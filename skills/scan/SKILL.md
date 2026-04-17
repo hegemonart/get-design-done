@@ -272,6 +272,27 @@ For each debt item, estimate effort:
 - `L` — architectural change, touches 15+ files (1–3 days)
 - `XL` — design system rebuild (3+ days)
 
+### Priority score for ordering DESIGN-DEBT.md entries
+
+Each debt item gets three scores:
+
+- **severity_weight**: `{ P0: 4, P1: 3, P2: 2, P3: 1 }`
+- **effort_weight**: `{ XS: 5, S: 4, M: 3, L: 2, XL: 1 }` — high effort = lower priority
+- **dependency_depth**: count of other debt items this fix unblocks
+
+Formula:
+
+```
+priority_score = (severity_weight × effort_weight) + (dependency_depth × 2)
+```
+
+Ordering rules:
+1. Sort entries by `priority_score` descending (highest first)
+2. Tiebreak: file count descending (more files affected = more impact)
+3. Second tiebreak: alphabetical by item ID (D-001 before D-002)
+
+Example: A P1 issue (`severity_weight = 3`) with S effort (`effort_weight = 4`) that unblocks 2 other items (`dependency_depth = 2`) scores: `(3 × 4) + (2 × 2) = 16`. A P0 issue (`4`) with XL effort (`1`) with no dependencies scores: `(4 × 1) + 0 = 4`. The P1 ranks above the P0 despite lower severity because its XL effort makes the P0 low ROI.
+
 Identify **quick wins**: P1 issues with XS/S effort — these have the best ROI.
 Identify **blocking dependencies**: fixes that must happen before others (e.g., token layer before dark mode).
 
@@ -405,12 +426,15 @@ p3_count: [N]
 ### D-001 — [Issue title]
 Category: [scoring category]
 Theme: [foundation | typography | color | accessibility | anti-patterns | components | motion]
+Severity: [P0/P1/P2/P3]
 Effort: [XS/S/M/L/XL]
+priority_score: [computed: (severity_weight × effort_weight) + (dependency_depth × 2)]
 Description: [What the issue is and where it was found]
 Evidence: [file:line or grep pattern that found it]
 Fix: [Concrete steps to fix — specific enough to execute without extra research]
 Acceptance: [What pass looks like — verifiable]
 Depends on: [D-XXX if this fix requires another fix first, else "none"]
+Dependency depth: [N — count of items this fix unblocks]
 
 ---
 
@@ -419,11 +443,14 @@ Depends on: [D-XXX if this fix requires another fix first, else "none"]
 ### D-010 — [Issue title] ⚡
 Category: [category]
 Theme: [theme]
+Severity: P1
 Effort: XS
+priority_score: [computed: (3 × 5) + (dependency_depth × 2) = 15+]
 Description: [...]
 Evidence: [...]
 Fix: [...]
 Acceptance: [...]
+Dependency depth: [N]
 
 ---
 
