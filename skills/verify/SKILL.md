@@ -40,16 +40,16 @@ Run the grep commands from `reference/anti-patterns.md`:
 ```bash
 # BAN violations (each = −3 from Anti-Pattern score)
 grep -rn "border-left:\s*[2-9]" src/ --include="*.css" --include="*.scss" --include="*.tsx" 2>/dev/null | head -5
-grep -rn "background-clip:\s*text\|text-fill-color:\s*transparent" src/ 2>/dev/null | head -5
+grep -rEn "background-clip:\s*text|text-fill-color:\s*transparent" src/ 2>/dev/null | head -5
 grep -rn "transition:\s*all" src/ 2>/dev/null | head -5
-grep -rn "user-scalable=no\|maximum-scale=1" public/ 2>/dev/null | head -5
+grep -rEn "user-scalable=no|maximum-scale=1" public/ 2>/dev/null | head -5
 
 # SLOP signals (each = −1)
-grep -rn "#6366f1\|#8b5cf6\|#06b6d4" src/ 2>/dev/null | head -5
+grep -rEn "#6366f1|#8b5cf6|#06b6d4" src/ 2>/dev/null | head -5
 grep -rn "backdrop-filter:\s*blur" src/ 2>/dev/null | head -5
 
 # Accessibility
-grep -rn "outline:\s*none\|outline:\s*0" src/ 2>/dev/null | head -5
+grep -rEn "outline:\s*none|outline:\s*0" src/ 2>/dev/null | head -5
 grep -rn "prefers-reduced-motion" src/ 2>/dev/null | head -3
 ```
 
