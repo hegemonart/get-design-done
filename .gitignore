@@ -1,6 +1,3 @@
-# Session memory — local only, not pushed to GitHub
-.claude/memory/
-
 # Pipeline artifacts — project-specific, not part of the plugin itself
 .design/
 
