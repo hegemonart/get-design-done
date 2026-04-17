@@ -1,7 +1,7 @@
 {
   "name": "ultimate-design",
-  "version": "2.1.0",
-  "description": "Self-contained 4-stage design pipeline: Discover → Plan → Design → Verify. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog directly — no sub-skill dependencies required. Optional: refero MCP for reference screenshots.",
+  "version": "3.0.0",
+  "description": "Agent-orchestrated 5-stage design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, Figma + Refero MCP connections, and 3 standalone commands (style, darkmode, compare). Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
