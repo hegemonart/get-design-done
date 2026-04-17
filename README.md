@@ -1,8 +1,6 @@
-# Ultimate Design
+# Get Design Done
 
-Master design orchestration skill for Claude Code. One entry point that routes design work through **Discover → Define → Design → Deliver → Defend** across the full design toolkit — `impeccable`, `emil-design-eng`, `anthropic-skills`, `design`, and `ui-ux-pro-max`.
-
-See [SKILL.md](./SKILL.md) for the full routing map and workflow.
+Agent-orchestrated design pipeline for Claude Code. One entry point that routes design work through a 5-stage workflow — **Scan → Discover → Plan → Design → Verify** — using 14 specialized agents, Figma + Refero MCP connections, and 3 standalone audit commands.
 
 ## Install
 
@@ -15,38 +13,56 @@ claude plugin marketplace add hegemonart/ultimate-design
 ### 2. Install the plugin
 
 ```bash
-claude plugin install ultimate-design@ultimate-design
+claude plugin install get-design-done@get-design-done
 ```
 
-This installs the orchestrator skill and triggers the bootstrap hook, which provisions the companion library `~/.claude/libs/awesome-design-md` on first run.
+This installs the pipeline skill and triggers the bootstrap hook, which provisions the companion library `~/.claude/libs/awesome-design-md` on first run.
 
-### 3. Install declared dependencies
+## Usage
 
-Ultimate Design depends on two upstream plugins. Add their marketplaces if you don't already have them, then install:
+Run in any project directory:
 
-```bash
-# impeccable — design vocabulary + 18 design commands
-claude plugin marketplace add pbakaus/impeccable
-claude plugin install impeccable@impeccable
-
-# ui-ux-pro-max — styles, palettes, typography, charts
-claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
-claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill
+```
+@get-design-done scan          — Map existing design system → DESIGN.md + debt roadmap
+@get-design-done discover      — Discovery interview + baseline audit → DESIGN-CONTEXT.md
+@get-design-done plan          — Decompose into tasks → DESIGN-PLAN.md
+@get-design-done design        — Execute tasks → DESIGN-SUMMARY.md
+@get-design-done verify        — Score + audit → DESIGN-VERIFICATION.md
 ```
 
-On Claude Code 2.1.110+ with cross-marketplace resolution enabled, the `dependencies` field in `plugin.json` will auto-install these when the marketplaces are known.
+Invoke without arguments for pipeline status and auto-routing to the next stage.
 
-## Optional companions
+### Standalone commands (work without running the pipeline first)
 
-### emil-design-eng
+```
+@get-design-done style Button  — Generate component handoff doc → .design/DESIGN-STYLE-Button.md
+@get-design-done darkmode      — Audit dark mode architecture + contrast → .design/DARKMODE-AUDIT.md
+@get-design-done compare       — Delta between baseline and verification result → .design/COMPARE-REPORT.md
+```
 
-The `emil-design-eng` skill (Emil Kowalski's design engineering philosophy) has no canonical public plugin source. Ultimate Design references it as an optional routing target. If you have a copy, place it at `~/.claude/skills/emil-design-eng/` and the routing map picks it up automatically. If not, ultimate-design gracefully falls back to impeccable variants for animation and polish work.
+## Pipeline overview
 
-### refero MCP
+Each stage is orchestrated by a thin skill that spawns specialized agents:
 
-Ultimate Design's Phase 1 (Discover) uses the `refero` MCP server to pull concrete visual references. `refero` is **not included** in this plugin because it requires an API token that not every user has.
+| Stage | Agents spawned | Output |
+|-------|----------------|--------|
+| scan | — (direct analysis) | DESIGN.md, DESIGN-DEBT.md |
+| discover | design-context-builder, design-context-checker | DESIGN-CONTEXT.md |
+| plan | design-phase-researcher, design-planner, design-plan-checker | DESIGN-PLAN.md |
+| design | design-executor (per task) | DESIGN-SUMMARY.md |
+| verify | design-verifier, design-auditor, design-integration-checker, design-fixer | DESIGN-VERIFICATION.md |
 
-To enable `refero`, add it to your Claude Code config manually:
+All pipeline artifacts are written to `.design/` inside your project.
+
+## Connections (optional)
+
+### Figma MCP
+
+When the official Figma Desktop MCP is active, `scan` reads Figma variables and `discover` pre-populates design decisions from your Figma file. Falls back to code-only analysis when not available. See [`connections/figma.md`](./connections/figma.md) for setup.
+
+### Refero MCP
+
+When Refero is active, `discover` pulls visual references to ground design decisions. Requires an API token:
 
 ```json
 {
@@ -60,70 +76,48 @@ To enable `refero`, add it to your Claude Code config manually:
 }
 ```
 
-Without `refero`, the Discover phase falls back to `~/.claude/libs/awesome-design-md/` (provisioned automatically) and the Figma MCP if available.
+Falls back to `~/.claude/libs/awesome-design-md/` when unavailable. See [`connections/refero.md`](./connections/refero.md) for setup.
 
-## What the bootstrap hook does
+## Bootstrap hook
 
-On `SessionStart`, the plugin checks whether companion resources are present and clones what's missing:
+On `SessionStart`, the plugin provisions the companion library if missing:
 
 | Resource | Location | Source |
-| --- | --- | --- |
-| awesome-design-md library | `~/.claude/libs/awesome-design-md/` | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) |
+|----------|----------|--------|
+| awesome-design-md | `~/.claude/libs/awesome-design-md/` | [`VoltAgent/awesome-design-md`](https://github.com/VoltAgent/awesome-design-md) |
 
-The hook is idempotent: it compares a bundled manifest against a marker in `${CLAUDE_PLUGIN_DATA}` and skips work if nothing changed. It runs `git pull --ff-only` for subsequent sessions. Failures are logged to stderr and do not block Claude Code startup.
+Idempotent — skips work if already present, runs `git pull --ff-only` on subsequent sessions.
 
-## Uninstall
+## Distribution
 
-```bash
-claude plugin uninstall ultimate-design@ultimate-design
-```
+**Ships with the plugin:**
+- `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` — manifest
+- `SKILL.md` — root pipeline router
+- `skills/` — stage skills (scan, discover, plan, design, verify, style, darkmode, compare)
+- `agents/` — 14 specialized agent specs
+- `connections/` — Figma + Refero connection specs
+- `reference/` — curated design reference material
+- `hooks/`, `scripts/bootstrap.sh`
 
-To also wipe the cached bootstrap state:
-
-```bash
-claude plugin uninstall ultimate-design@ultimate-design   # data dir is removed by default
-```
-
-The hook does **not** touch `~/.claude/libs/awesome-design-md/` or `~/.claude/skills/emil-design-eng/` on uninstall. Remove those manually if you want a clean slate.
+**Dev-only (gitignored, not distributed):**
+- `.planning/` — GSD planning artifacts
+- `.claude/memory/` — session-level memory
+- `.claude/settings.local.json`
 
 ## Develop locally
 
 ```bash
 claude --plugin-dir ./ultimate-design
-/reload-plugins   # after editing
-```
-
-Validate before pushing:
-
-```bash
+/reload-plugins
 claude plugin validate .
 ```
 
-## Distribution
+## Uninstall
 
-This repository is a Claude Code plugin. When installed via the marketplace, only the
-plugin runtime files ship to users — development scaffolding stays in this repo.
-
-**Ships with the plugin:**
-- `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` — plugin manifest
-- `SKILL.md` — root orchestrator skill
-- `skills/` — stage skills (scan, discover, plan, design, verify)
-- `scripts/bootstrap.sh` — idempotent plugin initialization
-- `hooks/` — Claude Code lifecycle hooks
-- `agents/` — agent authoring contract and specs (once added)
-- `connections/` — MCP connection specs (Figma, Refero, ...)
-- `reference/` — curated reference material
-- `README.md`, `.gitignore`, `.gitattributes`
-
-**Dev-only (gitignored, not distributed):**
-- `.planning/` — GSD planning artifacts (STATE, ROADMAP, PLANs)
-- `.claude/memory/` — session-level memory
-- `.claude/settings.local.json` — personal editor/runtime settings
-- `.design/` — pipeline runtime state written during design sessions
-
-If you are installing the plugin, you will not see `.planning/` or `.claude/memory/`.
-If you are contributing, clone the repo — dev artifacts will be generated as you work.
+```bash
+claude plugin uninstall get-design-done@get-design-done
+```
 
 ## License
 
-MIT. See [LICENSE](./LICENSE) (add if missing).
+MIT.
