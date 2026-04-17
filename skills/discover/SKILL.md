@@ -17,7 +17,27 @@ user-invocable: true
    - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=discover, status=in_progress, task_progress=0/1, and log warning: "STATE.md not found — created fresh. If this is a resumed session, run /ultimate-design:scan first."
    - If present and stage==discover and status==in_progress: RESUME — continue existing interview; do not reset.
    - Otherwise: normal transition — set frontmatter stage=discover, <position> stage=discover, status=in_progress, task_progress=0/1.
-2. Update <connections> by probing MCP availability.
+2. **Probe connection availability** — ToolSearch runs FIRST because MCP tools may be in the deferred tool set. This is the canonical probe pattern (spec lives in `connections/connections.md`; copied inline because SKILL.md has no include mechanism — if the probe pattern changes, update all stages that copied it).
+
+   **A — Figma probe:**
+
+   ```
+   A1. ToolSearch({ query: "select:mcp__figma-desktop__get_metadata", max_results: 1 })
+   A2. Empty result → figma: not_configured (skip all Figma paths)
+       Non-empty result → call mcp__figma-desktop__get_metadata
+         Success → figma: available
+         Error   → figma: unavailable
+   ```
+
+   **B — Refero probe (ToolSearch presence is sufficient — no tool call needed):**
+
+   ```
+   B1. ToolSearch({ query: "refero", max_results: 5 })
+   B2. Empty result  → refero: not_configured
+       Non-empty     → refero: available
+   ```
+
+   After both probes, update `.design/STATE.md` `<connections>` with the results and continue. Downstream stages (design-context-builder) read `<connections>` from STATE.md rather than re-probing.
 3. Update last_checkpoint. Write STATE.md.
 
 ## Auto Mode
