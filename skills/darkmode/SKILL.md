@@ -1,11 +1,11 @@
 ---
-name: ultimate-design:darkmode
+name: get-design-done:darkmode
 description: "Audit dark mode implementation. Detects architecture (CSS custom props, Tailwind dark:, JS class toggle), checks contrast, semantic token overrides, dark-specific anti-patterns, and color-scheme meta property. Writes .design/DARKMODE-AUDIT.md (read-only — no score writeback to DESIGN.md)."
 argument-hint: ""
 user-invocable: true
 ---
 
-# ultimate-design:darkmode — Dark Mode Audit
+# get-design-done:darkmode — Dark Mode Audit
 
 Standalone dark mode audit command. It detects the project's dark mode architecture, runs architecture-specific checks across contrast, token completeness, anti-patterns, and meta properties, then writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`.
 
@@ -36,7 +36,7 @@ Confirm source root exists before scanning. Try each candidate in order:
 
 Set `SRC_ROOT` to the first directory that exists. If none exist, abort:
 
-> "No source directory detected. Run /ultimate-design scan first."
+> "No source directory detected. Run /get-design-done scan first."
 
 Confirm `.design/` exists (create it if absent — `mkdir -p .design/`).
 

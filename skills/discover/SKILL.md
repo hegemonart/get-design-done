@@ -14,7 +14,7 @@ user-invocable: true
 ## State Integration
 
 1. Read `.design/STATE.md`.
-   - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=discover, status=in_progress, task_progress=0/1, and log warning: "STATE.md not found — created fresh. If this is a resumed session, run /ultimate-design:scan first."
+   - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=discover, status=in_progress, task_progress=0/1, and log warning: "STATE.md not found — created fresh. If this is a resumed session, run /get-design-done:scan first."
    - If present and stage==discover and status==in_progress: RESUME — continue existing interview; do not reset.
    - Otherwise: normal transition — set frontmatter stage=discover, <position> stage=discover, status=in_progress, task_progress=0/1.
 2. **Probe connection availability** — ToolSearch runs FIRST because MCP tools may be in the deferred tool set. This is the canonical probe pattern (spec lives in `connections/connections.md`; copied inline because SKILL.md has no include mechanism — if the probe pattern changes, update all stages that copied it).
@@ -124,7 +124,7 @@ Saved: .design/DESIGN-CONTEXT.md
 Baseline score: [N]/100 ([grade])
 Key issues: [top issue 1], [top issue 2], [top issue 3]
 
-Next: /ultimate-design:plan
+Next: /get-design-done:plan
   → Decomposes your context into executable design tasks.
 ━━━━━━━━━━━━━━━━━━━━━━━━━
 ```

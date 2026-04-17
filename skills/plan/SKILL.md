@@ -12,7 +12,7 @@ user-invocable: true
 ## State Integration
 
 1. Read `.design/STATE.md`.
-   - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=plan, status=in_progress, task_progress=0/3, and log warning "STATE.md not found — created fresh. If this is a resumed session, run /ultimate-design:scan first."
+   - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=plan, status=in_progress, task_progress=0/3, and log warning "STATE.md not found — created fresh. If this is a resumed session, run /get-design-done:scan first."
    - If present and frontmatter stage==plan and `<position>` status==in_progress: RESUME — skip already-complete agent invocations (use task_progress numerator as source of truth).
    - Otherwise: normal transition — set frontmatter stage=plan, `<position>` stage=plan, status=in_progress, task_progress=0/3.
 2. Update `<connections>` by probing MCP availability (figma, refero).
@@ -165,7 +165,7 @@ If `## PLAN CHECK RESULT: ISSUES FOUND` and any BLOCKER issues:
 Print user-facing summary:
 - Plan tasks: N waves, M total tasks
 - Files: .design/DESIGN-PLAN.md (and .design/DESIGN-RESEARCH.md if research ran)
-- Next: `/ultimate-design:design` to execute the plan
+- Next: `/get-design-done:design` to execute the plan
 
 ## PLAN COMPLETE
 

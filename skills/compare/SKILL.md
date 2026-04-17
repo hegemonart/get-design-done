@@ -1,11 +1,11 @@
 ---
-name: ultimate-design:compare
+name: get-design-done:compare
 description: "Compute delta between DESIGN.md baseline (from scan) and DESIGN-VERIFICATION.md result (from verify). Reports per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in DESIGN-PLAN.md). Writes .design/COMPARE-REPORT.md."
 argument-hint: ""
 user-invocable: true
 ---
 
-# ultimate-design:compare — Baseline vs Result Delta
+# get-design-done:compare — Baseline vs Result Delta
 
 Standalone delta command. Computes the difference between the scan baseline (`DESIGN.md`) and the verification result (`DESIGN-VERIFICATION.md`), and flags design drift for any regression not covered by an explicit task in `DESIGN-PLAN.md`. Writes one artifact: `.design/COMPARE-REPORT.md`.
 
@@ -35,10 +35,10 @@ Required files — abort if either is missing:
 **Abort conditions:**
 
 - If `.design/DESIGN.md` is missing:
-  > "No baseline found. Run /ultimate-design scan first."
+  > "No baseline found. Run /get-design-done scan first."
 
 - If `.design/DESIGN-VERIFICATION.md` is missing:
-  > "No verification result found. Run /ultimate-design verify first to produce DESIGN-VERIFICATION.md."
+  > "No verification result found. Run /get-design-done verify first to produce DESIGN-VERIFICATION.md."
 
 **Optional files** (graceful degradation if absent):
 

@@ -20,7 +20,7 @@ user-invocable: true
 2. Probe `<connections>`, update `last_checkpoint`, write STATE.md.
 
 Abort only if `.design/DESIGN-PLAN.md` is missing:
-> "No plan found. Run `/ultimate-design:plan` first."
+> "No plan found. Run `/get-design-done:plan` first."
 
 ---
 
@@ -198,7 +198,7 @@ Tasks: [N] complete / [M] total
 Deviations: [N]
 Commits: [git log --oneline since stage start]
 
-Next: /ultimate-design:verify
+Next: /get-design-done:verify
   → Scores the result against baseline, checks must-haves,
     runs NNG heuristic evaluation, and identifies gaps.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,6 +1,6 @@
 {
-  "name": "ultimate-design",
-  "version": "3.0.0",
+  "name": "get-design-done",
+  "version": "1.0.0",
   "description": "Agent-orchestrated 5-stage design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, Figma + Refero MCP connections, and 3 standalone commands (style, darkmode, compare). Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
   "author": {
     "name": "hegemonart",

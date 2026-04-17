@@ -19,7 +19,7 @@ user-invocable: true
    - Otherwise: normal transition — set `stage=verify`, `status=in_progress`, `task_progress=0/3`.
 2. Update `<connections>`, `last_checkpoint`. Write STATE.md.
 
-Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /ultimate-design:discover first."
+Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /get-design-done:discover first."
 
 ---
 
@@ -148,7 +148,7 @@ Merge verifier gaps (G-NN entries) and integration-checker gaps (Orphaned/Missin
   ```
   Verification failed — N gaps found (X blockers, Y majors, Z minors, W cosmetics).
   Report: .design/DESIGN-VERIFICATION.md
-  Fix gaps and re-run: /ultimate-design:verify
+  Fix gaps and re-run: /get-design-done:verify
   ```
 - If `auto_mode=false`: present gap summary and menu (go to Step 3).
 
@@ -182,7 +182,7 @@ Choose:
 - Write STATE.md.
 - Exit:
   ```
-  Gaps saved. Resume with: /ultimate-design:verify
+  Gaps saved. Resume with: /get-design-done:verify
   Report: .design/DESIGN-VERIFICATION.md
   ```
 
@@ -280,8 +280,8 @@ Reports:
   Qualitative audit: .design/DESIGN-AUDIT.md
   Full verification: .design/DESIGN-VERIFICATION.md
 
-Next: [if pass] pipeline complete — run /ultimate-design:discover for next session
-      [if fail] fix gaps and re-run /ultimate-design:verify
+Next: [if pass] pipeline complete — run /get-design-done:discover for next session
+      [if fail] fix gaps and re-run /get-design-done:verify
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 

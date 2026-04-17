@@ -1,18 +1,18 @@
 {
-  "name": "ultimate-design",
+  "name": "get-design-done",
   "owner": {
     "name": "hegemonart"
   },
   "metadata": {
-    "description": "Ultimate Design v3 — 5-stage agent-orchestrated design pipeline with Figma + Refero connections and 3 standalone audit commands (style, darkmode, compare).",
-    "version": "3.0.0"
+    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with Figma + Refero connections and 3 standalone audit commands (style, darkmode, compare).",
+    "version": "1.0.0"
   },
   "plugins": [
     {
-      "name": "ultimate-design",
+      "name": "get-design-done",
       "source": "./",
       "description": "Agent-orchestrated design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, Figma + Refero MCP connections, style/darkmode/compare commands.",
-      "version": "3.0.0",
+      "version": "1.0.0",
       "author": {
         "name": "hegemonart"
       },

@@ -1,11 +1,11 @@
 ---
-name: ultimate-design:style
+name: get-design-done:style
 description: "Generate a component handoff doc (.design/DESIGN-STYLE-[ComponentName].md) from existing pipeline artifacts or source files. Two modes: post-pipeline (uses DESIGN-SUMMARY.md) and pre-pipeline fallback (uses DESIGN.md + source). Invoke with a ComponentName argument, or with no argument to list available components."
 argument-hint: "[ComponentName]"
 user-invocable: true
 ---
 
-# ultimate-design:style — Component Handoff Doc Generator
+# get-design-done:style — Component Handoff Doc Generator
 
 Generates a per-component style spec at `.design/DESIGN-STYLE-[ComponentName].md`. This is a **standalone command**, not a pipeline stage.
 
@@ -41,7 +41,7 @@ This separation is a pre-roadmap decision recorded in `.planning/STATE.md`: util
    - `components/*.tsx`
    - `components/*.jsx`
 2. Also list task names from `.design/tasks/*.md` (if directory exists).
-3. Display the list to the user and prompt: "Specify a ComponentName to generate a style spec. Example: `/ultimate-design style Button`"
+3. Display the list to the user and prompt: "Specify a ComponentName to generate a style spec. Example: `/get-design-done style Button`"
 4. Exit without generating any file.
 
 ---
@@ -60,7 +60,7 @@ Elif .design/DESIGN.md exists:
   pipeline_complete = false
 
 Else:
-  Abort: "No .design/ artifacts found. Run /ultimate-design scan first to initialize."
+  Abort: "No .design/ artifacts found. Run /get-design-done scan first to initialize."
 ```
 
 The mode controls which files are supplied to the agent in `<required_reading>`.
@@ -163,7 +163,7 @@ This command MUST NOT:
 **Example 1: Named component**
 
 ```
-/ultimate-design style Button
+/get-design-done style Button
 ```
 
 - Resolves component: `src/components/Button.tsx`
@@ -176,7 +176,7 @@ This command MUST NOT:
 **Example 2: No argument (list mode)**
 
 ```
-/ultimate-design style
+/get-design-done style
 ```
 
 - Globs component files from `src/components/`
@@ -188,6 +188,6 @@ This command MUST NOT:
     Input
     Modal
     Toast
-  Specify: /ultimate-design style [ComponentName]
+  Specify: /get-design-done style [ComponentName]
   ```
 - Exits without generating any file.

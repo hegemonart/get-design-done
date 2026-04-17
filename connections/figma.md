@@ -1,6 +1,6 @@
 # Figma MCP — Connection Specification
 
-This file is the connection specification for the official Figma Desktop MCP within the ultimate-design pipeline. It provides the setup guide, tool inventory, per-stage usage, probe pattern, fallback behavior, and anti-patterns. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for the official Figma Desktop MCP within the get-design-done pipeline. It provides the setup guide, tool inventory, per-stage usage, probe pattern, fallback behavior, and anti-patterns. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

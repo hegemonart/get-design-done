@@ -1,6 +1,6 @@
 # Connections — Index and Capability Matrix
 
-This directory contains connection specifications for external tools and MCPs that the ultimate-design pipeline integrates with. Each connection has its own spec file. This file is the index.
+This directory contains connection specifications for external tools and MCPs that the get-design-done pipeline integrates with. Each connection has its own spec file. This file is the index.
 
 ---
 

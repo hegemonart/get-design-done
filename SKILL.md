@@ -1,13 +1,13 @@
 ---
-name: ultimate-design
+name: get-design-done
 description: "Master design pipeline for Claude Code. Includes a one-time scanner (scan) plus a 4-stage workflow: Discover → Plan → Design → Verify. Run 'scan' first in any new repo to map existing design system and generate a debt roadmap. Then use 'discover' to start the pipeline. Invoke without arguments for status and auto-routing."
 argument-hint: "[scan|discover|plan|design|verify|status|style|darkmode|compare]"
 user-invocable: true
 ---
 
-# Ultimate Design — Pipeline Router
+# Get Design Done — Pipeline Router
 
-Entry point for the ultimate-design toolkit:
+Entry point for the get-design-done toolkit:
 
 ```
 scan → Discover → Plan → Design → Verify
@@ -21,21 +21,21 @@ Each stage produces artifacts in `.design/` inside the current project.
 
 | Command | Skill | Purpose |
 |---|---|---|
-| `scan` | `ultimate-design:scan` | Map existing design system, generate DESIGN.md + debt roadmap |
-| `discover` | `ultimate-design:discover` | Discovery interview + baseline audit → DESIGN-CONTEXT.md |
-| `plan` | `ultimate-design:plan` | Decompose into tasks → DESIGN-PLAN.md |
-| `design` | `ultimate-design:design` | Execute tasks → DESIGN-SUMMARY.md |
-| `verify` | `ultimate-design:verify` | Score + audit → DESIGN-VERIFICATION.md |
-| `style [ComponentName]` | `ultimate-design:style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
-| `darkmode` | `ultimate-design:darkmode` | Audit dark mode architecture + contrast + anti-patterns → .design/DARKMODE-AUDIT.md |
-| `compare` | `ultimate-design:compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md → .design/COMPARE-REPORT.md |
+| `scan` | `get-design-done:scan` | Map existing design system, generate DESIGN.md + debt roadmap |
+| `discover` | `get-design-done:discover` | Discovery interview + baseline audit → DESIGN-CONTEXT.md |
+| `plan` | `get-design-done:plan` | Decompose into tasks → DESIGN-PLAN.md |
+| `design` | `get-design-done:design` | Execute tasks → DESIGN-SUMMARY.md |
+| `verify` | `get-design-done:verify` | Score + audit → DESIGN-VERIFICATION.md |
+| `style [ComponentName]` | `get-design-done:style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
+| `darkmode` | `get-design-done:darkmode` | Audit dark mode architecture + contrast + anti-patterns → .design/DARKMODE-AUDIT.md |
+| `compare` | `get-design-done:compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md → .design/COMPARE-REPORT.md |
 
 ## Routing Logic
 
 When invoked without arguments (or with `status`), show pipeline state and suggest next action:
 
 ```
-1. No DESIGN.md and no .design/ → Suggest scan first: "New repo detected — run /ultimate-design scan to map the design system."
+1. No DESIGN.md and no .design/ → Suggest scan first: "New repo detected — run /get-design-done scan to map the design system."
 2. DESIGN.md exists, no DESIGN-CONTEXT.md → Suggest discover
 3. DESIGN-CONTEXT.md missing → Route to discover
 4. DESIGN-CONTEXT.md exists, DESIGN-PLAN.md missing → Route to plan
@@ -47,7 +47,7 @@ When invoked without arguments (or with `status`), show pipeline state and sugge
 ## Status Display
 
 ```
-━━━ Ultimate Design Pipeline ━━━
+━━━ Get Design Done Pipeline ━━━
 [✓] Scan       → DESIGN.md + .design/DESIGN-DEBT.md
 [✓] Discover   → .design/DESIGN-CONTEXT.md
 [✓] Plan       → .design/DESIGN-PLAN.md
@@ -63,17 +63,17 @@ Show score delta if DESIGN.md baseline + DESIGN-VERIFICATION.md result both exis
 If `$ARGUMENTS` is a stage name — invoke it directly, no state check:
 
 ```
-/ultimate-design scan     → Skill("ultimate-design:scan")
-/ultimate-design discover → Skill("ultimate-design:discover")
-/ultimate-design plan     → Skill("ultimate-design:plan")
-/ultimate-design design   → Skill("ultimate-design:design")
-/ultimate-design verify   → Skill("ultimate-design:verify")
-/ultimate-design style    → Skill("ultimate-design:style")
-/ultimate-design darkmode → Skill("ultimate-design:darkmode")
-/ultimate-design compare → Skill("ultimate-design:compare")
+/get-design-done scan     → Skill("get-design-done:scan")
+/get-design-done discover → Skill("get-design-done:discover")
+/get-design-done plan     → Skill("get-design-done:plan")
+/get-design-done design   → Skill("get-design-done:design")
+/get-design-done verify   → Skill("get-design-done:verify")
+/get-design-done style    → Skill("get-design-done:style")
+/get-design-done darkmode → Skill("get-design-done:darkmode")
+/get-design-done compare  → Skill("get-design-done:compare")
 ```
 
-Pass remaining arguments through: `/ultimate-design scan --quick` → `Skill("ultimate-design:scan", "--quick")`
+Pass remaining arguments through: `/get-design-done scan --quick` → `Skill("get-design-done:scan", "--quick")`
 
 ## Do Not
 
