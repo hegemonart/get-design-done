@@ -1,7 +1,7 @@
 ---
 name: design-context-builder
 description: Detects existing design system state via grep/glob, runs discovery interview asking ONLY unanswered questions, produces .design/DESIGN-CONTEXT.md. Spawned by the discover stage.
-tools: Read, Write, Bash, Grep, Glob
+tools: Read, Write, Bash, Grep, Glob, mcp__figma-desktop__get_variable_defs, mcp__figma-desktop__get_metadata
 color: blue
 model: inherit
 ---
@@ -29,6 +29,68 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 - `.design/STATE.md` — current pipeline position and project metadata
 - `reference/audit-scoring.md` — scoring framework for baseline audit
 - `reference/anti-patterns.md` — grep patterns for BAN/SLOP violations
+
+---
+
+## Step 0 — Figma Pre-population
+
+**Skip this step if `figma` is `not_configured` or `unavailable` in `.design/STATE.md` `<connections>`.** Proceed directly to Step 1 — interview-only flow continues as before. No error.
+
+### If `figma: available`
+
+**ToolSearch first.** Figma tools may be in the deferred tool set — calling them without a prior ToolSearch fails silently.
+
+```
+ToolSearch({ query: "figma-desktop", max_results: 10 })
+```
+
+Then call `mcp__figma-desktop__get_variable_defs` (no arguments — returns all variables in the active Figma file).
+
+> If `get_variable_defs` errors (most commonly because no Figma file is open): skip Step 0 entirely AND update `.design/STATE.md` `<connections>` to `figma: unavailable`. Proceed to Step 1 with no pre-populated decisions.
+
+### Variable → Decision translation
+
+For each variable returned, emit a D-XX decision using the following mapping:
+
+**COLOR variables:**
+
+```
+D-XX: [Color] Figma token "colors/primary/brand" = #3B82F6 (Light) / #60A5FA (Dark) — use as primary brand color
+```
+
+- Record the variable **NAME** alongside the resolved hex — the name often carries semantic meaning that the hex alone cannot convey (`get_variable_defs` returns resolved values; no alias chain is available).
+- If the variable name has no clear semantic role (e.g., `blue-500`, `gray-30`), mark the decision as **"tentative — confirm with user"**.
+- When `valuesByMode` has Light and Dark entries, record both values.
+
+**FLOAT variables named `spacing/*`:**
+
+```
+D-XX: [Spacing] Figma token "spacing/md" = 16 — use as base spacing unit
+```
+
+**FLOAT variables named `font-size/*` or `typography/*`:**
+
+```
+D-XX: [Typography] Figma token "typography/body" = 16 — use as body text size
+```
+
+### Record the source in DESIGN-CONTEXT.md
+
+After emitting pre-populated decisions, add a note in the `<decisions>` section:
+
+```
+Note: Decisions D-XX through D-YY pre-populated from Figma variables (source: figma-variables).
+      These are starting points — the interview (Step 1+) may override or remove them.
+```
+
+### Caveats
+
+- **ToolSearch first** — Figma tools are deferred; without ToolSearch they may not be in context.
+- **Resolved values only** — `get_variable_defs` does not return alias chains. Record variable names alongside values.
+- **No file open** — `get_variable_defs` errors if no Figma file is open. Skip Step 0 and update `figma: unavailable` in STATE.md `<connections>`. Do not error the agent.
+- **Starting points, not locked decisions** — pre-populated D-XX decisions are marked `tentative`. The interview in Step 1+ may override or remove any of them. User confirmation supersedes Figma data.
+
+Proceed to Step 1 regardless of whether Step 0 ran or was skipped.
 
 ---
 
