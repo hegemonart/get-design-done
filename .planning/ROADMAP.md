@@ -142,5 +142,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Core Agents + Stage Orchestration | 4/4 | Complete   | 2026-04-17 |
 | 3. Quality Gate Agents + Pipeline Polish | 6/6 | Complete   | 2026-04-17 |
 | 4. Connections Layer | 3/3 | Complete   | 2026-04-17 |
-| 5. Automation Agents + New Commands | 3/5 | In Progress|  |
+| 5. Automation Agents + New Commands | 4/5 | In Progress|  |
 | 6. Validation + Version Bump | 0/1 | Not started | - |

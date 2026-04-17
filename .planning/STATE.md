@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-04-17T15:27:08.909Z"
+stopped_at: Completed 05-04-PLAN.md
+last_updated: "2026-04-17T15:31:17.278Z"
 last_activity: "2026-04-17 — Phase 04 Plan 03: Refero MCP wired into design-context-builder (Area 5 three-tier fallback), discover/SKILL.md probe concretized"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 23
-  completed_plans: 21
+  completed_plans: 22
   percent: 81
 ---
 
@@ -71,6 +71,7 @@ Progress: [████████░░] 81%
 | Phase 04-connections-layer P03 | 5 | 2 tasks | 2 files |
 | Phase 05-automation-agents-new-commands P02 | 1 | 2 tasks | 2 files |
 | Phase 05-automation-agents-new-commands P03 | 3 | 3 tasks | 3 files |
+| Phase 05-automation-agents-new-commands P04 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -141,6 +142,8 @@ Progress: [████████░░] 81%
 - [Phase 05-03]: Single design-doc-writer agent handles both post-pipeline and pre-pipeline modes via pipeline_complete context field
 - [Phase 05-03]: style command is a standalone leaf — no STATE.md contract, not a pipeline stage, DESIGN-STYLE-*.md namespace distinct from pipeline DESIGN-*.md
 - [Phase 05-03]: darkmode and compare NOT added to root SKILL.md in plan 05-03 — incremental additions reserved for plans 05-04 and 05-05 (Pitfall 5)
+- [Phase 05-04]: darkmode is audit-only: does NOT invoke design-auditor (Pitfall 4), runs its own inline checks
+- [Phase 05-04]: DARKMODE-AUDIT prefix used for output artifact — distinct from pipeline DESIGN-*.md namespace
 
 ### Pending Todos
 
@@ -152,6 +155,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-17T15:27:08.906Z
-Stopped at: Completed 05-03-PLAN.md
+Last session: 2026-04-17T15:31:17.274Z
+Stopped at: Completed 05-04-PLAN.md
 Resume file: None

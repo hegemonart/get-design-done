@@ -116,13 +116,13 @@
 
 ### darkmode Command
 
-- [ ] **DARK-01**: `darkmode` command exists at `skills/darkmode/SKILL.md` and is routed from root `SKILL.md`
-- [ ] **DARK-02**: Detects dark mode implementation architecture (CSS custom properties, Tailwind `dark:`, JS class toggle) before auditing
-- [ ] **DARK-03**: Audits contrast of all text/background pairs in dark context (WCAG 4.5:1 body, 3:1 large)
-- [ ] **DARK-04**: Checks semantic token dark mode overrides exist for all color tokens used in light mode
-- [ ] **DARK-05**: Detects dark-specific anti-patterns: images/SVGs without dark variant, pure-black backgrounds (BAN-05 in dark context), forced-colors media query absence
-- [ ] **DARK-06**: Checks `color-scheme` meta property and `prefers-color-scheme` media query presence
-- [ ] **DARK-07**: Produces `.design/DARKMODE-AUDIT.md` (separate from DESIGN.md — read-only, no score writeback)
+- [x] **DARK-01**: `darkmode` command exists at `skills/darkmode/SKILL.md` and is routed from root `SKILL.md`
+- [x] **DARK-02**: Detects dark mode implementation architecture (CSS custom properties, Tailwind `dark:`, JS class toggle) before auditing
+- [x] **DARK-03**: Audits contrast of all text/background pairs in dark context (WCAG 4.5:1 body, 3:1 large)
+- [x] **DARK-04**: Checks semantic token dark mode overrides exist for all color tokens used in light mode
+- [x] **DARK-05**: Detects dark-specific anti-patterns: images/SVGs without dark variant, pure-black backgrounds (BAN-05 in dark context), forced-colors media query absence
+- [x] **DARK-06**: Checks `color-scheme` meta property and `prefers-color-scheme` media query presence
+- [x] **DARK-07**: Produces `.design/DARKMODE-AUDIT.md` (separate from DESIGN.md — read-only, no score writeback)
 
 ### compare Command
 
@@ -240,13 +240,13 @@
 | STYL-03 | Phase 5 | Complete |
 | STYL-04 | Phase 5 | Complete |
 | STYL-05 | Phase 5 | Complete |
-| DARK-01 | Phase 5 | Pending |
-| DARK-02 | Phase 5 | Pending |
-| DARK-03 | Phase 5 | Pending |
-| DARK-04 | Phase 5 | Pending |
-| DARK-05 | Phase 5 | Pending |
-| DARK-06 | Phase 5 | Pending |
-| DARK-07 | Phase 5 | Pending |
+| DARK-01 | Phase 5 | Complete |
+| DARK-02 | Phase 5 | Complete |
+| DARK-03 | Phase 5 | Complete |
+| DARK-04 | Phase 5 | Complete |
+| DARK-05 | Phase 5 | Complete |
+| DARK-06 | Phase 5 | Complete |
+| DARK-07 | Phase 5 | Complete |
 | COMP-01 | Phase 5 | Pending |
 | COMP-02 | Phase 5 | Pending |
 | COMP-03 | Phase 5 | Pending |
