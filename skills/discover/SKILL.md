@@ -20,6 +20,15 @@ user-invocable: true
 2. Update <connections> by probing MCP availability.
 3. Update last_checkpoint. Write STATE.md.
 
+## Auto Mode
+
+Auto Mode CSS detection (when `auto_mode: true` is passed to the builder):
+  1. If tailwind.config.{js,cjs,mjs,ts} exists → Tailwind-only project
+     - Skip CSS file grep
+     - Parse tailwind.config for color palette, spacing scale, font families
+     - Use tailwind.config values as the baseline style signal
+  2. Else → fall through to existing CSS file grep logic
+
 ## Step 1 — Spawn design-context-builder
 
 Task("design-context-builder", """
@@ -32,6 +41,18 @@ Task("design-context-builder", """
 You are the design-context-builder agent. Auto-detect existing design system
 state via grep/glob before asking questions. Interview the user ONLY for areas
 where auto-detect returned no confident answer. Write .design/DESIGN-CONTEXT.md.
+
+Baseline audit directory detection (ordered fallback chain):
+  1. If src/ exists → use src/
+  2. Elif app/ exists → use app/ (Next.js App Router)
+  3. Elif pages/ exists → use pages/ (Next.js Pages Router)
+  4. Elif lib/ exists → use lib/ (library-only projects)
+  5. Else → flag "layout unknown", skip baseline, note in DESIGN-CONTEXT.md
+
+Common gray areas to probe during discovery (Area 7):
+  1. font-change risk — switching type families when existing UI has body copy in a specific family. Ask: "Is the current body font intentional or inherited? OK to change?"
+  2. token-layer introduction risk — adding CSS custom properties to a codebase that uses direct values. Ask: "Do you want design tokens (--primary, --surface) or inline values (hex, rgb)?"
+  3. Component rebuild vs restyle — when to keep existing component, when to rebuild from scratch. Ask: "For <component>, restyle in place or rebuild?"
 
 Context:
   auto_mode: <true|false>
