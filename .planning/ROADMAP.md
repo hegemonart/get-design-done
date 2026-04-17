@@ -2,7 +2,7 @@
 
 ## Overview
 
-v3 transforms ultimate-design from a linear pipeline into a GSD-style agent-orchestrated system. The pipeline keeps its five stages (scan → discover → plan → design → verify), but each stage becomes a thin orchestrator that spawns specialized agents — modeled on GSD's planner/executor/verifier/checker pattern. Phase 1 lays the foundation (cross-platform bash, distribution cleanup, explicit state machine, agent + connection scaffolding). Phase 2 builds the 5 core agents and rewrites the stages to use them. Phase 3 adds 6 quality-gate agents plus clears the existing polish backlog. Phase 4 formalizes Figma and Refero as connections with a plug-in model for future ones. Phase 5 ships 3 automation agents plus the three new commands (style, darkmode, compare). Phase 6 validates and bumps to 3.0.0.
+v3 transforms ultimate-design from a linear pipeline into a GSD-style agent-orchestrated system. The pipeline keeps its five stages (scan → discover → plan → design → verify), but each stage becomes a thin orchestrator that spawns specialized agents — modeled on GSD's planner/executor/verifier/checker pattern. Phase 1 lays the foundation (cross-platform bash, distribution cleanup, explicit state machine, agent + connection scaffolding). Phase 2 builds the 5 core agents and rewrites the stages to use them. Phase 3 adds 6 quality-gate agents plus clears the existing polish backlog. Phase 4 formalizes Figma and Refero as connections with a plug-in model for future ones. Phase 5 ships 3 automation agents plus the three new commands (style, darkmode, compare). Phase 6 validates, version-bumps to 3.0.0, and ships as get-design-done. Phase 7 integrates Claude Design (Anthropic Labs) as a first-class connection and adds Pinterest MCP as a reference source.
 
 ## Phases
 
@@ -18,7 +18,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Quality Gate Agents + Pipeline Polish** — 6 quality gate agents + existing backlog polish (completed 2026-04-17)
 - [x] **Phase 4: Connections Layer** — Figma MCP, Refero MCP, extensibility pattern (completed 2026-04-17)
 - [x] **Phase 5: Automation Agents + New Commands** — 3 automation agents + style + darkmode + compare (completed 2026-04-17)
-- [ ] **Phase 6: Validation + Version Bump** — Plugin validate, smoke test, version 3.0.0
+- [x] **Phase 6: Validation + Version Bump** — Plugin validate, smoke test, version 3.0.0, renamed to get-design-done (completed 2026-04-18)
+- [ ] **Phase 7: Claude Design Integration + Pinterest Connection** — Claude Design handoff auto-landing, `--from-handoff` entry point, Pinterest MCP as reference source, connections/claude-design.md
 
 ## Phase Details
 
@@ -118,7 +119,7 @@ Plans:
 - [ ] 05-05-PLAN.md — compare command — SKILL.md, delta logic, drift detection, router update
 
 ### Phase 6: Validation + Version Bump
-**Goal**: The plugin passes formal validation, all commands work on a real Windows Git Bash project, and the version is 3.0.0
+**Goal**: The plugin passes formal validation, all commands work on a real Windows Git Bash project, and the version is 3.0.0. Plugin renamed to get-design-done.
 **Depends on**: Phases 4 and 5
 **Requirements**: VAL-01, VAL-02, VAL-03
 **Success Criteria** (what must be TRUE):
@@ -126,21 +127,42 @@ Plans:
   2. Root SKILL.md argument-hint frontmatter, Command Reference table, and Jump Mode section all list style, darkmode, and compare — invoking any of them routes correctly
   3. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` both show version `3.0.0`
   4. `claude plugin install hegemonart/ultimate-design` on a fresh Claude Code instance installs cleanly and the pipeline runs end-to-end
-**Plans**: 5 plans
+**Status**: ✓ COMPLETE (2026-04-18)
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: Root SKILL.md routing audit + plugin validate + version bump + marketplace.json sync
+- [x] 06-01-PLAN.md — Version bump to 3.0.0 (plugin.json + marketplace.json), description refresh, validate both manifests, rename to get-design-done (VAL-01, VAL-02, VAL-03)
+
+### Phase 7: Claude Design Integration + Pinterest Connection
+**Goal**: get-design-done is a first-class post-handoff verification layer for Claude Design (claude.ai/design, Anthropic Labs) — users can land from a Claude Design handoff bundle with a single command, skip the full pipeline, and get a verified implementation. Pinterest MCP is added as a third reference-collection option in the discover stage.
+**Depends on**: Phase 6 (stable v3.0.0 baseline)
+**Requirements**: CDES-01, CDES-02, CDES-03, CDES-04, CDES-05, PINS-01
+**Success Criteria** (what must be TRUE):
+  1. `/get-design-done handoff` (or `--from-handoff`) initializes STATE.md from a Claude Design handoff bundle, writes DESIGN-CONTEXT.md with pre-populated D-XX decisions, and routes directly to verify — no scan/discover required
+  2. `connections/claude-design.md` documents the handoff bundle format, the adapter pattern, and the `DESIGN.md → Claude Design onboarding` reverse workflow
+  3. `connections/pinterest.md` documents Pinterest MCP setup, probe pattern, and fallback chain; the capability matrix in `connections/connections.md` is updated
+  4. design-context-builder Area 5 fallback chain extended to: Pinterest MCP → Refero MCP → awesome-design-md
+  5. `DESIGN-VERIFICATION.md` produced by post-handoff verify includes a "Handoff Faithfulness" section scoring how closely the code implementation matches the handoff bundle intent
+  6. Verify stage `--post-handoff` mode skips the DESIGN-PLAN.md prerequisite check and runs correctly on handoff-only input
+**Plans**: 4 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — connections/claude-design.md + connections/pinterest.md + connections.md capability matrix update (CDES-01, PINS-01)
+- [ ] 07-02-PLAN.md — Handoff adapter: design-context-builder Step 0B (handoff bundle → DESIGN-CONTEXT.md D-XX decisions) + STATE.md handoff_source field (CDES-02, CDES-03)
+- [ ] 07-03-PLAN.md — Pipeline router `handoff` sub-command + verify `--post-handoff` mode + Handoff Faithfulness section in DESIGN-VERIFICATION.md (CDES-04, CDES-05)
+- [ ] 07-04-PLAN.md — Pinterest MCP wiring: design-context-builder Area 5 three-tier fallback extension + discover probe update (PINS-01)
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Distribution + Infrastructure | 5/5 | Complete   | 2026-04-17 |
-| 2. Core Agents + Stage Orchestration | 4/4 | Complete   | 2026-04-17 |
-| 3. Quality Gate Agents + Pipeline Polish | 6/6 | Complete   | 2026-04-17 |
-| 4. Connections Layer | 3/3 | Complete   | 2026-04-17 |
-| 5. Automation Agents + New Commands | 5/5 | Complete   | 2026-04-17 |
-| 6. Validation + Version Bump | 0/1 | Not started | - |
+| 1. Foundation + Distribution + Infrastructure | 5/5 | Complete | 2026-04-17 |
+| 2. Core Agents + Stage Orchestration | 4/4 | Complete | 2026-04-17 |
+| 3. Quality Gate Agents + Pipeline Polish | 6/6 | Complete | 2026-04-17 |
+| 4. Connections Layer | 3/3 | Complete | 2026-04-17 |
+| 5. Automation Agents + New Commands | 5/5 | Complete | 2026-04-17 |
+| 6. Validation + Version Bump | 1/1 | Complete | 2026-04-18 |
+| 7. Claude Design Integration + Pinterest Connection | 0/4 | Planned | - |
