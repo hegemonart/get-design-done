@@ -18,7 +18,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Quality Gate Agents + Pipeline Polish** — 6 quality gate agents + existing backlog polish (completed 2026-04-17)
 - [x] **Phase 4: Connections Layer** — Figma MCP, Refero MCP, extensibility pattern (completed 2026-04-17)
 - [x] **Phase 5: Automation Agents + New Commands** — 3 automation agents + style + darkmode + compare (completed 2026-04-17)
-- [ ] **Phase 6: Validation + Version Bump** — Plugin validate, smoke test, version 3.0.0
+- [x] **Phase 6: Validation + Version Bump** — Plugin validate, smoke test, version 3.0.0 (completed 2026-04-17)
 
 ## Phase Details
 
@@ -126,10 +126,10 @@ Plans:
   2. Root SKILL.md argument-hint frontmatter, Command Reference table, and Jump Mode section all list style, darkmode, and compare — invoking any of them routes correctly
   3. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` both show version `3.0.0`
   4. `claude plugin install hegemonart/ultimate-design` on a fresh Claude Code instance installs cleanly and the pipeline runs end-to-end
-**Plans**: 5 plans
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: Root SKILL.md routing audit + plugin validate + version bump + marketplace.json sync
+- [ ] 06-01-PLAN.md — Version bump to 3.0.0 (plugin.json + marketplace.json), description refresh, REQUIREMENTS.md AGENT-12 fix, validate both manifests (VAL-01, VAL-02, VAL-03)
 
 ## Progress
 
