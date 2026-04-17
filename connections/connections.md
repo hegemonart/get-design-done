@@ -8,8 +8,8 @@ This directory contains connection specifications for external tools and MCPs th
 
 | Connection | Status | Spec File | Notes |
 |-----------|--------|-----------|-------|
-| Figma | Planned (Phase 2) | `connections/figma.md` (future) | Uses `mcp__claude_ai_Figma__*` or `mcp__figma__*` |
-| Refero | Active | `connections/refero.md` | Uses `mcp__refero__*` tools |
+| Figma | Active | [`connections/figma.md`](connections/figma.md) | Uses `mcp__figma-desktop__*` tools (official Figma Desktop MCP) |
+| Refero | Active | [`connections/refero.md`](connections/refero.md) | Uses `mcp__refero__*` tools (verify names via ToolSearch) |
 
 ---
 
@@ -19,8 +19,8 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 
 | Connection | scan | discover | plan | design | verify |
 |-----------|------|----------|------|--------|--------|
-| Figma | tokens | decisions | — | — | — |
-| Refero | — | references | — | — | — |
+| Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | — | — |
+| Refero | — | reference search via `mcp__refero__search`; fallback → awesome-design-md (CONN-05) | — | — | — |
 | Storybook (future) | — | — | — | — | components |
 | Linear (future) | — | — | — | — | tickets |
 | GitHub (future) | — | — | commits | — | PRs |
@@ -35,28 +35,67 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 
 ---
 
-## Connection Detection Pattern
+## Connection Probe Pattern
 
-At stage entry, each stage probes connection availability and records the result in `.design/STATE.md` under the `<connections>` section:
+This is the canonical probe pattern. All stages copy this prose inline — SKILL.md files have no include mechanism, so each stage repeats the relevant subset verbatim. The specification lives here; stages copy from it.
 
-```
-<connections>
-  figma: available | unavailable | not_configured
-  refero: available | unavailable | not_configured
-</connections>
-```
+**Why ToolSearch first:** MCP tools may be in the deferred tool set (not loaded into context at session start when many servers are registered). Calling a deferred tool directly fails silently. ToolSearch loads the tools into context and confirms presence in a single call — always call it before any MCP tool invocation.
 
-**Status values:**
+**Three-value status schema (fixed — do not extend):**
 
 | Status | Meaning |
 |--------|---------|
-| `available` | MCP tool call returned the expected response |
-| `unavailable` | MCP tool is present in the session but errored (auth failure, offline, rate-limited) |
-| `not_configured` | MCP tool is not in the session's tool list |
+| `available` | MCP tool confirmed present and responsive |
+| `unavailable` | MCP tool is in the session but errored (app offline, auth failure, rate-limited) |
+| `not_configured` | ToolSearch returned empty — MCP not registered in this session |
 
-**Probe pattern:** stages invoke connection-specific MCP tools at entry (not a shell check — a tool invocation). The call result determines status. If the call succeeds: `available`. If the tool exists but errors: `unavailable`. If the tool is absent from the tool list: `not_configured`.
+**STATE.md format:**
+
+```xml
+<connections>
+figma: available
+refero: not_configured
+</connections>
+```
+
+`<connections>` is the single source of truth across stages. Every stage reads it before deciding whether to invoke an MCP tool. Every stage writes to it after probing.
+
+---
+
+**Figma probe (execute at stage entry, after reading STATE.md):**
+
+```
+Step A1 — ToolSearch check:
+  ToolSearch({ query: "select:mcp__figma-desktop__get_metadata", max_results: 1 })
+  → Empty result      → figma: not_configured  (skip all Figma steps)
+  → Non-empty result  → proceed to Step A2
+
+Step A2 — Live tool call:
+  call mcp__figma-desktop__get_metadata
+  → Success           → figma: available
+  → Error             → figma: unavailable  (skip all Figma steps)
+
+Write figma status to STATE.md <connections>.
+```
+
+**Refero probe (execute at stage entry, after reading STATE.md):**
+
+```
+Step B1 — ToolSearch check:
+  ToolSearch({ query: "refero", max_results: 5 })
+  → Empty result      → refero: not_configured  (use fallback chain)
+  → Non-empty result  → refero: available
+
+Write refero status to STATE.md <connections>.
+```
+
+Note: Refero probe is ToolSearch-only (no live tool call). ToolSearch presence is sufficient; a live Refero search as probe would waste tokens before confirming the connection is even needed.
+
+---
 
 **Graceful degradation required:** stages MUST continue when a connection is `unavailable` or `not_configured`. Skip connection-dependent steps. If a missing connection prevents a `must_have` from being satisfied, append a `<blocker>` to `.design/STATE.md` and continue.
+
+For full per-connection fallback details, see the spec files: [`connections/figma.md`](connections/figma.md) and [`connections/refero.md`](connections/refero.md).
 
 ---
 
