@@ -1,13 +1,13 @@
 ---
 name: verify
-description: "Stage 4 of 4 — spawns design-verifier, interprets pass/gap result, handles gap-response loop with inline fix (Phase 5 will add AGENT-12 remediation agent). Thin orchestrator."
+description: "Stage 4 of 4 — spawns design-auditor, design-verifier, and design-integration-checker in sequence; interprets pass/gap result; handles gap-response loop with inline fix (Phase 5 will add AGENT-12 remediation agent). Thin orchestrator."
 argument-hint: "[--auto]"
 user-invocable: true
 ---
 
 # Ultimate Design — Verify
 
-**Stage 4 of 4.** Thin orchestrator. All verification intelligence lives in agents/design-verifier.md.
+**Stage 4 of 4.** Thin orchestrator. Verification intelligence lives in three agents: design-auditor, design-verifier, and design-integration-checker.
 
 ---
 
@@ -15,8 +15,8 @@ user-invocable: true
 
 1. Read `.design/STATE.md`.
    - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with `stage=verify`, `status=in_progress`; log warning to user: "No STATE.md found — creating minimal skeleton."
-   - If present and `stage==verify` and `status==in_progress`: RESUME — if `.design/DESIGN-VERIFICATION.md` exists, pick up from the gap-response loop (skip re-spawning the verifier, go to Step 2). Otherwise re-spawn verifier from Step 1.
-   - Otherwise: normal transition — set `stage=verify`, `status=in_progress`, `task_progress=0/1`.
+   - If present and `stage==verify` and `status==in_progress`: RESUME — if `.design/DESIGN-VERIFICATION.md` exists, pick up from the gap-response loop (skip re-spawning agents, go to Step 2). Otherwise re-spawn all three agents from Step 1.
+   - Otherwise: normal transition — set `stage=verify`, `status=in_progress`, `task_progress=0/3`.
 2. Update `<connections>`, `last_checkpoint`. Write STATE.md.
 
 Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /ultimate-design:discover first."
@@ -29,14 +29,45 @@ Abort only if no `.design/` directory exists (user has not run prior stages). Ou
 
 ---
 
-## Step 1 — Spawn Verifier
+## Step 1 — Spawn Auditor + Verifier + Integration Checker
 
 Initialize iteration counter to 0 (used for fix loop limit in Step 3).
+
+Three agents run in sequence. Each waits for its completion marker before the next is spawned.
+
+### 1a. Run design-auditor first (retrospective 6-pillar audit)
+
+```
+Task("design-auditor", """
+<required_reading>
+@.design/STATE.md
+@.design/DESIGN-CONTEXT.md
+@.design/DESIGN-PLAN.md
+@.design/tasks/
+@reference/audit-scoring.md
+</required_reading>
+
+You are the design-auditor agent. Run the 6-pillar retrospective audit (copy, visual hierarchy,
+color, typography, layout/spacing, experience design) against the completed design work.
+
+Score each pillar 1–4. Write your findings to .design/DESIGN-AUDIT.md.
+
+This audit SUPPLEMENTS the 7-category 0-10 system in reference/audit-scoring.md — do not replace
+or contradict it. Your output will be read by design-verifier as additional context.
+
+Emit `## AUDIT COMPLETE` when done.
+""")
+```
+
+Wait for `## AUDIT COMPLETE` in the agent response. Once detected, update STATE.md `task_progress=1/3`.
+
+### 1b. Run design-verifier (reads auditor output as additional input)
 
 ```
 Task("design-verifier", """
 <required_reading>
 @.design/STATE.md
+@.design/DESIGN-AUDIT.md
 @.design/DESIGN-PLAN.md
 @.design/DESIGN-CONTEXT.md
 @.design/tasks/
@@ -48,32 +79,72 @@ Task("design-verifier", """
 
 You are the design-verifier agent. Run the 5-phase verification against completed design work.
 
+DESIGN-AUDIT.md (above) contains a retrospective 6-pillar qualitative audit from design-auditor.
+Read it as supplementary signal — incorporate the priority fix list into your Phase 5 gap analysis
+where relevant. The auditor's 1–4 scores complement your 0–10 category scores; they do not
+replace your Phase 1 category scoring.
+
 Context:
   auto_mode: <true|false>
   re_verify: false
 
-Write .design/DESIGN-VERIFICATION.md. If gaps found, emit `## GAPS FOUND` followed by structured gap list, then `## VERIFICATION COMPLETE`. If no gaps, just emit `## VERIFICATION COMPLETE`.
+Write .design/DESIGN-VERIFICATION.md. If gaps found, emit `## GAPS FOUND` followed by structured
+gap list, then `## VERIFICATION COMPLETE`. If no gaps, just emit `## VERIFICATION COMPLETE`.
 """)
 ```
 
-Wait for `## VERIFICATION COMPLETE` in the agent response. Once detected, update STATE.md `task_progress=1/1`.
+Wait for `## VERIFICATION COMPLETE` in the agent response. Once detected, update STATE.md `task_progress=2/3`.
+
+### 1c. Run design-integration-checker (post-verification decision wiring check)
+
+```
+Task("design-integration-checker", """
+<required_reading>
+@.design/STATE.md
+@.design/DESIGN-CONTEXT.md
+@.design/DESIGN-VERIFICATION.md
+</required_reading>
+
+You are the design-integration-checker agent. Verify that each D-XX design decision recorded
+in DESIGN-CONTEXT.md is actually reflected in the source code.
+
+Check each decision by type:
+- Typography decisions → grep font-size/scale values against declared scale
+- Color decisions → grep for removed colors (expect 0 hits) and added tokens (expect ≥1 hit)
+- Layout/spacing decisions → grep spacing values against declared grid
+- Component decisions → grep for old patterns (expect 0) and new patterns (expect ≥1)
+
+Return: Connected count, Orphaned count, Missing count with per-decision evidence.
+Emit `## INTEGRATION CHECK COMPLETE` when done.
+""")
+```
+
+Wait for `## INTEGRATION CHECK COMPLETE` in the agent response. Once detected, update STATE.md `task_progress=3/3`.
+
+**Note:** Integration-checker findings (Orphaned and Missing decisions) are treated as additional gaps and fed into the gap-response loop in Step 2 alongside verifier gaps.
 
 ---
 
 ## Step 2 — Interpret Result
 
-Check agent response for `## GAPS FOUND` marker appearing before `## VERIFICATION COMPLETE`:
+Check agent responses for gaps. Gaps come from two sources:
+- design-verifier: `## GAPS FOUND` marker in the verifier response (G-NN entries)
+- design-integration-checker: Orphaned or Missing decisions in the integration checker response (any decision with status Orphaned or Missing is a gap)
 
-### If NO gaps (PASS):
+### Consolidate gaps:
+
+Merge verifier gaps (G-NN entries) and integration-checker gaps (Orphaned/Missing D-XX decisions) into a single gap list. Integration-checker Orphaned decisions become MAJOR gaps; Missing decisions become BLOCKER gaps (a decision that was never applied).
+
+### If NO gaps from either source (PASS):
 
 - Update STATE.md `<must_haves>`: set each M-XX `status=pass`.
 - Go to **State Update (exit)** with status=completed.
 
-### If GAPS FOUND:
+### If GAPS FOUND (from either source):
 
-- Parse the gap list from the agent response (all entries between `## GAPS FOUND` and `## VERIFICATION COMPLETE`).
+- Parse all gaps (verifier + integration-checker combined).
 - Count gaps by severity (BLOCKER, MAJOR, MINOR, COSMETIC).
-- If `auto_mode=true`: preserve DESIGN-VERIFICATION.md, update STATE.md `status=blocked`, append `<blockers>` entry: "[verify] [ISO date]: N blockers found — see .design/DESIGN-VERIFICATION.md". Exit with message:
+- If `auto_mode=true`: preserve DESIGN-VERIFICATION.md, update STATE.md `status=blocked`, append `<blockers>` entry: "[verify] [ISO date]: N blockers found — see .design/DESIGN-VERIFICATION.md and integration-checker output". Exit with message:
   ```
   Verification failed — N gaps found (X blockers, Y majors, Z minors, W cosmetics).
   Report: .design/DESIGN-VERIFICATION.md
@@ -154,6 +225,7 @@ After inline fixes complete, re-spawn design-verifier with `re_verify=true` and 
 Task("design-verifier", """
 <required_reading>
 @.design/STATE.md
+@.design/DESIGN-AUDIT.md
 @.design/DESIGN-PLAN.md
 @.design/DESIGN-CONTEXT.md
 @.design/tasks/
@@ -164,6 +236,8 @@ Task("design-verifier", """
 </required_reading>
 
 You are the design-verifier agent. This is a re-verification run after inline fixes.
+
+DESIGN-AUDIT.md contains the retrospective 6-pillar audit from design-auditor (read as supplementary context).
 
 Context:
   auto_mode: <true|false>
@@ -192,7 +266,15 @@ Print summary:
 ━━━ Verify complete ━━━
 Status: PASS | FAIL | ACCEPTED-WITH-GAPS
 Gaps:   X blockers, Y majors, Z minors, W cosmetics
-Report: .design/DESIGN-VERIFICATION.md
+
+Agents run:
+  design-auditor          → .design/DESIGN-AUDIT.md (6-pillar qualitative)
+  design-verifier         → .design/DESIGN-VERIFICATION.md (7-category + heuristics + UAT)
+  design-integration-checker → inline (D-XX decision wiring)
+
+Reports:
+  Qualitative audit: .design/DESIGN-AUDIT.md
+  Full verification: .design/DESIGN-VERIFICATION.md
 
 Next: [if pass] pipeline complete — run /ultimate-design:discover for next session
       [if fail] fix gaps and re-run /ultimate-design:verify
