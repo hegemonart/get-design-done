@@ -1,0 +1,33 @@
+{
+  "name": "ultimate-design",
+  "owner": {
+    "name": "hegemonart"
+  },
+  "metadata": {
+    "description": "Ultimate Design — master design orchestration skill. One entry point that routes design tasks across impeccable, emil-design-eng, anthropic-skills, design, and ui-ux-pro-max.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "ultimate-design",
+      "source": "./",
+      "description": "Master design orchestration skill. Discover → Define → Design → Deliver → Defend pipeline that routes to the right design sub-skill.",
+      "version": "1.0.0",
+      "author": {
+        "name": "hegemonart"
+      },
+      "homepage": "https://github.com/hegemonart/ultimate-design",
+      "repository": "https://github.com/hegemonart/ultimate-design",
+      "license": "MIT",
+      "category": "design",
+      "keywords": [
+        "design",
+        "ui",
+        "ux",
+        "frontend",
+        "orchestration",
+        "design-system"
+      ]
+    }
+  ]
+}

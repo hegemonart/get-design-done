@@ -1,0 +1,31 @@
+{
+  "name": "ultimate-design",
+  "version": "1.0.0",
+  "description": "Master design orchestration skill for Claude Code. Routes design work through Discover → Define → Design → Deliver → Defend across impeccable, emil-design-eng, anthropic-skills, design, and ui-ux-pro-max. One entry point for the full design toolkit.",
+  "author": {
+    "name": "hegemonart",
+    "url": "https://github.com/hegemonart"
+  },
+  "homepage": "https://github.com/hegemonart/ultimate-design",
+  "repository": "https://github.com/hegemonart/ultimate-design",
+  "license": "MIT",
+  "keywords": [
+    "design",
+    "ui",
+    "ux",
+    "frontend",
+    "orchestration",
+    "skill",
+    "design-system",
+    "critique",
+    "accessibility",
+    "impeccable",
+    "emil-design-eng"
+  ],
+  "skills": "./",
+  "hooks": "./hooks/hooks.json",
+  "dependencies": [
+    { "name": "impeccable", "marketplace": "impeccable" },
+    { "name": "ui-ux-pro-max", "marketplace": "ui-ux-pro-max-skill" }
+  ]
+}
