@@ -330,6 +330,44 @@ Common gray areas to probe:
 
 Ask the user to resolve each gray area before proceeding to write the context file.
 
+### Gray Area Escalation (design-advisor)
+
+When a gray area surfaced during Area 7 handling cannot be resolved via the built-in heuristics (DISC-03 checklist + user response), escalate to design-advisor for a researched comparison.
+
+Trigger conditions (escalate if ANY is true):
+- User answered "I'm not sure" or equivalent uncertainty to a gray-area checklist item
+- Multiple gray-area items in the same domain (e.g., two font-related gray areas simultaneously)
+- Gray area has non-trivial reversibility cost (e.g., introducing a token layer mid-project)
+
+Escalation pattern (one spawn per gray area — do NOT batch):
+
+```
+Task("design-advisor", """
+<required_reading>
+@.design/STATE.md
+@.design/DESIGN.md
+@.design/DESIGN-PATTERNS.md
+</required_reading>
+
+Research the following gray area and return a 5-column comparison table (Approach | Effort | Risk | User Control | Recommendation) + one-paragraph rationale.
+
+Context:
+  gray_area_name: <short-id>
+  gray_area_description: <one-paragraph from builder, includes evidence + user uncertainty>
+  project_constraints: <copy relevant constraint lines from DESIGN-CONTEXT.md draft — stack, team size, timebox>
+
+Emit ## ADVICE COMPLETE when done. Do NOT write a file.
+""")
+```
+
+Incorporate the advisor's response:
+1. Read the inline return text (table + rationale)
+2. Record the recommended approach as a decision in the `<decisions>` section of DESIGN-CONTEXT.md
+3. Append the advisor's rationale to the decision entry as evidence ("Researched via design-advisor: <one-line summary>")
+4. Do NOT write a separate advisor artifact to `.design/` — the advisor is a sub-task, not a pipeline output
+
+If the user rejects the advisor's recommendation, record the user's chosen approach instead and note the divergence in the decision entry.
+
 ---
 
 ## Auto Mode
