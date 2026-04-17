@@ -16,7 +16,9 @@
 set -u
 
 PLUGIN_DATA="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/ultimate-design}"
+PLUGIN_DATA="${PLUGIN_DATA//\\//}"  # Normalize Windows backslashes to forward slashes
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+PLUGIN_ROOT="${PLUGIN_ROOT//\\//}"  # Normalize Windows backslashes to forward slashes
 MANIFEST="${PLUGIN_ROOT}/scripts/bootstrap-manifest.txt"
 MARKER="${PLUGIN_DATA}/bootstrap-manifest.txt"
 
