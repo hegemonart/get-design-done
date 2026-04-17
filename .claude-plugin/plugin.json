@@ -1,7 +1,7 @@
 {
   "name": "ultimate-design",
-  "version": "1.0.0",
-  "description": "Master design orchestration skill for Claude Code. Routes design work through Discover → Define → Design → Deliver → Defend across impeccable, emil-design-eng, anthropic-skills, design, and ui-ux-pro-max. One entry point for the full design toolkit.",
+  "version": "2.0.0",
+  "description": "Self-contained 4-stage design pipeline: Discover → Plan → Design → Verify. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog directly — no sub-skill dependencies required. Optional: refero MCP for reference screenshots.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
@@ -14,18 +14,17 @@
     "ui",
     "ux",
     "frontend",
-    "orchestration",
+    "pipeline",
     "skill",
     "design-system",
-    "critique",
     "accessibility",
-    "impeccable",
-    "emil-design-eng"
+    "wcag",
+    "nng",
+    "typography",
+    "motion",
+    "anti-patterns",
+    "audit"
   ],
   "skills": ["./", "./skills/"],
-  "hooks": "./hooks/hooks.json",
-  "dependencies": [
-    { "name": "impeccable", "marketplace": "impeccable" },
-    { "name": "ui-ux-pro-max", "marketplace": "ui-ux-pro-max-skill" }
-  ]
+  "hooks": "./hooks/hooks.json"
 }

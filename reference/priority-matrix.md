@@ -24,8 +24,8 @@ Adapted from `ui-ux-pro-max`. Use this to rank findings when auditing, critiquin
 
 ## How to use this table in audits
 
-1. Run `Skill(impeccable-audit)` — it produces a scored P0–P3 report.
+1. Run the discover stage audit or a manual grep pass using `reference/anti-patterns.md` patterns.
 2. For each finding, assign a category (1–10) from above.
 3. Sort by severity descending.
-4. Fix P0s in-sprint, never ship with one open.
-5. Link each P0/P1 to a specific impeccable-* command skill that will fix it (e.g. P1 color finding → `impeccable-colorize`).
+4. Fix P0s before shipping — never ship with one open.
+5. Map each P0/P1 to a task type in the Design stage: color findings → `color` task, typography → `typography` task, accessibility → `accessibility` task.

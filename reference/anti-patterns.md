@@ -1,157 +1,336 @@
-# Anti-Pattern Catalog — What Makes AI-Generated UI Look Like AI-Generated UI
+# Anti-Pattern Catalog
 
-Merged from impeccable, emil-design-eng, anthropic-skills:ui-designer, anthropic-skills:ux-designer, ui-ux-pro-max. This is the master "don't do this" list.
+Use during Discover (baseline audit), Design (prevention), and Verify (compliance scoring).
+
+---
 
 ## The AI-Slop Test
 
-Before shipping any artifact, ask: **"If I told someone 'AI made this,' would they believe me immediately?"** If yes, you haven't escaped the training-set monoculture. Redo.
+Before shipping any artifact: **"If I told someone 'AI made this,' would they believe me immediately?"**
 
-## Absolute Bans (match-and-refuse)
+If yes — redo. The training-set monoculture has specific fingerprints. Learn them all.
 
-These are never acceptable — rewrite rather than soften.
+---
 
-1. **`border-left`/`border-right` > 1px** on cards, alerts, callouts. Looks AI-generated regardless of color or variable used. Use different element structure.
-2. **Gradient text** (`background-clip: text` + gradient background). Solid color only; emphasis via weight/size.
-3. **Emoji as UI icons.** SVG only.
-4. **Pure black (`#000`) dark mode.** Use oklch 12–18%.
-5. **Disabling zoom** via `user-scalable=no` viewport meta. Accessibility failure.
-6. **`outline: none` without replacement.** Breaks keyboard nav.
-7. **`scale(0)` animation entry** (Emil). Start `scale(0.95)` + opacity — nothing in the real world appears from nothing.
-8. **`transition: all`.** Specify exact properties.
-9. **`ease-in` for UI.** Feels sluggish. Use ease-out for entrances.
-10. **Animating keyboard-initiated actions** (command palette, shortcuts used 100+/day). No animation at all. Ever.
+## Hard Bans (BAN-XX)
 
-## Reflex Fonts to Reject
+Zero tolerance. Each violation = −3 points from Anti-Pattern score. Rewrite rather than soften.
 
-When writing font stacks, if your first instinct is any of these — stop. The training set converged here; pick something else.
+### BAN-01: Side-Stripe Borders
 
-**Serif reflex-list:** Fraunces, Newsreader, Lora, Crimson (Pro/Text), Playfair Display, Cormorant (Garamond), Instrument Serif.
+```css
+/* BANNED — AI-generated card tell, regardless of color */
+border-left: 4px solid var(--color-primary);
+border-right: 3px solid #6366f1;
+```
 
-**Sans reflex-list:** Inter, DM Sans, Outfit, Plus Jakarta Sans, Space Grotesk, Instrument Sans, Syne.
+**Why**: The border-left accent card is the most recognizable AI default. It signals no design thinking happened.
 
-**Mono reflex-list:** IBM Plex Mono, Space Mono, JetBrains Mono (for display use).
+**Fix**: Use different element structure — colored icon, colored background section, or inline accent element.
 
-**Process:** write 3 brand-voice words that are concrete (not "modern"), then browse a catalog imagining the font as a physical object (typewriter ribbon, shop sign, coat label, children's book). Pick one that makes sense for that object.
+**Grep**: `border-left:\s*[2-9][0-9]*px|border-right:\s*[2-9][0-9]*px`
 
-## Visual Anti-Patterns (Interface)
+### BAN-02: Gradient Text
 
-### Color
-- Purple → blue gradients on white backgrounds (the AI-default)
-- Cyan accents on dark backgrounds
-- Rainbow badges (different semantic for every status)
-- Gray on colored backgrounds (readability failure, not "subtle")
-- Pure gray neutrals (add 0.005–0.015 chroma toward brand hue — "pure gray is dead")
-- Red + green as the only meaning carrier (colorblind fail)
-- Text over image without scrim
-- Alpha-heavy transparency everywhere — usually a sign of an incomplete palette
+```css
+/* BANNED */
+background: linear-gradient(to right, #6366f1, #8b5cf6);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+```
 
-### Typography
-- Body text < 12px
-- > 8 font-size/weight combinations on a single page
-- Tiny letter-spacing tweaks nobody notices
-- `all-caps body text`
-- Fluid `clamp()` on dashboard/app UI (only for marketing headings)
-- Line-length > 80ch
+**Why**: Every AI-generated hero uses this. It's a visual cliché and fails against light backgrounds.
 
-### Layout
-- Card-in-card nesting (if you have one card inside another, remove one)
-- Sparkline as decoration (no data, just lines)
-- Identical hero-metric templates across every dashboard
-- Evenly distributed grids with no focal point
-- "Icon with rounded corners above every heading" stock pattern
-- Full-width buttons on every CTA
-- Forms with placeholder-only labels, no visible label above
+**Fix**: Solid color, emphasis via weight or size increase.
 
-### Shadow / Elevation
-- Generic drop shadows on rounded rectangles (the AI-default)
-- 3+ shadow depths when 2 tiers would be clearer
-- Shadow AND border AND background on the same element
-- Inner shadow + outer shadow simultaneously
+**Grep**: `background-clip:\s*text|text-fill-color:\s*transparent`
 
-### Imagery / Decoration
-- Glassmorphism everywhere (blurred translucent cards on gradient bg)
-- 3D isometric illustrations with pastel colors (Figma-community template vibe)
-- "Tech mesh" backgrounds with gradients + grain
-- Generic stock illustrations instead of custom
+### BAN-03: Bounce/Elastic Easing
 
-## Motion Anti-Patterns (Emil's list + impeccable)
+```css
+/* BANNED */
+transition: all 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+animation: bounce 1s ease;
+animation-timing-function: spring(1, 80, 10, 0);
+```
 
-- `transition: all 300ms` → specify the property
-- `ease-in` on hover/dropdown → use ease-out
-- Bounce / elastic easings (tacky 2015 skeuomorphic residue)
-- Same duration entering and exiting (exits should be ~75% of enter)
-- Animating `width`/`height` (not GPU-accelerated) instead of `transform`
-- No `prefers-reduced-motion` media query anywhere
-- Popover with `transform-origin: center` (should originate from trigger)
-- Button with no `:active` press feedback
-- Toast that re-plays entrance every state change
-- 1–2s decorative pulses that keep retriggering
+**Why**: Skeuomorphic residue from 2012. Feels toy-like and unprofessional.
 
-## UX / Interaction Anti-Patterns
+**Fix**: `ease-out` for enter, `ease-in` for exit, `ease-in-out` for transitions.
 
-### Navigation
-- Hamburger menu as PRIMARY navigation on desktop (>1024px)
-- FAB (floating action button) on iOS (it's Material Design, not HIG)
-- Custom back button that overrides native swipe gesture
+**Grep**: `cubic-bezier\(.*-[0-9]|bounce|elastic|spring\(`
+
+### BAN-04: Animating Keyboard Actions
+
+No animation on: command palette open/close, keyboard shortcuts, tab switching, filter/sort toggles, navigation item expand/collapse.
+
+**Why**: These repeat 100+ times per day. Every millisecond of animation accumulates into felt sluggishness.
+
+**Fix**: Instant state change. Zero transition duration.
+
+### BAN-05: Pure Black Dark Mode
+
+```css
+/* BANNED */
+background: #000000;
+background: rgb(0, 0, 0);
+```
+
+**Why**: Pure black in dark mode creates harsh contrast and looks amateur.
+
+**Fix**: oklch(12% 0 0) through oklch(18% 0.005 [hue]) — slightly warm or cool near-black.
+
+**Grep**: `background.*#000000|background.*rgb\(0,\s*0,\s*0\)`
+
+### BAN-06: Disabling Zoom
+
+```html
+<!-- BANNED -->
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, maximum-scale=1">
+```
+
+**Why**: WCAG 1.4.4 violation. Breaks accessibility for low-vision users.
+
+**Grep**: `user-scalable=no|maximum-scale=1`
+
+### BAN-07: Naked `outline: none`
+
+```css
+/* BANNED — unless a custom focus indicator replaces it */
+:focus { outline: none; }
+button:focus { outline: 0; }
+```
+
+**Why**: Removes keyboard navigation visibility. WCAG 2.4.7 failure.
+
+**Fix**: `:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }` with `outline: none` only on `:focus:not(:focus-visible)`.
+
+**Grep**: `:focus\s*\{[^}]*outline:\s*(none|0)`
+
+### BAN-08: `transition: all`
+
+```css
+/* BANNED */
+transition: all 300ms ease;
+```
+
+**Why**: Animates every property including layout properties (width, height, top) causing expensive paint/layout operations.
+
+**Fix**: Specify exact properties: `transition: transform 200ms ease-out, opacity 150ms ease-out;`
+
+**Grep**: `transition:\s*all\s`
+
+### BAN-09: `scale(0)` Animation Entry
+
+```css
+/* BANNED — nothing in the real world materializes from nothing */
+@keyframes enter { from { transform: scale(0); } }
+```
+
+**Fix**: `scale(0.95)` + `opacity: 0` → `scale(1)` + `opacity: 1`.
+
+---
+
+## AI-Slop Tells (SLOP-XX)
+
+Each confirmed tell = −1 point from Anti-Pattern score. These signal training-set monoculture without deliberate design choices.
+
+### SLOP-01: AI Default Palette
+
+```
+#6366f1 (indigo-500) + #8b5cf6 (violet-500) + #06b6d4 (cyan-500)
+```
+
+The exact palette generated by GPT-4 and Claude for 80% of UI requests.
+
+**Grep**: `#6366f1|#8b5cf6|#06b6d4`
+
+### SLOP-02: Purple → Blue Gradient Hero
+
+```css
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+background: linear-gradient(to right, #6366f1, #8b5cf6);
+```
+
+### SLOP-03: Cyan Accent on Dark Background
+
+`color: #06b6d4` or `color: #22d3ee` as the primary accent in dark mode.
+
+### SLOP-04: `backdrop-filter: blur` Without Purpose
+
+```css
+/* SLOP if used purely decoratively */
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(10px);
+```
+
+Glassmorphism as the default card treatment signals no layout thinking.
+
+**Valid uses**: Modal overlays dimming content behind them, floating command palette, persistent header over content.
+
+**Grep**: `backdrop-filter:\s*blur`
+
+### SLOP-05: Default Font Without Decision
+
+Using Inter, DM Sans, Space Grotesk, or Plus Jakarta Sans without a documented brand reason.
+
+**Test**: Can you give 3 concrete reasons this font matches the product's brand? If not — choose again.
+
+### SLOP-06: Card-in-Card
+
+A component with `border-radius` + `background` + `box-shadow` nested inside another such component.
+
+### SLOP-07: "Icon in Rounded Square Above Every Heading"
+
+The feature section pattern where every item has: `rounded-xl bg-primary/10 p-3 mb-4` containing an icon, followed by a heading and 2 sentences.
+
+### SLOP-08: Rainbow Status Badges
+
+Assigning a different color to every status: blue (pending), yellow (in review), purple (waiting), orange (blocked), teal (processing). Status color must be semantic: green (success/active), yellow (warning/pending), red (error/blocked), gray (inactive/draft). Only those four roles.
+
+### SLOP-09: Decorative Sparklines
+
+Charts placed in dashboards with no real data, purely decorative "trend lines" that don't encode information.
+
+### SLOP-10: Generic Drop Shadow
+
+```css
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+```
+
+The Tailwind `shadow-md` default. Used without considering elevation system.
+
+### SLOP-11: "Simple, Powerful, Flexible" Copy
+
+Hero headline triplets with no subject or verb. Feature list as the hero. "We're passionate about..." opener.
+
+### SLOP-12: 3D Isometric Illustration
+
+Pastel-colored isometric illustrations with floating icons. Figma community template vibe. Use photography, real screenshots, or purposefully-styled illustration with brand character.
+
+---
+
+## Visual Anti-Patterns
+
+### Color Errors
+
+- Gray on colored backgrounds (fails contrast, not "subtle")
+- Pure gray neutrals — add 0.005–0.015 chroma toward brand hue
+- Red + green as the only meaning carrier (colorblind failure)
+- Text over image without scrim or overlay
+- Alpha-heavy transparency everywhere (incomplete palette signal)
+- > 1 semantic role for the same color (red = danger ONLY)
+
+### Typography Errors
+
+- Body text < 16px on web (< 12px anywhere)
+- > 6 font-size/weight combinations on a single page
+- `all-caps` body text (labels/badges only)
+- Fluid `clamp()` on app/dashboard UI (marketing headings only)
+- Line height 1.0–1.2 on body text (needs 1.5–1.75)
+- `letter-spacing` changes with no typographic reason
+- `font-weight: 300` on text < 16px (illegible)
+
+### Layout Errors
+
+- Full-width buttons for every CTA (primary only)
+- Placeholder-only labels (no visible `<label>` above input)
+- Multi-column forms on mobile
+- Hamburger as PRIMARY nav on desktop (> 1024px)
 - Bottom nav with > 5 items
-- Breaking browser back/forward
+- Container width fixed at 1200px (breaks at 1300+)
+- Spacing values not from 4/8/12/16/24/32/48/64 series (e.g. `padding: 13px`)
+
+### Shadow/Elevation Errors
+
+- 3+ shadow depths when 2 tiers is enough
+- Shadow AND border AND background color on the same element
+- Inner shadow + outer shadow simultaneously
+- Drop shadows on flat/minimal design systems
+
+---
+
+## Motion Anti-Patterns
+
+- `ease-in` on entrances (use `ease-out`)
+- Same duration for enter and exit (exit should be 60–70% of enter)
+- Animating `width`/`height` (triggers layout — use `transform` only)
+- No `prefers-reduced-motion` media query
+- Popover origin `transform-origin: center` (should come from trigger element)
+- Button with no `:active` press feedback
+- Toast re-playing entrance on every state update
+- Decorative pulses > 1s that loop forever
+
+---
+
+## UX/Interaction Anti-Patterns
 
 ### Forms
-- Validation on every keystroke (except password strength)
-- Errors collected only at the top instead of near field
-- Overwhelming all fields upfront (no progressive disclosure for long forms)
-- Native `<select>` for > 10 options without typeahead
-- Multi-column forms on mobile
+- Validation firing on every keystroke (exception: password strength)
+- Errors shown only at top of form for field-level problems
+- Native `<select>` for > 10 options without typeahead search
+- No progressive disclosure on long forms (show all fields upfront)
 
 ### Feedback
 - Instant (0ms) state transitions — feels broken
-- Spinner with no context ("Loading..." — loading *what*?)
-- Success toast that blocks the next click
-- Destructive action with no undo and no "are you sure"
-- Confirm dialog for reversible action (annoyance; use undo instead)
+- "Loading..." spinners with no context ("Loading contacts..." is better)
+- Success toast that blocks the next interaction
+- Destructive action with no undo and no confirmation
+- Confirmation dialog for reversible action (annoyance — use undo instead)
 
-### AI UI
-- Magic box with no confidence shown
-- Auto-apply with no undo
-- Hallucination presented as fact, no indication of uncertainty
-- No escape from the AI-path back to manual
-- Invisible AI (user doesn't know what's AI and what isn't)
+### Navigation
+- Browser back button breaks app state
+- Custom back button overriding native swipe gesture (mobile)
+- FAB (floating action button) on iOS native (Material Design pattern, not HIG)
 
-## Copy Anti-Patterns (Copywriter)
+---
 
-### UX Copy
-- Placeholder text as the label (disappears on focus; accessibility failure)
-- "Click here" / "Read more" / "Learn more" links (verb-first + specific)
-- "OK" / "Submit" / "Yes" buttons (verbs describing the outcome, e.g. "Save changes," "Create account," "Delete message")
-- Errors that blame the user ("You entered an invalid email")
-- "Oops!" / "Uh oh!" / any forced cheer in errors
-- Empty state that only says "No items" — missed onboarding moment
+## Copy Anti-Patterns
 
-### Marketing
-- "Simple, powerful, flexible" as a hero headline (the AI-default triplet)
-- Three-word headline with no verb or subject
-- Feature list as the hero (tell me what I can DO, not what it IS)
-- "We're passionate about..." intros
-- Superlatives without evidence ("world-class," "best-in-class")
-- 3+ adjectives stacked ("beautiful, seamless, intuitive")
+- Placeholder text as the only label (disappears on focus; accessibility failure)
+- "Click here" / "Read more" / "Learn more" links (use verb-first + specific: "Download the guide")
+- "OK" / "Submit" / "Yes" buttons (use action verbs: "Save changes", "Create account", "Delete message")
+- Error messages that blame the user: "You entered an invalid email" → "Email address not recognized"
+- "Oops!" / "Uh oh!" in error states
+- Empty state that only says "No items found" (missed onboarding opportunity)
 
-## Density / Sizing Anti-Patterns
+---
 
-- Dev gray `#888` for "secondary text" (fails 4.5:1 against white)
-- Touch target < 44×44pt iOS or 48×48dp Android (primary button or close button especially)
-- Line height 1.0–1.2 on body (too tight)
-- Container width `1200px` fixed (breaks fluid designs at 1300+ monitors)
-- Padding like `13px` (off-grid; use 12 or 16)
+## Auto-Detection Grep Commands
 
-## Quick "Does This Have AI-Slop" Self-Check
+Run these against the codebase for quick anti-pattern audit:
 
-Before submitting:
-- [ ] Did I default to Inter, DM Sans, Space Grotesk, or Plus Jakarta Sans?
-- [ ] Does my accent involve purple → blue gradient, cyan-on-dark, or teal?
-- [ ] Do I have card-in-card anywhere?
-- [ ] Is every shadow a rounded-rectangle drop shadow?
-- [ ] Could my hero headline be "Simple, powerful, {noun}"?
-- [ ] Is there a sparkline decorating something with no data?
-- [ ] Is my empty state just "No items found"?
+```bash
+# BAN violations (−3 each)
+grep -rn "border-left:\s*[2-9]" src/ --include="*.css" --include="*.scss"
+grep -rn "background-clip:\s*text" src/
+grep -rn "text-fill-color:\s*transparent" src/
+grep -rn "cubic-bezier(.*-[0-9]" src/
+grep -rn "user-scalable=no\|maximum-scale=1" public/
+grep -rn ":focus\s*{" src/ | grep -v "focus-visible"
+grep -rn "transition:\s*all\s" src/
 
-If YES to any → rewrite that element.
+# SLOP signals (−1 each)
+grep -rn "#6366f1\|#8b5cf6\|#06b6d4" src/
+grep -rn "backdrop-filter:\s*blur" src/
+grep -rn "bounce\|elastic" src/ --include="*.css"
+```
+
+---
+
+## Pre-Ship Self-Check
+
+- [ ] Default font (Inter, DM Sans, Space Grotesk) used without a brand reason?
+- [ ] Accent uses purple → blue gradient, cyan-on-dark, or AI default palette?
+- [ ] Any card-in-card nesting?
+- [ ] Every shadow a rounded-rectangle drop shadow?
+- [ ] Hero headline: "Simple, powerful, [noun]"?
+- [ ] Decorative sparklines with no real data?
+- [ ] Empty state just says "No items found"?
+- [ ] Border-left accent on cards/alerts?
+- [ ] Gradient text on any heading?
+- [ ] Bounce or elastic easing anywhere?
+
+If YES to any → rewrite that element before proceeding.
