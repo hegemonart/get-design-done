@@ -250,6 +250,37 @@ Depends on: Task 01, Task 02
 
 ---
 
+## Task Action Field — Self-Contained Prompt Template
+
+When emitting parallel-mode tasks, the Action field must be a self-contained prompt that includes all required_reading and context. Parallel executors do not share conversational state — each agent receives only what its prompt contains.
+
+Example of a correctly self-contained parallel-mode Task Action body:
+
+```
+Task("design-executor", """
+<required_reading>
+@.design/tasks/01-hero-copy.md
+@.design/DESIGN-CONTEXT.md
+@reference/copywriting.md
+</required_reading>
+
+You are design-executor. Your assigned task is 01-hero-copy.md. Rewrite the
+hero copy at src/components/Hero.tsx per the task file's specification.
+
+Context:
+- task_id: 01
+- task_type: copy
+- auto_mode: true
+- is_parallel: true
+
+Emit `## EXECUTION COMPLETE` when done.
+""")
+```
+
+The prompt must stand alone. Do NOT write Action fields that say "see above", "as discussed", or rely on context from the orchestrator's conversational turn — parallel executors have zero session memory and will not have access to that context.
+
+---
+
 ## Constraints
 
 You MUST NOT:

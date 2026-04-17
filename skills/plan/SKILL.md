@@ -168,3 +168,19 @@ Print user-facing summary:
 - Next: `/ultimate-design:design` to execute the plan
 
 ## PLAN COMPLETE
+
+---
+
+## --research mode (removed)
+
+V2-04 deferred the `--research` flag. Rationale: complexity of an additional
+agent spawn + Context7 integration outweighs the benefit of discover-stage
+auto-detect for most projects. Use /discover's Auto Mode for research-assisted
+discovery instead.
+
+The optional research step that already exists (Step 1, triggered by complexity
+heuristic: 3+ domain scopes OR 6+ decisions) covers the core use case without
+a separate CLI flag.
+
+If --research is reintroduced in a future version, define its scope in
+ROADMAP.md V2+ and update this section.
