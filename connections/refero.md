@@ -1,6 +1,10 @@
-# Refero MCP — Visual Reference Gathering
+# Refero MCP — Connection Specification
 
-Refero is your **Phase 1 (Discover) primary tool**. It retrieves real product screenshots and design references, replacing "imagine how this should look" with "look at how Linear/Stripe/Phantom/Raycast did it."
+This file is the connection specification for Refero within the ultimate-design pipeline. It lives in `connections/` alongside other connection specs. See `connections/connections.md` for the full connection index and capability matrix.
+
+---
+
+Refero is the **discover stage's primary visual reference tool**. It retrieves real product screenshots and design references, replacing "imagine how this should look" with "look at how Linear/Stripe/Phantom/Raycast did it."
 
 ## Why refero is non-negotiable
 
@@ -16,7 +20,7 @@ With references, you copy the *structure* of best-in-class work and adapt the ae
 
 ## When to use refero
 
-**Always at the start of Phase 1.** No exceptions:
+**Always at the start of the discover stage.** No exceptions:
 - Building any UI → pull references for similar products and layouts
 - Writing UX copy → pull references for how the canonical products in that category write the equivalent string
 - Designing animations → pull references for the interaction (then pair with `emil-design-eng`)
@@ -70,10 +74,10 @@ Run **at least 2 queries per task**, one structural + one aesthetic:
 1. refero search "checkout flow mobile"        # structural
 2. refero search "warm editorial consumer app" # aesthetic
 3. pick 3-7 that match the brief
-4. save URLs + brief notes into the Phase 1 reference pack
+4. save URLs + brief notes into the discover reference pack
 5. if relevant DESIGN.md exists for one of them:
    → read ~/.claude/libs/awesome-design-md/{brand}/README.md
-6. proceed to Phase 2 with the pack
+6. proceed to the plan stage with the pack
 ```
 
 ## Citing references in output
@@ -105,7 +109,7 @@ Use both. Refero for visual direction, awesome-design-md for concrete token valu
 Do NOT use refero to:
 - Collect a huge dump of references and paste them all into the response (noise)
 - Justify a direction you've already decided on (confirmation bias; pull first, then decide)
-- Skip Phase 2 Define ("the references tell me the brand") — references inform direction, they don't *replace* context gathering with the user.
+- Skip the plan stage ("the references tell me the brand") — references inform direction, they don't *replace* context gathering with the user.
 
 ## If refero's API changes
 
