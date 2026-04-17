@@ -201,25 +201,29 @@ Outstanding gaps remain — see .design/DESIGN-VERIFICATION.md.
 ```
 Treat as Save and exit (option 2 above).
 
-Otherwise: increment iteration counter and run the inline fix flow below.
+Otherwise: increment iteration counter and spawn design-fixer:
 
-# TODO(phase-5): replace inline fix logic below with AGENT-12 spawn once it exists in Phase 5
-# --- BEGIN preserved v2.1.0 inline fix logic ---
-#
-# Treat the gap plan as a mini DESIGN-PLAN.md. Execute each BLOCKER/MAJOR gap task
-# sequentially using the Design stage's task execution approach:
-#
-# 1. For each gap classified BLOCKER or MAJOR in the gap list:
-#    a. Read the gap entry fields: Phase, Description, Expected, Actual, Location, Suggested fix.
-#    b. Apply the targeted fix to the file/location specified in the gap's Location field.
-#    c. Confirm the fix — re-grep or re-read the changed file to confirm the specific issue is gone.
-#    d. Log the fix applied (gap ID + what was changed).
-# 2. For MINOR and COSMETIC gaps: apply only if user confirms "fix all" or if gap has trivial scope.
-# 3. After all targeted fixes, report: "Fixes applied: N. Re-running verification..."
-#
-# --- END preserved v2.1.0 inline fix logic ---
+Task("design-fixer", """
+<required_reading>
+@.design/STATE.md
+@.design/DESIGN-VERIFICATION.md
+@.design/DESIGN-CONTEXT.md
+</required_reading>
 
-After inline fixes complete, re-spawn design-verifier with `re_verify=true` and loop to Step 2:
+Fix all BLOCKER and MAJOR gaps from ## Phase 5 — Gaps in DESIGN-VERIFICATION.md.
+For each gap: apply the targeted fix to the file/location in the gap's Location field.
+After each fix, make an atomic commit: fix(design-gap-GNN): [gap title].
+
+Context:
+  auto_mode: <true|false>
+
+Emit ## FIX COMPLETE when all in-scope gaps have been attempted (partial success is still ## FIX COMPLETE).
+Write a <blocker> entry to .design/STATE.md for any gap that could not be fixed.
+""")
+
+Wait for `## FIX COMPLETE` in the agent response before continuing.
+
+After the design-fixer spawn returns `## FIX COMPLETE`, re-spawn design-verifier with `re_verify=true` and loop to Step 2:
 
 ```
 Task("design-verifier", """
