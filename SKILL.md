@@ -1,7 +1,7 @@
 ---
 name: ultimate-design
 description: "Master design pipeline for Claude Code. Includes a one-time scanner (scan) plus a 4-stage workflow: Discover → Plan → Design → Verify. Run 'scan' first in any new repo to map existing design system and generate a debt roadmap. Then use 'discover' to start the pipeline. Invoke without arguments for status and auto-routing."
-argument-hint: "[scan|discover|plan|design|verify|status]"
+argument-hint: "[scan|discover|plan|design|verify|status|style]"
 user-invocable: true
 ---
 
@@ -26,6 +26,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `plan` | `ultimate-design:plan` | Decompose into tasks → DESIGN-PLAN.md |
 | `design` | `ultimate-design:design` | Execute tasks → DESIGN-SUMMARY.md |
 | `verify` | `ultimate-design:verify` | Score + audit → DESIGN-VERIFICATION.md |
+| `style [ComponentName]` | `ultimate-design:style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
 
 ## Routing Logic
 
@@ -65,6 +66,7 @@ If `$ARGUMENTS` is a stage name — invoke it directly, no state check:
 /ultimate-design plan     → Skill("ultimate-design:plan")
 /ultimate-design design   → Skill("ultimate-design:design")
 /ultimate-design verify   → Skill("ultimate-design:verify")
+/ultimate-design style    → Skill("ultimate-design:style")
 ```
 
 Pass remaining arguments through: `/ultimate-design scan --quick` → `Skill("ultimate-design:scan", "--quick")`
