@@ -1,9 +1,16 @@
 # Requirements: ultimate-design v3
 
 **Defined:** 2026-04-17
+**Revised:** 2026-04-17 (added agent layer, state machine, connections, distribution cleanup)
 **Core Value:** Any developer can run the full pipeline on a real project and receive measurable, specific design improvement — not generic AI advice.
 
 ## v1 Requirements
+
+### Distribution Cleanup
+
+- [ ] **DIST-01**: `.gitignore` excludes `.planning/`, `.claude/memory/`, `.claude/settings.local.json` — dev artifacts stay local
+- [ ] **DIST-02**: `.planning/` and `.claude/memory/` removed from git tracking via `git rm --cached` (plugin distribution stays clean)
+- [ ] **DIST-03**: README.md documents what the plugin distributes (SKILL.md, skills/, agents/, reference/, connections/, hooks/, scripts/) vs what is dev-only
 
 ### Platform Foundation
 
@@ -11,6 +18,50 @@
 - [ ] **PLAT-02**: `grep` calls across all skills include `-E` flag and work on macOS, Windows Git Bash, and Linux
 - [ ] **PLAT-03**: `.gitattributes` enforces LF line endings for all `*.md` and `*.sh` files
 - [ ] **PLAT-04**: Bootstrap script path normalization works on Windows (no hardcoded Unix paths)
+
+### State Machine
+
+- [ ] **STATE-01**: `.design/STATE.md` template defined (stage, wave, task progress, locked decisions, must-have status, blockers, timestamps) — a single source of pipeline truth
+- [ ] **STATE-02**: Every pipeline stage reads `.design/STATE.md` at entry and writes an updated version at completion
+- [ ] **STATE-03**: Resume capability — stages detect mid-wave state from STATE.md and continue from the last checkpoint without restarting
+
+### Agent Infrastructure
+
+- [ ] **AGENT-00**: `agents/` directory created with `README.md` documenting agent architecture, completion marker conventions, required_reading pattern, frontmatter schema, and how stages invoke agents
+
+### Core Agents (Phase 1 of agent layer)
+
+- [ ] **AGENT-01**: `agents/design-planner.md` — reads DESIGN-CONTEXT.md → produces DESIGN-PLAN.md with wave-ordered tasks, `Touches:` and `Parallel:` fields, acceptance criteria per task
+- [ ] **AGENT-02**: `agents/design-executor.md` — executes one plan task, makes atomic commit (`feat(design-NN): ...`), writes `.design/tasks/task-NN.md`, applies deviation rules
+- [ ] **AGENT-03**: `agents/design-verifier.md` — goal-backward verification against must-haves, spawns design-fixer if gaps, iterates until pass or escalate
+- [ ] **AGENT-04**: `agents/design-phase-researcher.md` — pre-plan research on design patterns for the project type (SaaS, dashboard, e-commerce, etc.)
+- [ ] **AGENT-05**: `agents/design-plan-checker.md` — validates DESIGN-PLAN.md will achieve brief goals before execution (goal-backward on plan, not on code)
+
+### Stage Wrapper Rewrites
+
+- [ ] **STAGE-01**: `skills/discover/SKILL.md` becomes a thin orchestrator that spawns design-context-builder + design-context-checker (no inline interview logic in the skill)
+- [ ] **STAGE-02**: `skills/plan/SKILL.md` becomes an orchestrator that spawns design-phase-researcher (optional) + design-pattern-mapper + design-planner + design-plan-checker
+- [ ] **STAGE-03**: `skills/design/SKILL.md` becomes an orchestrator that spawns design-executor agents per task with wave coordination and parallel/sequential routing
+- [ ] **STAGE-04**: `skills/verify/SKILL.md` becomes an orchestrator that spawns design-auditor + design-verifier + design-integration-checker
+
+### Quality Gate Agents (Phase 2 of agent layer)
+
+- [ ] **AGENT-06**: `agents/design-context-builder.md` — detects existing design system state, asks only unanswered questions, produces DESIGN-CONTEXT.md with `<decisions>`, `<must_haves>`, `<canonical_refs>`, `<constraints>`, `<deferred>` sections
+- [ ] **AGENT-07**: `agents/design-context-checker.md` — validates DESIGN-CONTEXT.md before planning (6 quality dimensions: copy specificity, color contract, typography scale, spacing scale, registry safety, must-have testability)
+- [ ] **AGENT-08**: `agents/design-auditor.md` — retroactive audit against 6 pillars (copy, visuals, color, typography, spacing, experience) with 1–4 scores and priority fix list
+- [ ] **AGENT-09**: `agents/design-pattern-mapper.md` — maps existing design patterns in codebase before planning (colors in use, spacing tokens, component conventions) — brownfield-critical
+- [ ] **AGENT-10**: `agents/design-assumptions-analyzer.md` — surfaces hidden design assumptions with evidence quotes and confidence levels before discover asks questions
+- [ ] **AGENT-11**: `agents/design-integration-checker.md` — verifies design decisions are wired through code post-execution (not just described in DESIGN-SUMMARY.md)
+
+### Connections Layer
+
+- [ ] **CONN-00**: `connections/` directory created with `connections.md` (index, capability matrix, extensibility guide for adding future connections)
+- [ ] **CONN-01**: `connections/figma.md` — Figma MCP setup instructions + per-tool capability coverage (`get_variable_defs`, `get_design_context`, `get_screenshot`) + which stages use each
+- [ ] **CONN-02**: `connections/refero.md` — Refero MCP setup (migrated from `reference/refero.md`), fallback behavior when unavailable
+- [ ] **CONN-03**: Figma MCP integrated into scan stage — reads design tokens if available, logs source provenance
+- [ ] **CONN-04**: Figma MCP integrated into discover stage — pre-populates `<decisions>` from Figma variables when available
+- [ ] **CONN-05**: Refero MCP integrated into discover stage — pulls reference screenshots for R-01/R-02 collection with graceful fallback to awesome-design-md
+- [ ] **CONN-06**: Connection availability detection in every stage — stages check for MCP presence before calling tools and document in STATE.md which connections were used
 
 ### Scan Polish
 
@@ -49,12 +100,18 @@
 - [ ] **REF-04**: `reference/motion.md` — spring physics patterns for React Spring and Framer Motion
 - [ ] **REF-05**: `reference/motion.md` — scroll-triggered animation guidance (threshold, once vs repeat, performance)
 
+### Automation Agents (Phase 3 of agent layer)
+
+- [ ] **AGENT-12**: `agents/design-fixer.md` — applies fix list from DESIGN-VERIFICATION.md gaps atomically with per-fix commits, enables verify→fix loop without manual re-planning
+- [ ] **AGENT-13**: `agents/design-advisor.md` — researches a single gray area with a 5-column comparison table + rationale (called from discover when gray areas need more than judgment)
+- [ ] **AGENT-14**: `agents/design-doc-writer.md` — generates handoff docs / component specs from DESIGN-SUMMARY.md (powers the `style` command)
+
 ### style Command
 
 - [ ] **STYL-01**: `style` command exists at `skills/style/SKILL.md` and is routed from root `SKILL.md`
 - [ ] **STYL-02**: `style` produces `.design/DESIGN-STYLE-[ComponentName].md` per component (not a flat file)
-- [ ] **STYL-03**: Post-pipeline mode: reads `DESIGN-SUMMARY.md` to build spec from applied design decisions
-- [ ] **STYL-04**: Pre-pipeline fallback mode: reads `DESIGN.md` + source file directly for current-state spec
+- [ ] **STYL-03**: Post-pipeline mode: invokes design-doc-writer agent with DESIGN-SUMMARY.md as input
+- [ ] **STYL-04**: Pre-pipeline fallback mode: invokes design-doc-writer with DESIGN.md + source file for current-state spec
 - [ ] **STYL-05**: Output includes: spacing tokens, color tokens, typography scale, component states, AI-slop detection flag, token semantic health score (raw-hex-in-components ratio)
 
 ### darkmode Command
@@ -79,21 +136,33 @@
 
 - [ ] **VAL-01**: `claude plugin validate .` passes clean after all v3 changes
 - [ ] **VAL-02**: Root `SKILL.md` argument-hint, Command Reference table, and Jump Mode section all updated for style/darkmode/compare
-- [ ] **VAL-03**: Plugin version bumped to 3.0.0 in all manifest files (`plugin.json`, `marketplace.json`)
+- [ ] **VAL-03**: Plugin version bumped to 3.0.0 in all manifest files (`.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`)
 
 ## v2 Requirements
 
+### Future agents
+
+- **V2-01**: design-debugger agent (investigates design regressions with evidence + fix hypothesis) — defer until design-fixer exists and shows patterns
+- **V2-02**: design-intel-updater (maintains `.design/intel/` knowledge base for fast lookups) — defer until pipeline stabilizes
+- **V2-03**: design-completeness-auditor (Nyquist-style must-have evidence validator) — defer; design-verifier + design-integration-checker cover v3 needs
+
 ### Future commands
 
-- **V2-01**: `--research` mode for plan stage (complex projects) — deferred pending scope definition
-- **V2-02**: Dark mode score writeback to DESIGN.md — deferred (two-sources-of-truth risk)
-- **V2-03**: Multi-snapshot compare (DESIGN.md snapshot naming convention) — deferred; v3 uses simpler baseline-vs-verification approach
-- **V2-04**: `darkmode` fix execution (not just audit) — deferred; fixes belong in design skill's color task
+- **V2-04**: `--research` mode for plan stage (complex projects) — deferred pending scope definition
+- **V2-05**: Dark mode score writeback to DESIGN.md — deferred (two-sources-of-truth risk)
+- **V2-06**: Multi-snapshot compare (DESIGN.md snapshot naming convention) — deferred; v3 uses simpler baseline-vs-verification approach
+- **V2-07**: `darkmode` fix execution — deferred; fixes belong in design skill's color task
+
+### Future connections
+
+- **V2-08**: Storybook MCP — component inventory + story state audit
+- **V2-09**: Linear MCP — create design debt tickets from DESIGN-DEBT.md
+- **V2-10**: GitHub MCP — open PRs from design task commits
 
 ### Reference expansions
 
-- **V2-05**: oklch exact chroma desaturation ratios (verified against browser rendering) — needs empirical validation
-- **V2-06**: Brand archetype expansion beyond 5 archetypes
+- **V2-11**: oklch exact chroma desaturation ratios (verified against browser rendering) — needs empirical validation
+- **V2-12**: Brand archetype expansion beyond 5 archetypes
 
 ## Out of Scope
 
@@ -101,8 +170,8 @@
 |---------|--------|
 | CI/CD integration | Plugin is an audit tool, not a pipeline runner |
 | Real-time UI rendering | Text-based pipeline, no visual tool |
-| Figma file reading | Optional refero MCP is sufficient |
-| Code generation / auto-fix | Audit and spec only — implementation belongs to design skill |
+| Figma file writing | Read-only integration; no bidirectional sync |
+| Code generation / auto-fix for non-accessibility | Audit and spec only — implementation belongs to design skill |
 | Mobile app | CLI plugin only |
 | External skill dependencies | Zero-dependency constraint is a hard requirement |
 | Chromatic / Storybook integration | Out of scope for v3; competitive positioning deferred |
@@ -111,55 +180,87 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| DIST-01 | Phase 1 | Pending |
+| DIST-02 | Phase 1 | Pending |
+| DIST-03 | Phase 1 | Pending |
 | PLAT-01 | Phase 1 | Pending |
 | PLAT-02 | Phase 1 | Pending |
 | PLAT-03 | Phase 1 | Pending |
 | PLAT-04 | Phase 1 | Pending |
-| SCAN-01 | Phase 2 | Pending |
-| SCAN-02 | Phase 2 | Pending |
-| SCAN-03 | Phase 2 | Pending |
+| STATE-01 | Phase 1 | Pending |
+| STATE-02 | Phase 1 | Pending |
+| STATE-03 | Phase 1 | Pending |
+| AGENT-00 | Phase 1 | Pending |
+| CONN-00 | Phase 1 | Pending |
 | SCAN-04 | Phase 1 | Pending |
-| DISC-01 | Phase 2 | Pending |
-| DISC-02 | Phase 2 | Pending |
-| DISC-03 | Phase 2 | Pending |
-| PLAN-01 | Phase 2 | Pending |
-| PLAN-02 | Phase 2 | Pending |
-| DSGN-01 | Phase 2 | Pending |
-| DSGN-02 | Phase 2 | Pending |
-| DSGN-03 | Phase 2 | Pending |
-| VRFY-01 | Phase 2 | Pending |
-| VRFY-02 | Phase 2 | Pending |
-| REF-01 | Phase 2 | Pending |
-| REF-02 | Phase 2 | Pending |
-| REF-03 | Phase 2 | Pending |
-| REF-04 | Phase 2 | Pending |
-| REF-05 | Phase 2 | Pending |
-| STYL-01 | Phase 3 | Pending |
-| STYL-02 | Phase 3 | Pending |
-| STYL-03 | Phase 3 | Pending |
-| STYL-04 | Phase 3 | Pending |
-| STYL-05 | Phase 3 | Pending |
-| DARK-01 | Phase 3 | Pending |
-| DARK-02 | Phase 3 | Pending |
-| DARK-03 | Phase 3 | Pending |
-| DARK-04 | Phase 3 | Pending |
-| DARK-05 | Phase 3 | Pending |
-| DARK-06 | Phase 3 | Pending |
-| DARK-07 | Phase 3 | Pending |
-| COMP-01 | Phase 4 | Pending |
-| COMP-02 | Phase 4 | Pending |
-| COMP-03 | Phase 4 | Pending |
-| COMP-04 | Phase 4 | Pending |
-| COMP-05 | Phase 4 | Pending |
-| VAL-01 | Phase 5 | Pending |
-| VAL-02 | Phase 5 | Pending |
-| VAL-03 | Phase 5 | Pending |
+| AGENT-01 | Phase 2 | Pending |
+| AGENT-02 | Phase 2 | Pending |
+| AGENT-03 | Phase 2 | Pending |
+| AGENT-04 | Phase 2 | Pending |
+| AGENT-05 | Phase 2 | Pending |
+| STAGE-01 | Phase 2 | Pending |
+| STAGE-02 | Phase 2 | Pending |
+| STAGE-03 | Phase 2 | Pending |
+| STAGE-04 | Phase 2 | Pending |
+| AGENT-06 | Phase 3 | Pending |
+| AGENT-07 | Phase 3 | Pending |
+| AGENT-08 | Phase 3 | Pending |
+| AGENT-09 | Phase 3 | Pending |
+| AGENT-10 | Phase 3 | Pending |
+| AGENT-11 | Phase 3 | Pending |
+| SCAN-01 | Phase 3 | Pending |
+| SCAN-02 | Phase 3 | Pending |
+| SCAN-03 | Phase 3 | Pending |
+| DISC-01 | Phase 3 | Pending |
+| DISC-02 | Phase 3 | Pending |
+| DISC-03 | Phase 3 | Pending |
+| PLAN-01 | Phase 3 | Pending |
+| PLAN-02 | Phase 3 | Pending |
+| DSGN-01 | Phase 3 | Pending |
+| DSGN-02 | Phase 3 | Pending |
+| DSGN-03 | Phase 3 | Pending |
+| VRFY-01 | Phase 3 | Pending |
+| VRFY-02 | Phase 3 | Pending |
+| REF-01 | Phase 3 | Pending |
+| REF-02 | Phase 3 | Pending |
+| REF-03 | Phase 3 | Pending |
+| REF-04 | Phase 3 | Pending |
+| REF-05 | Phase 3 | Pending |
+| CONN-01 | Phase 4 | Pending |
+| CONN-02 | Phase 4 | Pending |
+| CONN-03 | Phase 4 | Pending |
+| CONN-04 | Phase 4 | Pending |
+| CONN-05 | Phase 4 | Pending |
+| CONN-06 | Phase 4 | Pending |
+| AGENT-12 | Phase 5 | Pending |
+| AGENT-13 | Phase 5 | Pending |
+| AGENT-14 | Phase 5 | Pending |
+| STYL-01 | Phase 5 | Pending |
+| STYL-02 | Phase 5 | Pending |
+| STYL-03 | Phase 5 | Pending |
+| STYL-04 | Phase 5 | Pending |
+| STYL-05 | Phase 5 | Pending |
+| DARK-01 | Phase 5 | Pending |
+| DARK-02 | Phase 5 | Pending |
+| DARK-03 | Phase 5 | Pending |
+| DARK-04 | Phase 5 | Pending |
+| DARK-05 | Phase 5 | Pending |
+| DARK-06 | Phase 5 | Pending |
+| DARK-07 | Phase 5 | Pending |
+| COMP-01 | Phase 5 | Pending |
+| COMP-02 | Phase 5 | Pending |
+| COMP-03 | Phase 5 | Pending |
+| COMP-04 | Phase 5 | Pending |
+| COMP-05 | Phase 5 | Pending |
+| VAL-01 | Phase 6 | Pending |
+| VAL-02 | Phase 6 | Pending |
+| VAL-03 | Phase 6 | Pending |
 
 **Coverage:**
-- v1 requirements: 43 total
-- Mapped to phases: 43
+- v1 requirements: 73 total
+- Mapped to phases: 73
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-04-17*
-*Last updated: 2026-04-17 after initial definition*
+*Last updated: 2026-04-17 after agent layer + state machine + connections + distribution expansion*
