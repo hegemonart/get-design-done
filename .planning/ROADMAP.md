@@ -70,7 +70,7 @@ Plans:
   4. Running discover on a Tailwind-only project (no CSS files) completes without error and audits Tailwind config instead of CSS grep
   5. Brownfield project: design-pattern-mapper surfaces existing colors/spacing/components before planning so plan doesn't conflict with established patterns
   6. All five reference files contain the new content sections (archetypes, variable fonts, spring physics, scroll-triggered animations, Visual Hierarchy grep patterns)
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
 - [ ] 03-01: design-context-builder + design-context-checker + discover orchestrator update
@@ -108,14 +108,14 @@ Plans:
   4. `@ultimate-design darkmode` detects dark mode architecture, runs the audit, and produces `.design/DARKMODE-AUDIT.md` with a P0–P3 fix list
   5. `@ultimate-design compare` produces `.design/COMPARE-REPORT.md` with per-category delta, anti-pattern delta, and design-drift flagging
   6. None of the new commands pollute the pipeline artifact namespace — all use distinct prefixes
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 05-01: design-fixer agent + integrate into verify loop
-- [ ] 05-02: design-advisor agent + integrate into discover gray-area resolution
-- [ ] 05-03: design-doc-writer agent + style command (SKILL.md, two modes, router update)
-- [ ] 05-04: darkmode command — SKILL.md, architecture detection, audit checks, router update
-- [ ] 05-05: compare command — SKILL.md, delta logic, drift detection, router update
+- [x] 05-01-PLAN.md — design-fixer agent + integrate into verify loop
+- [ ] 05-02-PLAN.md — design-advisor agent + integrate into discover gray-area resolution
+- [ ] 05-03-PLAN.md — design-doc-writer agent + style command (SKILL.md, two modes, router update)
+- [ ] 05-04-PLAN.md — darkmode command — SKILL.md, architecture detection, audit checks, router update
+- [ ] 05-05-PLAN.md — compare command — SKILL.md, delta logic, drift detection, router update
 
 ### Phase 6: Validation + Version Bump
 **Goal**: The plugin passes formal validation, all commands work on a real Windows Git Bash project, and the version is 3.0.0
@@ -126,7 +126,7 @@ Plans:
   2. Root SKILL.md argument-hint frontmatter, Command Reference table, and Jump Mode section all list style, darkmode, and compare — invoking any of them routes correctly
   3. `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` both show version `3.0.0`
   4. `claude plugin install hegemonart/ultimate-design` on a fresh Claude Code instance installs cleanly and the pipeline runs end-to-end
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
 - [ ] 06-01: Root SKILL.md routing audit + plugin validate + version bump + marketplace.json sync
@@ -142,5 +142,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. Core Agents + Stage Orchestration | 4/4 | Complete   | 2026-04-17 |
 | 3. Quality Gate Agents + Pipeline Polish | 6/6 | Complete   | 2026-04-17 |
 | 4. Connections Layer | 3/3 | Complete   | 2026-04-17 |
-| 5. Automation Agents + New Commands | 0/5 | Not started | - |
+| 5. Automation Agents + New Commands | 2/5 | In Progress|  |
 | 6. Validation + Version Bump | 0/1 | Not started | - |

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-04-17T12:50:00.000Z"
-last_activity: "2026-04-17 — Phase 03 Plan 04: three-pass component detection (SCAN-01), --full output table (SCAN-02), priority_score formula (SCAN-03)"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-04-17T15:26:14.052Z"
+last_activity: "2026-04-17 — Phase 04 Plan 03: Refero MCP wired into design-context-builder (Area 5 three-tier fallback), discover/SKILL.md probe concretized"
 progress:
   total_phases: 6
-  completed_phases: 3
-  total_plans: 18
-  completed_plans: 18
+  completed_phases: 4
+  total_plans: 23
+  completed_plans: 20
   percent: 81
 ---
 
@@ -69,6 +69,7 @@ Progress: [████████░░] 81%
 | Phase 04-connections-layer P01 | 3 | 3 tasks | 3 files |
 | Phase 04 P02 | 2 | 3 tasks | 2 files |
 | Phase 04-connections-layer P03 | 5 | 2 tasks | 2 files |
+| Phase 05-automation-agents-new-commands P02 | 1 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -132,6 +133,10 @@ Progress: [████████░░] 81%
 - [Phase 04-03]: Three-tier fallback: awesome-design-md as middle tier (not WebFetch direct) — 68 curated archetypes preferred over ad-hoc URL fetching
 - [Phase 04-03]: Refero probe via ToolSearch presence only — no live search call needed (avoid token waste on probe)
 - [Phase 04-03]: discover/SKILL.md probe inline-copied from connections/connections.md (no include mechanism); canonical source noted in prose
+- [Phase 05-02]: design-advisor returns inline text only (no file) — same pattern as design-plan-checker (Open Question 2 resolution)
+- [Phase 05-02]: Advisor spawned from design-context-builder agent, NOT from skills/discover/SKILL.md (Pitfall 6 preserved)
+- [Phase 05-02]: Builder incorporates advisor findings into DESIGN-CONTEXT.md <decisions> section — no separate .design/ADVISOR-*.md artifact
+- [Phase 05-02]: 5-column table format locked: Approach | Effort | Risk | User Control | Recommendation; exactly one Recommendation=yes per table
 
 ### Pending Todos
 
@@ -143,6 +148,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-17T12:50:00.000Z
-Stopped at: Completed 04-03-PLAN.md
+Last session: 2026-04-17T15:26:14.048Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None

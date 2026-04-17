@@ -103,7 +103,7 @@
 ### Automation Agents (Phase 3 of agent layer)
 
 - [ ] **AGENT-12**: `agents/design-fixer.md` — applies fix list from DESIGN-VERIFICATION.md gaps atomically with per-fix commits, enables verify→fix loop without manual re-planning
-- [ ] **AGENT-13**: `agents/design-advisor.md` — researches a single gray area with a 5-column comparison table + rationale (called from discover when gray areas need more than judgment)
+- [x] **AGENT-13**: `agents/design-advisor.md` — researches a single gray area with a 5-column comparison table + rationale (called from discover when gray areas need more than judgment)
 - [ ] **AGENT-14**: `agents/design-doc-writer.md` — generates handoff docs / component specs from DESIGN-SUMMARY.md (powers the `style` command)
 
 ### style Command
@@ -233,7 +233,7 @@
 | CONN-05 | Phase 4 | Complete |
 | CONN-06 | Phase 4 | Complete |
 | AGENT-12 | Phase 5 | Pending |
-| AGENT-13 | Phase 5 | Pending |
+| AGENT-13 | Phase 5 | Complete |
 | AGENT-14 | Phase 5 | Pending |
 | STYL-01 | Phase 5 | Pending |
 | STYL-02 | Phase 5 | Pending |
