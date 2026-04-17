@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.1
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-04-17T11:47:51.826Z"
+stopped_at: Completed 03-05-PLAN.md
+last_updated: "2026-04-17T11:49:57.798Z"
 last_activity: "2026-04-17 — Phase 03 Plan 04: three-pass component detection (SCAN-01), --full output table (SCAN-02), priority_score formula (SCAN-03)"
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
   percent: 78
 ---
 
@@ -65,6 +65,7 @@ Progress: [████████░░] 78%
 | Phase 03-quality-gate-agents-pipeline-polish P06 | 2 min | 3 tasks | 3 files |
 | Phase 03-quality-gate-agents-pipeline-polish P04 | 2 | 3 tasks | 1 files |
 | Phase 03 P06 | 2 | 3 tasks | 3 files |
+| Phase 03-quality-gate-agents-pipeline-polish P05 | 5 | 4 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -114,6 +115,9 @@ Progress: [████████░░] 78%
 - [Phase 03-04]: Three-pass component detection uses temp files to avoid process substitution portability issues
 - [Phase 03-04]: priority_score formula uses + not / — addition keeps severity and effort signals independent (per RESEARCH.md)
 - [Phase 03-04]: Effort weight inverted (XS=5, XL=1) so high effort = lower priority — keeps formula monotonic
+- [Phase 03-05]: DISC-01/03 content inserted inside builder spawn prompt (not a separate section) — ensures context-builder receives fallback chain and gray areas at runtime
+- [Phase 03-05]: --research mode documented as REMOVED with V2-04 rationale — existing complexity heuristic (3+ scopes OR 6+ decisions) covers the use case
+- [Phase 03-05]: VRFY-02 shared grep reference placed in design-verifier.md Phase 1 (not verify/SKILL.md) — keeps deduplication adjacent to consumption point
 
 ### Pending Todos
 
@@ -125,6 +129,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-17T11:47:48.764Z
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-04-17T11:49:57.794Z
+Stopped at: Completed 03-05-PLAN.md
 Resume file: None

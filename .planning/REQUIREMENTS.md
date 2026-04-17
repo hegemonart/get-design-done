@@ -72,25 +72,25 @@
 
 ### Discover Polish
 
-- [ ] **DISC-01**: Baseline audit bash commands fall back gracefully when `src/` does not exist (checks app/, lib/, pages/ in order)
-- [ ] **DISC-02**: Auto mode detects Tailwind-only projects (no CSS files) and adjusts audit commands accordingly
-- [ ] **DISC-03**: Gray areas checklist is concrete and embedded: font-change risk, token-layer introduction risk, component rebuild vs restyle decision
+- [x] **DISC-01**: Baseline audit bash commands fall back gracefully when `src/` does not exist (checks app/, lib/, pages/ in order)
+- [x] **DISC-02**: Auto mode detects Tailwind-only projects (no CSS files) and adjusts audit commands accordingly
+- [x] **DISC-03**: Gray areas checklist is concrete and embedded: font-change risk, token-layer introduction risk, component rebuild vs restyle decision
 
 ### Plan Polish
 
-- [ ] **PLAN-01**: Task Action field includes inline examples for parallel-mode agents (self-contained prompt templates)
-- [ ] **PLAN-02**: `--research` mode is documented — either re-added with defined scope or explicitly removed with rationale
+- [x] **PLAN-01**: Task Action field includes inline examples for parallel-mode agents (self-contained prompt templates)
+- [x] **PLAN-02**: `--research` mode is documented — either re-added with defined scope or explicitly removed with rationale
 
 ### Design Polish
 
-- [ ] **DSGN-01**: Component task execution guide added (matching depth of typography, color, accessibility, motion guides)
-- [ ] **DSGN-02**: Decision authority section defines clear escalation path: proceed autonomously / flag and proceed / stop and ask
-- [ ] **DSGN-03**: Color task execution guide covers oklch color space (12–18% L for dark mode, chroma desaturation rules)
+- [x] **DSGN-01**: Component task execution guide added (matching depth of typography, color, accessibility, motion guides)
+- [x] **DSGN-02**: Decision authority section defines clear escalation path: proceed autonomously / flag and proceed / stop and ask
+- [x] **DSGN-03**: Color task execution guide covers oklch color space (12–18% L for dark mode, chroma desaturation rules)
 
 ### Verify Polish
 
-- [ ] **VRFY-01**: NNG heuristics that require visual inspection are flagged `? VISUAL` with clear explanation of why
-- [ ] **VRFY-02**: Phase 1 re-audit references shared grep patterns rather than duplicating scan logic verbatim
+- [x] **VRFY-01**: NNG heuristics that require visual inspection are flagged `? VISUAL` with clear explanation of why
+- [x] **VRFY-02**: Phase 1 re-audit references shared grep patterns rather than duplicating scan logic verbatim
 
 ### Reference File Polish
 
@@ -211,16 +211,16 @@
 | SCAN-01 | Phase 3 | Complete |
 | SCAN-02 | Phase 3 | Complete |
 | SCAN-03 | Phase 3 | Complete |
-| DISC-01 | Phase 3 | Pending |
-| DISC-02 | Phase 3 | Pending |
-| DISC-03 | Phase 3 | Pending |
-| PLAN-01 | Phase 3 | Pending |
-| PLAN-02 | Phase 3 | Pending |
-| DSGN-01 | Phase 3 | Pending |
-| DSGN-02 | Phase 3 | Pending |
-| DSGN-03 | Phase 3 | Pending |
-| VRFY-01 | Phase 3 | Pending |
-| VRFY-02 | Phase 3 | Pending |
+| DISC-01 | Phase 3 | Complete |
+| DISC-02 | Phase 3 | Complete |
+| DISC-03 | Phase 3 | Complete |
+| PLAN-01 | Phase 3 | Complete |
+| PLAN-02 | Phase 3 | Complete |
+| DSGN-01 | Phase 3 | Complete |
+| DSGN-02 | Phase 3 | Complete |
+| DSGN-03 | Phase 3 | Complete |
+| VRFY-01 | Phase 3 | Complete |
+| VRFY-02 | Phase 3 | Complete |
 | REF-01 | Phase 3 | Complete |
 | REF-02 | Phase 3 | Complete |
 | REF-03 | Phase 3 | Complete |

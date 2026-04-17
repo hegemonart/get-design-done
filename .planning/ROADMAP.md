@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation + Distribution + Infrastructure** — Cross-platform bash, gitignore cleanup, state machine, agents/ + connections/ scaffolding
  (completed 2026-04-17)
 - [x] **Phase 2: Core Agents + Stage Orchestration** — 5 core agents (planner, executor, verifier, phase-researcher, plan-checker) + 4 stage wrapper rewrites (completed 2026-04-17)
-- [ ] **Phase 3: Quality Gate Agents + Pipeline Polish** — 6 quality gate agents + existing backlog polish
+- [x] **Phase 3: Quality Gate Agents + Pipeline Polish** — 6 quality gate agents + existing backlog polish (completed 2026-04-17)
 - [ ] **Phase 4: Connections Layer** — Figma MCP, Refero MCP, extensibility pattern
 - [ ] **Phase 5: Automation Agents + New Commands** — 3 automation agents + style + darkmode + compare
 - [ ] **Phase 6: Validation + Version Bump** — Plugin validate, smoke test, version 3.0.0
@@ -90,12 +90,12 @@ Plans:
   3. Discover stage pre-populates `<decisions>` from Figma and `<references>` from Refero when available; completes without either
   4. `connections/connections.md` capability matrix shows which stages use which connection and includes an extensibility guide for adding a new connection
   5. Every stage records in STATE.md which connections were active during that run — a reader can trace which outputs came from which source
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Connection documentation + availability detection pattern
-- [ ] 04-02: Figma MCP integration in scan + discover
-- [ ] 04-03: Refero MCP integration in discover (migrate from reference/refero.md)
+- [ ] 04-01-PLAN.md — Connection documentation + canonical availability probe (connections/figma.md NEW, connections/refero.md + connections.md UPDATE) (CONN-01, CONN-02, CONN-06)
+- [ ] 04-02-PLAN.md — Figma MCP wiring: scan State Integration + Step 2A Token Augmentation; design-context-builder Step 0 Pre-population (CONN-03, CONN-04)
+- [ ] 04-03-PLAN.md — Refero MCP wiring: design-context-builder Area 5 with three-tier fallback (Refero → awesome-design-md → WebFetch); discover/SKILL.md concrete probe queries (CONN-05)
 
 ### Phase 5: Automation Agents + New Commands
 **Goal**: Three automation agents (fixer, advisor, doc-writer) close the verify→fix loop, handle gray-area research, and generate handoff docs — and three new commands (style, darkmode, compare) ship using them
@@ -140,7 +140,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Foundation + Distribution + Infrastructure | 5/5 | Complete   | 2026-04-17 |
 | 2. Core Agents + Stage Orchestration | 4/4 | Complete   | 2026-04-17 |
-| 3. Quality Gate Agents + Pipeline Polish | 5/6 | In Progress|  |
+| 3. Quality Gate Agents + Pipeline Polish | 6/6 | Complete   | 2026-04-17 |
 | 4. Connections Layer | 0/3 | Not started | - |
 | 5. Automation Agents + New Commands | 0/5 | Not started | - |
 | 6. Validation + Version Bump | 0/1 | Not started | - |
