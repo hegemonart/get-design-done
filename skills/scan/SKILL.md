@@ -144,14 +144,14 @@ Read `${CLAUDE_PLUGIN_ROOT}/reference/anti-patterns.md`. Run all grep commands.
 echo "=== BAN-01: Side-stripe borders ===" && grep -rEn "border-left:\s*[2-9][0-9]*px|border-right:\s*[2-9][0-9]*px" src/ --include="*.css" --include="*.scss" --include="*.tsx" 2>/dev/null
 echo "=== BAN-02: Gradient text ===" && grep -rEn "background-clip:\s*text|text-fill-color:\s*transparent" src/ 2>/dev/null
 echo "=== BAN-03: Bounce easing ===" && grep -rEn "cubic-bezier\(.*-[0-9]|bounce|elastic" src/ --include="*.css" --include="*.scss" 2>/dev/null
-echo "=== BAN-08: transition: all ===" && grep -rn "transition:\s*all\b" src/ --include="*.css" --include="*.scss" --include="*.tsx" 2>/dev/null | head -10
+echo "=== BAN-08: transition: all ===" && grep -rnE "transition:[[:space:]]*all([^a-zA-Z]|$)" src/ --include="*.css" --include="*.scss" --include="*.tsx" 2>/dev/null | head -10
 echo "=== BAN-05: Pure black dark mode ===" && grep -rEn "#000000\b|rgb\(0,\s*0,\s*0\)" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -5
 echo "=== BAN-06: Disable zoom ===" && grep -rEn "user-scalable=no|maximum-scale=1" public/ src/ 2>/dev/null
-echo "=== BAN-07: outline:none without replacement ===" && grep -rn ":focus\s*{" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -5
+echo "=== BAN-07: outline:none without replacement ===" && grep -rnE ":focus[[:space:]]*\{" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -5
 
 # SLOP signals (−1 each)
 echo "=== SLOP-01: AI palette ===" && grep -rEn "#6366f1|#8b5cf6|#06b6d4" src/ 2>/dev/null | head -5
-echo "=== SLOP-04: backdrop-filter ===" && grep -rn "backdrop-filter:\s*blur" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -5
+echo "=== SLOP-04: backdrop-filter ===" && grep -rnE "backdrop-filter:[[:space:]]*blur" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -5
 
 # Accessibility
 echo "=== A11Y: focus rings ===" && grep -rEn "outline:\s*none|outline:\s*0" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -5
