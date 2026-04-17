@@ -71,8 +71,8 @@
 | DIST-01 | `.gitignore` excludes `.planning/`, `.claude/memory/`, `.claude/settings.local.json` | Direct: current `.gitignore` has `.design/` + `.DS_Store`; additions are straightforward appends |
 | DIST-02 | `.planning/` and `.claude/memory/` removed from git tracking via `git rm --cached` | Direct: confirmed files tracked — see Git Tracking section; untrack procedure documented |
 | DIST-03 | README.md documents what ships vs dev-only | Direct: README.md exists, needs a "Distribution" section; ship list from CONTEXT.md |
-| PLAT-01 | All bash grep patterns use POSIX-compatible `-E` syntax | Direct: 18 specific GNU `\|` lines identified in scan/SKILL.md + 4 in verify/SKILL.md — exact inventory below |
-| PLAT-02 | `grep` calls across all skills include `-E` flag and work on macOS, Windows, Linux | Direct: same 22 lines are the complete scope — STACK.md cross-platform patterns apply |
+| PLAT-01 | All bash grep patterns use POSIX-compatible `-E` syntax | Direct: 19 specific GNU `\|` lines identified in scan/SKILL.md + 4 in verify/SKILL.md — exact inventory below |
+| PLAT-02 | `grep` calls across all skills include `-E` flag and work on macOS, Windows, Linux | Direct: same 23 lines are the complete scope — STACK.md cross-platform patterns apply |
 | PLAT-03 | `.gitattributes` enforces LF for `*.md` and `*.sh` files | Research: exact format for `.gitattributes` documented below |
 | PLAT-04 | Bootstrap script path normalization works on Windows | Direct: bootstrap.sh has partial handling; path normalization pattern documented |
 | STATE-01 | `.design/STATE.md` template defined | Direct: GSD STATE.md structure adapted; XML-tag format from DESIGN-CONTEXT.md pattern |
@@ -88,7 +88,7 @@
 
 ## Summary
 
-Phase 1 is pure infrastructure — no new features, no stage rewrites. It has three areas: (1) git hygiene (gitignore additions + untracking already-committed files), (2) bash portability fixes (22 specific lines in scan + verify skills that use GNU-only `\|` alternation, plus 4 `find` commands to assess), and (3) scaffolding (STATE.md template, agents/ README, connections/ directory + connections.md, refero.md move).
+Phase 1 is pure infrastructure — no new features, no stage rewrites. It has three areas: (1) git hygiene (gitignore additions + untracking already-committed files), (2) bash portability fixes (23 specific lines in scan + verify skills that use GNU-only `\|` alternation, plus 4 `find` commands to assess), and (3) scaffolding (STATE.md template, agents/ README, connections/ directory + connections.md, refero.md move).
 
 All research is HIGH confidence because every finding comes from direct inspection of working production files. No external tools were needed — the codebase is self-documenting.
 
@@ -200,7 +200,7 @@ After this, `git log --follow connections/refero.md` shows full history includin
 
 **What:** Replace all GNU-only `\|` alternation with POSIX `-E` flag and `|`.
 
-**18 lines in scan/SKILL.md** that need migration (line numbers confirmed by direct grep):
+**19 lines in scan/SKILL.md** that need migration (line numbers confirmed by direct grep):
 
 | Line | Pattern | Fix |
 |------|---------|-----|
