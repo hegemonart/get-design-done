@@ -1,0 +1,32 @@
+/* Root design tokens — smoke fixture */
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #6366f1;
+  --color-accent: #06b6d4;
+  --color-purple: #8b5cf6;
+  --color-surface: #ffffff;
+  --color-text: #1e293b;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-surface);
+}

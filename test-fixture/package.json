@@ -1,0 +1,6 @@
+{
+  "name": "ultimate-design-smoke-fixture",
+  "version": "1.0.0",
+  "description": "Smoke-test fixture for ultimate-design Phase 2 — seeded with BAN-01 violation + AI-slop signals",
+  "private": true
+}

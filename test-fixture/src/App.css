@@ -1,0 +1,74 @@
+/* App styles — smoke fixture */
+/* NOTE: intentionally seeded with violations for pipeline testing */
+
+/* AI-slop palette — SLOP signals: #6366f1, #8b5cf6, #06b6d4 */
+.hero {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+}
+
+.hero__title {
+  font-family: "Inter", sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.hero__subtitle {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 12px;
+}
+
+.cta-button {
+  background: #06b6d4;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: var(--space-lg);
+  transition: all 0.2s ease;
+}
+
+/* BAN-01 violation: border-left on .card — verify must catch this */
+.card {
+  border-left: 4px solid var(--color-primary);
+  background: var(--color-surface);
+  padding: var(--space-md);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.card__body {
+  font-size: var(--text-base);
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.footer {
+  /* Hardcoded color deviation — bypasses --color-primary token */
+  color: #ff0000;
+  font-size: 12px;
+  text-align: center;
+  padding: var(--space-lg);
+  border-top: 1px solid #e2e8f0;
+}
