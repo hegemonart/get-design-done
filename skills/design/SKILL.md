@@ -252,4 +252,30 @@ Next: /get-design-done:verify
 
 ---
 
+### Figma Write Dispatch (after design-executor completes)
+
+After design-executor has finished and DESIGN-PLAN.md tasks are complete:
+
+1. Read `figma_writer:` status from `.design/STATE.md` `<connections>`:
+   - If `figma_writer: not_configured` or absent → skip this block entirely (no prompt, no output)
+   - If `figma_writer: available` → proceed to step 2
+
+2. Offer the user a prompt:
+   ```
+   figma-writer is available — propagate design decisions back to Figma?
+   Modes: annotate (layer comments) | tokenize (variable bindings) | mappings (Code Connect)
+   Run figma-write? (y/N):
+   ```
+
+3. If user answers "y" or "yes":
+   - Ask which mode: annotate / tokenize / mappings (or all)
+   - Spawn `design-figma-writer` agent with the selected mode
+   - Pass `--dry-run` flag if user requests preview first
+
+4. If user answers "n", "N", or no response: skip silently.
+
+Note: This dispatch is always opt-in. The design stage never auto-runs figma-writer without user confirmation.
+
+---
+
 ## DESIGN COMPLETE
