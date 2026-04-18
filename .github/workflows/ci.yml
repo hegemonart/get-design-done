@@ -28,8 +28,9 @@ jobs:
       - name: Link check (lychee)
         uses: lycheeverse/lychee-action@v2
         with:
+          # .lycheeignore is auto-discovered by lychee when present at repo root — do NOT pass
+          # it via --config, which expects a TOML file.
           args: >-
-            --config .lycheeignore
             --no-progress
             --accept 200,206,403,429
             --exclude-path node_modules
