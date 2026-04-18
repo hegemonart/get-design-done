@@ -63,7 +63,7 @@ grep -rEn "box-shadow\s*:|shadow-(sm|md|lg|xl|2xl)" src/ --include="*.css" --inc
 
 ### Figma augmentation
 
-If STATE.md `<connections>` has `figma: available`, call `mcp__figma-desktop__get_variable_defs` to augment with named Figma variables.
+If STATE.md `<connections>` has `figma: available`, call `mcp__figma__get_variable_defs` to augment with named Figma variables.
 
 ## Output Format — `.design/map/tokens.md`
 

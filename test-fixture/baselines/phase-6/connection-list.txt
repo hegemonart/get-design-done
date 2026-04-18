@@ -1,7 +1,6 @@
 chromatic.md
 claude-design.md
 connections.md
-figma-writer.md
 figma.md
 graphify.md
 pinterest.md

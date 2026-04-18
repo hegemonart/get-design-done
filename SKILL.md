@@ -125,9 +125,9 @@ Each stage produces artifacts in `.design/` inside the current project.
 
 6. **Optional: Bidirectional write-back** (post-verify, offered to user)
    After verify completes without FAIL-level gaps:
-   - Check STATE.md `<connections>` for `figma_writer`
-   - `figma_writer: not_configured` → skip (no offer)
-   - `figma_writer: available` → offer: "Write implementation status back to Figma? (annotates frames + Code Connect mappings)"
+   - Check STATE.md `<connections>` for `figma:` (the unified remote MCP covers both reads and writes as of v1.0.7.1)
+   - `figma: not_configured` or `figma: unavailable` → skip (no offer)
+   - `figma: available` → offer: "Write implementation status back to Figma? (annotates frames + Code Connect mappings)"
      Options: [yes, write back] [dry-run, show proposal only] [skip]
    - If yes or dry-run: spawn `agents/design-figma-writer.md` with `mode: implementation-status`, `dry_run: <true|false>`
 

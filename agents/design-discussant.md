@@ -30,7 +30,7 @@ The spawning prompt supplies `<required_reading>`. Read every listed file before
 
 ## Step 0 — Context pre-load (Figma only, optional)
 
-If `<connections>` in STATE.md shows `figma: available`, ToolSearch `figma-desktop` and call `mcp__figma-desktop__get_variable_defs`. For each returned variable, draft a *tentative* D-XX decision (mark "tentative — confirm with user"). Silently skip on any error. Do NOT grep the codebase.
+If `<connections>` in STATE.md shows `figma: available`, `ToolSearch({ query: "select:mcp__figma__get_variable_defs", max_results: 1 })` and call `mcp__figma__get_variable_defs`. For each returned variable, draft a *tentative* D-XX decision (mark "tentative — confirm with user"). Silently skip on any error. Do NOT grep the codebase.
 
 ## Step 1 — Mode dispatch
 

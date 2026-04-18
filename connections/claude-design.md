@@ -146,7 +146,6 @@ refero: not_configured
 preview: available
 storybook: not_configured
 chromatic: not_configured
-figma_writer: not_configured
 graphify: not_configured
 pinterest: not_configured
 claude_design: available

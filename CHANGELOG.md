@@ -4,6 +4,32 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.0.7.1] — 2026-04-19
+
+### Changed — Phase 13.1: Figma MCP Consolidation
+- Collapsed the dual Figma MCP setup (local `figma-desktop` for reads + remote `figma` for writes) into the single remote `figma` MCP, which exposes full read parity (`get_metadata`, `get_design_context`, `get_variable_defs`, `get_screenshot`) alongside `use_figma` for writes.
+- Rewrote `connections/figma.md` to cover both reads and writes; deleted `connections/figma-writer.md` (folded into the unified spec).
+- Migrated every `mcp__figma-desktop__*` tool reference to `mcp__figma__*` across skills (`scan`, `discover`, `explore`, `design`), agents (`design-figma-writer`, `design-context-builder`, `design-discussant`, `token-mapper`), and `connections/connections.md` capability matrix + probe block.
+- Collapsed STATE.md `<connections>` schema from `figma: … / figma_writer: …` to a single `figma:` key. The remote MCP is one server — one probe, one status.
+- Updated capability matrix in `connections/connections.md`: a single `Figma` row now declares write-back under the `design` column (FWR-01..04).
+- Regenerated `test-fixture/baselines/phase-6/connection-list.txt` to drop the deleted `figma-writer.md` entry.
+
+### Migration
+- Install the remote Figma MCP (one command; replaces both prior installs):
+  ```
+  claude mcp add figma --transport http https://mcp.figma.com/v1/sse
+  ```
+- Optionally remove the old desktop MCP after upgrading:
+  ```
+  claude mcp remove figma-desktop
+  ```
+- No command or flag renames. The `design-figma-writer` agent keeps its name and proposal→confirm UX unchanged.
+
+### Off-cadence note
+- Labelled **v1.0.7.1** per the decimal-phase convention (established by Phase 10.1 → v1.0.4.1). The label is CHANGELOG-only: `package.json`, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json` remain at `1.0.7` so the release workflow does not auto-tag. The next integer bump (Phase 14 → v1.0.8) will absorb these changes implicitly. This matches how Phase 10.1 was handled.
+
+---
+
 ## [1.0.7] — 2026-04-18
 
 ### Added — Phase 13: CI/CD

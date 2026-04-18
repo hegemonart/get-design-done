@@ -1,7 +1,7 @@
 ---
 name: design-figma-writer
 description: Writes design decisions back to Figma — annotations, token bindings, Code Connect mappings, and implementation-status write-back. Operates in proposal→confirm mode by default. Accepts --dry-run (emit proposal without executing) and --confirm-shared (required for writes to team library components).
-tools: Read, Write, Bash, Grep, Glob, mcp__figma__use_figma, mcp__figma-desktop__get_variable_defs, mcp__figma-desktop__get_metadata
+tools: Read, Write, Bash, Grep, Glob, mcp__figma__use_figma, mcp__figma__get_variable_defs, mcp__figma__get_metadata
 color: purple
 model: inherit
 default-tier: sonnet
@@ -34,7 +34,7 @@ ToolSearch({ query: "select:mcp__figma__use_figma", max_results: 1 })
 → Non-empty     → proceed to Step 1
 ```
 
-Note: `mcp__figma__use_figma` is the remote Figma MCP (registered as server "figma"). Distinct from `mcp__figma-desktop__*` (desktop MCP, read-only in this pipeline). If only desktop MCP is present and remote is absent, STOP with the note above.
+Note: `mcp__figma__use_figma` is the remote Figma MCP (registered as server `figma`). Reads (`mcp__figma__get_metadata`, `mcp__figma__get_variable_defs`) live on the same server. As of v1.0.7.1, there is no separate read-only desktop MCP — the remote MCP is the single supported Figma connection.
 
 ---
 
@@ -72,15 +72,15 @@ Read `.design/DESIGN-CONTEXT.md`. Extract the relevant data for the selected mod
 - For `tokenize`: color/spacing/type literal values that could map to Figma variables — look for hex values, spacing scales, and typography sizes in the decisions section
 - For `mappings`: component names and their source file paths — look for component listings, file paths, and implementation references
 
-Also read the active Figma file structure using the desktop MCP (reads are always desktop, writes are always remote):
+Also read the active Figma file structure using the remote MCP (reads and writes share the same server):
 
 ```
-ToolSearch({ query: "figma-desktop", max_results: 10 })
-mcp__figma-desktop__get_metadata()    // lightweight layer outline
-mcp__figma-desktop__get_variable_defs()   // for tokenize mode — variable names and values
+ToolSearch({ query: "select:mcp__figma__get_metadata,mcp__figma__get_variable_defs", max_results: 2 })
+mcp__figma__get_metadata()       // lightweight layer outline
+mcp__figma__get_variable_defs()  // for tokenize mode — variable names and values
 ```
 
-If `get_metadata` errors (no file open), write: "No Figma file is open. Open the target file in the Figma desktop app and retry." and STOP.
+If `get_metadata` errors (no file accessible), write: "No Figma file is accessible. Open the target file in Figma and retry." and STOP.
 
 ---
 
@@ -157,7 +157,7 @@ Wait for user response. If response is not "yes", STOP with "Cancelled."
 
 ## Step 5 — Execute Writes
 
-For each operation in the proposal, call `mcp__figma__use_figma` with the appropriate operation payload. Remote MCP only — never use desktop MCP for writes.
+For each operation in the proposal, call `mcp__figma__use_figma` with the appropriate operation payload.
 
 For `annotate`:
 

@@ -8,12 +8,11 @@ This directory contains connection specifications for external tools and MCPs th
 
 | Connection | Status | Spec File | Notes |
 |-----------|--------|-----------|-------|
-| Figma | Active | [`connections/figma.md`](connections/figma.md) | Uses `mcp__figma-desktop__*` tools (official Figma Desktop MCP) |
+| Figma | Active | [`connections/figma.md`](connections/figma.md) | Uses `mcp__figma__*` tools (remote Figma MCP; reads + writes) |
 | Refero | Active | [`connections/refero.md`](connections/refero.md) | Uses `mcp__refero__*` tools (verify names via ToolSearch) |
 | Preview | Active | [`connections/preview.md`](connections/preview.md) | Uses `mcp__Claude_Preview__*` tools |
 | Storybook | Active | [`connections/storybook.md`](connections/storybook.md) | HTTP probe: `localhost:6006/index.json` |
 | Chromatic | Active | [`connections/chromatic.md`](connections/chromatic.md) | CLI: `npx chromatic`; env: `CHROMATIC_PROJECT_TOKEN` |
-| Figma Writer | Active | [`connections/figma-writer.md`](connections/figma-writer.md) | Uses `mcp__figma__use_figma` (remote MCP) |
 | Graphify | Active | [`connections/graphify.md`](connections/graphify.md) | CLI: `graphify`; `gsd-tools graphify *` |
 | Pinterest | Active | [`connections/pinterest.md`](connections/pinterest.md) | `mcp__mcp-pinterest__*` tools (ToolSearch-only probe; headless scraping, no API key) |
 | Claude Design | Active | [`connections/claude-design.md`](connections/claude-design.md) | No MCP — bundle file probe; enables `/gdd:handoff` pipeline + bidirectional write-back via figma-writer |
@@ -26,12 +25,11 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 
 | Connection | scan | discover | plan | design | verify |
 |-----------|------|----------|------|--------|--------|
-| Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | — | — |
+| Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | write tokens/annotations/Code Connect via `use_figma` (FWR-01..04) | — |
 | Refero | — | reference search via `mcp__refero__search`; fallback → awesome-design-md (CONN-05) | — | — | — |
 | Preview | — | — | — | — | screenshots for `? VISUAL` checks (VIS-02) |
 | Storybook | — | component inventory (STB-01) | change-risk via story count (STB-02) | `.stories.tsx` stub (STB-03) | a11y per story (STB-02) |
 | Chromatic | — | — | change-risk scoping (CHR-02) | — | visual delta narration (CHR-01) |
-| Figma Writer | — | — | — | write tokens/annotations/Code Connect (FWR-01..04) | — |
 | Graphify | — | — | dependency scoping (GRF-03) | — | orphan detection (GRF-04) |
 | Pinterest | probe only | visual reference search via `pinterest_search`; fallback → Refero → awesome-design-md | — | — | — |
 | Claude Design | bundle probe → `claude_design: available` | synthesizer handoff mode — parses bundle → D-XX decisions; discussant `--from-handoff` confirms | — (skipped in handoff) | — (skipped in handoff) | Handoff Faithfulness section; bidirectional write-back via figma-writer `implementation-status` mode |
@@ -75,16 +73,18 @@ refero: not_configured
 
 **Figma probe (execute at stage entry, after reading STATE.md):**
 
+One probe covers both reads and writes — the remote Figma MCP is a single server exposing `get_metadata`, `get_variable_defs`, `get_design_context`, `get_screenshot`, and `use_figma` together.
+
 ```
 Step A1 — ToolSearch check:
-  ToolSearch({ query: "select:mcp__figma-desktop__get_metadata", max_results: 1 })
+  ToolSearch({ query: "select:mcp__figma__get_metadata", max_results: 1 })
   → Empty result      → figma: not_configured  (skip all Figma steps)
   → Non-empty result  → proceed to Step A2
 
 Step A2 — Live tool call:
-  call mcp__figma-desktop__get_metadata
-  → Success           → figma: available
-  → Error             → figma: unavailable  (skip all Figma steps)
+  call mcp__figma__get_metadata
+  → Success           → figma: available   (reads AND use_figma writes both available)
+  → Error             → figma: unavailable (skip all Figma steps)
 
 Write figma status to STATE.md <connections>.
 ```
@@ -156,19 +156,6 @@ Write chromatic status to STATE.md <connections>.
 
 Note: First Chromatic run has no baseline — all stories become new snapshots. This is expected; it establishes the baseline.
 
-**Figma Writer probe (execute before any write operation):**
-
-```
-Step R1 — ToolSearch check:
-  ToolSearch({ query: "mcp__figma__use_figma", max_results: 1 })
-  → Empty result      → figma_writer: not_configured
-  → Non-empty result  → figma_writer: available
-
-Write figma_writer status to STATE.md <connections>.
-```
-
-Note: figma_writer is a separate connection key from figma (desktop). Both can be active simultaneously. There is no `unavailable` state for figma_writer — the ToolSearch-only probe cannot detect auth failures; those surface at execution time.
-
 **Graphify probe (execute at agent entry, before using graph):**
 
 ```
@@ -189,7 +176,7 @@ Write graphify status to STATE.md <connections>.
 
 **Graceful degradation required:** stages MUST continue when a connection is `unavailable` or `not_configured`. Skip connection-dependent steps. If a missing connection prevents a `must_have` from being satisfied, append a `<blocker>` to `.design/STATE.md` and continue.
 
-For full per-connection fallback details, see the spec files: [`connections/figma.md`](connections/figma.md), [`connections/refero.md`](connections/refero.md), [`connections/preview.md`](connections/preview.md), [`connections/storybook.md`](connections/storybook.md), [`connections/chromatic.md`](connections/chromatic.md), [`connections/figma-writer.md`](connections/figma-writer.md), and [`connections/graphify.md`](connections/graphify.md).
+For full per-connection fallback details, see the spec files: [`connections/figma.md`](connections/figma.md), [`connections/refero.md`](connections/refero.md), [`connections/preview.md`](connections/preview.md), [`connections/storybook.md`](connections/storybook.md), [`connections/chromatic.md`](connections/chromatic.md), and [`connections/graphify.md`](connections/graphify.md).
 
 ---
 
@@ -203,7 +190,7 @@ To add a new connection to the pipeline:
 
 3. **Update the Capability Matrix.** Add a row for the new connection. Mark the stages it feeds with a short capability noun; use `—` for stages it does not affect.
 
-4. **Declare the MCP.** If the connection uses an MCP server, ensure the server is declared in `.claude-plugin/plugin.json` or documented as a user-supplied MCP in the spec file. For read-only MCP connections, use `connections/figma.md` as the model. For remote MCP write connections, use `connections/figma-writer.md` as the model.
+4. **Declare the MCP.** If the connection uses an MCP server, ensure the server is declared in `.claude-plugin/plugin.json` or documented as a user-supplied MCP in the spec file. For read+write remote MCPs, use `connections/figma.md` as the model. For read-only remote MCPs with headless / API-key-free setup, use `connections/pinterest.md`.
 
 5. **Wire into stage skills (Phase 2+ work).** Update the relevant stage `SKILL.md` files to probe the connection at entry and write its status to `.design/STATE.md <connections>`.
 

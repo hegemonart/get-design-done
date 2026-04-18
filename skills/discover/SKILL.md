@@ -22,9 +22,9 @@ user-invocable: true
    **A — Figma probe:**
 
    ```
-   A1. ToolSearch({ query: "select:mcp__figma-desktop__get_metadata", max_results: 1 })
+   A1. ToolSearch({ query: "select:mcp__figma__get_metadata", max_results: 1 })
    A2. Empty result → figma: not_configured (skip all Figma paths)
-       Non-empty result → call mcp__figma-desktop__get_metadata
+       Non-empty result → call mcp__figma__get_metadata
          Success → figma: available
          Error   → figma: unavailable
    ```

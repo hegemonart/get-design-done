@@ -41,7 +41,7 @@ Skip if `auto_mode=true`.
 
 ## Pre-execution — Project-local conventions
 
-When spawning the executor, include any `./.claude/skills/design-*-conventions.md` files in `<required_reading>` so the executor sees project-local design conventions (typography, color, layout, motion, component, interaction decisions codified from prior sketch wrap-ups). Also include any `~/.claude/gdd/global-skills/*.md` files if the directory exists � global skills are cross-project conventions that inform but do not override project-local D-XX decisions.
+When spawning the executor, include any `./.claude/skills/design-*-conventions.md` files in `<required_reading>` so the executor sees project-local design conventions (typography, color, layout, motion, component, interaction decisions codified from prior sketch wrap-ups). Also include any `~/.claude/gdd/global-skills/*.md` files if the directory exists � global skills are cross-project conventions that inform but do not override project-local D-XX decisions.
 
 ---
 
@@ -256,13 +256,13 @@ Next: /get-design-done:verify
 
 After design-executor has finished and DESIGN-PLAN.md tasks are complete:
 
-1. Read `figma_writer:` status from `.design/STATE.md` `<connections>`:
-   - If `figma_writer: not_configured` or absent → skip this block entirely (no prompt, no output)
-   - If `figma_writer: available` → proceed to step 2
+1. Read `figma:` status from `.design/STATE.md` `<connections>` (the unified remote MCP covers both reads and writes as of v1.0.7.1):
+   - If `figma: not_configured` or `figma: unavailable` or absent → skip this block entirely (no prompt, no output)
+   - If `figma: available` → proceed to step 2
 
 2. Offer the user a prompt:
    ```
-   figma-writer is available — propagate design decisions back to Figma?
+   figma write-back is available — propagate design decisions back to Figma?
    Modes: annotate (layer comments) | tokenize (variable bindings) | mappings (Code Connect)
    Run figma-write? (y/N):
    ```

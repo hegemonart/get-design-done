@@ -285,14 +285,13 @@ Every stage uses the same pattern: a thin orchestrator skill spawns specialized 
 
 All agents carry `default-tier: haiku|sonnet|opus` + `tier-rationale` in frontmatter. Every agent opens with `@reference/shared-preamble.md` so the first agent in a session pays full cost and the rest ride Anthropic's 5-minute prompt cache.
 
-### 9 Tool Connections
+### 8 Tool Connections
 
 Every connection is optional. The pipeline degrades gracefully — a grep-based fallback exists for every missing tool.
 
 | Connection | Type | Purpose |
 |-----------|------|---------|
-| Figma Desktop | MCP (`mcp__figma-desktop__*`) | Token extraction, design context pre-population |
-| Figma Writer | MCP (`mcp__figma__use_figma`) | Write decisions back to Figma (annotate, tokenize, Code Connect) |
+| Figma | MCP (`mcp__figma__*`, remote) | Token extraction, design context pre-population, write-back via `use_figma` (annotate, tokenize, Code Connect) |
 | Refero | MCP (`mcp__refero__*`) | Reference design search during exploration |
 | Pinterest | MCP (`mcp__mcp-pinterest__*`) | Visual inspiration boards alongside Refero |
 | Preview (Playwright) | MCP (`mcp__Claude_Preview__*`) | Live page screenshots for visual verification |
@@ -443,13 +442,15 @@ Full command reference with argument specs: [`SKILL.md`](SKILL.md).
 
 All connections are optional — the pipeline degrades gracefully when any connection is unavailable.
 
-### Figma MCP
+### Figma MCP (reads + writes)
 
-When the official Figma Desktop MCP is active, `explore` reads Figma variables and pre-populates design decisions from your file. Falls back to code-only analysis. Setup: [`connections/figma.md`](connections/figma.md).
+One remote MCP covers both reads and writes as of v1.0.7.1. When it is active, `explore` reads Figma variables and pre-populates design decisions from your file, and `design-figma-writer` writes decisions back via `use_figma` — annotates frames, tokenizes local styles, registers Code Connect mappings. Proposal → confirm discipline with `--dry-run` and `--confirm-shared` guards. Falls back to code-only analysis when the MCP is not configured. One install command unlocks both:
 
-### Figma Writer MCP
+```
+claude mcp add figma --transport http https://mcp.figma.com/v1/sse
+```
 
-`design-figma-writer` writes decisions back to Figma via the remote `use_figma` MCP — annotates frames, tokenizes local styles, registers Code Connect mappings. Proposal → confirm discipline with `--dry-run` and `--confirm-shared` guards. Setup: [`connections/figma-writer.md`](connections/figma-writer.md).
+Setup: [`connections/figma.md`](connections/figma.md). If you previously installed the local `figma-desktop` MCP, you can remove it — its read tools are now exposed on the remote server.
 
 ### Refero MCP
 
@@ -623,7 +624,7 @@ lint → validate → test (matrix) → security + size-budget
 - **Agent hygiene** — frontmatter completeness, line-count tier budgets, required-reading path validity, `/gdd:` namespace consistency
 - **System contracts** — config schema, command↔skill parity, hooks integrity, atomic writes to `.design/STATE.md`, frontmatter parser edge cases, model-profile resolution, `/gdd:health` output shape, worktree safety, semver bump sequence, STATE-TEMPLATE drift
 - **Pipeline + data** — end-to-end smoke on `test-fixture/`, mapper JSON-schema validation (tokens, components, a11y, motion, hierarchy), parallelism-engine decision table, `Touches:` field parsing, cycle lifecycle, `.design/intel/` incremental-update correctness, regression-baseline drift detector
-- **Feature correctness** — `/gdd:sketch` variant determinism, 9-connection probe contracts with mocked MCPs, `design-figma-writer` dry-run discipline, `design-reflector` proposal-only shape, deprecated-name redirects, NNG heuristic coverage, injection-scanner hook behavior, optimization-layer schema enforcement
+- **Feature correctness** — `/gdd:sketch` variant determinism, 8-connection probe contracts with mocked MCPs, `design-figma-writer` dry-run discipline, `design-reflector` proposal-only shape, deprecated-name redirects, NNG heuristic coverage, injection-scanner hook behavior, optimization-layer schema enforcement
 
 ### Release automation
 

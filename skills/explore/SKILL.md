@@ -19,9 +19,9 @@ Probe connection availability and update `.design/STATE.md` `<connections>`:
 
 **A — Figma probe:**
 ```
-ToolSearch({ query: "select:mcp__figma-desktop__get_metadata", max_results: 1 })
+ToolSearch({ query: "select:mcp__figma__get_metadata", max_results: 1 })
 Empty → figma: not_configured
-Non-empty → call mcp__figma-desktop__get_metadata; success → available; error → unavailable
+Non-empty → call mcp__figma__get_metadata; success → available; error → unavailable
 ```
 
 **B — Refero probe:**

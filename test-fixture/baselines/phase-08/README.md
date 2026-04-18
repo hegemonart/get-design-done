@@ -17,7 +17,7 @@ This directory locks the baseline for Phase 8 of the get-design-done plugin.
 | Preview | connections/preview.md | Visual screenshots in verify |
 | Storybook | connections/storybook.md | Component inventory + a11y |
 | Chromatic | connections/chromatic.md | Visual regression delta |
-| Figma Writer | connections/figma-writer.md | Write decisions to Figma |
+| Figma Writer | connections/figma.md (as of v1.0.7.1; Phase 13.1 folded the deleted `connections/figma-writer.md` into the unified spec) | Write decisions to Figma |
 | Graphify | connections/graphify.md | Knowledge graph pre-search |
 
 ## New Commands

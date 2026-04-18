@@ -39,17 +39,17 @@ At scan entry, before running any step:
 
 Run both probes below. MCP tools may be in the deferred tool set — **always call ToolSearch first**; without it, a deferred tool invocation fails silently.
 
-**Figma probe:**
+**Figma probe (single probe covers both reads and writes — remote MCP exposes `get_metadata`, `get_variable_defs`, `use_figma` on the same server):**
 
 ```
 Step A1 — ToolSearch check:
-  ToolSearch({ query: "select:mcp__figma-desktop__get_metadata", max_results: 1 })
+  ToolSearch({ query: "select:mcp__figma__get_metadata", max_results: 1 })
   → Empty result      → figma: not_configured  (skip all Figma steps)
   → Non-empty result  → proceed to Step A2
 
 Step A2 — Live tool call:
-  call mcp__figma-desktop__get_metadata
-  → Success           → figma: available
+  call mcp__figma__get_metadata
+  → Success           → figma: available   (reads AND use_figma writes both available)
   → Error             → figma: unavailable  (skip all Figma steps)
 ```
 
@@ -66,7 +66,9 @@ Note: scan probes **both** connections because the State Integration block is th
 
 ### Phase 8 Connection Probes
 
-Run all 5 Phase 8 probes at scan entry. Results are written to STATE.md `<connections>` so downstream stages (verify, compare, darkmode, plan, design) do not re-probe unless needed.
+Run all 4 Phase 8 probes at scan entry. Results are written to STATE.md `<connections>` so downstream stages (verify, compare, darkmode, plan, design) do not re-probe unless needed.
+
+Note: as of v1.0.7.1, Figma is a single connection (`figma:` key) covering reads + writes — no separate `figma_writer:` probe. The Wave A Figma probe above is the sole Figma availability check.
 
 **preview:**
 
@@ -118,17 +120,6 @@ Step C2 — Token check:
 Write: chromatic: <status> to STATE.md <connections>
 ```
 
-**figma_writer:**
-
-```
-ToolSearch({ query: "select:mcp__figma__use_figma", max_results: 1 })
-→ Empty result      → figma_writer: not_configured
-→ Non-empty result  → figma_writer: available
-
-Write: figma_writer: <status> to STATE.md <connections>
-Note: ToolSearch-only probe (same pattern as Refero). No live call at scan time.
-```
-
 **graphify:**
 
 ```
@@ -145,7 +136,7 @@ Step G2 — Graph file check:
 Write: graphify: <status> to STATE.md <connections>
 ```
 
-After all 5 probes, STATE.md `<connections>` contains all 5 status entries. Downstream plans (08-02 through 08-05) read these values without re-probing.
+After all 4 probes, STATE.md `<connections>` contains all 4 status entries (plus the Wave A `figma:` and `refero:` probes = 6 total entries). Downstream plans (08-02 through 08-05) read these values without re-probing.
 
 ### Write STATE.md
 
@@ -158,7 +149,6 @@ refero: <available | not_configured>
 preview: <available | unavailable | not_configured>
 storybook: <available | unavailable | not_configured>
 chromatic: <available | unavailable | not_configured>
-figma_writer: <available | not_configured>
 graphify: <available | unavailable | not_configured>
 </connections>
 ```
@@ -238,7 +228,7 @@ Produce a color inventory table:
 
 ### If `figma: available`
 
-Call `mcp__figma-desktop__get_variable_defs` (no arguments — returns all variables in the active Figma file).
+Call `mcp__figma__get_variable_defs` (no arguments — returns all variables in the active Figma file).
 
 > If no Figma file is open, the call errors. Treat any error as a graceful skip: update STATE.md `<connections>` to `figma: unavailable` and continue with Step 2 results only.
 
