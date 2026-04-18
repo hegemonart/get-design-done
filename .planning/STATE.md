@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 13.3 Plan 05 complete (6 safe-window skills wired to .design/update-available.md; audit frontmatter gains Bash)
-last_updated: "2026-04-18T22:18:49.000Z"
-last_activity: 2026-04-18
+stopped_at: Phase 13.3 Plan 06 complete — Phase 13.3 SHIPPED at v1.0.7.3 (manifests + CHANGELOG + baseline; release.yml will auto-tag on merge-to-main)
+last_updated: "2026-04-18T22:26:02.000Z"
+last_activity: 2026-04-19
 progress:
   total_phases: 19
-  completed_phases: 14
-  total_plans: 63
-  completed_plans: 63
-  percent: 74
+  completed_phases: 15
+  total_plans: 64
+  completed_plans: 64
+  percent: 79
 ---
 
 # Project State
@@ -25,17 +25,17 @@ See: .planning/PROJECT.md (updated 2026-04-17)
 
 ## Current Position
 
-Phase: 13.3 (Plugin Update Checker) — IN PROGRESS (plan 05 of 06 complete)
+Phase: 13.3 (Plugin Update Checker) — COMPLETE (6 of 6 plans done)
 Last shipped: **v1.0.7** at https://github.com/hegemonart/get-design-done/releases/tag/v1.0.7
-Target version (13.3 closeout): v1.0.7.3
-Next plan: 13.3-06 (Phase-13.3 baseline relock + CHANGELOG entry + plugin.json / marketplace.json bump to v1.0.7.3)
-Last activity: 2026-04-18
+Pending release: v1.0.7.3 (manifests + CHANGELOG + baseline ready; release.yml auto-tags on merge-to-main)
+Next phase: 14 (AI-Native Design Tool Connections — paper.design + pencil.dev) — discuss + plan
+Last activity: 2026-04-19
 
-Resume file: .planning/phases/13.3-plugin-update-checker/13.3-06-PLAN.md
+Resume file: .planning/phases/14-ai-native-design-tool-connections/14-CONTEXT.md (to be created during discuss-phase)
 
-Progress: [████████████████░░░░] 74% (14/19 phases complete through v1.0.7)
+Progress: [████████████████▒░░░] 79% (15/19 phases complete; v1.0.7.3 in flight, awaits merge-to-main auto-tag)
 
-## Phases completed (through v1.0.7)
+## Phases completed (through v1.0.7.3)
 
 | Phase | Version | Shipped |
 |-------|---------|---------|
@@ -53,6 +53,7 @@ Progress: [████████████████░░░░] 74% (14
 | 11 — Self-Improvement | v1.0.5 | 2026-04-18 |
 | 12 — Test Coverage | v1.0.6 | 2026-04-18 |
 | 13 — CI/CD | v1.0.7 | 2026-04-18 |
+| 13.3 — Plugin Update Checker (INSERTED) | v1.0.7.3 | 2026-04-19 (auto-tagged on merge-to-main) |
 
 ## Open follow-ups
 
@@ -115,6 +116,7 @@ Progress: [████████████████░░░░] 74% (14
 | Phase 13.3 P03 | ~3 min | 1 tasks | 1 files |
 | Phase 13.3 P04 | ~2 min | 1 tasks | 1 files |
 | Phase 13.3 P05 | ~2 min | 2 tasks | 6 files |
+| Phase 13.3 P06 | ~3 min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -238,6 +240,10 @@ Progress: [████████████████░░░░] 74% (14
 - [Phase 13.3-04]: Dispatcher-skill pattern — `/gdd:check-update` is a thin router: `--refresh` delegates to the hot-path hook (13.3-02), `--prompt` spawns the cold-path Haiku agent (13.3-03), `--dismiss` handles the only skill-local mutation (atomic config write); no-flag default prints cached state and auto-refreshes if cache >24h old
 - [Phase 13.3-05]: Safe-window surface wiring pattern — each of the 6 D-15 skills appends a one-line `[ -f .design/update-available.md ] && cat .design/update-available.md` immediately before its `## <NAME> COMPLETE` marker; render logic stays in the hot-path hook (13.3-02), skills own zero state-machine or dismissal logic; narrative prose alongside the conditional documents the three silent-on-absence conditions (no newer release / state-machine guard / per-version dismissal)
 - [Phase 13.3-05]: audit frontmatter tools-list expansion is additive only — `Read, Write, Task, Glob` → `Read, Write, Task, Glob, Bash`; ship + complete-cycle already listed Bash (for `gh pr create` / `mkdir -p` respectively); surface-list discipline per D-15 is enforced by grepping mid-pipeline skills (brief/explore/plan/design/verify) MUST NOT contain `update-available.md`
+- [Phase 13.3-06]: Four-way version sync — `package.json` joins `plugin.json` + `marketplace.json.metadata.version` + `marketplace.json.plugins[0].version` as the canonical version sources; `scripts/verify-version-sync.cjs` (Phase 13) checks all four. Plan-level wording naming only the two `.claude-plugin/` files was incomplete; `package.json` bump is also required for release CI to pass — applied via Rule 3 (blocking auto-fix)
+- [Phase 13.3-06]: Off-cadence patch ships at 1.0.7.3 — does NOT shift Phase 14 → v1.0.8; the integer is preserved for the next feature milestone (AI-native design tool connections). Pattern: decimal phases ship as `<latest-integer>.<decimal>` patch versions on top of the most recently shipped integer release
+- [Phase 13.3-06]: Phase-13.3 baseline is manifest-only (BASELINE.md + README.md, no `intel/*.json`) — fixture is small enough that `build-intel.cjs` produces no deterministic intel slices, matching phase-13's pattern exactly. `tests/regression-baseline-drift.test.cjs` auto-recognizes the new directory by shape
+- [Phase 13.3-06]: Relock-snippet portability — explicit `REPO_ROOT="$(pwd)"` capture replaces any reliance on shell variables that are only populated after a `cd` (anti-pattern would crash under fresh shell / CI runner / subshell with `set -u`); enforced by acceptance criterion `! grep -q '\$OLDPWD'`
 
 ### Roadmap Evolution
 
@@ -254,6 +260,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T22:18:49.000Z
-Stopped at: Phase 13.3 Plan 05 complete — 6 safe-window skills (progress, health, help, ship, complete-cycle, audit) each append `[ -f .design/update-available.md ] && cat .design/update-available.md` before their `## <NAME> COMPLETE` marker; audit frontmatter tools list expanded from `Read, Write, Task, Glob` to `Read, Write, Task, Glob, Bash`; mid-pipeline skills (brief/explore/plan/design/verify) verified untouched; Phase 12 contract tests green.
-Resume file: .planning/phases/13.3-plugin-update-checker/13.3-06-PLAN.md
+Last session: 2026-04-18T22:26:02.000Z
+Stopped at: Phase 13.3 Plan 06 complete — Phase 13.3 SHIPPED at v1.0.7.3. plugin.json + marketplace.json (both fields) + package.json all bumped 1.0.7 → 1.0.7.3 (4-way sync verified by `scripts/verify-version-sync.cjs`); CHANGELOG.md gains `## [1.0.7.3] — 2026-04-19` section above [1.0.7] (Keep-a-Changelog format, parses cleanly via `scripts/extract-changelog-section.cjs`); `test-fixture/baselines/phase-13.3/` directory created with BASELINE.md (47 lines) + README.md (37 lines, uses `REPO_ROOT="$(pwd)"`, no $OLDPWD); `tests/regression-baseline-drift.test.cjs` auto-recognizes new phase-13.3 directory; `release-smoke-test.cjs --baseline test-fixture/baselines/phase-13.3` exits 0. Phase 13's `release.yml` will auto-tag `v1.0.7.3` on merge-to-main.
+Resume file: .planning/phases/14-ai-native-design-tool-connections/14-CONTEXT.md (to be created during discuss-phase)
