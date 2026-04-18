@@ -352,11 +352,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 10-01-PLAN.md — `.design/intel/` schema (`reference/intel-schema.md`) + initial index builder + `gdd-intel-updater` agent for incremental updates (KNW-01, KNW-02)
-- [ ] 10-02-PLAN.md — `/gdd:analyze-dependencies` command; token fan-out, component call-graph, decision traceability, circular dep detection; graph queries atop intel store (KNW-03)
-- [ ] 10-03-PLAN.md — `/gdd:skill-manifest` + `/gdd:extract-learnings`; `.design/learnings/` artifact layout; reference-file proposal generator with user-review flow (KNW-04, KNW-05)
-- [ ] 10-04-PLAN.md — Architectural Responsibility Mapping + Flow-diagram directive in phase-researcher; Mermaid generation; DESIGN-CONTEXT.md section addition (KNW-06)
-- [ ] 10-05-PLAN.md — Context-exhaustion auto-recording hook; STATE.md `<paused>` resumption block; agent `<required_reading>` conditional intel slices; Graphify → intel store feed (KNW-07, KNW-08, KNW-09, KNW-10)
+- [x] 10-01-PLAN.md — `.design/intel/` schema (`reference/intel-schema.md`) + initial index builder + `gdd-intel-updater` agent for incremental updates (KNW-01, KNW-02)
+- [x] 10-02-PLAN.md — `/gdd:analyze-dependencies` command; token fan-out, component call-graph, decision traceability, circular dep detection; graph queries atop intel store (KNW-03)
+- [x] 10-03-PLAN.md — `/gdd:skill-manifest` + `/gdd:extract-learnings`; `.design/learnings/` artifact layout; reference-file proposal generator with user-review flow (KNW-04, KNW-05)
+- [x] 10-04-PLAN.md — Architectural Responsibility Mapping + Flow-diagram directive in phase-researcher; Mermaid generation; DESIGN-CONTEXT.md section addition (KNW-06)
+- [x] 10-05-PLAN.md — Context-exhaustion auto-recording hook; STATE.md `<paused>` resumption block; agent `<required_reading>` conditional intel slices; Graphify → intel store feed (KNW-07, KNW-08, KNW-09, KNW-10)
 - [ ] 10-06-PLAN.md — **Phase closeout**: bump version to v1.0.4; refresh README.md (knowledge layer section, intel store, new commands: analyze-dependencies, skill-manifest, extract-learnings); refresh plugin.json + marketplace.json (version, description, keywords — add "knowledge-graph", "intel"); append CHANGELOG.md v1.0.4 entry; lock regression baseline at `test-fixture/baselines/phase-10/` (MAN-09, MAN-10)
 
 ### Phase 10.1: Optimization Layer + Cost Governance (INSERTED)
@@ -674,7 +674,7 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | 7. GSD Parity + Exploration — Discussant, Ergonomics, Sketch/Spike, Pipeline Reshape | 0/17 (7 Wave A + 6 Wave B + 4 Wave C incl. closeout) | Planned | v1.0.1 | - |
 | 8. Visual + Design-Side Connections + Knowledge Graph | 7/7 (6 feature + 1 closeout) | Complete | v1.0.2 | 2026-04-18 |
 | 9. Claude Design Integration + Pinterest Connection | 0/8 (7 provisional + 1 closeout — replan after 7 + 8) | Planned | v1.0.3 | - |
-| 10. Knowledge Layer — `.design/intel/`, learnings, dependencies, responsibility mapping | 0/6 (5 feature + 1 closeout) | Planned | v1.0.4 | - |
+| 10. Knowledge Layer — `.design/intel/`, learnings, dependencies, responsibility mapping | 6/6 (5 feature + 1 closeout) | Complete | v1.0.4 | 2026-04-18 |
 | **10.1. Optimization Layer + Cost Governance (INSERTED)** — router, cache manager, budget enforcement, telemetry, model tiers, lazy spawning, /gdd:optimize | 0/6 (5 feature + 1 closeout) | Planned | v1.0.4.1 | - |
 | 11. Self-Improvement — reflector, frontmatter feedback, reference-update proposer, budget feedback, global skills | 0/5 (4 feature + 1 closeout) | Planned | v1.0.5 | - |
 | 12. Test Coverage — ported GSD patterns + gdd-unique tests + optimization-layer tests + basic CI + regression baselines | 2/7 (6 plans + 1 closeout across 3 waves) | In Progress | v1.0.6 | - |

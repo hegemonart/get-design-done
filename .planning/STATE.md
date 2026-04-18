@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 08-05-PLAN.md
-last_updated: "2026-04-18T03:07:46.217Z"
+stopped_at: Merged Phase 10 into main
+last_updated: "2026-04-18T12:00:00.000Z"
 last_activity: 2026-04-18
 progress:
   total_phases: 15
-  completed_phases: 6
+  completed_phases: 9
   total_plans: 55
-  completed_plans: 33
-  percent: 60
+  completed_plans: 45
+  percent: 82
 ---
 
 # Project State
@@ -172,6 +172,9 @@ Progress: [████████░░] 81%
 - [Phase ?]: Graphify probe is CLI/file-based (config flag + graph.json existence), not ToolSearch — distinct from all MCP connections
 - [Phase ?]: Graph is a seed list for grep, never a replacement — agents always grep after graph query
 - [Phase ?]: All Graphify steps are conditional opt-in: skip gracefully when not_configured or unavailable
+- [Phase 10-04]: ARM tier vocabulary
+- [Phase 10-04]: Flow diagram uses Mermaid flowchart TD
+- [Phase 10-04]: Researcher MUST produce ARM + Flow Diagram in DESIGN-CONTEXT.md
 
 ### Pending Todos
 
@@ -183,6 +186,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T03:07:46.210Z
-Stopped at: Completed 08-05-PLAN.md
+Last session: 2026-04-18T12:00:00.000Z
+Stopped at: Merged Phase 10 into main
 Resume file: None

@@ -1,8 +1,8 @@
 {
   "name": "get-design-done",
   "short_name": "gdd",
-  "version": "1.0.3",
-  "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22 specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), handoff-first workflow via Claude Design bundles, and bidirectional Figma write-back (annotations, Code Connect). Standalone commands: style, darkmode, compare, figma-write, graphify, handoff. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
+  "version": "1.0.4",
+  "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22+ specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), handoff-first workflow via Claude Design bundles, bidirectional Figma write-back (annotations, Code Connect), and a queryable intel store (`.design/intel/`) for O(1) design surface lookups (dependencies, learnings, manifests). Standalone commands: style, darkmode, compare, figma-write, graphify, handoff, analyze-dependencies, skill-manifest, extract-learnings. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
@@ -33,7 +33,9 @@
     "handoff",
     "claude-design",
     "pinterest",
-    "bidirectional"
+    "bidirectional",
+    "knowledge-graph",
+    "intel-store"
   ],
   "skills": ["./", "./skills/"],
   "hooks": "./hooks/hooks.json"

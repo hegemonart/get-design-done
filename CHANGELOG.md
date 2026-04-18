@@ -4,6 +4,30 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.0.4] — 2026-04-18
+
+### Added — Phase 10: Knowledge Layer
+
+- **Intel store** (`.design/intel/`): queryable JSON slices indexing all files, exports, symbols, tokens, components, patterns, dependencies, decisions, debt, and a cross-reference graph
+- `scripts/build-intel.cjs` — full initial index builder with mtime + git-hash incremental updates
+- `agents/gdd-intel-updater` — incremental intel store updater agent
+- `/gdd:analyze-dependencies` — token fan-out, component call-graph, decision traceability, circular dependency detection (all O(1) from intel store)
+- `/gdd:skill-manifest` — browse all skills and agents from intel store; fallback to directory scan
+- `/gdd:extract-learnings` — extract project-specific patterns from `.design/` artifacts; propose reference/ additions with user review flow
+- `agents/gdd-learnings-extractor` — structured learning entry extractor; writes `.design/learnings/LEARNINGS.md`
+- `agents/gdd-graphify-sync` — feeds Graphify knowledge graph from intel store `graph.json`
+- `hooks/context-exhaustion.js` — PostToolUse hook: auto-records `<paused>` STATE.md block at 85% context
+- `reference/intel-schema.md` — authoritative schema reference for all ten intel slices
+- `design-phase-researcher` — now produces `## Architectural Responsibility Map` and `## Flow Diagram` (Mermaid) in every DESIGN-CONTEXT.md
+- Five core agents (design-context-builder, design-executor, design-verifier, design-phase-researcher, design-planner) now include conditional `@.design/intel/` required-reading blocks
+
+### Changed
+
+- Plugin version: 1.0.3 → 1.0.4
+- `hooks/hooks.json`: added context-exhaustion PostToolUse entry (fires on all tools)
+
+---
+
 ## [1.0.3] — 2026-04-18
 
 ### Added — Phase 9: Claude Design Integration + Pinterest Connection

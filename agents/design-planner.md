@@ -338,4 +338,11 @@ You MUST NOT:
 
 ---
 
+## Required reading (conditional)
+
+@.design/intel/files.json (if present)
+@.design/intel/decisions.json (if present)
+@.design/intel/dependencies.json (if present)
+@.design/intel/graph.json (if present)
+
 ## PLANNING COMPLETE

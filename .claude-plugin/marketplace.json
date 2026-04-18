@@ -4,15 +4,15 @@
     "name": "hegemonart"
   },
   "metadata": {
-    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), handoff-first workflow, bidirectional Figma write-back, and 22 specialized agents.",
-    "version": "1.0.3"
+    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 9 connections, handoff-first workflow, bidirectional Figma write-back, 22+ specialized agents, and a queryable knowledge layer (intel store, dependency analysis, learnings extraction).",
+    "version": "1.0.4"
   },
   "plugins": [
     {
       "name": "get-design-done",
       "source": "./",
-      "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22 specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), Claude Design handoff, and bidirectional Figma write-back. Standalone commands: style, darkmode, compare, figma-write, graphify, handoff. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
-      "version": "1.0.3",
+      "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22+ specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), Claude Design handoff, bidirectional Figma write-back, and a queryable intel store (.design/intel/) for dependency and learnings queries. Standalone commands: style, darkmode, compare, figma-write, graphify, handoff, analyze-dependencies, skill-manifest, extract-learnings. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
+      "version": "1.0.4",
       "author": {
         "name": "hegemonart"
       },
@@ -44,7 +44,9 @@
         "handoff",
         "claude-design",
         "pinterest",
-        "bidirectional"
+        "bidirectional",
+        "knowledge-graph",
+        "intel-store"
       ]
     }
   ]

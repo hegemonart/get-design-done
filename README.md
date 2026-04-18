@@ -79,6 +79,59 @@ Each stage is orchestrated by a thin skill that spawns specialized agents:
 
 All pipeline artifacts are written to `.design/` inside your project.
 
+## Knowledge Layer (v1.0.4)
+
+The knowledge layer gives the design pipeline persistent memory and O(1) lookups
+across all design surface files.
+
+### Intel Store (`.design/intel/`)
+
+A queryable set of JSON slices that index the design surface:
+
+| Slice | Contents |
+|-------|----------|
+| `files.json` | All tracked skill/agent/reference/script/hook files with mtime and git hash |
+| `exports.json` | Named exports: skill commands and agent names |
+| `symbols.json` | Markdown headings and section anchors |
+| `tokens.json` | Design token references (color, spacing, typography, radius) |
+| `components.json` | Component names and their referencing files |
+| `patterns.json` | Design pattern classifications by concern |
+| `dependencies.json` | @-reference and reads-from relationships |
+| `decisions.json` | Architectural decisions from DESIGN-CONTEXT.md |
+| `debt.json` | Design debt items from DESIGN-DEBT.md |
+| `graph.json` | Cross-reference graph: nodes (files) + edges (dependencies) |
+
+Build the intel store: `node scripts/build-intel.cjs --force`
+Incremental updates: invoke the `gdd-intel-updater` agent after any file edits.
+
+### New Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/gdd:analyze-dependencies` | Token fan-out, component call-graph, decision traceability, circular dep detection |
+| `/gdd:skill-manifest` | Browse all registered skills and agents from the intel store |
+| `/gdd:extract-learnings` | Extract project patterns from `.design/` artifacts → propose reference updates |
+
+### New Agents
+
+| Agent | Purpose |
+|-------|---------|
+| `gdd-intel-updater` | Incremental intel store rebuilder |
+| `gdd-learnings-extractor` | Structured learning entry extractor |
+| `gdd-graphify-sync` | Feeds Graphify knowledge graph from intel store |
+
+### Context Exhaustion Hook
+
+A `PostToolUse` hook (`hooks/context-exhaustion.js`) auto-records a `<paused>` resumption
+block in `.design/STATE.md` when session context reaches 85%. Run `/gdd:resume` in the next
+session to restore context.
+
+### Architectural Responsibility Map
+
+`design-phase-researcher` now produces two new sections in every `DESIGN-CONTEXT.md`:
+- **Architectural Responsibility Map** — file/module → tier → responsibility table
+- **Flow Diagram** — Mermaid flowchart of the main user workflow
+
 ## Connections (optional)
 
 The pipeline integrates with seven external tools and MCPs. All connections are optional — the pipeline degrades gracefully when any connection is unavailable.

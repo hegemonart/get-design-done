@@ -592,3 +592,10 @@ PASS (all dimensions PASS) | PARTIAL (any PARTIAL, no FAIL) | FAIL (any FAIL)
 - Run `grep` / `bash` commands for static analysis and token-violation detection
 - Write `.design/DESIGN-VERIFICATION.md`
 - Write a `<blocker>` entry to `.design/STATE.md` if verification cannot complete (file not found, etc.) — always emit `## VERIFICATION COMPLETE` after doing so
+
+## Required reading (conditional)
+
+@.design/intel/tokens.json (if present)
+@.design/intel/components.json (if present)
+@.design/intel/debt.json (if present)
+@.design/intel/decisions.json (if present)

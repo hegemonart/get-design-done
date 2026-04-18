@@ -19,6 +19,14 @@
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-read-injection-scanner.js\""
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/context-exhaustion.js\""
+          }
+        ]
       }
     ]
   }

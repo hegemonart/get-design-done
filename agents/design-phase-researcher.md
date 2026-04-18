@@ -137,4 +137,89 @@ You MUST NOT:
 
 ---
 
+## Output section: Architectural Responsibility Map
+
+The researcher MUST add an `## Architectural Responsibility Map` section to DESIGN-CONTEXT.md.
+
+**Purpose:** Assign every significant file or module in the design surface to an architectural tier and one-sentence responsibility. Downstream agents and the GSD planner use this to route tasks to the correct layer without codebase exploration.
+
+**Format to write into DESIGN-CONTEXT.md:**
+
+```markdown
+## Architectural Responsibility Map
+
+| File / Module | Tier | Responsibility |
+|---------------|------|----------------|
+| skills/scan/SKILL.md | command | Entry-point: orchestrates codebase scan and populates .design/DESIGN.md |
+| agents/design-executor.md | agent | Executes design plan tasks; writes DESIGN-SUMMARY.md |
+| reference/accessibility.md | reference | WCAG thresholds and contrast rules; read by verifier and auditor |
+| connections/figma.md | connection | Figma MCP integration contract; consumed by figma-write and scan |
+| scripts/build-intel.cjs | infrastructure | Builds .design/intel/ slices; run at phase start and after edits |
+```
+
+**Tier vocabulary:**
+
+| Tier | Description |
+|------|-------------|
+| command | User-facing /gdd: skill file |
+| agent | Specialized subagent invoked by commands |
+| reference | Static knowledge base read by agents |
+| connection | External integration contract doc |
+| infrastructure | Script, hook, or config consumed by the pipeline |
+| test | Test file — validates other layers |
+
+**Population rules:**
+1. Include every file in `skills/`, `agents/`, `reference/`, `connections/`, `scripts/`, `hooks/`
+2. Skip test files if there are more than 10 (summarise as "tests/ — test layer")
+3. One row per file. For agents with many small files, one row per directory is acceptable.
+4. Responsibility column: one sentence, verb-first (Orchestrates, Validates, Provides, Writes, Reads, Builds, Connects)
+
+---
+
+## Output section: Flow Diagram
+
+The researcher MUST add a `## Flow Diagram` section to DESIGN-CONTEXT.md immediately after the Architectural Responsibility Map.
+
+**Purpose:** Visualise the main user workflow as a Mermaid flowchart. Downstream agents and plan executors can reference this diagram to understand control flow without tracing code.
+
+**Format to write into DESIGN-CONTEXT.md:**
+
+````markdown
+## Flow Diagram
+
+```mermaid
+flowchart TD
+    A["/gdd:scan"] --> B["design-context-builder\n(builds DESIGN-CONTEXT.md)"]
+    B --> C["/gdd:discover"]
+    C --> D["design-phase-researcher\n(builds DESIGN-CONTEXT.md addendum)"]
+    D --> E["/gdd:plan"]
+    E --> F["design-planner\n(builds DESIGN-PLAN.md)"]
+    F --> G["/gdd:design"]
+    G --> H["design-executor\n(executes plan tasks)"]
+    H --> I["/gdd:verify"]
+    I --> J["design-verifier\n(builds DESIGN-VERIFICATION.md)"]
+    J --> K{Pass?}
+    K -- Yes --> L["/gdd:complete-cycle"]
+    K -- No --> G
+```
+````
+
+**Diagram rules:**
+1. Use `flowchart TD` (top-down). Do not use `graph` syntax.
+2. Each node represents a command or agent invocation — not an implementation file.
+3. Show the primary happy path. Add a single retry/failure edge where meaningful.
+4. Maximum 12 nodes. If the workflow has more stages, show only the main trunk and annotate branches with a comment.
+5. Node labels: commands in `/gdd:name` format, agents in `agent-name\n(one-line purpose)` format.
+6. The researcher adapts the diagram to reflect the actual project workflow observed during its research — the example above is the default GDD pipeline. If the project has custom commands or a different stage order, update accordingly.
+
+---
+
+## Required reading (conditional)
+
+@.design/intel/files.json (if present)
+@.design/intel/exports.json (if present)
+@.design/intel/patterns.json (if present)
+@.design/intel/dependencies.json (if present)
+@.design/intel/graph.json (if present)
+
 ## RESEARCH COMPLETE
