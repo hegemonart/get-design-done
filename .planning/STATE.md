@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0.0
+milestone: v1.0.7.2
 milestone_name: milestone
-status: Executing Phase 13.2
-stopped_at: Completed 13.2-03-PLAN.md
-last_updated: "2026-04-19T22:08:30.000Z"
-last_activity: 2026-04-19 -- Phase 13.2 Plan 03 complete (/gdd:watch-authorities skill + reflector wire-up, reflector agent UNTOUCHED)
+status: Phase 13.2 COMPLETE — v1.0.7.2 shipped
+stopped_at: Completed 13.2-04-PLAN.md — Phase 13.2 closed
+last_updated: "2026-04-19T22:21:50.000Z"
+last_activity: 2026-04-19 -- Phase 13.2 complete (v1.0.7.2 shipped — rejected-kinds + watcher-diff-structural-v1 tests; atomic manifests bump; CHANGELOG + README; 233/0/1 suite green)
 progress:
   total_phases: 21
   completed_phases: 1
   total_plans: 17
-  completed_plans: 12
-  percent: 58
+  completed_plans: 13
+  percent: 62
 ---
 
 # Project State
@@ -25,15 +25,16 @@ See: .planning/PROJECT.md (updated 2026-04-17)
 
 ## Current Position
 
-Phase: 13.2 (external-authority-watcher) — EXECUTING
-Plan: 4 of 4 (13.2-01, 13.2-02, 13.2-03 complete)
-Released: **v1.0.7** at https://github.com/hegemonart/get-design-done/releases/tag/v1.0.7
+Phase: 13.2 (external-authority-watcher) — **COMPLETE**
+Plan: 4 of 4 (ALL PLANS SHIPPED)
+Shipping: **v1.0.7.2** — off-cadence decimal patch (skips 1.0.7.1, reserved for Phase 13.1)
+Previous release: v1.0.7 at https://github.com/hegemonart/get-design-done/releases/tag/v1.0.7
 Next phase: 14 (AI-Native Design Tool Connections) — not yet started
-Last activity: 2026-04-19 -- Phase 13.2 Plan 03 complete (/gdd:watch-authorities skill + reflector wire-up, reflector agent UNTOUCHED)
+Last activity: 2026-04-19 -- Phase 13.2 Plan 04 complete (rejected-kinds + watcher-diff-structural-v1 CI tests; atomic v1.0.7.2 bump across 3 manifests; CHANGELOG + README shipped; full test suite 233/0/1 green; schemas + semver-compare relaxed via Rule 3 to accept the locked 4-segment off-cadence version)
 
-Resume file: .planning/phases/13.2-external-authority-watcher/13.2-04-PLAN.md
+Resume file: (none — Phase 13.2 closed; Phase 14 discuss-phase is next)
 
-Progress: [████████████████░░░░] 74% (14/19 phases complete through v1.0.7)
+Progress: [█████████████████░░░] 79% (15/19 phases complete through v1.0.7.2)
 
 ## Phases completed (through v1.0.7)
 
@@ -53,6 +54,7 @@ Progress: [████████████████░░░░] 74% (14
 | 11 — Self-Improvement | v1.0.5 | 2026-04-18 |
 | 12 — Test Coverage | v1.0.6 | 2026-04-18 |
 | 13 — CI/CD | v1.0.7 | 2026-04-18 |
+| 13.2 — External Authority Watcher (INSERTED) | v1.0.7.2 | 2026-04-19 |
 
 ## Open follow-ups
 
@@ -113,6 +115,7 @@ Progress: [████████████████░░░░] 74% (14
 | Phase 13.2 P01 | 11 min | 2 tasks | 3 files |
 | Phase 13.2 P02 | 7 min | 2 tasks | 8 files |
 | Phase 13.2 P03 | 4 min | 2 tasks | 4 files |
+| Phase 13.2 P04 | 7 min | 4 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -241,6 +244,13 @@ Progress: [████████████████░░░░] 74% (14
 - [Phase 13.2-03]: Reflector non-modification invariant (D-25) preserved across the whole phase-13.2 commit range — `git log --name-only f4d4791..HEAD -- agents/design-reflector.md` returns empty; only skills/reflect/SKILL.md gained the single-line authority-report.md append
 - [Phase 13.2-03]: Phase-6 baseline drift protocol generalizes to skills — new skill directories require a sorted append to `test-fixture/baselines/phase-6/skill-list.txt` (mirrors Plan 13.2-02's agent-list handling); CI regression test is strict deepEqual so baseline must track current directory state exactly
 - [Phase 13.2-03]: Every new skill directory requires a root-SKILL.md entry (argument-hint + command-table row + jump-mode route) for `tests/command-count-sync.test.cjs` to pass — this is an undocumented CI gate that surfaces as a Rule 3 blocking issue on the first `npm test` after a new skill ships
+- [Phase 13.2-04]: Authority-report baseline frozen at 9 entries (spec-change=2, heuristic-update=1, pattern-guidance=4, craft-tip=2, skip=0) matching the Plan 13.2-02 fixture set exactly; header "N entries surfaced" count and classification-section bullet count are locked equal by the watcher-diff test — resolves plan-checker warning #1
+- [Phase 13.2-04]: Watcher-diff test ships as structural-only v1 (resolves plan-checker warning #2) — asserts fixture presence, baseline shape, D-21 classification-heading vocabulary, totals line, header-vs-bullet count consistency, and Skipped footer. Full end-to-end byte diff (agent run → normalized diff vs baseline) deferred until Claude Code agent runtime is available in CI
+- [Phase 13.2-04]: `reference/schemas/plugin.schema.json` + `marketplace.schema.json` version pattern relaxed from `^\d+\.\d+\.\d+$` to `^\d+\.\d+\.\d+(\.\d+)?$` (Rule 3 deviation) to accept the locked off-cadence 4-segment `1.0.7.2`; backward-compatible with all prior 3-segment releases
+- [Phase 13.2-04]: `tests/semver-compare.test.cjs` gains an `OFF_CADENCE_VERSIONS` Set containing `'1.0.7.2'`; the "version is in expected sequence" assertion accepts either a mainline `EXPECTED_SEQUENCE` member or an off-cadence version, while the sibling consecutive-patch-bump invariant remains unchanged (off-cadence decimals deliberately do not participate in +0.0.1 sequencing)
+- [Phase 13.2-04]: CHANGELOG insertion uses pattern anchor (before first `^## \[` heading) not a line-number offset (resolves plan-checker info #6); resilient to prior-release formatting drift
+- [Phase 13.2-04]: README `## Authority Watcher` section placed between `## Why It Works` and `## Commands` as a new top-level section (not nested `### Authority Watcher` under Why It Works), keeping h2 parity with adjacent user-facing sections (Commands, Connections)
+- [Phase 13.2-04]: Auto-mode pipeline auto-approved the Task 4 human-verify checkpoint; README section written autonomously matching the adjacent Self-Improvement section's voice — any user-facing nits surface in PR review, tracked as a follow-up in 13.2-04 SUMMARY
 
 ### Roadmap Evolution
 
@@ -257,6 +267,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-19T22:08:30.000Z
-Stopped at: Completed 13.2-03-PLAN.md
-Resume file: .planning/phases/13.2-external-authority-watcher/13.2-04-PLAN.md
+Last session: 2026-04-19T22:21:50.000Z
+Stopped at: Completed 13.2-04-PLAN.md — Phase 13.2 closed, v1.0.7.2 shipped
+Resume file: (none — Phase 14 discuss-phase is the next action)
