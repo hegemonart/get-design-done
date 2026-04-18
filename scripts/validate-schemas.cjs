@@ -69,6 +69,14 @@ const PAIRS = [
     data: null,
     required: false,
   },
+  {
+    name: 'authority-snapshot',
+    schema: 'reference/schemas/authority-snapshot.schema.json',
+    // .design/authority-snapshot.json is runtime-only (gitignored via .design/).
+    // Only schema-compile it; Phase 13.2-02's watcher emits the data file at runtime.
+    data: null,
+    required: false,
+  },
 ];
 
 const USE_NPX = !process.argv.includes('--no-npx');
@@ -76,11 +84,20 @@ const USE_NPX = !process.argv.includes('--no-npx');
 /**
  * Try running ajv-cli via npx. Returns { ok, stdout, stderr, status, fetchFailed }.
  * fetchFailed=true if npx couldn't fetch the package (offline); caller should fall back.
+ *
+ * We pass `-c ajv-formats` so schemas declaring `format: "date-time"` (etc.) are
+ * validated against the standard JSON Schema formats plugin rather than being
+ * rejected as unknown formats under ajv's strict mode. Schemas that declare no
+ * formats (e.g., plugin, marketplace) are unaffected.
  */
 function runAjv(args) {
+  const injected = [...args];
+  // Inject `-c ajv-formats` after the sub-command (compile/validate) but before -s flags.
+  // Simpler: just append; ajv-cli accepts -c at any position.
+  injected.push('-c', 'ajv-formats');
   const result = spawnSync(
     'npx',
-    ['--yes', 'ajv-cli@5', ...args],
+    ['--yes', '-p', 'ajv-cli@5', '-p', 'ajv-formats@3', 'ajv', ...injected],
     { encoding: 'utf8', cwd: REPO_ROOT }
   );
   const combined = (result.stdout || '') + (result.stderr || '');
