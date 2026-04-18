@@ -563,7 +563,7 @@ Plans:
 Plans:
 - [x] 13.2-01-PLAN.md — `reference/authority-feeds.md` whitelist (seed ~25–40 feeds grouped by kind, rejected-kinds section, schema-lintable) + `.design/authority-snapshot.json` schema (AUTH-01, AUTH-08) ✅ 2026-04-18 (26 active feeds + Are.na extensibility; schema with maxItems:200 cap; validator wired)
 - [x] 13.2-02-PLAN.md — `agents/design-authority-watcher.md` agent (frontmatter + fetch + diff + classify into 5 categories, snapshot update, skip-collapse); `.design/authority-report.md` template (AUTH-02, AUTH-03, AUTH-04) ✅ 2026-04-18 (Sonnet-tier watcher with full 8-step body + D-17 decision table + D-21 report structure + D-15 first-run silent seed; mock-feed fixtures for Plan 13.2-04 CI)
-- [ ] 13.2-03-PLAN.md — `/gdd:watch-authorities` skill with `--refresh` / `--since` / `--feed` / `--schedule` flags; Phase 11 reflector read-path for authority report; `scheduled-tasks` MCP optional integration (AUTH-05, AUTH-06, AUTH-07)
+- [x] 13.2-03-PLAN.md — `/gdd:watch-authorities` skill with `--refresh` / `--since` / `--feed` / `--schedule` flags; Phase 11 reflector read-path for authority report; `scheduled-tasks` MCP optional integration (AUTH-05, AUTH-06, AUTH-07) ✅ 2026-04-19 (82-line skill with full 4-flag surface + MCP graceful-probe fallback; single-line append to skills/reflect/SKILL.md; reflector agent UNCHANGED per D-25)
 - [ ] 13.2-04-PLAN.md — **Phase closeout**: bump to v1.0.7.2 (off-cadence); README "Authority Watcher" section; CHANGELOG v1.0.7.2 entry listing shipped feeds; test asserting rejected-kinds are not in whitelist; manifests refresh (plugin.json, marketplace.json)
 
 **Authority Watcher design notes:**

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: milestone
 status: Executing Phase 13.2
-stopped_at: Completed 13.2-02-PLAN.md
-last_updated: "2026-04-18T21:58:38.000Z"
-last_activity: 2026-04-18 -- Phase 13.2 Plan 02 complete (design-authority-watcher agent + mock-feed fixtures)
+stopped_at: Completed 13.2-03-PLAN.md
+last_updated: "2026-04-19T22:08:30.000Z"
+last_activity: 2026-04-19 -- Phase 13.2 Plan 03 complete (/gdd:watch-authorities skill + reflector wire-up, reflector agent UNTOUCHED)
 progress:
   total_phases: 21
   completed_phases: 1
   total_plans: 17
-  completed_plans: 11
-  percent: 55
+  completed_plans: 12
+  percent: 58
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-17)
 ## Current Position
 
 Phase: 13.2 (external-authority-watcher) — EXECUTING
-Plan: 3 of 4 (13.2-01, 13.2-02 complete)
+Plan: 4 of 4 (13.2-01, 13.2-02, 13.2-03 complete)
 Released: **v1.0.7** at https://github.com/hegemonart/get-design-done/releases/tag/v1.0.7
 Next phase: 14 (AI-Native Design Tool Connections) — not yet started
-Last activity: 2026-04-18 -- Phase 13.2 Plan 02 complete (design-authority-watcher agent + mock-feed fixtures)
+Last activity: 2026-04-19 -- Phase 13.2 Plan 03 complete (/gdd:watch-authorities skill + reflector wire-up, reflector agent UNTOUCHED)
 
-Resume file: .planning/phases/13.2-external-authority-watcher/13.2-03-PLAN.md
+Resume file: .planning/phases/13.2-external-authority-watcher/13.2-04-PLAN.md
 
 Progress: [████████████████░░░░] 74% (14/19 phases complete through v1.0.7)
 
@@ -112,6 +112,7 @@ Progress: [████████████████░░░░] 74% (14
 | Phase 10.1 P04 | 20 min | 8 tasks | 8 files |
 | Phase 13.2 P01 | 11 min | 2 tasks | 3 files |
 | Phase 13.2 P02 | 7 min | 2 tasks | 8 files |
+| Phase 13.2 P03 | 4 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -233,6 +234,13 @@ Progress: [████████████████░░░░] 74% (14
 - [Phase 13.2-02]: Skip-regex takes precedence over kind-based classification — a component-system release titled "Sponsored: shipping X" correctly routes to `skip` rather than `pattern-guidance`; skip row is evaluated LAST in the decision table
 - [Phase 13.2-02]: named-practitioner upgrade predicate is link-host-based (w3.org, developer.apple.com, m3.material.io, fluent2.microsoft.design) — makes the craft-tip → pattern-guidance upgrade auditable rather than topic-heuristic
 - [Phase 13.2-02]: Fetch-notes footer is conditional — present only when `fetch_notes` is non-empty, so error-free runs emit a byte-identical report tail for Plan 13.2-04 diff-test determinism
+- [Phase 13.2-03]: /gdd:watch-authorities skill tools list locked at `Read, Write, Task, Bash` (Write kept despite plan's optional-omit clause — 82-line skill is well under the 90-line target, markdownlint green, retaining Write preserves forward-compat with proposal→confirm extensions)
+- [Phase 13.2-03]: --refresh and --since are mutually exclusive with explicit error "--refresh and --since are mutually exclusive. --refresh re-seeds the snapshot silently; --since surfaces a backlog from a boundary date. Pick one." — prevents semantically-contradictory invocation
+- [Phase 13.2-03]: --schedule cron expressions locked at 09:00 local: weekly=`0 9 * * 1`, daily=`0 9 * * *`, monthly=`0 9 1 * *`; matches cadence-hint convention in reference/authority-feeds.md
+- [Phase 13.2-03]: scheduled-tasks MCP probe uses ToolSearch with graceful exit-0 fallback (not blocker) on MCP absence — documented D-24 path, one-line diagnostic printed, skill still terminates with `## WATCH COMPLETE`
+- [Phase 13.2-03]: Reflector non-modification invariant (D-25) preserved across the whole phase-13.2 commit range — `git log --name-only f4d4791..HEAD -- agents/design-reflector.md` returns empty; only skills/reflect/SKILL.md gained the single-line authority-report.md append
+- [Phase 13.2-03]: Phase-6 baseline drift protocol generalizes to skills — new skill directories require a sorted append to `test-fixture/baselines/phase-6/skill-list.txt` (mirrors Plan 13.2-02's agent-list handling); CI regression test is strict deepEqual so baseline must track current directory state exactly
+- [Phase 13.2-03]: Every new skill directory requires a root-SKILL.md entry (argument-hint + command-table row + jump-mode route) for `tests/command-count-sync.test.cjs` to pass — this is an undocumented CI gate that surfaces as a Rule 3 blocking issue on the first `npm test` after a new skill ships
 
 ### Roadmap Evolution
 
@@ -249,6 +257,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T21:58:38.000Z
-Stopped at: Completed 13.2-02-PLAN.md
-Resume file: .planning/phases/13.2-external-authority-watcher/13.2-03-PLAN.md
+Last session: 2026-04-19T22:08:30.000Z
+Stopped at: Completed 13.2-03-PLAN.md
+Resume file: .planning/phases/13.2-external-authority-watcher/13.2-04-PLAN.md
