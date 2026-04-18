@@ -214,4 +214,12 @@ flowchart TD
 
 ---
 
+## Required reading (conditional)
+
+@.design/intel/files.json (if present)
+@.design/intel/exports.json (if present)
+@.design/intel/patterns.json (if present)
+@.design/intel/dependencies.json (if present)
+@.design/intel/graph.json (if present)
+
 ## RESEARCH COMPLETE

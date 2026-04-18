@@ -531,4 +531,10 @@ You MUST NOT:
 - Skip the Design Direction Statement step (unless `auto_mode: true`)
 - Write vague goals — push back until G-XX entries are observable and verifiable
 
+## Required reading (conditional)
+
+@.design/intel/files.json (if present)
+@.design/intel/exports.json (if present)
+@.design/intel/symbols.json (if present)
+
 ## CONTEXT COMPLETE

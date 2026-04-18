@@ -438,4 +438,11 @@ This agent MUST NOT:
 
 ---
 
+## Required reading (conditional)
+
+@.design/intel/files.json (if present)
+@.design/intel/components.json (if present)
+@.design/intel/tokens.json (if present)
+@.design/intel/decisions.json (if present)
+
 ## EXECUTION COMPLETE
