@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write   # needed to create tags + releases
+  id-token: write   # needed for npm provenance
 
 jobs:
   detect-version:
@@ -131,9 +132,34 @@ jobs:
           echo "Per D-22, automated rollback is intentionally NOT implemented."
           exit 1
 
+  npm-publish:
+    name: "npm publish (@hegemonart/get-design-done)"
+    needs: [detect-version, release-smoke-test]
+    if: needs.detect-version.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the freshly-created tag
+        uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.detect-version.outputs.version }}
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Verify version sync across manifests
+        run: node scripts/verify-version-sync.cjs
+
+      - name: Publish to npm (with provenance)
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
   marketplace-publish:
     name: "Marketplace publish (placeholder)"
-    needs: [detect-version, release-smoke-test]
+    needs: [detect-version, release-smoke-test, npm-publish]
     if: needs.detect-version.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:

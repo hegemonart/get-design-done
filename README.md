@@ -9,19 +9,23 @@ Agent-orchestrated design pipeline for Claude Code. One entry point that routes 
 
 ## Install
 
-### 1. Add the marketplace
+### Option A — Claude Code marketplace (recommended)
 
 ```bash
 claude plugin marketplace add hegemonart/get-design-done
-```
-
-### 2. Install the plugin
-
-```bash
 claude plugin install get-design-done@get-design-done
 ```
 
-This installs the pipeline skill and triggers the bootstrap hook, which provisions the companion library `~/.claude/libs/awesome-design-md` on first run.
+### Option B — npm / pnpm
+
+Published as a scoped package on npm. Works with any npm-compatible client (npm, pnpm, yarn, bun):
+
+```bash
+npm  install -g @hegemonart/get-design-done
+pnpm add     -g @hegemonart/get-design-done
+```
+
+Either path installs the pipeline skill and triggers the bootstrap hook, which provisions the companion library `~/.claude/libs/awesome-design-md` on first run.
 
 ## Usage
 
