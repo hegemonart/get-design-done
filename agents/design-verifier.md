@@ -493,6 +493,90 @@ CRITICAL: Always end with `## VERIFICATION COMPLETE` as the final line, regardle
 
 ---
 
+## Handoff Faithfulness Phase (post_handoff mode only)
+
+**Activate when:** `post_handoff: true` is in the spawn context AND `handoff_path` is non-empty.
+
+**Purpose:** Verify that the implementation faithfully realizes the Claude Design handoff bundle. Close the loop: bundle → decisions → code → verified faithful?
+
+### Step HF-1 — Parse handoff bundle token values
+
+Read `handoff_path` from spawn context. Parse the HTML export:
+- Extract CSS custom properties from `<style>` blocks matching `--[a-z]+-[a-z-]+:\s*[^;]+`
+- Categorize: `--color-*` (Color), `--spacing-*`/`--space-*` (Spacing), `--font-*`/`--text-*` (Typography), `--radius-*` (Radius), `--shadow-*` (Shadow)
+- Store as: `{ token_name, handoff_value }`
+
+### Step HF-2 — Grep implementation for same tokens
+
+For each token from HF-1:
+- Search `.css`, `.scss`, `.ts`, `.tsx` files for the same CSS custom property name
+- Record: `{ token_name, handoff_value, implemented_value, file, line }`
+- Mark `NOT FOUND` if absent from all source files
+- Mark `MATCH` if implemented ≈ handoff value (exact for hex; within 5% for numeric)
+- Mark `DIVERGE` if materially different
+
+### Step HF-3 — Component structure comparison
+
+From the handoff HTML, extract component names from `class="component-*"` or `data-component="*"`. For each:
+- Glob `**/*<component-name>*` (case-insensitive, check `src/`, `components/`, `app/`)
+- Mark PRESENT or MISSING
+
+### Step HF-4 — Visual screenshot (optional, Preview only)
+
+If `preview: available` in STATE.md:
+- `preview_navigate` to default route (`http://localhost:3000`)
+- `preview_screenshot` → save to `.design/screenshots/handoff-faithfulness-impl.png`
+- Reference by path in report (do NOT embed base64)
+
+### Step HF-5 — Write Handoff Faithfulness section
+
+Append to DESIGN-VERIFICATION.md after the Phase 4B section (or after Phase 4 if Phase 4B was skipped):
+
+```markdown
+## Handoff Faithfulness
+
+**Source bundle:** `<handoff_path>`
+**Token comparison:** <N> tokens checked, <M> MATCH, <K> DIVERGE, <J> NOT FOUND
+**Component structure:** <P> of <Q> components present
+
+### Color Fidelity
+| Token | Handoff value | Implemented value | Status |
+|-------|--------------|-------------------|--------|
+| --color-primary | #3B82F6 | #3B82F6 | MATCH |
+...
+**Color fidelity score:** PASS (>90% match) / PARTIAL (70–90%) / FAIL (<70%)
+
+### Typography Fidelity
+[Same table format for font tokens]
+**Typography fidelity score:** PASS / PARTIAL / FAIL
+
+### Spacing Fidelity
+[Same table format for spacing tokens]
+**Spacing fidelity score:** PASS (>80% match) / PARTIAL / FAIL
+
+### Component Structure
+| Component | Status |
+|-----------|--------|
+| button | PRESENT |
+...
+**Component structure score:** PASS (>80% present) / PARTIAL (60–80%) / FAIL (<60%)
+
+### Visual Reference
+[If preview available: .design/screenshots/handoff-faithfulness-impl.png]
+[If preview not available: "Visual comparison skipped — Preview not configured."]
+
+### Overall Faithfulness
+PASS (all dimensions PASS) | PARTIAL (any PARTIAL, no FAIL) | FAIL (any FAIL)
+```
+
+**Scoring rules:**
+- Color PASS: >90% exact hex match; PARTIAL: 70–90%; FAIL: <70%
+- Typography PASS: font-family and font-size-* within 5%; FAIL: >20% divergence
+- Spacing PASS: >80% within 5%; PARTIAL: 60–80%; FAIL: <60%
+- Component PASS: >80% present; PARTIAL: 60–80%; FAIL: <60%
+
+---
+
 ## Constraints
 
 **MUST NOT:**
