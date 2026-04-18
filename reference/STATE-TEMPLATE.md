@@ -36,7 +36,13 @@ stage: brief
 wave: 1
 task_progress: 0/0
 status: initialized
+handoff_source: ""
+handoff_path: ""
+skipped_stages: ""
 </position>
+<!-- handoff_source: "claude-design-html" | "claude-design-bundle" | "manual" | "" (empty = normal pipeline) -->
+<!-- handoff_path: path to the handoff bundle file or directory; empty for normal pipeline runs -->
+<!-- skipped_stages: comma-separated list of stages bypassed by handoff routing (e.g., "scan, discover, plan") -->
 
 <decisions>
 <!-- Filled by discover stage. Format: -->
@@ -54,6 +60,8 @@ status: initialized
 <!-- Format: <connection_name>: <available | unavailable | not_configured> -->
 figma: not_configured
 refero: not_configured
+pinterest: not_configured
+claude_design: not_configured
 </connections>
 
 <blockers>

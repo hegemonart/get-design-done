@@ -4,15 +4,15 @@
     "name": "hegemonart"
   },
   "metadata": {
-    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 7 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify) and 5 standalone commands (style, darkmode, compare, figma-write, graphify).",
-    "version": "1.0.2"
+    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), handoff-first workflow, bidirectional Figma write-back, and 22 specialized agents.",
+    "version": "1.0.3"
   },
   "plugins": [
     {
       "name": "get-design-done",
       "source": "./",
-      "description": "Agent-orchestrated 5-stage design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, 7 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify), and 5 standalone commands (style, darkmode, compare, figma-write, graphify). Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
-      "version": "1.0.2",
+      "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22 specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), Claude Design handoff, and bidirectional Figma write-back. Standalone commands: style, darkmode, compare, figma-write, graphify, handoff. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
+      "version": "1.0.3",
       "author": {
         "name": "hegemonart"
       },
@@ -26,6 +26,7 @@
         "ux",
         "frontend",
         "pipeline",
+        "orchestration",
         "skill",
         "design-system",
         "accessibility",
@@ -39,7 +40,11 @@
         "storybook",
         "graphify",
         "playwright",
-        "figma-write"
+        "figma-write",
+        "handoff",
+        "claude-design",
+        "pinterest",
+        "bidirectional"
       ]
     }
   ]

@@ -35,6 +35,13 @@ Inspect the orchestrator prompt for `<mode>`:
 - **normal** (default): adaptive one-question-at-a-time interview. Cover scope, audience, goals, brand direction, constraints, and any gray areas listed in DESIGN-CONTEXT.md.
 - **--all**: batch mode. Read all gray areas from `.design/DESIGN-CONTEXT.md` `<gray_areas>` and resolve them in a single pass of back-to-back questions.
 - **--spec**: after running a normal interview, identify the top-3 most underspecified decisions. For each, ask 2-3 Socratic clarifying sub-questions and score confidence 1-5. Append a `<confidence>` line to each D-XX.
+- **--from-handoff**: handoff mode. The synthesizer has pre-populated STATE.md `<decisions>` with D-XX entries tagged `(source: claude-design-handoff)`. Your job is reduced to two tasks only:
+  1. **Confirm tentative decisions**: For each D-XX tagged `(tentative — confirm with user)` or `(tentative — inferred)`, ask a single confirmation question. Example: "The handoff bundle suggests the primary color is #3B82F6. Does this match what you expect for this implementation?"
+  2. **Fill gaps**: Identify decision categories NOT covered by any D-XX in the `<decisions>` block (typically: implementation constraints, user preferences, interaction patterns not captured in CSS). Ask one question per gap.
+
+  Do NOT ask questions about decisions already tagged `(locked — from handoff spec)`. Do NOT re-ask questions answered this session. Do NOT ask generic design questions — the bundle has already answered them.
+
+  After all confirmations and gap-fills: promote confirmed tentatives to `(locked — confirmed)`, mark rejected tentatives as `(rejected — overridden by user)`, and write any new answers as standard D-XX entries.
 
 If `<cycle>` is provided, scope decisions to that cycle's subsection under `<decisions>` (create the subsection header `### cycle: <name>` if missing).
 

@@ -300,8 +300,8 @@ Plans:
 - [x] 08-03-PLAN.md — `connections/chromatic.md` + verify delta-narration + plan-stage change-risk scoping (CHR-01, CHR-02)
 - [x] 08-04-PLAN.md — `agents/design-figma-writer.md` (annotate + tokenize + mappings modes) + proposal→confirm UX + dry-run + shared-file guard (FWR-01, FWR-02, FWR-03, FWR-04)
 - [x] 08-05-PLAN.md — **Graphify knowledge-graph connection**: `connections/graphify.md` + `/gdd:graphify` command; graph schema spec (nodes: components, tokens, pages, D-XX decisions, M-XX must-haves, DESIGN-DEBT items, anti-patterns, a11y findings, Figma variables; edges: uses, renders, violates, derives-from, maps-to); pre-search consultation wiring in `design-integration-checker`, `design-planner`, `/gdd:health` (GRF-01, GRF-02, GRF-03, GRF-04)
-- [ ] 08-06-PLAN.md — `connections/connections.md` capability matrix update (preview, storybook, chromatic, figma-writer, graphify rows) + cross-reference in agent required_reading + README connections section
-- [ ] 08-07-PLAN.md — **Phase closeout**: bump version to v1.0.2; refresh README.md (new connections table, capability matrix link, visual-verification note); refresh plugin.json + marketplace.json (version, description, keywords — add "visual-regression", "graphify", "storybook"); append CHANGELOG.md v1.0.2 entry; lock regression baseline at `test-fixture/baselines/phase-08/` (MAN-05, MAN-06)
+- [x] 08-06-PLAN.md — `connections/connections.md` capability matrix update (preview, storybook, chromatic, figma-writer, graphify rows) + cross-reference in agent required_reading + README connections section
+- [x] 08-07-PLAN.md — **Phase closeout**: bump version to v1.0.2; refresh README.md (new connections table, capability matrix link, visual-verification note); refresh plugin.json + marketplace.json (version, description, keywords — add "visual-regression", "graphify", "storybook"); append CHANGELOG.md v1.0.2 entry; lock regression baseline at `test-fixture/baselines/phase-08/` (MAN-05, MAN-06)
 
 ### Phase 9: Claude Design Integration + Pinterest Connection
 **Goal**: get-design-done is a first-class post-handoff verification layer for Claude Design (claude.ai/design, Anthropic Labs) — users can land from a Claude Design handoff bundle with a single command, skip the full pipeline, and get a verified implementation. Pinterest MCP is added as a reference-collection source in the discover stage. With Phase 8's figma-writer, handoffs become **bidirectional** — implementation status and Code Connect mappings can be written back to the source Figma file.
@@ -672,7 +672,7 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | 5. Automation Agents + New Commands | 5/5 | Complete | — | 2026-04-17 |
 | 6. Validation + Version Bump | 1/1 | Complete | v1.0.0 (rename reset) | 2026-04-18 |
 | 7. GSD Parity + Exploration — Discussant, Ergonomics, Sketch/Spike, Pipeline Reshape | 0/17 (7 Wave A + 6 Wave B + 4 Wave C incl. closeout) | Planned | v1.0.1 | - |
-| 8. Visual + Design-Side Connections + Knowledge Graph | 0/7 (6 feature + 1 closeout) | 5/7 | In Progress|  |
+| 8. Visual + Design-Side Connections + Knowledge Graph | 7/7 (6 feature + 1 closeout) | Complete | v1.0.2 | 2026-04-18 |
 | 9. Claude Design Integration + Pinterest Connection | 0/8 (7 provisional + 1 closeout — replan after 7 + 8) | Planned | v1.0.3 | - |
 | 10. Knowledge Layer — `.design/intel/`, learnings, dependencies, responsibility mapping | 0/6 (5 feature + 1 closeout) | Planned | v1.0.4 | - |
 | **10.1. Optimization Layer + Cost Governance (INSERTED)** — router, cache manager, budget enforcement, telemetry, model tiers, lazy spawning, /gdd:optimize | 0/6 (5 feature + 1 closeout) | Planned | v1.0.4.1 | - |

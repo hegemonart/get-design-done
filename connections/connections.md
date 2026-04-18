@@ -15,6 +15,8 @@ This directory contains connection specifications for external tools and MCPs th
 | Chromatic | Active | [`connections/chromatic.md`](connections/chromatic.md) | CLI: `npx chromatic`; env: `CHROMATIC_PROJECT_TOKEN` |
 | Figma Writer | Active | [`connections/figma-writer.md`](connections/figma-writer.md) | Uses `mcp__figma__use_figma` (remote MCP) |
 | Graphify | Active | [`connections/graphify.md`](connections/graphify.md) | CLI: `graphify`; `gsd-tools graphify *` |
+| Pinterest | Active | [`connections/pinterest.md`](connections/pinterest.md) | `mcp__mcp-pinterest__*` tools (ToolSearch-only probe; headless scraping, no API key) |
+| Claude Design | Active | [`connections/claude-design.md`](connections/claude-design.md) | No MCP — bundle file probe; enables `/gdd:handoff` pipeline + bidirectional write-back via figma-writer |
 
 ---
 
@@ -31,6 +33,8 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | Chromatic | — | — | change-risk scoping (CHR-02) | — | visual delta narration (CHR-01) |
 | Figma Writer | — | — | — | write tokens/annotations/Code Connect (FWR-01..04) | — |
 | Graphify | — | — | dependency scoping (GRF-03) | — | orphan detection (GRF-04) |
+| Pinterest | probe only | visual reference search via `pinterest_search`; fallback → Refero → awesome-design-md | — | — | — |
+| Claude Design | bundle probe → `claude_design: available` | synthesizer handoff mode — parses bundle → D-XX decisions; discussant `--from-handoff` confirms | — (skipped in handoff) | — (skipped in handoff) | Handoff Faithfulness section; bidirectional write-back via figma-writer `implementation-status` mode |
 
 **Column definitions:**
 

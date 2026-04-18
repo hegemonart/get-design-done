@@ -2,7 +2,7 @@
 name: get-design-done
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
-argument-hint: "[brief|explore|plan|design|verify|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up]"
+argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up]"
 user-invocable: true
 ---
 
@@ -27,6 +27,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `plan` | `get-design-done:plan` | Stage 3 of 5 — decompose into tasks → DESIGN-PLAN.md |
 | `design` | `get-design-done:design` | Stage 4 of 5 — execute tasks → DESIGN-SUMMARY.md |
 | `verify` | `get-design-done:verify` | Stage 5 of 5 — score + audit → DESIGN-VERIFICATION.md |
+| `handoff <path>` | inline | Skip scan/discover/plan; initialize from Claude Design bundle; route to verify |
 | `map` | `get-design-done:gdd-map` | Parallel codebase mapping — spawns 5 mappers → `.design/map/*.md` + `.design/DESIGN-MAP.md` |
 | `next` | `get-design-done:gdd-next` | Route to the next pipeline stage based on STATE.md |
 | `help` | `get-design-done:gdd-help` | List all commands with one-line descriptions |
@@ -78,6 +79,55 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `update [--dry-run] [--version <tag>]` | `get-design-done:gdd-update` | Update plugin to latest release; preserves config + local skills |
 | `reapply-patches [--dry-run]` | `get-design-done:gdd-reapply-patches` | Reapply `reference/` customizations after an update |
 
+## Handoff Routing
+
+**Check FIRST** — before any other routing logic. If `$ARGUMENTS` starts with `handoff` OR contains `--from-handoff`:
+
+1. **Extract bundle path:**
+   - `handoff <path>` → bundle path is the second argument
+   - `--from-handoff <path>` → bundle path is the value after the flag
+   - Neither has a path → check STATE.md `handoff_path`; if absent, error: "Provide a bundle path: /gdd:handoff ./path/to/bundle.html"
+   - Verify the file exists; if not, error: "Bundle not found at <path>"
+
+2. **Initialize STATE.md:**
+   - If `.design/STATE.md` does not exist: copy `reference/STATE-TEMPLATE.md` to `.design/STATE.md`
+   - Set in `<position>`: `handoff_source: claude-design-html`, `handoff_path: <resolved path>`, `skipped_stages: scan, discover, plan`, `status: handoff-sourced`, `stage: verify`
+   - Set in `<connections>`: `claude_design: available`; all others remain `not_configured`
+
+3. **Spawn design-research-synthesizer** in handoff mode:
+   ```
+   Task("design-research-synthesizer", """
+   mode: handoff
+   handoff_path: <resolved bundle path>
+   state_path: .design/STATE.md
+   """)
+   ```
+   Wait for `## SYNTHESIZE COMPLETE`.
+
+4. **Spawn design-discussant** in `--from-handoff` mode:
+   ```
+   Task("design-discussant", """
+   <mode>--from-handoff</mode>
+   <required_reading>.design/STATE.md</required_reading>
+   """)
+   ```
+   Wait for `## DISCUSS COMPLETE`.
+
+5. **Route to verify** with `--post-handoff` flag:
+   ```
+   Skill("get-design-done:verify", "--post-handoff")
+   ```
+
+6. **Optional: Bidirectional write-back** (post-verify, offered to user)
+   After verify completes without FAIL-level gaps:
+   - Check STATE.md `<connections>` for `figma_writer`
+   - `figma_writer: not_configured` → skip (no offer)
+   - `figma_writer: available` → offer: "Write implementation status back to Figma? (annotates frames + Code Connect mappings)"
+     Options: [yes, write back] [dry-run, show proposal only] [skip]
+   - If yes or dry-run: spawn `agents/design-figma-writer.md` with `mode: implementation-status`, `dry_run: <true|false>`
+
+---
+
 ## Routing Logic
 
 When invoked without arguments (or with `status`), show pipeline state and suggest next action:
@@ -114,6 +164,7 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 /gdd:plan      → Skill("get-design-done:plan")          # stage 3-of-5
 /gdd:design    → Skill("get-design-done:design")        # stage 4-of-5
 /gdd:verify    → Skill("get-design-done:verify")        # stage 5-of-5
+/gdd:handoff   → [Handoff Routing] (inline — see ## Handoff Routing above)
 /gdd:map       → Skill("get-design-done:gdd-map")       # parallel codebase mapping
 /gdd:next      → Skill("get-design-done:gdd-next")
 /gdd:help      → Skill("get-design-done:gdd-help")

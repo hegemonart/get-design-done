@@ -37,7 +37,17 @@ user-invocable: true
        Non-empty     → refero: available
    ```
 
-   After both probes, update `.design/STATE.md` `<connections>` with the results and continue. Downstream stages (design-context-builder) read `<connections>` from STATE.md rather than re-probing.
+   **C — Pinterest probe (ToolSearch-only, same pattern as Refero):**
+
+   ```
+   C1. ToolSearch({ query: "mcp-pinterest", max_results: 5 })
+   C2. Empty result  → pinterest: not_configured
+       Non-empty     → pinterest: available
+   ```
+
+   No live `pinterest_search` call at probe time — ToolSearch presence is sufficient. The synthesizer makes the actual search calls.
+
+   After all probes (A, B, C), update `.design/STATE.md` `<connections>` with the results and continue. Downstream stages (design-context-builder) read `<connections>` from STATE.md rather than re-probing.
 3. Update last_checkpoint. Write STATE.md.
 
 ## Auto Mode

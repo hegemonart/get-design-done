@@ -1,6 +1,6 @@
 # Get Design Done
 
-Agent-orchestrated design pipeline for Claude Code. One entry point that routes design work through a 5-stage workflow — **Scan → Discover → Plan → Design → Verify** — using 14 specialized agents, Figma + Refero MCP connections, and 3 standalone audit commands.
+Agent-orchestrated design pipeline for Claude Code. One entry point that routes design work through a 5-stage workflow — **Scan → Discover → Plan → Design → Verify** — using 22 specialized agents, Figma + Refero + Pinterest MCP connections, and Claude Design handoff integration.
 
 ## Install
 
@@ -35,9 +35,10 @@ Invoke without arguments for pipeline status and auto-routing to the next stage.
 ### Standalone commands (work without running the pipeline first)
 
 ```
-@get-design-done style Button  — Generate component handoff doc → .design/DESIGN-STYLE-Button.md
-@get-design-done darkmode      — Audit dark mode architecture + contrast → .design/DARKMODE-AUDIT.md
-@get-design-done compare       — Delta between baseline and verification result → .design/COMPARE-REPORT.md
+@get-design-done handoff <path>  — Skip pipeline; parse Claude Design bundle → verify → optional Figma write-back
+@get-design-done style Button    — Generate component handoff doc → .design/DESIGN-STYLE-Button.md
+@get-design-done darkmode        — Audit dark mode architecture + contrast → .design/DARKMODE-AUDIT.md
+@get-design-done compare         — Delta between baseline and verification result → .design/COMPARE-REPORT.md
 ```
 
 ## Commands
@@ -58,7 +59,7 @@ All commands are invoked as `/gdd:<name>`.
 
 **Session**: `pause`, `resume`, `list-assumptions`, `discuss`
 
-**Standalone**: `style`, `darkmode`, `compare`
+**Standalone**: `style`, `darkmode`, `compare`, `handoff`
 
 **Settings**: `settings`, `update`, `reapply-patches`
 
@@ -116,6 +117,14 @@ When Refero is active, `discover` pulls visual references to ground design decis
 
 Falls back to `~/.claude/libs/awesome-design-md/` when unavailable. See [`connections/refero.md`](./connections/refero.md) for setup.
 
+### Pinterest MCP
+
+When the Pinterest MCP (`terryso/mcp-pinterest`) is active, `discover` pulls visual inspiration boards to ground design decisions alongside Refero references. ToolSearch-only probe — no API key required. Falls back to Refero → awesome-design-md when unavailable. See [`connections/pinterest.md`](./connections/pinterest.md) for setup.
+
+### Claude Design handoff
+
+Drop a Claude Design bundle (HTML export from claude.ai/design) into your project root and run `/gdd:handoff <path>`. The pipeline skips Scan → Discover → Plan, parses the bundle CSS custom properties into D-XX design decisions, runs `verify --post-handoff` for Handoff Faithfulness scoring, and optionally writes implementation status back to Figma. See [`connections/claude-design.md`](./connections/claude-design.md) for the full bundle format and adapter pattern.
+
 ## Bootstrap hook
 
 On `SessionStart`, the plugin provisions the companion library if missing:
@@ -132,8 +141,8 @@ Idempotent — skips work if already present, runs `git pull --ff-only` on subse
 - `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` — manifest
 - `SKILL.md` — root pipeline router
 - `skills/` — stage skills (scan, discover, plan, design, verify, style, darkmode, compare)
-- `agents/` — 14 specialized agent specs
-- `connections/` — Figma + Refero connection specs
+- `agents/` — 22 specialized agent specs
+- `connections/` — Figma, Refero, Pinterest, Claude Design connection specs
 - `reference/` — curated design reference material
 - `hooks/`, `scripts/bootstrap.sh`
 
