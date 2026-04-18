@@ -33,7 +33,7 @@ The `design-` prefix prevents name collisions with agents from other Claude Code
 
 ## Frontmatter Schema
 
-Every agent file begins with a YAML frontmatter block. All fields except `model` are required.
+Every agent file begins with a YAML frontmatter block. All fields except `model` are required. The `default-tier` and `tier-rationale` fields were added in Phase 10.1 — see `reference/model-tiers.md` for the per-agent assignment rationale.
 
 | Field | Type | Accepted values | Purpose |
 |-------|------|-----------------|---------|
@@ -42,6 +42,8 @@ Every agent file begins with a YAML frontmatter block. All fields except `model`
 | `tools` | comma-separated list | `Read`, `Write`, `Edit`, `Bash`, `Grep`, `Glob`, `Task`, `WebFetch`, `TodoWrite`, `mcp__*` | Claude tools the agent may use — list only what is needed |
 | `color` | enum | `yellow`, `green`, `blue`, `red` | Terminal display color for the agent's output |
 | `model` | enum (optional) | `inherit`, `sonnet`, `haiku` | Omit to use the project's configured profile default. Use `inherit` to bypass the profile and use the highest available model (quality-tier work) |
+| `default-tier` | enum | `haiku`, `sonnet`, `opus` | **Phase 10.1.** The model tier the router + budget-enforcer hook select when `.design/budget.json.tier_overrides` has no entry for this agent. Paired with `reference/model-tiers.md` — the per-agent map in that file is the source of truth; this field is the per-agent replica the hook reads. Required on all agents. |
+| `tier-rationale` | string | free-form, one line, quoted | **Phase 10.1.** One-sentence justification for the `default-tier` choice. Surfaces in `/gdd:optimize` output when the advisor suggests a tier move. Required on all agents. |
 | `parallel-safe` | enum | `always`, `never`, `conditional-on-touches`, `auto` | Whether stages may dispatch this agent in parallel with siblings. `conditional-on-touches` means safe only when `Touches:` do not overlap |
 | `typical-duration-seconds` | int | e.g. `30`, `60`, `120` | Expected wall-clock duration. Used by parallelism planner to decide whether savings clear `min_estimated_savings_seconds`. **Extensible** — Phase 10.1 adds `default-tier` override; Phase 11's `design-reflector` adds `measured-duration-seconds` from telemetry without replacing this field. |
 | `reads-only` | bool | `true`/`false` | True when the agent never writes any file |
@@ -200,24 +202,25 @@ Global ceiling: **no single agent file exceeds 600 lines** under any circumstanc
 
 ---
 
-*Cross-reference: [Claude Code Task tool documentation](https://docs.anthropic.com/en/docs/claude-code/sub-agents) for deeper detail on agent invocation, tool permissions, and model selection. This README is the authoring contract — the documentation covers the runtime.*
+## Cache-Aligned Ordering Convention (Phase 10.1)
+
+Every agent body under `agents/*.md` is structured in this exact order so that Anthropic's 5-minute prompt cache (and the plugin's `/gdd:warm-cache` pre-warmer) can key on the longest possible identical prefix across spawns. The rule (from Phase 10.1 decision D-17):
+
+1. **Shared-preamble import** — the first non-blank line of the body MUST be `@reference/shared-preamble.md`. This pulls the framework identity, required-reading discipline, writes protocol, deviation handling, and hook awareness into the prompt. Identical bytes across all 26 agents → one cache entry warms them all.
+2. **Agent-specific role + tools contract + output format** — unique to the agent but stable across every invocation of that same agent. Cache hits on the per-agent tail after the first call of the session.
+3. **Dynamic content** — the orchestrator's `<required_reading>` block, per-invocation parameters, concrete task description. Different every call; never caches, but also never invalidates the earlier layers.
+
+**Do not reorder these layers.** Splicing dynamic content (e.g., a `<context>` block) before the stable role description breaks the cache for everything after that splice. Inlining the preamble into the agent body (instead of importing) costs every spawn full-input rates on the preamble bytes.
+
+See `reference/shared-preamble.md` (the imported file) and `reference/model-tiers.md` (tier assignment + override precedence) for the two paired references.
+
+**Cross-references.**
+- `reference/shared-preamble.md` — the preamble file itself (Plan 10.1-03).
+- `reference/model-tiers.md` — tier-selection guide + per-agent map (Plan 10.1-03).
+- `skills/warm-cache/SKILL.md` — the command that primes Layer A cache across the roster (Plan 10.1-02).
+- `skills/cache-manager/SKILL.md` — Layer B (explicit manifest) cache; independent of this ordering rule (Plan 10.1-02).
+- `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` §D-08, §D-16, §D-17 — decision lineage.
 
 ---
 
-## Cache-aligned Prompt Ordering (Phase 10.1, D-17)
-
-**Every agent body must open with, in this exact order:**
-
-1. **`@reference/shared-preamble.md`** — the framework identity, deviation-handling rules, commit conventions, reads-only / writes protocol, and context-exhaustion hook behavior. Imported via the standard `@reference/...` directive. This is Layer A of the D-08 two-layer cache: identical across every agent, so Anthropic's automatic 5-minute prompt cache fires on the preamble prefix and the first-N-tokens input cost drops to `cached_input_per_1m` on every repeat spawn within the window.
-2. **Agent-specific role + tools + output contract** — the static parts unique to this agent (role description, which tools the agent is allowed to use, the exact output schema the orchestrator expects). Also cached by Anthropic on repeat spawns of the same agent, but the cache boundary is per-agent.
-3. **Task-specific dynamic content** — the parts that change per spawn (input file contents, the orchestrator's specific ask, any per-cycle data). This section is not cacheable across spawns because it differs every call; placing it last ensures Steps 1 and 2 form a stable cacheable prefix.
-
-**Rationale.** Anthropic's prompt cache keys on the longest matching prefix. Putting the shared preamble first means a single `/gdd:warm-cache` invocation (see `skills/warm-cache/SKILL.md`) can prime the cache for every agent in the roster in one pass. Putting task-specific content last means that cache is not invalidated by normal sprint variation. Violating this ordering (e.g., putting a dynamic input block above the preamble) causes cache misses that silently 10x the input-token cost per spawn — the cost reduction target of Phase 10.1 depends on this convention.
-
-**Enforcement.** Plan 10.1-04 (shared preamble extraction) audits every agent in `agents/*.md` and verifies the preamble import is the first non-frontmatter line of the body. Plan 10.1-03 (tier audit) adds a CI-style grep check: `grep -L "^@reference/shared-preamble.md" agents/*.md` must return no files (every agent file contains the import on its first body line).
-
-**Cross-references.**
-- `reference/shared-preamble.md` — the preamble file itself (authored in Plan 10.1-04).
-- `skills/warm-cache/SKILL.md` — the command that primes Layer A cache across the roster.
-- `skills/cache-manager/SKILL.md` — Layer B (explicit manifest) cache; independent of this ordering rule.
-- `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` §D-16, §D-17 — decision lineage.
+*Cross-reference: [Claude Code Task tool documentation](https://docs.anthropic.com/en/docs/claude-code/sub-agents) for deeper detail on agent invocation, tool permissions, and model selection. This README is the authoring contract — the documentation covers the runtime.*
