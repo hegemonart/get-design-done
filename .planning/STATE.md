@@ -4,14 +4,14 @@ milestone: v1.0.0
 milestone_name: milestone
 status: executing
 stopped_at: Completed 12-02-PLAN.md
-last_updated: "2026-04-18T02:30:10.619Z"
+last_updated: "2026-04-18T03:16:59.757Z"
 last_activity: 2026-04-18
 progress:
-  total_phases: 13
-  completed_phases: 6
-  total_plans: 53
-  completed_plans: 26
-  percent: 49
+  total_phases: 15
+  completed_phases: 0
+  total_plans: 6
+  completed_plans: 5
+  percent: 83
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-17)
 ## Current Position
 
 Phase: 12 (Test Coverage) — EXECUTING
-Plan: 3 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-04-18
 
@@ -158,6 +158,9 @@ Progress: [████████░░] 81%
 - [Phase ?]: [Phase 12-02]: Phase 6 baseline locks 14 agents, 12 skill dirs, 3 connection docs at plugin v1.0.0
 - [Phase ?]: [Phase 12-02]: Baseline captures manifest + frontmatter snapshot — lower maintenance burden than full file copies
 - [Phase ?]: [Phase 12-02]: Version test uses >= baseline — allows future phases to bump version without re-lock
+- [Phase ?]: ARM tier vocabulary
+- [Phase ?]: [Phase 10-04]: Flow diagram uses Mermaid flowchart TD
+- [Phase ?]: [Phase 10-04]: Researcher MUST produce ARM + Flow Diagram in DESIGN-CONTEXT.md
 
 ### Pending Todos
 
@@ -169,6 +172,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T02:30:10.613Z
+Last session: 2026-04-18T03:16:59.751Z
 Stopped at: Completed 12-02-PLAN.md
 Resume file: None
