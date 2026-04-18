@@ -1,57 +1,101 @@
 # Contributing to get-design-done
 
-Thanks for your interest. This document covers the contribution workflow, focusing on the test-suite contract introduced in Phase 12 (v1.0.6).
+Thanks for helping improve gdd. This guide documents the CI/CD contract that
+keeps the plugin shippable.
 
-## Test-suite contract
+## Branch strategy
 
-**From v1.0.6 forward, every PR MUST pass `npm test` before merging to `main`.** No exceptions for "it's just a docs change" — the test suite includes markdown-structural tests (stale-ref detection, deprecation-redirect, required-reading consistency, command-count sync) that legitimately fire on docs PRs.
+While the project has a single maintainer (@hegemonart), direct pushes to
+`main` are the default workflow. Branch protection is **advisory** in this
+mode (CI runs but does not block). Once a contributor joins, posture shifts
+to **enforcing**: all status checks must pass; linear history is required;
+no force-push. See `reference/BRANCH-PROTECTION.md` for the two-phase rollout.
 
-### Running tests locally
+## PR checklist
+
+Every PR must self-verify against `.github/pull_request_template.md`:
+
+- [ ] Phase affected
+- [ ] Version bumped? (Y/N)
+- [ ] CHANGELOG updated? (Y/N)
+- [ ] Baselines relocked? (Y/N)
+- [ ] `npm test` passes
+- [ ] Lint suite passes: `npm run lint:md && npm run validate:schemas && npm run validate:frontmatter && npm run detect:stale-refs`
+
+## Required checks
+
+The following CI jobs must pass before merge once branch protection is in
+enforcing mode:
+
+- `Lint (markdown + frontmatter + stale-refs)`
+- `Validate (schemas + plugin + shellcheck)`
+- `Test (Node 22 / ubuntu-latest)`
+- `Test (Node 22 / macos-latest)`
+- `Test (Node 22 / windows-latest)`
+- `Test (Node 24 / ubuntu-latest)`
+- `Test (Node 24 / macos-latest)`
+- `Test (Node 24 / windows-latest)`
+- `Security (secrets + injection scan)`
+- `Size budget (blocking)`
+
+## Version-bump workflow
+
+Phase-closeout PRs bump the plugin version:
+
+1. Edit `.claude-plugin/plugin.json`: change `version`.
+2. Edit `.claude-plugin/marketplace.json`: update BOTH `metadata.version` AND `plugins[0].version` to match.
+3. Edit `package.json`: update `version` to match (keeps all three in sync).
+4. Append a `## [<new-version>] — YYYY-MM-DD` section to `CHANGELOG.md` with `### Added`, `### Changed`, `### Fixed` subsections as applicable.
+5. Commit, merge to `main`.
+6. On merge, `.github/workflows/release.yml` detects the plugin.json diff, creates the `v<new-version>` tag, creates the GitHub Release with the CHANGELOG section as body, and runs the release smoke test against the current phase's baseline.
+
+## Baseline relock how-to
+
+Baselines live at `test-fixture/baselines/phase-<N>/`. If a phase changes
+agent behavior such that the release smoke test would flag a diff, relock
+the baseline as part of the phase-closeout PR:
+
+1. Rerun the deterministic portion of `/gdd:explore` on `test-fixture/src/`:
+
+   ```bash
+   TMPDIR=$(mktemp -d)
+   cp -r test-fixture/src/* "$TMPDIR/"
+   (cd "$TMPDIR" && node "$OLDPWD/scripts/build-intel.cjs" .)
+   ```
+
+2. Copy the resulting `.design/intel/*.json` plus any `DESIGN-CONTEXT.md` fragments into `test-fixture/baselines/phase-<N>/`.
+3. Write a short `BASELINE.md` in the new phase directory documenting what changed vs the prior baseline.
+4. Update `scripts/release-smoke-test.cjs` + `.github/workflows/release.yml` release-smoke-test step if the artifact shape changed.
+5. Include the baseline commit in the phase-closeout PR.
+
+## Adding CI checks
+
+New CI checks go in `.github/workflows/ci.yml`. Follow the existing
+job-separation pattern (lint / validate / test / security / size-budget).
+New required checks must also be added to:
+
+- `reference/BRANCH-PROTECTION.md` §Phase B contexts list
+- `scripts/apply-branch-protection.sh` enforcing branch
+
+## Local dev loop
 
 ```bash
-npm test
+npm test                      # run all tests
+npm run lint:md               # markdown lint
+npm run validate:schemas      # JSON schema validation
+npm run validate:frontmatter  # agent frontmatter contract
+npm run detect:stale-refs     # legacy namespace detector
+npm run scan:injection        # prompt-injection scanner
+npm run test:size-budget      # agent size budget only
 ```
 
-The runner is Node's built-in `node:test`. Node 22 or 24 is required. CI covers Node 22 + 24 on Linux, macOS, and Windows.
+## Rolling back a release
 
-### What to do when a test fails
+If a release ships with a broken pipeline:
 
-1. **Read the failure message.** Every test in this suite includes a descriptive assertion message with the offending file, field, or line.
-2. **Fix the underlying issue, not the test.** If an agent exceeds its line-count tier, either compress the agent OR raise its `size_budget` with a rationale in the PR description — do not soften the tier cap. If a required-reading reference is dangling, fix the path — do not remove the check.
-3. **If the test itself is broken**, open a PR touching only `tests/` with a clear description of why the test was wrong.
+```bash
+bash scripts/rollback-release.sh <version>
+```
 
-### Size-budget tiers
-
-`tests/agent-size-budget.test.cjs` enforces line-count caps per tier:
-
-| Tier | Line cap |
-|------|----------|
-| `DEFAULT` (no declaration) | 250 |
-| `LARGE` | 350 |
-| `XL` | 500 |
-| `XXL` | 700 |
-
-To raise an agent's tier: add `size_budget: <TIER>` to its frontmatter AND explain why in the PR description. The justification must stand on its own (this agent genuinely needs the extra lines because X), not "test was failing."
-
-### Baselines
-
-Each phase locks a structural baseline under `test-fixture/baselines/phase-<N>/`. When your PR legitimately changes the baseline (e.g., you added a new agent), re-lock per the procedure in `test-fixture/baselines/phase-6/README.md`. The re-lock is itself a separate commit and requires a rationale.
-
-## Version bump workflow
-
-Version bumps happen at **phase closeout** only. A solo-commit version bump outside of a phase is not a supported workflow.
-
-At phase closeout:
-1. Bump `package.json` `version`.
-2. Refresh `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (version, description, keywords as needed).
-3. Prepend a `CHANGELOG.md` entry listing every material change.
-4. Update `README.md` if the user-facing surface changed.
-5. Lock the phase's regression baseline in `test-fixture/baselines/phase-<N>/` (if structural state changed).
-
-## Hooks and safety
-
-`hooks/gdd-read-injection-scanner.js` runs on every `Read` tool use and warns on known prompt-injection patterns. `hooks/context-exhaustion.js` runs on every tool use and records a paused checkpoint when context is high. Both are CI-safe; neither blocks legitimate work.
-
-## Questions
-
-File an issue in the repo — issue triage uses the same CI guarantees as PRs.
+This prompts for confirmation, then deletes the tag + GitHub Release.
+Manual-only per D-22 — auto-rollback is intentionally not implemented.

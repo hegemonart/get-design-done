@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done.example/schemas/plugin.schema.json",
+  "title": "Claude plugin.json",
+  "description": "Shape of .claude-plugin/plugin.json — the plugin manifest consumed by Claude Code.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "name",
+    "short_name",
+    "version",
+    "description",
+    "author",
+    "repository",
+    "license",
+    "keywords",
+    "skills",
+    "hooks"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "short_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "author": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "url": { "type": "string" }
+      }
+    },
+    "homepage": { "type": "string" },
+    "repository": { "type": "string" },
+    "license": { "type": "string" },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "skills": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "hooks": { "type": "string" }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done.example/schemas/config.schema.json",
+  "title": ".design/config.json",
+  "description": "Shape of .design/config.json — model profile and parallelism settings per reference/config-schema.md.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "model_profile": {
+      "type": "string",
+      "enum": ["quality", "balanced", "budget"]
+    },
+    "parallelism": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "max_parallel_agents": { "type": "integer", "minimum": 1 },
+        "min_tasks_to_parallelize": { "type": "integer", "minimum": 1 },
+        "min_estimated_savings_seconds": { "type": "integer", "minimum": 0 },
+        "require_disjoint_touches": { "type": "boolean" },
+        "worktree_isolation": { "type": "boolean" },
+        "per_stage_override": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "max_parallel_agents": { "type": "integer", "minimum": 1 },
+              "min_tasks_to_parallelize": { "type": "integer", "minimum": 1 },
+              "min_estimated_savings_seconds": { "type": "integer", "minimum": 0 },
+              "require_disjoint_touches": { "type": "boolean" },
+              "worktree_isolation": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

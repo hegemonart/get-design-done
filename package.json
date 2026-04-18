@@ -1,6 +1,6 @@
 {
   "name": "get-design-done",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A Claude Code plugin for systematic design improvement",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -10,7 +10,15 @@
   },
   "license": "MIT",
   "scripts": {
-    "test": "node --test \"tests/**/*.cjs\""
+    "test": "node --test \"tests/**/*.cjs\"",
+    "lint:md": "npx --yes markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.planning\" \"#.claude\" \"#test-fixture/baselines\"",
+    "lint:links": "npx --yes lychee --config .lycheeignore --no-progress --accept 200,206,403,429 \"**/*.md\" || true",
+    "validate:schemas": "node scripts/validate-schemas.cjs",
+    "validate:frontmatter": "node scripts/validate-frontmatter.cjs agents/",
+    "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
+    "scan:injection": "node scripts/run-injection-scanner-ci.cjs",
+    "test:size-budget": "node --test tests/agent-size-budget.test.cjs",
+    "release:extract-changelog": "node scripts/extract-changelog-section.cjs"
   },
   "keywords": [
     "claude",

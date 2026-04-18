@@ -19,9 +19,11 @@ function isExactPatchBump(from, to) {
          b.patch === a.patch + 1;
 }
 
-// Version sequence per roadmap: v1.0.0 → v1.0.1 → ... → v1.0.6
+// Version sequence per roadmap: v1.0.0 → v1.0.1 → ... → v1.0.7
+// Phase 12 did not ship a manifest bump in this worktree; 1.0.6 included for
+// sequence continuity but the tree jumps 1.0.5 → 1.0.7 at Phase 13 closeout.
 const EXPECTED_SEQUENCE = [
-  '1.0.0', '1.0.1', '1.0.2', '1.0.3', '1.0.4', '1.0.5', '1.0.6'
+  '1.0.0', '1.0.1', '1.0.2', '1.0.3', '1.0.4', '1.0.5', '1.0.6', '1.0.7'
 ];
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

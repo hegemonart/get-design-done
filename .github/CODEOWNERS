@@ -1,0 +1,6 @@
+# CODEOWNERS — solo maintainer default.
+# Every path assigned to @hegemonart. Future contributors: add path-specific
+# rules above this blanket rule (e.g. `skills/ @someone`) — GitHub applies
+# the most specific match.
+
+* @hegemonart

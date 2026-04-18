@@ -7,23 +7,157 @@ on:
     branches: ["**"]
 
 jobs:
+  lint:
+    name: "Lint (markdown + frontmatter + stale-refs)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install markdownlint-cli2
+        run: npm install --no-save --no-audit --no-fund markdownlint-cli2@0.13.0
+
+      - name: Run markdownlint
+        run: npx markdownlint-cli2 "**/*.md" "#node_modules" "#.planning" "#.claude" "#test-fixture/baselines"
+
+      - name: Link check (lychee)
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --config .lycheeignore
+            --no-progress
+            --accept 200,206,403,429
+            --exclude-path node_modules
+            --exclude-path .planning
+            --exclude-path .claude
+            --exclude-path test-fixture/baselines
+            '**/*.md'
+          fail: true
+
+      - name: Validate agent frontmatter
+        run: node scripts/validate-frontmatter.cjs agents/
+
+      - name: Detect stale references
+        run: node scripts/detect-stale-refs.cjs
+
+  validate:
+    name: "Validate (schemas + plugin + shellcheck)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate JSON schemas
+        run: node scripts/validate-schemas.cjs
+
+      - name: Plugin validate (schema-only fallback)
+        run: |
+          # D-09: run `claude plugin validate .` if the CLI is on the runner;
+          # else the schema validation above is the authoritative check.
+          if command -v claude >/dev/null 2>&1 && claude plugin --help 2>&1 | grep -q 'validate'; then
+            echo "claude CLI detected — running claude plugin validate ."
+            claude plugin validate . || exit 1
+          else
+            echo "claude plugin validate CLI not available on runner — schema validation (previous step) is the authoritative check per D-09."
+          fi
+
+      - name: Shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          severity: error
+          scandir: scripts
+
+      - name: Detect hardcoded absolute paths
+        run: |
+          set -e
+          # D-11: flag /Users/, /home/<user>/, and C:\ in shipped content dirs.
+          # Exit nonzero on any match. DEPRECATIONS.md excluded (documents examples).
+          MATCHES=$(grep -rnE '/Users/|/home/[a-z]+/|C:\\\\' \
+            scripts/ reference/ agents/ skills/ \
+            --include='*.sh' --include='*.cjs' --include='*.js' --include='*.md' \
+            --exclude-dir='baselines' \
+            2>/dev/null | grep -v 'DEPRECATIONS.md' || true)
+          if [ -n "$MATCHES" ]; then
+            echo "Hardcoded absolute paths detected:"
+            echo "$MATCHES"
+            echo "Use \$HOME or a relative path instead (Phase 1 cross-platform discipline)."
+            exit 1
+          fi
+          echo "No hardcoded absolute paths found."
+
   test:
-    name: "Node ${{ matrix.node-version }} / ${{ matrix.os }}"
+    name: "Test (Node ${{ matrix.node-version }} / ${{ matrix.os }})"
+    needs: [lint, validate]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         node-version: [22, 24]
         os: [ubuntu-latest, macos-latest, windows-latest]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
       - name: Run tests
         run: npm test
+
+  security:
+    name: "Security (secrets + injection scan)"
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for gitleaks initial scan per D-12
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+      - name: Injection scanner (CI mode)
+        run: npm run scan:injection
+
+  size-budget:
+    name: "Size budget (blocking)"
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Agent size-budget gate
+        run: |
+          if ! npm run test:size-budget; then
+            echo ""
+            echo "ERROR: one or more agents exceed their size_budget tier."
+            echo "To raise: set size_budget: XL in the agent frontmatter AND include rationale in the PR description."
+            echo "See CONTRIBUTING.md for the override process."
+            exit 1
+          fi

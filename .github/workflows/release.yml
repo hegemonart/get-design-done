@@ -1,0 +1,141 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.claude-plugin/plugin.json'
+      - 'CHANGELOG.md'
+
+# Per D-19: workflow only tags + releases. It does not push to main, force-push, or delete refs.
+# Per D-22: release-time smoke test is a separate workflow/job — this workflow ends at release creation.
+
+permissions:
+  contents: write   # needed to create tags + releases
+
+jobs:
+  detect-version:
+    name: "Detect version bump"
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.diff.outputs.version }}
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # needs HEAD^ for diff
+
+      - name: Detect plugin.json version change
+        id: diff
+        run: |
+          set -euo pipefail
+          OLD=$(git show HEAD^:.claude-plugin/plugin.json 2>/dev/null | node -e 'let d=""; process.stdin.on("data",c=>d+=c); process.stdin.on("end",()=>{try{console.log(JSON.parse(d).version)}catch{console.log("")}})' || echo "")
+          NEW=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(".claude-plugin/plugin.json","utf8")).version)')
+          echo "old=$OLD"
+          echo "new=$NEW"
+          if [ "$OLD" != "$NEW" ] && [ -n "$NEW" ]; then
+            echo "version=$NEW" >> "$GITHUB_OUTPUT"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Version bump detected: $OLD -> $NEW"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No version change. Exiting quietly."
+          fi
+
+  tag-and-release:
+    name: "Tag + GitHub Release"
+    needs: detect-version
+    if: needs.detect-version.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Extract CHANGELOG section
+        id: changelog
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.detect-version.outputs.version }}"
+          BODY=$(node scripts/extract-changelog-section.cjs "$VERSION")
+          {
+            echo "body<<GDDEOF"
+            echo "$BODY"
+            echo "GDDEOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.detect-version.outputs.version }}"
+          TAG="v${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Create and push the tag pointing at the merge commit on main.
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.detect-version.outputs.version }}
+          name: v${{ needs.detect-version.outputs.version }}
+          body: ${{ steps.changelog.outputs.body }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release-smoke-test:
+    name: "Release smoke test (fresh checkout + baseline diff)"
+    needs: tag-and-release
+    if: needs.detect-version.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the freshly-created tag
+        uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.detect-version.outputs.version }}
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run release smoke test against phase-13 baseline
+        run: |
+          set -euo pipefail
+          if [ -d test-fixture/baselines/phase-13 ]; then
+            BASELINE=test-fixture/baselines/phase-13
+          else
+            echo "phase-13 baseline not yet present — falling back to phase-11 (plan 13-08 locks phase-13)"
+            BASELINE=test-fixture/baselines/phase-11
+          fi
+          node scripts/release-smoke-test.cjs --baseline "$BASELINE"
+
+      - name: Rollback guidance on failure
+        if: failure()
+        run: |
+          echo ""
+          echo "SMOKE TEST FAILED."
+          echo "The tag v${{ needs.detect-version.outputs.version }} has been created but the pipeline diff vs baseline did not match."
+          echo "To roll back: run locally as repo admin:"
+          echo "  bash scripts/rollback-release.sh ${{ needs.detect-version.outputs.version }}"
+          echo "Per D-22, automated rollback is intentionally NOT implemented."
+          exit 1
+
+  marketplace-publish:
+    name: "Marketplace publish (placeholder)"
+    needs: release-smoke-test
+    if: needs.detect-version.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder — D-23
+        run: echo "no-op — marketplace registry pending; webhook wired here when available"

@@ -1,0 +1,7 @@
+^https://github\.com/.*/issues/\d+$
+^https://github\.com/.*/pull/\d+$
+^https://anthropic\.com/.*
+^https://claude\.ai/.*
+^mailto:.*
+^https://localhost.*
+^http://localhost.*

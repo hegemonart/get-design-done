@@ -4,6 +4,39 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.0.7] — 2026-04-18
+
+### Added — Phase 13: CI/CD
+- `.github/workflows/ci.yml` expanded from single-job test runner to five-job pipeline: `lint` → `validate` → `test` (matrix) → `security` + `size-budget`
+- Markdown lint via `markdownlint-cli2@0.13.0` (pinned); link checker via `lycheeverse/lychee-action@v2` (blocking)
+- JSON schemas at `reference/schemas/`: `plugin.schema.json`, `marketplace.schema.json`, `hooks.schema.json`, `config.schema.json`, `intel.schema.json`
+- `scripts/validate-schemas.cjs` — ajv-cli wrapper with structural-parse fallback for all schemas
+- `scripts/validate-frontmatter.cjs` — CLI-friendly agent-frontmatter validator reusing `tests/helpers.cjs`
+- `scripts/detect-stale-refs.cjs` — fails on any `/design:*` legacy namespace or deprecated agent/stage names; authoritative list in `reference/DEPRECATIONS.md`
+- `claude plugin validate .` in CI with schema-only fallback (per D-09)
+- `ludeeus/action-shellcheck@master` at severity=error on `scripts/`
+- Hardcoded-absolute-path grep across `scripts/`, `reference/`, `agents/`, `skills/` (flags `/Users/`, `/home/<user>/`, `C:\`)
+- `gitleaks/gitleaks-action@v2` secrets scan with `.gitleaks.toml` allowlist
+- `scripts/run-injection-scanner-ci.cjs` — CI-mode scanner over Phase 7 injection patterns against all shipped `reference/`, `skills/**/SKILL.md`, `agents/*.md`
+- `tests/agent-size-budget.test.cjs` wired as its own blocking `size-budget` CI job with actionable override guidance
+- `.github/pull_request_template.md` — phase / version-bump / CHANGELOG / baseline / tests checklist
+- `.github/CODEOWNERS` — solo-maintainer default (`* @hegemonart`)
+- `reference/BRANCH-PROTECTION.md` + `scripts/apply-branch-protection.sh` — two-phase rollout (advisory → enforcing)
+- `.github/workflows/release.yml` — auto-tag + GitHub Release on `.claude-plugin/plugin.json` version change; softprops/action-gh-release@v2
+- `scripts/extract-changelog-section.cjs` — parses CHANGELOG for release body
+- `scripts/rollback-release.sh` — documented manual rollback (not CI-automated, per D-22)
+- `scripts/release-smoke-test.cjs` — fresh-checkout deterministic smoke test against `test-fixture/src/`, diffs against `test-fixture/baselines/phase-13/`
+- `CONTRIBUTING.md` — branch strategy, PR checklist, required checks list, version-bump workflow, baseline relock how-to
+- README badges: CI build status, Node versions (22, 24), plugin version, license (MIT)
+- `test-fixture/baselines/phase-13/` — regression baseline locked at v1.0.7
+
+### Changed
+- Plugin version: 1.0.5 → 1.0.7 (skipping 1.0.6 — Phase 12 did not ship a manifest bump in this worktree)
+- `package.json` gains CI-focused scripts: `lint:md`, `lint:links`, `validate:schemas`, `validate:frontmatter`, `detect:stale-refs`, `scan:injection`, `test:size-budget`, `release:extract-changelog`
+- `ci.yml` matrix preserved exactly: Node 22/24 × ubuntu/macos/windows
+
+---
+
 ## [1.0.6] — 2026-04-18
 
 ### Added — Phase 12: Test Coverage

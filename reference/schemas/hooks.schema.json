@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done.example/schemas/hooks.schema.json",
+  "title": "Claude hooks.json",
+  "description": "Shape of hooks/hooks.json — event-triggered commands registered by the plugin.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["hooks"],
+  "properties": {
+    "hooks": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "SessionStart": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/hookGroup" }
+        },
+        "SessionEnd": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/hookGroup" }
+        },
+        "PreToolUse": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/hookGroup" }
+        },
+        "PostToolUse": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/hookGroup" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "hookGroup": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["hooks"],
+      "properties": {
+        "matcher": { "type": "string" },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["type", "command"],
+            "properties": {
+              "type": { "type": "string", "enum": ["command"] },
+              "command": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

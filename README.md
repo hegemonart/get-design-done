@@ -1,5 +1,10 @@
 # Get Design Done
 
+[![CI](https://github.com/hegemonart/get-design-done/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/hegemonart/get-design-done/actions/workflows/ci.yml)
+[![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Version](https://img.shields.io/badge/plugin-v1.0.7-blue)](https://github.com/hegemonart/get-design-done/releases/tag/v1.0.7)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/hegemonart/get-design-done/blob/main/LICENSE)
+
 Agent-orchestrated design pipeline for Claude Code. One entry point that routes design work through a 5-stage workflow — **Scan → Discover → Plan → Design → Verify** — using 22 specialized agents, Figma + Refero + Pinterest MCP connections, and Claude Design handoff integration.
 
 ## Install
