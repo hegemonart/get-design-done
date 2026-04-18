@@ -33,6 +33,32 @@ Parse $ARGUMENTS:
 - Plan's pipeline is inherently sequential (researcher → pattern-mapper → planner → checker). Expected verdict: **serial** (rule 1).
 - Write `<parallelism_decision>` to STATE.md with the verdict and reason before spawning agents.
 
+## Probe Chromatic connection
+
+Run at stage entry, after reading STATE.md:
+
+Step C1 — CLI presence:
+  Bash: command -v chromatic 2>/dev/null || npx chromatic --version 2>/dev/null
+  → found → proceed to Step C2
+  → not found → chromatic: not_configured (skip all Chromatic steps)
+
+Step C2 — Token check:
+  Bash: test -n "${CHROMATIC_PROJECT_TOKEN}"
+  → true → chromatic: available
+  → false → chromatic: unavailable
+
+Also check: if storybook: not_configured → chromatic effectively unavailable (emit note, do not run).
+Write chromatic status to .design/STATE.md <connections>.
+
+## Chromatic Change-Risk Scoping (when chromatic: available)
+
+Before writing DESIGN-PLAN.md, if chromatic: available:
+1. Identify token/component files to be changed (from DESIGN-CONTEXT.md scope)
+2. Run: Bash: npx chromatic --project-token $CHROMATIC_PROJECT_TOKEN --trace-changed=expanded --dry-run 2>&1
+3. Parse output — count story files that depend on changed source files
+4. Pass story count to design-planner.md (see design-planner.md Chromatic Change-Risk section)
+If unavailable: design-planner proceeds without story-count annotation.
+
 ## Step 1 — Optional Research (skip if auto_mode)
 
 Complexity heuristic: if DESIGN-CONTEXT.md `<domain>` spans 3+ scopes OR `<decisions>` count > 6 → spawn design-phase-researcher. Otherwise skip.

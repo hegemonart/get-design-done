@@ -32,6 +32,7 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt pass
 
 It may also include:
 - `.design/DESIGN-RESEARCH.md` — if the research step ran, use these patterns to inform task scope
+- `connections/chromatic.md` — Chromatic CLI connection spec (probe, --trace-changed scoping, baseline management)
 
 **Invariant:** Read every file in the `<required_reading>` block before taking any other action.
 
@@ -180,6 +181,20 @@ If the prompt context contains `parallel_mode: true`:
 If `parallel_mode: false` (or absent):
 - Set `Parallel: false` on all tasks
 - Omit `Touches:` field from all tasks
+
+---
+
+## Chromatic Change-Risk Scoping (when chromatic: available)
+
+**Skip if `chromatic` is `not_configured` or `unavailable` in STATE.md `<connections>`.**
+
+Before finalizing task list:
+1. For each task that modifies a design token file or component file, check the at-risk story count
+   (passed from skills/plan/SKILL.md via the --trace-changed output, or run inline if not pre-computed)
+2. Annotate each affected task in DESIGN-PLAN.md with:
+   `At-risk stories: N` (derived from --trace-changed dependency tree)
+3. If N > 20: suggest splitting the task or adding a Chromatic review gate after execution
+4. If N = 0: token file change is isolated — no story regression risk
 
 ---
 

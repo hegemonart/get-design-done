@@ -75,6 +75,32 @@ If storybook: not_configured — skip; emit no note (opt-in feature).
 
 ---
 
+### Probe Chromatic connection
+
+Run at stage entry, after reading STATE.md:
+
+Step C1 — CLI presence:
+  Bash: command -v chromatic 2>/dev/null || npx chromatic --version 2>/dev/null
+  → found → proceed to Step C2
+  → not found → chromatic: not_configured (skip all Chromatic steps)
+
+Step C2 — Token check:
+  Bash: test -n "${CHROMATIC_PROJECT_TOKEN}"
+  → true → chromatic: available
+  → false → chromatic: unavailable
+
+Also check: if storybook: not_configured → chromatic effectively unavailable (emit note, do not run).
+Write chromatic status to .design/STATE.md <connections>.
+
+### Chromatic Visual Delta (when chromatic: available)
+
+After design executor has run (when verifying post-design):
+1. Run: Bash: npx chromatic --project-token $CHROMATIC_PROJECT_TOKEN --output json 2>&1 | tee .design/chromatic-results.json
+2. Pass .design/chromatic-results.json to design-verifier for narration (see design-verifier.md Chromatic Delta Narration section)
+If chromatic: unavailable or not_configured: skip; note in DESIGN-VERIFICATION.md "visual regression check skipped".
+
+---
+
 Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /get-design-done:discover first."
 
 ---
