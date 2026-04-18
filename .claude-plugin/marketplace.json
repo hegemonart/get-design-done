@@ -4,15 +4,15 @@
     "name": "hegemonart"
   },
   "metadata": {
-    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with Figma + Refero connections and 3 standalone audit commands (style, darkmode, compare).",
-    "version": "1.0.0"
+    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 7 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify) and 5 standalone commands (style, darkmode, compare, figma-write, graphify).",
+    "version": "1.0.2"
   },
   "plugins": [
     {
       "name": "get-design-done",
       "source": "./",
-      "description": "Agent-orchestrated design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, Figma + Refero MCP connections, style/darkmode/compare commands.",
-      "version": "1.0.0",
+      "description": "Agent-orchestrated 5-stage design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, 7 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify), and 5 standalone commands (style, darkmode, compare, figma-write, graphify). Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
+      "version": "1.0.2",
       "author": {
         "name": "hegemonart"
       },
@@ -25,8 +25,21 @@
         "ui",
         "ux",
         "frontend",
-        "orchestration",
-        "design-system"
+        "pipeline",
+        "skill",
+        "design-system",
+        "accessibility",
+        "wcag",
+        "nng",
+        "typography",
+        "motion",
+        "anti-patterns",
+        "audit",
+        "visual-regression",
+        "storybook",
+        "graphify",
+        "playwright",
+        "figma-write"
       ]
     }
   ]

@@ -1,8 +1,8 @@
 {
   "name": "get-design-done",
   "short_name": "gdd",
-  "version": "1.0.1",
-  "description": "Agent-orchestrated 5-stage design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, Figma + Refero MCP connections, and 3 standalone commands (style, darkmode, compare). Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
+  "version": "1.0.2",
+  "description": "Agent-orchestrated 5-stage design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, 7 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify), and 5 standalone commands (style, darkmode, compare, figma-write, graphify). Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
@@ -24,7 +24,12 @@
     "typography",
     "motion",
     "anti-patterns",
-    "audit"
+    "audit",
+    "visual-regression",
+    "storybook",
+    "graphify",
+    "playwright",
+    "figma-write"
   ],
   "skills": ["./", "./skills/"],
   "hooks": "./hooks/hooks.json"
