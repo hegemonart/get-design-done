@@ -1,7 +1,7 @@
 {
   "name": "get-design-done",
   "short_name": "gdd",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22+ specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), handoff-first workflow via Claude Design bundles, bidirectional Figma write-back (annotations, Code Connect), queryable intel store (`.design/intel/`) for O(1) design surface lookups, and self-improvement loop (reflector agent, frontmatter + budget feedback, global-skills layer at `~/.claude/gdd/global-skills/`). Standalone commands: style, darkmode, compare, figma-write, graphify, handoff, analyze-dependencies, skill-manifest, extract-learnings, reflect, apply-reflections. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
   "author": {
     "name": "hegemonart",
