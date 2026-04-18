@@ -2,6 +2,8 @@
 name: design-context-builder
 description: Detects existing design system state via grep/glob, runs discovery interview asking ONLY unanswered questions, produces .design/DESIGN-CONTEXT.md. Spawned by the discover stage.
 tools: Read, Write, Bash, Grep, Glob, mcp__figma-desktop__get_variable_defs, mcp__figma-desktop__get_metadata, mcp__refero__search
+required_reading:
+  - connections/storybook.md
 color: blue
 model: inherit
 size_budget: XL
@@ -33,6 +35,7 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 - `.design/STATE.md` — current pipeline position and project metadata
 - `reference/audit-scoring.md` — scoring framework for baseline audit
 - `reference/anti-patterns.md` — grep patterns for BAN/SLOP violations
+- `connections/storybook.md` — Storybook HTTP probe and index.json format
 
 ## Step 0 — Figma Pre-population
 
@@ -86,6 +89,47 @@ Note: Decisions D-XX through D-YY pre-populated from Figma variables (source: fi
 ```
 
 Proceed to Step 1 regardless of whether Step 0 ran or was skipped.
+
+## Step 0B — Storybook Component Inventory
+
+**Skip this step if `storybook` is `not_configured` or `unavailable` in `.design/STATE.md` `<connections>`.** Proceed to Step 1 — grep-based inventory continues as before.
+
+### If `storybook: available`
+
+Fetch the component inventory from the running Storybook dev server:
+
+```bash
+curl -sf http://localhost:6006/index.json
+```
+
+If the above returns 404 or empty, try the Storybook 7 compat endpoint:
+
+```bash
+curl -sf http://localhost:6006/stories.json
+```
+
+**Parse the response:**
+
+1. Iterate `entries` — filter to entries where `type === "story"` (exclude `"docs"` entries)
+2. Group by `title` field — each unique `title` is one component
+3. For each component title: collect all `name` values (the declared story states: Primary, Disabled, Loading, etc.)
+4. Build the component inventory as:
+   ```
+   Component: Button
+     States: Primary, Secondary, Disabled, Loading, WithIcon
+     Stories file: ./src/components/Button.stories.tsx
+
+   Component: Input
+     States: Default, Error, Disabled, WithHelperText
+     Stories file: ./src/components/Input.stories.tsx
+   ```
+5. Use this as the **AUTHORITATIVE** component list — zero grep false-positives, zero missed states
+6. Record in DESIGN-CONTEXT.md `<components>` section (or the component inventory section equivalent)
+7. **Note: do NOT read `entry.parameters`** — Storybook 8 index.json does not include parameters; a11y config lives in `.storybook/preview.ts`
+
+**If index.json fetch errors:** update STATE.md `storybook: unavailable`, fall back to grep-based inventory in Step 1. Continue without error.
+
+Proceed to Step 1 regardless of whether Step 0B ran or was skipped.
 
 ## Step 1 — Auto-Detect Design System State
 

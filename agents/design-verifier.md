@@ -32,6 +32,8 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 - `reference/heuristics.md` — NNG heuristics H-01..H-10 scoring guide
 - `reference/review-format.md` — visual UAT presentation format
 - `reference/accessibility.md` — WCAG checklist for accessibility scoring
+- `connections/chromatic.md` — Chromatic CLI connection spec (probe, baseline management, fallback)
+- `connections/storybook.md` — Storybook HTTP probe and a11y integration details
 
 ## Prompt Context Fields
 
@@ -289,6 +291,48 @@ For each gap, emit an entry in the locked gap format:
 Order gaps: BLOCKER first, then MAJOR, MINOR, COSMETIC. Number sequentially (G-01, G-02, ...).
 
 If zero gaps found: skip this section entirely — do NOT emit `## GAPS FOUND`.
+
+---
+
+## Chromatic Delta Narration (when chromatic: available)
+
+**Skip if `chromatic` is `not_configured` or `unavailable` in STATE.md `<connections>`.**
+
+If `.design/chromatic-results.json` exists:
+1. Read .design/chromatic-results.json
+2. Check if this is a first run (all entries have status: "new"):
+   → First run: emit "Baseline established — no regressions detected (first run creates baseline)."
+3. For subsequent runs, narrate changes:
+   For each story entry in results:
+     - status "unchanged" → PASS <StoryTitle>:<StoryName>
+     - status "changed" → CHANGED <StoryTitle>:<StoryName> (visual change detected — review on chromatic.com)
+     - status "new" → NEW <StoryTitle>:<StoryName> (first snapshot — not a regression)
+     - status "error" → ERROR <StoryTitle>:<StoryName> — investigate
+4. Emit summary: "Total: N stories. X unchanged. Y changed. Z new. W errors."
+5. If Y > 0 (changed stories): flag as "VISUAL REGRESSION CANDIDATES — review required on chromatic.com before merging"
+6. Append narration to DESIGN-VERIFICATION.md ## Visual Regression section (create section if absent)
+
+If .design/chromatic-results.json does not exist: skip; emit no note.
+
+---
+
+## Storybook A11y Integration (when storybook: available)
+
+**Skip this block if `storybook` is `not_configured` or `unavailable` in STATE.md `<connections>`.**
+
+If `.design/storybook-a11y-report.txt` exists (written by the verify stage's a11y loop):
+
+1. Read `.design/storybook-a11y-report.txt`
+2. For each test failure found (axe-core rule names: `color-contrast`, `button-name`, `landmark-one-main`, etc.):
+   a. Match the failing story to the component name (`title` field from index.json — e.g., `"Button"` from story id `"button--primary"`)
+   b. Record in DESIGN-VERIFICATION.md A11y section as:
+      `A11Y-STORY [rule-name]: <ComponentName> (<story-state>) — <violation description>`
+3. Count violations by component — components with 3+ violations get a `HIGH PRIORITY` flag
+4. Distinguish between VIOLATIONS (axe-core "violations" array — must fix) and INCOMPLETE (needs manual check)
+
+If `.design/storybook-a11y-report.txt` does not exist:
+- Proceed with standard grep-based a11y checks only
+- Note: "Story-level a11y audit skipped — run `storybook test --ci` and re-verify to include story state coverage"
 
 ---
 
