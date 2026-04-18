@@ -95,7 +95,7 @@ jobs:
 
   release-smoke-test:
     name: "Release smoke test (fresh checkout + baseline diff)"
-    needs: tag-and-release
+    needs: [detect-version, tag-and-release]
     if: needs.detect-version.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -133,7 +133,7 @@ jobs:
 
   marketplace-publish:
     name: "Marketplace publish (placeholder)"
-    needs: release-smoke-test
+    needs: [detect-version, release-smoke-test]
     if: needs.detect-version.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:
