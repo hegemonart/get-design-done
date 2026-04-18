@@ -1,20 +1,28 @@
 name: npm backfill publish
 
-# Manually publish an already-existing git tag to npm as
-# @hegemonart/get-design-done. Used to backfill a release that shipped before
-# the npm-publish step existed in release.yml, or to re-publish a specific
-# tag if it failed the first time.
+# Manually publish the current main branch to npm as @hegemonart/get-design-done
+# under a specific version. Used when:
+#   - A release shipped before the npm-publish step existed in release.yml
+#     (e.g. v1.0.7 predates the npm-publish infrastructure in PR #11)
+#   - Re-running a publish for a specific version that failed the first time
+#
+# This workflow publishes from HEAD of main, NOT from the tag's historic
+# commit. That's intentional — the tag's tree predates the scoped package
+# setup (`@hegemonart/...` rename, publishConfig, files allowlist,
+# verify-version-sync.cjs). We publish the CURRENT package layout at the
+# version number supplied, using the `version` input as a sanity gate that
+# must match package.json.
 #
 # Usage (from GitHub UI):
-#   Actions → "npm backfill publish" → Run workflow → enter tag, e.g. v1.0.7
+#   Actions → "npm backfill publish" → Run workflow → enter version, e.g. 1.0.7
 #
 # Requires: NPM_TOKEN repo secret with publish rights on @hegemonart.
 
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'Git tag to publish (e.g. v1.0.7)'
+      version:
+        description: 'Version to publish (must match package.json on main, e.g. 1.0.7 — no v prefix)'
         required: true
         type: string
 
@@ -24,13 +32,12 @@ permissions:
 
 jobs:
   npm-backfill:
-    name: "npm publish (backfill ${{ inputs.tag }})"
+    name: "npm publish (backfill ${{ inputs.version }})"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout tag ${{ inputs.tag }}
+      - name: Checkout main
         uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.tag }}
+        # Note: refs/heads/main by default — intentionally not the tag.
 
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
@@ -38,18 +45,18 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Verify tag matches package.json version
+      - name: Verify input matches package.json version
         run: |
           set -euo pipefail
-          TAG="${{ inputs.tag }}"
-          # Strip leading 'v' if present: v1.0.7 → 1.0.7
-          EXPECTED="${TAG#v}"
+          EXPECTED="${{ inputs.version }}"
+          # Tolerate a leading 'v' if the user typed one.
+          EXPECTED="${EXPECTED#v}"
           ACTUAL=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("package.json","utf8")).version)')
-          echo "Tag says: $EXPECTED"
-          echo "package.json says: $ACTUAL"
+          echo "Input says: $EXPECTED"
+          echo "package.json on main says: $ACTUAL"
           if [ "$EXPECTED" != "$ACTUAL" ]; then
-            echo "ERROR: tag ${TAG} does not match package.json version ${ACTUAL}."
-            echo "Refusing to publish — tag and manifest must agree."
+            echo "ERROR: input version ${EXPECTED} does not match main's package.json ${ACTUAL}."
+            echo "Either bump package.json on main first, or re-run this workflow with the correct version."
             exit 1
           fi
 
