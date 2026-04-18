@@ -53,6 +53,25 @@ if [[ ! -d "${HOME}/.claude/skills/emil-design-eng" ]]; then
   log "optional: emil-design-eng skill not found in ~/.claude/skills. See get-design-done README for install options."
 fi
 
+# Phase 10.1: ensure .design/budget.json exists with defaults (D-12)
+DESIGN_DIR="$(pwd)/.design"
+mkdir -p "${DESIGN_DIR}"
+if [ ! -f "${DESIGN_DIR}/budget.json" ]; then
+  cat > "${DESIGN_DIR}/budget.json" <<'BUDGET_EOF'
+{
+  "per_task_cap_usd": 2.00,
+  "per_phase_cap_usd": 20.00,
+  "tier_overrides": {},
+  "auto_downgrade_on_cap": true,
+  "cache_ttl_seconds": 3600,
+  "enforcement_mode": "enforce"
+}
+BUDGET_EOF
+fi
+
+# Phase 10.1: ensure .design/telemetry/ directory is writable
+mkdir -p "${DESIGN_DIR}/telemetry"
+
 # Record success so we don't re-run until the bundled manifest changes.
 if [[ -f "${MANIFEST}" ]]; then
   cp "${MANIFEST}" "${MARKER}"
