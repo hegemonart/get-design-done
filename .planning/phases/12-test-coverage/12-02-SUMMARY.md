@@ -36,7 +36,7 @@ requirements_satisfied: [TST-04, TST-05]
 
 # Phase 12 Plan 02: Regression Baseline Capture + Diff Harness Summary
 
-Phase 6 regression baseline locked with 14-agent manifest, 12-skill-dir manifest, 3-connection-doc manifest, and agent frontmatter snapshot. Diff harness runs 5 baseline-comparison tests as part of the normal test suite.
+Phase 6 regression baseline locked with 14-agent manifest, 8-committed-skill-dir manifest, 3-connection-doc manifest, and agent frontmatter snapshot. Diff harness uses git ls-files for committed-state enumeration and runs 5 tests as part of the normal test suite.
 
 ## Tasks Completed
 
@@ -44,20 +44,21 @@ Phase 6 regression baseline locked with 14-agent manifest, 12-skill-dir manifest
 |---|------|--------|-------|
 | 1 | Capture Phase 6 baseline snapshot | 9cba861 | test-fixture/baselines/phase-6/ (6 files) |
 | 2 | Create regression-baseline.test.cjs | 2517e38 | tests/regression-baseline.test.cjs, package.json |
+| fix | Use git ls-files for committed-file enumeration | 7d28c08 | tests/regression-baseline.test.cjs, skill-list.txt |
 
 ## What Was Built
 
 **test-fixture/baselines/phase-6/** — snapshot of the plugin's structural metadata at Phase 6 (v1.0.0):
 - `agent-list.txt`: 14 `design-*.md` agents sorted
-- `skill-list.txt`: 12 skill directories sorted
+- `skill-list.txt`: 8 committed skill directories sorted (untracked dirs excluded)
 - `connection-list.txt`: 3 connection doc files sorted
 - `plugin-version.txt`: `1.0.0`
 - `agent-frontmatter-snapshot.json`: parsed frontmatter for all 14 agents (name, description, tools, color, model)
 - `README.md`: re-lock procedure with explicit human-confirmation requirement
 
 **tests/regression-baseline.test.cjs** — diff harness with 5 tests:
-1. Agent list exact match against `agents/` directory
-2. Skill directory list exact match against `skills/`
+1. Agent list exact match against committed `agents/` files (via git ls-files)
+2. Skill directory list exact match against committed `skills/` subdirs (via git ls-files)
 3. Connection doc list exact match against `connections/`
 4. Plugin version >= baseline (allows forward progression, blocks regression)
 5. Agent frontmatter integrity — all baseline agents still exist with required fields (name, description, tools, color)
@@ -68,12 +69,12 @@ Phase 6 regression baseline locked with 14-agent manifest, 12-skill-dir manifest
 npm test
 > node --test "tests/**/*.cjs"
 
-✔ tests\helpers.cjs (51ms)
-✔ baseline: agent-list matches agents/ directory (2ms)
-✔ baseline: skill-list matches skills/ directory (1ms)
-✔ baseline: connection-list matches connections/ directory (0ms)
+✔ tests\helpers.cjs (71ms)
+✔ baseline: agent-list matches committed agents/ files (53ms)
+✔ baseline: skill-list matches committed skills/ directories (51ms)
+✔ baseline: connection-list matches connections/ directory (1ms)
 ✔ baseline: plugin version matches plugin-version.txt (1ms)
-✔ baseline: agent frontmatter snapshot — no agent has lost required fields (3ms)
+✔ baseline: agent frontmatter snapshot — no agent has lost required fields (8ms)
 tests: 6 pass
 ```
 
@@ -88,8 +89,12 @@ tests: 6 pass
 - **Files modified:** package.json
 - **Commit:** 2517e38
 
-**2. [Context] skill-list.txt captures 12 directories (not 8 as listed in plan)**
-- The plan's example showed 8 skill directories, but the actual repo has 12 (brief, compare, darkmode, design, discover, explore, help, next, plan, scan, style, verify). The baseline was locked to the actual current state (12 dirs) — this is correct behavior. The plan's example list was illustrative, not exhaustive.
+**2. [Rule 1 - Bug] Use git ls-files instead of readdirSync for committed-file enumeration**
+- **Found during:** Post-task 2 verification run
+- **Issue:** `readdirSync` includes untracked working-tree files. The repo has untracked `design-discussant.md` in agents/ and extra skill dirs (discuss/, health/, list-assumptions/, etc.) from future-phase work. This caused false-positive test failures immediately after the baseline was created.
+- **Fix:** Agent and skill tests now use `execSync('git ls-files ...')` to enumerate only committed files. `skill-list.txt` updated from 12 dirs to 8 committed dirs. Connection-list kept as `readdirSync` (connections/ has no untracked files).
+- **Files modified:** tests/regression-baseline.test.cjs, test-fixture/baselines/phase-6/skill-list.txt
+- **Commit:** 7d28c08
 
 ## Known Stubs
 
