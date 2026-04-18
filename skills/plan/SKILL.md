@@ -127,6 +127,24 @@ Emit `## ANALYSIS COMPLETE` when done.
 
 Wait for `## ANALYSIS COMPLETE`.
 
+## Step 1.7 — Synthesize pre-plan research inputs (Plan 10.1-04, D-13/D-15)
+
+If 2+ of the pre-plan research agents ran (`design-phase-researcher` Step 1, `design-pattern-mapper` Step 1.5, `design-assumptions-analyzer` Step 1.6), invoke synthesize to merge their outputs into a single compact brief. If only one ran, skip this step.
+
+    Skill("synthesize", {
+      outputs: [
+        (if Step 1 ran)   "=== from design-phase-researcher ===\n" + <read .design/DESIGN-RESEARCH.md>,
+        (if Step 1.5 ran) "=== from design-pattern-mapper ===\n"   + <read .design/DESIGN-PATTERNS.md>,
+        (if Step 1.6 ran) "=== from design-assumptions-analyzer ===\n" + <read .design/DESIGN-ASSUMPTIONS.md>
+      ],
+      directive: "Merge into a single compact pre-plan brief. Preserve per-source section headers so the planner can trace provenance. Consolidate duplicate recommendations with source tags. Target ~150 lines.",
+      output_shape: "markdown"
+    })
+
+Wait for `## SYNTHESIS COMPLETE`. Write to `.design/DESIGN-PREPLAN-BRIEF.md` (overwrite if present). Add `@.design/DESIGN-PREPLAN-BRIEF.md` to the planner's `<required_reading>` in Step 2 — individual files remain on disk for drill-down.
+
+**Parallel synthesizer note (future):** if a future plan variant spawns N parallel phase-researchers (e.g., one per project-type family), wire synthesize the same way as `skills/map/` Step 3.5.
+
 ## Step 2 — Plan
 
 ```
@@ -138,6 +156,7 @@ Task("design-planner", """
 @.design/DESIGN-PATTERNS.md
 [@.design/DESIGN-RESEARCH.md — only include if research step ran]
 [@.design/DESIGN-ASSUMPTIONS.md — only include if assumptions analysis ran]
+[@.design/DESIGN-PREPLAN-BRIEF.md — include if Step 1.7 synthesize ran; planner prefers this compact brief over the individual files above]
 [@.design/sketches/*/WINNER.md — include all completed sketch winners if present]
 [@.design/spikes/*/FINDINGS.md — include all completed spike findings if present]
 [@./.claude/skills/design-*-conventions.md — include all project-local design conventions if present]

@@ -93,6 +93,34 @@ Emit `## CONTEXT COMPLETE` when done.
 
 Wait for `## CONTEXT COMPLETE`. Update STATE.md task_progress = 0.5.
 
+## Step 1.75 — Lazy gate: should design-context-checker run? (Plan 10.1-04, D-21)
+
+Spawn the cheap Haiku gate before the full context-checker:
+
+    Task("design-context-checker-gate", """
+    <required_reading>
+    @.design/STATE.md
+    </required_reading>
+
+    You are the design-context-checker-gate.
+
+    Context:
+      diff_files: <git diff --name-only HEAD~1..HEAD>
+      diff_body: (not needed — single-file heuristic)
+      baseline_sha: <HEAD~1>
+
+    Apply the heuristic (DESIGN-CONTEXT.md in diff_files?). Emit JSON + `## GATE COMPLETE`.
+    """)
+
+Wait for `## GATE COMPLETE`. Parse JSON:
+
+- `spawn: false` → append `lazy_skipped: true` telemetry row for `design-context-checker`, skip Step 2, set STATE.md `<position>` as if checker passed (rationale: DESIGN-CONTEXT.md didn't change, last validation still holds), emit `design-context-checker skipped — <rationale>`.
+- `spawn: true` → proceed to Step 2 as currently written.
+
+**Note:** On first-run discover, the builder just wrote DESIGN-CONTEXT.md so the gate returns `spawn: true`. The gate meaningfully short-circuits only on re-runs where the builder made no changes.
+
+**Parallel synthesizer note:** discover does not spawn parallel researchers in v1, so `skills/synthesize/` is not wired here. If future variants spawn N parallel interviewers/auto-detectors, wire synthesize between dispatch and collate as in `skills/map/` Step 3.5.
+
 ## Step 2 — Spawn design-context-checker
 
 Task("design-context-checker", """
