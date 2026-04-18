@@ -4,15 +4,15 @@
     "name": "hegemonart"
   },
   "metadata": {
-    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 9 connections, handoff-first workflow, bidirectional Figma write-back, 22+ specialized agents, queryable knowledge layer (intel store, dependency analysis, learnings extraction), and a self-improvement loop (reflector, frontmatter + budget feedback, global-skills layer).",
-    "version": "1.0.5"
+    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 9 connections, handoff-first workflow, bidirectional Figma write-back, 22+ specialized agents, queryable knowledge layer (intel store, dependency analysis, learnings extraction), and a self-improvement loop (reflector, frontmatter + budget feedback, global-skills layer). Ships with a locked test suite and CI matrix (Node 22/24 × Linux/macOS/Windows).",
+    "version": "1.0.6"
   },
   "plugins": [
     {
       "name": "get-design-done",
       "source": "./",
-      "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22+ specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), Claude Design handoff, bidirectional Figma write-back, and a queryable intel store (.design/intel/) for dependency and learnings queries. Standalone commands: style, darkmode, compare, figma-write, graphify, handoff, analyze-dependencies, skill-manifest, extract-learnings. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
-      "version": "1.0.5",
+      "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22+ specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), Claude Design handoff, bidirectional Figma write-back, and a queryable intel store (.design/intel/) for dependency and learnings queries. Standalone commands: style, darkmode, compare, figma-write, graphify, handoff, analyze-dependencies, skill-manifest, extract-learnings. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog. Ships with a locked test suite and CI matrix (Node 22/24 × Linux/macOS/Windows).",
+      "version": "1.0.6",
       "author": {
         "name": "hegemonart"
       },
@@ -46,7 +46,9 @@
         "pinterest",
         "bidirectional",
         "knowledge-graph",
-        "intel-store"
+        "intel-store",
+        "tested",
+        "ci"
       ]
     }
   ]
