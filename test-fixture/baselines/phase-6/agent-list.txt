@@ -1,6 +1,7 @@
 design-advisor.md
 design-assumptions-analyzer.md
 design-auditor.md
+design-authority-watcher.md
 design-context-builder.md
 design-context-checker-gate.md
 design-context-checker.md

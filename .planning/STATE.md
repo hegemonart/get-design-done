@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0.0
+milestone: v1.0.7.2
 milestone_name: milestone
-status: ready-for-next
-stopped_at: Phase 13 merged — v1.0.7 shipped
-last_updated: "2026-04-18T21:45:00.000Z"
-last_activity: 2026-04-18
+status: Phase 13.2 COMPLETE — v1.0.7.2 shipped
+stopped_at: Completed 13.2-04-PLAN.md — Phase 13.2 closed
+last_updated: "2026-04-19T22:21:50.000Z"
+last_activity: 2026-04-19 -- Phase 13.2 complete (v1.0.7.2 shipped — rejected-kinds + watcher-diff-structural-v1 tests; atomic manifests bump; CHANGELOG + README; 233/0/1 suite green)
 progress:
-  total_phases: 19
-  completed_phases: 14
-  total_plans: 63
-  completed_plans: 63
-  percent: 74
+  total_phases: 21
+  completed_phases: 1
+  total_plans: 17
+  completed_plans: 13
+  percent: 62
 ---
 
 # Project State
@@ -21,18 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-17)
 
 **Core value:** Any developer can run the full pipeline on a real project and receive measurable, specific design improvement — not generic AI advice.
-**Current focus:** Phase 14 — AI-Native Design Tool Connections (paper.design + pencil.dev + unified canvas-connection interface) next up.
+**Current focus:** Phase 13.2 — external-authority-watcher
 
 ## Current Position
 
-Phase: 13 (CI/CD) — COMPLETE
-Released: **v1.0.7** at https://github.com/hegemonart/get-design-done/releases/tag/v1.0.7
+Phase: 13.2 (external-authority-watcher) — **COMPLETE**
+Plan: 4 of 4 (ALL PLANS SHIPPED)
+Shipping: **v1.0.7.2** — off-cadence decimal patch (skips 1.0.7.1, reserved for Phase 13.1)
+Previous release: v1.0.7 at https://github.com/hegemonart/get-design-done/releases/tag/v1.0.7
 Next phase: 14 (AI-Native Design Tool Connections) — not yet started
-Last activity: 2026-04-18
+Last activity: 2026-04-19 -- Phase 13.2 Plan 04 complete (rejected-kinds + watcher-diff-structural-v1 CI tests; atomic v1.0.7.2 bump across 3 manifests; CHANGELOG + README shipped; full test suite 233/0/1 green; schemas + semver-compare relaxed via Rule 3 to accept the locked 4-segment off-cadence version)
 
-Resume file: (no active resume — ready to start Phase 14)
+Resume file: (none — Phase 13.2 closed; Phase 14 discuss-phase is next)
 
-Progress: [████████████████░░░░] 74% (14/19 phases complete through v1.0.7)
+Progress: [█████████████████░░░] 79% (15/19 phases complete through v1.0.7.2)
 
 ## Phases completed (through v1.0.7)
 
@@ -52,6 +54,7 @@ Progress: [████████████████░░░░] 74% (14
 | 11 — Self-Improvement | v1.0.5 | 2026-04-18 |
 | 12 — Test Coverage | v1.0.6 | 2026-04-18 |
 | 13 — CI/CD | v1.0.7 | 2026-04-18 |
+| 13.2 — External Authority Watcher (INSERTED) | v1.0.7.2 | 2026-04-19 |
 
 ## Open follow-ups
 
@@ -109,6 +112,10 @@ Progress: [████████████████░░░░] 74% (14
 | Phase 08 P05 | 190 | 2 tasks | 5 files |
 | Phase 10.1 P03 | 58 min | 5 tasks | 29 files |
 | Phase 10.1 P04 | 20 min | 8 tasks | 8 files |
+| Phase 13.2 P01 | 11 min | 2 tasks | 3 files |
+| Phase 13.2 P02 | 7 min | 2 tasks | 8 files |
+| Phase 13.2 P03 | 4 min | 2 tasks | 4 files |
+| Phase 13.2 P04 | 7 min | 4 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -217,6 +224,33 @@ Progress: [████████████████░░░░] 74% (14
 - [Phase 10.1-04]: Map Step 3.5 skipped when --only <name> restricts dispatch to a single mapper
 - [Phase 10.1-04]: Per-mapper .design/map/*.md files preserved on disk even after DESIGN-PATTERNS.md synthesis — drill-down evidence unchanged
 - [Phase 10.1-04]: Three gate agents use distinct colors (green, blue, cyan) mirroring their gated counterparts for terminal readability
+- [Phase 13.2-01]: Named-practitioner list locked at 10 writers (Wathan, Mulligan, Andrew, Comeau, Shadeed, Soueidan, Verou, Jehl, Pickering, Kravets) — lower bound of the 10-12 range; Simmons + Coyier dropped for feed-stability uncertainty
+- [Phase 13.2-01]: Rejected-kinds section is load-bearing markdown (not comments) — structurally enforced by Plan 13.2-04's grep test for dribbble.com, behance.net, linkedin.com, medium.com/topic; all rejected hostnames confined to the `## Rejected kinds` section only
+- [Phase 13.2-01]: D-09 feed-entry grammar locked: `- **[Title](home)** — \`kind: X\` · \`url: Y\` · \`cadence-hint: Z\` · *rationale*` — diff-friendly, human-editable, one line per feed
+- [Phase 13.2-01]: authority-snapshot schema-level DoS mitigation: `maxItems:200` on feed entries enforces D-14 retention at validation time (mitigates T-13.2-03 snapshot-growth DoS)
+- [Phase 13.2-01]: scripts/validate-schemas.cjs hardened via `-c ajv-formats` to enforce `format: "date-time"` declarations rather than reject them under ajv strict mode — no-op for existing schemas (none declare formats), future-proof for any new schema that does
+- [Phase 13.2-01]: scripts/validate-schemas.cjs PAIRS array is NOT auto-discovery — new schemas under reference/schemas/ must be manually wired into the PAIRS array to get CI enforcement (CONTEXT.md D-12's "picked up automatically" claim was incorrect; fixed inline as Rule 2 deviation)
+- [Phase 13.2-02]: agent-size-budget TIER_LIMITS gains `M: 300` line cap — accommodates Worker-tier agents between S (150) and LARGE (350); matches CONTEXT D-05 "body ≈ 200–300 lines" target with modest headroom; no-op for existing agents (none declare `M`)
+- [Phase 13.2-02]: Phase-6 regression baseline drift protocol — new agents require a single append to `test-fixture/baselines/phase-6/agent-list.txt` in sorted position; the sibling `agent-frontmatter-snapshot.json` stays unchanged because that check only asserts existing agents retain their fields, not that new agents be added
+- [Phase 13.2-02]: Authority-watcher classification table encodes D-17 verbatim in agent body — regex pipes intentionally unescaped inside backticks (prompt-readable regex notation); MD060 markdownlint noise is pre-existing class, not a regression
+- [Phase 13.2-02]: Watcher uses `shasum -a 256` over `sha256sum` for portability (macOS default vs GNU coreutils); both emit identical 64-char lowercase hex per D-13 contract and the schema `^[0-9a-f]{64}$` pattern
+- [Phase 13.2-02]: Skip-regex takes precedence over kind-based classification — a component-system release titled "Sponsored: shipping X" correctly routes to `skip` rather than `pattern-guidance`; skip row is evaluated LAST in the decision table
+- [Phase 13.2-02]: named-practitioner upgrade predicate is link-host-based (w3.org, developer.apple.com, m3.material.io, fluent2.microsoft.design) — makes the craft-tip → pattern-guidance upgrade auditable rather than topic-heuristic
+- [Phase 13.2-02]: Fetch-notes footer is conditional — present only when `fetch_notes` is non-empty, so error-free runs emit a byte-identical report tail for Plan 13.2-04 diff-test determinism
+- [Phase 13.2-03]: /gdd:watch-authorities skill tools list locked at `Read, Write, Task, Bash` (Write kept despite plan's optional-omit clause — 82-line skill is well under the 90-line target, markdownlint green, retaining Write preserves forward-compat with proposal→confirm extensions)
+- [Phase 13.2-03]: --refresh and --since are mutually exclusive with explicit error "--refresh and --since are mutually exclusive. --refresh re-seeds the snapshot silently; --since surfaces a backlog from a boundary date. Pick one." — prevents semantically-contradictory invocation
+- [Phase 13.2-03]: --schedule cron expressions locked at 09:00 local: weekly=`0 9 * * 1`, daily=`0 9 * * *`, monthly=`0 9 1 * *`; matches cadence-hint convention in reference/authority-feeds.md
+- [Phase 13.2-03]: scheduled-tasks MCP probe uses ToolSearch with graceful exit-0 fallback (not blocker) on MCP absence — documented D-24 path, one-line diagnostic printed, skill still terminates with `## WATCH COMPLETE`
+- [Phase 13.2-03]: Reflector non-modification invariant (D-25) preserved across the whole phase-13.2 commit range — `git log --name-only f4d4791..HEAD -- agents/design-reflector.md` returns empty; only skills/reflect/SKILL.md gained the single-line authority-report.md append
+- [Phase 13.2-03]: Phase-6 baseline drift protocol generalizes to skills — new skill directories require a sorted append to `test-fixture/baselines/phase-6/skill-list.txt` (mirrors Plan 13.2-02's agent-list handling); CI regression test is strict deepEqual so baseline must track current directory state exactly
+- [Phase 13.2-03]: Every new skill directory requires a root-SKILL.md entry (argument-hint + command-table row + jump-mode route) for `tests/command-count-sync.test.cjs` to pass — this is an undocumented CI gate that surfaces as a Rule 3 blocking issue on the first `npm test` after a new skill ships
+- [Phase 13.2-04]: Authority-report baseline frozen at 9 entries (spec-change=2, heuristic-update=1, pattern-guidance=4, craft-tip=2, skip=0) matching the Plan 13.2-02 fixture set exactly; header "N entries surfaced" count and classification-section bullet count are locked equal by the watcher-diff test — resolves plan-checker warning #1
+- [Phase 13.2-04]: Watcher-diff test ships as structural-only v1 (resolves plan-checker warning #2) — asserts fixture presence, baseline shape, D-21 classification-heading vocabulary, totals line, header-vs-bullet count consistency, and Skipped footer. Full end-to-end byte diff (agent run → normalized diff vs baseline) deferred until Claude Code agent runtime is available in CI
+- [Phase 13.2-04]: `reference/schemas/plugin.schema.json` + `marketplace.schema.json` version pattern relaxed from `^\d+\.\d+\.\d+$` to `^\d+\.\d+\.\d+(\.\d+)?$` (Rule 3 deviation) to accept the locked off-cadence 4-segment `1.0.7.2`; backward-compatible with all prior 3-segment releases
+- [Phase 13.2-04]: `tests/semver-compare.test.cjs` gains an `OFF_CADENCE_VERSIONS` Set containing `'1.0.7.2'`; the "version is in expected sequence" assertion accepts either a mainline `EXPECTED_SEQUENCE` member or an off-cadence version, while the sibling consecutive-patch-bump invariant remains unchanged (off-cadence decimals deliberately do not participate in +0.0.1 sequencing)
+- [Phase 13.2-04]: CHANGELOG insertion uses pattern anchor (before first `^## \[` heading) not a line-number offset (resolves plan-checker info #6); resilient to prior-release formatting drift
+- [Phase 13.2-04]: README `## Authority Watcher` section placed between `## Why It Works` and `## Commands` as a new top-level section (not nested `### Authority Watcher` under Why It Works), keeping h2 parity with adjacent user-facing sections (Commands, Connections)
+- [Phase 13.2-04]: Auto-mode pipeline auto-approved the Task 4 human-verify checkpoint; README section written autonomously matching the adjacent Self-Improvement section's voice — any user-facing nits surface in PR review, tracked as a follow-up in 13.2-04 SUMMARY
 
 ### Roadmap Evolution
 
@@ -233,6 +267,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T15:51:15.000Z
-Stopped at: Completed 10.1-04-PLAN.md
-Resume file: .planning/phases/10.1-optimization-layer-cost-governance/10.1-06-PLAN.md
+Last session: 2026-04-19T22:21:50.000Z
+Stopped at: Completed 13.2-04-PLAN.md — Phase 13.2 closed, v1.0.7.2 shipped
+Resume file: (none — Phase 14 discuss-phase is the next action)

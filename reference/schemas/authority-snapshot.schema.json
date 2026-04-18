@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/authority-snapshot.schema.json",
+  "title": "AuthoritySnapshot",
+  "description": "Structure of .design/authority-snapshot.json produced by agents/design-authority-watcher.md. See .planning/phases/13.2-external-authority-watcher/13.2-CONTEXT.md §D-12.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "generated_at", "feeds"],
+  "properties": {
+    "version": { "const": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "feeds": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/definitions/feedState" }
+    }
+  },
+  "definitions": {
+    "feedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["last_fetched_at", "entries"],
+      "properties": {
+        "last_fetched_at": { "type": "string", "format": "date-time" },
+        "etag": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "maxItems": 200,
+          "items": { "$ref": "#/definitions/entry" }
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "hash"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    }
+  }
+}

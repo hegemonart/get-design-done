@@ -27,6 +27,7 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
    .design/agent-metrics.json
    .design/learnings/question-quality.jsonl
    .design/cycles/<slug>/CYCLE-SUMMARY.md
+   .design/authority-report.md
    ```
    Use the resolved slug where `<slug>` appears.
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>urn:fixture:wai-aria-apg</id>
+  <title>WAI-ARIA Authoring Practices</title>
+  <updated>2026-04-18T00:00:00Z</updated>
+  <link href="https://www.w3.org/WAI/ARIA/apg/" rel="alternate"/>
+  <link href="https://github.com/w3c/aria-practices/releases.atom" rel="self"/>
+
+  <entry>
+    <id>urn:fixture:wai-aria-apg:combobox-2026-04-15</id>
+    <title>Updated: Combobox pattern</title>
+    <summary>The Combobox pattern documentation has been updated with new guidance for inline autocomplete behavior and keyboard-interaction expectations in the list popup.</summary>
+    <link href="https://www.w3.org/WAI/ARIA/apg/patterns/combobox/" rel="alternate"/>
+    <updated>2026-04-15T12:00:00Z</updated>
+  </entry>
+
+  <entry>
+    <id>urn:fixture:wai-aria-apg:skip-link-2026-04-10</id>
+    <title>New: Skip Link pattern</title>
+    <summary>A new Skip Link pattern has been added to the WAI-ARIA Authoring Practices, documenting best practices for bypass-navigation affordances.</summary>
+    <link href="https://www.w3.org/WAI/ARIA/apg/patterns/skip-link/" rel="alternate"/>
+    <updated>2026-04-10T09:00:00Z</updated>
+  </entry>
+
+  <entry>
+    <id>urn:fixture:wai-aria-apg:reading-reference-2026-04-05</id>
+    <title>Reading ARIA reference documentation</title>
+    <summary>Guidance on how to read the ARIA specification alongside the Authoring Practices, including how to resolve apparent conflicts between normative and advisory content.</summary>
+    <link href="https://www.w3.org/WAI/ARIA/apg/practices/reading-reference/" rel="alternate"/>
+    <updated>2026-04-05T08:30:00Z</updated>
+  </entry>
+</feed>

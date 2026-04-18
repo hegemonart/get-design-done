@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Nielsen Norman Group Articles</title>
+    <link>https://www.nngroup.com/articles/</link>
+    <description>UX research articles from the Nielsen Norman Group (fixture).</description>
+    <lastBuildDate>Sat, 18 Apr 2026 00:00:00 GMT</lastBuildDate>
+
+    <item>
+      <guid isPermaLink="false">urn:fixture:nng-articles:error-message-heuristic-2026-04-14</guid>
+      <title>Updated: Error Message heuristic with touch-target minimums</title>
+      <description>The error-message heuristic has been revised to incorporate touch-target minimum guidance derived from recent usability findings on mobile forms. Updates the principle around visibility-of-system-status for error states.</description>
+      <link>https://www.nngroup.com/articles/error-message-heuristic-touch-targets/</link>
+      <pubDate>Tue, 14 Apr 2026 10:00:00 GMT</pubDate>
+    </item>
+
+    <item>
+      <guid isPermaLink="false">urn:fixture:nng-articles:onboarding-ways-2026-04-06</guid>
+      <title>Opinion: 10 ways to improve your onboarding</title>
+      <description>Ten practical tactics to improve product onboarding, drawn from consulting engagements. Covers first-run flows, empty-state messaging, and progressive disclosure.</description>
+      <link>https://www.nngroup.com/articles/onboarding-ten-ways/</link>
+      <pubDate>Mon, 06 Apr 2026 09:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

@@ -2,7 +2,7 @@
 name: get-design-done
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
-argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|warm-cache|optimize|cache-manager]"
+argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|warm-cache|optimize|cache-manager|watch-authorities]"
 user-invocable: true
 ---
 
@@ -83,6 +83,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `analyze-dependencies [--slice <name>]` | `get-design-done:analyze-dependencies` | Query the `.design/intel/` store — dependency slices, graph queries, phase-scoped reads |
 | `extract-learnings [--cycle <slug>]` | `get-design-done:extract-learnings` | Extract decisions, lessons, patterns, and surprises from a completed cycle → `.design/cycles/<slug>/LEARNINGS.md` |
 | `skill-manifest [--refresh]` | `get-design-done:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
+| `watch-authorities [--refresh] [--since <date>] [--feed <name>] [--schedule <cadence>]` | `get-design-done:gdd-watch-authorities` | Run design-authority-watcher — fetch curated feeds, diff snapshot, classify new entries → `.design/authority-report.md` (consumed by `/gdd:reflect`) |
 
 ## Handoff Routing
 
@@ -200,6 +201,7 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 /gdd:audit              → Skill("get-design-done:gdd-audit")
 /gdd:reflect            → Skill("get-design-done:gdd-reflect")
 /gdd:apply-reflections  → Skill("get-design-done:gdd-apply-reflections")
+/gdd:watch-authorities  → Skill("get-design-done:gdd-watch-authorities")
 /gdd:pause              → Skill("get-design-done:gdd-pause")
 /gdd:resume          → Skill("get-design-done:gdd-resume")
 # --- Lifecycle ---

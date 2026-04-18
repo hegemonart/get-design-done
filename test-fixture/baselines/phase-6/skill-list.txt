@@ -53,3 +53,4 @@ undo
 update
 verify
 warm-cache
+watch-authorities

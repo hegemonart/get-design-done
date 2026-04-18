@@ -11,6 +11,7 @@ const TIER_LIMITS = {
   XXL: 700,
   XL: 500,
   LARGE: 350,
+  M: 300,      // Phase 13.2 Worker tier (CONTEXT D-05) — network+classify agents; 200-270 target body + frontmatter
   DEFAULT: 250,
   S: 150,  // Phase 10.1 Haiku gate agents — tight cap enforces lean diff-scanners
 };

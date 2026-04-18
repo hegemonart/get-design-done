@@ -1,0 +1,22 @@
+{
+  "id": 100001,
+  "title": "Design Refs (fixture)",
+  "slug": "design-refs-fixture",
+  "contents": [
+    {
+      "id": 900001,
+      "title": "Grid systems in editorial design",
+      "class": "Link",
+      "description": "A collected set of grid references covering editorial print traditions and their web-native descendants.",
+      "source": { "url": "https://example.com/grid-refs" },
+      "created_at": "2026-04-15T12:00:00.000Z"
+    },
+    {
+      "id": 900002,
+      "title": "Spacing rhythm — reference images",
+      "class": "Image",
+      "description": "Spacing rhythm references pulled from longform reading layouts, documenting the relationship between line-height and inter-block spacing.",
+      "created_at": "2026-04-17T08:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>urn:fixture:radix-ui-releases</id>
+  <title>Radix UI Releases</title>
+  <updated>2026-04-18T00:00:00Z</updated>
+  <link href="https://www.radix-ui.com/" rel="alternate"/>
+  <link href="https://github.com/radix-ui/primitives/releases.atom" rel="self"/>
+
+  <entry>
+    <id>urn:fixture:radix-ui-releases:v2-3-0-2026-04-16</id>
+    <title>v2.3.0: new AlertDialog composition</title>
+    <summary>Release 2.3.0 introduces a new AlertDialog composition primitive with refined focus-trap behavior and improved screen-reader announcement semantics. Ships with a migration note for users of the prior AlertDialog.Root API.</summary>
+    <link href="https://github.com/radix-ui/primitives/releases/tag/v2.3.0" rel="alternate"/>
+    <updated>2026-04-16T14:00:00Z</updated>
+  </entry>
+
+  <entry>
+    <id>urn:fixture:radix-ui-releases:v2-2-1-2026-04-08</id>
+    <title>Radix Primitives 2.2.1 (patch)</title>
+    <summary>Patch release 2.2.1 ships bugfixes for edge-case focus handling in nested portals and a build-time tree-shaking improvement. No API changes.</summary>
+    <link href="https://github.com/radix-ui/primitives/releases/tag/v2.2.1" rel="alternate"/>
+    <updated>2026-04-08T11:30:00Z</updated>
+  </entry>
+</feed>

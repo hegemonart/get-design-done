@@ -330,6 +330,47 @@ After each design cycle, `/gdd:reflect` reads `.design/learnings/`, `.design/tel
 
 ---
 
+## Authority Watcher
+
+Subscribe to a curated whitelist of design-authority sources, diff it against a snapshot, and feed only genuinely new, classified entries into the Self-Improvement reflector. Authority monitoring — not trend watching.
+
+```bash
+# On-demand diff + classify
+/gdd:watch-authorities
+
+# Force re-seed the snapshot (recovery for a corrupted snapshot)
+/gdd:watch-authorities --refresh
+
+# Surface backlog since a specific date
+/gdd:watch-authorities --since 2026-01-01
+
+# Limit to a single feed (debugging)
+/gdd:watch-authorities --feed wai-aria-apg
+
+# Schedule recurring runs (requires the scheduled-tasks MCP)
+/gdd:watch-authorities --schedule weekly
+```
+
+### What the whitelist covers
+
+See [`reference/authority-feeds.md`](reference/authority-feeds.md). 26 curated feeds grouped by kind:
+
+- **Spec sources** — WAI-ARIA APG, Material 3, Apple HIG, Fluent 2, W3C Design Tokens CG
+- **Component systems** — Radix, shadcn/ui, Polaris, Carbon, Primer, Atlassian, Ant, Mantine
+- **Research institutions** — Nielsen Norman Group, Laws of UX, Baymard
+- **Named practitioners** — 10 writers filtered for spec-adjacent, durable, original analysis
+- **User-added Are.na channels** — extensibility point; add your own via a PR to the Are.na section, no config file or schema editing required
+
+### What is explicitly rejected
+
+No Dribbble. No Behance. No LinkedIn. No generic "trending" aggregators. See `reference/authority-feeds.md` §"Rejected kinds" — enforced structurally by `scripts/tests/test-authority-rejected-kinds.sh`, which greps the active whitelist for rejected hostnames and fails CI on any match. The anti-slop thesis is a test, not a comment.
+
+### How the report feeds reflection
+
+The watcher writes `.design/authority-report.md` — new entries classified into five buckets (`spec-change`, `heuristic-update`, `pattern-guidance`, `craft-tip`, `skip`) with a one-sentence rationale each. `/gdd:reflect` reads the report alongside internal telemetry and proposes reference-file updates. Nothing auto-ships — you review every proposal via `/gdd:apply-reflections`.
+
+---
+
 ## Commands
 
 All commands use the `/gdd:` namespace.

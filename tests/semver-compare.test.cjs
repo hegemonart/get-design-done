@@ -26,6 +26,16 @@ const EXPECTED_SEQUENCE = [
   '1.0.0', '1.0.1', '1.0.2', '1.0.3', '1.0.4', '1.0.5', '1.0.6', '1.0.7'
 ];
 
+// Off-cadence decimal patches (CONTEXT.md D-29): four-segment versions that
+// attach a sub-patch to an already-shipped 3-segment release without
+// disturbing the parent cadence. These are accepted for plugin.json / marketplace.json
+// but do NOT participate in the exact-patch-bump sequence check above.
+//   - 1.0.7.2 → Phase 13.2 (external-authority-watcher); skips 1.0.7.1 which
+//     was reserved for Phase 13.1 (Figma MCP consolidation) per ROADMAP.
+const OFF_CADENCE_VERSIONS = new Set([
+  '1.0.7.2',
+]);
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];
@@ -41,9 +51,12 @@ test('semver-compare: plugin.json version is in expected sequence', () => {
   const pluginJson = JSON.parse(
     fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'), 'utf8')
   );
+  const accepted = EXPECTED_SEQUENCE.includes(pluginJson.version)
+    || OFF_CADENCE_VERSIONS.has(pluginJson.version);
   assert.ok(
-    EXPECTED_SEQUENCE.includes(pluginJson.version),
-    `plugin.json version "${pluginJson.version}" is not in expected sequence: ${EXPECTED_SEQUENCE.join(' → ')}`
+    accepted,
+    `plugin.json version "${pluginJson.version}" is not in expected sequence ${EXPECTED_SEQUENCE.join(' → ')} ` +
+      `and is not a recognized off-cadence version (${[...OFF_CADENCE_VERSIONS].join(', ')})`
   );
 });
 
