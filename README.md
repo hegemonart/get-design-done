@@ -68,7 +68,9 @@ Get Design Done fixes that. It's the context engineering layer for design work i
 
 ## Who This Is For
 
-Designers and design-engineers who want Claude Code to do serious design work — and expect it to respect the design system, the brief, and WCAG.
+Anyone shipping UI with Claude Code who expects the output to actually hold up — engineers, designers, design-engineers, solo founders. If you care that tokens match, contrast passes WCAG, and the result ties back to what you asked for, this is for you.
+
+You don't need to be a designer. The pipeline carries the design expertise so you don't have to — it extracts the system, grounds in references, verifies against the brief, and catches the things people usually miss.
 
 Built-in quality gates catch real problems: Handoff Faithfulness scoring on Claude Design bundles, contrast audits across the full palette × surface matrix, anti-pattern detection from the NNG catalog, dark-mode architecture verification, and motion-system consistency checks.
 
@@ -632,7 +634,7 @@ Every `/gdd:*` command and agent spawn passes through a cross-cutting optimizati
 - **Streaming synthesizer** (`skills/synthesize/`) — N parallel-mapper outputs collapse through a single Haiku call before returning to main context.
 - **Cost telemetry** — `.design/telemetry/costs.jsonl` appends one row per spawn decision: `{ts, agent, tier, tokens_in, tokens_out, cache_hit, est_cost_usd, cycle, phase}`. Aggregated to `.design/agent-metrics.json`. Consumed by `/gdd:optimize` and `design-reflector`.
 
-Regression baseline: [`test-fixture/baselines/phase-10.1/`](test-fixture/baselines/phase-10.1/) — methodology README + `pre-baseline-cost-report.md` + `cost-report.md`. Phase 13 CI diffs against `cost-report.md` to catch regressions.
+CI diffs against a locked cost baseline on every push to catch regressions.
 
 ---
 
@@ -669,15 +671,14 @@ lint → validate → test (matrix) → security + size-budget
 
 ### Release automation
 
-`.github/workflows/release.yml` auto-tags and publishes a GitHub Release when `.claude-plugin/plugin.json` version changes. Release body is extracted from the matching `CHANGELOG.md` section. A release-time smoke test (`scripts/release-smoke-test.cjs`) diffs a fresh checkout against `test-fixture/baselines/phase-13/` before the release publishes.
+`.github/workflows/release.yml` auto-tags and publishes a GitHub Release when `.claude-plugin/plugin.json` version changes. Release body is extracted from the matching `CHANGELOG.md` section. A release-time smoke test diffs a fresh checkout against a locked baseline before the release publishes.
 
-From **v1.0.6 forward**, every PR MUST pass `npm test` before merging to `main`. Baselines in `test-fixture/baselines/phase-<N>/` lock each phase's structural state — re-lock explicitly rather than relaxing tests. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Every PR must pass `npm test` before merging to `main`. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the re-lock procedure when baselines change.
 
 ---
 
-## Distribution
+## What ships with the plugin
 
-**Ships with the plugin:**
 - `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` — manifest
 - `SKILL.md` — root pipeline router
 - `skills/` — 55 stage + standalone skills
@@ -685,11 +686,6 @@ From **v1.0.6 forward**, every PR MUST pass `npm test` before merging to `main`.
 - `connections/` — 9 connection specs
 - `reference/` — curated design reference (shared preamble, model tiers, model prices, schemas, DEPRECATIONS, config schema)
 - `hooks/`, `scripts/bootstrap.sh`
-
-**Dev-only (gitignored, not distributed):**
-- `.planning/` — GSD planning artifacts for GDD's own development
-- `.claude/memory/` — session-level memory
-- `.claude/settings.local.json`
 
 ---
 
