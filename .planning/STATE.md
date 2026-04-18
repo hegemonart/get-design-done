@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: milestone
-status: verifying
-stopped_at: Merged Phase 10 into main
-last_updated: "2026-04-18T12:00:00.000Z"
+status: executing
+stopped_at: Phase 10.1 Plan 03 complete
+last_updated: "2026-04-18T15:17:50.000Z"
 last_activity: 2026-04-18
 progress:
   total_phases: 15
   completed_phases: 9
   total_plans: 55
-  completed_plans: 45
-  percent: 82
+  completed_plans: 46
+  percent: 84
 ---
 
 # Project State
@@ -21,16 +21,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-17)
 
 **Core value:** Any developer can run the full pipeline on a real project and receive measurable, specific design improvement — not generic AI advice.
-**Current focus:** Phase 12 — Test Coverage
+**Current focus:** Phase 10.1 — Optimization Layer + Cost Governance (INSERTED, retroactive v1.0.4.1)
 
 ## Current Position
 
-Phase: 12 (Test Coverage) — EXECUTING
-Plan: 7 of 7
-Status: Phase complete — ready for verification
+Phase: 10.1 (Optimization Layer + Cost Governance) — EXECUTING
+Plan: 3 of 6 complete (Plans 01, 02, 03, 05 done; 04, 06 remaining)
+Status: Plan 10.1-03 complete — tier audit + shared preamble extraction shipped
 Last activity: 2026-04-18
 
-Progress: [████████░░] 81%
+Resume file: .planning/phases/10.1-optimization-layer-cost-governance/10.1-04-PLAN.md
+
+Progress: [████████▍░] 84%
 
 ## Performance Metrics
 
@@ -81,6 +83,7 @@ Progress: [████████░░] 81%
 | Phase 08 P03 | 246 | 2 tasks | 5 files |
 | Phase 08-visual-design-connections P01 | 372 | 4 tasks | 6 files |
 | Phase 08 P05 | 190 | 2 tasks | 5 files |
+| Phase 10.1 P03 | 58 min | 5 tasks | 29 files |
 
 ## Accumulated Context
 
@@ -175,6 +178,10 @@ Progress: [████████░░] 81%
 - [Phase 10-04]: ARM tier vocabulary
 - [Phase 10-04]: Flow diagram uses Mermaid flowchart TD
 - [Phase 10-04]: Researcher MUST produce ARM + Flow Diagram in DESIGN-CONTEXT.md
+- [Phase 10.1-03]: Per-agent tier map locked (D-13): 5 haiku + 16 sonnet + 5 opus = 26 agents
+- [Phase 10.1-03]: Override precedence (D-04) documented: budget.json.tier_overrides > frontmatter default-tier > hardcoded sonnet fallback
+- [Phase 10.1-03]: Cache-aligned body ordering (D-17): shared-preamble import is first non-blank body line; verified on all 26 agents
+- [Phase 10.1-03]: Shared preamble scope (D-16) is universal — no agent-specific language; 82 lines covering framework identity, required reading discipline, writes protocol, deviation handling, hook awareness, ordering convention
 
 ### Pending Todos
 
@@ -186,6 +193,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T12:00:00.000Z
-Stopped at: Merged Phase 10 into main
+Last session: 2026-04-18T15:17:50.000Z
+Stopped at: Completed 10.1-03-PLAN.md
 Resume file: None
