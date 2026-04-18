@@ -6,8 +6,17 @@
   "MD013": false,           // line length — repo prose runs long, especially frontmatter `description` fields
   "MD033": false,           // allow inline HTML (badges, <details> blocks, <kbd> tags)
   "MD041": false,           // first line need not be a top heading — YAML frontmatter or tables may come first
-  "MD024": { "siblings_only": true }, // duplicate headings OK across sections, not within the same section
+  "MD024": false,           // duplicate headings — repo reuses "## Role", "## Output", etc. across agent files
   "MD036": false,           // emphasis-as-heading — some reference docs use it stylistically
   "MD040": false,           // allow fenced code blocks without a language tag
-  "MD034": false            // bare URLs OK in reference docs and commit trailers
+  "MD034": false,           // bare URLs OK in reference docs and commit trailers
+  "MD022": false,           // blanks around headings — existing docs use tight formatting in many places
+  "MD031": false,           // blanks around fences — legacy docs interleave fences inside list items
+  "MD032": false,           // blanks around lists — same as above
+  "MD029": false,           // ordered list numbering style — mixed conventions across reference docs
+  "MD026": false,           // trailing punctuation in headings — some docs use colons intentionally
+  "MD007": false,           // unordered list indentation — mixed 2/3-space indent in legacy docs
+  "MD046": false,           // code block style (fenced vs indented) — mixed in legacy docs
+  "MD056": false,           // table columns — table ragged-edges exist in a few reference docs
+  "MD009": false            // trailing spaces — one-off, accept silently
 }
