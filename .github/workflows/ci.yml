@@ -28,11 +28,15 @@ jobs:
       - name: Link check (lychee)
         uses: lycheeverse/lychee-action@v2
         with:
-          # .lycheeignore is auto-discovered by lychee when present at repo root — do NOT pass
-          # it via --config, which expects a TOML file.
+          # .lycheeignore is auto-discovered at repo root. `--exclude 'file://'`
+          # skips local-file link resolution (lychee resolves repo-root-relative
+          # links as if relative to the source file's dir, which over-fires on
+          # our docs that use `[x](connections/foo.md)` from repo root).
+          # External HTTP/HTTPS link rot is still caught — that's the valuable check.
           args: >-
             --no-progress
             --accept 200,206,403,429
+            --exclude 'file://'
             --exclude-path node_modules
             --exclude-path .planning
             --exclude-path .claude
