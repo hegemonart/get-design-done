@@ -4,15 +4,15 @@
     "name": "hegemonart"
   },
   "metadata": {
-    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with Figma + Refero connections and 3 standalone audit commands (style, darkmode, compare).",
-    "version": "1.0.0"
+    "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with Figma + Refero connections, knowledge layer (intel store, dependency analysis, learnings extraction), and standalone audit commands.",
+    "version": "1.0.4"
   },
   "plugins": [
     {
       "name": "get-design-done",
       "source": "./",
-      "description": "Agent-orchestrated design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, Figma + Refero MCP connections, style/darkmode/compare commands.",
-      "version": "1.0.0",
+      "description": "Agent-orchestrated design pipeline: Scan → Discover → Plan → Design → Verify. 17+ specialized agents, Figma + Refero MCP connections, style/darkmode/compare/analyze-dependencies/skill-manifest/extract-learnings commands. Knowledge layer: .design/intel/ store, dependency graph, learnings extraction.",
+      "version": "1.0.4",
       "author": {
         "name": "hegemonart"
       },
@@ -26,7 +26,9 @@
         "ux",
         "frontend",
         "orchestration",
-        "design-system"
+        "design-system",
+        "knowledge-graph",
+        "intel-store"
       ]
     }
   ]
