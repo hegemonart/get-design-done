@@ -1,0 +1,32 @@
+{
+  "design-verifier": {
+    "spawn_count": 6,
+    "measured_duration_seconds": [142, 138, 155, 141, 149, 144],
+    "avg_duration_seconds": 144.8,
+    "typical_duration_seconds_declared": 45,
+    "tier_used": ["sonnet", "sonnet", "sonnet", "sonnet", "sonnet", "sonnet"],
+    "gap_rate": 0.05,
+    "conflict_events": 0,
+    "write_ops_observed": true
+  },
+  "design-auditor": {
+    "spawn_count": 4,
+    "measured_duration_seconds": [38, 42, 40, 39],
+    "avg_duration_seconds": 39.75,
+    "typical_duration_seconds_declared": 45,
+    "tier_used": ["haiku", "haiku", "haiku", "haiku"],
+    "gap_rate": 0.02,
+    "conflict_events": 0,
+    "write_ops_observed": false
+  },
+  "design-discussant": {
+    "spawn_count": 3,
+    "measured_duration_seconds": [195, 210, 188],
+    "avg_duration_seconds": 197.7,
+    "typical_duration_seconds_declared": 180,
+    "tier_used": ["sonnet", "sonnet", "sonnet"],
+    "gap_rate": 0.0,
+    "conflict_events": 0,
+    "write_ops_observed": true
+  }
+}

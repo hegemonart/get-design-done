@@ -41,7 +41,7 @@ Skip if `auto_mode=true`.
 
 ## Pre-execution â€” Project-local conventions
 
-When spawning the executor, include any `./.claude/skills/design-*-conventions.md` files in `<required_reading>` so the executor sees project-local design conventions (typography, color, layout, motion, component, interaction decisions codified from prior sketch wrap-ups).
+When spawning the executor, include any `./.claude/skills/design-*-conventions.md` files in `<required_reading>` so the executor sees project-local design conventions (typography, color, layout, motion, component, interaction decisions codified from prior sketch wrap-ups). Also include any `~/.claude/gdd/global-skills/*.md` files if the directory exists — global skills are cross-project conventions that inform but do not override project-local D-XX decisions.
 
 ---
 

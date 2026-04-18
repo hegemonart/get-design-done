@@ -64,6 +64,8 @@ Mark STATE.md `task_progress` for the scan pass.
 
 **Project-local skills**: Read any `./.claude/skills/design-*-conventions.md` files if present. Include their content in DESIGN-CONTEXT.md under a `<project_conventions>` section — these are codified decisions from prior `/gdd:sketch-wrap-up` runs or manual edits, and they override defaults.
 
+**Global skills**: If `~/.claude/gdd/global-skills/` exists and contains `.md` files (other than README.md), read them and prepend their content to the `<project_conventions>` section under a `<global_conventions>` sub-block. Global skills represent cross-project personal conventions. They inform but do not override project-local decisions — when a project-local D-XX decision conflicts with a global skill, the project-local decision wins.
+
 ## Step 3 — Design interview (unless `--skip-interview`)
 
 Spawn the `design-discussant` agent:

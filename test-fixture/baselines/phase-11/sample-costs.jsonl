@@ -1,0 +1,6 @@
+{"ts":"2026-04-01T10:00:00Z","agent":"design-verifier","tier":"sonnet","tokens_in":4200,"tokens_out":1100,"cache_hit":false,"est_cost_usd":0.021,"cap_hit":true,"cycle":"cycle-1","phase":"11"}
+{"ts":"2026-04-01T10:45:00Z","agent":"design-auditor","tier":"haiku","tokens_in":2100,"tokens_out":800,"cache_hit":true,"est_cost_usd":0.004,"cap_hit":false,"cycle":"cycle-1","phase":"11"}
+{"ts":"2026-04-02T09:00:00Z","agent":"design-verifier","tier":"sonnet","tokens_in":4300,"tokens_out":1050,"cache_hit":false,"est_cost_usd":0.022,"cap_hit":true,"cycle":"cycle-2","phase":"11"}
+{"ts":"2026-04-02T09:50:00Z","agent":"design-auditor","tier":"haiku","tokens_in":1950,"tokens_out":780,"cache_hit":true,"est_cost_usd":0.003,"cap_hit":false,"cycle":"cycle-2","phase":"11"}
+{"ts":"2026-04-03T11:00:00Z","agent":"design-verifier","tier":"sonnet","tokens_in":4400,"tokens_out":1200,"cache_hit":false,"est_cost_usd":0.023,"cap_hit":true,"cycle":"cycle-3","phase":"11"}
+{"ts":"2026-04-03T11:55:00Z","agent":"design-auditor","tier":"haiku","tokens_in":2050,"tokens_out":810,"cache_hit":false,"est_cost_usd":0.004,"cap_hit":false,"cycle":"cycle-3","phase":"11"}

@@ -4,6 +4,26 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.0.5] — 2026-04-18
+
+### Added — Phase 11: Self-Improvement
+- `design-reflector` agent — post-cycle reflection from learnings + telemetry + agent-metrics
+- `/gdd:reflect` command — on-demand reflection with `--dry-run` and `--cycle` flags
+- `/gdd:apply-reflections` command — user-review + selective apply for all proposal types
+- Frontmatter feedback loop — reflector proposes `typical-duration-seconds`, `default-tier`, `parallel-safe`, `reads-only` updates from measured data
+- Budget-config feedback loop — reflector proposes `.design/budget.json` cap adjustments from telemetry
+- Reference-update proposer — N≥3 pattern detection across learnings files → `reference/` additions
+- Discussant question-quality logging — answer quality recorded to `.design/learnings/question-quality.jsonl`
+- Discussant question-quality analysis — low-value questions flagged and pruning proposed after ≥3 cycles
+- Global skills layer — `~/.claude/gdd/global-skills/` for cross-project conventions
+- Global skills auto-loading in explore, plan, design stages
+- Phase 11 regression baseline locked in `test-fixture/baselines/phase-11/`
+
+### Changed
+- `/gdd:audit` now spawns `design-reflector` at cycle end when learnings data exists
+- `agents/design-discussant.md` logs answer quality after each Q&A exchange
+- Plugin version: 1.0.4.1 → 1.0.5
+
 ## [1.0.4] — 2026-04-18
 
 ### Added — Phase 10: Knowledge Layer

@@ -141,6 +141,7 @@ Task("design-planner", """
 [@.design/sketches/*/WINNER.md — include all completed sketch winners if present]
 [@.design/spikes/*/FINDINGS.md — include all completed spike findings if present]
 [@./.claude/skills/design-*-conventions.md — include all project-local design conventions if present]
+[@~/.claude/gdd/global-skills/*.md — include all global skills if directory exists; global conventions inform but do not override project-local D-XX decisions]
 </required_reading>
 
 You are the design-planner agent. Read DESIGN-CONTEXT.md and produce .design/DESIGN-PLAN.md

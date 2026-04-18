@@ -43,9 +43,11 @@ Every agent file begins with a YAML frontmatter block. All fields except `model`
 | `color` | enum | `yellow`, `green`, `blue`, `red` | Terminal display color for the agent's output |
 | `model` | enum (optional) | `inherit`, `sonnet`, `haiku` | Omit to use the project's configured profile default. Use `inherit` to bypass the profile and use the highest available model (quality-tier work) |
 | `parallel-safe` | enum | `always`, `never`, `conditional-on-touches`, `auto` | Whether stages may dispatch this agent in parallel with siblings. `conditional-on-touches` means safe only when `Touches:` do not overlap |
-| `typical-duration-seconds` | int | e.g. `30`, `60`, `120` | Expected wall-clock duration. Used by parallelism planner to decide whether savings clear `min_estimated_savings_seconds` |
+| `typical-duration-seconds` | int | e.g. `30`, `60`, `120` | Expected wall-clock duration. Used by parallelism planner to decide whether savings clear `min_estimated_savings_seconds`. **Extensible** — Phase 10.1 adds `default-tier` override; Phase 11's `design-reflector` adds `measured-duration-seconds` from telemetry without replacing this field. |
 | `reads-only` | bool | `true`/`false` | True when the agent never writes any file |
 | `writes` | list | e.g. `[".design/DESIGN-PLAN.md"]` | Files / globs the agent may write. `[]` for read-only agents |
+
+> **Frontmatter is extensible.** New fields can be added by downstream phases without removing existing ones. The `design-reflector` agent (Phase 11) may propose updates to `typical-duration-seconds` and `default-tier` based on measured telemetry — those proposals go through `/gdd:apply-reflections`, never auto-applied.
 
 Example frontmatter block:
 
@@ -190,7 +192,7 @@ Agents should be kept small — long instruction bodies burn context at every sp
 
 | Tier | Examples | Limit |
 |---|---|---|
-| Orchestrator | `design-planner`, `design-executor`, `design-verifier` | ≤ 300 lines |
+| Orchestrator | `design-planner`, `design-executor`, `design-verifier`, `design-reflector` | ≤ 300 lines |
 | Worker | `design-auditor`, `design-fixer`, `design-doc-writer`, `design-pattern-mapper`, `design-context-builder` | ≤ 200 lines |
 | Checker | `design-integration-checker`, `design-plan-checker`, `design-context-checker`, `design-advisor`, `design-assumptions-analyzer`, `design-phase-researcher` | ≤ 150 lines |
 

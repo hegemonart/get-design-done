@@ -2,7 +2,7 @@
 name: get-design-done
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
-argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up]"
+argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections]"
 user-invocable: true
 ---
 
@@ -39,7 +39,9 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `discuss [topic] [--all] [--spec] [--cycle <name>]` | `get-design-done:gdd-discuss` | Adaptive design interview — spawns design-discussant; appends D-XX decisions to STATE.md |
 | `list-assumptions [--area]` | `get-design-done:gdd-list-assumptions` | Surface implicit design assumptions baked into the codebase |
 | **Audit & Session** | | |
-| `audit [--retroactive] [--quick]` | `get-design-done:gdd-audit` | Wraps design-verifier + design-auditor; `--retroactive` audits full cycle scope |
+| `audit [--retroactive] [--quick] [--no-reflect]` | `get-design-done:gdd-audit` | Wraps design-verifier + design-auditor + design-reflector; `--retroactive` audits full cycle scope |
+| `reflect [--dry-run] [--cycle <slug>]` | `get-design-done:gdd-reflect` | On-demand reflection — reads cycle data, produces improvement proposals → `.design/reflections/<slug>.md` |
+| `apply-reflections [--filter <type>] [--dry-run]` | `get-design-done:gdd-apply-reflections` | Review + selectively apply reflection proposals (FRONTMATTER/REFERENCE/BUDGET/QUESTION/GLOBAL-SKILL) |
 | `pause [context]` | `get-design-done:gdd-pause` | Write session handoff to `.design/HANDOFF.md` |
 | `resume` | `get-design-done:gdd-resume` | Restore session context from `.design/HANDOFF.md` and route to next step |
 | **Lifecycle** | | |
@@ -192,8 +194,10 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 /gdd:update          → Skill("get-design-done:gdd-update")
 /gdd:reapply-patches → Skill("get-design-done:gdd-reapply-patches")
 # --- Audit & Session ---
-/gdd:audit           → Skill("get-design-done:gdd-audit")
-/gdd:pause           → Skill("get-design-done:gdd-pause")
+/gdd:audit              → Skill("get-design-done:gdd-audit")
+/gdd:reflect            → Skill("get-design-done:gdd-reflect")
+/gdd:apply-reflections  → Skill("get-design-done:gdd-apply-reflections")
+/gdd:pause              → Skill("get-design-done:gdd-pause")
 /gdd:resume          → Skill("get-design-done:gdd-resume")
 # --- Lifecycle ---
 /gdd:new-project     → Skill("get-design-done:gdd-new-project")

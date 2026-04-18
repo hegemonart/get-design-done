@@ -69,6 +69,22 @@ Do NOT write a DECISIONS.md artifact. STATE.md is the single source of truth.
 
 Rewrite STATE.md after each confirmed area so a crash does not lose work.
 
+## Step 5 — Answer quality logging
+
+After each question-answer exchange, append one JSON object to `.design/learnings/question-quality.jsonl` (create file if it doesn't exist):
+
+```json
+{"ts":"<iso-timestamp>","question_id":"Q-NN","question_text":"<verbatim question>","answer_summary":"<one sentence>","quality":"high|medium|low|skipped","evidence":"<why — e.g. user said skip, answer < 10 words, answer overridden by D-15>","cycle":"<active-cycle-slug>"}
+```
+
+**Quality classification** (automatic, no user interaction):
+- `skipped` — user typed "skip", "n/a", "pass", "doesn't matter", or submitted empty input
+- `low` — answer < 10 words AND not a specific value (hex code, integer, named token, CSS keyword); OR the answer was directly contradicted by a D-XX decision written in the same session
+- `medium` — answer ≥ 10 words but contains "maybe", "probably", "I think", "not sure", "I guess"
+- `high` — specific, actionable, no hedging language
+
+Write quality log after every exchange. This data feeds `design-reflector`'s question-quality analysis in Phase 11.
+
 ## Constraints
 
 - Never modify files outside `.design/`.

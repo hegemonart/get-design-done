@@ -1,0 +1,7 @@
+{
+  "minimum_proposals": 2,
+  "required_types": ["FRONTMATTER", "BUDGET"],
+  "frontmatter_target": "design-verifier",
+  "frontmatter_field": "typical-duration-seconds",
+  "budget_target": "design-verifier"
+}

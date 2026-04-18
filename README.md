@@ -188,6 +188,29 @@ On `SessionStart`, the plugin provisions the companion library if missing:
 
 Idempotent — skips work if already present, runs `git pull --ff-only` on subsequent sessions.
 
+## Self-Improvement
+
+After each design cycle, `get-design-done` reflects on what happened and proposes concrete improvements — no vague retros, no auto-applied changes.
+
+### How it works
+1. Run `/gdd:audit` at cycle end → automatically triggers `design-reflector`
+2. Or run `/gdd:reflect` on demand at any time
+3. Reflector reads `.design/learnings/`, telemetry, and agent-metrics to produce `.design/reflections/<cycle-slug>.md`
+4. Review proposals with `/gdd:apply-reflections` — diff, accept, skip, or edit each one
+
+### What gets proposed
+- **Frontmatter updates** — agent duration estimates and tier assignments from measured data
+- **Reference additions** — anti-patterns and heuristics that appeared ≥3 cycles
+- **Budget adjustments** — cost caps tuned from actual spend patterns
+- **Question pruning** — discussant questions that consistently get low-value answers
+- **Global skill promotion** — project findings promoted to `~/.claude/gdd/global-skills/` for cross-project use
+
+### Nothing auto-applies
+Every proposal requires explicit user review via `/gdd:apply-reflections`. The discipline mirrors figma-writer's proposal→confirm pattern — the plugin proposes, you decide.
+
+### Global skills
+Cross-project conventions live in `~/.claude/gdd/global-skills/`. Once you accept a `[GLOBAL-SKILL]` proposal, that convention auto-loads in every future gdd session across all projects.
+
 ## Distribution
 
 **Ships with the plugin:**
