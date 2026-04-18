@@ -260,6 +260,69 @@ Record each response. For `no` responses, capture the user's issue description v
 
 ---
 
+## Phase 4B — Screenshot Evidence (when preview: available)
+
+**Gate:** Skip this entire Phase 4B block if `preview` is `not_configured` or `unavailable` in STATE.md `<connections>`. The `? VISUAL` flags from Phase 3 remain as-is; mark them `[SKIPPED — browser not available]` and proceed to Phase 5.
+
+**Step 1 — ToolSearch first:**
+
+```
+ToolSearch({ query: "Claude_Preview", max_results: 10 })
+```
+
+If empty result: mark all Phase 4B checks `[SKIPPED — browser not available]` and proceed to Phase 5.
+
+**Step 2 — Per-route screenshot loop:**
+
+For each route identified from DESIGN-PLAN.md tasks or `src/app/` / `src/pages/` file structure:
+
+```
+a. call preview_navigate to route URL (e.g., http://localhost:3000/<route>)
+   → If error (connection refused, 404): update STATE.md preview: unavailable
+     mark all remaining Phase 4B checks [SKIPPED — no running server]; proceed to Phase 5
+b. call preview_screenshot → save to .design/screenshots/verify/<route>.png
+c. Reference path in DESIGN-VERIFICATION.md Visual UAT section (NOT inline base64)
+```
+
+**Step 3 — Resolve the six ? VISUAL heuristics using screenshot evidence:**
+
+**Contrast cascade (dark-mode parity):**
+- After capturing light-mode screenshot, call `preview_eval("document.documentElement.classList.add('dark')")` or the project-specific toggle from DESIGN-CONTEXT.md D-XX.
+- `preview_screenshot` → save to `.design/screenshots/verify/<route>-dark.png`.
+- From screenshots: compare light vs dark — note any elements that lose visible contrast. Mark H-05/color heuristic as `PASS` or `FLAG`.
+
+**Visual rhythm / hierarchy:**
+- From the screenshot, describe the dominant visual groupings and whitespace distribution.
+- Use `preview_inspect` on key elements to get bounding boxes for spacing verification.
+- Mark pass if clear visual grouping and consistent spacing is evident; flag if layout appears cramped or unclear.
+
+**H-02 Real world match:**
+- Screenshot shows actual rendered copy/labels — confirm they match the intended language register from DESIGN-CONTEXT.md.
+- Mark `PASS` if copy looks professional and matches context; `FLAG` if lorem ipsum, placeholder text, or backend error codes are visible.
+
+**H-06 Recognition vs recall:**
+- Screenshot shows visible navigation and controls — confirm primary actions are discoverable without prior knowledge.
+- `FLAG` if navigation items are hidden, unlabeled icon buttons have no visible tooltip, or the primary CTA is not immediately apparent.
+
+**H-07 Flexibility / efficiency:**
+- Screenshot shows progressive disclosure pattern — confirm advanced features are accessible but not foregrounded.
+- Mark `PASS` or `FLAG` with screenshot evidence and note which route the screenshot covers.
+
+**Focus-visible:**
+- Call `preview_eval("document.activeElement.style.outline")` on the first focusable element.
+- OR call `preview_snapshot` to get the accessibility tree with focus state.
+- Confirm focus ring is visible (non-empty outline or box-shadow). Mark `PASS` or `FLAG`.
+
+**Step 4 — Output format for each resolved heuristic:**
+
+Replace `? VISUAL` in Phase 3 output with one of:
+- `PASS (screenshot: .design/screenshots/verify/<route>.png)` — heuristic satisfied with visual evidence
+- `FLAG: <reason> (screenshot: .design/screenshots/verify/<route>.png)` — heuristic fails; include screenshot reference
+
+In DESIGN-VERIFICATION.md, add a `## Phase 4B — Screenshot Evidence` section listing each heuristic, its resolution, and the screenshot path.
+
+---
+
 ## Phase 5 — Gap Analysis
 
 Collect all failures from Phases 1–4:
