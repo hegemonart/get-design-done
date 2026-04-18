@@ -132,6 +132,62 @@ session to restore context.
 - **Architectural Responsibility Map** — file/module → tier → responsibility table
 - **Flow Diagram** — Mermaid flowchart of the main user workflow
 
+## Optimization Layer (v1.0.4.1)
+
+Phase 10.1 added a cross-cutting optimization layer that every `/gdd:*` command and agent spawn passes through. Target: **50–70% per-task token-cost reduction** versus the pre-optimization baseline — with no regression on the design-quality floor. Shipped as an off-cadence patch (v1.0.4.1) retroactively after Phases 10 and 11.
+
+### What's in it
+
+- **`gdd-router` skill** — first-step intent router. Given task intent and target artifacts, returns `{path: fast|quick|full, model_tier_overrides, estimated_cost_usd, cache_hits}`. Cheap Haiku call; gates every downstream spawn.
+- **`gdd-cache-manager` skill** + **`/gdd:warm-cache`** command — maintains `.design/cache-manifest.json` and pre-warms common agent system prompts so Anthropic's 5-minute prompt cache fires on the shared preamble.
+- **`.design/budget.json`** config — per-task + per-phase USD caps, per-agent tier overrides, auto-downgrade on soft-threshold, cache TTL, and enforcement mode. Schema: [`reference/config-schema.md`](reference/config-schema.md).
+- **PreToolUse `budget-enforcer` hook** — intercepts every `Agent` tool spawn: consults router, cache-manifest, and budget.json. Hard-blocks on cap breach (with an actionable error), auto-downgrades at the 80% soft-threshold, short-circuits on cache hit. Without the hook, optimization is advisory; with it, violations are impossible.
+- **Model-tier system** — every agent now carries `default-tier: haiku|sonnet|opus` + `tier-rationale` in its frontmatter. Overridden by `budget.json tier_overrides`. Policy: [`reference/model-tiers.md`](reference/model-tiers.md).
+- **Shared preamble** at [`reference/shared-preamble.md`](reference/shared-preamble.md) — extracted common agent framework content. All agents import it first; first agent in a session pays full cost, rest ride the 5-min prompt cache.
+- **Lazy checker gates** (`design-verifier-gate`, `design-integration-checker-gate`, `design-context-checker-gate`) — cheap Haiku heuristic agents that decide whether to spawn the expensive full checker.
+- **Streaming synthesizer** (`skills/synthesize/`) — parallel-mapper and parallel-researcher outputs are collapsed by a single Haiku call before returning to main context.
+- **Cost telemetry** — `.design/telemetry/costs.jsonl` appends one row per agent spawn decision: `{ts, agent, tier, tokens_in, tokens_out, cache_hit, est_cost_usd, cycle, phase}`. Aggregated to `.design/agent-metrics.json`.
+- **`/gdd:optimize`** advisory command — reads telemetry + metrics and emits recommendations to `.design/OPTIMIZE-RECOMMENDATIONS.md`. Pure advisory; no auto-apply. Phase 11's reflector consumes the same data for frontmatter-update proposals.
+
+### Using it
+
+```bash
+# One-shot cache warm-up before a design sprint
+/gdd:warm-cache
+
+# Run any /gdd:* command — the hook enforces budget.json automatically
+/gdd:scan .
+
+# Review cost recommendations after a run
+/gdd:optimize
+```
+
+### Configuration
+
+Edit `.design/budget.json` to tune limits per project:
+
+```json
+{
+  "per_task_cap_usd": 2.00,
+  "per_phase_cap_usd": 20.00,
+  "tier_overrides": {
+    "design-planner": "opus",
+    "design-verifier": "haiku"
+  },
+  "auto_downgrade_on_cap": true,
+  "cache_ttl_seconds": 3600,
+  "enforcement_mode": "enforce"
+}
+```
+
+`enforcement_mode` takes `enforce | warn | log` — use `log` during adoption to see the hook's decisions without blocking.
+
+### Baselines
+
+Regression baselines for Phase 10.1 live at [`test-fixture/baselines/phase-10.1/`](test-fixture/baselines/phase-10.1/) — methodology in that directory's README. Phase 12's test suite diffs against `cost-report.md` to catch regressions.
+
+---
+
 ## Connections (optional)
 
 The pipeline integrates with seven external tools and MCPs. All connections are optional — the pipeline degrades gracefully when any connection is unavailable.
