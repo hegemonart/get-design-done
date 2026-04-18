@@ -47,6 +47,24 @@ Required files — abort if either is missing:
 
 Confirm `.design/` directory exists. If absent, create it: `mkdir -p .design/`
 
+### Probe Preview connection
+
+Run at stage entry, after pre-flight checks:
+
+```
+Step P1 — ToolSearch check:
+  ToolSearch({ query: "Claude_Preview", max_results: 5 })
+  → Empty result      → preview: not_configured  (skip Screenshot Delta section)
+  → Non-empty result  → proceed to Step P2
+
+Step P2 — Live tool call:
+  call mcp__Claude_Preview__preview_list
+  → Success           → preview: available
+  → Error             → preview: unavailable
+
+Write preview status to .design/STATE.md <connections>.
+```
+
 ---
 
 ## Step 1: Parse Category Scores
@@ -184,6 +202,25 @@ If no regressions in Step 2 → emit: "No drift detected. No score regressions f
 
 ---
 
+## Step 5B: Screenshot Delta (when preview: available)
+
+Check `preview` status from STATE.md `<connections>` (written by the probe at stage entry).
+
+**If `preview: available`:**
+
+1. Call `preview_start` if no session is already running.
+2. For each route inferred from DESIGN-PLAN.md tasks or `src/app/` / `src/pages/` file structure:
+   a. `preview_navigate` to route URL (e.g., `http://localhost:3000/<route>`)
+   b. `preview_screenshot` → save to `.design/screenshots/before/<route>.png` (pre-design baseline — only if a prior run's screenshot exists at this path) and `.design/screenshots/after/<route>.png` (current render)
+   c. Record the reference path (NOT base64) for embedding in `## Screenshot Delta` section of COMPARE-REPORT.md
+3. Call `preview_stop` when all routes are captured.
+
+**If `preview: unavailable` or `preview: not_configured`:**
+
+Emit exactly: `Screenshot delta skipped — preview not configured.` in the `## Screenshot Delta` section of COMPARE-REPORT.md.
+
+---
+
 ## Step 6: Write COMPARE-REPORT.md (COMP-05)
 
 Output path: `.design/COMPARE-REPORT.md`
@@ -234,6 +271,12 @@ This file MUST NOT be written to any of the pipeline-reserved paths (`DESIGN.md`
 - "No drift detected. All regressed categories are covered by tasks in DESIGN-PLAN.md."
 - "DRIFT: [Category] regressed from <baseline> to <result> without a design task of Type:<category>"
 - "Drift detection skipped: DESIGN-PLAN.md not found."
+
+## Screenshot Delta
+
+<One of the following:>
+- Per-route screenshot pairs (when preview: available): reference paths to .design/screenshots/before/<route>.png and .design/screenshots/after/<route>.png
+- "Screenshot delta skipped — preview not configured."
 
 ## Notes
 

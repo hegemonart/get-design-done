@@ -40,6 +40,24 @@ Set `SRC_ROOT` to the first directory that exists. If none exist, abort:
 
 Confirm `.design/` exists (create it if absent — `mkdir -p .design/`).
 
+### Probe Preview connection
+
+Run at stage entry, after pre-flight checks:
+
+```
+Step P1 — ToolSearch check:
+  ToolSearch({ query: "Claude_Preview", max_results: 5 })
+  → Empty result      → preview: not_configured  (skip Dark Mode Rendering section)
+  → Non-empty result  → proceed to Step P2
+
+Step P2 — Live tool call:
+  call mcp__Claude_Preview__preview_list
+  → Success           → preview: available
+  → Error             → preview: unavailable
+
+Write preview status to .design/STATE.md <connections>.
+```
+
 ---
 
 ## Step 1: Architecture Detection (DARK-02)
@@ -204,6 +222,28 @@ If `pcs_count` equals 0 → P2 (minor). Absence means the site ignores the OS-le
 
 ---
 
+## Step 5B: Dark Mode Rendering Screenshots (when preview: available)
+
+Check `preview` status from STATE.md `<connections>` (written by the probe at stage entry).
+
+**If `preview: available`:**
+
+1. `preview_navigate` to the primary route (e.g., `http://localhost:3000/`).
+2. Capture light-mode screenshot: `preview_screenshot` → save to `.design/screenshots/darkmode/light.png`.
+3. Inject dark mode using the project's toggle mechanism (check `DESIGN-CONTEXT.md` D-XX decisions):
+   - Tailwind dark: `preview_eval("document.documentElement.classList.add('dark')")`
+   - data-theme: `preview_eval("document.documentElement.setAttribute('data-theme','dark')")`
+   - Custom class: `preview_eval("document.documentElement.classList.add('theme-dark')")`
+   - If mechanism is unknown: attempt Tailwind default first; note in DARKMODE-AUDIT.md which method was used
+4. `preview_screenshot` → save to `.design/screenshots/darkmode/dark.png`.
+5. Record both paths (NOT base64) for embedding in `## Dark Mode Rendering` section of DARKMODE-AUDIT.md.
+
+**If `preview: unavailable` or `preview: not_configured`:**
+
+Omit `## Dark Mode Rendering` section entirely. Emit: `Visual dark mode check skipped — preview not configured.` in the Notes section.
+
+---
+
 ## Step 6: Write DARKMODE-AUDIT.md (DARK-07)
 
 Output path: `.design/DARKMODE-AUDIT.md`
@@ -246,6 +286,15 @@ Collect all flagged issues from Steps 2–5, group by priority (P0 → P1 → P2
 ## P3 Fixes (Cosmetic)
 
 - <cosmetic issues, if any>
+
+## Dark Mode Rendering
+
+<One of the following:>
+- When preview: available: side-by-side screenshot evidence
+  - Light: .design/screenshots/darkmode/light.png
+  - Dark: .design/screenshots/darkmode/dark.png
+  - Injection method used: <classList.add('dark') | setAttribute('data-theme','dark') | other>
+- "Visual dark mode check skipped — preview not configured."
 
 ## Notes
 
