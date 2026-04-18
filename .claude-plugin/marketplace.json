@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Get Design Done — 5-stage agent-orchestrated design pipeline with 9 connections, handoff-first workflow, bidirectional Figma write-back, 22+ specialized agents, queryable knowledge layer (intel store, dependency analysis, learnings extraction), and a self-improvement loop (reflector, frontmatter + budget feedback, global-skills layer).",
-    "version": "1.0.4"
+    "version": "1.0.5"
   },
   "plugins": [
     {

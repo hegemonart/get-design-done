@@ -672,9 +672,9 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | 4. Connections Layer | 3/3 | Complete | — | 2026-04-17 |
 | 5. Automation Agents + New Commands | 5/5 | Complete | — | 2026-04-17 |
 | 6. Validation + Version Bump | 1/1 | Complete | v1.0.0 (rename reset) | 2026-04-18 |
-| 7. GSD Parity + Exploration — Discussant, Ergonomics, Sketch/Spike, Pipeline Reshape | 0/17 (7 Wave A + 6 Wave B + 4 Wave C incl. closeout) | Planned | v1.0.1 | - |
+| 7. GSD Parity + Exploration — Discussant, Ergonomics, Sketch/Spike, Pipeline Reshape | 17/17 (7 Wave A + 6 Wave B + 4 Wave C incl. closeout) | Complete | v1.0.1 | 2026-04-18 |
 | 8. Visual + Design-Side Connections + Knowledge Graph | 7/7 (6 feature + 1 closeout) | Complete | v1.0.2 | 2026-04-18 |
-| 9. Claude Design Integration + Pinterest Connection | 0/8 (7 provisional + 1 closeout — replan after 7 + 8) | Planned | v1.0.3 | - |
+| 9. Claude Design Integration + Pinterest Connection | 8/8 (7 provisional + 1 closeout) | Complete | v1.0.3 | 2026-04-18 |
 | 10. Knowledge Layer — `.design/intel/`, learnings, dependencies, responsibility mapping | 6/6 (5 feature + 1 closeout) | Complete | v1.0.4 | 2026-04-18 |
 | **10.1. Optimization Layer + Cost Governance (INSERTED)** — router, cache manager, budget enforcement, telemetry, model tiers, lazy spawning, /gdd:optimize | 0/6 (5 feature + 1 closeout) | Planned | v1.0.4.1 | - |
 | 11. Self-Improvement — reflector, frontmatter feedback, reference-update proposer, budget feedback, global skills | 5/5 | Complete | v1.0.5 | 2026-04-18 |
