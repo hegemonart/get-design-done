@@ -218,6 +218,11 @@ Progress: [████████████████░░░░] 74% (14
 - [Phase 10.1-04]: Per-mapper .design/map/*.md files preserved on disk even after DESIGN-PATTERNS.md synthesis — drill-down evidence unchanged
 - [Phase 10.1-04]: Three gate agents use distinct colors (green, blue, cyan) mirroring their gated counterparts for terminal readability
 
+### Roadmap Evolution
+
+- Phase 13.1 inserted after Phase 13: Figma MCP Consolidation (URGENT) — collapse dual Figma MCP setup into single remote MCP
+- 2026-04-19: Phase 11.1 renumbered to 13.2 (External Authority Watcher); Phase 11.2 renumbered to 13.3 (Plugin Update Checker). Rationale: original decimal slots under Phase 11 referenced v1.0.5.x versioning, but v1.0.5/6/7 already shipped — moving the unstarted decimals behind the latest shipped integer phase (13, v1.0.7) corrects the version strings (v1.0.7.2, v1.0.7.3) and restores meaningful ordering. No phase directories existed on disk for 11.1/11.2, so this was a text-only rename in ROADMAP.md.
+
 ### Pending Todos
 
 None yet.
