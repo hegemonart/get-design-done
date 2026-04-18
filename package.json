@@ -12,7 +12,7 @@
   "scripts": {
     "test": "node --test \"tests/**/*.cjs\"",
     "lint:md": "npx --yes markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.planning\" \"#.claude\" \"#test-fixture/baselines\"",
-    "lint:links": "npx --yes lychee --config .lycheeignore --no-progress --accept 200,206,403,429 \"**/*.md\" || true",
+    "lint:links": "npx --yes lychee --no-progress --accept 200,206,403,429 \"**/*.md\" || true",
     "validate:schemas": "node scripts/validate-schemas.cjs",
     "validate:frontmatter": "node scripts/validate-frontmatter.cjs agents/",
     "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
