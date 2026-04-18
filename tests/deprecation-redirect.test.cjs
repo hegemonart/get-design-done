@@ -90,7 +90,9 @@ test('deprecation-redirect: no orphan mention of "design-pattern-mapper" outside
   const files = SCAN_DIRS.flatMap(walkMarkdown);
   const offenders = [];
   for (const file of files) {
-    const rel = path.relative(REPO_ROOT, file);
+    // Normalize path separators so Windows (backslashes) matches the
+    // forward-slash entries in ALLOWED_DEPRECATION_REFS.
+    const rel = path.relative(REPO_ROOT, file).split(path.sep).join('/');
     if (ALLOWED_DEPRECATION_REFS.includes(rel)) continue;
     const body = fs.readFileSync(file, 'utf8');
     if (body.includes('design-pattern-mapper')) {

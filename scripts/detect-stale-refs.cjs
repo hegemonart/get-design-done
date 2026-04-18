@@ -31,7 +31,8 @@ const EXCLUDE_DIRS = new Set([
 ]);
 
 const EXCLUDE_FILES = new Set([
-  path.relative(REPO_ROOT, DEPRECATIONS_PATH),
+  // Normalize to forward-slashes so Windows matches this set correctly.
+  path.relative(REPO_ROOT, DEPRECATIONS_PATH).split(path.sep).join('/'),
 ]);
 
 function ensureDeprecationsExists() {
@@ -64,7 +65,7 @@ function walk(dir, out) {
       walk(path.join(dir, entry.name), out);
     } else if (entry.isFile() && entry.name.endsWith('.md')) {
       const full = path.join(dir, entry.name);
-      const rel = path.relative(REPO_ROOT, full);
+      const rel = path.relative(REPO_ROOT, full).split(path.sep).join('/');
       if (EXCLUDE_FILES.has(rel)) continue;
       out.push(full);
     }
