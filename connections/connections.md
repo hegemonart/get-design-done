@@ -10,6 +10,8 @@ This directory contains connection specifications for external tools and MCPs th
 |-----------|--------|-----------|-------|
 | Figma | Active | [`connections/figma.md`](connections/figma.md) | Uses `mcp__figma-desktop__*` tools (official Figma Desktop MCP) |
 | Refero | Active | [`connections/refero.md`](connections/refero.md) | Uses `mcp__refero__*` tools (verify names via ToolSearch) |
+| Pinterest | Active | [`connections/pinterest.md`](connections/pinterest.md) | `mcp__mcp-pinterest__*` tools (ToolSearch-only probe; headless scraping, no API key) |
+| Claude Design | Active | [`connections/claude-design.md`](connections/claude-design.md) | No MCP — bundle file probe; enables `/gdd:handoff` pipeline + bidirectional write-back via figma-writer |
 
 ---
 
@@ -26,6 +28,8 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | visual-hierarchy-mapper | hierarchy map → `.design/map/visual-hierarchy.md` | — | — | — | — |
 | a11y-mapper | static a11y map → `.design/map/a11y.md` | — | — | — | — |
 | motion-mapper | motion map → `.design/map/motion.md` | — | — | — | — |
+| Pinterest | probe only | visual reference search via `pinterest_search`; fallback → Refero → awesome-design-md | — | — | — |
+| Claude Design | bundle probe → `claude_design: available` | synthesizer handoff mode — parses bundle → D-XX decisions; discussant `--from-handoff` confirms | — (skipped in handoff) | — (skipped in handoff) | Handoff Faithfulness section; bidirectional write-back via figma-writer `implementation-status` mode |
 | Storybook (future) | — | — | — | — | components |
 | Linear (future) | — | — | — | — | tickets |
 | GitHub (future) | — | — | commits | — | PRs |

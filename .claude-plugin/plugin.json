@@ -1,8 +1,8 @@
 {
   "name": "get-design-done",
   "short_name": "gdd",
-  "version": "1.0.1",
-  "description": "Agent-orchestrated 5-stage design pipeline: Scan → Discover → Plan → Design → Verify. 14 specialized agents, Figma + Refero MCP connections, and 3 standalone commands (style, darkmode, compare). Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog.",
+  "version": "1.0.3",
+  "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. Handoff-first workflow via Claude Design bundles. Pinterest MCP + Refero + Figma connections. Bidirectional Figma write-back (annotations, Code Connect). 22 specialized agents, style/darkmode/compare/handoff commands.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
@@ -24,7 +24,11 @@
     "typography",
     "motion",
     "anti-patterns",
-    "audit"
+    "audit",
+    "handoff",
+    "claude-design",
+    "pinterest",
+    "bidirectional"
   ],
   "skills": ["./", "./skills/"],
   "hooks": "./hooks/hooks.json"
