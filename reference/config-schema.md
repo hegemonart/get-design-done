@@ -154,6 +154,87 @@ TTL driving `.design/cache-manifest.json` entry expiry per D-08 Layer B.
 
 If `.design/budget.json` is missing when any `/gdd:*` command runs, `scripts/bootstrap.sh` writes the Default Config values (per D-12). Don't block the spawn — defaults are sensible.
 
+## .design/telemetry/costs.jsonl + .design/agent-metrics.json (Phase 10.1)
+
+Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.js` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.js` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory — they are local session state, not committed.
+
+### .design/telemetry/costs.jsonl
+
+Append-only ledger. One JSON object per line. Written by `hooks/budget-enforcer.js` on every PreToolUse decision: spawn allowed, spawn blocked by cap, tier downgraded, cache-hit short-circuit, lazy-gate skip. Consumed by the Phase 11 reflector (`agents/design-reflector.md`) and by `/gdd:optimize`.
+
+**Row schema** (verbatim from ROADMAP criterion 7):
+
+```json
+{
+  "ts": "<ISO-8601 timestamp>",
+  "agent": "<agent name>",
+  "tier": "<haiku | sonnet | opus | cache | gate>",
+  "tokens_in": <int>,
+  "tokens_out": <int>,
+  "cache_hit": <bool>,
+  "est_cost_usd": <float>,
+  "cycle": "<v1.0.x>",
+  "phase": "<phase slug>"
+}
+```
+
+**Extra diagnostic fields** (optional; Phase 11 reflector ignores unknown fields gracefully):
+
+- `tier_downgraded: <bool>` — set when soft-threshold downgrade fired (D-03).
+- `enforcement_mode: <"enforce" | "warn" | "log">` — mirrors `.design/budget.json.enforcement_mode` at the time of decision.
+- `lazy_skipped: <bool>` — set when plan 10.1-04 gate agent declined to spawn the full checker.
+- `block_reason: <"per_task_cap" | "per_phase_cap">` — set when hook blocked the spawn.
+
+**Guarantees:**
+
+- Writes are `fs.appendFileSync` — OS-level atomic per line.
+- The file is **never truncated or rotated** by the hook in v1. Log rotation is a Phase 12 concern.
+- Consumers must be tolerant of malformed lines (partial writes from crashed processes) — skip-and-continue is the canonical pattern.
+- Rows log only token counts, agent name, tier, cost, cycle, phase. **No prompt or response content is logged** — the schema is information-disclosure-safe by construction.
+
+### .design/agent-metrics.json
+
+Per-agent aggregate derived from `costs.jsonl` by `scripts/aggregate-agent-metrics.js`. Written atomically via tmp-file + rename. Overwritten in full on every refresh — not append-only. Consumers should treat it as a snapshot.
+
+**Schema:**
+
+```json
+{
+  "generated_at": "<ISO-8601 timestamp>",
+  "agents": {
+    "<agent-name>": {
+      "typical_duration_seconds": <number | null>,
+      "default_tier": "<haiku | sonnet | opus | null>",
+      "parallel_safe": <bool | null>,
+      "reads_only": <bool | null>,
+      "total_spawns": <int>,
+      "total_cost_usd": <float>,
+      "total_tokens_in": <int>,
+      "total_tokens_out": <int>,
+      "cache_hit_rate": <float 0..1>,
+      "lazy_skip_rate": <float 0..1>
+    }
+  }
+}
+```
+
+**Field sources:**
+
+- `typical_duration_seconds`, `default_tier`, `parallel_safe`, `reads_only` — read from `agents/{agent}.md` frontmatter (kebab-case in the markdown; re-keyed to snake_case in JSON). Null if the agent file is absent or the field is missing.
+- `total_spawns`, `total_cost_usd`, `total_tokens_in`, `total_tokens_out` — summed across all `costs.jsonl` rows for this agent.
+- `cache_hit_rate = cache_hits / total_spawns` (clamped when total_spawns = 0).
+- `lazy_skip_rate = lazy_skips / total_spawns` (same).
+
+**Phase 11 reflector contract:** the fields `typical_duration_seconds`, `default_tier`, `parallel_safe`, `reads_only`, `total_spawns`, `total_cost_usd` are the exact inputs the reflector feeds into its frontmatter-update proposals (see `.planning/phases/11-self-improvement/11-02-PLAN.md`). Do not rename or drop these fields without a reflector contract update.
+
+### Gitignore
+
+Both files sit inside `.design/`, which is already `.gitignore`d at the project root. No changes to `.gitignore` required. A `.gitkeep` at `.design/telemetry/` ensures the directory ships empty but present (see plan 10.1-05 Task 06).
+
+### Refresh cadence
+
+The aggregator is invoked as a detached child process by `hooks/budget-enforcer.js` after every telemetry row write. It is also invoked directly by `/gdd:optimize` before analysis. There is no cron, no daemon, and no scheduled task — metrics are always at most one spawn stale.
+
 ## .design/cache-manifest.json Schema (Phase 10.1)
 
 Authored and maintained by `skills/cache-manager/SKILL.md`. Read by `hooks/budget-enforcer.js` (PreToolUse on Agent spawns) for short-circuiting cached spawns per D-05. Layer B of the D-08 two-layer cache. Flat KV shape — keys are SHA-256 hex of the deterministic input-hash, values are entry objects. Schema version 1.
