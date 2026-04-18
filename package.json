@@ -1,0 +1,25 @@
+{
+  "name": "get-design-done",
+  "version": "1.0.0",
+  "description": "A Claude Code plugin for systematic design improvement",
+  "author": "Hegemon",
+  "homepage": "https://github.com/hegemonart/get-design-done",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hegemonart/get-design-done.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test 'tests/**/*.cjs'"
+  },
+  "keywords": [
+    "claude",
+    "plugin",
+    "design",
+    "design-system"
+  ],
+  "skills": [
+    "SKILL.md"
+  ],
+  "hooks": "hooks/hooks.json"
+}
