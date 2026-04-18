@@ -1,0 +1,26 @@
+# Gitleaks config for get-design-done — D-12
+# Extends the default v8 rule set with allowlist overrides for planning dirs,
+# dev-only paths, and documentation-example tokens.
+
+title = "get-design-done gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Known safe paths and placeholder patterns"
+paths = [
+  '''\.planning/''',
+  '''\.claude/''',
+  '''test-fixture/baselines/''',
+  '''node_modules/''',
+  '''\.design/''',
+]
+regexes = [
+  # Placeholder tokens used in reference docs and examples
+  '''sk-example-[A-Za-z0-9]+''',
+  '''sk-test-[A-Za-z0-9]+''',
+  '''ghp_example[A-Za-z0-9]*''',
+  # Shields.io / badge URLs (never real secrets)
+  '''https://img\.shields\.io/.*''',
+]

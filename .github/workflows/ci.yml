@@ -121,8 +121,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Placeholder — filled by plan 13-04
-        run: echo "security job placeholder — plan 13-04 lands gitleaks + injection-scanner"
+        with:
+          fetch-depth: 0  # full history for gitleaks initial scan per D-12
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false
+          GITLEAKS_CONFIG: .gitleaks.toml
+
+      - name: Injection scanner (CI mode)
+        run: npm run scan:injection
 
   size-budget:
     name: "Size budget (blocking)"
@@ -131,9 +146,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Placeholder — filled by plan 13-04
-        run: echo "size-budget job placeholder — plan 13-04 lands blocking agent-size-budget gate"
+
+      - name: Agent size-budget gate
+        run: |
+          if ! npm run test:size-budget; then
+            echo ""
+            echo "ERROR: one or more agents exceed their size_budget tier."
+            echo "To raise: set size_budget: XL in the agent frontmatter AND include rationale in the PR description."
+            echo "See CONTRIBUTING.md for the override process."
+            exit 1
+          fi

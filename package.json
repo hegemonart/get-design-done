@@ -15,7 +15,9 @@
     "lint:links": "npx --yes lychee --config .lycheeignore --no-progress --accept 200,206,403,429 \"**/*.md\" || true",
     "validate:schemas": "node scripts/validate-schemas.cjs",
     "validate:frontmatter": "node scripts/validate-frontmatter.cjs agents/",
-    "detect:stale-refs": "node scripts/detect-stale-refs.cjs"
+    "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
+    "scan:injection": "node scripts/run-injection-scanner-ci.cjs",
+    "test:size-budget": "node --test tests/agent-size-budget.test.cjs"
   },
   "keywords": [
     "claude",
