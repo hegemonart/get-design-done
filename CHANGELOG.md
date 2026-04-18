@@ -4,6 +4,31 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.0.7.3] — 2026-04-19
+
+### Added — Phase 13.3: Plugin Update Checker
+- `hooks/update-check.sh` — SessionStart Bash hook; 24h-cached unauthenticated `GET /repos/hegemonart/get-design-done/releases/latest`; classifies semver delta (major / minor / patch / off-cadence); respects `.design/STATE.md` stage guard (suppresses nudge during `plan`, `design`, `verify`); respects per-version dismissal from `.design/config.json`; silent-on-failure by policy (exit 0 on every error path).
+- `hooks/hooks.json` — registers `update-check.sh` as a second SessionStart command alongside `bootstrap.sh` (run order: bootstrap → update-check).
+- `agents/design-update-checker.md` — Haiku-tier enrichment agent (Phase 10.1 cost governance). Invoked only by `/gdd:check-update --prompt` to produce a 3–5-line "what this release changes for you" summary from the cached release body. Reads-only, inline-text-only output, ends with `## UPDATE-CHECKER COMPLETE`.
+- `skills/check-update/SKILL.md` — `/gdd:check-update` manual slash command. Flags: `--refresh` (bypass 24h TTL, re-fetch now), `--dismiss` (write `update_dismissed: "<tag>"` atomically to `.design/config.json` and delete the rendered banner), `--prompt` (spawn the enrichment agent). Default (no flag) prints cached state.
+- `.design/update-cache.json` — per-user-project runtime cache (written by the hook). Shape: `{checked_at, current_tag, latest_tag, delta, is_newer, changelog_excerpt}`; 500-char excerpt from release body.
+- `.design/update-available.md` — per-user-project runtime rendered banner. Written only when all four gates pass (cache is_newer=true AND stage ∉ {plan,design,verify} AND not dismissed AND latest_tag parsed successfully). Consumed by safe-window skills via `[ -f .design/update-available.md ] && cat .design/update-available.md`.
+- `reference/schemas/config.schema.json` — adds optional `update_dismissed: string` property.
+- Safe-window surfaces: `/gdd:progress`, `/gdd:health`, `/gdd:help`, post-closeout of `/gdd:ship`, `/gdd:complete-cycle`, `/gdd:audit` — each appends the one-line banner-cat tail before its completion marker.
+- `skills/audit/SKILL.md` — `tools:` list extended with `Bash` to enable the banner-cat tail (previously: `Read, Write, Task, Glob`).
+- `test-fixture/baselines/phase-13.3/` — regression baseline lock for v1.0.7.3 (manifest-only, following the phase-13 pattern — this phase adds no pipeline output).
+
+### Changed
+- Plugin version: `1.0.7` → `1.0.7.3` (off-cadence patch — does not shift Phase 14 → v1.0.8).
+
+### Design principles (Phase 13.3)
+- Never auto-updates. The checker only surfaces a nudge; `/gdd:update` remains the explicit user action.
+- Never interrupts critical work. State-machine guard suppresses the nudge during mid-pipeline stages (`plan`, `design`, `verify`); banner renders only in the 6 documented safe windows.
+- Silent-on-failure. Network timeout, malformed JSON, missing plugin.json, unwritable `.design/` — every path exits 0 without printing to stderr during normal SessionStart.
+- No telemetry. Unauthenticated GitHub Releases fetch; no phone-home, no tracking, no tokens in code.
+
+---
+
 ## [1.0.7] — 2026-04-18
 
 ### Added — Phase 13: CI/CD
