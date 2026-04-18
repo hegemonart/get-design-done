@@ -1,0 +1,62 @@
+name: npm backfill publish
+
+# Manually publish an already-existing git tag to npm as
+# @hegemonart/get-design-done. Used to backfill a release that shipped before
+# the npm-publish step existed in release.yml, or to re-publish a specific
+# tag if it failed the first time.
+#
+# Usage (from GitHub UI):
+#   Actions → "npm backfill publish" → Run workflow → enter tag, e.g. v1.0.7
+#
+# Requires: NPM_TOKEN repo secret with publish rights on @hegemonart.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Git tag to publish (e.g. v1.0.7)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write   # needed for npm provenance
+
+jobs:
+  npm-backfill:
+    name: "npm publish (backfill ${{ inputs.tag }})"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tag ${{ inputs.tag }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Verify tag matches package.json version
+        run: |
+          set -euo pipefail
+          TAG="${{ inputs.tag }}"
+          # Strip leading 'v' if present: v1.0.7 → 1.0.7
+          EXPECTED="${TAG#v}"
+          ACTUAL=$(node -e 'console.log(JSON.parse(require("fs").readFileSync("package.json","utf8")).version)')
+          echo "Tag says: $EXPECTED"
+          echo "package.json says: $ACTUAL"
+          if [ "$EXPECTED" != "$ACTUAL" ]; then
+            echo "ERROR: tag ${TAG} does not match package.json version ${ACTUAL}."
+            echo "Refusing to publish — tag and manifest must agree."
+            exit 1
+          fi
+
+      - name: Verify version sync across manifests
+        run: node scripts/verify-version-sync.cjs
+
+      - name: Publish to npm (with provenance)
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

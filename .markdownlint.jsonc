@@ -18,5 +18,6 @@
   "MD007": false,           // unordered list indentation — mixed 2/3-space indent in legacy docs
   "MD046": false,           // code block style (fenced vs indented) — mixed in legacy docs
   "MD056": false,           // table columns — table ragged-edges exist in a few reference docs
-  "MD009": false            // trailing spaces — one-off, accept silently
+  "MD009": false,           // trailing spaces — one-off, accept silently
+  "MD001": false            // heading increment — legitimate use inside GH callouts (> [!IMPORTANT] blocks) with ### sub-headings fires this
 }
