@@ -14,6 +14,8 @@
  *   - enforcement_mode: "log" → advisory only
  *
  * Logs every decision to .design/telemetry/costs.jsonl (OPT-09 schema).
+ * Every telemetry write fires a detached child aggregator (scripts/aggregate-agent-metrics.js)
+ * that rebuilds .design/agent-metrics.json incrementally.
  *
  * Hook type: PreToolUse
  * Input:  JSON on stdin { tool_name, tool_input }
@@ -25,6 +27,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const { spawn } = require('child_process');
 
 const BUDGET_PATH = path.join(process.cwd(), '.design', 'budget.json');
 const MANIFEST_PATH = path.join(process.cwd(), '.design', 'cache-manifest.json');
@@ -60,12 +63,30 @@ function currentPhaseSpend(phase) {
   return sum;
 }
 
+// ---- cycle + phase reader (STATE.md frontmatter) ----
+function readCycleAndPhase() {
+  const defaults = { cycle: 'unknown', phase: 'unknown' };
+  if (!fs.existsSync(STATE_PATH)) return defaults;
+  try {
+    const content = fs.readFileSync(STATE_PATH, 'utf8');
+    // Match the first frontmatter block: between opening '---' and next '---'
+    const fm = content.match(/^---\s*\n([\s\S]*?)\n---/);
+    const body = fm ? fm[1] : content;
+    const cycleMatch = body.match(/^cycle:\s*"?([^"\n]+)"?/m);
+    const phaseMatch = body.match(/^phase:\s*"?([^"\n]+)"?/m);
+    return {
+      cycle: cycleMatch ? cycleMatch[1].trim() : 'unknown',
+      phase: phaseMatch ? phaseMatch[1].trim() : 'unknown',
+    };
+  } catch {
+    return defaults;
+  }
+}
+
+// Deprecated alias for plan 01 callers (and any other hook/script that imports this).
+// Returns only the phase string; prefer readCycleAndPhase() for new code.
 function currentPhase() {
-  // Read .design/STATE.md phase: frontmatter field (simple regex, no yaml lib)
-  if (!fs.existsSync(STATE_PATH)) return 'unknown';
-  const content = fs.readFileSync(STATE_PATH, 'utf8');
-  const m = content.match(/^phase:\s*"?([^"\n]+)"?/m);
-  return m ? m[1].trim() : 'unknown';
+  return readCycleAndPhase().phase;
 }
 
 // ---- cache short-circuit (D-05) ----
@@ -86,12 +107,64 @@ function resolveTier(agent, agentDefaultTier, overrides) {
   return overrides?.[agent] || agentDefaultTier || 'sonnet';
 }
 
-// ---- telemetry append ----
-function appendTelemetry(row) {
-  const dir = path.dirname(TELEMETRY_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.appendFileSync(TELEMETRY_PATH, JSON.stringify(row) + '\n', 'utf8');
+// ---- detached aggregator invocation ----
+// Fire-and-forget: do not block the hook. The aggregator reads costs.jsonl tail
+// and rewrites .design/agent-metrics.json atomically.
+function spawnAggregator() {
+  try {
+    const aggregatorPath = path.join(process.cwd(), 'scripts', 'aggregate-agent-metrics.js');
+    if (!fs.existsSync(aggregatorPath)) return; // script not installed — fail open
+    const child = spawn('node', [aggregatorPath], {
+      cwd: process.cwd(),
+      detached: true,
+      stdio: 'ignore',
+      env: process.env,
+    });
+    child.unref();
+  } catch {
+    // Aggregator failures are non-fatal to the hook.
+  }
 }
+
+// ---- locked-schema row builder (OPT-09) ----
+function buildTelemetryRow(partial) {
+  const { cycle, phase } = partial._cyclePhase || readCycleAndPhase();
+  // The nine mandatory fields per OPT-09, always in this order.
+  const row = {
+    ts: partial.ts || new Date().toISOString(),
+    agent: String(partial.agent || 'unknown'),
+    tier: String(partial.tier || 'unknown'),
+    tokens_in: Number(partial.tokens_in || 0),
+    tokens_out: Number(partial.tokens_out || 0),
+    cache_hit: Boolean(partial.cache_hit),
+    est_cost_usd: Number(partial.est_cost_usd || 0),
+    cycle: partial.cycle || cycle,
+    phase: partial.phase || phase,
+  };
+  // Optional diagnostic fields (Phase 11 reflector ignores unknown fields gracefully).
+  if (partial.tier_downgraded !== undefined) row.tier_downgraded = Boolean(partial.tier_downgraded);
+  if (partial.enforcement_mode !== undefined) row.enforcement_mode = String(partial.enforcement_mode);
+  if (partial.lazy_skipped !== undefined) row.lazy_skipped = Boolean(partial.lazy_skipped);
+  if (partial.block_reason !== undefined) row.block_reason = String(partial.block_reason);
+  return row;
+}
+
+// ---- telemetry writer: append one JSON row to costs.jsonl ----
+function writeTelemetry(partial) {
+  const dir = path.dirname(TELEMETRY_PATH);
+  try {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const row = buildTelemetryRow(partial);
+    fs.appendFileSync(TELEMETRY_PATH, JSON.stringify(row) + '\n', 'utf8');
+    // Fire-and-forget aggregator — rebuilds .design/agent-metrics.json incrementally.
+    spawnAggregator();
+  } catch {
+    // Fail open: telemetry must never block the hook.
+  }
+}
+
+// Backward-compat alias (plan 01 called it appendTelemetry; keep it working).
+const appendTelemetry = writeTelemetry;
 
 // ---- main ----
 async function main() {
@@ -108,23 +181,49 @@ async function main() {
   const agent = toolInput.subagent_type || toolInput.agent || 'unknown';
   const inputHash = toolInput._input_hash || null;  // supplied by orchestrator if cache-manager pre-computed it
 
-  const budget = loadBudget();
-  const phase = currentPhase();
+  // Resolve cycle + phase once so every branch can stamp consistent values.
+  const { cycle, phase } = readCycleAndPhase();
+  const cyclePhase = { cycle, phase };
 
-  // Layer A: cache short-circuit
+  // Branch A: lazy-gate signal from plan 10.1-04 agents (design-verifier-gate, etc.).
+  // Gate agents set tool_input.lazy_skipped === true when the heuristic declines
+  // to spawn the full checker. We log a zero-cost row and pass through.
+  if (toolInput.lazy_skipped === true) {
+    writeTelemetry({
+      agent,
+      tier: 'gate',
+      tokens_in: 0,
+      tokens_out: 0,
+      cache_hit: false,
+      est_cost_usd: 0,
+      lazy_skipped: true,
+      _cyclePhase: cyclePhase,
+    });
+    const response = { continue: true, suppressOutput: true };
+    process.stdout.write(JSON.stringify(response));
+    return;
+  }
+
+  const budget = loadBudget();
+
+  // Branch B: cache short-circuit (D-05)
   if (inputHash) {
     const cached = cacheLookup(agent, inputHash);
     if (cached !== null) {
-      appendTelemetry({
-        ts: new Date().toISOString(), agent, tier: 'cache',
-        tokens_in: 0, tokens_out: 0, cache_hit: true,
-        est_cost_usd: 0, cycle: toolInput.cycle || null, phase
+      writeTelemetry({
+        agent,
+        tier: 'cache',
+        tokens_in: 0,
+        tokens_out: 0,
+        cache_hit: true,
+        est_cost_usd: 0,
+        _cyclePhase: cyclePhase,
       });
       const response = {
         continue: false,  // block the real spawn; orchestrator reads suppressOutput.message for cached blob
         suppressOutput: false,
         message: `gdd-budget-enforcer: SkippedCached — returning cached result for ${agent}:${inputHash}`,
-        cached_result: cached
+        cached_result: cached,
       };
       process.stdout.write(JSON.stringify(response));
       return;
@@ -136,20 +235,44 @@ async function main() {
   const phaseSpend = currentPhaseSpend(phase);
 
   if (budget.enforcement_mode === 'enforce') {
-    // 100% per_task cap (hard block)
+    // Branch C: 100% per_task cap (hard block)
     if (estCost >= budget.per_task_cap_usd) {
+      writeTelemetry({
+        agent,
+        tier: toolInput._tier_override || toolInput._default_tier || 'sonnet',
+        tokens_in: Number(toolInput._tokens_in_est || 0),
+        tokens_out: Number(toolInput._tokens_out_est || 0),
+        cache_hit: false,
+        est_cost_usd: estCost,
+        enforcement_mode: budget.enforcement_mode,
+        block_reason: 'per_task_cap',
+        _cyclePhase: cyclePhase,
+      });
       const response = {
-        continue: false, suppressOutput: false,
-        message: `Budget cap reached for per-task. Estimated: $${estCost.toFixed(4)}, cap: $${budget.per_task_cap_usd.toFixed(2)}. Raise cap in .design/budget.json or retry after next task.`
+        continue: false,
+        suppressOutput: false,
+        message: `Budget cap reached for per-task. Estimated: $${estCost.toFixed(4)}, cap: $${budget.per_task_cap_usd.toFixed(2)}. Raise cap in .design/budget.json or retry after next task.`,
       };
       process.stdout.write(JSON.stringify(response));
       return;
     }
-    // 100% per_phase cap (hard block)
+    // Branch D: 100% per_phase cap (hard block)
     if (phaseSpend + estCost >= budget.per_phase_cap_usd) {
+      writeTelemetry({
+        agent,
+        tier: toolInput._tier_override || toolInput._default_tier || 'sonnet',
+        tokens_in: Number(toolInput._tokens_in_est || 0),
+        tokens_out: Number(toolInput._tokens_out_est || 0),
+        cache_hit: false,
+        est_cost_usd: estCost,
+        enforcement_mode: budget.enforcement_mode,
+        block_reason: 'per_phase_cap',
+        _cyclePhase: cyclePhase,
+      });
       const response = {
-        continue: false, suppressOutput: false,
-        message: `Budget cap reached for per-phase (${phase}). Cumulative: $${(phaseSpend + estCost).toFixed(4)}, cap: $${budget.per_phase_cap_usd.toFixed(2)}. Raise cap in .design/budget.json or retry after next phase.`
+        continue: false,
+        suppressOutput: false,
+        message: `Budget cap reached for per-phase (${phase}). Cumulative: $${(phaseSpend + estCost).toFixed(4)}, cap: $${budget.per_phase_cap_usd.toFixed(2)}. Raise cap in .design/budget.json or retry after next phase.`,
       };
       process.stdout.write(JSON.stringify(response));
       return;
@@ -171,19 +294,17 @@ async function main() {
     toolInput._tier_override = budget.tier_overrides[agent];
   }
 
-  // Telemetry: log the decision
-  appendTelemetry({
-    ts: new Date().toISOString(),
+  // Branch E: standard spawn-allowed (includes tier-downgraded path D-03)
+  writeTelemetry({
     agent,
     tier: toolInput._tier_override || toolInput._default_tier || 'sonnet',
     tokens_in: Number(toolInput._tokens_in_est || 0),
     tokens_out: Number(toolInput._tokens_out_est || 0),
     cache_hit: false,
     est_cost_usd: estCost,
-    cycle: toolInput.cycle || null,
-    phase,
     tier_downgraded: !!toolInput._tier_downgraded,
-    enforcement_mode: budget.enforcement_mode
+    enforcement_mode: budget.enforcement_mode,
+    _cyclePhase: cyclePhase,
   });
 
   const response = {
