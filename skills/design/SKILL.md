@@ -43,6 +43,31 @@ Skip if `auto_mode=true`.
 
 When spawning the executor, include any `./.claude/skills/design-*-conventions.md` files in `<required_reading>` so the executor sees project-local design conventions (typography, color, layout, motion, component, interaction decisions codified from prior sketch wrap-ups).
 
+---
+
+### .stories.tsx Stub (when storybook project detected)
+
+After every new component file is created by the design-executor:
+
+Step 1 — Check project detection (does not require server running):
+  Bash: ls .storybook/ 2>/dev/null || grep '"storybook"' package.json 2>/dev/null
+  → Found → storybook_project: true
+  → Not found → skip .stories.tsx emission
+
+Step 2 — When storybook_project: true, emit a CSF stub alongside the component:
+  File: `<same directory as component>/<ComponentName>.stories.tsx`
+  Content follows CSF format (see `connections/storybook.md` for full template):
+  - Import `Meta` and `StoryObj` from `@storybook/react`
+  - Import the new component
+  - `meta: Meta<typeof ComponentName>` with `title` and `parameters.a11y.test = 'error'`
+  - Export `Default`, `Primary`, `Disabled` story variants
+  Adjust `title` to match directory structure (e.g., `'Components/Button'` or `'Features/Auth/LoginForm'`)
+
+Note: the `.stories.tsx` stub is emitted whenever `storybook_project: true` regardless of whether
+the dev server is running. New components need stories even in offline/CI contexts.
+
+---
+
 ## Step 1 — Parse DESIGN-PLAN.md
 
 Read `.design/DESIGN-PLAN.md`. Partition tasks by `## Wave N` heading. Within each wave, partition by `Parallel: true` vs `Parallel: false`. Compute `total_tasks` for `task_progress` denominator.

@@ -19,6 +19,62 @@ user-invocable: true
    - Otherwise: normal transition — set `stage=verify`, `status=in_progress`, `task_progress=0/3`.
 2. Update `<connections>`, `last_checkpoint`. Write STATE.md.
 
+---
+
+### Probe Preview connection
+
+Run at stage entry, after reading STATE.md:
+
+```
+Step P1 — ToolSearch check:
+  ToolSearch({ query: "Claude_Preview", max_results: 5 })
+  → Empty result      → preview: not_configured  (skip all Preview steps in this stage)
+  → Non-empty result  → proceed to Step P2
+
+Step P2 — Live tool call:
+  call mcp__Claude_Preview__preview_list
+  → Success           → preview: available
+  → Error             → preview: unavailable
+
+Write preview status to .design/STATE.md <connections>.
+```
+
+When `preview: available`, the design-verifier agent runs Phase 4B — Screenshot Evidence to resolve `? VISUAL` heuristic flags with real screenshot evidence. See `agents/design-verifier.md` Phase 4B for the screenshot evidence loop.
+
+---
+
+### Probe Storybook connection
+
+Run at stage entry, after reading STATE.md:
+
+Step B1 — Project detection:
+  Bash: ls .storybook/ 2>/dev/null || grep -l '"storybook"' package.json 2>/dev/null
+  → Found → storybook_project: true → proceed to Step B2
+  → Not found → storybook: not_configured (skip all Storybook steps)
+
+Step B2 — Dev server detection:
+  Bash: curl -sf http://localhost:6006/index.json 2>/dev/null | head -1
+  → Returns JSON → storybook: available
+  → Fails → Bash: curl -sf http://localhost:6006/stories.json 2>/dev/null | head -1
+      → Returns JSON → storybook: available (compat endpoint)
+      → Fails → storybook: unavailable
+
+Write storybook status to .design/STATE.md `<connections>`.
+
+---
+
+### Storybook A11y Loop (when storybook: available)
+
+If `storybook: available` in STATE.md `<connections>`:
+1. Run: Bash: npx storybook test --ci 2>&1 | tee .design/storybook-a11y-report.txt
+2. Read .design/storybook-a11y-report.txt — pass to design-verifier as additional a11y evidence
+3. design-verifier reads this file in its a11y gap analysis section and annotates DESIGN-VERIFICATION.md with per-story violations
+
+If storybook: unavailable — skip this section; run standard WCAG grep-based a11y checks only.
+If storybook: not_configured — skip; emit no note (opt-in feature).
+
+---
+
 Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /get-design-done:discover first."
 
 ---
