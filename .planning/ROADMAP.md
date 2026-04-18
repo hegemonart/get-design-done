@@ -388,7 +388,7 @@ Plans:
 - [ ] 10.1-01-PLAN.md — `gdd-router` skill + `.design/budget.json` schema + PreToolUse hook enforcing tier overrides, cap checks, and cached-answer short-circuits (OPT-01, OPT-02, OPT-03)
 - [ ] 10.1-02-PLAN.md — `gdd-cache-manager` skill + `/gdd:warm-cache` command + `.design/cache-manifest.json` + cache-aware agent-prompt ordering convention documented in `agents/README.md` (OPT-04, OPT-05)
 - [x] 10.1-03-PLAN.md — Model-tier audit: add `default-tier` + rationale to every agent's frontmatter; extract shared cached preamble; document tier-selection guide in `reference/model-tiers.md` (OPT-06, OPT-07)
-- [ ] 10.1-04-PLAN.md — Lazy checker spawning: Haiku gate agents for design-verifier / security-audit / UI-check triggers; streaming synthesizer pattern for parallel-mapper + parallel-researcher orchestrators (OPT-08)
+- [x] 10.1-04-PLAN.md — Lazy checker spawning: Haiku gate agents for design-verifier / security-audit / UI-check triggers; streaming synthesizer pattern for parallel-mapper + parallel-researcher orchestrators (OPT-08)
 - [ ] 10.1-05-PLAN.md — Cost telemetry (`.design/telemetry/costs.jsonl`) + `.design/agent-metrics.json` tracker + `/gdd:optimize` recommendation command + cost-report generation for baselines (OPT-09, OPT-10)
 - [ ] 10.1-06-PLAN.md — **Phase closeout**: bump version to v1.0.4.1 (off-cadence decimal-phase patch); refresh README.md (optimization layer section, budget config, warm-cache command, optimize command, model tiers); refresh plugin.json + marketplace.json (version, description, keywords — add "cost-optimization", "cache-aware", "budget"); append CHANGELOG.md v1.0.4.1 entry; lock regression baseline at `test-fixture/baselines/phase-10.1/` including `cost-report.md` (MAN-10a, MAN-10b)
 
@@ -831,7 +831,7 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | 8. Visual + Design-Side Connections + Knowledge Graph | 7/7 (6 feature + 1 closeout) | Complete | v1.0.2 | 2026-04-18 |
 | 9. Claude Design Integration + Pinterest Connection | 8/8 (7 provisional + 1 closeout) | Complete | v1.0.3 | 2026-04-18 |
 | 10. Knowledge Layer — `.design/intel/`, learnings, dependencies, responsibility mapping | 6/6 (5 feature + 1 closeout) | Complete | v1.0.4 | 2026-04-18 |
-| **10.1. Optimization Layer + Cost Governance (INSERTED)** — router, cache manager, budget enforcement, telemetry, model tiers, lazy spawning, /gdd:optimize | 0/6 (5 feature + 1 closeout) | Planned | v1.0.4.1 | - |
+| **10.1. Optimization Layer + Cost Governance (INSERTED)** — router, cache manager, budget enforcement, telemetry, model tiers, lazy spawning, /gdd:optimize | 4/6 (5 feature + 1 closeout) | In Progress | v1.0.4.1 | - |
 | 11. Self-Improvement — reflector, frontmatter feedback, reference-update proposer, budget feedback, global skills | 5/5 | Complete | v1.0.5 | 2026-04-18 |
 | 12. Test Coverage — ported GSD patterns + gdd-unique tests + optimization-layer tests + basic CI + regression baselines | 2/7 (6 plans + 1 closeout across 3 waves) | In Progress | v1.0.6 | - |
 | 13. CI/CD — lint, validate, security, release automation, branch protection, smoke-on-release | 0/8 (7 plans + 1 closeout across 3 waves) | Planned | v1.0.7 | - |
