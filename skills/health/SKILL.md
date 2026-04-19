@@ -45,4 +45,14 @@ Health: 5 / 6 checks passing.
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Update notice (safe-window surface)
+
+After the health table, emit the plugin-update banner if one is present:
+
+```bash
+[ -f .design/update-available.md ] && cat .design/update-available.md
+```
+
+Written by `hooks/update-check.sh`; suppressed mid-pipeline and when the latest release is dismissed.
+
 ## HEALTH COMPLETE

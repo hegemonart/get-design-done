@@ -4,6 +4,7 @@ apply-reflections
 audit
 brief
 cache-manager
+check-update
 compare
 complete-cycle
 darkmode

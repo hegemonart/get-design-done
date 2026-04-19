@@ -73,4 +73,14 @@ Lifecycle:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Update notice (safe-window surface)
+
+After the command reference, emit the plugin-update banner if one is present:
+
+```bash
+[ -f .design/update-available.md ] && cat .design/update-available.md
+```
+
+Written by `hooks/update-check.sh`; suppressed mid-pipeline and when the latest release is dismissed.
+
 ## HELP COMPLETE

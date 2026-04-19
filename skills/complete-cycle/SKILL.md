@@ -30,4 +30,14 @@ Closes the current cycle: marks CYCLES.md entry complete, archives pipeline arti
 - Do not delete source files in `src/` — only archive `.design/` artifacts.
 - Do not auto-start a new cycle — user invokes `/gdd:new-cycle` explicitly.
 
+## Step 6 — Update notice (post-closeout surface)
+
+After the archive has been written and STATE.md has been cleared for the next cycle, emit the plugin-update banner if one is present:
+
+```bash
+[ -f .design/update-available.md ] && cat .design/update-available.md
+```
+
+Written by `hooks/update-check.sh`; suppressed mid-pipeline and when the latest release is dismissed.
+
 ## COMPLETE-CYCLE COMPLETE

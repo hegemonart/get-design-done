@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.0.7.2",
+  "version": "1.13.3",
   "description": "A Claude Code plugin for systematic design improvement",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",

@@ -28,4 +28,14 @@ Closes the verify → merge gap: runs `/gdd:pr-branch` for a clean branch, assem
 - Do not include `.design/` or `.planning/` files in the PR branch — that is `/gdd:pr-branch`'s job.
 - Do not skip the verify pre-flight silently — always surface a failure and ask.
 
+## Step 7 — Update notice (post-closeout surface)
+
+ONLY on the success path — after the PR has been created and the URL has been printed — emit the plugin-update banner. If PR creation failed earlier, skip this step (do not suggest upgrades in the middle of a PR-creation failure).
+
+```bash
+[ -f .design/update-available.md ] && cat .design/update-available.md
+```
+
+Written by `hooks/update-check.sh`; suppressed mid-pipeline and when the latest release is dismissed.
+
 ## SHIP COMPLETE

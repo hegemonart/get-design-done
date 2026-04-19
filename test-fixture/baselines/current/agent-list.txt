@@ -18,5 +18,6 @@ design-plan-checker.md
 design-planner.md
 design-reflector.md
 design-research-synthesizer.md
+design-update-checker.md
 design-verifier-gate.md
 design-verifier.md

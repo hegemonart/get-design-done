@@ -2,7 +2,7 @@
 name: gdd-audit
 description: "Run design audit — wraps design-verifier + design-auditor + design-reflector. --retroactive audits the full cycle scope."
 argument-hint: "[--retroactive] [--quick] [--no-reflect]"
-tools: Read, Write, Task, Glob
+tools: Read, Write, Task, Glob, Bash
 ---
 
 # /gdd:audit
@@ -50,5 +50,15 @@ Run only `design-auditor` (skip `design-integration-checker`). Faster health che
 
 - Do not modify source files.
 - Do not rerun stages; this is a read-only audit.
+
+## Step 7 — Update notice (post-closeout surface)
+
+After the consolidated audit summary has been printed (and any reflection-proposal count appended), emit the plugin-update banner if one is present:
+
+```bash
+[ -f .design/update-available.md ] && cat .design/update-available.md
+```
+
+Written by `hooks/update-check.sh`; suppressed mid-pipeline and when the latest release is dismissed.
 
 ## AUDIT COMPLETE

@@ -19,5 +19,6 @@
   "MD046": false,           // code block style (fenced vs indented) — mixed in legacy docs
   "MD056": false,           // table columns — table ragged-edges exist in a few reference docs
   "MD009": false,           // trailing spaces — one-off, accept silently
-  "MD001": false            // heading increment — legitimate use inside GH callouts (> [!IMPORTANT] blocks) with ### sub-headings fires this
+  "MD001": false,           // heading increment — legitimate use inside GH callouts (> [!IMPORTANT] blocks) with ### sub-headings fires this
+  "MD025": false            // multiple H1 — `#` lines inside python heredocs in skill code blocks trigger false positives
 }

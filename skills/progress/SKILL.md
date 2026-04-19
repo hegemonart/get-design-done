@@ -57,4 +57,14 @@ Seeds ready: 0
 ━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Step 4 — Update notice (safe-window surface)
+
+After printing the pipeline state, emit the plugin-update banner if one is present. This file is written by `hooks/update-check.sh` subject to the state-machine guard (mid-pipeline stages suppress it) and per-version dismissal.
+
+```bash
+[ -f .design/update-available.md ] && cat .design/update-available.md
+```
+
+No-op when: no new release exists, state-machine guard is active (stage in plan|design|verify), or the latest tag has been dismissed via `/gdd:check-update --dismiss`.
+
 ## PROGRESS COMPLETE

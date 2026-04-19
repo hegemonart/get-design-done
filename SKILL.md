@@ -2,7 +2,7 @@
 name: get-design-done
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
-argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|warm-cache|optimize|cache-manager|watch-authorities]"
+argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|warm-cache|optimize|cache-manager|watch-authorities|check-update]"
 user-invocable: true
 ---
 
