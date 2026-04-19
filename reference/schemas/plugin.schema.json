@@ -28,7 +28,7 @@
     },
     "version": {
       "type": "string",
-      "pattern": "^\\d+\\.\\d+\\.\\d+(\\.\\d+)?$"
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
     "description": {
       "type": "string",

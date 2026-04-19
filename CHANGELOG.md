@@ -18,15 +18,14 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 - `skills/audit/SKILL.md` — `tools:` list extended with `Bash` to enable the banner-cat tail (previously: `Read, Write, Task, Glob`).
 - `test-fixture/baselines/phase-13.3/` — regression baseline lock for v1.0.7.3 (manifest-only, following the phase-13 pattern — this phase adds no pipeline output).
 
-### Changed
-- Plugin version: `1.0.7` → `1.0.7.3` (off-cadence patch — does not shift Phase 14 → v1.0.8).
-- `reference/schemas/plugin.schema.json` and `reference/schemas/marketplace.schema.json` — version pattern widened from `^\d+\.\d+\.\d+$` to `^\d+\.\d+\.\d+(\.\d+)?$` to permit off-cadence 4-segment versions; required so v1.0.7.3 passes the Phase 13 ajv-cli CI gate.
-
 ### Design principles (Phase 13.3)
 - Never auto-updates. The checker only surfaces a nudge; `/gdd:update` remains the explicit user action.
 - Never interrupts critical work. State-machine guard suppresses the nudge during mid-pipeline stages (`plan`, `design`, `verify`); banner renders only in the 6 documented safe windows.
 - Silent-on-failure. Network timeout, malformed JSON, missing plugin.json, unwritable `.design/` — every path exits 0 without printing to stderr during normal SessionStart.
 - No telemetry. Unauthenticated GitHub Releases fetch; no phone-home, no tracking, no tokens in code.
+
+### Off-cadence note
+- Labelled **v1.0.7.3** per the decimal-phase convention (established by Phase 10.1 → v1.0.4.1, continued by Phase 13.1 → v1.0.7.1 and Phase 13.2 → v1.0.7.2). The label is CHANGELOG-only: `package.json`, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json` remain at `1.0.7` so the release workflow does not auto-tag and `npm publish` does not fail on a 4-segment version (npm strict SemVer 2.0.0 only accepts `MAJOR.MINOR.PATCH[-pre][+build]`). The next integer bump (Phase 14 → v1.0.8) will absorb 13.1 + 13.2 + 13.3 into one npm publish. This matches how Phase 10.1 was handled.
 
 ---
 

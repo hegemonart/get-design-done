@@ -25,7 +25,7 @@
       "required": ["description", "version"],
       "properties": {
         "description": { "type": "string", "minLength": 1 },
-        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(\\.\\d+)?$" }
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" }
       }
     },
     "plugins": {
@@ -48,7 +48,7 @@
           "name": { "type": "string", "minLength": 1 },
           "source": { "type": "string", "minLength": 1 },
           "description": { "type": "string", "minLength": 1 },
-          "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(\\.\\d+)?$" },
+          "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
           "author": {
             "type": "object",
             "additionalProperties": true,

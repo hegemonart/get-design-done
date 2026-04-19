@@ -19,22 +19,17 @@ function isExactPatchBump(from, to) {
          b.patch === a.patch + 1;
 }
 
-// Version sequence per roadmap: v1.0.0 → v1.0.1 → ... → v1.0.7 → v1.0.7.3 (off-cadence)
+// Version sequence per roadmap: v1.0.0 → v1.0.1 → ... → v1.0.7
 // Phase 12 did not ship a manifest bump in this worktree; 1.0.6 included for
 // sequence continuity but the tree jumps 1.0.5 → 1.0.7 at Phase 13 closeout.
-// Phase 13.3 ships off-cadence as v1.0.7.3 (4-segment); does not shift Phase 14 → v1.0.8.
 const EXPECTED_SEQUENCE = [
-  '1.0.0', '1.0.1', '1.0.2', '1.0.3', '1.0.4', '1.0.5', '1.0.6', '1.0.7', '1.0.7.3'
+  '1.0.0', '1.0.1', '1.0.2', '1.0.3', '1.0.4', '1.0.5', '1.0.6', '1.0.7'
 ];
 
-// Strict +0.0.1 patch-bump check applies only to the 3-segment sequence; off-cadence
-// 4-segment patches are validated separately by their inclusion in EXPECTED_SEQUENCE.
-const STRICT_PATCH_SEQUENCE = EXPECTED_SEQUENCE.filter(v => /^\d+\.\d+\.\d+$/.test(v));
-
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
-  for (let i = 1; i < STRICT_PATCH_SEQUENCE.length; i++) {
-    const from = STRICT_PATCH_SEQUENCE[i - 1];
-    const to = STRICT_PATCH_SEQUENCE[i];
+  for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
+    const from = EXPECTED_SEQUENCE[i - 1];
+    const to = EXPECTED_SEQUENCE[i];
     assert.ok(
       isExactPatchBump(from, to),
       `Version jump from ${from} to ${to} is not an exact patch bump (+0.0.1)`
