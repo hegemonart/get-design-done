@@ -25,6 +25,7 @@ const os = require('os');
 const CWD = process.cwd();
 const TELEMETRY_PATH = path.join(CWD, '.design', 'telemetry', 'costs.jsonl');
 const METRICS_PATH = path.join(CWD, '.design', 'agent-metrics.json');
+const PHASE_TOTALS_PATH = path.join(CWD, '.design', 'telemetry', 'phase-totals.json');
 const AGENTS_DIR = path.join(CWD, 'agents');
 
 // ---- frontmatter reader (no YAML dep) ----
@@ -124,6 +125,18 @@ function writeAtomic(filePath, content) {
   fs.renameSync(tmp, filePath);
 }
 
+// ---- phase totals aggregator (WR-02: avoids full JSONL replay in budget enforcer) ----
+function aggregateByPhase(rows) {
+  const byPhase = {};
+  for (const r of rows) {
+    const phase = r.phase || 'unknown';
+    byPhase[phase] = (byPhase[phase] || 0) + Number(r.est_cost_usd || 0);
+  }
+  // Round to 6dp to match per-agent precision
+  for (const k of Object.keys(byPhase)) byPhase[k] = Number(byPhase[k].toFixed(6));
+  return byPhase;
+}
+
 // ---- main ----
 function main() {
   const rows = readTelemetryRows();
@@ -133,6 +146,13 @@ function main() {
     agents,
   };
   writeAtomic(METRICS_PATH, JSON.stringify(payload, null, 2) + '\n');
+  // Write lightweight phase-totals.json so budget-enforcer can read phase spend
+  // in O(1) without replaying the full JSONL on every agent spawn (WR-02).
+  const phaseTotals = {
+    generated_at: new Date().toISOString(),
+    totals: aggregateByPhase(rows),
+  };
+  writeAtomic(PHASE_TOTALS_PATH, JSON.stringify(phaseTotals, null, 2) + '\n');
 }
 
 try {

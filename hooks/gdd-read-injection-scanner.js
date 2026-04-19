@@ -6,16 +6,11 @@
  */
 
 const readline = require('readline');
+const path = require('path');
+const { INJECTION_PATTERNS: RAW_PATTERNS } = require(path.join(__dirname, '..', 'scripts', 'injection-patterns.cjs'));
 
-const INJECTION_PATTERNS = [
-  /ignore\s+(all\s+)?(previous|prior|above)\s+instructions?/i,
-  /disregard\s+(all\s+)?(previous|prior|above)\s+instructions?/i,
-  /you\s+are\s+now\s+a\s+different/i,
-  /system\s*:\s*you\s+are/i,
-  /<\s*\/?\s*(system|assistant|human)\s*>/i,
-  /\[INST\]/i,
-  /###\s*instruction/i,
-];
+// The hook needs bare RegExp objects; extract them from the shared {name,re} entries.
+const INJECTION_PATTERNS = RAW_PATTERNS.map(p => p.re);
 
 async function main() {
   const rl = readline.createInterface({ input: process.stdin });

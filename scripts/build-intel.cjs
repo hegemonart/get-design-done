@@ -17,7 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 
 const ROOT = process.cwd();
 const INTEL_DIR = path.join(ROOT, '.design', 'intel');
@@ -46,15 +46,23 @@ function writeSlice(name, data) {
 
 function gitHash(filePath) {
   try {
-    return execSync(`git log -1 --format=%h -- "${filePath}"`, { stdio: ['pipe', 'pipe', 'ignore'] })
-      .toString().trim() || 'untracked';
+    const r = spawnSync('git', ['log', '-1', '--format=%h', '--', filePath], {
+      stdio: ['pipe', 'pipe', 'ignore'],
+      encoding: 'utf8',
+      timeout: 5000,
+    });
+    return r.stdout.trim() || 'untracked';
   } catch { return 'untracked'; }
 }
 
 function headHash() {
   try {
-    return execSync('git rev-parse --short HEAD', { stdio: ['pipe', 'pipe', 'ignore'] })
-      .toString().trim();
+    const r = spawnSync('git', ['rev-parse', '--short', 'HEAD'], {
+      stdio: ['pipe', 'pipe', 'ignore'],
+      encoding: 'utf8',
+      timeout: 5000,
+    });
+    return r.stdout.trim() || 'unknown';
   } catch { return 'unknown'; }
 }
 

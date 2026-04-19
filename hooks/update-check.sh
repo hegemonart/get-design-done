@@ -165,6 +165,14 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
       BODY_EXCERPT="$(printf '%s' "${RAW}" | extract_body)"
       # Strip control chars defensively (T-13.3-03)
       BODY_EXCERPT="$(printf '%s' "${BODY_EXCERPT}" | tr -d '\000-\010\013\014\016-\037')"
+      # Strip double-quotes so the JSON round-trip sed read-back cannot be injected via a
+      # crafted release body. Body is display-only — losing quotes is acceptable.
+      BODY_EXCERPT="$(printf '%s' "${BODY_EXCERPT}" | tr -d '"')"
+      # Validate LATEST_TAG is a safe semver string before trusting it (CR-02).
+      if ! printf '%s' "${LATEST_TAG}" | grep -qE '^v?[0-9]+\.[0-9]+(\.[0-9]+)*$'; then
+        log "LATEST_TAG '${LATEST_TAG}' failed semver safety check — aborting cache write"
+        LATEST_TAG=""
+      fi
       if [ -n "${LATEST_TAG}" ]; then
         read -r DELTA_STATE DELTA_KIND <<EOF
 $(classify_delta "${DISPLAY_CURRENT}" "${LATEST_TAG}")
@@ -195,6 +203,11 @@ EOF
 
   C_LATEST="$(grep -E '"latest_tag"' "${CACHE}" 2>/dev/null | head -n1 | sed -E 's/.*"latest_tag"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')"
   C_DELTA="$(grep -E '"delta"' "${CACHE}" 2>/dev/null | head -n1 | sed -E 's/.*"delta"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')"
+  # Allowlist-gate C_DELTA before it reaches any shell context (WR-04).
+  case "${C_DELTA:-}" in
+    major|minor|patch|off-cadence|none) : ;;
+    *) C_DELTA="unknown" ;;
+  esac
   C_NEWER="$(grep -E '"is_newer"' "${CACHE}" 2>/dev/null | head -n1 | sed -E 's/.*"is_newer"[[:space:]]*:[[:space:]]*(true|false).*/\1/')"
   C_BODY="$(grep -E '"changelog_excerpt"' "${CACHE}" 2>/dev/null | head -n1 | sed -E 's/.*"changelog_excerpt"[[:space:]]*:[[:space:]]*"(.*)".*/\1/' | sed -E 's/\\n/\n/g')"
 

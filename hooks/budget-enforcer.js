@@ -32,6 +32,7 @@ const { spawn } = require('child_process');
 const BUDGET_PATH = path.join(process.cwd(), '.design', 'budget.json');
 const MANIFEST_PATH = path.join(process.cwd(), '.design', 'cache-manifest.json');
 const TELEMETRY_PATH = path.join(process.cwd(), '.design', 'telemetry', 'costs.jsonl');
+const PHASE_TOTALS_PATH = path.join(process.cwd(), '.design', 'telemetry', 'phase-totals.json');
 const STATE_PATH = path.join(process.cwd(), '.design', 'STATE.md');
 
 // ---- budget.json loader with defaults per D-12 ----
@@ -49,8 +50,18 @@ function loadBudget() {
   catch { return defaults; }
 }
 
-// ---- cumulative phase spend from telemetry (D-02 per_phase_cap_usd check) ----
+// ---- cumulative phase spend (WR-02) ----
+// Reads from the lightweight phase-totals.json written by aggregate-agent-metrics.js
+// instead of replaying the full costs.jsonl on every hook invocation.
+// Falls back to 0 when the file doesn't exist yet (early in a session).
 function currentPhaseSpend(phase) {
+  if (fs.existsSync(PHASE_TOTALS_PATH)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(PHASE_TOTALS_PATH, 'utf8'));
+      return Number(data.totals?.[phase] || 0);
+    } catch { /* fall through */ }
+  }
+  // Fallback: replay JSONL when phase-totals.json not yet written (first spawn of session).
   if (!fs.existsSync(TELEMETRY_PATH)) return 0;
   const lines = fs.readFileSync(TELEMETRY_PATH, 'utf8').split(/\r?\n/).filter(Boolean);
   let sum = 0;
@@ -118,7 +129,7 @@ function spawnAggregator() {
       cwd: process.cwd(),
       detached: true,
       stdio: 'ignore',
-      env: process.env,
+      env: { PATH: process.env.PATH },  // IN-02: minimal env; aggregator needs no secrets
     });
     child.unref();
   } catch {

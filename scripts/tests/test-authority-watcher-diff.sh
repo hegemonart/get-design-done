@@ -35,7 +35,11 @@ fi
 
 # Count actual fixture files (should be 4 frozen feeds + 1 README; we only
 # care that at least one XML/JSON fixture is present).
-FIXTURE_COUNT=$(find "$FIXTURE_DIR" -maxdepth 1 -type f \( -name '*.atom' -o -name '*.rss' -o -name '*.json' \) | wc -l | tr -d ' ')
+# Use null-delimited find to handle filenames with spaces/newlines (WR-05).
+FIXTURE_COUNT=0
+while IFS= read -r -d '' _f; do
+  FIXTURE_COUNT=$((FIXTURE_COUNT + 1))
+done < <(find "$FIXTURE_DIR" -maxdepth 1 -type f \( -name '*.atom' -o -name '*.rss' -o -name '*.json' \) -print0)
 if [ "$FIXTURE_COUNT" -lt 1 ]; then
   echo "FAIL: $FIXTURE_DIR contains no feed fixtures (.atom/.rss/.json)." >&2
   exit 1

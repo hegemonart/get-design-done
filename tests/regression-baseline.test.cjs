@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const { REPO_ROOT } = require('./helpers.cjs');
 
 const BASELINE_DIR = path.join(REPO_ROOT, 'test-fixture', 'baselines', 'current');
@@ -21,15 +21,16 @@ function readBaselineLines(filename) {
  * Returns an array of filenames (basename only, no subdirs).
  */
 function gitTrackedFiles(dirPrefix) {
-  const output = execSync(`git ls-files ${dirPrefix}`, { cwd: REPO_ROOT, encoding: 'utf8' });
-  return output.trim().split('\n').filter(Boolean).map(f => path.basename(f));
+  const result = spawnSync('git', ['ls-files', dirPrefix], { cwd: REPO_ROOT, encoding: 'utf8' });
+  return (result.stdout || '').trim().split('\n').filter(Boolean).map(f => path.basename(f));
 }
 
 /**
  * List unique direct subdirectory names tracked by git under a given directory prefix.
  */
 function gitTrackedSubdirs(dirPrefix) {
-  const output = execSync(`git ls-files ${dirPrefix}`, { cwd: REPO_ROOT, encoding: 'utf8' });
+  const result = spawnSync('git', ['ls-files', dirPrefix], { cwd: REPO_ROOT, encoding: 'utf8' });
+  const output = result.stdout || '';
   const seen = new Set();
   for (const line of output.trim().split('\n').filter(Boolean)) {
     // e.g. "skills/design/SKILL.md" -> relative to dirPrefix -> "design/SKILL.md" -> first segment "design"

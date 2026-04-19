@@ -28,37 +28,32 @@ const AGENT_METRICS = path.join(
 );
 
 test('optimization-layer: budget.json schema contract', () => {
+  // Schema must match what loadBudget() in hooks/budget-enforcer.js actually reads.
   const scaffold = scaffoldDesignDir();
   try {
     const budget = {
-      'design-verifier': { per_run_cap_usd: 0.02, tier: 'sonnet' },
-      'design-auditor': { per_run_cap_usd: 0.01, tier: 'haiku' },
-      global: { per_cycle_cap_usd: 2.0 },
+      per_task_cap_usd: 2.00,
+      per_phase_cap_usd: 20.00,
+      tier_overrides: { 'design-planner': 'opus' },
+      auto_downgrade_on_cap: true,
+      cache_ttl_seconds: 3600,
+      enforcement_mode: 'enforce',
     };
     const budgetPath = path.join(scaffold.designDir, 'budget.json');
     fs.writeFileSync(budgetPath, JSON.stringify(budget, null, 2), 'utf8');
 
     const parsed = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
-    assert.ok(parsed.global, 'budget.json must declare top-level `global`');
-    assert.equal(
-      typeof parsed.global.per_cycle_cap_usd,
-      'number',
-      'global.per_cycle_cap_usd must be a number'
+    assert.equal(typeof parsed.per_task_cap_usd, 'number', 'per_task_cap_usd must be a number');
+    assert.equal(typeof parsed.per_phase_cap_usd, 'number', 'per_phase_cap_usd must be a number');
+    assert.equal(typeof parsed.tier_overrides, 'object', 'tier_overrides must be an object');
+    assert.equal(typeof parsed.auto_downgrade_on_cap, 'boolean', 'auto_downgrade_on_cap must be boolean');
+    assert.equal(typeof parsed.cache_ttl_seconds, 'number', 'cache_ttl_seconds must be a number');
+    assert.ok(
+      ['enforce', 'warn', 'log'].includes(parsed.enforcement_mode),
+      `enforcement_mode must be enforce|warn|log, got: ${parsed.enforcement_mode}`
     );
-
-    const agentEntries = Object.entries(parsed).filter(([k]) => k !== 'global');
-    assert.ok(agentEntries.length >= 1, 'at least one agent entry expected');
-    for (const [agent, entry] of agentEntries) {
-      assert.equal(
-        typeof entry.per_run_cap_usd,
-        'number',
-        `${agent}.per_run_cap_usd must be a number`
-      );
-      assert.equal(
-        typeof entry.tier,
-        'string',
-        `${agent}.tier must be a string`
-      );
+    for (const [agent, tier] of Object.entries(parsed.tier_overrides)) {
+      assert.equal(typeof tier, 'string', `tier_overrides.${agent} must be a string`);
     }
   } finally {
     scaffold.cleanup();

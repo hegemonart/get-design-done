@@ -13,16 +13,7 @@ const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
-// Patterns mirror hooks/gdd-read-injection-scanner.js.
-const INJECTION_PATTERNS = [
-  { name: 'ignore previous', re: /ignore\s+(all\s+)?(previous|prior|above)\s+instructions?/i },
-  { name: 'disregard previous', re: /disregard\s+(all\s+)?(previous|prior|above)\s+instructions?/i },
-  { name: 'you are now a different', re: /you\s+are\s+now\s+a\s+different/i },
-  { name: 'system: you are', re: /system\s*:\s*you\s+are/i },
-  { name: 'role tag injection', re: /<\s*\/?\s*(system|assistant|human)\s*>/i },
-  { name: '[INST] fragment', re: /\[INST\]/i },
-  { name: '### instruction fragment', re: /###\s*instruction/i },
-];
+const { INJECTION_PATTERNS } = require('./injection-patterns.cjs');
 
 function walkMd(dir, out) {
   if (!fs.existsSync(dir)) return;
