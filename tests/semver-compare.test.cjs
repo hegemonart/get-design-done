@@ -39,11 +39,14 @@ const EXPECTED_SEQUENCE = [
 //     release under the new milestone.phase.patch scheme.
 //   - 1.14.1 → Security hardening patch (shell injection, CI pinning, prompt
 //     injection consolidation, spend aggregation fixes).
+//   - 1.14.2 → Multi-format Claude Design handoff ingestion (URL fetch, ZIP,
+//     PDF, PPTX entry points; format-dispatch in synthesizer).
 const OFF_CADENCE_VERSIONS = new Set([
   '1.0.7.2',
   '1.13.3',
   '1.14.0',
   '1.14.1',
+  '1.14.2',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
