@@ -76,6 +76,10 @@ function readTelemetryRows() {
 function aggregate(rows) {
   const byAgent = new Map();
   for (const r of rows) {
+    // Blocked rows represent a spawn that was denied at the hook — the agent
+    // never actually ran, so it must not contribute to spawn counts, cost, or
+    // token totals. Skip them here (mirror of the filter in aggregateByPhase).
+    if (r.block_reason) continue;
     const agent = r.agent || 'unknown';
     if (!byAgent.has(agent)) {
       byAgent.set(agent, {
@@ -129,6 +133,11 @@ function writeAtomic(filePath, content) {
 function aggregateByPhase(rows) {
   const byPhase = {};
   for (const r of rows) {
+    // Blocked rows represent spawns that were denied by the hook — the agent
+    // never ran, so their est_cost_usd must not inflate cumulative phase spend.
+    // Counting them would make future hard-block and soft-threshold checks
+    // stricter than intended on every repeat cap hit.
+    if (r.block_reason) continue;
     const phase = r.phase || 'unknown';
     byPhase[phase] = (byPhase[phase] || 0) + Number(r.est_cost_usd || 0);
   }

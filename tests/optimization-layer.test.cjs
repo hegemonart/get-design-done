@@ -15,7 +15,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 const { REPO_ROOT, scaffoldDesignDir, readFrontmatter } = require('./helpers.cjs');
 
 const COSTS_JSONL = path.join(
@@ -139,6 +141,79 @@ test('optimization-layer: router tier-selection reference matches agent frontmat
       !tier || typeof tier === 'string',
       `router reference for ${name} should match a string tier (got ${tier})`
     );
+  }
+});
+
+test('optimization-layer: aggregateByPhase excludes blocked rows from phase totals', () => {
+  // Regression test for telemetry pipeline bug: Branch C (per_task_cap) and
+  // Branch D (per_phase_cap) in hooks/budget-enforcer.js write rows with
+  // block_reason set to costs.jsonl, but the agent never actually spawned.
+  // scripts/aggregate-agent-metrics.js must not sum those rows into
+  // phase-totals.json.totals — doing so permanently inflates cumulative phase
+  // spend, making future cap checks stricter than intended on every repeat hit.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-aggregator-'));
+  try {
+    const telemetryDir = path.join(dir, '.design', 'telemetry');
+    fs.mkdirSync(telemetryDir, { recursive: true });
+    const costsPath = path.join(telemetryDir, 'costs.jsonl');
+    const phaseTotalsPath = path.join(telemetryDir, 'phase-totals.json');
+    const metricsPath = path.join(dir, '.design', 'agent-metrics.json');
+
+    // Synthetic ledger: 3 normal spawns for phase 11 + 2 blocked rows that
+    // must be excluded. Expected phase-11 total: 0.01 + 0.02 + 0.03 = 0.06.
+    // A second phase ("other") has one normal row to confirm the filter is
+    // per-phase, not global.
+    const rows = [
+      { ts: '2026-04-20T10:00:00Z', agent: 'design-verifier', tier: 'sonnet', tokens_in: 1000, tokens_out: 500, cache_hit: false, est_cost_usd: 0.01, cycle: 'c1', phase: '11' },
+      { ts: '2026-04-20T10:05:00Z', agent: 'design-auditor',  tier: 'sonnet', tokens_in: 1200, tokens_out: 600, cache_hit: false, est_cost_usd: 0.02, cycle: 'c1', phase: '11' },
+      // Blocked by per_task_cap — agent never spawned, est_cost must be dropped.
+      { ts: '2026-04-20T10:10:00Z', agent: 'design-planner',  tier: 'opus',   tokens_in: 8000, tokens_out: 4000, cache_hit: false, est_cost_usd: 5.00, block_reason: 'per_task_cap', enforcement_mode: 'enforce', cycle: 'c1', phase: '11' },
+      { ts: '2026-04-20T10:15:00Z', agent: 'design-executor', tier: 'sonnet', tokens_in: 1500, tokens_out: 700, cache_hit: false, est_cost_usd: 0.03, cycle: 'c1', phase: '11' },
+      // Blocked by per_phase_cap — also excluded.
+      { ts: '2026-04-20T10:20:00Z', agent: 'design-planner',  tier: 'opus',   tokens_in: 8000, tokens_out: 4000, cache_hit: false, est_cost_usd: 7.50, block_reason: 'per_phase_cap', enforcement_mode: 'enforce', cycle: 'c1', phase: '11' },
+      { ts: '2026-04-20T10:25:00Z', agent: 'design-verifier', tier: 'sonnet', tokens_in: 900, tokens_out: 450, cache_hit: false, est_cost_usd: 0.04, cycle: 'c1', phase: 'other' },
+    ];
+    fs.writeFileSync(costsPath, rows.map(r => JSON.stringify(r)).join('\n') + '\n', 'utf8');
+
+    const aggregatorPath = path.join(REPO_ROOT, 'scripts', 'aggregate-agent-metrics.js');
+    const result = spawnSync(process.execPath, [aggregatorPath], {
+      cwd: dir,
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, `aggregator exited non-zero: ${result.stderr}`);
+
+    // phase-totals.json must reflect only non-blocked rows.
+    const phaseTotals = JSON.parse(fs.readFileSync(phaseTotalsPath, 'utf8'));
+    assert.equal(
+      phaseTotals.totals['11'],
+      0.06,
+      `phase '11' total should exclude blocked rows — expected 0.06, got ${phaseTotals.totals['11']}`
+    );
+    assert.equal(
+      phaseTotals.totals['other'],
+      0.04,
+      `phase 'other' total should be 0.04, got ${phaseTotals.totals['other']}`
+    );
+
+    // Per-agent rollup must also exclude blocked rows so design-planner,
+    // whose only entries were both blocked, does not appear at all.
+    const metrics = JSON.parse(fs.readFileSync(metricsPath, 'utf8'));
+    assert.ok(
+      !('design-planner' in metrics.agents),
+      'design-planner appeared in per-agent rollup despite having only blocked rows'
+    );
+    assert.equal(
+      metrics.agents['design-verifier'].total_spawns,
+      2,
+      'design-verifier should have exactly 2 non-blocked spawns'
+    );
+    assert.equal(
+      metrics.agents['design-verifier'].total_cost_usd,
+      0.05,
+      `design-verifier total_cost_usd should be 0.05 (0.01 + 0.04), got ${metrics.agents['design-verifier'].total_cost_usd}`
+    );
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
