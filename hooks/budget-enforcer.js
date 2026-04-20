@@ -288,8 +288,8 @@ async function main() {
       process.stdout.write(JSON.stringify(response));
       return;
     }
-    // 80% soft-threshold downgrade (D-03)
-    if (budget.auto_downgrade_on_cap && (phaseSpend + estCost) >= (0.80 * budget.per_task_cap_usd)) {
+    // 80% soft-threshold downgrade (D-03): task-scoped, per reference/model-tiers.md
+    if (budget.auto_downgrade_on_cap && estCost >= (0.80 * budget.per_task_cap_usd)) {
       toolInput._tier_override = 'haiku';
       toolInput._tier_downgraded = true;
     }
