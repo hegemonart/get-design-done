@@ -4,6 +4,24 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.14.4] — 2026-04-20
+
+### Fixed — Figma MCP install URL was stale
+
+The docs everywhere referenced the legacy `https://mcp.figma.com/v1/sse` endpoint. Users following the current Claude Code Figma MCP flow hit "Failed to connect" because Figma has since moved the server to `https://mcp.figma.com/mcp` (Streamable HTTP). Every skill, agent, and reference doc that prints Figma install steps now uses the current URL, and the migration note tells existing users how to remove a stale registration.
+
+### Changed — Variant-agnostic Figma MCP probe
+
+- The `mcp__figma__` prefix is no longer hardcoded. The probe matches any server whose name fits `/figma/i` — remote `figma`, `Figma`, local `figma-desktop`, UUID-prefixed instances — via keyword `ToolSearch`, applies a tiebreaker (both-sets > reads-only > canonical `figma` > alphabetical), and writes the resolved `prefix=` and `writes=` capability flags to `.design/STATE.md <connections>`. Consumer skills and agents read the resolved prefix from `STATE.md` instead of hardcoding it.
+- Added preferred install path: `claude plugin install figma@claude-plugins-official` (bundles the MCP + Figma's agent skills). Manual `claude mcp add` remains supported.
+- Tool table extended with `generate_figma_design`, `search_design_system`, `create_new_file`, `whoami`, `generate_diagram`, `get_figjam`, `get_code_connect_suggestions`, `send_code_connect_mappings` — split by reads (remote + desktop) vs writes (remote-only).
+- `design-figma-writer` now STOPs early with a clear install message when only a reads-only variant (e.g. `figma-desktop`) is detected.
+- `tests/semver-compare.test.cjs` — registered `1.14.4` as a recognized off-cadence version.
+
+Cherry-picked from `c11cd7b` on `claude/upbeat-fermi-199627` — the Figma MCP fix that was authored before v1.14.2 but never merged to main, so every install doc was printing the outdated URL until this release.
+
+---
+
 ## [1.14.3] — 2026-04-20
 
 ### Added — `npx @hegemonart/get-design-done` installer

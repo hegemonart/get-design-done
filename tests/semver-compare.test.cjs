@@ -43,6 +43,8 @@ const EXPECTED_SEQUENCE = [
 //     PDF, PPTX entry points; format-dispatch in synthesizer).
 //   - 1.14.3 → Plugin manifest fix: drop `"./"` from skills (loader rejects
 //     it as path escape) and drop redundant `hooks` pointer (auto-detected).
+//   - 1.14.4 → Figma MCP: variant-agnostic probe, current canonical URL
+//     (mcp.figma.com/mcp), plugin-install path, desktop-variant auto-detect.
 const OFF_CADENCE_VERSIONS = new Set([
   '1.0.7.2',
   '1.13.3',
@@ -50,6 +52,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   '1.14.1',
   '1.14.2',
   '1.14.3',
+  '1.14.4',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
