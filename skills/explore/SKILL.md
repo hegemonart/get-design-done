@@ -2,7 +2,7 @@
 name: gdd-explore
 description: "Codebase inventory + design context — runs scan patterns and design-discussant interview, produces DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md (Stage 2 of 5)"
 argument-hint: "[--skip-interview] [--skip-scan]"
-tools: Read, Write, Bash, Grep, Glob, Task
+tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion
 ---
 
 # Get Design Done — Explore
@@ -120,27 +120,55 @@ Mark STATE.md `task_progress` for the scan pass.
 
 ## Step 3 — Design interview (unless `--skip-interview`)
 
-Spawn the `design-discussant` agent:
+**Run this inline — do NOT spawn `design-discussant` as a subagent.** Subagent UI tools (`AskUserQuestion`) only render the native picker when called from the top-level skill context; spawning a Task() degrades the interview to plain markdown in chat (broken in Claude Desktop).
 
-```
-Task("design-discussant", """
-<required_reading>
-@.design/STATE.md
-@.design/BRIEF.md
-@.design/DESIGN.md
-@./.claude/skills
-</required_reading>
+### 3.a — Pre-load context
 
-<mode>normal</mode>
+Read in this order:
+1. `.design/STATE.md` — existing `<decisions>` D-XX entries (do NOT re-ask anything covered)
+2. `.design/BRIEF.md` — problem statement, audience, constraints
+3. `.design/DESIGN.md` — auto-detected inventory from Step 2
+4. `.design/DESIGN-CONTEXT.md` if it exists — `<gray_areas>` block lists unresolved topics
+5. `./.claude/skills/design-*-conventions.md` if any — locked project conventions, treat as authoritative
 
-Run an adaptive interview for areas not already covered by D-XX decisions.
-Append D-XX decisions to STATE.md <decisions>. Produce/update .design/DESIGN-CONTEXT.md.
+If `<connections>` in STATE.md shows `figma: available`, call `mcp__figma__get_variable_defs` and draft tentative D-XX entries (mark `(tentative — confirm with user)`) before asking.
 
-Emit `## DISCUSS COMPLETE` when done.
-""")
-```
+### 3.b — Identify question set
 
-Wait for `## DISCUSS COMPLETE`.
+Build the list of areas needing input. Skip any area already answered by an existing D-XX or covered by a project convention. Default coverage:
+
+- Cycle goal / outcome that matters most
+- Audience and primary use context
+- Brand direction (only if no tokens detected in DESIGN.md)
+- Color primitives (only if no palette detected)
+- Typography scale (only if no type system detected)
+- Spacing scale (only if no spacing tokens detected)
+- Motion preferences (only if no motion patterns detected)
+- Any `<gray_areas>` from DESIGN-CONTEXT.md
+
+### 3.c — Ask, one question at a time
+
+For each area, call `AskUserQuestion` with a single focused question. Provide 4 concrete options plus "Other" / "Skip" where it helps. Do not batch questions into one call. Do not print the question as markdown — always go through the tool.
+
+Reject generic answers ("modern", "clean", "professional"). If the answer is vague, ask one follow-up before recording.
+
+### 3.d — Record after each answer
+
+After each confirmed answer:
+1. Append a `D-XX` entry to `.design/STATE.md` `<decisions>` block. Format:
+   ```
+   D-NN: [Category] Decision summary — short rationale
+   ```
+2. Append one JSON line to `.design/learnings/question-quality.jsonl` (create if absent):
+   ```json
+   {"ts":"<iso>","question_id":"Q-NN","question_text":"<verbatim>","answer_summary":"<one sentence>","quality":"high|medium|low|skipped","evidence":"<why>","cycle":"<active-cycle-slug>"}
+   ```
+   Quality classification: `skipped` if user picked Skip / "doesn't matter"; `low` if < 10 words and not a specific value; `medium` if hedged ("maybe", "I think", "not sure"); `high` otherwise.
+3. Save STATE.md immediately (incremental save — survives crash mid-interview).
+
+### 3.e — Produce DESIGN-CONTEXT.md
+
+When all questions are answered, write `.design/DESIGN-CONTEXT.md` summarizing the locked decisions, remaining gray areas, and any Figma-sourced tentatives that were confirmed or rejected. Set frontmatter `status: complete`.
 
 ## Step 4 — Update STATE.md
 
