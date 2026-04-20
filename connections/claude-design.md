@@ -6,20 +6,94 @@ This file is the connection specification for Claude Design (https://claude.ai/d
 
 ## What Is a Claude Design Handoff Bundle?
 
-Claude Design produces AI-generated designs that can be exported as **handoff bundles**. A bundle contains:
+Claude Design produces AI-generated designs that can be exported in several formats or sent directly to Claude Code via a hosted URL. The pipeline supports all of them.
 
-| Artifact | Format | Contains |
-|----------|--------|---------|
-| Standalone HTML export | `.html` | Rendered component tree, inline CSS (design tokens as CSS custom properties), component structure, color/spacing/typography values |
-| Design spec (optional) | `.md` or `.json` | Design decisions as structured text, token tables, component annotations |
-| Assets (optional) | `assets/` dir | Icons, images referenced by the HTML export |
+### Entry Points
 
-**Bundle entry point:** The primary parseable artifact is the HTML export. It contains inline `<style>` blocks with CSS custom properties (e.g., `--color-primary: #3B82F6`) and class-level token usage.
+| Source | How it arrives | handoff_source value |
+|--------|---------------|----------------------|
+| **"Send to local coding agent"** | Anthropic-hosted URL in the agent prompt | `claude-design-url` |
+| **"Download zip"** | `.zip` bundle dropped into project | `claude-design-zip` |
+| **"Save as standalone HTML"** | `.html` file dropped into project | `claude-design-html` |
+| **"Save as PDF"** | `.pdf` file (spec text extraction only) | `claude-design-pdf` |
+| **"Save as PPTX"** | `.pptx` file (spec text extraction only) | `claude-design-pptx` |
+| **Bundle directory** | Unzipped directory with HTML + spec + assets | `claude-design-bundle` |
 
-**Bundle discovery:** The pipeline looks for the bundle in:
-1. The path passed via `--from-handoff <path>` flag or `handoff <path>` sub-command
-2. The value of `handoff_source` in `.design/STATE.md` (if a prior session already set it)
-3. A `claude-design-handoff.html` file in the project root (convention — not required)
+### Bundle contents by format
+
+| Format | Primary artifact | Design tokens | Spec text | Images |
+|--------|-----------------|---------------|-----------|--------|
+| URL (hosted) | Fetched HTML | ✅ CSS custom props | ✅ if readme present | ✅ |
+| ZIP | Unzipped HTML | ✅ CSS custom props | ✅ `readme.md` inside | ✅ |
+| Standalone HTML | `.html` file | ✅ CSS custom props | ✅ if `.md` alongside | ✅ inline |
+| PDF | `.pdf` text | ❌ (no CSS) | ✅ extracted text | ❌ |
+| PPTX | `.pptx` slides | ❌ (no CSS) | ✅ slide text only | ❌ |
+
+**Bundle entry point:** The primary parseable artifact is always the HTML — it contains inline `<style>` blocks with CSS custom properties (e.g., `--color-primary: #3B82F6`) and class-level token usage. PDF and PPTX are text-extraction fallbacks when no HTML is available.
+
+**Bundle discovery:** The pipeline looks for the bundle in this priority order:
+1. A `https://api.anthropic.com/v1/design/h/` URL in the agent invocation arguments
+2. The path passed via `--from-handoff <path>` flag or `handoff <path>` sub-command
+3. The value of `handoff_source` in `.design/STATE.md` (if a prior session already set it)
+4. A `claude-design-handoff.{html,zip,pdf,pptx}` file in the project root (convention — not required)
+
+---
+
+## Format-Specific Ingestion
+
+### URL format — `https://api.anthropic.com/v1/design/h/<hash>`
+
+This is the native entry point when the user clicks **"Send to local coding agent"** in Claude Design. The agent prompt arrives as:
+
+```
+Fetch this design file, read its readme, and implement the relevant aspects of the design. https://api.anthropic.com/v1/design/h/<hash>
+Implement: <user description>
+```
+
+**Detection:** grep the raw arguments/prompt for the pattern `https://api\.anthropic\.com/v1/design/h/[A-Za-z0-9_-]+`.
+
+**Fetch sequence:**
+1. `WebFetch` the URL — the response is either an HTML bundle or a redirect to a ZIP download
+2. If `Content-Type: text/html` → treat as standalone HTML, parse normally
+3. If `Content-Type: application/zip` or redirect to `.zip` → download to `.design/handoff/claude-design-handoff.zip`, then follow ZIP ingestion below
+4. Check the response for an embedded `readme.md` link (often served alongside) — fetch it separately if present
+5. Set `handoff_source: claude-design-url` and `handoff_url: <url>` in STATE.md
+
+**Implement description:** The text after `Implement:` in the agent prompt is the user's implementation scope — capture it as a project note, not a D-XX decision.
+
+### ZIP format
+
+**Detection:** input path ends in `.zip` OR fetched from URL as zip.
+
+**Ingestion sequence:**
+1. Extract to `.design/handoff/` (temp directory, not committed)
+2. Find the primary HTML: `index.html`, `design.html`, or any `.html` at root
+3. Find spec: `readme.md`, `spec.md`, `design.md`, or any `.md` at root
+4. Parse HTML + spec using the standard field catalogue below
+5. Clean up `.design/handoff/` after parsing (keep only extracted decisions in STATE.md)
+
+### PDF format
+
+**Detection:** input path ends in `.pdf`.
+
+**Ingestion:** PDF yields no CSS custom properties — token extraction is not possible. Instead:
+1. Extract all text content (pdftotext or equivalent)
+2. Grep for `Decision:`, `Rationale:`, `Token:`, `Color:`, `Typography:`, `Spacing:` prefixes
+3. Treat matched lines as spec text → translate to D-XX entries tagged `(source: claude-design-pdf)` + `(tentative — text-only, no CSS confirmation)`
+4. Note in STATE.md: `handoff_format: pdf` + caveat that token values were extracted from text, not CSS
+
+**Limitation:** PDF handoffs cannot produce `(locked)` token decisions — all are `(tentative)`. Surface this explicitly to the user in the discussant step.
+
+### PPTX format
+
+**Detection:** input path ends in `.pptx`.
+
+**Ingestion:** Same as PDF — text extraction only, no CSS tokens.
+1. Extract slide text (python-pptx or unzip `.pptx` and parse `ppt/slides/*.xml`)
+2. Same grep patterns as PDF
+3. Tag all entries `(source: claude-design-pptx)` + `(tentative — text-only)`
+
+**Limitation:** Same as PDF — all decisions are tentative. PPTX format is the weakest source; prefer HTML or ZIP if available.
 
 ---
 
@@ -114,13 +188,15 @@ Claude Design is not an MCP server — it has no tools to probe via ToolSearch. 
 
 ```
 At scan stage entry:
-  1. Check STATE.md <position> for handoff_source field
+  1. Check invocation arguments/prompt for https://api.anthropic.com/v1/design/h/ URL
   2. Check $ARGUMENTS for --from-handoff <path> flag
-  3. Check project root for claude-design-handoff.html
+  3. Check STATE.md <position> for handoff_source / handoff_url / handoff_path field
+  4. Check project root for claude-design-handoff.{html,zip,pdf,pptx}
 
-  → Bundle path found AND file exists           → claude_design: available
-  → Bundle path provided but file missing/bad   → claude_design: unavailable
-  → No bundle path, no file                      → claude_design: not_configured
+  → URL detected (step 1)                        → claude_design: available (fetch at ingest time)
+  → File path found AND file exists              → claude_design: available
+  → Path/URL provided but unreachable/bad        → claude_design: unavailable
+  → None of the above                            → claude_design: not_configured
 ```
 
 Write result to STATE.md `<connections>` at scan entry.
@@ -168,17 +244,25 @@ skipped_stages: scan, discover, plan
 
 **`handoff_source` values:**
 
-| Value | Meaning |
-|-------|---------|
-| `claude-design-html` | Bundle is a standalone HTML export from Claude Design |
-| `claude-design-bundle` | Bundle is a directory with HTML + spec markdown + assets |
-| `manual` | User manually initialized STATE.md with design decisions (no bundle file) |
+| Value | Meaning | Token quality |
+|-------|---------|---------------|
+| `claude-design-url` | Fetched from Anthropic-hosted URL (Send to local coding agent) | High — HTML |
+| `claude-design-zip` | ZIP bundle dropped into project | High — HTML inside |
+| `claude-design-html` | Standalone HTML export | High — CSS custom props |
+| `claude-design-bundle` | Directory with HTML + spec markdown + assets | High — CSS custom props |
+| `claude-design-pdf` | PDF export (text extraction only) | Low — text only, all tentative |
+| `claude-design-pptx` | PPTX export (text extraction only) | Low — text only, all tentative |
+| `manual` | User manually initialized STATE.md with design decisions (no bundle file) | N/A |
 
 ---
 
 ## Caveats and Pitfalls
 
-1. **Handoff bundle format is undocumented by Anthropic.** The Claude Design handoff bundle format is inferred from the product announcement and common HTML export patterns. The pipeline uses defensive parsing: grep for CSS custom properties in `<style>` tags, extract component class names from `class="component-*"` patterns, and fall back to the spec markdown/JSON if CSS parsing yields no results. If the format changes in a future Claude Design release, update this spec and the synthesizer's parsing patterns.
+1. **Handoff bundle format is undocumented by Anthropic.** The Claude Design handoff bundle format is inferred from the product UI and common HTML export patterns. The pipeline uses defensive parsing: grep for CSS custom properties in `<style>` tags, extract component class names from `class="component-*"` patterns, and fall back to the spec markdown/JSON if CSS parsing yields no results. If the format changes in a future Claude Design release, update this spec and the synthesizer's parsing patterns. The URL endpoint (`/v1/design/h/<hash>`) may return different content types — always check `Content-Type` before deciding whether to parse as HTML or unzip.
+
+6. **PDF and PPTX handoffs produce only tentative decisions.** These formats contain no CSS — all token values must be inferred from prose. Never promote PDF/PPTX-sourced decisions to `(locked)` without explicit user confirmation. If the user provides both a PDF and an HTML export, always prefer the HTML.
+
+7. **ZIP extraction is ephemeral.** Extracted ZIP contents go to `.design/handoff/` and are deleted after parsing. Only the extracted D-XX decisions are persisted to STATE.md. Never commit the raw extracted files.
 
 2. **`(tentative)` decisions MUST be confirmed by the user.** The discussant `--from-handoff` mode surfaces all tentative decisions for confirmation before proceeding to verify. Do NOT skip this step — implementing against unconfirmed inferred values is the primary failure mode of handoff-sourced workflows.
 

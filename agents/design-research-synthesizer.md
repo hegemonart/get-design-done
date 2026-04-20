@@ -99,10 +99,29 @@ Read .design/STATE.md
 
 ### Parsing algorithm (handoff mode)
 
-1. **Read bundle path** from STATE.md `handoff_path` field (or resolve from `handoff_source` if `handoff_path` is missing).
+1. **Resolve the bundle** from STATE.md fields in priority order:
 
-2. **Parse HTML export** (primary):
-   - Read the HTML file with the Read tool
+   ```
+   handoff_url present   → fetch URL with WebFetch tool
+                           check Content-Type:
+                             text/html               → use response body as html_content (goto step 2)
+                             application/zip         → save to .design/handoff/bundle.zip, goto ZIP branch
+                             other                   → warn user, abort handoff mode
+   handoff_path present  → check extension:
+                             .html                   → read file, goto step 2
+                             .zip                    → goto ZIP branch
+                             .pdf                    → goto PDF branch
+                             .pptx / .pptx           → goto PPTX branch
+   neither present       → warn "no handoff_path or handoff_url in STATE.md", abort handoff mode
+   ```
+
+   **ZIP branch:** Extract `.design/handoff/bundle.zip` to `.design/handoff/extracted/`. Find primary HTML (`index.html`, `design.html`, or first `.html` at root). Find spec file (`readme.md`, `spec.md`, or first `.md` at root). Set html_content + spec_content. Delete `.design/handoff/extracted/` after parsing.
+
+   **PDF branch:** Extract all text content (Bash: `pdftotext <file> -` or python `pdfminer`). Set text_content. Skip to step 3b.
+
+   **PPTX branch:** Extract slide text (Bash: unzip `.pptx`, parse `ppt/slides/*.xml` for `<a:t>` text nodes). Set text_content. Skip to step 3b.
+
+2. **Parse HTML export** (primary — html_content available):
    - Extract all CSS custom properties from `<style>` blocks: grep for `--[a-z]+-[a-z-]+:\s*[^;]+`
    - Categorize by prefix:
      - `--color-*` → `[Color]` decisions
@@ -114,15 +133,23 @@ Read .design/STATE.md
    - Extract component names from `class="component-*"` or `data-component="*"` patterns → `[Component]` decisions
    - Detect layout patterns: `display: grid`, `display: flex` in component-level sections → `[Layout]` decisions
 
-3. **Parse spec markdown** (secondary, if present):
-   - Look for `.md` or `.json` files in the same directory as the HTML export
+3. **Parse spec text** (secondary):
+
+   3a. **Spec markdown / JSON** (if html_content path had a `.md` sibling, or ZIP contained spec):
    - Grep for `Decision:`, `Rationale:`, `Token:`, `Component:` prefixes
    - Treat found lines as pre-formed D-XX entries
+
+   3b. **PDF / PPTX text** (text_content only, no HTML):
+   - Grep text_content for same prefixes as 3a
+   - Also grep for hex colors (`#[0-9a-fA-F]{3,6}`), rem/px values (`[\d.]+rem|[\d]+px`), font names
+   - Tag ALL entries `(tentative — text-only, no CSS confirmation)`
+   - Note in STATE.md: `handoff_format: pdf` or `handoff_format: pptx` with caveat that token values need user confirmation
 
 4. **Translate to D-XX decisions**:
    - CSS custom property: `D-NN: [Category] Token name: value (source: claude-design-handoff) (tentative — confirm with user)`
    - Explicit spec markdown decision: `D-NN: [Category] decision text (source: claude-design-handoff) (locked — from handoff spec)`
    - Inferred component/layout: `D-NN: [Category] inferred text (source: claude-design-handoff) (tentative — inferred)`
+   - PDF/PPTX text value: `D-NN: [Category] extracted text (source: claude-design-pdf/pptx) (tentative — text-only, no CSS confirmation)`
 
 5. **Append to STATE.md `<decisions>` block** under `### Handoff-sourced decisions` subsection header.
 
