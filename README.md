@@ -2,24 +2,26 @@
 
 # GET DESIGN DONE
 
+**English** · [简体中文](README.zh-CN.md)
+
 **Agent-orchestrated design pipeline for Claude Code. Five stages, thirty-three specialized agents, twelve tool connections — from brief to verified shipping work.**
 
 **Solves the "Claude made it look fine but nothing ties together" problem: no design system extraction, no reference grounding, no verification against the brief.**
 
 [![npm version](https://img.shields.io/npm/v/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
+[![npm downloads](https://img.shields.io/npm/dm/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
+[![GitHub stars](https://img.shields.io/github/stars/hegemonart/get-design-done?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/get-design-done)
 [![CI](https://img.shields.io/github/actions/workflow/status/hegemonart/get-design-done/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI)](https://github.com/hegemonart/get-design-done/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Plugin](https://img.shields.io/badge/plugin-v1.14.0-blue?style=for-the-badge)](https://github.com/hegemonart/get-design-done/releases/tag/v1.14.0)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 <br>
 
 ```bash
-claude plugin marketplace add hegemonart/get-design-done
-claude plugin install get-design-done@get-design-done
+npx @hegemonart/get-design-done@latest
 ```
 
-**Works on macOS, Linux, and Windows. Requires Claude Code + Node 22/24.**
+**One command. Works on macOS, Linux, and Windows. Requires Claude Code + Node 22/24.**
 
 <br>
 
@@ -84,25 +86,43 @@ Built-in quality gates catch real problems: Handoff Faithfulness scoring on Clau
 
 ## Getting Started
 
-### Option A — Claude Code marketplace (recommended)
+```bash
+npx @hegemonart/get-design-done@latest
+```
+
+That's it. The installer writes a `get-design-done` marketplace entry and enables the plugin in `~/.claude/settings.json` atomically. Restart Claude Code (or run `/reload-plugins`), and the pipeline is live.
+
+**What the installer does**
+
+- Registers the `github:hegemonart/get-design-done` marketplace in `extraKnownMarketplaces`
+- Flips `enabledPlugins["get-design-done@get-design-done"]` to `true`
+- Preserves every other key in your settings — theme, permissions, other marketplaces — untouched
+- Idempotent: safe to re-run; no duplicate entries
+
+On first Claude Code launch after install, a `SessionStart` bootstrap hook provisions the companion reference library `~/.claude/libs/awesome-design-md` (idempotent — subsequent sessions run `git pull --ff-only`).
+
+### Non-interactive install (CI, Docker, scripts)
+
+```bash
+# Dry-run: print the diff, don't write
+npx @hegemonart/get-design-done@latest --dry-run
+
+# Custom config dir (Docker, non-default Claude root)
+CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done@latest
+```
+
+### Alternative: Claude Code CLI
+
+Prefer to skip the npm package entirely? Use the native plugin CLI:
 
 ```bash
 claude plugin marketplace add hegemonart/get-design-done
 claude plugin install get-design-done@get-design-done
 ```
 
-### Option B — npm / pnpm
+This is what the installer wires up for you — `npx` is just one command instead of two.
 
-Published as a scoped package. Works with any npm-compatible client:
-
-```bash
-npm  install -g @hegemonart/get-design-done
-pnpm add     -g @hegemonart/get-design-done
-```
-
-Either path installs the pipeline skill and triggers a `SessionStart` bootstrap hook, which provisions the companion reference library `~/.claude/libs/awesome-design-md` on first run (idempotent — subsequent sessions run `git pull --ff-only`).
-
-Verify with:
+Verify any install path with:
 
 ```
 /gdd:help
@@ -110,6 +130,22 @@ Verify with:
 
 > [!TIP]
 > Run Claude Code with `--dangerously-skip-permissions` for the intended frictionless flow. GDD is built for autonomous multi-stage execution; approving every file read and `git commit` defeats the purpose.
+
+### Staying Updated
+
+Get Design Done ships frequent patch releases. To pick up the latest plugin contract, run the installer again — it's idempotent and upgrades the registered marketplace entry in place:
+
+```bash
+npx @hegemonart/get-design-done@latest
+```
+
+Or from inside Claude Code:
+
+```
+/gdd:update
+```
+
+`/gdd:update` previews the changelog before applying. Local customizations in `reference/` are preserved — use `/gdd:reapply-patches` if they need re-stitching after a structural release. A `SessionStart` hook surfaces a one-line banner when a newer release is available, gated so it never interrupts an active pipeline stage.
 
 ---
 
@@ -823,10 +859,7 @@ The forensic mode runs a 6-check integrity audit — stale artifacts, dangling d
 Set `enforcement_mode: "log"` in `.design/budget.json` — the hook writes every decision to `.design/telemetry/costs.jsonl` without blocking.
 
 **Updating to the latest version?**
-```
-/gdd:update
-```
-Previews the changelog before applying. Local customizations in `reference/` are preserved; use `/gdd:reapply-patches` if they need re-stitching after a structural update.
+See [Staying Updated](#staying-updated). Short version: `npx @hegemonart/get-design-done@latest` or `/gdd:update`.
 
 ### Uninstall
 
@@ -834,13 +867,13 @@ Previews the changelog before applying. Local customizations in `reference/` are
 claude plugin uninstall get-design-done@get-design-done
 ```
 
-Or, if installed via npm:
+To reverse the `npx` installer, remove the two keys it wrote — either by hand or with a one-liner:
 
 ```bash
-npm uninstall -g @hegemonart/get-design-done
+node -e "const f=require('os').homedir()+'/.claude/settings.json';const j=require(f);delete j.extraKnownMarketplaces?.['get-design-done'];delete j.enabledPlugins?.['get-design-done@get-design-done'];require('fs').writeFileSync(f,JSON.stringify(j,null,2))"
 ```
 
-This removes all GDD skills, agents, hooks, and settings while preserving your other configurations and your `.design/` project artifacts.
+This removes all GDD skills, agents, hooks, and registration while preserving your other configurations and your `.design/` project artifacts.
 
 ---
 
