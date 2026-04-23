@@ -1,0 +1,6 @@
+{"ts":"2026-04-24T00:00:00.000Z","tool":"mcp__figma__use_figma","outcome":"success","consecutive_timeouts":0,"total_calls":1}
+{"ts":"2026-04-24T00:00:05.000Z","tool":"mcp__figma__use_figma","outcome":"timeout","consecutive_timeouts":1,"total_calls":2}
+{"ts":"2026-04-24T00:00:15.000Z","tool":"mcp__figma__use_figma","outcome":"timeout","consecutive_timeouts":2,"total_calls":3}
+{"ts":"2026-04-24T00:00:25.000Z","tool":"mcp__figma__use_figma","outcome":"success","consecutive_timeouts":0,"total_calls":4}
+{"ts":"2026-04-24T00:00:30.000Z","tool":"mcp__figma__use_figma","outcome":"timeout","consecutive_timeouts":1,"total_calls":5}
+{"ts":"2026-04-24T00:00:40.000Z","tool":"mcp__figma__use_figma","outcome":"error","consecutive_timeouts":1,"total_calls":6}

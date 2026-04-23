@@ -27,6 +27,33 @@
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/budget-enforcer.js\""
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-bash-guard.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-protected-paths.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-decision-injector.js\""
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -36,6 +63,15 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-read-injection-scanner.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__.*use_figma$|mcp__.*use_paper$|mcp__.*use_pencil$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-mcp-circuit-breaker.js\""
           }
         ]
       },

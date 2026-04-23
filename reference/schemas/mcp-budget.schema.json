@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/mcp-budget.schema.json",
+  "title": "MCP Budget",
+  "description": "Thresholds for the MCP circuit-breaker hook. Applies to use_figma / use_paper / use_pencil and any tracked_tools entry the user extends.",
+  "type": "object",
+  "required": ["version", "max_calls_per_task", "max_consecutive_timeouts"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "description": { "type": "string" },
+    "max_calls_per_task": { "type": "integer", "minimum": 0, "maximum": 10000 },
+    "max_consecutive_timeouts": { "type": "integer", "minimum": 0, "maximum": 1000 },
+    "reset_on_success": { "type": "boolean" },
+    "tracked_tools": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "additionalProperties": false
+}

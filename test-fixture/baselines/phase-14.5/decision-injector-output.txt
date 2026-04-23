@@ -1,0 +1,26 @@
+// Expected shape of hooks/gdd-decision-injector.js additionalContext when
+// the opened file is `reference/heuristics.md` (≥1500 bytes) in a fixture
+// archive with the following prior-cycle material:
+//
+//   .design/learnings/LEARNINGS.md:
+//     L-01: Always prefer heuristics.md when scoring color contrast.
+//     L-02: anti-patterns.md supersedes ad-hoc advice for dark-mode.
+//     L-03: reference/heuristics.md is the canonical source for NNG.
+//
+//   .design/STATE.md:
+//     D-12: Heuristics reference (reference/heuristics.md) is tier L2 and must be
+//           imported by every audit-family agent.
+//
+//   .design/archive/cycle-3/CYCLE-SUMMARY.md:
+//     Key shift: Adopted heuristics.md as the canonical rubric.
+//
+// Expected additionalContext (markdown block prepended to agent context):
+//
+//   > ⌂ **Recall** — prior decisions & learnings referencing `heuristics.md`:
+//   > - [cycle-3] Key shift: Adopted heuristics.md as the canonical rubric. (...CYCLE-SUMMARY.md:2)
+//   > - [state] D-12: Heuristics reference (reference/heuristics.md) is tier L2 ... (...STATE.md:N)
+//   > - [learnings] L-01: Always prefer heuristics.md when scoring color contrast. (...LEARNINGS.md:N)
+//   > - [learnings] L-03: reference/heuristics.md is the canonical source for NNG. (...LEARNINGS.md:N)
+//   > (4 matches surfaced. Grep backend; FTS5 upgrade in Phase 19.5.)
+//
+// Ordering: cycle-N > state > learnings. Dedup by (source-file + text). Top-15 cap.

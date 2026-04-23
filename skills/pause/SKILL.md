@@ -5,6 +5,9 @@ argument-hint: "[context note]"
 tools: Read, Write, AskUserQuestion
 ---
 
+@reference/retrieval-contract.md
+@reference/cycle-handoff-preamble.md
+
 # /gdd:pause
 
 Captures enough state that a killed or stopped session can resume cleanly via `/gdd:resume`.

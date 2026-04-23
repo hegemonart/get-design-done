@@ -1,0 +1,18 @@
+{
+  "$schema": "./schemas/protected-paths.schema.json",
+  "version": 1,
+  "description": "Paths the plugin refuses to Edit/Write or mutate via Bash without an explicit user override. User additions in .design/config.json.protected_paths MERGE into this list — they can extend but cannot reduce the default set.",
+  "protected_paths": [
+    "reference/**",
+    ".design/archive/**",
+    ".design/config.json",
+    ".design/telemetry/**",
+    "skills/**",
+    "commands/**",
+    "hooks/**",
+    ".git/**",
+    ".claude/settings.json",
+    ".claude-plugin/plugin.json",
+    ".claude-plugin/marketplace.json"
+  ]
+}

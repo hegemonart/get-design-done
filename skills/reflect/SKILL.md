@@ -5,6 +5,8 @@ argument-hint: "[--dry-run] [--cycle <slug>]"
 tools: Read, Write, Task
 ---
 
+@reference/retrieval-contract.md
+
 # /gdd:reflect
 
 Run `design-reflector` on demand against the current (or specified) cycle. Produces `.design/reflections/<cycle-slug>.md` with numbered improvement proposals. Every proposal requires explicit user review — nothing is auto-applied.

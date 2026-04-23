@@ -39,6 +39,47 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 
 ---
 
+## Preflight — Blast-Radius Check
+
+Before the FIRST Edit/Write of this task, run a blast-radius preflight:
+
+```js
+const { estimate, formatDiffSummary, loadConfig } = require('scripts/lib/blast-radius.cjs');
+const cfg = loadConfig();
+const result = estimate({
+  touchedPaths: <paths this task declares>,
+  diffStats: { insertions: <estimate>, deletions: <estimate> },
+  config: cfg,
+});
+```
+
+**Ceilings** (defaults; user may override in `.design/config.json.blast_radius`):
+- `max_files_per_task: 10`
+- `max_lines_per_task: 400`
+- `max_mcp_calls_per_task: 30` (see MCP Budget section)
+
+**If `result.exceeds === true`:** STOP. Do NOT Edit/Write. Append `formatDiffSummary({touchedPaths, diffStats, result})` to `.design/STATE.md` under a new blocker line, then emit a structured deviation:
+
+> Rule 3 — Blast-Radius Exceeds: this task would touch `<files>` files / `<lines>` lines, above the per-task ceiling. Proposed split: <suggest 2–3 sub-tasks that each stay under the limit>. User must explicitly approve a single ceiling raise or accept the split.
+
+Proceed only after the user confirms. The preflight is skipped entirely when both ceilings are set to `0` in config.
+
+---
+
+## MCP Budget — Per-Task
+
+Before every `mcp__*use_figma`, `mcp__*use_paper`, `mcp__*use_pencil`, or equivalent mutation-side MCP call, check the rolling counter:
+
+```js
+const { estimateMCPCalls, loadConfig } = require('scripts/lib/blast-radius.cjs');
+const r = estimateMCPCalls({ toolCalls: <calls-issued-so-far>, config: loadConfig() });
+if (r.exceeds) STOP;
+```
+
+The MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) enforces the same ceiling at the tool boundary; the preflight here avoids wasting a MCP round-trip before the hook blocks you. Surface in `/gdd:stats` as "MCP calls this task: N/limit".
+
+---
+
 ## Prompt Context Fields
 
 The stage embeds the following fields in the prompt. Use them to locate and execute the correct task:

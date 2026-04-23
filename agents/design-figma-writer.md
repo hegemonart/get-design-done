@@ -6,7 +6,7 @@ color: purple
 model: inherit
 default-tier: sonnet
 tier-rationale: "Writer proposes + executes Figma write-backs — Sonnet handles structured proposal synthesis well"
-size_budget: LARGE
+size_budget: XL
 parallel-safe: never
 typical-duration-seconds: 120
 reads-only: false
@@ -37,6 +37,66 @@ Parse tool names matching /^mcp__([^_]*figma[^_]*)__use_figma$/i → write-capab
 ```
 
 Note: the remote Figma MCP (canonical server name `figma`, URL `https://mcp.figma.com/mcp`) exposes both reads (`get_metadata`, `get_variable_defs`) and writes (`use_figma`) on the same server. The desktop MCP (`figma-desktop`) exposes reads only and cannot be used for writes — this agent STOPs if only a desktop variant is detected.
+
+---
+
+## Step 0.5 — Authoring-Intent Guard
+
+BEFORE proceeding to Step 1, analyze the invocation text (prompt + task description + any user-facing message in the agent dispatch) for **authoring-intent**. `design-figma-writer` is a *decision-writer* (annotations, token bindings, Code Connect, implementation-status). When the user wants to *author* new Figma content (create pages, populate with library components, build doc layouts from scratch), the correct tool is `figma:figma-generate-design` from the Figma plugin — it runs outside the sandbox and has no per-call timeout.
+
+Apply the patterns below (case-insensitive, whitespace-tolerant). If ANY author-intent pattern matches AND NO decision-intent pattern dominates the text, STOP with the redirect response and do not proceed to the remote-MCP probe or any `use_figma` call.
+
+**Author-intent patterns (EN):**
+- `create .{0,30}(page|file|frame|layout|doc)`
+- `(populate|fill|build) .{0,40}(with )?(components|library)`
+- `(author|write|generate|produce|build) .{0,30}(doc|documentation|spec|design)`
+- `make .{0,30}(layout|frame|page|template)`
+- `spin up .{0,30}Figma`
+- `design .{0,30}(page|doc|spec|layout) .{0,20}(from|in) (scratch|Figma)`
+
+**Author-intent patterns (RU):**
+- `(создай|сделай|построй|свёрстай|собери|оформи) .{0,30}(страниц|макет|документац|страницу|документ|файл|лейаут|шаблон)`
+- `(новую?|новый) страниц[уыа]`
+- `документац[иия] .{0,40}токен`
+- `сгенерируй .{0,30}Figma`
+
+**Decision-intent patterns (EN) — these WIN over ambiguous author-intent:**
+- `annotate .{0,30}(selection|frame|component)`
+- `bind .{0,30}token`
+- `code connect`
+- `code-connect`
+- `update .{0,30}(status|implementation)`
+- `write .{0,30}D-\d+`
+- `sync .{0,30}(tokens?|variables?)`
+
+**Decision-intent patterns (RU):**
+- `привяжи .{0,30}токен`
+- `аннотируй`
+- `синхронизируй .{0,30}токен`
+
+### Decision rule
+- If decision-intent matches AND author-intent doesn't match, proceed normally.
+- If author-intent matches AND NO decision-intent match, STOP with redirect.
+- If BOTH match (mixed), favor decision-intent (the guard is permissive; the circuit-breaker catches runaway cases downstream).
+- If NEITHER matches, proceed normally (default is decision-writing — the guard doesn't block the common case).
+
+### Redirect response (emit verbatim and STOP)
+
+```
+This task reads as authoring new Figma content. `design-figma-writer` is a decision-writer — it uses `use_figma` inside the Figma plugin sandbox with ~5–10s per-call timeout, so multi-row docs-authoring hill-climbs against the timeout and burns MCP quota.
+
+Use `figma:figma-generate-design` from the Figma plugin instead — it runs outside the sandbox and has no per-call timeout.
+
+Four sandbox pitfalls you would hit here on raw `use_figma` calls:
+1. `loadFontAsync` does not cache across calls — preload once, clone existing nodes.
+2. `figma.root.findOne()` is O(tree-size) — pass node IDs and use `getNodeById`.
+3. `appendChild` on large trees forces full AutoLayout recomputation — build subtrees off-tree.
+4. Per-call timeout is ~5–10s — budget ≤2 row-equivalents per call.
+
+See `reference/figma-sandbox.md`.
+```
+
+After emitting the redirect, STOP with the marker `## FIGMA AUTHORING-INTENT REDIRECT` and do NOT proceed to Step 1.
 
 ---
 

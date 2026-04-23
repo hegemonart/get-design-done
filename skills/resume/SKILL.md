@@ -5,6 +5,9 @@ argument-hint: ""
 tools: Read, Write, Bash, Glob
 ---
 
+@reference/retrieval-contract.md
+@reference/cycle-handoff-preamble.md
+
 # /gdd:resume
 
 Inverse of `/gdd:pause`. Reads the handoff file, prints a clear "you were here" summary, and routes to the next command.

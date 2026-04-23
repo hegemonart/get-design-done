@@ -489,6 +489,21 @@ See [`connections/magic-patterns.md`](connections/magic-patterns.md) for probe p
 
 ---
 
+## Safety + Recall Floor
+
+Starting with v1.14.6, GDD ships three defense-in-depth hooks, the first cross-cycle recall primitive, and a typed reference index:
+
+- **Bash guard** (`hooks/gdd-bash-guard.js`) — PreToolUse:Bash blocks ~45 dangerous shell patterns after Unicode NFKC + ANSI + zero-width/bidi normalization, so `rm\u200B -rf /`, bidi-override obfuscations, and hex-encoded exec sequences fail closed.
+- **Protected paths** (`hooks/gdd-protected-paths.js`) — PreToolUse:Edit|Write|Bash refuses to mutate `reference/**`, `skills/**`, `commands/**`, `hooks/**`, `.design/archive/**`, `.design/config.json`, `.design/telemetry/**`, `.git/**`, both plugin manifests, and anything the user appends under `.design/config.json.protected_paths` (merge-only — user configs cannot reduce the default set).
+- **Blast-radius preflight** (`scripts/lib/blast-radius.cjs`) — `design-executor` refuses tasks above `.design/config.json.blast_radius.max_files_per_task` (default 10), `max_lines_per_task` (default 400), or `max_mcp_calls_per_task` (default 30); writes a blocker to STATE.md with a diff summary.
+- **Decision-injector** (`hooks/gdd-decision-injector.js`) — PreToolUse:Read on any `.design/**.md | reference/**.md | .planning/**.md` ≥ 1500 bytes surfaces the top-15 matching D-XX decisions, L-NN learnings, and prior-cycle summary excerpts that reference the opened file. Grep backend; Phase 19.5 upgrades to FTS5 transparently.
+
+**Reference index** — `reference/registry.json` (schema: `reference/registry.schema.json`) indexes every `reference/*.md` by typed category (`heuristic | preamble | motion | defaults | meta-rules | …`). Agents can query `list({type: "heuristic"})` instead of grep-hunting import strings. `scripts/build-intel.cjs` enforces round-trip on every `reference/**` change: missing entries, dangling entries, and duplicates fail the build.
+
+**L0/L2 cache-locality split** — the 5 framework-invariant rules (Required Reading Discipline, Writes Protocol, Deviation Handling, Completion Markers, Context-Exhaustion & Budget Awareness) now live in `reference/meta-rules.md` (tier L0). `reference/shared-preamble.md` becomes an L0 aggregator importing `meta-rules.md` first, so Phase 15+ L2 churn (heuristics, anti-patterns, checklists) no longer invalidates the L0 prompt-cache prefix.
+
+**Figma authoring-redirect** — `/gdd:figma-write` is a decision-writer (annotations, token bindings, Code Connect, implementation-status). For authoring new Figma content (create pages, populate library components, build layouts from scratch), use `figma:figma-generate-design` from the Figma plugin — it runs outside the Figma plugin sandbox. `design-figma-writer` Step 0.5 detects author-intent (EN + RU) and emits a bilingual redirect citing the four sandbox pitfalls in `reference/figma-sandbox.md`. The MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) caps `use_figma | use_paper | use_pencil` at 30 calls/task and 3 consecutive timeouts by default (see `reference/mcp-budget.default.json`), logging per-call JSONL at `.design/telemetry/mcp-budget.jsonl`.
+
 ## Commands
 
 All commands use the `/gdd:` namespace.
@@ -620,6 +635,8 @@ claude mcp add --transport http figma https://mcp.figma.com/mcp
 **Desktop MCP (reads only):** optionally enabled via the Figma desktop app's Dev Mode. Useful when writes are not needed. Register under server name `figma-desktop` — the probe auto-detects it.
 
 Setup: [`connections/figma.md`](connections/figma.md). If you previously registered the remote MCP with the legacy URL `https://mcp.figma.com/v1/sse`, remove and re-add with the current URL `https://mcp.figma.com/mcp` (Streamable HTTP).
+
+> ⚠︎ **Authoring new Figma content?** `/gdd:figma-write` is a *decision-writer* (annotations, token bindings, Code Connect). For **creating pages, populating with library components, building doc layouts from scratch**, use `figma:figma-generate-design` from the Figma plugin — it runs outside the plugin sandbox. See [`reference/figma-sandbox.md`](reference/figma-sandbox.md) for the four sandbox pitfalls the MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) protects you from (defaults: 30 calls/task, 3 consecutive timeouts → break).
 
 ### Refero MCP
 

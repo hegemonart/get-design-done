@@ -1,0 +1,44 @@
+{
+  "note": "Phase 14.5 registry shape anchor. Drift in entry counts is acceptable when new reference/* lands in a later phase, but the type enum and structural keys are load-bearing.",
+  "version": 1,
+  "min_entries": 18,
+  "required_types_present": [
+    "preamble",
+    "meta-rules",
+    "heuristic",
+    "output-contract",
+    "defaults",
+    "schema",
+    "data",
+    "motion",
+    "surfaces",
+    "authority-feed"
+  ],
+  "schema_enum_superset": [
+    "easing",
+    "taxonomy",
+    "preamble",
+    "output-contract",
+    "heuristic",
+    "schema",
+    "defaults",
+    "surfaces",
+    "motion",
+    "influences",
+    "meta-rules",
+    "data",
+    "authority-feed",
+    "principles",
+    "emotional-design",
+    "experience",
+    "palette",
+    "style-vocabulary"
+  ],
+  "tier_values": ["L0", "L1", "L2"],
+  "round_trip_invariants": [
+    "every reference/*.md and reference/*.default.json has exactly one registry entry",
+    "every registry entry path resolves to an existing file",
+    "registry.schema.json and schemas/** are excluded from the walk",
+    "data/** is excluded from the walk"
+  ]
+}

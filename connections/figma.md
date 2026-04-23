@@ -63,6 +63,16 @@ No data is lost — the remote MCP reads the same Figma files.
 
 ---
 
+> ⚠︎ **Authoring-redirect** — `/gdd:figma-write` (and the `design-figma-writer` agent behind it) is a *decision-writer*: annotations, token bindings, Code Connect mappings, implementation-status write-back. For **authoring new Figma content** — create pages, populate with library components, build doc layouts from scratch — use `figma:figma-generate-design` from the Figma plugin. It runs outside the plugin sandbox and has no per-call timeout.
+>
+> **Four sandbox pitfalls `use_figma` hits in authoring loops (see `reference/figma-sandbox.md`):**
+> 1. `loadFontAsync` does not cache across calls — preload once, clone existing nodes.
+> 2. `figma.root.findOne()` is O(tree-size) — pass node IDs and use `getNodeById`.
+> 3. `appendChild` on large trees forces full AutoLayout recomputation — build subtrees off-tree.
+> 4. Per-call timeout is ~5–10s — budget ≤2 row-equivalents per call for docs-authoring.
+>
+> The MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) enforces a per-task ceiling of 30 calls and 3 consecutive timeouts by default; see `reference/mcp-budget.default.json`.
+
 ## Tools
 
 Tool names take the form `mcp__<prefix>__<tool>` where `<prefix>` is the resolved server name from the probe (commonly `figma` for remote or `figma-desktop` for local). The pipeline discovers the prefix at runtime — see **Availability Probe** below. The `mcp__figma__` examples shown here assume a server registered as `figma`.

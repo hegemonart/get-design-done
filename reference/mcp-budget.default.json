@@ -1,0 +1,13 @@
+{
+  "$schema": "./schemas/mcp-budget.schema.json",
+  "version": 1,
+  "description": "Default per-task MCP ceilings enforced by hooks/gdd-mcp-circuit-breaker.js. User overrides merge from .design/config.json.mcp_budget.",
+  "max_calls_per_task": 30,
+  "max_consecutive_timeouts": 3,
+  "reset_on_success": true,
+  "tracked_tools": [
+    "mcp__.*use_figma$",
+    "mcp__.*use_paper$",
+    "mcp__.*use_pencil$"
+  ]
+}
