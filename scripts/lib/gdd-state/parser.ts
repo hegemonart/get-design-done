@@ -69,13 +69,33 @@ export interface RawBlockBodies {
   timestamps: string | null;
 }
 
-/** Full parser result — `ParsedState` plus the raw bodies map. The
- *  `raw_bodies` map is attached via a non-enumerable `Symbol` in index.ts
- *  so consumer code doesn't see it in `Object.keys(parsed)`; the parser
- *  itself returns a plain object. */
+/** Separator text appearing BEFORE each block's opening tag, counted from
+ *  the end of the previous recognized block (or from the end of the
+ *  frontmatter for the first block). Captures the blank lines and
+ *  free-form markdown that template authors place between blocks. */
+export interface BlockGaps {
+  position: string;
+  decisions: string;
+  must_haves: string;
+  connections: string;
+  blockers: string;
+  parallelism_decision: string;
+  todos: string;
+  timestamps: string;
+}
+
+/** Full parser result — `ParsedState` plus the raw bodies map and raw
+ *  frontmatter. The `raw_bodies` map is consumed by `serialize()` so
+ *  untouched blocks can emit verbatim. */
 export interface ParseResult {
   state: ParsedState;
   raw_bodies: RawBlockBodies;
+  /** Verbatim frontmatter body (between the `---` fences). Serializer
+   *  emits it back when `state.frontmatter` is semantically unchanged. */
+  raw_frontmatter: string;
+  /** Map of per-block preceding separators. Serializer emits these before
+   *  each present block. */
+  block_gaps: BlockGaps;
   /** Detected line-ending: '\n' or '\r\n'. Serializer emits this back. */
   line_ending: '\n' | '\r\n';
   /** True when the last byte of the original input was a newline. */
@@ -161,13 +181,24 @@ export function parse(raw: string): ParseResult {
     i = close; // continue scanning after the close tag
   }
 
-  // --- 3. Compute body_preamble / body_trailer -------------------------
-  // body_preamble = text from start-of-body up to (and excluding) the
-  // first block's opening tag line.
-  // body_trailer = text from the line AFTER the last block's close tag
-  // to the end.
+  // --- 3. Compute body_preamble / body_trailer / block_gaps ------------
+  // body_preamble = text between frontmatter-end and first block's <tag>.
+  // body_trailer  = text after the last block's </tag>.
+  // block_gaps[name] = text between the previous recognized block's </tag>
+  //                    and this block's <tag>. For the first block this
+  //                    equals body_preamble.
   let body_preamble: string;
   let body_trailer: string;
+  const block_gaps: BlockGaps = {
+    position: '',
+    decisions: '',
+    must_haves: '',
+    connections: '',
+    blockers: '',
+    parallelism_decision: '',
+    todos: '',
+    timestamps: '',
+  };
   if (blocks.length === 0) {
     // No recognized blocks at all — everything is preamble; trailer is empty.
     body_preamble = body;
@@ -180,17 +211,28 @@ export function parse(raw: string): ParseResult {
       throw new ParseError('internal: block index inconsistency', 1);
     }
     body_preamble = lines.slice(0, firstBlock.openLine).join('\n');
-    // If preamble is not empty, it ended with a newline in the original
-    // (each line is terminated by '\n' except the final one). Append '\n'
-    // to preserve the separator between preamble and the `<block>` tag.
     if (firstBlock.openLine > 0) body_preamble += '\n';
     body_trailer = lines.slice(lastBlock.closeLine + 1).join('\n');
-    // Same trailing-newline logic applies to trailer: if there's content
-    // after the last close tag, the `\n` between `</block>` and trailer
-    // belongs to the serializer's block emission. We reconstruct by
-    // prepending '\n' when trailer is non-empty (so `</block>\n<trailer>`).
-    // Simpler: do not add a leading newline here — serialize() handles
-    // the separator.
+
+    // Populate block_gaps: preceding separator for each block.
+    for (let bi = 0; bi < blocks.length; bi++) {
+      const cur = blocks[bi];
+      if (cur === undefined) continue;
+      if (bi === 0) {
+        block_gaps[cur.name] = body_preamble;
+      } else {
+        const prev = blocks[bi - 1];
+        if (prev === undefined) continue;
+        // Text strictly between prev.closeLine and cur.openLine (exclusive).
+        // That's lines[prev.closeLine+1 .. cur.openLine-1] joined by '\n',
+        // plus a trailing '\n' if cur.openLine > prev.closeLine + 1 (to
+        // separate the gap content from the opening tag).
+        const gapLines = lines.slice(prev.closeLine + 1, cur.openLine);
+        let gap = gapLines.join('\n');
+        if (cur.openLine > prev.closeLine + 1) gap += '\n';
+        block_gaps[cur.name] = gap;
+      }
+    }
   }
 
   // --- 4. Parse each block ---------------------------------------------
@@ -268,7 +310,14 @@ export function parse(raw: string): ParseResult {
     body_trailer,
   };
 
-  return { state, raw_bodies, line_ending, trailing_newline };
+  return {
+    state,
+    raw_bodies,
+    raw_frontmatter: fmText,
+    block_gaps,
+    line_ending,
+    trailing_newline,
+  };
 }
 
 /** --- helpers --- */

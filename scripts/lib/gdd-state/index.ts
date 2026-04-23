@@ -64,12 +64,18 @@ export async function mutate(
   const tmpPath: string = `${path}.tmp`;
   try {
     const raw: string = readFileSync(path, 'utf8');
-    const { state, raw_bodies, line_ending } = parse(raw);
+    const { state, raw_bodies, raw_frontmatter, block_gaps, line_ending } =
+      parse(raw);
     // Deep-clone so the consumer's fn cannot mutate the state we just
     // parsed (defensive — apply() does this too for pure callers).
     const clone = structuredClone(state);
     const next = fn(clone);
-    const out = serialize(next, raw_bodies, line_ending);
+    const out = serialize(next, {
+      raw_frontmatter,
+      raw_bodies,
+      block_gaps,
+      line_ending,
+    });
     writeFileSync(tmpPath, out, 'utf8');
     try {
       renameSync(tmpPath, path);

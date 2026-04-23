@@ -14,49 +14,76 @@
 // and gives us "preserve comments when the user didn't touch this block"
 // behavior without asking consumers to mark blocks dirty.
 
-import { parse, BLOCK_ORDER, type BlockName, type RawBlockBodies } from './parser.ts';
+import {
+  parse,
+  BLOCK_ORDER,
+  type BlockGaps,
+  type BlockName,
+  type RawBlockBodies,
+} from './parser.ts';
 import {
   type Blocker,
   type ConnectionStatus,
   type Decision,
+  type Frontmatter,
   type MustHave,
   type ParsedState,
   type Position,
 } from './types.ts';
 
 /**
+ * Optional fidelity hints from a prior `parse()` call. When provided and
+ * the typed representation is semantically unchanged, the serializer
+ * emits each component verbatim — yielding byte-identical round-trip
+ * for unchanged blocks while still allowing targeted edits.
+ */
+export interface SerializeFidelity {
+  raw_frontmatter?: string;
+  raw_bodies?: RawBlockBodies;
+  block_gaps?: BlockGaps;
+  line_ending?: '\n' | '\r\n';
+}
+
+/**
  * Serialize a `ParsedState` back to STATE.md text.
  *
- * @param state       the parsed state (possibly mutated)
- * @param raw_bodies  original raw bodies; when present and the typed
- *                    value for that block is semantically unchanged, the
- *                    raw body is emitted verbatim (preserves comments).
- *                    When absent or stale, canonical form is emitted.
- * @param line_ending '\n' or '\r\n'; defaults to '\n'.
+ * @param state      the parsed state (possibly mutated)
+ * @param fidelity   optional fidelity hints from `parse()` — preserve
+ *                   original formatting for untouched regions.
  */
 export function serialize(
   state: ParsedState,
-  raw_bodies?: RawBlockBodies,
-  line_ending: '\n' | '\r\n' = '\n',
+  fidelity: SerializeFidelity = {},
 ): string {
+  const {
+    raw_frontmatter,
+    raw_bodies,
+    block_gaps,
+    line_ending = '\n',
+  } = fidelity;
+
   const out: string[] = [];
 
   // --- frontmatter ---
   out.push('---\n');
-  out.push(serializeFrontmatter(state.frontmatter));
+  out.push(emitFrontmatter(state.frontmatter, raw_frontmatter));
   out.push('---\n');
 
-  // --- preamble (verbatim) ---
-  out.push(state.body_preamble);
-
-  // --- blocks (canonical order) ---
+  // --- blocks (canonical order, each preceded by its gap) ---
   for (const name of BLOCK_ORDER) {
     const rawBody = raw_bodies?.[name] ?? null;
     const emitted = emitBlock(name, state, rawBody);
-    if (emitted === null) continue; // skip absent blocks
+    if (emitted === null) {
+      // Block absent — do NOT emit a gap either (gaps belong to present blocks).
+      continue;
+    }
+    // Prepend gap if we have one; otherwise fall back to a single '\n'
+    // separator between consecutive blocks for canonical output.
+    const gap =
+      block_gaps?.[name] ?? (out.length > 0 && isFirstEmission(out) ? '' : '\n');
+    out.push(gap);
     out.push(`<${name}>\n`);
     out.push(emitted);
-    // Ensure body ends with newline before closing tag.
     if (!emitted.endsWith('\n')) out.push('\n');
     out.push(`</${name}>\n`);
   }
@@ -68,6 +95,14 @@ export function serialize(
   return line_ending === '\r\n' ? joined.replace(/\n/g, '\r\n') : joined;
 }
 
+/** Helper: detect whether the current push would be the first block
+ *  emission (`out` ends at the `---\n` fence). Used when `block_gaps` is
+ *  absent — we preserve `state.body_preamble` for the first block and
+ *  use a single '\n' between subsequent blocks. */
+function isFirstEmission(out: string[]): boolean {
+  return out.length <= 3; // ['---\n', frontmatter, '---\n']
+}
+
 /**
  * Pure mutator. Parses, applies `fn`, serializes. Throws `ParseError`
  * on structurally invalid input.
@@ -76,17 +111,95 @@ export function apply(
   raw: string,
   fn: (s: ParsedState) => ParsedState,
 ): string {
-  const { state, raw_bodies, line_ending } = parse(raw);
+  const { state, raw_bodies, raw_frontmatter, block_gaps, line_ending } =
+    parse(raw);
   // Deep-clone so `fn` cannot accidentally mutate the original parsed
   // result (which callers of `parse()` may also hold a reference to).
   const clone = structuredClone(state);
   const next = fn(clone);
-  return serialize(next, raw_bodies, line_ending);
+  return serialize(next, {
+    raw_frontmatter,
+    raw_bodies,
+    block_gaps,
+    line_ending,
+  });
 }
 
 /** --- helpers --- */
 
-function serializeFrontmatter(fm: ParsedState['frontmatter']): string {
+function emitFrontmatter(
+  fm: Frontmatter,
+  raw_frontmatter?: string,
+): string {
+  // Fidelity path: if the caller supplied the original raw frontmatter
+  // and the parsed fm (after fn()) semantically equals a reparse of that
+  // raw, emit the raw verbatim. This preserves quoting (e.g., `cycle: ""`
+  // round-trips as `cycle: ""`, not `cycle: `) and author key ordering.
+  if (raw_frontmatter !== undefined) {
+    const reparsed = tryReparseFrontmatter(raw_frontmatter);
+    if (reparsed !== null && frontmatterEqual(reparsed, fm)) {
+      return raw_frontmatter + '\n';
+    }
+  }
+  return canonicalFrontmatter(fm);
+}
+
+function tryReparseFrontmatter(raw: string): Frontmatter | null {
+  try {
+    const out: Record<string, unknown> = {};
+    for (const line of raw.split('\n')) {
+      const trimmed = line.trim();
+      if (trimmed === '' || trimmed.startsWith('#')) continue;
+      const idx = line.indexOf(':');
+      if (idx === -1) continue;
+      const key = line.slice(0, idx).trim();
+      let value: string = line.slice(idx + 1).trim();
+      if (
+        (value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))
+      ) {
+        value = value.slice(1, -1);
+      }
+      if (key === 'wave') {
+        const n = Number(value);
+        out[key] = Number.isFinite(n) ? n : value;
+      } else {
+        out[key] = value;
+      }
+    }
+    const fm: Frontmatter = {
+      pipeline_state_version: String(out['pipeline_state_version'] ?? '1.0'),
+      stage: String(out['stage'] ?? ''),
+      cycle: String(out['cycle'] ?? ''),
+      wave: typeof out['wave'] === 'number' ? (out['wave'] as number) : 1,
+      started_at: String(out['started_at'] ?? ''),
+      last_checkpoint: String(out['last_checkpoint'] ?? ''),
+    };
+    for (const [k, v] of Object.entries(out)) {
+      if (!(k in fm)) fm[k] = v;
+    }
+    return fm;
+  } catch {
+    return null;
+  }
+}
+
+function frontmatterEqual(a: Frontmatter, b: Frontmatter): boolean {
+  const ak = Object.keys(a);
+  const bk = Object.keys(b);
+  if (ak.length !== bk.length) return false;
+  for (const k of ak) {
+    if (!(k in b)) return false;
+    // Cheap comparison; strings & numbers only in this surface.
+    if (a[k] !== b[k]) {
+      // Handle the string/number coerce edge for `wave`.
+      if (String(a[k]) !== String(b[k])) return false;
+    }
+  }
+  return true;
+}
+
+function canonicalFrontmatter(fm: Frontmatter): string {
   // Emit in a stable order: template-defined keys first, then anything
   // else in insertion order. This keeps fresh → serialize byte-stable.
   const fixed = [
