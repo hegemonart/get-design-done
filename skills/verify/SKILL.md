@@ -28,13 +28,14 @@ Run at stage entry, after reading STATE.md:
 ```
 Step P1 — ToolSearch check:
   ToolSearch({ query: "Claude_Preview", max_results: 5 })
-  → Empty result      → preview: not_configured  (skip all Preview steps in this stage)
+  → Empty result      → preview: not_loaded  (MCP not registered — skip all Preview steps in this stage)
   → Non-empty result  → proceed to Step P2
 
 Step P2 — Live tool call:
   call mcp__Claude_Preview__preview_list
-  → Success           → preview: available
-  → Error             → preview: unavailable
+  → Success                               → preview: available
+  → Error containing "permission"/blocked → preview: permission_denied
+  → Any other error                       → preview: unreachable
 
 Write preview status to .design/STATE.md <connections>.
 ```

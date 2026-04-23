@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.14.5] — 2026-04-23
+
+### Fixed — Preview MCP silently skipped in verify even when available ([#19](https://github.com/hegemonart/get-design-done/issues/19))
+
+`design-verifier` was spawned with `tools: Read, Write, Bash, Grep, Glob` only. The verify skill's orchestrator-level probe correctly classified the session as `preview: available` and wrote it to `STATE.md`, but the subagent's tool allowlist blocked every `mcp__Claude_Preview__*` call, causing Phase 4B to silently skip screenshot capture and leave all `? VISUAL` heuristic flags unresolved.
+
+**Fix:** Added six Preview MCP tools to `design-verifier`'s `tools:` frontmatter — `preview_list`, `preview_navigate`, `preview_screenshot`, `preview_eval`, `preview_snapshot`, `preview_inspect` — so Phase 4B runs in the same permission context as the probe.
+
+**Probe hardening:** The availability probe in `connections/preview.md` and `skills/verify/SKILL.md` now distinguishes three failure modes instead of collapsing them to `not_configured`/`unavailable`:
+
+| New status | Meaning |
+|---|---|
+| `not_loaded` | ToolSearch empty — MCP not registered in this session |
+| `permission_denied` | ToolSearch found the tool but the live call was rejected by the tool permission layer |
+| `unreachable` | Tool loaded but live call errored for a non-permission reason (no dev server, timeout) |
+
+The Phase 4B gate in `design-verifier` skips on all non-`available` statuses and emits a targeted message on `permission_denied` to aid diagnosis.
+
+`connections/preview.md` now documents the **execution-context requirement**: the probe and the `preview_*` calls must run in the same context; a parent-session probe does not transfer to a spawned subagent.
+
+---
+
 ## [1.14.4] — 2026-04-20
 
 ### Fixed — Figma MCP install URL was stale

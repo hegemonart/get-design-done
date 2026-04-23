@@ -1,7 +1,7 @@
 ---
 name: design-verifier
 description: Goal-backward verification of design outcomes against .design/STATE.md must-haves, NNG heuristics, and audit rubric. Returns pass result or structured gap list. Spawned by the verify stage.
-tools: Read, Write, Bash, Grep, Glob
+tools: Read, Write, Bash, Grep, Glob, mcp__Claude_Preview__preview_list, mcp__Claude_Preview__preview_navigate, mcp__Claude_Preview__preview_screenshot, mcp__Claude_Preview__preview_eval, mcp__Claude_Preview__preview_snapshot, mcp__Claude_Preview__preview_inspect
 color: green
 model: inherit
 default-tier: haiku
@@ -267,7 +267,7 @@ Record each response. For `no` responses, capture the user's issue description v
 
 ## Phase 4B — Screenshot Evidence (when preview: available)
 
-**Gate:** Skip this entire Phase 4B block if `preview` is `not_configured` or `unavailable` in STATE.md `<connections>`. The `? VISUAL` flags from Phase 3 remain as-is; mark them `[SKIPPED — browser not available]` and proceed to Phase 5.
+**Gate:** Skip this entire Phase 4B block if `preview` is `not_loaded`, `not_configured`, `permission_denied`, `unreachable`, or `unavailable` in STATE.md `<connections>`. The `? VISUAL` flags from Phase 3 remain as-is; mark them `[SKIPPED — browser not available]` and proceed to Phase 5. When skipping due to `permission_denied`, also log: `Preview MCP tools missing from agent allowlist — contact the pipeline maintainer.`
 
 **Step 1 — ToolSearch first:**
 

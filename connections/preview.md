@@ -67,16 +67,19 @@ All tools use the `mcp__Claude_Preview__` prefix.
 
 **Preview probe sequence:**
 
+> **Execution-context requirement:** The probe and the subsequent `preview_*` calls must run in the **same execution context**. If the probe runs in the orchestrator and the calls run inside a spawned subagent, the subagent's tool allowlist may block the calls even when the probe succeeds. Run the probe where the calls will actually happen, or ensure the spawned agent's `tools:` frontmatter includes `mcp__Claude_Preview__*` tools.
+
 ```
 Step P1 — ToolSearch check:
   ToolSearch({ query: "Claude_Preview", max_results: 5 })
-  → Empty result      → preview: not_configured  (skip all Preview steps)
+  → Empty result      → preview: not_loaded  (MCP not registered in this session — skip all Preview steps)
   → Non-empty result  → proceed to Step P2
 
 Step P2 — Live tool call:
   call mcp__Claude_Preview__preview_list
-  → Success (returns array, even empty)  → preview: available
-  → Error                                → preview: unavailable
+  → Success (returns array, even empty)       → preview: available
+  → Error containing "permission" or blocked  → preview: permission_denied
+  → Any other error                           → preview: unreachable
 ```
 
 Write the result to `.design/STATE.md <connections>` immediately after probing.
@@ -142,8 +145,9 @@ preview: available
 | Value | Meaning |
 |-------|---------|
 | `available` | `preview_list` returned a successful response (array, even empty) |
-| `unavailable` | Tool is in the session but errored (no running server, tool timeout, internal error) |
-| `not_configured` | ToolSearch returned empty for `Claude_Preview` — MCP not registered in this session |
+| `permission_denied` | Tool is in the session (ToolSearch found it) but the live call was rejected by the tool permission layer — likely missing from the agent's `tools:` frontmatter |
+| `unreachable` | Tool is in the session but the live call errored for a non-permission reason (no running server, timeout, internal error) |
+| `not_loaded` | ToolSearch returned empty for `Claude_Preview` — MCP not registered in this session |
 
 **Which stages probe vs. read:**
 
