@@ -101,6 +101,16 @@ That's it. The installer writes a `get-design-done` marketplace entry and enable
 
 On first Claude Code launch after install, a `SessionStart` bootstrap hook provisions the companion reference library `~/.claude/libs/awesome-design-md` (idempotent — subsequent sessions run `git pull --ff-only`).
 
+### First run — `/gdd:start` *(v1.14.7+)*
+
+```
+/gdd:start
+```
+
+Run this once in any frontend repo. The skill asks five short questions, scans your `components/` directory (with framework-aware fallback for `src/components/`, `app/components/`, `packages/ui/`, `apps/*/components/`), and writes `.design/START-REPORT.md` with three concrete findings — each with file:line evidence — plus one `best_first_proof` and a single suggested next command. Takes ≤5 minutes, never touches source code, and never enters the pipeline state machine.
+
+A one-line SessionStart nudge surfaces `/gdd:start` in fresh repos; run `/gdd:start --dismiss-nudge` to silence it per install.
+
 ### Non-interactive install (CI, Docker, scripts)
 
 ```bash
@@ -525,6 +535,7 @@ All commands use the `/gdd:` namespace.
 
 | Command | What it does |
 |---------|--------------|
+| `/gdd:start [--budget] [--skip-interview] [--dismiss-nudge]` | First-Run Proof Path — scans UI code, emits `.design/START-REPORT.md`, never enters pipeline state |
 | `/gdd:new-project [--name]` | Initialize project — PROJECT.md + STATE.md + cycle-1 |
 | `/gdd:new-cycle [<goal>]` | Start new design cycle |
 | `/gdd:complete-cycle [<note>]` | Archive cycle to `.design/archive/cycle-N/` |

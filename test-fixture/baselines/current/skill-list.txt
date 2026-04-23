@@ -47,6 +47,7 @@ sketch-wrap-up
 skill-manifest
 spike
 spike-wrap-up
+start
 stats
 style
 synthesize

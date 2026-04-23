@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "detected": {
+    "kind": "src-components",
+    "path": "src/components",
+    "framework": "vite",
+    "design_system": "tailwind",
+    "confidence": 0.85
+  },
+  "interview": {
+    "pain": "buttons feel jittery on press",
+    "target_area": "src/components",
+    "budget": "balanced",
+    "framework_confirmed": true,
+    "design_system_confirmed": true,
+    "figma_workflow": "skip"
+  },
+  "scan": {
+    "findings": [
+      {
+        "id": "F1",
+        "category": "transition-all",
+        "title": "Tailwind bare `transition` (implicitly all)",
+        "file": "src/components/Card.tsx",
+        "line": 6,
+        "severity": "minor",
+        "evidence": "<div className=\"rounded-lg border p-4 transition\" ...>",
+        "visibleDelta": true,
+        "blastRadius": "single-file"
+      },
+      {
+        "id": "F2",
+        "category": "scale-on-press-drift",
+        "title": "Scale-on-press drift from canonical 0.96",
+        "file": "src/components/Badge.tsx",
+        "line": 8,
+        "severity": "minor",
+        "evidence": "active:scale-97",
+        "visibleDelta": true,
+        "blastRadius": "single-file"
+      },
+      {
+        "id": "F3",
+        "category": "tinted-image-outline",
+        "title": "Tinted outline on <img>",
+        "file": "src/components/Thumb.tsx",
+        "line": 2,
+        "severity": "minor",
+        "evidence": "outline-slate-200 on <img>",
+        "visibleDelta": true,
+        "blastRadius": "single-file"
+      }
+    ],
+    "bestFirstProofId": "F1",
+    "partial": false,
+    "inspected": { "files": 3, "root": "/tmp/fixture/src/components" }
+  },
+  "generated_at": "2026-04-24T01:00:00Z"
+}

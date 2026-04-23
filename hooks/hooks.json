@@ -16,6 +16,14 @@
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/update-check.sh\""
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/first-run-nudge.sh\""
+          }
+        ]
       }
     ],
     "PreToolUse": [

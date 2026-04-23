@@ -45,6 +45,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `pause [context]` | `get-design-done:gdd-pause` | Write session handoff to `.design/HANDOFF.md` |
 | `resume` | `get-design-done:gdd-resume` | Restore session context from `.design/HANDOFF.md` and route to next step |
 | **Lifecycle** | | |
+| `start [--budget <t>] [--skip-interview] [--dismiss-nudge]` | `get-design-done:start` | First-Run Proof Path — scans UI code, returns one concrete first fix. No STATE.md writes. |
 | `new-project [--name <n>]` | `get-design-done:gdd-new-project` | Initialize project — PROJECT.md + STATE.md + cycle-1 |
 | `new-cycle [<goal>]` | `get-design-done:gdd-new-cycle` | Start a new design cycle; writes `.design/CYCLES.md` entry |
 | `complete-cycle [<note>]` | `get-design-done:gdd-complete-cycle` | Archive cycle artifacts to `.design/archive/cycle-N/`; reset STATE.md |
@@ -205,6 +206,7 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 /gdd:pause              → Skill("get-design-done:gdd-pause")
 /gdd:resume          → Skill("get-design-done:gdd-resume")
 # --- Lifecycle ---
+/gdd:start           → Skill("get-design-done:start")          # leaf command, no STATE.md
 /gdd:new-project     → Skill("get-design-done:gdd-new-project")
 /gdd:new-cycle       → Skill("get-design-done:gdd-new-cycle")
 /gdd:complete-cycle  → Skill("get-design-done:gdd-complete-cycle")

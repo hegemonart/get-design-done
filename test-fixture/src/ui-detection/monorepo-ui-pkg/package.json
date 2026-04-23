@@ -1,0 +1,9 @@
+{
+  "name": "fixture-monorepo-ui-pkg",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "dependencies": {
+    "react": "18.2.0"
+  }
+}

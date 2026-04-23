@@ -1,0 +1,9 @@
+{
+  "name": "fixture-monorepo-apps",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "dependencies": {
+    "react": "18.2.0"
+  }
+}

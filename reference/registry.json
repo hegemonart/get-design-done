@@ -29,6 +29,7 @@
     { "name": "model-tiers",             "path": "reference/model-tiers.md",             "type": "data",                           "description": "Per-agent default tier map and rationale" },
     { "name": "figma-sandbox",           "path": "reference/figma-sandbox.md",           "type": "defaults",                       "description": "Four Figma plugin-sandbox pitfalls encoded as hard rules" },
     { "name": "mcp-budget.default",      "path": "reference/mcp-budget.default.json",    "type": "defaults",                       "description": "Default MCP per-task budget (calls + consecutive-timeout thresholds)" },
-    { "name": "protected-paths.default", "path": "reference/protected-paths.default.json","type": "defaults",                       "description": "Default glob list the plugin refuses to Edit/Write/mutate-via-Bash without override" }
+    { "name": "protected-paths.default", "path": "reference/protected-paths.default.json","type": "defaults",                       "description": "Default glob list the plugin refuses to Edit/Write/mutate-via-Bash without override" },
+    { "name": "start-interview",         "path": "reference/start-interview.md",         "type": "preamble",                       "description": "Locked 5-question interview consumed by /gdd:start (Phase 14.7) — pain, target-area, budget, framework/DS confirmation, Figma/canvas workflow" }
   ]
 }

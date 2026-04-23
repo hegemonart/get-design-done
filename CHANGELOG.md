@@ -4,6 +4,31 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.14.8] — 2026-04-24
+
+### Added — Phase 14.7 First-Run Proof Path
+
+A new user can now install the plugin, run one command, and see GDD inspect their own UI code in under five minutes — with a concrete "first fix" pointer on the way out.
+
+- **`/gdd:start` skill** (`skills/start/SKILL.md`) — leaf command with a locked 5-question interview (`reference/start-interview.md`) that collects pain hint, target-area confirmation, budget preference, framework/design-system confirmation, and visual-workflow selection. Writes only `.design/START-REPORT.md` and a temporary `.design/.start-context.json`; never mutates `STATE.md`, `config.json`, or source files.
+- **`detect-ui-root` helper** (`scripts/lib/detect-ui-root.cjs`) — deterministic priority-ordered detector that identifies the user's UI surface across `packages/ui/src/`, `apps/*/components/`, Next.js app-router `app/components/`, Vite `src/components/`, CRA `src/components/`, root `components/`, and Svelte/Remix `src/routes/`. Backend-only repos get a clean diagnostic and exit with zero `.design/` footprint.
+- **`start-findings-engine` helper** (`scripts/lib/start-findings-engine.cjs`) — read-only scanner with seven regex-based detectors (transition-all, will-change-all, tinted-image-outline, scale-on-press-drift, same-radius-nested, missing-reduced-motion-guard, non-root-font-smoothing), budget-bounded walk (fast / balanced / thorough), and a deterministic **safe-fix rubric** that picks exactly one `best_first_proof` per report.
+- **`design-start-writer` agent** (`agents/design-start-writer.md`) — Haiku-tier writer with `allowed-write-paths: [.design/START-REPORT.md]`. Output contract locks seven H2 sections (`What I inspected`, `Three findings`, `Best first proof`, `Suggested next command`, `Visual Proof Readiness`, `Full pipeline path`, `Connections / writeback optional`) plus one trailing machine-readable JSON block that future `/gdd:fast` / `/gdd:do` invocations can consume.
+- **First-run nudge** (`hooks/first-run-nudge.sh`) — SessionStart hook that surfaces one restrained line pointing at `/gdd:start` only when `.design/config.json` is absent, no dismissal flag exists, and no active pipeline stage is in progress. Per-install dismissal lives at `~/.claude/gdd-nudge-dismissed`. Silent-on-failure posture inherited from Phase 13.3.
+- **Regression fixtures** at `test-fixture/baselines/phase-14.7/` (context-input.json, expected-report-shape.md) and `test-fixture/src/ui-detection/` covering Next.js, Vite, CRA, Remix, two monorepo shapes, backend-only, and empty-repo paths.
+- **Plugin keywords** extended with `onboarding`, `first-run`, `demo`, `proof-path`.
+
+### Non-breaking
+
+Phase 15 target version unchanged (`v1.15.0`). `v1.14.6` remains reserved for Phase 14.6 (test-coverage-completion); this release does not block or reshape that phase.
+
+### Scope notes
+
+- The first-run report **recommends** commands; it never auto-applies fixes. `/gdd:fast` suggestions are printed as ready-to-run text.
+- `/gdd:do` is intentionally **not** surfaced as a suggested command in v1.14.8 (revisit at Phase 15 per Phase 14.7 D-05).
+
+---
+
 ## [1.14.7] — 2026-04-24
 
 ### Phase 14.6 — Test Coverage Completion (Phase 12 Wave C closeout)
