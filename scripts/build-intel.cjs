@@ -435,6 +435,26 @@ async function main() {
 
   console.log(`  discovered ${allFiles.length} files, ${changed.length} changed`);
 
+  // Phase 14.5: validate reference registry round-trip whenever any reference/*
+  // changed (or on --force). Fail the build on dangling/missing/duplicate.
+  const referenceChanged = FORCE || changed.some(f => f.startsWith('reference/'));
+  if (referenceChanged) {
+    try {
+      const { validateRegistry } = require(path.join(__dirname, 'lib', 'reference-registry.cjs'));
+      const v = validateRegistry({ cwd: ROOT });
+      if (!v.ok) {
+        console.error('build-intel: reference registry validation failed:');
+        if (v.missingInRegistry.length) console.error('  missing in registry:', v.missingInRegistry);
+        if (v.danglingInRegistry.length) console.error('  dangling entries:', v.danglingInRegistry);
+        if (v.duplicates.length) console.error('  duplicate entries:', v.duplicates);
+        process.exit(1);
+      }
+      console.log('  reference registry: ok');
+    } catch (err) {
+      if (err && err.code !== 'MODULE_NOT_FOUND') throw err;
+    }
+  }
+
   // Always rebuild files slice when any file changed
   const filesSlice = buildFilesSlice(allFiles);
   writeSlice('files.json', filesSlice);
