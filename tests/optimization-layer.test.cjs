@@ -18,7 +18,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { REPO_ROOT, scaffoldDesignDir, readFrontmatter } = require('./helpers.cjs');
+const { REPO_ROOT, scaffoldDesignDir, readFrontmatter } = require('./helpers.ts');
 
 const COSTS_JSONL = path.join(
   REPO_ROOT,

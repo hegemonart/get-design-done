@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
 const BASELINE_DIR = path.join(REPO_ROOT, 'test-fixture', 'baselines', 'current');
 

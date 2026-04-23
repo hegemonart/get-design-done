@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { scaffoldDesignDir } = require('./helpers.cjs');
+const { scaffoldDesignDir } = require('./helpers.ts');
 
 test('atomic-write: write-then-rename pattern produces intact file', () => {
   const { designDir, cleanup } = scaffoldDesignDir();

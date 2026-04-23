@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { scaffoldDesignDir } = require('./helpers.cjs');
+const { scaffoldDesignDir } = require('./helpers.ts');
 
 /**
  * Parse task blocks from a DESIGN-PLAN.md-shaped markdown string.

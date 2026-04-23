@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { readFrontmatter } = require('../tests/helpers.cjs');
+const { readFrontmatter } = require('../tests/helpers.ts');
 
 const REQUIRED_FIELDS = [
   'name',

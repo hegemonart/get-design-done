@@ -21,7 +21,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
 const HOOK = path.join(REPO_ROOT, 'hooks/gdd-read-injection-scanner.js');
 

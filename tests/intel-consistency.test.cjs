@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { scaffoldDesignDir } = require('./helpers.cjs');
+const { scaffoldDesignDir } = require('./helpers.ts');
 
 /**
  * Given an intel slice object and a fileExistsFn(path) predicate, remove
