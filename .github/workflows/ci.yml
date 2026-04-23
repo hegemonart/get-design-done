@@ -44,8 +44,11 @@ jobs:
             '**/*.md'
           fail: true
 
+      - name: Install dev dependencies
+        run: npm ci --no-audit --no-fund
+
       - name: Validate agent frontmatter
-        run: node scripts/validate-frontmatter.cjs agents/
+        run: npm run validate:frontmatter
 
       - name: Detect stale references
         run: node scripts/detect-stale-refs.cjs
@@ -62,8 +65,14 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install dev dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
       - name: Validate JSON schemas
-        run: node scripts/validate-schemas.cjs
+        run: npm run validate:schemas
 
       - name: Plugin validate (schema-only fallback)
         run: |
@@ -116,6 +125,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
       - name: Run tests
         run: npm test
 
@@ -156,6 +167,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
 
       - name: Agent size-budget gate
         run: |
