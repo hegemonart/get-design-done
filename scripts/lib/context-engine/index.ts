@@ -7,6 +7,7 @@ import { Buffer } from 'node:buffer';
 import type { Stage, ContextFile, ContextBundle, BundleOptions } from './types.ts';
 import { MANIFEST, manifestFor, readFileRaw } from './manifest.ts';
 import { truncateMarkdown } from './truncate.ts';
+import { getLogger } from '../logger/index.ts';
 
 /** Default 8 KiB truncation threshold. */
 const DEFAULT_THRESHOLD_BYTES = 8192;
@@ -66,12 +67,29 @@ export function buildContextBundle(stage: Stage, opts: BundleOptions = {}): Cont
     total_bytes += content_bytes;
   }
 
-  return {
+  const bundle: ContextBundle = {
     stage,
     files,
     total_bytes,
     built_at: new Date().toISOString(),
   };
+
+  // Diagnostic emit. Plan 21-04 Task 4: context-engine consumes the
+  // structured logger so CI and the E2E harness can observe bundle
+  // construction without screen-scraping stdout.
+  try {
+    getLogger().debug('bundle built', {
+      stage,
+      files: files.length,
+      total_bytes,
+    });
+  } catch {
+    // getLogger() is defensive; any failure here must not block bundle
+    // construction. Callers depend on buildContextBundle returning a
+    // valid ContextBundle.
+  }
+
+  return bundle;
 }
 
 /**
