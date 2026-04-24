@@ -2,6 +2,7 @@
 chromatic.md
 claude-design.md
 connections.md
+design-corpora.md
 figma.md
 graphify.md
 magic-patterns.md

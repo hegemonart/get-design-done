@@ -2,6 +2,7 @@ add-backlog
 analyze-dependencies
 apply-reflections
 audit
+benchmark
 brief
 cache-manager
 check-update

@@ -259,6 +259,108 @@
       "path": "reference/data/google-fonts.csv",
       "type": "data",
       "description": "Google Fonts catalog (representative sample of 1923-row UUPM data set)"
+    },
+    {
+      "name": "components-README",
+      "path": "reference/components/README.md",
+      "type": "taxonomy",
+      "description": "Component Benchmark Corpus index — Wave 1–5 tables, coverage summary, harvesting procedure"
+    },
+    {
+      "name": "components-TEMPLATE",
+      "path": "reference/components/TEMPLATE.md",
+      "type": "schema",
+      "description": "Locked 12-section spec shape for component benchmarks (Purpose → Failing example)"
+    },
+    {
+      "name": "component-accordion",
+      "path": "reference/components/accordion.md",
+      "type": "component-spec",
+      "description": "Accordion component spec — h2–h6 header, aria-expanded on trigger, CSS grid height animation"
+    },
+    {
+      "name": "component-button",
+      "path": "reference/components/button.md",
+      "type": "component-spec",
+      "description": "Button component spec — primary/secondary/ghost/destructive/icon-only; WAI-ARIA Enter/Space contract"
+    },
+    {
+      "name": "component-card",
+      "path": "reference/components/card.md",
+      "type": "component-spec",
+      "description": "Card component spec — stretched-link pattern, article semantics, nested interactive anti-pattern"
+    },
+    {
+      "name": "component-checkbox",
+      "path": "reference/components/checkbox.md",
+      "type": "component-spec",
+      "description": "Checkbox component spec — fieldset+legend, indeterminate state, aria-checked=mixed"
+    },
+    {
+      "name": "component-drawer",
+      "path": "reference/components/drawer.md",
+      "type": "component-spec",
+      "description": "Drawer component spec — focus trap, swipe-to-close, nav vs content role distinction"
+    },
+    {
+      "name": "component-input",
+      "path": "reference/components/input.md",
+      "type": "component-spec",
+      "description": "Input component spec — placeholder-as-label anti-pattern, aria-describedby error linking"
+    },
+    {
+      "name": "component-label",
+      "path": "reference/components/label.md",
+      "type": "component-spec",
+      "description": "Label component spec — 4 association methods, .sr-only pattern, legend for groups"
+    },
+    {
+      "name": "component-link",
+      "path": "reference/components/link.md",
+      "type": "component-spec",
+      "description": "Link component spec — a[href] vs button boundary, WCAG 1.4.1 underline, rel=noopener"
+    },
+    {
+      "name": "component-modal-dialog",
+      "path": "reference/components/modal-dialog.md",
+      "type": "component-spec",
+      "description": "Modal dialog spec — focus trap, Escape contract, aria-modal, aria-labelledby, scroll-lock"
+    },
+    {
+      "name": "component-popover",
+      "path": "reference/components/popover.md",
+      "type": "component-spec",
+      "description": "Popover spec — Floating UI middlewares, non-modal, aria-expanded+aria-controls"
+    },
+    {
+      "name": "component-radio",
+      "path": "reference/components/radio.md",
+      "type": "component-spec",
+      "description": "Radio component spec — arrow-key auto-advance, Tab-as-group-unit, single-radio anti-pattern"
+    },
+    {
+      "name": "component-select-combobox",
+      "path": "reference/components/select-combobox.md",
+      "type": "component-spec",
+      "description": "Select/combobox spec — WAI-ARIA listbox + combobox contracts, aria-activedescendant"
+    },
+    {
+      "name": "component-switch",
+      "path": "reference/components/switch.md",
+      "type": "component-spec",
+      "description": "Switch component spec — role=switch, spring thumb, pill track, immediate-action rule"
+    },
+    {
+      "name": "component-tabs",
+      "path": "reference/components/tabs.md",
+      "type": "component-spec",
+      "description": "Tabs component spec — roving tabindex, arrow-key nav, automatic vs manual activation"
+    },
+    {
+      "name": "component-tooltip",
+      "path": "reference/components/tooltip.md",
+      "type": "component-spec",
+      "description": "Tooltip spec — no interactive content, hover+focus trigger, 300ms delay, aria-describedby"
     }
   ]
 }
