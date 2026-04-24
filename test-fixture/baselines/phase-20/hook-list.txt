@@ -1,0 +1,5 @@
+budget-enforcer.ts
+context-exhaustion.ts
+gdd-read-injection-scanner.ts
+hooks.json
+update-check.sh

@@ -1,0 +1,57 @@
+[
+  {
+    "name": "gdd_state__add_blocker",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/add_blocker.schema.json",
+    "schemaHash": "8f1b5207756a92fc4f95aa14ab24b7921a25f35fa89924f779fd3ba77f353cfa"
+  },
+  {
+    "name": "gdd_state__add_decision",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/add_decision.schema.json",
+    "schemaHash": "ad22870a77804450bcaf8e1e8590db5af6a34f06768fd0231936ebf6e1b8ed9d"
+  },
+  {
+    "name": "gdd_state__add_must_have",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/add_must_have.schema.json",
+    "schemaHash": "f45c77afa7d0ad523d55e2f3aaa7a1372146f95e8035d663d073d15396682215"
+  },
+  {
+    "name": "gdd_state__checkpoint",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/checkpoint.schema.json",
+    "schemaHash": "18c16303d57f09cb4eadfc386cb32f949fbf6af1e31b638d68ab899c8a0a2b23"
+  },
+  {
+    "name": "gdd_state__frontmatter_update",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/frontmatter_update.schema.json",
+    "schemaHash": "52522b215aa8aa593bb5c0829e85ef8843a645f11143549047a8526e00b82509"
+  },
+  {
+    "name": "gdd_state__get",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/get.schema.json",
+    "schemaHash": "420bf37c48c84dc64f070a6f0d6ae4bbde92e61ba14c05313c850da3524e3dc9"
+  },
+  {
+    "name": "gdd_state__probe_connections",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/probe_connections.schema.json",
+    "schemaHash": "c7ea84bf2e103d71f26361229b67e7d15bc2f92ddd494e4afeef67ef514ab57f"
+  },
+  {
+    "name": "gdd_state__resolve_blocker",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/resolve_blocker.schema.json",
+    "schemaHash": "1a6cd884b5c4eefa60c2f4d45bc37e0b1961433d82799376cecfd271f59af52e"
+  },
+  {
+    "name": "gdd_state__set_status",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/set_status.schema.json",
+    "schemaHash": "53a9be08e5aebf83afba99f1efbcc70ec6bf12d9e75a321ac2a65b4b84f588c2"
+  },
+  {
+    "name": "gdd_state__transition_stage",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/transition_stage.schema.json",
+    "schemaHash": "7d84503f5969ab8e52b024cab6fb29dd75208630bd787e55254028b905142ca0"
+  },
+  {
+    "name": "gdd_state__update_progress",
+    "schemaPath": "scripts/mcp-servers/gdd-state/schemas/update_progress.schema.json",
+    "schemaHash": "aed72a3f20d0d493aae1d05faf03913efc2182899bd0f013ea66de0af79ada28"
+  }
+]
