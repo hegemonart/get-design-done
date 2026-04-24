@@ -2,7 +2,7 @@
 name: gdd-brief
 description: "Design intake — captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md (Stage 1 of 5)"
 argument-hint: "[--re-brief to redo intake on existing project]"
-tools: Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get
+tools: Read, Write, AskUserQuestion
 ---
 
 # Get Design Done — Brief
@@ -56,21 +56,12 @@ Write the brief with these sections, preserving any pre-existing answers:
 <answer>
 ```
 
-## Step 4 — Bootstrap STATE.md (if missing)
+## Step 4 — Update STATE.md
 
-<!-- BOOTSTRAP EXCEPTION: STATE.md does not exist yet — MCP tools require it to exist. Direct Write is intentional. All subsequent mutations use MCP. -->
-
-If `.design/STATE.md` does not exist, copy the template block from `reference/STATE-TEMPLATE.md` (between `==== BEGIN TEMPLATE ====` and `==== END TEMPLATE ====`) to `.design/STATE.md` via `Write`. Leave the `<ISO 8601 timestamp>` placeholders in-place — Step 5 stamps them via MCP. If STATE.md already exists, skip to Step 5.
-
-## Step 5 — Commit STATE.md initialization
-
-With `.design/STATE.md` seeded from the template:
-
-1. Stamp timestamps + cycle id: call `mcp__gdd_state__frontmatter_update` with `patch: { started_at: <ISO>, last_checkpoint: <ISO>, cycle: <cycle-id> }`.
-2. Mark brief progress: call `mcp__gdd_state__update_progress` with `task_progress: "5/5"`, `status: "brief_complete"`.
-3. Set handoff status: call `mcp__gdd_state__set_status` with `status: "brief_complete"`.
-
-Do NOT call `mcp__gdd_state__transition_stage` from brief — explore calls it on entry, keeping the transition atomic with the stage that owns the new state.
+- If `.design/STATE.md` does not exist, create it from `reference/STATE-TEMPLATE.md`.
+- Set frontmatter `stage: explore` (next stage).
+- Update `last_checkpoint` to now.
+- Write STATE.md.
 
 ## After Writing
 
