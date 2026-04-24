@@ -389,6 +389,29 @@ After each design cycle, `/gdd:reflect` reads `.design/learnings/`, `.design/tel
 
 ---
 
+## Component Benchmark Corpus
+
+Per-component design specifications harvested from 18 major design systems and synthesized into a locked, agent-consumable format. Every spec is ≤350 lines, greppable, diff-friendly, and cross-linked to `reference/anti-patterns.md`.
+
+**Wave 1 — Inputs (v1.16.0)**: Button · Input · Select/Combobox · Checkbox · Radio · Switch · Link · Label
+
+**Wave 2 — Containers (v1.16.0)**: Card · Modal/Dialog · Drawer/Sheet · Popover · Tooltip · Accordion · Tabs
+
+**Wave 3–5 — Feedback, Navigation, Data** (Phase 17): Toast · Alert · Progress · Skeleton · Badge · Chip · Breadcrumb · Pagination · Stepper · Table/Grid · Date Picker · File Upload · Rich Text · Virtualized List
+
+Each spec includes: WAI-ARIA keyboard contracts (verbatim), convergence analysis (NORM = ≥4 systems agree · DIVERGE = systems differ), grep signatures for CI detection, and a failing-example block.
+
+```bash
+/gdd:benchmark button                  # harvest + synthesize a single spec
+/gdd:benchmark --wave 1                # run all Wave 1 specs
+/gdd:benchmark --list                  # coverage table
+/gdd:benchmark --refresh modal-dialog  # re-harvest after design-system update
+```
+
+Sources: `connections/design-corpora.md` — Material 3, Apple HIG, Radix, WAI-ARIA APG, shadcn/ui, Polaris, Carbon, Fluent 2, Primer, Atlassian, Ant Design, Mantine, Chakra, Base Web, Nord, Spectrum, Lightning, Gestalt (Pinterest).
+
+---
+
 ## Authority Watcher
 
 Subscribe to a curated whitelist of design-authority sources, diff it against a snapshot, and feed only genuinely new, classified entries into the Self-Improvement reflector. Authority monitoring — not trend watching.

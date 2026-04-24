@@ -37,7 +37,8 @@
               "emotional-design",
               "experience",
               "palette",
-              "style-vocabulary"
+              "style-vocabulary",
+              "component-spec"
             ]
           },
           "tier": { "enum": ["L0", "L1", "L2"] },
