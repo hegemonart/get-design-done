@@ -26,7 +26,8 @@
     "LICENSE"
   ],
   "bin": {
-    "get-design-done": "./scripts/install.cjs"
+    "get-design-done": "./scripts/install.cjs",
+    "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts"
   },
   "publishConfig": {
     "access": "public",
