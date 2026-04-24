@@ -4,6 +4,7 @@ claude-design.md
 connections.md
 design-corpora.md
 figma.md
+gdd-state.md
 graphify.md
 magic-patterns.md
 paper-design.md

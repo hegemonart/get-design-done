@@ -10,6 +10,7 @@ This directory contains connection specifications for external tools and MCPs th
 
 | Connection | Status | Spec File | Notes |
 |-----------|--------|-----------|-------|
+| gdd-state | Active | [`connections/gdd-state.md`](connections/gdd-state.md) | Local stdio MCP shipped with the plugin; required for STATE.md mutation in Phase 20+ (skills fall back to direct module import when not registered) |
 | Figma | Active | [`connections/figma.md`](connections/figma.md) | Auto-detects any Figma MCP variant (remote reads+writes, desktop reads-only); prefix resolved at probe time |
 | Refero | Active | [`connections/refero.md`](connections/refero.md) | Uses `mcp__refero__*` tools (verify names via ToolSearch) |
 | Preview | Active | [`connections/preview.md`](connections/preview.md) | Uses `mcp__Claude_Preview__*` tools |
@@ -31,6 +32,7 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 
 | Connection | scan | discover | plan | design | verify | canvas | generator |
 |-----------|------|----------|------|--------|--------|--------|-----------|
+| gdd-state | STATE mutation (init position, probe_connections, add_decision) | STATE mutation (add_decision, add_must_have, transition gate) | STATE mutation (locked decisions, must_haves, transition gate) | STATE mutation (update_progress, resolve_blocker, transition gate) | STATE mutation (must_have pass/fail, add_blocker, set_status) | — | — |
 | Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | write tokens/annotations/Code Connect via `use_figma` (FWR-01..04) | — | — | — |
 | Refero | — | reference search via `mcp__refero__search`; fallback → awesome-design-md (CONN-05) | — | — | — | — | — |
 | Preview | — | — | — | — | screenshots for `? VISUAL` checks (VIS-02) | — | — |
@@ -227,6 +229,7 @@ To add a new connection to the pipeline:
 - `connections/` is infrastructure scaffolding introduced in Phase 1. Stage integration (wiring detection and graceful degradation into each stage) is Phase 2 work.
 - Phase 8 added five new active connections. Linear and GitHub remain planned for a future phase.
 - Phase 14 added four AI-native design tool connections (paper.design, pencil.dev, 21st.dev, Magic Patterns) and the canvas/generator capability columns.
+- Phase 20 added `gdd-state` — a local stdio MCP server shipped with the plugin that owns STATE.md mutation across every pipeline stage. Unlike external connections, `gdd-state` is required (fallback to direct module import preserves mutation safety but loses event telemetry). See [`connections/gdd-state.md`](connections/gdd-state.md).
 - The capability matrix columns map to the five pipeline stages: `scan | discover | plan | design | verify`, plus `canvas` and `generator` sub-categories.
 
 ---
