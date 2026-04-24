@@ -42,6 +42,7 @@ import type {
   AuthoritySnapshotSchema,
   EventsSchema,
   McpGddStateToolsSchema,
+  BudgetSchema,
 } from '../reference/schemas/generated.js';
 
 export type {
@@ -53,6 +54,7 @@ export type {
   AuthoritySnapshotSchema,
   EventsSchema,
   McpGddStateToolsSchema,
+  BudgetSchema,
 };
 
 /**
@@ -151,6 +153,17 @@ export const PAIRS: readonly Pair[] = [
     // schemas live under scripts/mcp-servers/gdd-state/schemas/ and are
     // consumed directly by the server. Schema-compile only here so the
     // Draft-07 declaration stays valid as tools evolve. See Plan 20-05.
+    data: null,
+    required: false,
+  },
+  {
+    name: 'budget',
+    schema: 'reference/schemas/budget.schema.json',
+    // .design/budget.json is runtime-only (created by scripts/bootstrap.sh
+    // on first session if absent, per D-12). It's gitignored under .design/
+    // so the data file isn't tracked — schema-compile only here. The
+    // budget-enforcer.ts hook consumes BudgetSchema from generated.d.ts at
+    // type-check time regardless of file presence. See Plan 20-13.
     data: null,
     required: false,
   },

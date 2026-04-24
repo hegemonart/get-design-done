@@ -27,6 +27,42 @@ export interface Entry {
 
 export type AuthoritySnapshotSchema = AuthoritySnapshot;
 
+// ---- budget.schema.json ----
+/**
+ * Shape of .design/budget.json — the Phase 10.1 optimization-layer budget governance file. Consumed by hooks/budget-enforcer.ts on every PreToolUse:Agent spawn. Bootstrap writes the Default Config from reference/config-schema.md if the file is missing.
+ */
+export interface DesignBudgetJson {
+  /**
+   * Hard ceiling per agent spawn (USD). Breach under enforcement_mode=enforce triggers D-02 block.
+   */
+  per_task_cap_usd?: number;
+  /**
+   * Cumulative ceiling across all spawns within the current phase (USD). Read from .design/STATE.md frontmatter `phase:` field.
+   */
+  per_phase_cap_usd?: number;
+  /**
+   * Per-agent tier override map (agent-name -> tier). Wins over agent frontmatter default-tier per D-04.
+   */
+  tier_overrides?: {
+    [k: string]: 'haiku' | 'sonnet' | 'opus';
+  };
+  /**
+   * When true, hook silently rewrites tier -> haiku at 80% of per_task_cap_usd per D-03; logged as tier_downgraded: true in telemetry.
+   */
+  auto_downgrade_on_cap?: boolean;
+  /**
+   * TTL (seconds) driving .design/cache-manifest.json entry expiry per D-08 Layer B. Default 3600.
+   */
+  cache_ttl_seconds?: number;
+  /**
+   * D-11 enforcement policy. enforce = block + auto-downgrade; warn = print warnings but allow spawn; log = advisory-only telemetry without gating.
+   */
+  enforcement_mode?: 'enforce' | 'warn' | 'log';
+  [k: string]: unknown;
+}
+
+export type BudgetSchema = DesignBudgetJson;
+
 // ---- config.schema.json ----
 /**
  * Shape of .design/config.json — model profile and parallelism settings per reference/config-schema.md.
