@@ -110,5 +110,8 @@
   "skills": [
     "SKILL.md"
   ],
-  "hooks": "hooks/hooks.json"
+  "hooks": "hooks/hooks.json",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
 }

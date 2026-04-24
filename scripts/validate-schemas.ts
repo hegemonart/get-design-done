@@ -41,6 +41,7 @@ import type {
   IntelSchema,
   AuthoritySnapshotSchema,
   EventsSchema,
+  McpGddStateToolsSchema,
 } from '../reference/schemas/generated.js';
 
 export type {
@@ -51,6 +52,7 @@ export type {
   IntelSchema,
   AuthoritySnapshotSchema,
   EventsSchema,
+  McpGddStateToolsSchema,
 };
 
 /**
@@ -139,6 +141,16 @@ export const PAIRS: readonly Pair[] = [
     // is the schema subject, not the file. Schema-compile only here;
     // per-line structural discipline is enforced by the EventWriter at
     // runtime (Plan 20-06). See scripts/lib/event-stream/writer.ts.
+    data: null,
+    required: false,
+  },
+  {
+    name: 'mcp-gdd-state-tools',
+    schema: 'reference/schemas/mcp-gdd-state-tools.schema.json',
+    // The combined tool manifest is a codegen artifact — individual per-tool
+    // schemas live under scripts/mcp-servers/gdd-state/schemas/ and are
+    // consumed directly by the server. Schema-compile only here so the
+    // Draft-07 declaration stays valid as tools evolve. See Plan 20-05.
     data: null,
     required: false,
   },

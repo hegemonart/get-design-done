@@ -268,6 +268,40 @@ export interface ClaudeMarketplaceJson {
 
 export type MarketplaceSchema = ClaudeMarketplaceJson;
 
+// ---- mcp-gdd-state-tools.schema.json ----
+/**
+ * Combined manifest of all 11 gdd-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under scripts/mcp-servers/gdd-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.
+ */
+export interface McpGddStateTools {
+  tools: {
+    gdd_state__get: ToolSchemaEntry;
+    gdd_state__update_progress: ToolSchemaEntry;
+    gdd_state__transition_stage: ToolSchemaEntry;
+    gdd_state__add_blocker: ToolSchemaEntry;
+    gdd_state__resolve_blocker: ToolSchemaEntry;
+    gdd_state__add_decision: ToolSchemaEntry;
+    gdd_state__add_must_have: ToolSchemaEntry;
+    gdd_state__set_status: ToolSchemaEntry;
+    gdd_state__checkpoint: ToolSchemaEntry;
+    gdd_state__probe_connections: ToolSchemaEntry;
+    gdd_state__frontmatter_update: ToolSchemaEntry;
+  };
+}
+export interface ToolSchemaEntry {
+  /**
+   * JSON Schema fragment describing the tool's input parameters.
+   */
+  input: {};
+  /**
+   * JSON Schema fragment describing the tool's response envelope.
+   */
+  output: {
+    type: 'object';
+  };
+}
+
+export type McpGddStateToolsSchema = McpGddStateTools;
+
 // ---- plugin.schema.json ----
 /**
  * Shape of .claude-plugin/plugin.json — the plugin manifest consumed by Claude Code.

@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/gdd-state/schemas/probe_connections.schema.json",
+  "title": "GddStateProbeConnections",
+  "description": "MCP tool gdd_state__probe_connections — update <connections> map from probe results. Overwrites keys present in the input; does NOT delete keys not in the input. Emits state.mutation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "output"],
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["probe_results"],
+      "properties": {
+        "probe_results": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "status"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Connection name (e.g. \"figma\", \"refero\")."
+              },
+              "status": {
+                "type": "string",
+                "enum": ["available", "unavailable", "not_configured"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "updated": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Names of connection entries that were written."
+            },
+            "connections": {
+              "type": "object",
+              "description": "Full current <connections> map after update.",
+              "additionalProperties": {
+                "type": "string",
+                "enum": ["available", "unavailable", "not_configured"]
+              }
+            }
+          }
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["code", "message", "kind"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "kind": { "type": "string", "enum": ["validation", "state_conflict", "operation_failed", "unknown"] }
+          }
+        }
+      }
+    }
+  }
+}

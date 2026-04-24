@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/gdd-state/schemas/update_progress.schema.json",
+  "title": "GddStateUpdateProgress",
+  "description": "MCP tool gdd_state__update_progress — update <position> task_progress and/or status. Emits state.mutation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "output"],
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "anyOf": [
+        { "required": ["task_progress"] },
+        { "required": ["status"] }
+      ],
+      "properties": {
+        "task_progress": {
+          "type": "string",
+          "pattern": "^[0-9]+/[0-9]+$",
+          "description": "e.g. \"3/7\"."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["initialized", "in_progress", "completed", "blocked"]
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "position": {
+              "type": "object",
+              "description": "The updated <position> block."
+            }
+          }
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["code", "message", "kind"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "kind": { "type": "string", "enum": ["validation", "state_conflict", "operation_failed", "unknown"] }
+          }
+        }
+      }
+    }
+  }
+}
