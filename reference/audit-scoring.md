@@ -137,7 +137,6 @@ Auto-detect (grep):
 
 ### 7. Interaction & Motion (Weight: 5%)
 
-
 | Score | Criteria |
 |---|---|
 | 10 | `prefers-reduced-motion` implemented, motion purposeful, correct easing, no bounce, exit < enter |

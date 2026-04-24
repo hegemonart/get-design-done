@@ -226,8 +226,6 @@ grep -rEn "sm:|md:|lg:|xl:|\@media" src/ --include="*.tsx" --include="*.jsx" --i
 
 **What this measures:** Whether loading states, error states, empty states, and interactive feedback are all handled. Completeness of state coverage is the measure.
 
-
-
 **Audit method:**
 
 ```bash
