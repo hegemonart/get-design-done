@@ -40,7 +40,8 @@
               "style-vocabulary",
               "typography",
               "layout",
-              "performance"
+              "performance",
+              "component-spec"
             ]
           },
           "tier": { "enum": ["L0", "L1", "L2"] },

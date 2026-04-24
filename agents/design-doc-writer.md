@@ -61,6 +61,27 @@ The orchestrating stage (style command) supplies a `<required_reading>` block in
 
 ---
 
+## Component Spec Scaffold
+
+Before Step 1, check whether a benchmark spec exists for this component:
+
+```bash
+# component_name is title-cased (e.g., "Button") → convert to kebab-case for file lookup
+# e.g., "CommandPalette" → "command-palette", "RichTextEditor" → "rich-text-editor"
+ls reference/components/<kebab-name>.md 2>/dev/null
+```
+
+**If the spec exists**, read its **Purpose**, **Anatomy**, **Variants**, and **States** sections. Use them to:
+1. Pre-fill the DESIGN-STYLE doc's structure with the benchmark section headers and variant table
+2. Pull the "Benchmark Citations" entry from the spec and include: `> Benchmarked against: [systems list]`
+3. Fill in project-specific values from DESIGN-CONTEXT.md on top of the scaffold (brand tokens, chosen variants, etc.)
+
+**If no spec exists**, generate the DESIGN-STYLE doc from scratch as before — no change to existing behaviour.
+
+This step runs for both `pipeline_complete: true` and `pipeline_complete: false` modes.
+
+---
+
 ## Work
 
 ### Common Step 1 — Extract Design Tokens from Source File

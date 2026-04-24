@@ -397,6 +397,39 @@ After each design cycle, `/gdd:reflect` reads `.design/learnings/`, `.design/tel
 
 ---
 
+## Component Benchmark Corpus
+
+Per-component design specifications harvested from 18 major design systems and synthesized into a locked, agent-consumable format. Every spec is ≤350 lines, greppable, diff-friendly, and cross-linked to `reference/anti-patterns.md`.
+
+**Wave 1 — Inputs (v1.16.0)**: Button · Input · Select/Combobox · Checkbox · Radio · Switch · Link · Label
+
+**Wave 2 — Containers (v1.16.0)**: Card · Modal/Dialog · Drawer/Sheet · Popover · Tooltip · Accordion · Tabs
+
+**Wave 3 — Feedback (v1.17.0)**: Toast · Alert · Progress · Skeleton · Badge · Chip
+
+**Wave 4 — Navigation & Data (v1.17.0)**: Menu · Navbar · Sidebar · Breadcrumbs · Pagination · Table · List · Tree · Command-palette
+
+**Wave 5 — Advanced (v1.17.0)**: Date-picker · Slider · File-upload · Rich-text editor · Stepper
+
+**Total: 35 specs** across 5 waves. Each spec: WAI-ARIA keyboard contracts (verbatim), NORM/DIVERGE convergence analysis, grep signatures for `design-auditor` conformance scoring, and a failing-example block.
+
+**Pipeline integration (v1.17.0):**
+- `design-auditor` — detects component implementations via grep signatures, scores conformance against specs, emits Component Conformance addendum
+- `design-executor` — reads matching spec as pre-flight contract for `type:components` tasks
+- `design-doc-writer` — scaffolds handoff docs from spec anatomy/variants when a benchmark spec exists
+- `design-pattern-mapper` — writes `.design/map/component-convergence.md` (matched/absent components + convergence %)
+
+```bash
+/gdd:benchmark button                  # harvest + synthesize a single spec
+/gdd:benchmark --wave 1                # run all Wave 1 specs
+/gdd:benchmark --list                  # coverage table
+/gdd:benchmark --refresh modal-dialog  # re-harvest after design-system update
+```
+
+Sources: `connections/design-corpora.md` — Material 3, Apple HIG, Radix, WAI-ARIA APG, shadcn/ui, Polaris, Carbon, Fluent 2, Primer, Atlassian, Ant Design, Mantine, Chakra, Base Web, Nord, Spectrum, Lightning, Gestalt (Pinterest).
+
+---
+
 ## Authority Watcher
 
 Subscribe to a curated whitelist of design-authority sources, diff it against a snapshot, and feed only genuinely new, classified entries into the Self-Improvement reflector. Authority monitoring — not trend watching.

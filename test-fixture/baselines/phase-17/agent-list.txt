@@ -1,0 +1,2 @@
+component-benchmark-harvester.md
+component-benchmark-synthesizer.md

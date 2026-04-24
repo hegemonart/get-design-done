@@ -74,7 +74,9 @@
     "motion-easings",
     "transition-taxonomy",
     "gesture-mechanics",
-    "clip-path-animation"
+    "clip-path-animation",
+    "component-specs",
+    "design-system-benchmarks"
   ],
   "skills": [
     "SKILL.md"

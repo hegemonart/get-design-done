@@ -2,7 +2,7 @@
   "name": "get-design-done",
   "short_name": "gdd",
   "version": "1.18.0",
-  "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22+ specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), handoff-first workflow via Claude Design bundles, bidirectional Figma write-back (annotations, Code Connect), queryable intel store (`.design/intel/`) for O(1) design surface lookups, and self-improvement loop (reflector agent, frontmatter + budget feedback, global-skills layer at `~/.claude/gdd/global-skills/`). Standalone commands: style, darkmode, compare, figma-write, graphify, handoff, analyze-dependencies, skill-manifest, extract-learnings, reflect, apply-reflections. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, and anti-pattern catalog. Ships with a full CI/CD pipeline (Node 22/24 × Linux/macOS/Windows, lint + schema + frontmatter + stale-ref + shellcheck + gitleaks + injection-scan + blocking size-budget) and release automation (auto-tag + GitHub Release + release-time smoke test). Optimization layer (v1.0.4.1, retroactive): gdd-router + gdd-cache-manager skills, PreToolUse budget-enforcer hook, tier-aware agent frontmatter, lazy checker gates, streaming synthesizer, /gdd:warm-cache + /gdd:optimize commands, and cost telemetry at .design/telemetry/costs.jsonl — targeting 50-70% per-task token-cost reduction with no quality-floor regression.",
+  "description": "Agent-orchestrated 5-stage design pipeline: Brief → Explore → Plan → Design → Verify. 22+ specialized agents, 9 connections (Figma, Refero, Preview, Storybook, Chromatic, Figma Writer, Graphify, Pinterest, Claude Design), handoff-first workflow via Claude Design bundles, bidirectional Figma write-back (annotations, Code Connect), queryable intel store (`.design/intel/`) for O(1) design surface lookups, and self-improvement loop (reflector agent, frontmatter + budget feedback, global-skills layer at `~/.claude/gdd/global-skills/`). Standalone commands: style, darkmode, compare, figma-write, graphify, handoff, analyze-dependencies, skill-manifest, extract-learnings, reflect, apply-reflections. Ships 35-component benchmark corpus (Waves 1–5) with pipeline integration: auditor conformance scoring, executor spec pre-flight, doc-writer scaffold, pattern-mapper convergence detector. Embeds NNG heuristics, WCAG thresholds, typographic systems, motion framework, variable-font loading, image optimization, CSS Grid + container queries, advanced motion vocabulary (RN MIT easings/spring/interpolate + hyperframes transition taxonomy), and anti-pattern catalog. Ships with a full CI/CD pipeline (Node 22/24 × Linux/macOS/Windows, lint + schema + frontmatter + stale-ref + shellcheck + gitleaks + injection-scan + blocking size-budget) and release automation (auto-tag + GitHub Release + release-time smoke test). Optimization layer (v1.0.4.1, retroactive): gdd-router + gdd-cache-manager skills, PreToolUse budget-enforcer hook, tier-aware agent frontmatter, lazy checker gates, streaming synthesizer, /gdd:warm-cache + /gdd:optimize commands, and cost telemetry at .design/telemetry/costs.jsonl — targeting 50-70% per-task token-cost reduction with no quality-floor regression.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
@@ -72,7 +72,13 @@
     "motion-easings",
     "transition-taxonomy",
     "gesture-mechanics",
-    "clip-path-animation"
+    "clip-path-animation",
+    "component-specs",
+    "design-system-benchmarks",
+    "component-conformance",
+    "convergence-detector"
   ],
-  "skills": ["./skills/"]
+  "skills": [
+    "./skills/"
+  ]
 }

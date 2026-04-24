@@ -44,6 +44,88 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.17.0] — 2026-04-24
+
+### Added — Component Benchmark Corpus: Waves 3–5 (20 specs) + Pipeline Integration
+
+Completes the 35-spec component benchmark corpus and wires it into the design pipeline so agents actively consume per-component benchmarks during audit, execution, documentation, and pattern analysis.
+
+#### Wave 3 — Feedback (6 specs)
+
+- **`reference/components/toast.md`** — transient notification (4–8s auto-dismiss, configurable); `role="status"` (info/success) vs `role="alert"` (warning/error); entry/exit slide+fade animation; optional action; stacking with 8px gap (max 3 visible); UUPM app-interface dashboard/settings-save context (MIT attribution).
+- **`reference/components/alert.md`** — inline persistent message; info/success/warning/error variants; `role="alert"` (assertive) vs `role="status"` (polite); icon reinforces variant — never color as sole differentiator (WCAG 1.4.1).
+- **`reference/components/progress.md`** — linear + circular variants; determinate (`aria-valuenow`) vs indeterminate (`aria-valuetext`); `role="progressbar"`; `aria-label` required; 4px minimum track height.
+- **`reference/components/skeleton.md`** — content-layout mirror; shimmer (left-to-right gradient, 1.5s loop); `aria-hidden="true"` on skeleton elements; `aria-busy="true"` + `aria-label` on container; 60–90% width variation.
+- **`reference/components/badge.md`** — count/dot/icon variants; `99+` overflow pattern; decorative (no keyboard interaction); count surfaced via `aria-label` on parent element.
+- **`reference/components/chip.md`** — filter/input/suggestion/display variants; independent `aria-label` on remove button; `aria-pressed` on toggle; `role="option"` in listbox context; UUPM app-interface filter/tag-input context (MIT attribution).
+
+#### Wave 4 — Navigation & Data (9 specs)
+
+- **`reference/components/menu.md`** — `role="menu"` + `role="menuitem"`; arrow-key navigation; click-only open (no hover trigger); sub-menus on ArrowRight; focus returns to trigger on close.
+- **`reference/components/navbar.md`** — `role="banner"` + `role="navigation"` + `aria-label="Primary"`; skip-to-main link; `aria-current="page"`; hamburger `aria-expanded`; UUPM dashboard/settings/profile context (MIT attribution).
+- **`reference/components/sidebar.md`** — `aria-label="Secondary"`; icon+label vs icon-only collapsed; `aria-expanded` on collapsible sections; UUPM settings-nav + dashboard-nav variants (MIT attribution).
+- **`reference/components/breadcrumbs.md`** — `role="navigation"` + `aria-label="Breadcrumb"`; `aria-current="page"` on last item; `aria-hidden` on separators; truncate middle not ends.
+- **`reference/components/pagination.md`** — `aria-label="Pagination"`; `aria-current="page"` on active page; per-page `<select>` with visible label; UUPM list-view context (MIT attribution).
+- **`reference/components/table.md`** — `scope="col"` on all `<th>`; `aria-sort` on sortable headers; `aria-selected` on rows; `role="grid"` vs `role="table"`; virtualise >200 rows; UUPM list/detail + master-detail + dashboard context (MIT attribution).
+- **`reference/components/list.md`** — display (`<ul>/<li>`) vs interactive (`role="listbox"` + `role="option"`); `aria-multiselectable`; virtualise >100 items; UUPM list/detail left-panel context (MIT attribution).
+- **`reference/components/tree.md`** — `role="tree"` + `role="treeitem"` + `role="group"`; `aria-expanded`; `aria-level`; `aria-busy` on lazy-load nodes; full WAI-ARIA APG keyboard contract.
+- **`reference/components/command-palette.md`** — `role="dialog"` + `aria-modal`; focus trap; `role="combobox"` + `aria-controls` → `role="listbox"`; Cmd/Ctrl+K trigger; UUPM global-search context (MIT attribution).
+
+#### Wave 5 — Advanced (5 specs)
+
+- **`reference/components/date-picker.md`** — input + range variants; calendar `role="dialog"`; day cells `role="gridcell"` + `role="button"`; full arrow-key navigation; native `<input type="date">` mobile fallback.
+- **`reference/components/slider.md`** — single + range; `role="slider"` + `aria-valuenow/min/max/valuetext`; 44px thumb touch target via `::before` trick; Page Up/Down ±10%.
+- **`reference/components/file-upload.md`** — drop-zone + picker; `<input type="file">` never `display:none` (keyboard/AT fallback); `aria-label="Remove [filename]"` on remove buttons; upload errors via `aria-live="assertive"`.
+- **`reference/components/rich-text-editor.md`** — `contenteditable` + `role="textbox"` + `aria-multiline="true"`; toolbar `role="toolbar"`; toggle buttons `aria-pressed`; placeholder via CSS `::before`; mention trigger pattern.
+- **`reference/components/stepper.md`** — `role="list"` (not `role="tablist"`); `aria-current="step"` on active step; UUPM wizard/onboarding/checkout flow context (MIT attribution).
+
+#### Pipeline Integration
+
+- **`agents/design-auditor.md`** — new **Component Conformance** addendum: discovers specs, runs grep signatures against codebase, scores state/variant/a11y coverage per component, emits conformance table as informational addendum (does not change /28 pillar score).
+- **`agents/design-executor.md`** — **Benchmark Spec Pre-Flight** for `type:components` tasks: reads matching `reference/components/<name>.md`, applies anatomy/states/a11y contract before building — no re-discovering ARIA roles or keyboard patterns already benchmarked.
+- **`agents/design-doc-writer.md`** — **Component Spec Scaffold**: pre-fills DESIGN-STYLE doc structure from benchmark spec's Purpose/Anatomy/Variants/States when a spec exists; includes "Benchmarked against" citation; falls back to from-scratch generation gracefully.
+- **`agents/design-pattern-mapper.md`** — **Component Convergence Detector**: writes `.design/map/component-convergence.md` with matched/absent component table and per-component convergence %; runs after pattern extraction.
+
+---
+
+## [1.16.0] — 2026-04-24
+
+### Added — Component Benchmark Corpus: Tooling + Waves 1–2 (15 specs)
+
+This release builds the infrastructure to harvest per-component design knowledge from 18 design systems and ships 15 canonical component specs at `reference/components/`. Every spec follows a locked shape — Purpose · Anatomy · Variants · States · Sizing · Typography · Keyboard & a11y · Motion · Do/Don't · Anti-patterns · Citations · Grep signatures — making the corpus greppable, diffable, and agent-consumable.
+
+#### Tooling
+
+- **`agents/component-benchmark-harvester.md`** — given a component name, harvests per-source excerpts from 18 design systems (see `connections/design-corpora.md`), consumes Phase 15 impeccable salvage, emits raw harvest to `.planning/benchmarks/raw/<component>.md` with source-attributed excerpts and convergence pre-analysis.
+- **`agents/component-benchmark-synthesizer.md`** — reads the raw harvest and emits a canonical `reference/components/<name>.md` using the locked TEMPLATE.md shape. Convergence analysis is explicit: NORM (≥4 systems agree) vs. DIVERGE (systems disagree with rationale).
+- **`skills/benchmark/SKILL.md`** — new `/gdd:benchmark` command with 4 modes: `<component>` (single), `--wave <N>` (full wave), `--list` (coverage table), `--refresh <component>` (re-harvest on design-system version bump).
+- **`connections/design-corpora.md`** — 18-system catalog with canonical URLs, licensing/attribution notes, and fallback chain (canonical → archive.org → Refero MCP → Pinterest MCP).
+- **`reference/components/TEMPLATE.md`** — locked 12-section spec shape. All future component specs must conform.
+- **`reference/components/README.md`** — corpus index with category tables (Wave 1–5) and coverage summary.
+
+#### Wave 1 — Inputs (8 specs)
+
+- **`reference/components/button.md`** — primary/secondary/ghost/destructive/icon-only variants, 96% press scale norm, WAI-ARIA button keyboard contract, `transition:all` BAN, non-descriptive-label anti-pattern.
+- **`reference/components/input.md`** — text/search/password/number, placeholder-as-label anti-pattern, floating vs. static label trade-off (static preferred), `aria-describedby` error linking, WAI-ARIA textbox contract.
+- **`reference/components/select-combobox.md`** — native vs. custom decision tree, WAI-ARIA listbox + combobox contracts (verbatim), `aria-activedescendant` pattern, multi-select approaches, virtualised list note, async empty state.
+- **`reference/components/checkbox.md`** — binary/indeterminate states, `fieldset`+`legend` group requirement, `.indeterminate` JS property, WAI-ARIA checkbox contract.
+- **`reference/components/radio.md`** — arrow-key auto-advance behavior, Tab-as-group-unit pattern, single-radio anti-pattern, WAI-ARIA radiogroup contract.
+- **`reference/components/switch.md`** — switch vs. checkbox semantic distinction (`role="switch"` not `role="checkbox"`), spring thumb animation, pill track (`border-radius: 9999px`), immediate-action rule.
+- **`reference/components/link.md`** — link vs. button semantic boundary, underline requirement for inline links (WCAG 1.4.1), external-link disclosure, `rel="noopener noreferrer"`, non-descriptive link text anti-pattern.
+- **`reference/components/label.md`** — four association methods ranked (`<label for>` → `aria-labelledby` → `aria-label` → `<legend>`), `.sr-only` CSS pattern, legend-for-groups rule, placeholder failure analysis.
+
+#### Wave 2 — Containers (7 specs)
+
+- **`reference/components/card.md`** — stretched-link pattern for nested interactivity, `<article>` vs `<div>` semantics, elevated/outlined/clickable variants, `aria-busy` skeleton state.
+- **`reference/components/modal-dialog.md`** — focus trap, Escape contract, portal rendering, `aria-modal`+`aria-labelledby` requirement, `role="alertdialog"` for confirmations, scroll-lock, focus return on close.
+- **`reference/components/drawer.md`** — focus trap (same as modal), swipe-to-close for bottom sheet, side direction routing, nav drawer vs. content drawer role distinction, slide-in motion.
+- **`reference/components/popover.md`** — Floating UI positioning (flip+shift+arrow middlewares), non-modal vs. modal distinction, `aria-expanded`+`aria-controls` trigger contract, `role="tooltip"` on interactive content anti-pattern.
+- **`reference/components/tooltip.md`** — no-interactive-content rule, hover+focus trigger (not hover-only), Escape dismiss, 300ms delay, `aria-describedby` contract, tooltip vs. popover boundary.
+- **`reference/components/accordion.md`** — `h2`–`h6` header requirement, `aria-expanded`-on-trigger rule, `grid-template-rows` CSS height animation trick, `role="region"` landmark note (skip if >6 items).
+- **`reference/components/tabs.md`** — roving tabindex pattern, arrow-key navigation (not Tab), automatic vs. manual activation modes, tablist label requirement, `hidden` on inactive panels.
+
+---
+
 ## [1.15.0] — 2026-04-24
 
 ### Added — Design Knowledge Expansion: 10 foundational references + MIFB micro-polish + UUPM ingest

@@ -322,6 +322,228 @@
       "type": "output-contract",
       "phase": 18,
       "description": "JSON schema for motion-mapper structured output block — easing, transition_family, duration_class, trigger per animation binding (MOT-04)"
+    },
+    {
+      "name": "components-README",
+      "path": "reference/components/README.md",
+      "type": "taxonomy",
+      "description": "Component Benchmark Corpus index — Wave 1–5 tables, coverage summary, harvesting procedure"
+    },
+    {
+      "name": "components-TEMPLATE",
+      "path": "reference/components/TEMPLATE.md",
+      "type": "schema",
+      "description": "Locked 12-section spec shape for component benchmarks (Purpose → Failing example)"
+    },
+    {
+      "name": "component-accordion",
+      "path": "reference/components/accordion.md",
+      "type": "component-spec",
+      "description": "Accordion component spec — h2–h6 header, aria-expanded on trigger, CSS grid height animation"
+    },
+    {
+      "name": "component-button",
+      "path": "reference/components/button.md",
+      "type": "component-spec",
+      "description": "Button component spec — primary/secondary/ghost/destructive/icon-only; WAI-ARIA Enter/Space contract"
+    },
+    {
+      "name": "component-card",
+      "path": "reference/components/card.md",
+      "type": "component-spec",
+      "description": "Card component spec — stretched-link pattern, article semantics, nested interactive anti-pattern"
+    },
+    {
+      "name": "component-checkbox",
+      "path": "reference/components/checkbox.md",
+      "type": "component-spec",
+      "description": "Checkbox component spec — fieldset+legend, indeterminate state, aria-checked=mixed"
+    },
+    {
+      "name": "component-drawer",
+      "path": "reference/components/drawer.md",
+      "type": "component-spec",
+      "description": "Drawer component spec — focus trap, swipe-to-close, nav vs content role distinction"
+    },
+    {
+      "name": "component-input",
+      "path": "reference/components/input.md",
+      "type": "component-spec",
+      "description": "Input component spec — placeholder-as-label anti-pattern, aria-describedby error linking"
+    },
+    {
+      "name": "component-label",
+      "path": "reference/components/label.md",
+      "type": "component-spec",
+      "description": "Label component spec — 4 association methods, .sr-only pattern, legend for groups"
+    },
+    {
+      "name": "component-link",
+      "path": "reference/components/link.md",
+      "type": "component-spec",
+      "description": "Link component spec — a[href] vs button boundary, WCAG 1.4.1 underline, rel=noopener"
+    },
+    {
+      "name": "component-modal-dialog",
+      "path": "reference/components/modal-dialog.md",
+      "type": "component-spec",
+      "description": "Modal dialog spec — focus trap, Escape contract, aria-modal, aria-labelledby, scroll-lock"
+    },
+    {
+      "name": "component-popover",
+      "path": "reference/components/popover.md",
+      "type": "component-spec",
+      "description": "Popover spec — Floating UI middlewares, non-modal, aria-expanded+aria-controls"
+    },
+    {
+      "name": "component-radio",
+      "path": "reference/components/radio.md",
+      "type": "component-spec",
+      "description": "Radio component spec — arrow-key auto-advance, Tab-as-group-unit, single-radio anti-pattern"
+    },
+    {
+      "name": "component-select-combobox",
+      "path": "reference/components/select-combobox.md",
+      "type": "component-spec",
+      "description": "Select/combobox spec — WAI-ARIA listbox + combobox contracts, aria-activedescendant"
+    },
+    {
+      "name": "component-switch",
+      "path": "reference/components/switch.md",
+      "type": "component-spec",
+      "description": "Switch component spec — role=switch, spring thumb, pill track, immediate-action rule"
+    },
+    {
+      "name": "component-tabs",
+      "path": "reference/components/tabs.md",
+      "type": "component-spec",
+      "description": "Tabs component spec — roving tabindex, arrow-key nav, automatic vs manual activation"
+    },
+    {
+      "name": "component-tooltip",
+      "path": "reference/components/tooltip.md",
+      "type": "component-spec",
+      "description": "Tooltip spec — no interactive content, hover+focus trigger, 300ms delay, aria-describedby"
+    },
+    {
+      "name": "component-toast",
+      "path": "reference/components/toast.md",
+      "type": "component-spec",
+      "description": "Toast spec — role=status vs role=alert, 4–8s auto-dismiss, stacking, UUPM dashboard context"
+    },
+    {
+      "name": "component-alert",
+      "path": "reference/components/alert.md",
+      "type": "component-spec",
+      "description": "Alert spec — info/success/warning/error variants, role=alert vs role=status, icon reinforces variant"
+    },
+    {
+      "name": "component-progress",
+      "path": "reference/components/progress.md",
+      "type": "component-spec",
+      "description": "Progress spec — determinate (aria-valuenow) vs indeterminate (aria-valuetext), linear + circular"
+    },
+    {
+      "name": "component-skeleton",
+      "path": "reference/components/skeleton.md",
+      "type": "component-spec",
+      "description": "Skeleton spec — content-mirror layout, shimmer animation, aria-hidden on elements, aria-busy on container"
+    },
+    {
+      "name": "component-badge",
+      "path": "reference/components/badge.md",
+      "type": "component-spec",
+      "description": "Badge spec — count/dot/icon variants, 99+ overflow, aria-label on parent element"
+    },
+    {
+      "name": "component-chip",
+      "path": "reference/components/chip.md",
+      "type": "component-spec",
+      "description": "Chip spec — filter/input/suggestion/display variants, aria-pressed on toggle, independent remove aria-label"
+    },
+    {
+      "name": "component-menu",
+      "path": "reference/components/menu.md",
+      "type": "component-spec",
+      "description": "Menu spec — role=menu + role=menuitem, arrow-key nav, click-only open, sub-menu ArrowRight"
+    },
+    {
+      "name": "component-navbar",
+      "path": "reference/components/navbar.md",
+      "type": "component-spec",
+      "description": "Navbar spec — role=banner + role=navigation, skip link, aria-current=page, hamburger aria-expanded"
+    },
+    {
+      "name": "component-sidebar",
+      "path": "reference/components/sidebar.md",
+      "type": "component-spec",
+      "description": "Sidebar spec — aria-label=Secondary, icon+label vs icon-only collapsed, settings-nav + dashboard-nav variants"
+    },
+    {
+      "name": "component-breadcrumbs",
+      "path": "reference/components/breadcrumbs.md",
+      "type": "component-spec",
+      "description": "Breadcrumbs spec — aria-current=page on last item, aria-hidden separators, ol not ul"
+    },
+    {
+      "name": "component-pagination",
+      "path": "reference/components/pagination.md",
+      "type": "component-spec",
+      "description": "Pagination spec — aria-label=Pagination, aria-current=page, per-page select with visible label"
+    },
+    {
+      "name": "component-table",
+      "path": "reference/components/table.md",
+      "type": "component-spec",
+      "description": "Table spec — scope=col on th, aria-sort, aria-selected on rows, role=grid vs role=table, virtualise >200"
+    },
+    {
+      "name": "component-list",
+      "path": "reference/components/list.md",
+      "type": "component-spec",
+      "description": "List spec — display (ul/li) vs interactive (role=listbox + role=option), virtualise >100 items"
+    },
+    {
+      "name": "component-tree",
+      "path": "reference/components/tree.md",
+      "type": "component-spec",
+      "description": "Tree spec — role=tree + role=treeitem + role=group, aria-expanded, aria-level, aria-busy lazy-load"
+    },
+    {
+      "name": "component-command-palette",
+      "path": "reference/components/command-palette.md",
+      "type": "component-spec",
+      "description": "Command-palette spec — role=dialog + aria-modal, focus trap, role=combobox + aria-controls, Cmd/Ctrl+K"
+    },
+    {
+      "name": "component-date-picker",
+      "path": "reference/components/date-picker.md",
+      "type": "component-spec",
+      "description": "Date-picker spec — input + range, calendar role=dialog, day gridcell+button, native mobile fallback"
+    },
+    {
+      "name": "component-slider",
+      "path": "reference/components/slider.md",
+      "type": "component-spec",
+      "description": "Slider spec — role=slider + aria-valuenow/min/max/valuetext, 44px thumb touch target, Page Up/Down ±10%"
+    },
+    {
+      "name": "component-file-upload",
+      "path": "reference/components/file-upload.md",
+      "type": "component-spec",
+      "description": "File-upload spec — drop-zone + picker, input[type=file] never display:none, remove aria-label"
+    },
+    {
+      "name": "component-rich-text-editor",
+      "path": "reference/components/rich-text-editor.md",
+      "type": "component-spec",
+      "description": "Rich-text editor spec — contenteditable + role=textbox, toolbar role=toolbar, aria-pressed on toggles"
+    },
+    {
+      "name": "component-stepper",
+      "path": "reference/components/stepper.md",
+      "type": "component-spec",
+      "description": "Stepper spec — role=list (not role=tablist), aria-current=step, wizard/onboarding/checkout flow context"
     }
   ]
 }
