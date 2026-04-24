@@ -199,6 +199,54 @@
       "path": "reference/design-systems-catalog.md",
       "type": "taxonomy",
       "description": "Quick-reference index of 18 major design systems"
+    },
+    {
+      "name": "brand-voice",
+      "path": "reference/brand-voice.md",
+      "type": "heuristic",
+      "description": "Voice axes, archetypes, tone-by-context, industry-context palettes"
+    },
+    {
+      "name": "visual-hierarchy-layout",
+      "path": "reference/visual-hierarchy-layout.md",
+      "type": "heuristic",
+      "description": "Z-order, whitespace, grids, F/Z patterns, 24 landing archetypes"
+    },
+    {
+      "name": "gestalt",
+      "path": "reference/gestalt.md",
+      "type": "heuristic",
+      "description": "8 Gestalt principles with scoring rubrics and grep signatures"
+    },
+    {
+      "name": "design-system-guidance",
+      "path": "reference/design-system-guidance.md",
+      "type": "heuristic",
+      "description": "Token versioning, multi-brand arch, governance, maturity rubric 0-5"
+    },
+    {
+      "name": "palette-catalog",
+      "path": "reference/palette-catalog.md",
+      "type": "palette",
+      "description": "40+ industry-vertical color palettes (WCAG verified, UUPM MIT)"
+    },
+    {
+      "name": "style-vocabulary",
+      "path": "reference/style-vocabulary.md",
+      "type": "style-vocabulary",
+      "description": "67 UI aesthetics with keywords, effects, best-for, era (UUPM MIT)"
+    },
+    {
+      "name": "palettes-data",
+      "path": "reference/data/palettes.csv",
+      "type": "data",
+      "description": "CSV data sibling for palette-catalog.md"
+    },
+    {
+      "name": "styles-data",
+      "path": "reference/data/styles.csv",
+      "type": "data",
+      "description": "CSV data sibling for style-vocabulary.md"
     }
   ]
 }

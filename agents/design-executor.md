@@ -240,6 +240,7 @@ Also: verify exit animations are 60–70% of enter duration.
 ### Type: copy
 
 Read `reference/anti-patterns.md` copy section before starting.
+Read `reference/brand-voice.md` — voice axes, archetype library, and tone-by-context table provide the authoritative copy standards for this task type.
 
 1. **Audit all user-visible text**: scan files in scope for button labels, error messages, empty states, tooltips, placeholder text.
 2. **Apply UX copy standards**:
@@ -268,7 +269,7 @@ Read `reference/heuristics.md` (if present) before starting. Apply NNG heuristic
 
 ### Type: tokens
 
-Read `reference/anti-patterns.md` and DESIGN-CONTEXT.md before starting.
+Read `reference/anti-patterns.md`, `reference/design-system-guidance.md`, and DESIGN-CONTEXT.md before starting. The design-system-guidance file provides the semantic-layer naming conventions, multi-brand token architecture, and component API conventions that govern how tokens should be named and structured.
 
 1. **Audit magic values**: grep all literal CSS values (px, rem, #hex, rgb(), etc.) across scope files.
 2. **Organize by role**: group values into categories — color, spacing, typography, radius, shadow, z-index.

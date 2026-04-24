@@ -45,6 +45,9 @@ Minimum expected files:
 - `.design/DESIGN-PLAN.md` — planned tasks and acceptance criteria
 - `.design/tasks/` — what was actually done (glob all task files)
 - `reference/audit-scoring.md` — existing 7-category scoring rubric (understand, do not duplicate)
+- `reference/brand-voice.md` — voice axes, archetype library, and tone-by-context table (use when auditing Pillar 1: Copy)
+- `reference/gestalt.md` — 8 Gestalt principles with scoring rubrics (use when auditing Pillar 2: Visual Hierarchy)
+- `reference/visual-hierarchy-layout.md` — Z-order, whitespace, grids, and reading-order patterns (use when auditing Pillar 2: Visual Hierarchy)
 - `reference/iconography.md` — icon sizing, metaphors, library catalog, touch targets, animation guidelines
 - `reference/performance.md` — Core Web Vitals budgets, JS/font/image budgets, React runtime performance
 - `reference/design-systems-catalog.md` — 18-system index for identifying pattern precedents and system alignment
