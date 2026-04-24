@@ -33,7 +33,25 @@ export type {
   StageExitedEvent,
   HookFiredEvent,
   ErrorEvent,
+  WaveStartedEvent,
+  WaveCompletedEvent,
+  BlockerAddedEvent,
+  DecisionAddedEvent,
+  MustHaveAddedEvent,
+  ParallelismVerdictEvent,
+  CostUpdateEvent,
+  RateLimitEvent,
+  ApiRetryEvent,
+  CompactBoundaryEvent,
+  McpProbeEvent,
+  ReflectionProposedEvent,
+  ConnectionStatusChangeEvent,
+  ToolCallStartedEvent,
+  ToolCallCompletedEvent,
+  AgentSpawnEvent,
+  AgentOutcomeEvent,
 } from './types.ts';
+export { KNOWN_EVENT_TYPES } from './types.ts';
 export { EventBus } from './emitter.ts';
 export type { EventHandler, Unsubscribe } from './emitter.ts';
 export { EventWriter, DEFAULT_EVENTS_PATH, DEFAULT_MAX_LINE_BYTES } from './writer.ts';
