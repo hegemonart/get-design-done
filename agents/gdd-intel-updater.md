@@ -85,4 +85,15 @@ Generated:      <timestamp>
 A slice is stale if its `generated` timestamp is older than the newest `mtime` in `files.json`.
 The updater does not need to check this manually — `build-intel.cjs` handles mtime comparison.
 
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
+
 ## INTEL UPDATE COMPLETE

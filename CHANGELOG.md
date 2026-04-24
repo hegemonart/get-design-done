@@ -4,6 +4,30 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.19.5] — 2026-04-24
+
+### Added — Cross-Cycle Memory: Recall, Checkpoints, Experience Archive
+
+Turns write-only learnings and reflections into a queryable, ranked, self-pruning memory layer.
+
+**Search backend (`scripts/lib/design-search.cjs`):** Priority chain — FTS5 via `better-sqlite3` (optional dep, runtime-probed) → ripgrep → Node fs scan. `/gdd:recall --reindex` rebuilds the index. `scripts/lib/probe-optional.cjs` wraps optional native deps for future reuse.
+
+**Cross-cycle recall (`/gdd:recall <query>`):** `skills/recall/SKILL.md` — searches `.design/archive/`, `.design/learnings/LEARNINGS.md`, `.design/CYCLES.md`, and STATE.md decision blocks; signals `surfaced` for matched L-NN IDs via `relevance-counter.cjs`.
+
+**Numbered checkpoints (pause/resume rewrite):** `skills/pause/SKILL.md` atomic-appends to `.design/checkpoints/NN-<stage>-<ISO-date>.md` instead of clobbering `HANDOFF.md`; `HANDOFF.md` becomes a pointer to the latest checkpoint. `skills/resume/SKILL.md` gains listing mode with `AskUserQuestion` picker when no arg; `/gdd:resume N` restores checkpoint N. `skills/continue/SKILL.md` — alias for `/gdd:resume` (discoverability).
+
+**Per-cycle EXPERIENCE.md:** `skills/complete-cycle/SKILL.md` extended — Haiku-tier writer reads cycle STATE + DESIGN-VERIFICATION + reflections, emits `.design/archive/cycle-N/EXPERIENCE.md` (~100–200 lines, declarative-fact framing: Goal / Decisions made / Learnings graduated / What died / Surprises / Handoff to next cycle). Highest-priority source for decision-injector.
+
+**Timeline retrospective (`/gdd:timeline`):** `skills/timeline/SKILL.md` — narrative view across EXPERIENCE.md files + git log; sections Opened with / Key decisions / Surprises / What we'd do differently.
+
+**Relevance counter (`scripts/lib/relevance-counter.cjs`):** `record(id, signal, designDir)` under atomic-write + `.lock`; signals: `cited`, `surfaced`, `dismissed`. `shouldPromote` at 8+ cites; `shouldPrune` at 0 cites + 4 cycles.
+
+**Decision-injector FTS5 upgrade:** `hooks/gdd-decision-injector.js` backend-swaps to FTS5 transparently when `design-search.cjs` is available — zero surface-level output change, backend label shown in footer.
+
+**Record contract (mandatory for all agents):** `agents/README.md` authoring template gains mandatory `## Record` step — every agent appends one JSONL line to `.design/intel/insights.jsonl`. `reference/schemas/insight-line.schema.json` — schema with 6 required fields (`ts`, `agent`, `cycle`, `stage`, `one_line_insight`, `artifacts_written`). `tests/record-contract.test.cjs` enforces presence of `## Record` section in every `agents/*.md`. All 36 existing agents updated with stub Record sections.
+
+---
+
 ## [1.19.0] — 2026-04-24
 
 ### Added — Platform, Inclusive Design & UX Research References (knowledge-layer complete)

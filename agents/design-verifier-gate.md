@@ -94,4 +94,15 @@ You MAY:
 
 Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. Gate agent: reads DIFF of changed files, applies heuristic (design-system paths touched? copy strings touched? token files touched?), returns `{spawn: true|false, rationale: '...'}`. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the verifier-specific instance of that pattern — full `design-verifier` is an XL-size spawn and the most expensive single agent in the pipeline, so gating it behind a cheap Haiku diff-scan yields the largest single cost win in Phase 10.1.
 
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
+
 ## GATE COMPLETE

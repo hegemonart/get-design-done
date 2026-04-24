@@ -25,6 +25,14 @@ const MIN_BYTES = 1500;
 const TOP_N = 15;
 const MATCHER_RE = /[\\/](?:\.design|reference|\.planning)[\\/][^\n]*\.md$/;
 
+// Phase 19.5: try FTS5 backend first; fall back to grep silently.
+let _designSearch = null;
+try {
+  _designSearch = require(path.join(__dirname, '..', 'scripts', 'lib', 'design-search.cjs'));
+} catch { /* not available in this install */ }
+
+const BACKEND = _designSearch ? _designSearch.backendName() : null;
+
 function ripgrepAvailable() {
   try {
     const r = spawnSync('rg', ['--version'], { encoding: 'utf8', windowsHide: true });
@@ -103,7 +111,7 @@ function sortKeyFor(tag) {
   return 0;
 }
 
-function buildRecallBlock(matches, basename) {
+function buildRecallBlock(matches, basename, backendLabel) {
   if (!matches.length) return null;
   const uniq = [];
   const seen = new Set();
@@ -125,10 +133,11 @@ function buildRecallBlock(matches, basename) {
     const excerpt = m.text.length > 140 ? m.text.slice(0, 137) + '…' : m.text;
     lines.push(`> - [${tag}] ${excerpt} (${path.relative(process.cwd(), m.file)}:${m.line})`);
   }
+  // backendLabel passed in from main()
   if (uniq.length > TOP_N) {
-    lines.push(`> … (${uniq.length - TOP_N} more matches; use \`/gdd:recall <term>\` to expand. Grep backend; FTS5 upgrade in Phase 19.5.)`);
+    lines.push(`> … (${uniq.length - TOP_N} more matches; use \`/gdd:recall <term>\` to expand. Backend: ${backendLabel}.)`);
   } else {
-    lines.push(`> (${uniq.length} match${uniq.length === 1 ? '' : 'es'} surfaced. Grep backend; FTS5 upgrade in Phase 19.5.)`);
+    lines.push(`> (${uniq.length} match${uniq.length === 1 ? '' : 'es'} surfaced. Backend: ${backendLabel}.)`);
   }
   lines.push('');
   return lines.join('\n');
@@ -173,13 +182,26 @@ async function main() {
     return;
   }
 
-  const useRg = ripgrepAvailable();
-  const hits = [];
-  for (const src of sources) {
-    hits.push(...(useRg ? grepLinesRg(src, terms) : grepLinesNode(src, terms)));
+  const useRgGlobal = ripgrepAvailable();
+  let hits = [];
+  if (BACKEND === 'fts5' && _designSearch) {
+    // FTS5 path: single query across all indexed docs
+    try {
+      const query = terms.join(' OR ');
+      hits = _designSearch.search(query, cwd, { limit: TOP_N * 3 });
+    } catch { hits = []; }
+    if (!hits.length) {
+      // FTS5 db may be stale — rebuild silently then retry
+      try { _designSearch.reindex(cwd); hits = _designSearch.search(terms.join(' OR '), cwd, { limit: TOP_N * 3 }); } catch { hits = []; }
+    }
+  } else {
+    for (const src of sources) {
+      hits.push(...(useRgGlobal ? grepLinesRg(src, terms) : grepLinesNode(src, terms)));
+    }
   }
 
-  const block = buildRecallBlock(hits, basename);
+  const backendLabel = BACKEND || (useRgGlobal ? 'ripgrep' : 'node-grep');
+  const block = buildRecallBlock(hits, basename, backendLabel);
   if (!block) {
     process.stdout.write(JSON.stringify({ continue: true }));
     return;

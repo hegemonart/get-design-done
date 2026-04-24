@@ -105,6 +105,17 @@ This pre-analysis seeds the synthesizer's convergence analysis.
 End your response with:
 
 ```
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
+
 ## HARVEST COMPLETE
 Component: <name>
 Sources harvested: <N>

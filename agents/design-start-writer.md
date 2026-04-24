@@ -219,3 +219,14 @@ The JSON block at the bottom is the contract future `/gdd:fast` / `/gdd:do` invo
 - Do not omit any of the seven H2 sections — even empty, they must exist for downstream regression fixtures.
 
 ## START-WRITER COMPLETE
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
+

@@ -2,7 +2,7 @@
 name: get-design-done
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
-argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark]"
+argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark|recall|timeline|continue]"
 user-invocable: true
 ---
 
@@ -42,8 +42,11 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `audit [--retroactive] [--quick] [--no-reflect]` | `get-design-done:gdd-audit` | Wraps design-verifier + design-auditor + design-reflector; `--retroactive` audits full cycle scope |
 | `reflect [--dry-run] [--cycle <slug>]` | `get-design-done:gdd-reflect` | On-demand reflection — reads cycle data, produces improvement proposals → `.design/reflections/<slug>.md` |
 | `apply-reflections [--filter <type>] [--dry-run]` | `get-design-done:gdd-apply-reflections` | Review + selectively apply reflection proposals (FRONTMATTER/REFERENCE/BUDGET/QUESTION/GLOBAL-SKILL) |
-| `pause [context]` | `get-design-done:gdd-pause` | Write session handoff to `.design/HANDOFF.md` |
-| `resume` | `get-design-done:gdd-resume` | Restore session context from `.design/HANDOFF.md` and route to next step |
+| `pause [context]` | `get-design-done:gdd-pause` | Write numbered checkpoint to `.design/checkpoints/NN-*.md` |
+| `resume [N]` | `get-design-done:gdd-resume` | Restore session from checkpoint N (or list checkpoints if no arg) |
+| `continue [N]` | `get-design-done:gdd-continue` | Alias for `/gdd:resume` |
+| `recall <query>` | `get-design-done:gdd-recall` | Search cross-cycle memory (decisions, learnings, experience archives) |
+| `timeline [N\|N-M\|all]` | `get-design-done:gdd-timeline` | Narrative retrospective across completed cycles |
 | **Lifecycle** | | |
 | `start [--budget <t>] [--skip-interview] [--dismiss-nudge]` | `get-design-done:start` | First-Run Proof Path — scans UI code, returns one concrete first fix. No STATE.md writes. |
 | `new-project [--name <n>]` | `get-design-done:gdd-new-project` | Initialize project — PROJECT.md + STATE.md + cycle-1 |
@@ -207,7 +210,10 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 /gdd:watch-authorities  → Skill("get-design-done:gdd-watch-authorities")
 /gdd:benchmark          → Skill("get-design-done:gdd-benchmark")
 /gdd:pause              → Skill("get-design-done:gdd-pause")
-/gdd:resume          → Skill("get-design-done:gdd-resume")
+/gdd:resume             → Skill("get-design-done:gdd-resume")
+/gdd:continue           → Skill("get-design-done:gdd-continue")
+/gdd:recall             → Skill("get-design-done:gdd-recall")
+/gdd:timeline           → Skill("get-design-done:gdd-timeline")
 # --- Lifecycle ---
 /gdd:start           → Skill("get-design-done:start")          # leaf command, no STATE.md
 /gdd:new-project     → Skill("get-design-done:gdd-new-project")

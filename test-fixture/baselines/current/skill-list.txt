@@ -9,6 +9,7 @@ check-update
 compare
 complete-cycle
 connections
+continue
 darkmode
 debug
 design
@@ -36,6 +37,7 @@ pr-branch
 progress
 quick
 reapply-patches
+recall
 reflect
 resume
 review-backlog
@@ -52,6 +54,7 @@ start
 stats
 style
 synthesize
+timeline
 todo
 undo
 update

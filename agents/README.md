@@ -188,6 +188,59 @@ Constraints: do not modify any file other than .design/example-output.md.
 
 ---
 
+## Mandatory Record Step (Phase 19.5)
+
+Every agent **must** end its run by appending one JSONL line to `.design/intel/insights.jsonl`. This feeds `/gdd:reflect`, `/gdd:extract-learnings`, and the decision-injector relevance counter.
+
+### Format
+
+```json
+{"ts":"2026-01-15T14:23:00.000Z","agent":"design-planner","cycle":"cycle-1","stage":"plan","one_line_insight":"Produced 7-task DESIGN-PLAN.md targeting typography and spacing","artifacts_written":[".design/DESIGN-PLAN.md"]}
+```
+
+### Schema
+
+`reference/schemas/insight-line.schema.json` — all six fields are required.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `ts` | ISO 8601 string | Current UTC time |
+| `agent` | string | Must match frontmatter `name` field |
+| `cycle` | string | From `STATE.md cycle:` — empty string if no active cycle |
+| `stage` | string | From `STATE.md stage:` |
+| `one_line_insight` | string ≤200 chars | Declarative fact: what was produced or learned |
+| `artifacts_written` | string[] | Relative paths written; `[]` for read-only agents |
+
+### Implementation pattern
+
+At the very end of your run (after all writes, before emitting the COMPLETE marker):
+
+```bash
+echo '{"ts":"...","agent":"...","cycle":"...","stage":"...","one_line_insight":"...","artifacts_written":[...]}' >> .design/intel/insights.jsonl
+```
+
+Or via Bash + `node -e` when quoting is complex. Always append (>>), never overwrite. Create `.design/intel/` with `mkdir -p` first.
+
+### Authoring template
+
+Every new agent body must include a `## Record` section before the `## <NAME> COMPLETE` footer:
+
+```markdown
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+\`\`\`json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle>","stage":"<stage>","one_line_insight":"<what was produced>","artifacts_written":["<files>"]}
+\`\`\`
+
+Schema: `reference/schemas/insight-line.schema.json`.
+```
+
+`tests/record-contract.test.cjs` enforces this section is present in every `agents/*.md` file.
+
+---
+
 ## Size Budgets
 
 Agents should be kept small — long instruction bodies burn context at every spawn and drift from their single-responsibility role. Per-tier soft limits:

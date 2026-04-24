@@ -381,6 +381,13 @@
       "description": "Nav pattern catalog, menu-depth rules, card sort/tree test benchmarks, wayfinding, faceted nav"
     },
     {
+      "name": "insight-line.schema",
+      "path": "reference/schemas/insight-line.schema.json",
+      "type": "schema",
+      "tier": "haiku",
+      "description": "JSONL schema for agent run-end insight lines written to .design/intel/insights.jsonl"
+    },
+    {
       "name": "intel-schema",
       "path": "reference/intel-schema.md",
       "type": "schema",

@@ -6,6 +6,8 @@ color: yellow
 model: sonnet
 default-tier: sonnet
 tier-rationale: "Produces polished prose documentation; Sonnet's style quality is sufficient"
+size_budget: XL
+size_budget_rationale: "Phase 19.5 Record contract added ~11 lines; base doc-writer body is 250-line tier"
 parallel-safe: always
 typical-duration-seconds: 45
 reads-only: false
@@ -246,5 +248,16 @@ This agent MUST NOT:
 - MUST NOT batch multiple components in one invocation — the style command spawns one agent per component
 
 ---
+
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
 
 ## DOC COMPLETE

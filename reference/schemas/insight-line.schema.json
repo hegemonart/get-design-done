@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AgentInsightLine",
+  "description": "One JSONL line appended by an agent to .design/intel/insights.jsonl at run-end.",
+  "type": "object",
+  "required": ["ts", "agent", "cycle", "stage", "one_line_insight", "artifacts_written"],
+  "additionalProperties": false,
+  "properties": {
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the agent run completion."
+    },
+    "agent": {
+      "type": "string",
+      "description": "Agent name matching the frontmatter 'name' field (e.g. 'design-planner')."
+    },
+    "cycle": {
+      "type": "string",
+      "description": "Active cycle ID from STATE.md (e.g. 'cycle-1'). Empty string if not in a cycle."
+    },
+    "stage": {
+      "type": "string",
+      "description": "Pipeline stage from STATE.md (e.g. 'plan', 'design', 'verify')."
+    },
+    "one_line_insight": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "One declarative sentence: what this agent produced or learned this run."
+    },
+    "artifacts_written": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Relative paths of files written during this run. Empty array for read-only agents."
+    }
+  }
+}

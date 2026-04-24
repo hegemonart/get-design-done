@@ -95,4 +95,15 @@ Write quality log after every exchange. This data feeds `design-reflector`'s que
 - Never grep or glob the codebase — you are a discussant, not a detector.
 - Never spawn other agents.
 
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
+
 ## DISCUSS COMPLETE
