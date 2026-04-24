@@ -361,6 +361,126 @@
       "path": "reference/components/tooltip.md",
       "type": "component-spec",
       "description": "Tooltip spec — no interactive content, hover+focus trigger, 300ms delay, aria-describedby"
+    },
+    {
+      "name": "component-toast",
+      "path": "reference/components/toast.md",
+      "type": "component-spec",
+      "description": "Toast spec — role=status vs role=alert, 4–8s auto-dismiss, stacking, UUPM dashboard context"
+    },
+    {
+      "name": "component-alert",
+      "path": "reference/components/alert.md",
+      "type": "component-spec",
+      "description": "Alert spec — info/success/warning/error variants, role=alert vs role=status, icon reinforces variant"
+    },
+    {
+      "name": "component-progress",
+      "path": "reference/components/progress.md",
+      "type": "component-spec",
+      "description": "Progress spec — determinate (aria-valuenow) vs indeterminate (aria-valuetext), linear + circular"
+    },
+    {
+      "name": "component-skeleton",
+      "path": "reference/components/skeleton.md",
+      "type": "component-spec",
+      "description": "Skeleton spec — content-mirror layout, shimmer animation, aria-hidden on elements, aria-busy on container"
+    },
+    {
+      "name": "component-badge",
+      "path": "reference/components/badge.md",
+      "type": "component-spec",
+      "description": "Badge spec — count/dot/icon variants, 99+ overflow, aria-label on parent element"
+    },
+    {
+      "name": "component-chip",
+      "path": "reference/components/chip.md",
+      "type": "component-spec",
+      "description": "Chip spec — filter/input/suggestion/display variants, aria-pressed on toggle, independent remove aria-label"
+    },
+    {
+      "name": "component-menu",
+      "path": "reference/components/menu.md",
+      "type": "component-spec",
+      "description": "Menu spec — role=menu + role=menuitem, arrow-key nav, click-only open, sub-menu ArrowRight"
+    },
+    {
+      "name": "component-navbar",
+      "path": "reference/components/navbar.md",
+      "type": "component-spec",
+      "description": "Navbar spec — role=banner + role=navigation, skip link, aria-current=page, hamburger aria-expanded"
+    },
+    {
+      "name": "component-sidebar",
+      "path": "reference/components/sidebar.md",
+      "type": "component-spec",
+      "description": "Sidebar spec — aria-label=Secondary, icon+label vs icon-only collapsed, settings-nav + dashboard-nav variants"
+    },
+    {
+      "name": "component-breadcrumbs",
+      "path": "reference/components/breadcrumbs.md",
+      "type": "component-spec",
+      "description": "Breadcrumbs spec — aria-current=page on last item, aria-hidden separators, ol not ul"
+    },
+    {
+      "name": "component-pagination",
+      "path": "reference/components/pagination.md",
+      "type": "component-spec",
+      "description": "Pagination spec — aria-label=Pagination, aria-current=page, per-page select with visible label"
+    },
+    {
+      "name": "component-table",
+      "path": "reference/components/table.md",
+      "type": "component-spec",
+      "description": "Table spec — scope=col on th, aria-sort, aria-selected on rows, role=grid vs role=table, virtualise >200"
+    },
+    {
+      "name": "component-list",
+      "path": "reference/components/list.md",
+      "type": "component-spec",
+      "description": "List spec — display (ul/li) vs interactive (role=listbox + role=option), virtualise >100 items"
+    },
+    {
+      "name": "component-tree",
+      "path": "reference/components/tree.md",
+      "type": "component-spec",
+      "description": "Tree spec — role=tree + role=treeitem + role=group, aria-expanded, aria-level, aria-busy lazy-load"
+    },
+    {
+      "name": "component-command-palette",
+      "path": "reference/components/command-palette.md",
+      "type": "component-spec",
+      "description": "Command-palette spec — role=dialog + aria-modal, focus trap, role=combobox + aria-controls, Cmd/Ctrl+K"
+    },
+    {
+      "name": "component-date-picker",
+      "path": "reference/components/date-picker.md",
+      "type": "component-spec",
+      "description": "Date-picker spec — input + range, calendar role=dialog, day gridcell+button, native mobile fallback"
+    },
+    {
+      "name": "component-slider",
+      "path": "reference/components/slider.md",
+      "type": "component-spec",
+      "description": "Slider spec — role=slider + aria-valuenow/min/max/valuetext, 44px thumb touch target, Page Up/Down ±10%"
+    },
+    {
+      "name": "component-file-upload",
+      "path": "reference/components/file-upload.md",
+      "type": "component-spec",
+      "description": "File-upload spec — drop-zone + picker, input[type=file] never display:none, remove aria-label"
+    },
+    {
+      "name": "component-rich-text-editor",
+      "path": "reference/components/rich-text-editor.md",
+      "type": "component-spec",
+      "description": "Rich-text editor spec — contenteditable + role=textbox, toolbar role=toolbar, aria-pressed on toggles"
+    },
+    {
+      "name": "component-stepper",
+      "path": "reference/components/stepper.md",
+      "type": "component-spec",
+      "description": "Stepper spec — role=list (not role=tablist), aria-current=step, wizard/onboarding/checkout flow context"
     }
   ]
 }

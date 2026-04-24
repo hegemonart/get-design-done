@@ -41,40 +41,44 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 ---
 
-## Wave 3 — Feedback *(Phase 17)*
+## Wave 3 — Feedback
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
-| Toast / Snackbar | — | Ephemeral status notification |
-| Alert / Banner | — | Persistent inline status message |
-| Progress | — | Linear and circular completion indicator |
-| Skeleton | — | Loading placeholder matching content shape |
-| Badge | — | Numeric or status indicator overlaid on another element |
-| Chip / Tag | — | Compact, dismissible label |
+| Toast / Snackbar | [toast.md](toast.md) | Ephemeral status notification; auto-dismisses 4–8s |
+| Alert / Banner | [alert.md](alert.md) | Persistent inline status message; four severity variants |
+| Progress | [progress.md](progress.md) | Linear and circular completion indicator; determinate + indeterminate |
+| Skeleton | [skeleton.md](skeleton.md) | Loading placeholder matching content shape |
+| Badge | [badge.md](badge.md) | Numeric or status indicator overlaid on another element |
+| Chip / Tag | [chip.md](chip.md) | Compact toggleable/removable label; filter, input, suggestion, display |
 
 ---
 
-## Wave 4 — Navigation *(Phase 17)*
+## Wave 4 — Navigation & Data *(v1.17.0 · plan 17-02)*
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
-| Breadcrumb | — | Hierarchical location trail |
-| Pagination | — | Page-set navigation |
-| Stepper | — | Sequential multi-step progress indicator |
-| Navigation Menu | — | Top-level or sidebar navigation |
-| Command Menu | — | Keyboard-first search + action launcher |
+| Menu | [menu.md](menu.md) | Dropdown and context menu; action list with ARIA menu roles |
+| Navbar | [navbar.md](navbar.md) | Top navigation bar; primary nav + skip link + mobile hamburger |
+| Sidebar | [sidebar.md](sidebar.md) | Collapsible side navigation panel; icon+label / icon-only states |
+| Breadcrumbs | [breadcrumbs.md](breadcrumbs.md) | Hierarchical location trail; aria-current + hidden separators |
+| Pagination | [pagination.md](pagination.md) | Page-set navigation; previous/next + page buttons + per-page |
+| Table | [table.md](table.md) | Data table with sorting, selection, sticky header, virtualisation |
+| List | [list.md](list.md) | Display list (`<ul>/<ol>`) and interactive listbox (`role="listbox"`) |
+| Tree | [tree.md](tree.md) | Hierarchical tree view; expand/collapse with full ARIA tree roles |
+| Command Palette | [command-palette.md](command-palette.md) | Global Cmd/Ctrl+K launcher; dialog + combobox + listbox pattern |
 
 ---
 
-## Wave 5 — Data & Advanced *(Phase 17)*
+## Wave 5 — Data & Advanced
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
-| Table / Data Grid | — | Tabular data with sorting, filtering, selection |
-| Date Picker | — | Calendar-based date/range selection |
-| File Upload | — | Drag-drop or browse file input |
-| Rich Text Editor | — | WYSIWYG content authoring |
-| Virtualized List | — | Windowed rendering for large datasets |
+| Date Picker | [date-picker.md](date-picker.md) | Calendar-based date/range selection; input + popover variants |
+| Slider | [slider.md](slider.md) | Single-value and range thumb on a track; full keyboard contract |
+| File Upload | [file-upload.md](file-upload.md) | Drag-drop zone + accessible file input; per-file progress list |
+| Rich-Text Editor | [rich-text-editor.md](rich-text-editor.md) | WYSIWYG authoring with contenteditable + toolbar + mentions |
+| Stepper / Wizard | [stepper.md](stepper.md) | Sequential multi-step flow; role="list" (not tablist) |
 
 ---
 
@@ -84,7 +88,7 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 |------|-------|--------|
 | Wave 1 — Inputs | 8 | v1.16.0 |
 | Wave 2 — Containers | 7 | v1.16.0 |
-| Wave 3 — Feedback | 6 | Phase 17 |
-| Wave 4 — Navigation | 5 | Phase 17 |
-| Wave 5 — Data & Advanced | 5 | Phase 17 |
-| **Total** | **31** | — |
+| Wave 3 — Feedback | 6 | v1.17.0 |
+| Wave 4 — Navigation & Data | 9 | v1.17.0 |
+| Wave 5 — Data & Advanced | 5 | v1.17.0 |
+| **Total** | **35** | — |

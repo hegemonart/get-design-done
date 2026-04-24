@@ -6,6 +6,7 @@ color: green
 model: inherit
 default-tier: sonnet
 tier-rationale: "Catalogs design patterns present in codebase; open-ended classification"
+size_budget: XL
 parallel-safe: always
 typical-duration-seconds: 45
 reads-only: false
@@ -114,6 +115,66 @@ grep -rEn "import\s+styles\s+from\s+['\"].*\.module\.css['\"]" src/ --include="*
 ```
 
 Identify: CSS Modules, styled-components, Tailwind utility classes, or inline style objects. Classify the dominant approach and note any mixed patterns.
+
+---
+
+## Component Convergence Detection
+
+After pattern extraction, scan for component implementations against the benchmark corpus.
+
+### Step 1: Enumerate available specs
+
+```bash
+ls reference/components/*.md 2>/dev/null | grep -v TEMPLATE | grep -v README
+```
+
+If `reference/components/` does not exist or is empty, skip this entire section.
+
+### Step 2: Detect implementations per spec
+
+For each spec file, run its **Grep Signatures** section patterns against the source root:
+
+```bash
+# Example for button.md — adapt per spec's actual grep signatures
+grep -rn "role=\"button\"\|<button\b" src/ --include="*.tsx" --include="*.jsx" -l 2>/dev/null | wc -l
+```
+
+A component is "detected" if ≥1 signature pattern returns results.
+
+### Step 3: Compute convergence score per detected component
+
+For detected components, check coverage against the spec's **States** and **Variants** tables:
+- Count spec states: how many are implemented (aria attributes, CSS classes, data attributes)
+- Count spec variants: how many variant prop values exist in the codebase
+- Convergence % = (implemented items / total spec items) × 100, rounded to 10%
+
+### Step 4: Write `.design/map/component-convergence.md`
+
+```markdown
+---
+generated: [ISO timestamp]
+total_specs: [N]
+detected: [M]
+---
+
+# Component Convergence
+
+## Matched Components
+
+| Component | Spec | Convergence | Key Gaps |
+|-----------|------|-------------|----------|
+| Button | reference/components/button.md | 90% | Missing loading aria-busy |
+| Toast | reference/components/toast.md | 60% | Missing role="alert" on error variant |
+
+## Absent Components (spec exists, no codebase match)
+
+- `reference/components/command-palette.md` — no implementation detected
+- `reference/components/tree.md` — no implementation detected
+
+## Summary
+
+**N/M specs detected** in codebase · Average convergence: X%
+```
 
 ---
 

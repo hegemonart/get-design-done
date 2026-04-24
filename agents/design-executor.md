@@ -5,7 +5,8 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 color: yellow
 default-tier: sonnet
 tier-rationale: "Follows an Opus-authored plan; executes rather than plans"
-size_budget: XL
+size_budget: XXL
+size_budget_rationale: "Phase 17 added Benchmark Spec Pre-Flight section for type:components (+17 lines)"
 parallel-safe: conditional-on-touches
 typical-duration-seconds: 60
 reads-only: false
@@ -287,6 +288,23 @@ Read `reference/anti-patterns.md`, `reference/design-system-guidance.md`, and DE
 ### Type: component
 
 Read all relevant reference files for this component's concerns (typography, color, accessibility, motion) before starting.
+
+#### Benchmark Spec Pre-Flight
+
+Before executing the task, check for a benchmark spec:
+
+```bash
+# Extract component name from task description (PascalCase → kebab-case)
+ls reference/components/<name>.md 2>/dev/null
+```
+
+If `reference/components/<name>.md` exists:
+1. Read the spec's **Anatomy**, **States**, **Variants**, and **Keyboard & Accessibility** sections
+2. Use these as the authoritative contract for the implementation — do not re-discover naming conventions, ARIA roles, or keyboard patterns that the spec already defines
+3. In the task output file (`task-NN.md`), add a line: `Spec pre-flight: reference/components/<name>.md — [N] states, [M] variants, WAI-ARIA contract applied`
+4. Flag any deviation between the task instructions and the spec in the `## Deviations` section
+
+If no spec exists, skip silently and proceed normally (graceful degradation).
 
 1. **Read the component spec from the task's Action field**: understand what the component does, its states, its variants.
 2. **Apply ALL relevant reference guidelines simultaneously**: typography scale, color token usage, accessibility requirements (ARIA, focus management, keyboard nav), motion constraints.

@@ -397,9 +397,19 @@ Per-component design specifications harvested from 18 major design systems and s
 
 **Wave 2 — Containers (v1.16.0)**: Card · Modal/Dialog · Drawer/Sheet · Popover · Tooltip · Accordion · Tabs
 
-**Wave 3–5 — Feedback, Navigation, Data** (Phase 17): Toast · Alert · Progress · Skeleton · Badge · Chip · Breadcrumb · Pagination · Stepper · Table/Grid · Date Picker · File Upload · Rich Text · Virtualized List
+**Wave 3 — Feedback (v1.17.0)**: Toast · Alert · Progress · Skeleton · Badge · Chip
 
-Each spec includes: WAI-ARIA keyboard contracts (verbatim), convergence analysis (NORM = ≥4 systems agree · DIVERGE = systems differ), grep signatures for CI detection, and a failing-example block.
+**Wave 4 — Navigation & Data (v1.17.0)**: Menu · Navbar · Sidebar · Breadcrumbs · Pagination · Table · List · Tree · Command-palette
+
+**Wave 5 — Advanced (v1.17.0)**: Date-picker · Slider · File-upload · Rich-text editor · Stepper
+
+**Total: 35 specs** across 5 waves. Each spec: WAI-ARIA keyboard contracts (verbatim), NORM/DIVERGE convergence analysis, grep signatures for `design-auditor` conformance scoring, and a failing-example block.
+
+**Pipeline integration (v1.17.0):**
+- `design-auditor` — detects component implementations via grep signatures, scores conformance against specs, emits Component Conformance addendum
+- `design-executor` — reads matching spec as pre-flight contract for `type:components` tasks
+- `design-doc-writer` — scaffolds handoff docs from spec anatomy/variants when a benchmark spec exists
+- `design-pattern-mapper` — writes `.design/map/component-convergence.md` (matched/absent components + convergence %)
 
 ```bash
 /gdd:benchmark button                  # harvest + synthesize a single spec
