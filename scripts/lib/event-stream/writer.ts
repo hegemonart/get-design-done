@@ -21,7 +21,7 @@
 //     `payload` with `{ _truncated_placeholder: true }`, then re-serialize
 //     and stamp `_truncated: true` on the line.
 
-import { appendFileSync, mkdirSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, resolve, isAbsolute, join } from 'node:path';
 import { createRequire } from 'node:module';
 
@@ -29,11 +29,28 @@ import type { BaseEvent } from './types.ts';
 
 // Phase 22 Plan 22-02: write-time secret scrubbing. `redact()` deep-walks
 // the event and replaces secret-shaped strings with `[REDACTED:<type>]`
-// placeholders before serialization. Loaded via createRequire because
-// `redact.cjs` is a CommonJS module and `--experimental-strip-types` does
-// not interop ESM↔CJS for type-stripped sources.
-const require = createRequire(import.meta.url);
-const { redact } = require('../redact.cjs') as { redact: (v: unknown) => unknown };
+// placeholders before serialization. Loaded via createRequire so the
+// CommonJS `redact.cjs` interops cleanly. We avoid `import.meta.url` —
+// tsc's Node16 module mode classifies this .ts file as CJS output for
+// typecheck purposes (even though it runs as ESM under
+// `--experimental-strip-types`), and `import.meta` is forbidden in CJS
+// output. Mirror the pattern from `scripts/lib/session-runner/errors.ts`:
+// anchor createRequire on the repo-root package.json discovered by
+// walking up from `process.cwd()`.
+function _findRepoRoot(): string {
+  let dir = process.cwd();
+  for (let i = 0; i < 8; i++) {
+    if (existsSync(join(dir, 'package.json'))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return process.cwd();
+}
+const _redactRequire = createRequire(join(_findRepoRoot(), 'package.json'));
+const { redact } = _redactRequire(
+  resolve(_findRepoRoot(), 'scripts/lib/redact.cjs'),
+) as { redact: (v: unknown) => unknown };
 
 /** Default relative path for the persisted event stream. */
 export const DEFAULT_EVENTS_PATH = '.design/telemetry/events.jsonl';
