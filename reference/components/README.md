@@ -66,15 +66,16 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 ---
 
-## Wave 5 — Data & Advanced *(Phase 17)*
+## Wave 5 — Data & Advanced
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
 | Table / Data Grid | — | Tabular data with sorting, filtering, selection |
-| Date Picker | — | Calendar-based date/range selection |
-| File Upload | — | Drag-drop or browse file input |
-| Rich Text Editor | — | WYSIWYG content authoring |
-| Virtualized List | — | Windowed rendering for large datasets |
+| Date Picker | [date-picker.md](date-picker.md) | Calendar-based date/range selection; input + popover variants |
+| Slider | [slider.md](slider.md) | Single-value and range thumb on a track; full keyboard contract |
+| File Upload | [file-upload.md](file-upload.md) | Drag-drop zone + accessible file input; per-file progress list |
+| Rich-Text Editor | [rich-text-editor.md](rich-text-editor.md) | WYSIWYG authoring with contenteditable + toolbar + mentions |
+| Stepper / Wizard | [stepper.md](stepper.md) | Sequential multi-step flow; role="list" (not tablist) |
 
 ---
 
@@ -86,5 +87,5 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 | Wave 2 — Containers | 7 | v1.16.0 |
 | Wave 3 — Feedback | 6 | v1.17.0 |
 | Wave 4 — Navigation | 5 | Phase 17 |
-| Wave 5 — Data & Advanced | 5 | Phase 17 |
-| **Total** | **31** | — |
+| Wave 5 — Data & Advanced | 5 of 6 | v1.17.0 (plan 17-03) |
+| **Total** | **36** | — |
