@@ -4,6 +4,20 @@
   "generated_at": "2026-04-24T00:00:00.000Z",
   "entries": [
     {
+      "name": "codex-tools",
+      "path": "reference/codex-tools.md",
+      "type": "meta-rules",
+      "phase": 21,
+      "description": "Phase 21 cross-harness tool map — Claude Code → OpenAI Codex CLI tool-name equivalents for the gdd-sdk runner (Read→read_file, Write/Edit→apply_patch, Bash→shell, etc.)"
+    },
+    {
+      "name": "gemini-tools",
+      "path": "reference/gemini-tools.md",
+      "type": "meta-rules",
+      "phase": 21,
+      "description": "Phase 21 cross-harness tool map — Claude Code → Gemini CLI tool-name equivalents for the gdd-sdk runner"
+    },
+    {
       "name": "error-recovery",
       "path": "reference/error-recovery.md",
       "type": "meta-rules",
