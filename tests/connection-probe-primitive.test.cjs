@@ -175,7 +175,11 @@ test('22-08: probe throws on missing name or cmd', async () => {
 });
 
 test('22-08: statePathFor honors absolute + relative paths', () => {
-  assert.equal(statePathFor({ statePath: '/abs/state.json' }), '/abs/state.json');
-  const rel = statePathFor({ baseDir: '/proj', statePath: 'rel.json' });
-  assert.equal(rel, '/proj/rel.json');
+  // Use platform-appropriate absolute paths (POSIX `/abs/...` vs Windows `C:\abs\...`).
+  const path = require('node:path');
+  const abs = process.platform === 'win32' ? 'C:\\abs\\state.json' : '/abs/state.json';
+  const base = process.platform === 'win32' ? 'C:\\proj' : '/proj';
+  assert.equal(statePathFor({ statePath: abs }), abs);
+  const rel = statePathFor({ baseDir: base, statePath: 'rel.json' });
+  assert.equal(rel, path.resolve(base, 'rel.json'));
 });

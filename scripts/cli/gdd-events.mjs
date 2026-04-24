@@ -31,6 +31,7 @@
 
 import { existsSync, statSync, openSync, readSync, closeSync } from 'node:fs';
 import { resolve, isAbsolute } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { argv, exit, stdout, stderr } from 'node:process';
 import { createRequire } from 'node:module';
 
@@ -269,7 +270,11 @@ async function main() {
   }
 }
 
-const isCli = import.meta.url === `file://${process.argv[1]}`;
+// Compare module URL via pathToFileURL — Windows paths use backslashes
+// and need proper file:// URL canonicalisation; the simpler `file://${argv[1]}`
+// form drops to false on Windows and the CLI silently no-ops.
+const isCli = process.argv[1] !== undefined &&
+  import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isCli) {
   main().then((code) => exit(code), (err) => {
     stderr.write(`gdd-events fatal: ${err}\n`);
