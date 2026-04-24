@@ -53,6 +53,10 @@ Minimum expected files:
 - `reference/performance.md` — Core Web Vitals budgets, JS/font/image budgets, React runtime performance
 - `reference/style-vocabulary.md` — UI aesthetic catalog; use when scoring Pillar 3 (Color) style-coherence sub-check and Pillar 2 (Visual Hierarchy) signature-effects verification
 - `reference/design-systems-catalog.md` — 18-system index for identifying pattern precedents and system alignment
+- `reference/variable-fonts-loading.md` (if present) — variable font axes, font-display trade-offs, fallback metric overrides; use when auditing Pillar 4 (Typography)
+- `reference/image-optimization.md` (if present) — format matrix, srcset/sizes, LQIP/BlurHash, CDN transforms, image budgets; use when auditing Pillar 5 (Layout & Spacing) for image-heavy UIs
+- `reference/css-grid-layout.md` (if present) — subgrid, container queries, fluid clamp() typography, logical properties; use when auditing Pillar 5 (Layout & Spacing)
+- `reference/motion-advanced.md` (if present) — advanced motion patterns; score gesture/drag mechanics, clip-path animations, blur crossfades as "advanced craft" signal (positive, not a penalty) in Pillar 7 (Micro-Polish)
 
 ---
 

@@ -385,3 +385,23 @@ Remove `will-change` after the animation completes if applied dynamically:
 ```js
 element.addEventListener('transitionend', () => element.style.willChange = 'auto')
 ```
+
+---
+
+## Advanced Patterns
+
+For spring physics, scroll-driven animation, FLIP, View Transitions API, gesture & drag mechanics, clip-path animation patterns, blur-to-mask crossfades, WAAPI, Framer Motion hardware-acceleration gotcha, motion cohesion & personality, and the next-day slow-motion review process, see:
+
+→ **`reference/motion-advanced.md`** (Phase 18)
+
+For the canonical easing catalog (`--ease-*` tokens, cubic-bezier equivalents, 60fps settle-times):
+
+→ **`reference/motion-easings.md`** (Phase 18)
+
+For spring parameter presets (gentle / wobbly / stiff / slow):
+
+→ **`reference/motion-spring.md`** (Phase 18)
+
+For transition family taxonomy (8 families: 3d / blur / cover / destruction / dissolve / distortion / grid / light):
+
+→ **`reference/motion-transition-taxonomy.md`** (Phase 18)

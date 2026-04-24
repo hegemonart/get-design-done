@@ -261,6 +261,69 @@
       "description": "Google Fonts catalog (representative sample of 1923-row UUPM data set)"
     },
     {
+      "name": "variable-fonts-loading",
+      "path": "reference/variable-fonts-loading.md",
+      "type": "typography",
+      "phase": 18,
+      "description": "Variable font axes, font-display trade-offs, WOFF2 subsetting, FOIT/FOUT, fallback metric overrides, GRAD axis for dark mode, system font stacks (REF-14)"
+    },
+    {
+      "name": "image-optimization",
+      "path": "reference/image-optimization.md",
+      "type": "performance",
+      "phase": 18,
+      "description": "WebP/AVIF/JPEG-XL matrix, srcset+sizes math, art direction, LQIP/BlurHash, lazy-loading, fetchpriority, CDN transforms, image budget enforcement (REF-15)"
+    },
+    {
+      "name": "css-grid-layout",
+      "path": "reference/css-grid-layout.md",
+      "type": "layout",
+      "phase": 18,
+      "description": "CSS Grid templates, subgrid, container queries, fluid clamp() typography, intrinsic sizing, logical properties, safe-area insets, anchor positioning (REF-16)"
+    },
+    {
+      "name": "motion-advanced",
+      "path": "reference/motion-advanced.md",
+      "type": "motion",
+      "phase": 18,
+      "description": "Advanced motion: spring physics, FLIP, scroll-driven, View Transitions API, gesture/drag mechanics, clip-path animations, blur crossfades, WAAPI, Framer Motion hardware-accel gotcha, motion cohesion (REF-17)"
+    },
+    {
+      "name": "motion-easings",
+      "path": "reference/motion-easings.md",
+      "type": "motion",
+      "phase": 18,
+      "description": "12 canonical easing presets from RN MIT upstream — linear/quad/cubic/poly/sin/circle/exp/elastic/back/bounce/bezier + in/out/inOut wrappers; --ease-* token catalog; 60fps settle-times (MOT-01)"
+    },
+    {
+      "name": "motion-interpolate",
+      "path": "reference/motion-interpolate.md",
+      "type": "motion",
+      "phase": 18,
+      "description": "Input→output range mapping + 4 extrapolation modes (extend|identity|clamp|wrap); taxonomy of progress/scroll/gesture/time-linked animations (MOT-02)"
+    },
+    {
+      "name": "motion-spring",
+      "path": "reference/motion-spring.md",
+      "type": "motion",
+      "phase": 18,
+      "description": "Spring stiffness/damping/mass triad + 4 canonical presets (gentle/wobbly/stiff/slow) with 60fps settle-times; Framer Motion + React Spring syntax; CSS linear() approximation (MOT-05)"
+    },
+    {
+      "name": "motion-transition-taxonomy",
+      "path": "reference/motion-transition-taxonomy.md",
+      "type": "motion",
+      "phase": 18,
+      "description": "8 controlled transition families from hyperframes Apache-2.0: 3d, blur, cover, destruction, dissolve, distortion, grid, light — each with definition, canonical examples, when-to-use (MOT-03)"
+    },
+    {
+      "name": "motion-map-contract",
+      "path": "reference/output-contracts/motion-map.schema.json",
+      "type": "output-contract",
+      "phase": 18,
+      "description": "JSON schema for motion-mapper structured output block — easing, transition_family, duration_class, trigger per animation binding (MOT-04)"
+    },
+    {
       "name": "components-README",
       "path": "reference/components/README.md",
       "type": "taxonomy",

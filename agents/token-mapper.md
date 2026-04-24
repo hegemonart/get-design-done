@@ -119,6 +119,14 @@ After the standard token inventory, scan and report:
    - Check if they have `font-variant-numeric: tabular-nums` or Tailwind `tabular-nums` class
    - Report missing instances
 
+5. **Easing token consolidation** (when `reference/motion-easings.md` is present)
+   - Grep: `cubic-bezier\(` in CSS/SCSS/styled-components/Tailwind config
+   - Grep: `ease:` or `easing:` in Framer Motion / GSAP configs
+   - For each raw easing value found, check if a canonical `--ease-*` token from `reference/motion-easings.md` would serve the same purpose
+   - Report raw values that map to a canonical preset (recommend the `--ease-*` token)
+   - Report raw values with no canonical match as informational (may warrant a custom token)
+   - Do NOT flag values that are already using `--ease-*` tokens
+
 ### Output format:
 ```
 ## Micro-polish token findings

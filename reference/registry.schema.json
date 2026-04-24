@@ -38,10 +38,14 @@
               "experience",
               "palette",
               "style-vocabulary",
+              "typography",
+              "layout",
+              "performance",
               "component-spec"
             ]
           },
           "tier": { "enum": ["L0", "L1", "L2"] },
+          "phase": { "type": "integer", "description": "Phase that introduced this entry" },
           "description": { "type": "string" },
           "registered_at": { "type": "string", "format": "date-time" }
         },
