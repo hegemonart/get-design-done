@@ -76,6 +76,13 @@ You don't need to be a designer. The pipeline carries the design expertise so yo
 
 Built-in quality gates catch real problems: Handoff Faithfulness scoring on Claude Design bundles, contrast audits across the full palette × surface matrix, anti-pattern detection from the NNG catalog, dark-mode architecture verification, and motion-system consistency checks.
 
+### v1.15.0 Highlights — Design Knowledge Expansion
+
+- **10 new foundational references** — `iconography.md`, `performance.md`, `brand-voice.md`, `visual-hierarchy-layout.md`, `gestalt.md`, `design-system-guidance.md`, `design-systems-catalog.md`, `framer-motion-patterns.md`, `palette-catalog.md`, `style-vocabulary.md`. Agents now have authoritative answers on icon sizing, Web Vitals budgets, brand voice axes, Gestalt principles, DS governance, and 40+ industry-vertical color palettes.
+- **MIFB micro-polish track** — MIT content from [Jakub Krehel](https://jakub.kr/writing/details-that-make-interfaces-feel-better): new `reference/surfaces.md` (concentric radius, 3-layer shadow), `text-wrap: balance/pretty`, canonical press scale `0.96`, `AnimatePresence initial={false}`, `bounce: 0` icon cross-fade, and 4 new BAN entries. All four mapper agents gain "Micro-polish findings" detection. New 7th audit pillar: **Micro-polish** (5%).
+- **UUPM data ingest** — One-shot MIT snapshot from [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) v2.5.0: icon metaphor taxonomy, React perf heuristics, 20+ industry verticals, 24 landing-page archetypes, 57 font pairings, 40+ WCAG-verified palettes, 38+ UI aesthetic styles — all rewritten in GDD voice.
+- **⚠️ Breaking** — 7th audit pillar changes Anti-Pattern Compliance weight (10%→5%). Cross-cycle score comparisons spanning v1.14.x and v1.15.0 should account for this weight shift.
+
 ### v1.14.0 Highlights
 
 - **AI-native canvas tools** — paper.design (MCP canvas read/write, screenshot verification) and pencil.dev (git-tracked `.pen` spec files, no MCP required) complete a full canvas→code→verify→canvas round-trip.

@@ -4,6 +4,65 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.15.0] — 2026-04-24
+
+### Added — Design Knowledge Expansion: 10 foundational references + MIFB micro-polish + UUPM ingest
+
+This release closes the plugin's shallow-coverage gaps across iconography, performance, brand voice, visual hierarchy, Gestalt principles, design-system governance, and adds two new UUPM-sourced knowledge bases (palette catalog + style vocabulary). It also lands the complete MIT-licensed MIFB (make-interfaces-feel-better) micro-polish track.
+
+#### Impeccable removal
+
+All `impeccable-*` skill coupling removed from the plugin. References in `reference/checklists.md` and `reference/review-format.md` replaced with native GDD equivalents (`DESIGN-CONTEXT.md`, `/gdd:fast`, `design:design-critique`). Salvage archive at `.planning/research/impeccable-salvage/` for Phase 16.
+
+#### 10 new foundational reference files
+
+- **`reference/iconography.md`** — Optical sizing, stroke-weight rules, metaphor taxonomy (functional/status/nav/brand), dark-mode variants, icon animation guidelines, semantic vs. decorative labeling, touch-target pairing, catalog of 9 public icon libraries (Lucide, Phosphor, Heroicons, Radix Icons, Tabler, Iconoir, Remix, SF Symbols, Feather). Metaphor taxonomy absorbs UUPM `icons.csv` (MIT).
+- **`reference/performance.md`** — Core Web Vitals targets by project type (SaaS/marketing/e-commerce/docs/dashboards), LCP/INP/CLS/TTFB budgets, critical CSS, image budgets, animation frame budget (16.67ms), JS bundle budgets (<170KB gzipped), font budgets, Lighthouse CI hookup. React runtime section absorbs UUPM `react-performance.csv` (MIT).
+- **`reference/design-systems-catalog.md`** — Quick-reference index of 18 major design systems: Material 3, Apple HIG, Radix+WAI-ARIA, shadcn/ui, Polaris, Carbon, Fluent 2, Primer, Atlassian, Ant Design, Mantine, Chakra, Base Web, Nord, Spectrum, Lightning, Evergreen, Gestalt (Pinterest).
+- **`reference/brand-voice.md`** — 5 voice axes (Formal↔Casual, Serious↔Playful, Expert↔Approachable, Reverent↔Irreverent, Authoritative↔Collaborative), 12 Jungian archetypes + 6 design-register variants, tone-by-context table (8 contexts), 20+ industry-vertical context table. Industry-context absorbs UUPM `products.csv` + `ui-reasoning.csv` (MIT).
+- **`reference/visual-hierarchy-layout.md`** — Z-order/depth cues, whitespace principles, asymmetry/rhythm, compositional grids (4/8/12/16-col), figure-ground, reading-order patterns (F/Z/inverted-triangle), progressive disclosure. Landing-archetypes subsection absorbs UUPM `landing.csv` (24 patterns, MIT).
+- **`reference/gestalt.md`** — All 8 Gestalt principles (Proximity, Similarity, Continuity, Closure, Figure-Ground, Common Fate, Common Region, Prägnanz), each with definition, design application, scoring rubric, and CSS grep signatures. UUPM `ux-guidelines.csv` deduped across gestalt/heuristics/anti-patterns/priority-matrix (MIT).
+- **`reference/design-system-guidance.md`** — Token versioning/deprecation, multi-brand token architecture (base/semantic/component layers), platform translation (Style Dictionary/Tokens Studio/Terrazzo), governance/RFC model, documentation standard, maturity rubric levels 0–5.
+- **`reference/framer-motion-patterns.md`** — Spring vs. tween config, AnimatePresence (including `initial={false}` rule), layout animations, variants+staggering, gesture motion (`whileHover`, `whileTap` canonical 0.96), scroll-linked animations, `prefers-reduced-motion` compliance, 60fps GPU-safe property rules, MotionConfig, common pitfalls. UUPM `stacks/react.csv` framer rows absorbed (MIT).
+- **`reference/palette-catalog.md`** — 40+ industry-vertical color palettes with 12 semantic token roles each, all WCAG 4.5:1 body / 3:1 UI verified. Data sibling at `reference/data/palettes.csv`. UUPM `colors.csv` absorbed (MIT).
+- **`reference/style-vocabulary.md`** — 38+ named UI aesthetics (Glassmorphism, Brutalism, Neumorphism, Bento, Claymorphism, Aurora, AI-Native, Swiss Modernism 2.0, Vaporwave, Editorial Grid, HUD/Sci-Fi FUI, and more) with keywords, signature effects, best-for, avoid-for, era. Data sibling at `reference/data/styles.csv`. UUPM `styles.csv` absorbed (MIT).
+
+#### MIFB micro-polish track
+
+Source: [jakub.kr/writing/details-that-make-interfaces-feel-better](https://jakub.kr/writing/details-that-make-interfaces-feel-better) (MIT, Jakub Krehel)
+
+- **`reference/surfaces.md`** (new) — Concentric radius formula (`outerRadius = innerRadius + padding`), optical alignment offsets, 3-layer shadow system (exact `rgba` values), image outline rule (pure black/white opacity only), hit-area `::after` pseudo-element pattern.
+- **`reference/typography.md`** extended — `text-wrap: balance` (headings, ≤6 lines Chromium), `text-wrap: pretty` (body/captions), `-webkit-font-smoothing: antialiased` at `:root` only, `font-variant-numeric: tabular-nums` for dynamic numerals. UUPM `typography.csv` (57 pairings) absorbed into expanded pairings catalog (MIT). `reference/data/google-fonts.csv` registered as data sibling.
+- **`reference/motion.md`** extended — 6 new subsections: interruptible animations (transitions vs. keyframes decision table), split-and-stagger enter/exit pattern, contextual icon cross-fade (canonical `scale 0.25→1`, `opacity 0→1`, `blur 4→0`, `bounce: 0`), scale-on-press canonical `0.96`, `<AnimatePresence initial={false}>` rule, `will-change` GPU-compositable property table.
+- **`reference/anti-patterns.md`** — 4 new BAN entries: BAN-10 same-radius-nested, BAN-11 tinted image outline, BAN-12 `transition: all`, BAN-13 `will-change: all`. Each with grep signature and fix pointer.
+- **`reference/checklists.md`** — New "Micro-polish check" gate (14 items across typography/surfaces/motion). `scale(0.97)` mention reconciled to canonical `0.96`.
+
+#### ⚠️ BREAKING — 7th audit pillar: Micro-polish (weight redistribution)
+
+A new **Micro-polish** pillar (5%) has been added to `reference/audit-scoring.md`. Weight was redistributed from the Anti-Pattern Compliance pillar (10% → 5%). **Total remains 100%, but per-pillar weights changed.** Cross-cycle score comparisons that mix v1.14.x and v1.15.0 audit reports should account for this weight shift.
+
+#### Mapper extensions
+
+All four mapper agents (`motion-mapper`, `token-mapper`, `visual-hierarchy-mapper`, `a11y-mapper`) gain "Micro-polish findings" output sections with grep-driven detection of BAN-10/11/12/13 and MIFB rule violations.
+
+#### Agent integrations
+
+- `design-context-builder` — reads `brand-voice.md` for archetype resolution, `palette-catalog.md` for palette proposal, `style-vocabulary.md` for style-direction picker.
+- `design-auditor` — reads `iconography.md`, `performance.md`, `gestalt.md`, `framer-motion-patterns.md`, `surfaces.md`; includes 7th pillar micro_polish in output schema.
+- `design-executor` — reads `brand-voice.md` (type:copy), `design-system-guidance.md` (type:tokens), `framer-motion-patterns.md` (type:motion), `performance.md` (type:layout).
+- `design-pattern-mapper` — extended with `iconography-system` and `brand-voice` categories.
+- `design-verifier` — micro_polish added as supplemental dimension.
+
+#### Attribution
+
+- Jakub Krehel (MIT) — micro-polish rules in typography.md, surfaces.md, motion.md, anti-patterns.md BAN-10/11/12/13, checklists.md Micro-polish gate.
+- nextlevelbuilder/ui-ux-pro-max-skill v2.5.0 (MIT) — data snapshot ingested into iconography, performance, brand-voice, visual-hierarchy-layout, typography, framer-motion-patterns, palette-catalog, style-vocabulary, gestalt/heuristics/anti-patterns/priority-matrix dedup. **One-shot snapshot — no live re-sync contract.**
+
+#### UUPM deferrals (explicitly routed, not discarded)
+
+- `charts.csv` → Phase 19 `reference/data-visualization.md`
+- `app-interface.csv` → Phase 17 component-corpus authoring
+- `stacks/*.csv` (14 non-React) → future stack-playbook phase
 ## [1.14.8] — 2026-04-24
 
 ### Added — Phase 14.7 First-Run Proof Path

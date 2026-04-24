@@ -3,33 +3,262 @@
   "version": 1,
   "generated_at": "2026-04-24T00:00:00.000Z",
   "entries": [
-    { "name": "shared-preamble",         "path": "reference/shared-preamble.md",         "type": "preamble",        "tier": "L0", "description": "L0 aggregator — imports meta-rules first and exposes Framework Identity + Ordering Convention + Pre-Warming" },
-    { "name": "meta-rules",              "path": "reference/meta-rules.md",              "type": "meta-rules",      "tier": "L0", "description": "Framework-invariant rules: Required Reading Discipline, Writes Protocol, Deviation Handling, Completion Markers, Context-Exhaustion & Budget awareness" },
-    { "name": "cycle-handoff-preamble",  "path": "reference/cycle-handoff-preamble.md",  "type": "preamble",                       "description": "Framing prose for archived cycle material — read as reference, not as current request" },
-    { "name": "retrieval-contract",      "path": "reference/retrieval-contract.md",      "type": "preamble",                       "description": "3-layer search → metadata → full-doc protocol with per-row token-cost labels" },
-    { "name": "heuristics",              "path": "reference/heuristics.md",              "type": "heuristic",       "tier": "L2", "description": "NNG heuristics + GDD-specific rubrics used by auditor / verifier" },
-    { "name": "anti-patterns",           "path": "reference/anti-patterns.md",           "type": "heuristic",       "tier": "L2", "description": "Catalog of design anti-patterns surfaced during audit" },
-    { "name": "checklists",              "path": "reference/checklists.md",              "type": "heuristic",       "tier": "L2", "description": "Per-category gate checklists" },
-    { "name": "accessibility",           "path": "reference/accessibility.md",           "type": "heuristic",                     "description": "WCAG + focus + keyboard-nav heuristics referenced by a11y-mapper" },
-    { "name": "debugger-philosophy",     "path": "reference/debugger-philosophy.md",     "type": "heuristic",                     "description": "Philosophy guide for systematic-debugging agents" },
-    { "name": "parallelism-rules",       "path": "reference/parallelism-rules.md",       "type": "heuristic",                     "description": "Rules for serial/parallel agent dispatch and Touches conflict detection" },
-    { "name": "priority-matrix",         "path": "reference/priority-matrix.md",         "type": "heuristic",                     "description": "Severity × Effort priority-score formula used by gap prioritizers" },
-    { "name": "project-skills-guide",    "path": "reference/project-skills-guide.md",    "type": "heuristic",                     "description": "Guide for authoring project-skill artifacts (sketch/spike wrap-ups)" },
-    { "name": "audit-scoring",           "path": "reference/audit-scoring.md",           "type": "output-contract",                "description": "6-pillar + 7-category audit score rubric and output schema" },
-    { "name": "review-format",           "path": "reference/review-format.md",           "type": "output-contract",                "description": "Format of code-review output documents" },
-    { "name": "authority-feeds",         "path": "reference/authority-feeds.md",         "type": "authority-feed",                 "description": "Whitelist of design-authority feed sources for the watcher" },
-    { "name": "motion",                  "path": "reference/motion.md",                  "type": "motion",                         "description": "Motion vocabulary seed (extended in Phase 18)" },
-    { "name": "typography",              "path": "reference/typography.md",              "type": "heuristic",                     "description": "Typography-system heuristics used by visual-hierarchy-mapper" },
-    { "name": "ai-native-tool-interface","path": "reference/ai-native-tool-interface.md","type": "surfaces",                       "description": "AI-native tool interface contract used across connections" },
-    { "name": "intel-schema",            "path": "reference/intel-schema.md",            "type": "schema",                         "description": "Schema documentation for .design/intel/ files" },
-    { "name": "config-schema",           "path": "reference/config-schema.md",           "type": "schema",                         "description": "Schema documentation for .design/config.json" },
-    { "name": "DEPRECATIONS",            "path": "reference/DEPRECATIONS.md",            "type": "schema",                         "description": "Deprecation records and redirect mappings" },
-    { "name": "STATE-TEMPLATE",          "path": "reference/STATE-TEMPLATE.md",          "type": "schema",                         "description": "Template for .design/STATE.md scaffolded by /gdd:scan" },
-    { "name": "model-prices",            "path": "reference/model-prices.md",            "type": "data",                           "description": "Anthropic model pricing table used by the telemetry aggregator" },
-    { "name": "model-tiers",             "path": "reference/model-tiers.md",             "type": "data",                           "description": "Per-agent default tier map and rationale" },
-    { "name": "figma-sandbox",           "path": "reference/figma-sandbox.md",           "type": "defaults",                       "description": "Four Figma plugin-sandbox pitfalls encoded as hard rules" },
-    { "name": "mcp-budget.default",      "path": "reference/mcp-budget.default.json",    "type": "defaults",                       "description": "Default MCP per-task budget (calls + consecutive-timeout thresholds)" },
-    { "name": "protected-paths.default", "path": "reference/protected-paths.default.json","type": "defaults",                       "description": "Default glob list the plugin refuses to Edit/Write/mutate-via-Bash without override" },
-    { "name": "start-interview",         "path": "reference/start-interview.md",         "type": "preamble",                       "description": "Locked 5-question interview consumed by /gdd:start (Phase 14.7) — pain, target-area, budget, framework/DS confirmation, Figma/canvas workflow" }
+    {
+      "name": "shared-preamble",
+      "path": "reference/shared-preamble.md",
+      "type": "preamble",
+      "tier": "L0",
+      "description": "L0 aggregator \u2014 imports meta-rules first and exposes Framework Identity + Ordering Convention + Pre-Warming"
+    },
+    {
+      "name": "meta-rules",
+      "path": "reference/meta-rules.md",
+      "type": "meta-rules",
+      "tier": "L0",
+      "description": "Framework-invariant rules: Required Reading Discipline, Writes Protocol, Deviation Handling, Completion Markers, Context-Exhaustion & Budget awareness"
+    },
+    {
+      "name": "cycle-handoff-preamble",
+      "path": "reference/cycle-handoff-preamble.md",
+      "type": "preamble",
+      "description": "Framing prose for archived cycle material \u2014 read as reference, not as current request"
+    },
+    {
+      "name": "retrieval-contract",
+      "path": "reference/retrieval-contract.md",
+      "type": "preamble",
+      "description": "3-layer search \u2192 metadata \u2192 full-doc protocol with per-row token-cost labels"
+    },
+    {
+      "name": "heuristics",
+      "path": "reference/heuristics.md",
+      "type": "heuristic",
+      "tier": "L2",
+      "description": "NNG heuristics + GDD-specific rubrics used by auditor / verifier"
+    },
+    {
+      "name": "anti-patterns",
+      "path": "reference/anti-patterns.md",
+      "type": "heuristic",
+      "tier": "L2",
+      "description": "Catalog of design anti-patterns surfaced during audit"
+    },
+    {
+      "name": "checklists",
+      "path": "reference/checklists.md",
+      "type": "heuristic",
+      "tier": "L2",
+      "description": "Per-category gate checklists"
+    },
+    {
+      "name": "accessibility",
+      "path": "reference/accessibility.md",
+      "type": "heuristic",
+      "description": "WCAG + focus + keyboard-nav heuristics referenced by a11y-mapper"
+    },
+    {
+      "name": "debugger-philosophy",
+      "path": "reference/debugger-philosophy.md",
+      "type": "heuristic",
+      "description": "Philosophy guide for systematic-debugging agents"
+    },
+    {
+      "name": "parallelism-rules",
+      "path": "reference/parallelism-rules.md",
+      "type": "heuristic",
+      "description": "Rules for serial/parallel agent dispatch and Touches conflict detection"
+    },
+    {
+      "name": "priority-matrix",
+      "path": "reference/priority-matrix.md",
+      "type": "heuristic",
+      "description": "Severity \u00d7 Effort priority-score formula used by gap prioritizers"
+    },
+    {
+      "name": "project-skills-guide",
+      "path": "reference/project-skills-guide.md",
+      "type": "heuristic",
+      "description": "Guide for authoring project-skill artifacts (sketch/spike wrap-ups)"
+    },
+    {
+      "name": "audit-scoring",
+      "path": "reference/audit-scoring.md",
+      "type": "output-contract",
+      "description": "6-pillar + 7-category audit score rubric and output schema"
+    },
+    {
+      "name": "review-format",
+      "path": "reference/review-format.md",
+      "type": "output-contract",
+      "description": "Format of code-review output documents"
+    },
+    {
+      "name": "authority-feeds",
+      "path": "reference/authority-feeds.md",
+      "type": "authority-feed",
+      "description": "Whitelist of design-authority feed sources for the watcher"
+    },
+    {
+      "name": "motion",
+      "path": "reference/motion.md",
+      "type": "motion",
+      "description": "Motion vocabulary seed (extended in Phase 18)"
+    },
+    {
+      "name": "typography",
+      "path": "reference/typography.md",
+      "type": "heuristic",
+      "description": "Typography-system heuristics used by visual-hierarchy-mapper"
+    },
+    {
+      "name": "ai-native-tool-interface",
+      "path": "reference/ai-native-tool-interface.md",
+      "type": "surfaces",
+      "description": "AI-native tool interface contract used across connections"
+    },
+    {
+      "name": "intel-schema",
+      "path": "reference/intel-schema.md",
+      "type": "schema",
+      "description": "Schema documentation for .design/intel/ files"
+    },
+    {
+      "name": "config-schema",
+      "path": "reference/config-schema.md",
+      "type": "schema",
+      "description": "Schema documentation for .design/config.json"
+    },
+    {
+      "name": "DEPRECATIONS",
+      "path": "reference/DEPRECATIONS.md",
+      "type": "schema",
+      "description": "Deprecation records and redirect mappings"
+    },
+    {
+      "name": "STATE-TEMPLATE",
+      "path": "reference/STATE-TEMPLATE.md",
+      "type": "schema",
+      "description": "Template for .design/STATE.md scaffolded by /gdd:scan"
+    },
+    {
+      "name": "model-prices",
+      "path": "reference/model-prices.md",
+      "type": "data",
+      "description": "Anthropic model pricing table used by the telemetry aggregator"
+    },
+    {
+      "name": "model-tiers",
+      "path": "reference/model-tiers.md",
+      "type": "data",
+      "description": "Per-agent default tier map and rationale"
+    },
+    {
+      "name": "figma-sandbox",
+      "path": "reference/figma-sandbox.md",
+      "type": "defaults",
+      "description": "Four Figma plugin-sandbox pitfalls encoded as hard rules"
+    },
+    {
+      "name": "mcp-budget.default",
+      "path": "reference/mcp-budget.default.json",
+      "type": "defaults",
+      "description": "Default MCP per-task budget (calls + consecutive-timeout thresholds)"
+    },
+    {
+      "name": "protected-paths.default",
+      "path": "reference/protected-paths.default.json",
+      "type": "defaults",
+      "description": "Default glob list the plugin refuses to Edit/Write/mutate-via-Bash without override"
+    },
+    {
+      "name": "start-interview",
+      "path": "reference/start-interview.md",
+      "type": "preamble",
+      "description": "Locked 5-question interview consumed by /gdd:start (Phase 14.7) \u2014 pain, target-area, budget, framework/DS confirmation, Figma/canvas workflow"
+    },
+    {
+      "name": "framer-motion-patterns",
+      "path": "reference/framer-motion-patterns.md",
+      "type": "heuristic",
+      "description": "Framer Motion implementation: spring/tween, AnimatePresence, variants, gestures, a11y"
+    },
+    {
+      "name": "iconography",
+      "path": "reference/iconography.md",
+      "type": "heuristic",
+      "description": "Icon sizing, metaphors, library catalog, touch targets, animation"
+    },
+    {
+      "name": "performance",
+      "path": "reference/performance.md",
+      "type": "heuristic",
+      "description": "Core Web Vitals budgets, JS/font/image budgets, React runtime perf"
+    },
+    {
+      "name": "design-systems-catalog",
+      "path": "reference/design-systems-catalog.md",
+      "type": "taxonomy",
+      "description": "Quick-reference index of 18 major design systems"
+    },
+    {
+      "name": "brand-voice",
+      "path": "reference/brand-voice.md",
+      "type": "heuristic",
+      "description": "Voice axes, archetypes, tone-by-context, industry-context palettes"
+    },
+    {
+      "name": "visual-hierarchy-layout",
+      "path": "reference/visual-hierarchy-layout.md",
+      "type": "heuristic",
+      "description": "Z-order, whitespace, grids, F/Z patterns, 24 landing archetypes"
+    },
+    {
+      "name": "gestalt",
+      "path": "reference/gestalt.md",
+      "type": "heuristic",
+      "description": "8 Gestalt principles with scoring rubrics and grep signatures"
+    },
+    {
+      "name": "design-system-guidance",
+      "path": "reference/design-system-guidance.md",
+      "type": "heuristic",
+      "description": "Token versioning, multi-brand arch, governance, maturity rubric 0-5"
+    },
+    {
+      "name": "palette-catalog",
+      "path": "reference/palette-catalog.md",
+      "type": "palette",
+      "description": "40+ industry-vertical color palettes (WCAG verified, UUPM MIT)"
+    },
+    {
+      "name": "style-vocabulary",
+      "path": "reference/style-vocabulary.md",
+      "type": "style-vocabulary",
+      "description": "67 UI aesthetics with keywords, effects, best-for, era (UUPM MIT)"
+    },
+    {
+      "name": "palettes-data",
+      "path": "reference/data/palettes.csv",
+      "type": "data",
+      "description": "CSV data sibling for palette-catalog.md"
+    },
+    {
+      "name": "styles-data",
+      "path": "reference/data/styles.csv",
+      "type": "data",
+      "description": "CSV data sibling for style-vocabulary.md"
+    },
+    {
+      "name": "surfaces",
+      "path": "reference/surfaces.md",
+      "type": "surfaces",
+      "description": "Concentric radius, optical alignment, 3-layer shadow, image outlines, hit areas"
+    },
+    {
+      "name": "google-fonts-data",
+      "path": "reference/data/google-fonts.csv",
+      "type": "data",
+      "description": "Google Fonts catalog (representative sample of 1923-row UUPM data set)"
+    }
   ]
 }

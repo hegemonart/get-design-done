@@ -94,6 +94,42 @@ figma_augmented: [true|false]
 
 ## Observations
 - [Dominant color space, typography scale coherence, grid adherence]
+
+## Micro-polish token findings
+
+After the standard token inventory, scan and report:
+
+1. **Tinted image outlines**
+   - Grep: `outline-(slate|zinc|neutral|gray|stone|blue|red|green|yellow|purple|orange)-\d+` on `<img>` elements
+   - Grep CSS: `img\s*\{[^}]*outline:[^}]*#[0-9a-fA-F]{3,8}`
+   - Fix: `outline: 1px solid rgba(0,0,0,0.08)` or `rgba(255,255,255,0.08)` only
+
+2. **Shadow tokens drifting from 3-layer formula**
+   - Grep for `box-shadow` values that use a single layer or non-rgba values
+   - Flag: shadows that don't follow the 3-layer pattern (0 1px 2px / 0 4px 8px / 0 8px 16px)
+   - Report as informational (not hard violation) unless the design system has a shadow token system
+
+3. **Missing root-level font-smoothing**
+   - Grep: `-webkit-font-smoothing` and `-moz-osx-font-smoothing`
+   - If found NOT on `:root` or `body` → flag as per-element misapplication
+   - If not found at all → flag as missing root antialiasing
+
+4. **Missing tabular-nums on dynamic numerals**
+   - Grep for elements with className containing: `price`, `counter`, `timer`, `count`, `amount`, `balance`, `total`
+   - Check if they have `font-variant-numeric: tabular-nums` or Tailwind `tabular-nums` class
+   - Report missing instances
+
+### Output format:
+```
+## Micro-polish token findings
+
+| Finding | File | Line | Issue | Fix |
+|---------|------|------|-------|-----|
+| tinted-outline | ... | ... | `outline-slate-200` on img | Use `outline: 1px solid rgba(0,0,0,0.08)` |
+| missing-tabular-nums | ... | ... | `.price` element lacks tabular-nums | Add `font-variant-numeric: tabular-nums` |
+
+Total: N findings. (0 = clean)
+```
 ```
 
 ## Constraints

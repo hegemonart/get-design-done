@@ -86,6 +86,35 @@ Scale coherence: [Well-defined | Flat | Inverted | Chaotic]
 
 ## Score
 Overall hierarchy health: [Well-defined | Flat | Inverted]
+
+## Micro-polish hierarchy findings
+
+After the standard visual hierarchy map, scan and report:
+
+1. **Same border-radius on nested surfaces**
+   - Grep (Tailwind): look for identical `rounded-*` class on a container AND its immediate child within a padded block
+   - Grep CSS: `border-radius:\s*[0-9]+` appearing on both parent and child in the same component
+   - Fix: apply concentric formula `innerRadius = outerRadius − padding`
+
+2. **Headings without text-wrap:balance**
+   - Grep: `<h[1-3]` elements or `.heading`, `.title` elements without `text-wrap: balance` or Tailwind `text-balance`
+   - Report: file:line; add `text-wrap: balance` to all headings
+
+3. **Missing text-wrap:pretty on body text**
+   - Grep: `<p>`, `.body`, `.description`, `.caption` without `text-wrap: pretty` or `text-pretty`
+   - This is an informational finding (enhancement, not violation)
+
+### Output format:
+```
+## Micro-polish hierarchy findings
+
+| Finding | Severity | File | Description | Fix |
+|---------|----------|------|-------------|-----|
+| same-radius-nested | HIGH | ... | Card (rounded-xl) + inner button (rounded-xl) at 16px padding | inner should be rounded-none (16-16=0) |
+| heading-no-balance | MED | ... | h2 missing text-wrap:balance | Add text-balance class |
+
+Total: N findings.
+```
 ```
 
 ## Constraints

@@ -1,0 +1,51 @@
+family,category,variants,popularity_rank,best_for,pairing_suggestion
+Inter,sans-serif,"100 200 300 400 500 600 700 800 900",1,UI interfaces,JetBrains Mono
+Roboto,sans-serif,"100 300 400 500 700 900",2,Android apps,Roboto Mono
+Open Sans,sans-serif,"300 400 500 600 700 800",3,Content sites,Source Code Pro
+Lato,sans-serif,"100 300 400 700 900",4,Corporate,Inconsolata
+Montserrat,sans-serif,"100 200 300 400 500 600 700 800 900",5,Headers/Fashion,Raleway
+Poppins,sans-serif,"100 200 300 400 500 600 700 800 900",6,Modern UI,Space Mono
+Nunito,sans-serif,"200 300 400 500 600 700 800 900",7,Friendly apps,Nunito Sans
+Raleway,sans-serif,"100 200 300 400 500 600 700 800 900",8,Luxury/Editorial,Lato
+Oswald,sans-serif,"200 300 400 500 600 700",9,Impact headlines,Source Sans 3
+Source Sans 3,sans-serif,"200 300 400 500 600 700 900",10,Content/Enterprise,Source Serif 4
+Playfair Display,serif,"400 500 600 700 800 900",11,Editorial headers,Source Sans 3
+Merriweather,serif,"300 400 700 900",12,Long-form reading,Open Sans
+PT Sans,sans-serif,"400 700",13,CIS region apps,PT Serif
+Ubuntu,sans-serif,"300 400 500 700",14,Linux/tech apps,Ubuntu Mono
+Noto Sans,sans-serif,"100 200 300 400 500 600 700 800 900",15,Multilingual,Noto Serif
+Work Sans,sans-serif,"100 200 300 400 500 600 700 800 900",16,Modern websites,Space Mono
+Quicksand,sans-serif,"300 400 500 600 700",17,Playful/Wellness,Nunito
+Mulish,sans-serif,"200 300 400 500 600 700 800 900",18,Clean UI,Courier Prime
+DM Sans,sans-serif,"100 200 300 400 500 600 700 800 900",19,Tech/Modern,DM Mono
+DM Serif Display,serif,"400",20,Display headers,DM Sans
+IBM Plex Sans,sans-serif,"100 200 300 400 500 600 700",21,Enterprise/IBM,IBM Plex Mono
+IBM Plex Mono,monospace,"100 200 300 400 500 600 700",22,Code/Tech,IBM Plex Sans
+JetBrains Mono,monospace,"100 200 300 400 500 600 700 800",23,Developer tools,Inter
+Fira Code,monospace,"300 400 500 600 700",24,Developer tools,Fira Sans
+Space Mono,monospace,"400 700",25,Retro/Tech,Space Grotesk
+Space Grotesk,sans-serif,"300 400 500 600 700",26,Modern tech,Space Mono
+Plus Jakarta Sans,sans-serif,"200 300 400 500 600 700 800",27,Consumer apps,Syne
+Syne,sans-serif,"400 500 600 700 800",28,Creative headers,DM Sans
+Cabinet Grotesk,sans-serif,"100 200 300 400 500 600 700 800 900",29,Consumer branding,Satoshi
+Geist,sans-serif,"100 200 300 400 500 600 700 800 900",30,Vercel ecosystem,Geist Mono
+Geist Mono,monospace,"100 200 300 400 500 600 700 800 900",31,Code display,Geist
+Outfit,sans-serif,"100 200 300 400 500 600 700 800 900",32,Friendly SaaS,DM Mono
+Cormorant Garamond,serif,"300 400 500 600 700",33,Luxury editorial,Proza Libre
+EB Garamond,serif,"400 500 600 700 800",34,Classical print,Lato
+Libre Baskerville,serif,"400 700",35,Classic editorial,Libre Franklin
+Libre Franklin,sans-serif,"100 200 300 400 500 600 700 800 900",36,Editorial body,Libre Baskerville
+Crimson Pro,serif,"200 300 400 500 600 700 800 900",37,Long-form reading,Raleway
+Lora,serif,"400 500 600 700",38,Blog/editorial,Source Sans 3
+Bodoni Moda,serif,"400 500 600 700 800 900",39,Fashion/luxury,Jost
+Jost,sans-serif,"100 200 300 400 500 600 700 800 900",40,Modern sans,Bodoni Moda
+Exo 2,sans-serif,"100 200 300 400 500 600 700 800 900",41,Futuristic/Gaming,Roboto
+Bebas Neue,sans-serif,"400",42,Impact display,Open Sans
+Anton,sans-serif,"400",43,Bold headlines,Open Sans
+Archivo,sans-serif,"100 200 300 400 500 600 700 800 900",44,Neutral content,Archivo Black
+Cabin,sans-serif,"400 500 600 700",45,Humanist UI,Cabin Condensed
+Rubik,sans-serif,"300 400 500 600 700 800 900",46,Rounded UI,Fira Code
+Barlow,sans-serif,"100 200 300 400 500 600 700 800 900",47,Wide screens,Barlow Condensed
+Hind,sans-serif,"300 400 500 600 700",48,Devanagari+Latin,Roboto
+Manrope,sans-serif,"200 300 400 500 600 700 800",49,Modern rounded,JetBrains Mono
+Noto Serif,serif,"100 200 300 400 500 600 700 800 900",50,Multilingual body,Noto Sans

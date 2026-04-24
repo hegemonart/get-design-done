@@ -109,6 +109,31 @@ scope: static-only
 
 ## Scope note
 Static scan only. Runtime contrast, focus-trap, and screen-reader behavior require a live audit (Phase 8).
+
+## Micro-polish a11y findings
+
+After the standard accessibility map, scan and report:
+
+1. **Interactive elements visually < 40×40 without hit-area extension**
+   - Grep: `<button`, `<a`, elements with `onClick` where width/height classes suggest small size (e.g., `w-4 h-4`, `w-5 h-5`, `w-6 h-6`) without `::after` pseudo-element or explicit padding expansion
+   - Fix: add `::after { content:''; position:absolute; inset:-10px }` to reach 40×40 minimum
+   - This pairs with existing WCAG touch-target check but adds the concrete `::after` fix pointer
+
+2. **Icon buttons without expanded click area**
+   - Grep: `<button[^>]*>` containing only an `<svg>` or icon component with small container size
+   - Flag if no `p-2` or larger padding that would expand the hit area
+   - Fix: add `p-2` (8px each side) to 24px icon → 40px total; or use `::after` pattern
+
+### Output format:
+```
+## Micro-polish a11y findings
+
+| Finding | File | Line | Element | Measured Size | Fix |
+|---------|------|------|---------|---------------|-----|
+| small-hit-area | ... | ... | IconButton (close) | 20×20px | Add p-2 padding or ::after inset:-10px |
+
+Total: N findings. (0 = clean)
+```
 ```
 
 ## Constraints

@@ -341,6 +341,10 @@ The NOT is equally important:
 - "NOT another purple-gradient AI product"
 - "NOT enterprise blue and gray"
 
+**Palette proposal (palette-catalog.md):** Once the product type is known from Area 1 and the brand direction is established above, look up the matching row in `reference/palette-catalog.md`. Pre-populate `D-02` with the vertical's palette as the baseline. If the product spans two verticals, anchor on the primary revenue-model vertical and note the borrow from the secondary. Always cross-check the palette against the voice axis from `reference/brand-voice.md` — a mismatch (e.g., "authoritative navy" palette + "playful irreverent" voice) must be surfaced as a gray area.
+
+**Style direction (style-vocabulary.md):** Ask the user to confirm or adjust the inferred UI aesthetic style before writing the context file. Infer the style from the brand direction words captured above. Look up the inferred style name verbatim in `reference/style-vocabulary.md` to confirm it is coherent with the product type (Best For / Avoid For columns) and to surface the performance cost (Performance column) in the Constraints section. Record the confirmed style name verbatim in the context file as a `D-0N` decision so downstream agents can pattern-match it. Example: `D-04: [Style] "Glassmorphism Dark" — confirmed for gaming media player context; GPU cost noted in constraints.`
+
 ### Area 5 — Visual References (Refero-augmented)
 
 This area uses Refero MCP when available, with graceful fallback to local brand archetypes and finally WebFetch. Refero tool names may vary — verify via ToolSearch before calling.
@@ -572,6 +576,8 @@ C-04: [other constraints]
 - ${CLAUDE_PLUGIN_ROOT}/reference/audit-scoring.md
 - ${CLAUDE_PLUGIN_ROOT}/reference/motion.md
 - ${CLAUDE_PLUGIN_ROOT}/reference/heuristics.md
+- ${CLAUDE_PLUGIN_ROOT}/reference/iconography.md
+- ${CLAUDE_PLUGIN_ROOT}/reference/performance.md
 </canonical_refs>
 
 <baseline_audit>

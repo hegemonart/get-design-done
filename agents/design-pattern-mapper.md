@@ -36,6 +36,7 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt pass
 - `.design/STATE.md` — current pipeline position and source roots
 - `.design/DESIGN-CONTEXT.md` — goals, decisions, must-haves, baseline audit, domain, scopes
 - `reference/audit-scoring.md` — maps task types to scoring categories
+- `reference/brand-voice.md` — voice axis defaults and industry context (use when classifying copy-system patterns and inferring brand register from existing UI text)
 
 **Invariant:** Read every file in the `<required_reading>` block before taking any other action.
 
@@ -186,6 +187,7 @@ _Dominant styling approach: [CSS Modules | Tailwind | styled-components | inline
 | `spacing-system` | Padding, margin, gap, spacing scale |
 | `typography-system` | Font size, weight, family, line-height |
 | `component-styling` | How components apply styles (CSS Modules, Tailwind, etc.) |
+| `iconography-system` | Icon library in use, stroke weight, sizing conventions, touch targets |
 
 **DO NOT use:** controller, service, middleware, CRUD, data flow, request-response, event-driven. Those are code-architecture terms and have no meaning in design pattern analysis.
 

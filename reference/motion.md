@@ -283,3 +283,105 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 3. For many elements, share a single observer instance and call `observe()` once per element.
 4. Prefer CSS transitions triggered by a class toggle over requestAnimationFrame loops.
 5. Use `will-change: transform, opacity` sparingly (only on elements that animate repeatedly).
+
+---
+
+## MIFB Micro-Motion Extensions
+Source: jakubkrehel/make-interfaces-feel-better (MIT) — motion.md
+
+### Interruptible Animations
+
+Use CSS transitions for interactive elements because transitions retarget mid-animation — when a user moves their cursor away before a hover animation completes, the transition reverses smoothly from wherever it currently is. Keyframe animations restart from the beginning, creating a jarring jump.
+
+**Decision rule:**
+- Interactive states (hover, focus, active, pressed): always CSS transitions
+- Orchestrated sequences, entrance effects, data-driven animations: keyframe or JS animation
+
+```css
+/* Good — transition retargets smoothly */
+.button { transition: background-color 150ms ease-out; }
+
+/* Avoid for interactive — restarts on interruption */
+.button:hover { animation: hover-bg 150ms ease-out forwards; }
+```
+
+### Split-and-Stagger Enter/Exit
+
+For multi-element entrances (card grids, lists, feature sections):
+
+- Default stagger: 100ms between elements
+- Heading words: 80ms per word
+- Entrance transform: `opacity: 0 → 1` + `translateY(12px → 0)` + `blur(4px → 0)`
+- Entrance duration: 300ms, `ease-out`
+- Exit transform: `opacity: 1 → 0` + `translateY(0 → -12px)` (opposite direction, smaller offset)
+- Exit duration: 150ms (half the entrance duration — exits should be faster)
+
+The blur component adds a depth cue that makes entrances feel less flat. Keep blur modest (4px) — the goal is a subtle focus effect, not a visible blur.
+
+### Contextual Icon Animations — Cross-Fade Pattern
+
+When swapping two icons (e.g., play ↔ pause, chevron-up ↔ chevron-down, bookmark ↔ bookmarked), use this exact cross-fade spec:
+
+**Framer Motion spring (preferred):**
+- `scale: 0.25 → 1` (entering), `scale: 1 → 0.25` (exiting)
+- `opacity: 0 → 1` (entering), `opacity: 1 → 0` (exiting)
+- `filter: blur(4px) → blur(0)` (entering), `blur(0) → blur(4px)` (exiting)
+- `transition: { type: "spring", duration: 0.3, bounce: 0 }` — **bounce MUST be 0**
+
+**CSS fallback (no Framer):**
+- Keep both icons in the DOM, one `position: absolute`
+- Use `cubic-bezier(0.2, 0, 0, 1)` easing
+- Duration: 200ms
+
+The scale + blur combination creates a focus-snap effect that feels intentional rather than mechanical. The `bounce: 0` hard constraint exists because any bounce on a 0.25-scale origin point makes icons appear to "pop" invasively.
+
+### Scale on Press — Canonical Value
+
+The canonical scale value for press feedback is **`0.96`**.
+
+Rules:
+- Never use `scale(0.95)` — too large, feels unresponsive
+- Never use `scale(0.97)` — too subtle at high DPI, not perceived as feedback
+- Never use `scale(0.98)` or higher — imperceptible
+- `0.96` is the ONLY correct value for standard interactive elements
+
+Tailwind: `active:scale-[0.96]`
+Framer: `whileTap={{ scale: 0.96 }}`
+
+For primary CTAs where maximum tactility is needed (purchase, send, confirm):
+use `0.96` with a shadow reduction: `box-shadow: none` during press.
+
+Deprecation note: earlier versions of `reference/checklists.md` referenced `scale(0.97)`. That entry has been reconciled. **0.96 is the canonical value.**
+
+### AnimatePresence initial={false}
+
+When `AnimatePresence` wraps UI that exists in the DOM before it enters the animation scope (e.g., a tab panel that renders its first tab immediately, a dropdown that's already open on first load), use `initial={false}`:
+
+```tsx
+<AnimatePresence initial={false}>
+  {isOpen && <motion.div key="panel" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />}
+</AnimatePresence>
+```
+
+Without `initial={false}`, Framer will animate the FIRST render of children — meaning UI that's immediately visible on page load will "fade in" unnecessarily. This creates a flash/flicker that signals poor craftsmanship.
+
+**Rule:** Any `AnimatePresence` wrapping persistent UI should have `initial={false}`.
+
+### will-change — GPU Property Table
+
+Only add `will-change` when you observe first-frame stutter on lower-end hardware. Do NOT add it preemptively — it consumes GPU memory continuously for every element that has it.
+
+GPU-compositable properties (safe with will-change):
+| Property | will-change value |
+|----------|------------------|
+| transform (translate, scale, rotate) | `transform` |
+| opacity | `opacity` |
+| filter (blur, brightness, contrast) | `filter` |
+| clip-path | `clip-path` |
+
+Never use `will-change: all` or `will-change: contents` — this forces the entire element and its subtree onto a new compositor layer, thrashing memory.
+
+Remove `will-change` after the animation completes if applied dynamically:
+```js
+element.addEventListener('transitionend', () => element.style.willChange = 'auto')
+```

@@ -42,9 +42,9 @@ Also wrong:
 
 ## When to use this format
 
-- **Any review of existing code or design.** `impeccable-audit`, `impeccable-critique`, `design:design-critique`, `design:accessibility-review` — all produce outputs that can be rendered as this table.
+- **Any review of existing code or design.** `design:design-critique`, `design:accessibility-review` — all produce outputs that can be rendered as this table.
 - **Responding to "review this" / "what do you think of this."**
-- **After `Skill(impeccable-polish)` runs** — present the diff as a table.
+- **After `/gdd:fast` or `/gdd:design` applies a polish pass** — present the diff as a table.
 - **Documenting design-system migrations** (old token → new token, with why).
 
 ## When NOT to use this format

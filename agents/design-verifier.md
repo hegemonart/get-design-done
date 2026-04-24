@@ -120,6 +120,11 @@ Anti-Patterns (weight 10%):
 Motion (weight 5%):
   Score: [N]/10
   Evidence: [easing values, reduced-motion presence, duration range]
+
+Micro-Polish (qualitative supplement — from DESIGN-AUDIT.md Pillar 7):
+  Score: [N]/4  (not weighted into the 0–100 total; reported as supplementary signal)
+  Violations flagged: [list BAN/MIFB hits from mapper micro-polish sections]
+  Notes: [brief summary — 0 violations = clean; list categories with hits]
 ```
 
 **Weighted total:**
@@ -127,6 +132,8 @@ Motion (weight 5%):
 Score = (Accessibility × 0.25) + (Visual Hierarchy × 0.20) + (Typography × 0.15)
       + (Color × 0.15) + (Layout × 0.10) + (Anti-Patterns × 0.10) + (Motion × 0.05)
 ```
+
+Note: Micro-Polish is a qualitative supplement (drawn from DESIGN-AUDIT.md Pillar 7) and is reported alongside the weighted total but does not alter the 0–100 score. If Pillar 7 score is 1 or 2 and violations are systemic, flag as a MINOR or MAJOR gap in Phase 5.
 
 **Delta vs baseline:**
 ```
@@ -149,6 +156,8 @@ Before → After
   ─────────────────────────────────
   Total:    [baseline]/100 → [new]/100  ([+N] improvement)
   Grade:    [before grade] → [after grade]
+  ─────────────────────────────────
+  Micro-Polish (suppl.): [N]/4  — [N] violations  *(not weighted)*
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -383,6 +392,7 @@ If no `.pen` files: skip silently. Print: `pencil.dev spec diff: no .pen files �
 
 Collect all failures from Phases 1–4:
 - Phase 1: category scores still below 7 (despite design pass)
+- Phase 1 (micro-polish supplement): Pillar 7 score of 1 or 2 with systemic violations → MINOR or MAJOR gap
 - Phase 2: `✗ FAIL` must-haves
 - Phase 3: NNG scores of 0 or 1 on any heuristic
 - Phase 4: visual UAT `no` responses
@@ -487,6 +497,7 @@ cosmetics: N
 | Anti-Patterns | [N]/10 | [N]/10 | [±N] | 10% | [N] |
 | Motion | [N]/10 | [N]/10 | [±N] | 5% | [N] |
 | **Total** | **[N]/100** | **[N]/100** | **[±N]** | | |
+| Micro-Polish *(suppl.)* | [N]/4 | [N]/4 | [±N] | — | *(not weighted)* |
 
 Grade: [before] → [after]
 
