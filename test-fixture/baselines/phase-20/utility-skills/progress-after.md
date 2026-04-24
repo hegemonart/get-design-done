@@ -5,8 +5,6 @@ argument-hint: "[--forensic]"
 tools: Read, Bash, Grep, Glob, mcp__gdd_state__get
 ---
 
-@reference/retrieval-contract.md
-
 # /gdd:progress
 
 **Role:** Show current position in the pipeline and recommend the next action. With `--forensic`, run a 6-check integrity audit.
