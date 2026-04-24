@@ -49,6 +49,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "ajv-cli": "^5.0.0",
+    "ajv-formats": "^3.0.1",
     "json-schema-to-typescript": "^15.0.0",
     "typescript": "^5.5.0"
   },
