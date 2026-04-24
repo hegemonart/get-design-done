@@ -96,7 +96,7 @@ Every spawned executor receives the following STATE.md contract in its prompt:
 >
 > Do NOT `Read` + `Write` `.design/STATE.md` directly — the MCP tools enforce the lockfile and emit mutation events. Direct writes corrupt parallel state.
 
-Inline this protocol block verbatim inside every `Task("design-executor", """ ... """)` prompt in both the parallel-batch and sequential-tail spawns below. Concurrent executors (Phase 10.1 parallel mode) each emit `update_progress` calls; the lockfile (Plan 20-01) and event stream (Plan 20-06) serialize them safely.
+Inline this protocol block verbatim inside every design-executor prompt in both the parallel-batch and sequential-tail spawns below. Concurrent executors (Phase 10.1 parallel mode) each emit `update_progress` calls; the lockfile (Plan 20-01) and event stream (Plan 20-06) serialize them safely.
 
 ## Step 2 — Wave-by-Wave Execution
 
