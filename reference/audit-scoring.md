@@ -124,7 +124,7 @@ Check for:
 - Content max-width enforced (prose: 65ch, layout: 1200–1440px)
 - Mobile breakpoint respected (no horizontal scroll)
 
-### 6. Anti-Pattern Compliance (Weight: 10%)
+### 6. Anti-Pattern Compliance (Weight: 5%)
 
 Score = 10 − (number of hard-ban violations × 3) − (number of AI-slop tells × 1), minimum 0.
 
@@ -136,6 +136,7 @@ Auto-detect (grep):
 - Bounce easing → BAN violation
 
 ### 7. Interaction & Motion (Weight: 5%)
+
 
 | Score | Criteria |
 |---|---|
@@ -155,8 +156,9 @@ Score = (Accessibility × 0.25)
       + (Typography × 0.15)
       + (Color × 0.15)
       + (Layout × 0.10)
-      + (Anti-Patterns × 0.10)
+      + (Anti-Patterns × 0.05)
       + (Motion × 0.05)
+      + (Micro-polish × 0.05)
 ```
 
 | Grade | Score | Meaning |
@@ -184,8 +186,9 @@ Baseline score: [N/100]
 | Typography | /10 | 15% | |
 | Color | /10 | 15% | |
 | Layout | /10 | 10% | |
-| Anti-Patterns | /10 | 10% | |
+| Anti-Patterns | /10 | 5% | |
 | Motion | /10 | 5% | |
+| Micro-polish | /10 | 5% | |
 | **Total** | | | **/100** |
 
 ### Findings
@@ -203,3 +206,32 @@ Baseline score: [N/100]
 | ... | | |
 | **Total** | /40 | **= NNG Score:** /100 |
 ```
+
+---
+
+<!-- BREAKING: Anti-Pattern Compliance pillar weight changed 10%→5% in v1.15.0; Micro-polish pillar added at 5%. Cross-cycle score comparisons should account for this change. -->
+
+### 8. Micro-polish (Weight: 5%)
+
+Text-wrap, font-smoothing, tabular-nums, concentric radius, image outlines, hit areas, canonical press scale, will-change discipline.
+
+| Score | Criteria |
+|---|---|
+| 10 | All 14 micro-polish checklist items pass |
+| 7–9 | 2–3 violations found |
+| 4–6 | 7 or more violations, core items failing (press scale, transition:all) |
+| 0–3 | Most items fail or not considered |
+
+Check for (see `reference/checklists.md` Micro-Polish Check gate):
+- Headings: `text-wrap: balance`; body/captions: `text-wrap: pretty`
+- Font smoothing at `:root` only
+- Dynamic numbers: `font-variant-numeric: tabular-nums`
+- Nested elements: concentric radius (`innerRadius = outerRadius − padding`)
+- Images: `outline: 1px solid rgba(0,0,0,0.08)` — no tinted outlines
+- Interactive elements <40px: `::after` hit-area extension to 40×40
+- Press feedback: `scale(0.96)` exactly
+- `AnimatePresence` on persistent UI: `initial={false}`
+- Icon cross-fade spring: `bounce: 0`
+- No `transition: all` (BAN-12)
+- No `will-change: all` (BAN-13)
+- `prefers-reduced-motion` respected

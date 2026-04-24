@@ -135,3 +135,30 @@ For flagship work:
 8. **Reduced motion test.** Enable it at OS level. Functional animations preserved, spatial ones killed?
 9. **Mobile test.** Real device or Chrome DevTools mobile emulation. Touch targets? Safe areas? Viewport zoom allowed?
 10. **The AI-slop self-check** (see anti-patterns.md). Honest answer: would someone believe this was AI-generated? If yes, which elements? Fix those.
+
+---
+
+## Micro-Polish Check
+Source: jakubkrehel/make-interfaces-feel-better (MIT)
+
+Use this checklist after the main design review for pixel-level craft verification:
+
+### Typography micro
+- [ ] Headings use `text-wrap: balance`
+- [ ] Body/caption uses `text-wrap: pretty` (or no wrap setting — not `balance`)
+- [ ] Font smoothing applied at `:root` only, not per-element
+- [ ] Dynamic numbers (counters, prices, timers) use `font-variant-numeric: tabular-nums`
+
+### Surfaces
+- [ ] Nested elements use concentric radius (`innerRadius = outerRadius − padding`)
+- [ ] No same-radius parent+child within padded container (see BAN-10 same-radius-nested)
+- [ ] Images have `outline: 1px solid rgba(0,0,0,0.08)` — no tinted outlines
+- [ ] Interactive elements <40px have `::after` hit-area extension to 40×40
+
+### Motion
+- [ ] Press feedback uses `scale(0.96)` — not 0.95, not 0.97, not 0.98
+- [ ] `AnimatePresence` on persistent UI has `initial={false}`
+- [ ] Icon cross-fade spring has `bounce: 0`
+- [ ] No `transition: all` anywhere (see BAN-12 transition-all)
+- [ ] No `will-change: all` anywhere (see BAN-13 will-change-all)
+- [ ] `prefers-reduced-motion` respected via `MotionConfig` or `useReducedMotion()`

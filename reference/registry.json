@@ -247,6 +247,18 @@
       "path": "reference/data/styles.csv",
       "type": "data",
       "description": "CSV data sibling for style-vocabulary.md"
+    },
+    {
+      "name": "surfaces",
+      "path": "reference/surfaces.md",
+      "type": "surfaces",
+      "description": "Concentric radius, optical alignment, 3-layer shadow, image outlines, hit areas"
+    },
+    {
+      "name": "google-fonts-data",
+      "path": "reference/data/google-fonts.csv",
+      "type": "data",
+      "description": "Google Fonts catalog (representative sample of 1923-row UUPM data set)"
     }
   ]
 }

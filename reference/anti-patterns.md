@@ -334,3 +334,72 @@ grep -rn "bounce\|elastic" src/ --include="*.css"
 - [ ] Bounce or elastic easing anywhere?
 
 If YES to any → rewrite that element before proceeding.
+
+---
+
+### BAN-10: Same Border-Radius on Nested Surfaces
+
+Applying the same `border-radius` to a container and an element inside it (when the element is separated by padding) makes the inner element appear to "float" — the radii should be concentric, not equal.
+
+**Grep (Tailwind):**
+```
+(rounded-\w+)[^"]*"[^>]*>\s*<[^>]*\1
+```
+**Grep (CSS):** Look for identical `border-radius` values in parent and child selectors within the same component.
+
+**Fix:** Apply the concentric formula: `innerRadius = outerRadius − padding`. See `reference/surfaces.md`.
+
+Source: jakubkrehel/make-interfaces-feel-better (MIT)
+
+---
+
+### BAN-11: Tinted Image Outline
+
+Using a colored outline on images (e.g., `outline-slate-200`, `outline-gray-300`, or a hex-value outline color) competes visually with the image content and creates color contamination.
+
+**Grep (Tailwind):**
+```
+outline-(slate|zinc|neutral|gray|stone|blue|red|green|yellow|purple)-\d+
+```
+applied to `<img>` elements.
+
+**Grep (CSS):**
+```
+img\s*\{[^}]*outline:\s*[^}]*#[0-9a-fA-F]{3,8}
+```
+
+**Fix:** Use `outline: 1px solid rgba(0,0,0,0.08)` (light) or `outline: 1px solid rgba(255,255,255,0.08)` (dark). Pure black or white at low opacity only. See `reference/surfaces.md`.
+
+Source: jakubkrehel/make-interfaces-feel-better (MIT)
+
+---
+
+### BAN-12: `transition: all`
+
+`transition: all` animates every animatable CSS property on the element, including layout-triggering properties (width, height, padding, margin). This causes layout recalculation on EVERY transition, creating jank and unexpected visual effects (e.g., a hover transition that also animates the element's size if any dimensions change).
+
+**Grep (CSS):**
+```
+transition:\s*all
+transition-property:\s*all
+```
+**Grep (Tailwind):** bare `\btransition\b` class (without a modifier like `transition-transform` or `transition-[specific-property]`).
+
+**Fix:** Specify the exact properties to animate. For hover effects: `transition: background-color 150ms, color 150ms, opacity 150ms`. For motion: `transition: transform 200ms, opacity 200ms`.
+
+Source: jakubkrehel/make-interfaces-feel-better (MIT)
+
+---
+
+### BAN-13: `will-change: all`
+
+`will-change: all` promotes every animatable property to its own GPU compositor layer, consuming GPU memory for each property. On complex components this can allocate hundreds of MB of texture memory per instance, causing performance degradation and potential crashes on mobile.
+
+**Grep:**
+```
+will-change:\s*all
+```
+
+**Fix:** Restrict to specific compositing-safe properties: `will-change: transform`, `will-change: opacity`, `will-change: filter`, or `will-change: clip-path`. Remove entirely after animation completes. See `reference/motion.md` will-change section.
+
+Source: jakubkrehel/make-interfaces-feel-better (MIT)

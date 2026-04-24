@@ -227,3 +227,83 @@ Always include a non-variable fallback of the same family in the font stack:
 ```css
 font-family: 'InterVariable', 'Inter', -apple-system, system-ui, sans-serif;
 ```
+
+---
+
+## Micro-Typography
+Source: jakubkrehel/make-interfaces-feel-better (MIT) — typography.md
+
+### text-wrap
+
+Use `text-wrap: balance` for headings to prevent orphaned single words:
+```css
+h1, h2, h3 { text-wrap: balance; }
+```
+Chromium supports up to 6 lines, Firefox up to 10. Do not apply to body text (performance cost scales with line count). For body copy and captions, use `text-wrap: pretty` instead — it prevents widows (dangling last words) without the line-count restriction.
+
+### Font smoothing
+
+Apply antialiasing at root level only:
+```css
+:root {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+```
+Never apply per-element — this creates inconsistency within a single text block and is one of the most common micro-typography mistakes. The antialiased value makes text appear slightly thinner/lighter, which is generally preferred for UI type at modern screen densities.
+
+### Tabular numerals
+
+Use tabular-nums on any surface where numbers change dynamically or need to align in columns:
+```css
+.counter, .price, .timer, .table-cell { font-variant-numeric: tabular-nums; }
+```
+Proportional numerals (the default) cause text to shift width when numbers change, creating a distracting jitter in timers and prices. Exception: Inter's `1` character widens slightly with tabular-nums — test at your numeric composition before committing.
+
+## Font Pairings Catalog
+Source: nextlevelbuilder/ui-ux-pro-max-skill (MIT) — data/typography.csv
+
+57 professionally curated pairings grouped by use-case vertical. For font loading, see `reference/data/google-fonts.csv` for the full 1923-font reference.
+
+### SaaS / Productivity
+- **Inter + Inter** (mono weight hierarchy) — The "safe default" for app UIs. Use regular (400) for body, medium (500) for labels, semibold (600) for headings. Consistent x-height, excellent at small sizes.
+- **Inter + JetBrains Mono** — For dev tools and dashboards with code display. JetBrains Mono has excellent legibility at 12-14px.
+- **Geist Sans + Geist Mono** — Vercel's pair; clean, modern, designed together.
+- **Outfit + DM Mono** — Friendly SaaS feel with clear code fallback.
+
+### Consumer / Marketing
+- **Satoshi + Cabinet Grotesk** — High-energy, modern consumer feel.
+- **Plus Jakarta Sans + Syne** — Playful but legible; works for creative consumer apps.
+- **DM Sans + DM Serif Display** — Classic pairing; editorial headers, clean body.
+- **Nunito + Source Code Pro** — Approachable and friendly.
+
+### Finance / Enterprise
+- **IBM Plex Sans + IBM Plex Mono** — Authoritative, systematic, designed for data-heavy interfaces.
+- **Source Sans 3 + Source Code Pro** — Adobe's workhorse pair; widely trusted.
+- **Lato + Roboto Mono** — Clean, neutral enterprise pair.
+
+### Editorial / Publishing
+- **Playfair Display + Source Serif 4** — High contrast serif headers with readable body serif.
+- **Cormorant Garamond + Proza Libre** — Elegant luxury/editorial tone.
+- **Libre Baskerville + Libre Franklin** — Free-license editorial pair.
+- **EB Garamond + Lato** — Classic print feel with modern body.
+
+### Wellness / Health
+- **Nunito + Nunito Sans** — Soft, approachable, consistent x-height.
+- **Quicksand + Work Sans** — Rounded, friendly, healthcare-appropriate.
+- **Raleway + Open Sans** — Clean and welcoming.
+
+### Dev Tools
+- **JetBrains Mono + Inter** — Code-first, UI-second; natural for developer tools.
+- **Fira Code + Fira Sans** — Cohesive family; ligatures available.
+- **Cascadia Code + Segoe UI** — Microsoft's modern dev pair.
+
+### Luxury / Fashion
+- **Cormorant + Montserrat** — High contrast serif + geometric sans; classic luxury.
+- **Bodoni Moda + Jost** — Fashion editorial feel.
+- **Playfair Display + Raleway** — Elegant header + clean body.
+
+### Gaming / Entertainment
+- **Syne + DM Sans** — Bold, energetic headers; clean readable body.
+- **Bebas Neue + Open Sans** — Impact headlines; neutral body.
+- **Exo 2 + Roboto** — Futuristic but readable.
