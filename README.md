@@ -76,6 +76,14 @@ You don't need to be a designer. The pipeline carries the design expertise so yo
 
 Built-in quality gates catch real problems: Handoff Faithfulness scoring on Claude Design bundles, contrast audits across the full palette × surface matrix, anti-pattern detection from the NNG catalog, dark-mode architecture verification, and motion-system consistency checks.
 
+### v1.18.0 Highlights — Advanced Craft References + Motion Vocabulary
+
+- **4 advanced craft references** — `variable-fonts-loading.md` (variable axes, font-display trade-offs, WOFF2 subsetting, fallback metric overrides, GRAD axis for dark mode), `image-optimization.md` (WebP/AVIF/JPEG XL matrix, srcset math, LQIP/BlurHash, CDN transforms, image budgets), `css-grid-layout.md` (subgrid, container queries, fluid `clamp()` typography, logical properties, safe areas, anchor positioning), `motion-advanced.md` (spring physics, FLIP, View Transitions API, gesture/drag mechanics, clip-path animations, blur crossfades, Framer Motion hardware-accel gotcha, motion cohesion, next-day review).
+- **Motion vocabulary (RN MIT upstream)** — `motion-easings.md` (12 canonical curve presets, `--ease-*` token catalog), `motion-interpolate.md` (input→output range + 4 extrapolation modes: extend/identity/clamp/wrap), `motion-spring.md` (gentle/wobbly/stiff/slow presets with 60fps settle-times). Optional math helpers at `scripts/lib/easings.cjs` and `scripts/lib/spring.cjs`.
+- **Transition taxonomy (hyperframes Apache-2.0)** — `motion-transition-taxonomy.md` names 8 controlled families (3d, blur, cover, destruction, dissolve, distortion, grid, light) so motion-mapper output diffs cleanly cycle-over-cycle.
+- **Structured motion-map output** — `motion-mapper` now emits a JSON block at the top of `.design/map/motion.md` conforming to `reference/output-contracts/motion-map.schema.json`. Every animation binding declares easing (canonical or custom+justification), transition family, duration class, and trigger type. `scripts/lib/parse-contract.cjs` validates and returns structured data or actionable error.
+- **Agent wiring** — `token-mapper` gains easing consolidation (raw `cubic-bezier()` → `--ease-*` token recommendations); `design-executor` reads craft references per task type; `design-auditor` scores gesture patterns and clip-path animations as advanced-craft signal (positive, not a penalty).
+
 ### v1.15.0 Highlights — Design Knowledge Expansion
 
 - **10 new foundational references** — `iconography.md`, `performance.md`, `brand-voice.md`, `visual-hierarchy-layout.md`, `gestalt.md`, `design-system-guidance.md`, `design-systems-catalog.md`, `framer-motion-patterns.md`, `palette-catalog.md`, `style-vocabulary.md`. Agents now have authoritative answers on icon sizing, Web Vitals budgets, brand voice axes, Gestalt principles, DS governance, and 40+ industry-vertical color palettes.

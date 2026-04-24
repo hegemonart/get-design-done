@@ -25,6 +25,10 @@ You inventory motion and animation patterns. Zero session memory. You do not mod
 
 - `.design/STATE.md`
 - `reference/motion.md` (if present)
+- `reference/motion-advanced.md` (if present) — advanced patterns: spring physics, scroll-driven, FLIP, View Transitions API, gesture/drag mechanics, clip-path patterns, blur crossfades, Framer Motion hardware-accel gotcha
+- `reference/motion-easings.md` (if present) — 12 canonical easing presets; classify each detected easing against this catalog
+- `reference/motion-transition-taxonomy.md` (if present) — 8 transition families; classify page/route transitions against this taxonomy
+- `reference/motion-spring.md` (if present) — spring presets; classify spring configs against gentle/wobbly/stiff/slow
 - Any files supplied by the orchestrator
 
 ## Scan Strategy
@@ -61,7 +65,36 @@ From the collected values, bucket by:
 - Normal: 200–400ms
 - Slow: >400ms
 
+## Advanced Scan Patterns (Phase 18+)
+
+When `reference/motion-advanced.md` is present, additionally scan for:
+
+```bash
+# Gesture / drag patterns
+grep -rEn "setPointerCapture|onPointerDown.*drag|dragConstraints|useDragControls" src/ | head -40
+grep -rEn "velocity|flick|swipe.*dismiss|drag.*dismiss" src/ | head -40
+
+# Clip-path animations
+grep -rEn "clip-path|clipPath|inset\(" src/ | head -40
+
+# FLIP / View Transitions
+grep -rEn "layoutId|startViewTransition|view-transition-name" src/ | head -30
+
+# Scroll-driven
+grep -rEn "animation-timeline|ScrollTimeline|useScroll\b" src/ | head -30
+
+# WAAPI
+grep -rEn "\.animate\(\[|WebAnimation|getAnimations" src/ | head -20
+```
+
+Classify gesture patterns against `reference/motion-advanced.md` (velocity formula, pointer capture, multi-touch protection).
+Classify easing values against the 12 canonical presets in `reference/motion-easings.md`; output `"custom"` with justification for anything that doesn't match.
+Classify page/route transitions against the 8 families in `reference/motion-transition-taxonomy.md`.
+Classify spring configs against the 4 presets in `reference/motion-spring.md`.
+
 ## Output Format — `.design/map/motion.md`
+
+**The output MUST begin with a structured JSON block** enclosed in ` ```json ``` ` fences, followed by the prose sections. The JSON block must conform to `reference/output-contracts/motion-map.schema.json`. Malformed or missing blocks are validation failures.
 
 ```markdown
 ---
@@ -70,22 +103,54 @@ generated: [ISO 8601]
 
 # Motion Map
 
+```json
+{
+  "schema_version": "1.0.0",
+  "generated_at": "[ISO 8601]",
+  "summary": {
+    "total_animations": 0,
+    "custom_easings": 0,
+    "reduced_motion_compliant": false,
+    "libraries": []
+  },
+  "animations": [
+    {
+      "id": "example-toast-enter",
+      "location": { "file": "src/components/Toast.tsx", "line": 12 },
+      "description": "Toast enter animation — opacity + translateY",
+      "easing": "cubic-out",
+      "duration_class": "quick",
+      "duration_ms": 180,
+      "trigger": "state-change",
+      "library": "framer-motion",
+      "reduced_motion_handled": true
+    }
+  ]
+}
+```
+
 ## CSS transitions
-| File | Property | Duration | Easing |
-|------|----------|----------|--------|
+| File | Property | Duration | Easing | Canonical Easing |
+|------|----------|----------|--------|-----------------|
 
 ## Library usage
 | Library | Files | Notes |
 |---------|-------|-------|
 
 ## Duration distribution
-- Fast (<200ms): [N]
-- Normal (200–400ms): [N]
-- Slow (>400ms): [N]
+- Instant (<100ms): [N]
+- Quick (100–200ms): [N]
+- Standard (200–400ms): [N]
+- Slow (400–800ms): [N]
+- Narrative (>800ms): [N]
 
-## Easing functions
-| Easing | Count |
-|--------|-------|
+## Easing classification
+| Detected Easing | Canonical Name | Count | Notes |
+|----------------|---------------|-------|-------|
+
+## Advanced patterns detected
+| Pattern | Files | Notes |
+|---------|-------|-------|
 
 ## Reduced-motion compliance
 - `prefers-reduced-motion` queries present: [N]

@@ -4,6 +4,46 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.18.0] — 2026-04-24
+
+### Added — Advanced Craft References + Motion Vocabulary
+
+**Wave A — Craft references (4 new files):**
+
+- `reference/variable-fonts-loading.md` — Variable font axes (wght/ital/opsz/slnt/GRAD/custom), `@font-face` range declarations, `font-display` trade-offs (swap/fallback/optional), WOFF2 subsetting with `unicode-range`, FOIT vs FOUT, fallback metric overrides (`size-adjust`, `ascent-override`, `descent-override`, `line-gap-override`), GRAD axis for dark-mode weight compensation without layout reflow, system font stacks per platform (REF-14)
+- `reference/image-optimization.md` — WebP/AVIF/JPEG XL choice matrix, `srcset`+`sizes` math by breakpoint, responsive art direction with `<picture>`, LQIP/BlurHash/ThumbHash placeholder strategies, lazy-loading + `decoding="async"` + `fetchpriority="high"`, CDN transform patterns (Cloudinary/imgix/Vercel Image), image budget enforcement (REF-15)
+- `reference/css-grid-layout.md` — CSS Grid template patterns (holy grail, bento, masonry), `subgrid`, container queries (`@container` + `container-type`), fluid typography with `clamp()` (utopia.fyi math), intrinsic sizing, logical properties, safe-area insets, `aspect-ratio`/`object-fit`, anchor positioning progressive enhancement (REF-16)
+- `reference/motion-advanced.md` — Spring physics, stagger patterns, scroll-driven animation (`animation-timeline`), FLIP, View Transitions API, route orchestration, gesture/drag mechanics (velocity threshold ≈0.11, boundary damping, pointer capture, multi-touch protection), clip-path animation patterns (hold-to-delete, scroll reveals, tab masks, comparison sliders), blur-to-mask crossfades (<20px Safari cap), CSS transitions vs keyframes for interruptible UI, WAAPI, Framer Motion hardware-accel gotcha (`x`/`y` shorthand vs GPU `transform` string), motion cohesion & personality, next-day slow-motion review process; Disney's 12 Principles UX mapping stub (fills at Phase 19.6 closeout) (REF-17)
+
+**Wave B — Motion vocabulary (RN MIT + hyperframes Apache-2.0):**
+
+- `reference/motion-easings.md` — 12 canonical curve presets (linear/quad/cubic/poly/sin/circle/exp/elastic/back/bounce/bezier + in/out/inOut wrappers) from React Native MIT upstream; `--ease-*` CSS custom property token catalog; 60fps settle-times for spring/bounce/elastic variants (MOT-01)
+- `reference/motion-interpolate.md` — Input→output range model + 4 extrapolation modes (extend/identity/clamp/wrap) from RN MIT; taxonomy of progress-linked/scroll-linked/gesture-linked/time-linked animations (MOT-02)
+- `reference/motion-spring.md` — Stiffness/damping/mass triad + 4 canonical presets (gentle/wobbly/stiff/slow) with 60fps settle-times; Framer Motion + React Spring syntax; CSS `linear()` approximation pattern (MOT-05)
+- `reference/motion-transition-taxonomy.md` — 8 controlled transition families from hyperframes Apache-2.0: 3d, blur, cover, destruction, dissolve, distortion, grid, light — each with definition, canonical examples, when-to-use heuristics (MOT-03)
+- `reference/external/NOTICE.hyperframes` — Apache-2.0 attribution for hyperframes transition taxonomy
+
+**Wave B — Output contract + tooling:**
+
+- `reference/output-contracts/motion-map.schema.json` — JSON schema requiring each animation binding to declare easing (canonical or custom+justification), transition family (optional), duration class (instant/quick/standard/slow/narrative), and trigger type (user-gesture/state-change/scroll-progress/time/loop) (MOT-04)
+- `scripts/lib/parse-contract.cjs` — Shared validation helper: extracts JSON block from agent markdown output, validates against motion-map contract, returns structured data or actionable error
+- `scripts/lib/easings.cjs` — Closed-form easing math helper (RN MIT): all 12 presets + in/out/inOut HOFs, cubic-bezier Newton-Raphson solver
+- `scripts/lib/spring.cjs` — Spring simulation helper (RN MIT): PRESETS, criticalDamping(), settleTime(), step()
+- `scripts/tests/test-motion-provenance.sh` — Provenance test: asserts RN-MIT attribution in all motion-vocabulary files; asserts no Remotion/ path citations
+
+**Agent integrations:**
+
+- `agents/motion-mapper.md` — Reads motion-advanced + easings + interpolate + transition-taxonomy + spring; emits structured JSON block (conforming to motion-map schema) before prose; advanced scan patterns for gesture/drag, clip-path, FLIP, View Transitions, scroll-driven, WAAPI
+- `agents/design-executor.md` — type:typography reads `variable-fonts-loading.md`; type:layout reads `css-grid-layout.md` + `image-optimization.md`; type:motion reads `motion-advanced.md` + `motion-easings.md` + `motion-spring.md`
+- `agents/design-auditor.md` — Required Reading extended with 4 Phase 18 references; gesture/clip-path/blur-crossfade patterns scored as "advanced craft" signal (positive) in Pillar 7
+- `agents/token-mapper.md` — Micro-polish finding #5: easing token consolidation (raw `cubic-bezier()` → `--ease-*` canonical tokens)
+- `reference/motion.md` — Cross-links added pointing to all 4 Phase 18 motion references
+- `reference/registry.json` — 9 new entries: REF-14 through REF-17 + MOT-01 through MOT-05
+
+**Phase 18 keywords added to package.json:** `variable-fonts`, `container-queries`, `view-transitions`, `motion-vocabulary`, `motion-easings`, `transition-taxonomy`, `gesture-mechanics`, `clip-path-animation`
+
+---
+
 ## [1.15.0] — 2026-04-24
 
 ### Added — Design Knowledge Expansion: 10 foundational references + MIFB micro-polish + UUPM ingest

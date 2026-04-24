@@ -128,7 +128,7 @@ For `audit` tasks: grep the codebase using patterns from `reference/anti-pattern
 
 ### Type: typography
 
-Read `reference/typography.md` before starting.
+Read `reference/typography.md` before starting. If `reference/variable-fonts-loading.md` is present, also read it — apply variable font axis guidance, font-display trade-offs, fallback metric overrides (size-adjust, ascent-override), and FOIT/FOUT rules to any web font or @font-face decisions in this task.
 
 1. **Identify current state**: grep all font-size values in the codebase. List every unique value.
 2. **Design the target scale**: from the `<decisions>` in DESIGN-CONTEXT.md, pick the modular ratio (default: 1.25, base 16px). Compute: 12/14/16/20/24/30/36/48px (or `text-xs` through `text-5xl` in Tailwind).
@@ -177,7 +177,7 @@ before committing final values.
 
 ### Type: layout
 
-Read `reference/layout.md` (if present) and relevant DESIGN-CONTEXT.md decisions before starting.
+Read `reference/layout.md` (if present) and relevant DESIGN-CONTEXT.md decisions before starting. If `reference/css-grid-layout.md` is present, also read it — apply modern Grid patterns (subgrid, container queries with `@container`, fluid `clamp()` typography, logical properties, safe-area insets, anchor positioning). If `reference/image-optimization.md` is present, apply it to any image-related layout decisions (format choice, srcset/sizes, lazy-loading, CDN transforms, image budget enforcement).
 
 1. **Inventory layout structure**: identify all grid, flex, and positioning patterns in scope files.
 2. **Check spacing consistency**: grep for magic spacing values (px or rem) not from a spacing scale. Map to nearest scale step.
@@ -220,7 +220,7 @@ Work through the accessibility checklist:
 
 ### Type: motion
 
-Read `reference/motion.md` and `reference/framer-motion-patterns.md` before starting.
+Read `reference/motion.md` and `reference/framer-motion-patterns.md` before starting. If `reference/motion-advanced.md` is present, also read it — apply advanced patterns (gesture/drag mechanics, clip-path animations, blur-to-mask crossfades, CSS transitions vs keyframes for interruptible UI, WAAPI, Framer Motion hardware-accel gotcha, motion cohesion rules, next-day review process). If `reference/motion-easings.md` is present, use canonical `--ease-*` tokens rather than raw cubic-bezier strings. If `reference/motion-spring.md` is present, use named presets (gentle/wobbly/stiff/slow) for spring configurations.
 
 `reference/framer-motion-patterns.md` contains Framer Motion-specific implementation patterns that complement the framework-agnostic rules in `reference/motion.md`. When the codebase uses Framer Motion (detectable by `framer-motion` imports), apply the patterns from that file: spring/tween configuration, `AnimatePresence` with `initial={false}`, layout animations, variants with `staggerChildren`, gesture props (`whileHover`, `whileTap` at scale 0.96), `useReducedMotion` or `MotionConfig reducedMotion="user"` for a11y, and the hard constraint that `bounce: 0` for all micro-interactions.
 

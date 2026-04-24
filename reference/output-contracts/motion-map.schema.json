@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "motion-map.schema.json",
+  "title": "Motion Map Output Contract",
+  "description": "Schema for the structured JSON block emitted by motion-mapper at the top of .design/map/motion.md. Every detected animation binding must conform to this schema.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "animations"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Schema version — bump when adding required fields"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of when this map was generated"
+    },
+    "summary": {
+      "type": "object",
+      "description": "Aggregate counts for quick review",
+      "properties": {
+        "total_animations": { "type": "integer", "minimum": 0 },
+        "custom_easings": { "type": "integer", "minimum": 0 },
+        "reduced_motion_compliant": { "type": "boolean" },
+        "libraries": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Animation libraries detected (e.g., framer-motion, gsap, css-only)"
+        }
+      }
+    },
+    "animations": {
+      "type": "array",
+      "description": "One entry per detected animation binding",
+      "items": {
+        "$ref": "#/definitions/AnimationBinding"
+      }
+    }
+  },
+  "definitions": {
+    "AnimationBinding": {
+      "type": "object",
+      "required": ["id", "location", "easing", "duration_class", "trigger"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this binding, e.g., 'toast-enter-opacity'"
+        },
+        "location": {
+          "type": "object",
+          "required": ["file", "line"],
+          "properties": {
+            "file": { "type": "string", "description": "Relative path from project root" },
+            "line": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this animation does"
+        },
+        "easing": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "linear",
+                "quad", "quad-in", "quad-out", "quad-in-out",
+                "cubic", "cubic-in", "cubic-out", "cubic-in-out",
+                "poly", "poly-in", "poly-out", "poly-in-out",
+                "sin", "sin-in", "sin-out", "sin-in-out",
+                "circle", "circle-in", "circle-out", "circle-in-out",
+                "exp", "exp-in", "exp-out", "exp-in-out",
+                "elastic", "elastic-in", "elastic-out", "elastic-in-out",
+                "back", "back-in", "back-out", "back-in-out",
+                "bounce", "bounce-in", "bounce-out", "bounce-in-out",
+                "bezier"
+              ],
+              "description": "One of the 12 canonical easing presets from reference/motion-easings.md"
+            },
+            {
+              "type": "object",
+              "required": ["type", "justification"],
+              "properties": {
+                "type": { "type": "string", "const": "custom" },
+                "value": {
+                  "type": "string",
+                  "description": "The actual easing value (cubic-bezier string, spring config, etc.)"
+                },
+                "justification": {
+                  "type": "string",
+                  "description": "Why a canonical easing was not sufficient. Must be non-empty."
+                }
+              }
+            }
+          ]
+        },
+        "transition_family": {
+          "type": "string",
+          "enum": ["3d", "blur", "cover", "destruction", "dissolve", "distortion", "grid", "light"],
+          "description": "Optional: one of the 8 transition families from reference/motion-transition-taxonomy.md. Omit for micro-interactions where no family applies."
+        },
+        "duration_class": {
+          "type": "string",
+          "enum": ["instant", "quick", "standard", "slow", "narrative"],
+          "description": "Duration classification. instant: <100ms, quick: 100-200ms, standard: 200-400ms, slow: 400-800ms, narrative: >800ms"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Actual duration in milliseconds, if known"
+        },
+        "trigger": {
+          "type": "string",
+          "enum": ["user-gesture", "state-change", "scroll-progress", "time", "loop"],
+          "description": "What drives this animation"
+        },
+        "reduced_motion_handled": {
+          "type": "boolean",
+          "description": "Whether this animation respects prefers-reduced-motion"
+        },
+        "library": {
+          "type": "string",
+          "description": "Animation library used, e.g., 'framer-motion', 'gsap', 'css-transition', 'waapi'"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional free-form notes for the reviewer"
+        }
+      }
+    }
+  }
+}
