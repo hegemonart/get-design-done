@@ -1,0 +1,7 @@
+{
+  "tool_name": "Read",
+  "tool_input": { "file_path": "/tmp/benign.md" },
+  "tool_response": {
+    "content": "# Benign file\n\nThis file is a regular Markdown document with no suspicious content."
+  }
+}

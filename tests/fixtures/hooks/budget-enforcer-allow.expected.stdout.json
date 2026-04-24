@@ -1,0 +1,11 @@
+{
+  "continue": true,
+  "suppressOutput": true,
+  "modified_tool_input": {
+    "subagent_type": "design-explorer",
+    "_est_cost_usd": 0.05,
+    "_tokens_in_est": 1200,
+    "_tokens_out_est": 400,
+    "_default_tier": "sonnet"
+  }
+}
