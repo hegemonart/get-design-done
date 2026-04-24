@@ -62,16 +62,13 @@
         "cost-optimization",
         "cache-aware",
         "budget",
-        "component-specs",
-        "design-system-benchmarks",
-        "component-conformance",
-        "convergence-detector",
-        "i18n",
-        "user-research",
-        "information-architecture",
-        "form-patterns",
-        "data-viz",
-        "platforms"
+        "headless",
+        "cli",
+        "codex",
+        "gemini",
+        "mcp",
+        "parallel-agents",
+        "agent-sdk"
       ]
     }
   ]
