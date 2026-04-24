@@ -29,7 +29,8 @@
   "bin": {
     "get-design-done": "./scripts/install.cjs",
     "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts",
-    "gdd-sdk": "./bin/gdd-sdk"
+    "gdd-sdk": "./bin/gdd-sdk",
+    "gdd-events": "./scripts/cli/gdd-events.mjs"
   },
   "publishConfig": {
     "access": "public",
