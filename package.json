@@ -45,7 +45,8 @@
     "scan:injection": "node scripts/run-injection-scanner-ci.cjs",
     "test:size-budget": "node --test tests/agent-size-budget.test.cjs",
     "release:extract-changelog": "node scripts/extract-changelog-section.cjs",
-    "verify:version-sync": "node scripts/verify-version-sync.cjs"
+    "verify:version-sync": "node scripts/verify-version-sync.cjs",
+    "typecheck:session-runner": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -115,6 +116,7 @@
   ],
   "hooks": "hooks/hooks.json",
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.119",
     "@modelcontextprotocol/sdk": "^1.0.0"
   }
 }
