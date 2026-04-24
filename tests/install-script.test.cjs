@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
 const INSTALL_SCRIPT = path.join(REPO_ROOT, 'scripts', 'install.cjs');
 

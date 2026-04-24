@@ -104,6 +104,18 @@ Built-in quality gates catch real problems: Handoff Faithfulness scoring on Clau
 - **Component generators** — 21st.dev Magic MCP adds a prior-art gate before any greenfield build; Magic Patterns generates DS-aware components with a `preview_url` for visual verification. Both feed into a shared `design-component-generator` agent.
 - **Twelve tool connections** — Four new connections (paper.design, pencil.dev, 21st.dev, Magic Patterns) join the original eight. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable.
 
+## What's New in v1.20.0
+
+**Resilience primitives** (headline upgrade) — the pipeline now survives Anthropic API rate limits, 429 responses, and context-overflow errors without manual restart. New modules: jittered backoff, rate-guard, error-classifier, iteration-budget. See [`reference/error-recovery.md`](reference/error-recovery.md) for the recovery protocol. Connection probes and long-running loops use these primitives instead of fixed sleeps.
+
+**Typed state core** — `.design/STATE.md` mutations are now lockfile-safe. Parallel executors can concurrently update `task_progress` and `<blockers>` on the same file with zero corruption — validated by a 4-way race-condition test (2000 concurrent ops, <60s). The legacy `Read → regex → Write` pattern is deprecated in favor of the typed API.
+
+**`gdd-state` MCP server** — 11 typed tools (`gdd_state__get`, `__update_progress`, `__transition_stage`, `__add_blocker`, `__resolve_blocker`, `__add_decision`, `__add_must_have`, `__set_status`, `__checkpoint`, `__probe_connections`, `__frontmatter_update`) replace ad-hoc STATE.md edits. Every mutation emits a typed event to `.design/telemetry/events.jsonl`, giving downstream consumers a structured audit trail next to the existing `costs.jsonl` cost stream.
+
+**TypeScript foundation** — `tsc --noEmit` typechecks the whole SDK; JSON schemas codegen to `reference/schemas/generated.d.ts`; hooks + Tier-1 scripts migrated to `.ts` and executed directly via Node 22 `--experimental-strip-types` (no bundler step).
+
+**Prompt sanitizer** — strips interactive-only constructs (AskUserQuestion, STOP, `/gdd:` slash commands) from skill bodies. Preparatory work for headless-runner support.
+
 ---
 
 ## Getting Started

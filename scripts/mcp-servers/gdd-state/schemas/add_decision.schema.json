@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/gdd-state/schemas/add_decision.schema.json",
+  "title": "GddStateAddDecision",
+  "description": "MCP tool gdd_state__add_decision — append one entry to <decisions>. Emits state.mutation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "output"],
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable decision text."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["locked", "tentative"],
+          "description": "Defaults to tentative."
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^D-[0-9]+$",
+          "description": "Optional. Defaults to next available D-N based on existing decisions."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "decision": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "text", "status"],
+              "properties": {
+                "id": { "type": "string" },
+                "text": { "type": "string" },
+                "status": { "type": "string", "enum": ["locked", "tentative"] }
+              }
+            },
+            "count": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["code", "message", "kind"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "kind": { "type": "string", "enum": ["validation", "state_conflict", "operation_failed", "unknown"] }
+          }
+        }
+      }
+    }
+  }
+}

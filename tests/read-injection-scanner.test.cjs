@@ -2,7 +2,7 @@
 /**
  * TST-31 — read-injection-scanner
  *
- * Validates hooks/gdd-read-injection-scanner.js:
+ * Validates hooks/gdd-read-injection-scanner.ts (Plan 20-13 TS rewrite):
  *   - file exists
  *   - clean input → exit 0
  *   - known injection strings → exit 0 but emit a warning response OR non-zero exit
@@ -14,6 +14,10 @@
  *
  * The scanner reads from `parsed.tool_response.content` (Claude Code hook
  * convention). Test payloads use that shape.
+ *
+ * Plan 20-13: the hook was rewritten in TypeScript and is invoked via
+ * `node --experimental-strip-types <path>.ts` — same invocation Claude
+ * Code uses per hooks/hooks.json. The .js file no longer exists.
  */
 
 const { test } = require('node:test');
@@ -21,9 +25,9 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
-const HOOK = path.join(REPO_ROOT, 'hooks/gdd-read-injection-scanner.js');
+const HOOK = path.join(REPO_ROOT, 'hooks/gdd-read-injection-scanner.ts');
 
 // Human-readable injection strings for the test payloads. The shipped
 // scanner uses regex variants (see INJECTION_PATTERNS in the hook source) —
@@ -39,10 +43,10 @@ const INJECTION_PATTERNS = [
 ];
 
 function runHook(inputString) {
-  return spawnSync('node', [HOOK], {
+  return spawnSync('node', ['--experimental-strip-types', HOOK], {
     input: inputString,
     encoding: 'utf8',
-    timeout: 5000,
+    timeout: 10000,
   });
 }
 
@@ -54,7 +58,7 @@ function buildPayload({ content = '', filePath = '/tmp/test.txt' } = {}) {
   });
 }
 
-test('read-injection-scanner: hook file exists at hooks/gdd-read-injection-scanner.js', () => {
+test('read-injection-scanner: hook file exists at hooks/gdd-read-injection-scanner.ts', () => {
   assert.ok(fs.existsSync(HOOK), `expected hook at ${HOOK}`);
 });
 

@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { scaffoldDesignDir } = require('./helpers.cjs');
+const { scaffoldDesignDir } = require('./helpers.ts');
 
 test('worktree-safety: two separate .design/ directories do not share STATE.md', () => {
   const worktree1 = scaffoldDesignDir({ stateContent: '---\nstage: scan\n---\n' });

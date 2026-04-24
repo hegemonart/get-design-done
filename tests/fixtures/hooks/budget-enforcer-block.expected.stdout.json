@@ -1,0 +1,5 @@
+{
+  "continue": false,
+  "suppressOutput": false,
+  "message_pattern": "Budget cap reached for per-task"
+}

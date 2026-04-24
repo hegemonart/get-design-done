@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/events.schema.json",
+  "title": "Event",
+  "description": "One line of .design/telemetry/events.jsonl — the append-only telemetry stream produced by Plan 20-06. Each event is a single JSON object followed by a newline. See .planning/phases/20-gdd-sdk-foundation/20-06-PLAN.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "timestamp", "sessionId", "payload"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of event emission."
+    },
+    "sessionId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier per GDD pipeline run; correlates events across stages."
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["brief", "explore", "plan", "design", "verify"],
+      "description": "Optional — present when the event is scoped to a pipeline stage."
+    },
+    "cycle": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional — present when the event is scoped to a cycle identifier."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Event-type-specific payload. Opaque at the envelope level."
+    },
+    "_meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pid", "host", "source"],
+      "properties": {
+        "pid": { "type": "integer", "minimum": 0 },
+        "host": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "description": "Writer-injected provenance. Never set by callers."
+    },
+    "_truncated": {
+      "type": "boolean",
+      "description": "Writer-set flag indicating the payload exceeded maxLineBytes and has been replaced by a placeholder."
+    }
+  }
+}

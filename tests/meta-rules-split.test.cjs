@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
 const META_PATH = path.join(REPO_ROOT, 'reference', 'meta-rules.md');
 const SHARED_PATH = path.join(REPO_ROOT, 'reference', 'shared-preamble.md');

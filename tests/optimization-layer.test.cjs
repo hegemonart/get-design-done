@@ -18,7 +18,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { REPO_ROOT, scaffoldDesignDir, readFrontmatter } = require('./helpers.cjs');
+const { REPO_ROOT, scaffoldDesignDir, readFrontmatter } = require('./helpers.ts');
 
 const COSTS_JSONL = path.join(
   REPO_ROOT,
@@ -175,8 +175,8 @@ test('optimization-layer: aggregateByPhase excludes blocked rows from phase tota
     ];
     fs.writeFileSync(costsPath, rows.map(r => JSON.stringify(r)).join('\n') + '\n', 'utf8');
 
-    const aggregatorPath = path.join(REPO_ROOT, 'scripts', 'aggregate-agent-metrics.js');
-    const result = spawnSync(process.execPath, [aggregatorPath], {
+    const aggregatorPath = path.join(REPO_ROOT, 'scripts', 'aggregate-agent-metrics.ts');
+    const result = spawnSync(process.execPath, ['--experimental-strip-types', aggregatorPath], {
       cwd: dir,
       encoding: 'utf8',
     });

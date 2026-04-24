@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { REPO_ROOT, scaffoldDesignDir } = require('./helpers.cjs');
+const { REPO_ROOT, scaffoldDesignDir } = require('./helpers.ts');
 
 // The /gdd:health command reads .design/ and produces a report.
 // This test verifies the contract: given a .design/STATE.md with known content,

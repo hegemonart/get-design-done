@@ -1,0 +1,10 @@
+budget-enforcer.ts
+context-exhaustion.ts
+first-run-nudge.sh
+gdd-bash-guard.js
+gdd-decision-injector.js
+gdd-mcp-circuit-breaker.js
+gdd-protected-paths.js
+gdd-read-injection-scanner.ts
+hooks.json
+update-check.sh

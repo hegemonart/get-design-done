@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
 test('command-count-sync: every skills/ subdirectory has a SKILL.md', () => {
   const skillsDir = path.join(REPO_ROOT, 'skills');

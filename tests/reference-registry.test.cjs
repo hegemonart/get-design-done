@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 const REG_PATH = path.join(REPO_ROOT, 'reference', 'registry.json');
 const SCHEMA_PATH = path.join(REPO_ROOT, 'reference', 'registry.schema.json');
 const LIB = path.join(REPO_ROOT, 'scripts', 'lib', 'reference-registry.cjs');

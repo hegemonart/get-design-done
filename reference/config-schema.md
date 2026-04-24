@@ -185,7 +185,7 @@ If `.design/budget.json` is missing when any `/gdd:*` command runs, `scripts/boo
 
 ## .design/telemetry/costs.jsonl + .design/agent-metrics.json (Phase 10.1)
 
-Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.js` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.js` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory — they are local session state, not committed.
+Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.js` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.ts` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory — they are local session state, not committed.
 
 ### .design/telemetry/costs.jsonl
 
@@ -223,7 +223,7 @@ Append-only ledger. One JSON object per line. Written by `hooks/budget-enforcer.
 
 ### .design/agent-metrics.json
 
-Per-agent aggregate derived from `costs.jsonl` by `scripts/aggregate-agent-metrics.js`. Written atomically via tmp-file + rename. Overwritten in full on every refresh — not append-only. Consumers should treat it as a snapshot.
+Per-agent aggregate derived from `costs.jsonl` by `scripts/aggregate-agent-metrics.ts`. Written atomically via tmp-file + rename. Overwritten in full on every refresh — not append-only. Consumers should treat it as a snapshot.
 
 **Schema:**
 

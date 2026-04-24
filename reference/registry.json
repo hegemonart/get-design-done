@@ -4,6 +4,13 @@
   "generated_at": "2026-04-24T00:00:00.000Z",
   "entries": [
     {
+      "name": "error-recovery",
+      "path": "reference/error-recovery.md",
+      "type": "meta-rules",
+      "phase": 20,
+      "description": "Phase 20 resilience recovery protocol — rate-limit + 429 + context-overflow retry guidance for the SDK runner (jittered-backoff / rate-guard / error-classifier / iteration-budget integration)"
+    },
+    {
       "name": "component-authoring",
       "path": "reference/component-authoring.md",
       "type": "heuristic",

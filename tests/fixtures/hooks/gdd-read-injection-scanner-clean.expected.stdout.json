@@ -1,0 +1,4 @@
+{
+  "_comment": "Clean content → hook exits 0 with NO stdout payload.",
+  "stdout_is_empty": true
+}

@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
 function parseSemver(v) {
   const m = v.match(/^(\d+)\.(\d+)\.(\d+)$/);
@@ -50,6 +50,17 @@ const EXPECTED_SEQUENCE = [
 //   - 1.14.7 → Phase 14.6 Test Coverage Completion closeout (shipped on main).
 //   - 1.14.8 → Phase 14.7 First-Run Proof Path (/gdd:start skill, nudge hook,
 //     design-start-writer agent, detect-ui-root + findings-engine helpers).
+//   - 1.20.0 → Phase 20 SDK foundation (gdd-sdk-foundation milestone). Jumps
+//     the 1.19.x sequence to mark the shift from "design pipeline" to
+//     "typed SDK + MCP server + resilience primitives + event stream".
+//     16 plans complete (20-00 through 20-15): TS toolchain, gdd-state
+//     module, transition gates, prompt sanitizer, GDDError taxonomy,
+//     gdd-state MCP server (11 tools), event stream foundation, 5 stage
+//     skill migrations, 6 utility skill migrations, hooks TS rewrite,
+//     resilience primitives (jittered-backoff / rate-guard /
+//     error-classifier / iteration-budget). Closeout shipped the
+//     race-condition test (4 workers × 500 ops), phase-20 regression
+//     baseline, v1.20.0 CHANGELOG, and version-sync across manifests.
 const OFF_CADENCE_VERSIONS = new Set([
   '1.0.7.2',
   '1.13.3',
@@ -69,6 +80,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   '1.19.0',
   '1.19.5',
   '1.19.6',
+  '1.20.0',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { REPO_ROOT, scaffoldDesignDir } = require('./helpers.cjs');
+const { REPO_ROOT, scaffoldDesignDir } = require('./helpers.ts');
 
 const TEMPLATE_PATH = path.join(REPO_ROOT, 'reference', 'STATE-TEMPLATE.md');
 

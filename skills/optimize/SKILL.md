@@ -19,7 +19,7 @@ This skill is **advisory only**. It never edits `agents/*.md`, `.design/budget.j
 Before analysis, invoke the aggregator to ensure metrics are current:
 
 ```bash
-node scripts/aggregate-agent-metrics.js
+node --experimental-strip-types scripts/aggregate-agent-metrics.ts
 ```
 
 This is idempotent. If `--refresh` flag is absent and `.design/agent-metrics.json` was generated within the last 60 seconds, the skill may skip this step.
@@ -27,7 +27,7 @@ This is idempotent. If `--refresh` flag is absent and `.design/agent-metrics.jso
 ## Inputs
 
 - `.design/telemetry/costs.jsonl` — append-only; skill reads tail. Tolerant of malformed lines.
-- `.design/agent-metrics.json` — per-agent aggregate produced by `scripts/aggregate-agent-metrics.js`. Source of truth for `cache_hit_rate`, `lazy_skip_rate`, `total_cost_usd`, `total_spawns`.
+- `.design/agent-metrics.json` — per-agent aggregate produced by `scripts/aggregate-agent-metrics.ts`. Source of truth for `cache_hit_rate`, `lazy_skip_rate`, `total_cost_usd`, `total_spawns`.
 - `agents/*.md` — frontmatter cross-reference when checking tier override churn + typical-duration drift.
 - `.design/budget.json` — `tier_overrides` table for cross-check (optional; proceed if missing).
 
@@ -116,5 +116,5 @@ The Phase 11 reflector (`agents/design-reflector.md`) reads both `costs.jsonl` a
 ## Failure Modes
 
 - Missing `.design/telemetry/costs.jsonl` → emit a single line `"No telemetry data yet — run one or more /gdd:* commands to accumulate data, then retry."` and still write the `## OPTIMIZE COMPLETE` marker.
-- Missing `.design/agent-metrics.json` after refresh → emit `"Aggregator failed — check \`node scripts/aggregate-agent-metrics.js\` output manually."`.
+- Missing `.design/agent-metrics.json` after refresh → emit `"Aggregator failed — check \`node --experimental-strip-types scripts/aggregate-agent-metrics.ts\` output manually."`.
 - Zero rules matched → still write the recommendations file with `"No recommendations — all agents within healthy thresholds."` and the `## OPTIMIZE COMPLETE` marker.

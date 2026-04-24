@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { scaffoldDesignDir, readFrontmatter } = require('./helpers.cjs');
+const { scaffoldDesignDir, readFrontmatter } = require('./helpers.ts');
 
 // Canonical stage sequence — matches skills/brief → explore → plan → design → verify.
 const STAGES = ['brief', 'explore', 'plan', 'design', 'verify'];

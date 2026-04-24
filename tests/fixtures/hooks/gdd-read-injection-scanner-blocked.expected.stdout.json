@@ -1,0 +1,5 @@
+{
+  "continue": true,
+  "suppressOutput": false,
+  "message_pattern": "Suspicious prompt-injection pattern detected"
+}

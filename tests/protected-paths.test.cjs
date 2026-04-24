@@ -6,7 +6,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 const os = require('node:os');
 
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 const HOOK = path.join(REPO_ROOT, 'hooks', 'gdd-protected-paths.js');
 const { matches, globToRegex } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'glob-match.cjs'));
 

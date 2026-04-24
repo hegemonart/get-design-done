@@ -6,7 +6,7 @@ const path = require('node:path');
 const os = require('node:os');
 const { spawnSync } = require('node:child_process');
 
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 const HOOK = path.join(REPO_ROOT, 'hooks', 'gdd-mcp-circuit-breaker.js');
 
 function scaffold(config) {

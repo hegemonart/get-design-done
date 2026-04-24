@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/iteration-budget.schema.json",
+  "title": "IterationBudget",
+  "description": "Shape of .design/iteration-budget.json produced by scripts/lib/iteration-budget.cjs. Caps the number of fix-loop iterations that can consume context before the pipeline halts for user input. All mutations are coordinated by scripts/lib/lockfile.cjs and written via temp+rename. See .planning/phases/20-gdd-sdk-foundation/20-14-PLAN.md §Task 4.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["budget", "remaining", "consumed", "refunded", "updatedAt"],
+  "properties": {
+    "budget": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The configured ceiling. Initialized by reset(). `remaining` never exceeds this value after refund()."
+    },
+    "remaining": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Iterations still available for consume() calls. Starts at `budget`, drops on consume, climbs (capped at `budget`) on refund."
+    },
+    "consumed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Running total of successful consume() calls since last reset()."
+    },
+    "refunded": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Running total of refund amount since last reset() (useful for auditing the cache-hit refund path from budget-enforcer.ts)."
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of the last mutation."
+    }
+  }
+}

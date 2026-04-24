@@ -1,0 +1,4 @@
+{
+  "_comment": "context-exhaustion below threshold → hook exits 0 with NO stdout payload. Expected behavior: empty stdout.",
+  "stdout_is_empty": true
+}

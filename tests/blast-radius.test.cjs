@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 const { estimate, estimateMCPCalls, loadConfig, formatDiffSummary, DEFAULTS } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'blast-radius.cjs'));
 
 function scaffoldCfg(configJson) {

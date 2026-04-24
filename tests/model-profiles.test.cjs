@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { REPO_ROOT, readFrontmatter } = require('./helpers.cjs');
+const { REPO_ROOT, readFrontmatter } = require('./helpers.ts');
 
 const VALID_PROFILES = ['quality', 'balanced', 'budget'];
 const VALID_MODELS = ['inherit', 'sonnet', 'haiku', 'opus'];

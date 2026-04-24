@@ -5,7 +5,7 @@ const { spawnSync } = require('node:child_process');
 const path = require('node:path');
 const fs = require('node:fs');
 
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 const HOOK = path.join(REPO_ROOT, 'hooks', 'gdd-bash-guard.js');
 const { match, normalize, patterns } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'dangerous-patterns.cjs'));
 

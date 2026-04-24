@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done.example/schemas/budget.schema.json",
+  "title": ".design/budget.json",
+  "description": "Shape of .design/budget.json — the Phase 10.1 optimization-layer budget governance file. Consumed by hooks/budget-enforcer.ts on every PreToolUse:Agent spawn. Bootstrap writes the Default Config from reference/config-schema.md if the file is missing.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "per_task_cap_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Hard ceiling per agent spawn (USD). Breach under enforcement_mode=enforce triggers D-02 block."
+    },
+    "per_phase_cap_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Cumulative ceiling across all spawns within the current phase (USD). Read from .design/STATE.md frontmatter `phase:` field."
+    },
+    "tier_overrides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["haiku", "sonnet", "opus"]
+      },
+      "description": "Per-agent tier override map (agent-name -> tier). Wins over agent frontmatter default-tier per D-04."
+    },
+    "auto_downgrade_on_cap": {
+      "type": "boolean",
+      "description": "When true, hook silently rewrites tier -> haiku at 80% of per_task_cap_usd per D-03; logged as tier_downgraded: true in telemetry."
+    },
+    "cache_ttl_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "TTL (seconds) driving .design/cache-manifest.json entry expiry per D-08 Layer B. Default 3600."
+    },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": ["enforce", "warn", "log"],
+      "description": "D-11 enforcement policy. enforce = block + auto-downgrade; warn = print warnings but allow spawn; log = advisory-only telemetry without gating."
+    }
+  }
+}

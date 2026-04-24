@@ -32,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/budget-enforcer.js\""
+            "command": "node --experimental-strip-types \"${CLAUDE_PLUGIN_ROOT}/hooks/budget-enforcer.ts\""
           }
         ]
       },
@@ -70,7 +70,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-read-injection-scanner.js\""
+            "command": "node --experimental-strip-types \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-read-injection-scanner.ts\""
           }
         ]
       },
@@ -87,7 +87,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/context-exhaustion.js\""
+            "command": "node --experimental-strip-types \"${CLAUDE_PLUGIN_ROOT}/hooks/context-exhaustion.ts\""
           }
         ]
       }

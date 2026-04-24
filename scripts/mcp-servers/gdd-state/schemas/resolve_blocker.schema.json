@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/gdd-state/schemas/resolve_blocker.schema.json",
+  "title": "GddStateResolveBlocker",
+  "description": "MCP tool gdd_state__resolve_blocker — remove one <blockers> entry by 0-based index or exact text match. Emits state.mutation when a row is removed; returns operation_failed error when no row matches.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "output"],
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        { "required": ["index"] },
+        { "required": ["text"] }
+      ],
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "0-based index into the <blockers> list. Mutually exclusive with text."
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact text match against blocker.text. First matching row is removed. Mutually exclusive with index."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "removed": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["stage", "date", "text"],
+              "properties": {
+                "stage": { "type": "string" },
+                "date": { "type": "string" },
+                "text": { "type": "string" }
+              }
+            },
+            "count": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["code", "message", "kind"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "kind": { "type": "string", "enum": ["validation", "state_conflict", "operation_failed", "unknown"] }
+          }
+        }
+      }
+    }
+  }
+}

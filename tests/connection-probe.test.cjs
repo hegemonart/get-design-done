@@ -14,7 +14,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { REPO_ROOT, mockMCP } = require('./helpers.cjs');
+const { REPO_ROOT, mockMCP } = require('./helpers.ts');
 
 const CONNECTIONS = [
   { name: 'figma',         probeType: 'mcp',    expectedTool: /mcp__figma/i },

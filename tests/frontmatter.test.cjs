@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { readFrontmatter } = require('./helpers.cjs');
+const { readFrontmatter } = require('./helpers.ts');
 
 function tmpMd(content) {
   const f = path.join(os.tmpdir(), `gdd-fm-test-${Date.now()}.md`);

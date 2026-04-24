@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/gdd-state/schemas/get.schema.json",
+  "title": "GddStateGet",
+  "description": "MCP tool gdd_state__get — read current STATE.md (parsed). Read-only; no event emitted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "output"],
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Optional projection. When present, limit data.state to these top-level keys. Unknown keys are ignored (no error)."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "state": {
+              "type": "object",
+              "description": "The parsed STATE.md (see scripts/lib/gdd-state/types.ts ParsedState). When fields[] was passed, only the requested keys are present."
+            },
+            "path": { "type": "string" }
+          }
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["code", "message", "kind"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "kind": { "type": "string", "enum": ["validation", "state_conflict", "operation_failed", "unknown"] }
+          }
+        }
+      }
+    }
+  }
+}

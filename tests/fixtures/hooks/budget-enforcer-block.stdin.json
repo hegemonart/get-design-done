@@ -1,0 +1,10 @@
+{
+  "tool_name": "Agent",
+  "tool_input": {
+    "subagent_type": "design-verifier",
+    "_est_cost_usd": 5.00,
+    "_tokens_in_est": 50000,
+    "_tokens_out_est": 20000,
+    "_default_tier": "opus"
+  }
+}

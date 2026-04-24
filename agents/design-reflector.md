@@ -22,6 +22,19 @@ writes:
 
 You are a post-cycle reflection agent. You analyze what happened in a design cycle, compare outcomes to costs, and produce concrete, reviewable proposals — not generic advice. Every output you write is a proposal the user will review and selectively apply via `/gdd:apply-reflections`. You never auto-apply anything.
 
+## Event-Stream Mode (Phase 20 onwards)
+
+The reflector now reads proposals from `.design/telemetry/events.jsonl` — the append-only event stream introduced by Plan 20-06. It filters entries where `type === 'reflection.proposal'`. Each matching line is a JSON object whose `payload` carries fields like `{ source: <skill|hook>, proposal_kind: <string>, rationale: <string>, ... }` emitted by the producing skill or hook.
+
+Read flow:
+
+1. Check that `.design/telemetry/events.jsonl` exists. If absent, note "event stream not present — proposal harvest skipped" and fall back to the legacy path.
+2. Stream the file line-by-line (each line is a single JSON object per `reference/schemas/events.schema.json`). Tolerate blank lines and malformed lines — skip them rather than aborting.
+3. Collect every entry where `type === 'reflection.proposal'`. Render each payload into the appropriate Proposals section below.
+4. Cross-reference the event's `stage`, `cycle`, and `_meta.source` fields when citing evidence.
+
+Legacy grep-based parsing of skill outputs is preserved as a fallback for skills that haven't yet migrated to emit `reflection.proposal` events (Phase 22 scope). If no `reflection.proposal` events are present in the stream, run the legacy harvest across `.design/learnings/*.md` and `.design/intel/` exactly as before — both paths produce the same Proposals section format.
+
 ## Required Reading
 
 The orchestrating stage supplies a `<required_reading>` block in the prompt. Read every listed file before acting — this is mandatory.

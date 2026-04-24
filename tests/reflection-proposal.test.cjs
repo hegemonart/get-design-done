@@ -12,7 +12,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { REPO_ROOT } = require('./helpers.cjs');
+const { REPO_ROOT } = require('./helpers.ts');
 
 const REFLECTOR = path.join(REPO_ROOT, 'agents/design-reflector.md');
 const APPLY_SKILL = path.join(REPO_ROOT, 'skills/apply-reflections/SKILL.md');

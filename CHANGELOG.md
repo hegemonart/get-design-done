@@ -4,6 +4,66 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.20.0] — 2026-04-24
+
+Phase 20 SDK foundation milestone — the shift from "design pipeline" to "typed SDK + MCP server + resilience primitives + event stream". 16 plans (20-00 through 20-15), 50+ commits, 645+ tests.
+
+### Added
+
+- **Resilience primitives** (headline upgrade) — pipeline now survives Anthropic API rate limits, 429 responses, and context-overflow errors without manual restart. New modules:
+  - `scripts/lib/jittered-backoff.cjs` — decorrelated-jitter exponential backoff with a pluggable clock for testability.
+  - `scripts/lib/rate-guard.cjs` — token-bucket rate limiter with `RateLimitSchema`-driven config.
+  - `scripts/lib/error-classifier.cjs` — three-class taxonomy (transient / retryable-after / fatal) mapping real Anthropic error codes.
+  - `scripts/lib/iteration-budget.cjs` — bounded-iteration guard for recovery loops with `IterationBudgetSchema`.
+  - See [`reference/error-recovery.md`](reference/error-recovery.md) for the recovery protocol.
+- **`gdd-state` MCP server** at `scripts/mcp-servers/gdd-state/` — 11 typed tools replace ad-hoc `Read + regex + Write` patterns for STATE.md:
+  - `gdd_state__get`, `__update_progress`, `__transition_stage`, `__add_blocker`, `__resolve_blocker`, `__add_decision`, `__add_must_have`, `__set_status`, `__checkpoint`, `__probe_connections`, `__frontmatter_update`.
+  - Every tool has a JSON Schema at `scripts/mcp-servers/gdd-state/schemas/`; inputs and outputs are strict-validated.
+  - Every mutation emits a typed event to `.design/telemetry/events.jsonl`.
+- **Typed state core** (`scripts/lib/gdd-state/`) — `parse()`, `serialize()`, `mutate()`, `transition()`, `read()`. Lockfile-safe concurrent writes validated by a 4-way race-condition test (`tests/race-condition-state-mutation.test.ts`) — 2000 concurrent ops, zero lost writes, <60s.
+- **Event stream foundation** — `.design/telemetry/events.jsonl` append-only with a typed `EventBus`. Parallel stream to the existing `costs.jsonl` cost telemetry.
+- **Prompt sanitizer** (`scripts/lib/prompt-sanitizer/`) — strips interactive-only constructs (AskUserQuestion, STOP, `/gdd:` slash commands) from skill bodies for future headless-runner support.
+- **TypeScript toolchain** — strict `tsconfig.json`, schema codegen to `reference/schemas/generated.d.ts`, Node 22 `--experimental-strip-types` direct execution (no bundler step).
+- **Transition gates** as pure functions (`briefToExplore`, `exploreToPlan`, `planToDesign`, `designToVerify`) with fixture-based tests.
+- **`GDDError` 3-class taxonomy** (`ValidationError`, `StateConflictError`, `OperationFailedError`) at `scripts/lib/gdd-errors/`.
+- **Phase 20 regression baseline** at `test-fixture/baselines/phase-20/` — agent list, skill list, frontmatter snapshot, MCP tools manifest (schema sha256), events schema hash, hook list, resilience primitives list. Enforced by `tests/regression-baseline-phase-20.test.cjs`.
+
+### Changed
+
+- All 5 stage skills (`brief`, `explore`, `plan`, `design`, `verify`) use `gdd_state__*` MCP tools for STATE.md operations instead of direct `Read + regex + Write`.
+- Utility skills (`pause`, `resume`, `progress`, `health`, `todo`, `settings`) migrated to typed `gdd_state__get` + mutation tools.
+- Three hooks (`budget-enforcer`, `context-exhaustion`, `gdd-read-injection-scanner`) rewritten in TypeScript and wired as event-stream consumers.
+- Four Tier-1 scripts converted to `.ts` (`tests/helpers.ts`, `scripts/validate-schemas.ts`, `scripts/validate-frontmatter.ts`, `scripts/aggregate-agent-metrics.ts`).
+- Connection probes (Figma MCP, update-check, watch-authorities) use jittered backoff instead of fixed sleeps.
+- Reflector (`agents/design-reflector.md`) reads proposals from the event stream; legacy grep path preserved as fallback.
+- `hooks.json` repointed from `.js` hooks to the new `.ts` hooks (via `--experimental-strip-types`).
+
+### Security
+
+- Lockfile-safe STATE.md mutations validated by 4-way concurrent race-condition test. Each mutation acquires `${path}.lock` (PID + timestamp), performs read-modify-write under the lock, writes to `${path}.tmp`, and atomic-renames. Windows EPERM/EBUSY from AV scanners is retried transparently.
+- Prompt sanitizer strips untrusted interactive constructs before headless execution paths — reduces prompt-injection surface for future runner work.
+
+### Fixed
+
+- Race conditions in `<position>` `task_progress` and `<blockers>` updates under parallel executor load. The prior `Read + regex + Write` pattern could lose increments and corrupt blocker counts under concurrent agent writes; the new typed `mutate()` API guarantees zero lost writes.
+
+### Deprecated
+
+- `.js` hooks under `hooks/` — replaced by `.ts` equivalents running via `--experimental-strip-types`.
+- Direct `Read → regex → Write` patterns against STATE.md — replaced by the 11 `gdd_state__*` MCP tools. Skills that still use the direct pattern will be migrated in a future phase.
+
+### Migration notes
+
+- Consumers of STATE.md should prefer the `gdd_state__*` MCP tools over direct file reads/writes — the typed tools emit events, enforce schemas, and are lockfile-safe. Direct reads for non-mutation cases remain supported.
+- Node 22+ is required for `--experimental-strip-types` execution of `.ts` scripts. The CI matrix already pins Node 22 & 24.
+- No breaking API changes. All legacy skills and agents continue to work unchanged; the MCP server is additive.
+
+### Stats
+
+- 16 plans (20-00 through 20-15) completed across 4 waves.
+- 50+ per-task commits on the Phase 20 branch.
+- 645+ tests across CJS + TS suites, 0 failures, 1 skipped.
+- `tsc --noEmit` green; `validate:schemas` 11/11 green; `validate:frontmatter` 0 violations.
 ## [1.19.6] — 2026-04-24
 
 ### Added — Design Philosophy Layer
