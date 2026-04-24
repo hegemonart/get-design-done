@@ -4,6 +4,128 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.22.0] — 2026-04-25
+
+Phase 22 GDD SDK Observability milestone — the single-typed `BaseEvent` envelope from Phase 20 grows into a queryable, redacted, transport-able observability layer with tail/grep/WebSocket consumers and a causal event chain. 10 plans (22-01 through 22-10), additive — every Phase 20 + Phase 21 consumer keeps working unchanged.
+
+### Added
+
+- **Expanded event-type registry** — 17 new pre-registered subtypes alongside
+  the 6 from Phase 20: `wave.started`, `wave.completed`, `blocker.added`,
+  `decision.added`, `must_have.added`, `parallelism.verdict`, `cost.update`,
+  `rate_limit`, `api.retry`, `compact.boundary`, `mcp.probe`,
+  `reflection.proposed`, `connection.status_change`, `tool_call.started`,
+  `tool_call.completed`, `agent.spawn`, `agent.outcome`. The envelope
+  remains open (`type: string`); the `KnownEvent` union is an additive
+  overlay for typed `switch` consumers. Runtime `KNOWN_EVENT_TYPES` list
+  exported for the CLI's `list-types` subcommand. (Plan 22-01)
+
+- **Secret scrubber** — `scripts/lib/redact.cjs` deep-walks every event
+  payload and replaces secret-shaped strings with `[REDACTED:<type>]`
+  placeholders. Patterns: `sk-ant-…` (anthropic), `sk_live_…` (stripe),
+  `xox[baprs]-…` (slack), `ghp_…` (github_pat), `AKIA…` (aws), generic
+  `sk-…`, `eyJ…` JWTs, and full `-----BEGIN/END-----` PEM blocks.
+  Wired into `EventWriter.serialize()` so every event hitting disk and
+  every bus subscriber sees the scrubbed form — single rule everywhere,
+  no escape hatch. (Plan 22-02)
+
+- **Per-tool-call trajectory stream** — `.design/telemetry/trajectories/<cycle>.jsonl`
+  receives one line per agent tool-use:
+  `{ts, agent, tool, args_hash, result_hash, latency_ms, status}`.
+  Args + result are sha256-prefix-hashed (16 chars) — line size stays
+  bounded; prompt content stays de-identified. Captured by the new
+  PostToolUse:Agent hook `hooks/gdd-trajectory-capture.js`. (Plan 22-03)
+
+- **Append-only event chain** — `.design/gep/events.jsonl` (gep =
+  "GDD Event Provenance"). One line per causal hop: `{event_id,
+  parent_event_id, ts, agent, decision_refs, outcome, rollback_reason?}`.
+  `appendChainEvent()` auto-generates UUIDs; `walkParents()` traces a
+  row up to its root for `/gdd:audit --retroactive`. Cycle-safe; skips
+  invalid lines; lives separately from the firehose so audits don't
+  scan unrelated rows. (Plan 22-04)
+
+- **Typed event reader + aggregator** — `readEvents({path, type,
+  predicate, since, until})` returns an async streaming iterator over
+  `events.jsonl` (readline + createReadStream — no full-file load,
+  GB-scale logs OK). `aggregate()` rolls events up by type, stage,
+  cycle, agent + totals (count, error_count, truncated_count). Exposed
+  from the public event-stream API. (Plan 22-05)
+
+- **CLI transport** — `gdd-events` bin entry, subcommands:
+  `tail [--follow]` (250ms-poll follow mode, no native inotify dep);
+  `grep <terms…>` with hand-rolled filter language
+  (`type=foo`, `payload.x.y=bar`, `!type=baz`, multiple = AND);
+  `cat` pretty-print with timestamp+type prefix; `list-types` runtime
+  registry dump; `serve` for the WebSocket transport. (Plan 22-06)
+
+- **WebSocket transport** — `scripts/lib/transports/ws.cjs` exposes
+  `startServer({port, token, tailFrom?, subscribe?})`. Loaded via
+  `probeOptional('ws')` — clear install hint when absent. Auth:
+  `Authorization: Bearer <token>` on the upgrade; mismatched →
+  HTTP 401 close. Tail replay sends `tailFrom`'s contents to new
+  clients before subscribing them to the live bus. Fire-and-forget
+  delivery; closed sockets dropped silently. `ws@8` declared as
+  optional dep. (Plan 22-07)
+
+- **Connection probe primitive** — `scripts/lib/connection-probe/`
+  exposes `probe({name, cmd, timeout, retries, fallback})` →
+  `{status: 'ok'|'degraded'|'down', latency_ms, attempts,
+  fallback_used, error?}`. Backoff between retries via
+  `jittered-backoff.cjs`. State persisted at
+  `.design/telemetry/connection-state.json` (atomic .tmp+rename).
+  Status transitions emit `connection.status_change` events through a
+  caller-supplied `emit` callback — transitions only, not every probe.
+  Replaces ad-hoc bash probe snippets in `connections/`. (Plan 22-08)
+
+- **Hook → event-stream wire-in** — new `hooks/_hook-emit.js` shared
+  helper wraps `appendEvent()` in try/catch (hooks must NEVER throw on
+  telemetry failure). Wired hooks emit `hook.fired` events on every
+  decision: `gdd-bash-guard` (allow/block + severity + pattern),
+  `gdd-protected-paths` (allow/block + matched glob),
+  `gdd-decision-injector` (inject/no-hits + backend label).
+  Trajectory-capture (Plan 22-03) already emits via its own path.
+  Additive — zero behavior change to existing hook contracts. (Plan 22-09)
+
+### Changed
+
+- `EventWriter.serialize()` now runs `redact()` on the event before
+  JSON-stringifying. Persisted form is the canonical scrubbed form.
+  All 27 Phase 20 event-stream tests still pass. (Plan 22-02 wire-in)
+
+- `hooks.json` registers a new `PostToolUse:Agent` matcher pointing at
+  `gdd-trajectory-capture.js`. The existing `PreToolUse:Agent`
+  budget-enforcer is unaffected. (Plan 22-03 registration)
+
+### Tests
+
+- `tests/event-types-registry.test.ts` — registry expansion (4 tests)
+- `tests/redact.test.cjs` — secret scrubber (12 tests)
+- `tests/event-stream-redact-integration.test.ts` — write-time wire-in (2 tests)
+- `tests/trajectory-capture.test.cjs` — module + hook subprocess (7 tests)
+- `tests/event-chain.test.cjs` — chain + walk + cycle defense (10 tests)
+- `tests/event-reader.test.ts` — reader + aggregator (8 tests)
+- `tests/cli-events.test.cjs` — CLI subcommands + filter language (10 tests)
+- `tests/ws-transport.test.cjs` — WebSocket auth + replay + live (5 + 1 skip)
+- `tests/connection-probe-primitive.test.cjs` — retry + fallback + emit (9 tests)
+- `tests/hook-emit-wire.test.cjs` — bash-guard + protected-paths emission (4 tests)
+- `tests/phase-22-baseline.test.cjs` — Phase 22 regression baseline (12 tests)
+
+Total: 84 new tests. All Phase 20/21 tests still green.
+
+### Deferred
+
+- Grafana / Prometheus exporter (out of scope; code-primitive
+  observability shipped first).
+- Event-stream compaction / retention (`events.jsonl` grows unbounded;
+  Phase 22.x if needed).
+- Replay-on-subscribe semantics (bus stays live-only; transports that
+  want replay read `events.jsonl` directly, then subscribe live).
+- Wire-in for `gdd-mcp-circuit-breaker.js`, `budget-enforcer.ts`,
+  `context-exhaustion.ts`, `gdd-read-injection-scanner.ts` — flow is
+  more intricate; follow-up phase.
+
+---
+
 ## [1.21.0] — 2026-04-24
 
 Phase 21 GDD SDK Headless milestone — the plugin now runs unchanged on Claude Code, OpenAI Codex CLI, and Gemini CLI, and ships a full `gdd-sdk` CLI that executes the design pipeline without a harness. 12 plans (21-01 through 21-12), 50+ commits, 936 tests.
