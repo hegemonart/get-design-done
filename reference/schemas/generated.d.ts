@@ -268,6 +268,35 @@ export interface DesignIntelJson {
 
 export type IntelSchema = DesignIntelJson;
 
+// ---- iteration-budget.schema.json ----
+/**
+ * Shape of .design/iteration-budget.json produced by scripts/lib/iteration-budget.cjs. Caps the number of fix-loop iterations that can consume context before the pipeline halts for user input. All mutations are coordinated by scripts/lib/lockfile.cjs and written via temp+rename. See .planning/phases/20-gdd-sdk-foundation/20-14-PLAN.md §Task 4.
+ */
+export interface IterationBudget {
+  /**
+   * The configured ceiling. Initialized by reset(). `remaining` never exceeds this value after refund().
+   */
+  budget: number;
+  /**
+   * Iterations still available for consume() calls. Starts at `budget`, drops on consume, climbs (capped at `budget`) on refund.
+   */
+  remaining: number;
+  /**
+   * Running total of successful consume() calls since last reset().
+   */
+  consumed: number;
+  /**
+   * Running total of refund amount since last reset() (useful for auditing the cache-hit refund path from budget-enforcer.ts).
+   */
+  refunded: number;
+  /**
+   * ISO-8601 timestamp of the last mutation.
+   */
+  updatedAt: string;
+}
+
+export type IterationBudgetSchema = IterationBudget;
+
 // ---- marketplace.schema.json ----
 /**
  * Shape of .claude-plugin/marketplace.json — the plugin marketplace descriptor.

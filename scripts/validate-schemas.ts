@@ -44,6 +44,7 @@ import type {
   McpGddStateToolsSchema,
   BudgetSchema,
   RateLimitsSchema,
+  IterationBudgetSchema,
 } from '../reference/schemas/generated.js';
 
 export type {
@@ -57,6 +58,7 @@ export type {
   McpGddStateToolsSchema,
   BudgetSchema,
   RateLimitsSchema,
+  IterationBudgetSchema,
 };
 
 /**
@@ -178,6 +180,15 @@ export const PAIRS: readonly Pair[] = [
     // shape — so no single subject data path exists. Schema-compile
     // only here; per-file structural discipline is enforced at write
     // time by rate-guard. See Plan 20-14.
+    data: null,
+    required: false,
+  },
+  {
+    name: 'iteration-budget',
+    schema: 'reference/schemas/iteration-budget.schema.json',
+    // .design/iteration-budget.json is runtime-only, written by
+    // scripts/lib/iteration-budget.cjs. Schema-compile only here.
+    // See Plan 20-14.
     data: null,
     required: false,
   },
