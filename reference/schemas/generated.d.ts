@@ -363,3 +363,28 @@ export interface ClaudePluginJson {
 
 export type PluginSchema = ClaudePluginJson;
 
+// ---- rate-limits.schema.json ----
+/**
+ * Shape of .design/rate-limits/<provider>.json produced by scripts/lib/rate-guard.cjs. One file per provider (anthropic, openai, figma, ...) — header ingestion overwrites atomically via tmp+rename under scripts/lib/lockfile.cjs protection. See .planning/phases/20-gdd-sdk-foundation/20-14-PLAN.md §Task 2.
+ */
+export interface RateLimits {
+  /**
+   * Provider identifier (e.g. 'anthropic', 'openai', 'figma'). Matches the state file basename.
+   */
+  provider: string;
+  /**
+   * Number of API calls the provider says are still allowed before the next reset. When ingestion sees both requests-remaining and tokens-remaining, the lower value wins (most-restrictive).
+   */
+  remaining: number;
+  /**
+   * ISO-8601 timestamp when the rate-limit window resets. Synthesized from whichever header is present: retry-after (seconds or HTTP date), x-ratelimit-reset-requests / -tokens (Unix seconds), anthropic-ratelimit-requests-reset (ISO string). When multiple candidates are present, the latest resetAt wins.
+   */
+  resetAt: string;
+  /**
+   * ISO-8601 timestamp when this state file was last written (ingestHeaders call time).
+   */
+  updatedAt: string;
+}
+
+export type RateLimitsSchema = RateLimits;
+

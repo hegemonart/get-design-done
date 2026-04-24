@@ -43,6 +43,7 @@ import type {
   EventsSchema,
   McpGddStateToolsSchema,
   BudgetSchema,
+  RateLimitsSchema,
 } from '../reference/schemas/generated.js';
 
 export type {
@@ -55,6 +56,7 @@ export type {
   EventsSchema,
   McpGddStateToolsSchema,
   BudgetSchema,
+  RateLimitsSchema,
 };
 
 /**
@@ -164,6 +166,18 @@ export const PAIRS: readonly Pair[] = [
     // so the data file isn't tracked — schema-compile only here. The
     // budget-enforcer.ts hook consumes BudgetSchema from generated.d.ts at
     // type-check time regardless of file presence. See Plan 20-13.
+    data: null,
+    required: false,
+  },
+  {
+    name: 'rate-limits',
+    schema: 'reference/schemas/rate-limits.schema.json',
+    // .design/rate-limits/<provider>.json is runtime-only, written by
+    // scripts/lib/rate-guard.cjs as a side-effect of every
+    // ingestHeaders() call. One file per provider — they're all the same
+    // shape — so no single subject data path exists. Schema-compile
+    // only here; per-file structural discipline is enforced at write
+    // time by rate-guard. See Plan 20-14.
     data: null,
     required: false,
   },
