@@ -32,6 +32,20 @@ The spawning prompt supplies `<required_reading>`. Read every listed file before
 
 If `<connections>` in STATE.md shows `figma: available`, read the `prefix=` field on that line (call it `{P}`). Then `ToolSearch({ query: "figma get_variable_defs", max_results: 5 })` and call `{P}get_variable_defs`. For each returned variable, draft a *tentative* D-XX decision (mark "tentative — confirm with user"). Silently skip on any error. Do NOT grep the codebase.
 
+## Step 0.5 — First-Principles Invariants (brief stage only)
+
+If `<stage>` in the spawning prompt is `brief` or `discover`, prepend these three invariant questions **before** the main design interview. Record answers as D-XX decisions prefixed `[Invariant]` in STATE.md.
+
+Read `reference/first-principles.md` before asking. Questions to ask (one at a time, using `AskUserQuestion`):
+
+1. **Body invariant** — "Are there accessibility requirements for motor-impaired users, or will this be used primarily on mobile devices? (This affects minimum touch target sizes and input method assumptions.)"
+2. **Attention invariant** — "What is the single most important action a user should take on the primary screen? (This will be the only element styled as a primary action.)"
+3. **Memory invariant** — "Are there any multi-step flows where users must carry information from one screen to the next? (This determines whether we need progress indicators or inline context cues.)"
+
+After recording all three answers, apply the **Reducibility Test** framing: note in STATE.md which design elements are invariant-justified (body/attention/memory) and which are decorative.
+
+Skip this step if: `<stage>` is not `brief`/`discover`, if `<mode>` is `--from-handoff` (handoff decisions already encode invariants), or if D-XX decisions prefixed `[Invariant]` already exist in STATE.md.
+
 ## Step 1 — Mode dispatch
 
 Inspect the orchestrator prompt for `<mode>`:

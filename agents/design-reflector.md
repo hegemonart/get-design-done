@@ -51,6 +51,16 @@ Write these sections in order. If source data is missing, write the section head
 
 Compare `.design/DESIGN-VERIFICATION.md` gaps to `.design/DESIGN-PLAN.md` acceptance criteria. List decisions that deviated from plan, unexpected cost spikes (agent cost > 2× typical), agents that ran > 3× their `typical-duration-seconds`. One bullet per surprise; cite cycle slug and evidence.
 
+After listing standard surprises, apply the **Four Principles Checks** from `reference/emotional-design.md` and `reference/first-principles.md`:
+
+**Reducibility check** — Did any executed task add elements that fail the reducibility test (body / attention / memory justification absent)? If DESIGN-PLAN.md tasks added >3 visual elements none of which appear in DESIGN-VERIFICATION.md acceptance criteria, flag as "possible decorative accumulation."
+
+**Memory-load check** — Does DESIGN-VERIFICATION.md show any H-06 (Recognition > Recall) gap? If yes, flag: "Memory invariant violation — users may need to remember context between screens." Cite the specific gap.
+
+**Peak-End check** — Scan DESIGN-PLAN.md and DESIGN-VERIFICATION.md for evidence of a designed peak moment (a completion screen, a celebration, a distinct success state). If none found, flag: "No peak moment designed — reflective-level experience may score low. Consider adding a designed end state."
+
+**Error-redemption check** — Scan DESIGN-VERIFICATION.md for H-09 (Error Recovery) score. If score < 3, flag: "Error-redemption gap — error states do not guide users to resolution. This is a behavioral-level failure that also damages the reflective level (users remember bad endings)."
+
 ### 2. Recurring Decisions
 
 Scan STATE.md `<decisions>` block for D-XX codes. Cross-reference `.design/learnings/` files from prior cycles if present. Flag decisions that: (a) appeared in multiple sessions of the same cycle, or (b) appear under the same keyword in learnings from ≥2 prior cycles. These are candidates for `reference/` additions.

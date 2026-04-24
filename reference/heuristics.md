@@ -181,6 +181,76 @@ People **remember incomplete tasks** better than completed ones. Implications:
 
 ---
 
+## Peak-End Rule
+
+Users judge an experience primarily by how it felt at its most intense moment (the **peak**) and how it ended — not by the average across the whole session. Implications:
+- Design a deliberate positive peak in every primary flow (e.g., a celebratory completion screen, an instant result, a delightful empty state).
+- The **end state** of a flow matters disproportionately: the last screen the user sees shapes their memory of the whole interaction.
+- Reduce negative peaks first (error states, loading hangs) — they weigh heavier than neutral moments.
+- A long frustrating form followed by a satisfying completion screen is remembered more positively than a mildly annoying end to an otherwise smooth flow.
+
+---
+
+## Loss Aversion
+
+Users feel the pain of loss approximately **twice as strongly** as the pleasure of an equivalent gain (Kahneman & Tversky). Implications:
+- Frame CTAs around what users keep/save, not what they gain: "Don't lose your progress" over "Save your work."
+- Subscription cancellation flows that show what the user will lose (features, data, streak) leverage loss aversion ethically to reduce churn — but only if the stated losses are real.
+- Free trial countdowns ("3 days left") trigger loss aversion more effectively than benefit reminders.
+- Destructive action confirmations should name what is lost: "Delete this project and all 47 files?" not just "Are you sure?"
+
+---
+
+## Cognitive Load Theory
+
+Working memory is limited to approximately **7 ± 2 chunks** simultaneously (Miller, 1956) and degrades under conditions of stress, distraction, or novelty. Cognitive Load Theory (Sweller, 1988) distinguishes three types:
+
+| Type | Definition | Design implication |
+|---|---|---|
+| **Intrinsic** | Load inherent to the task itself (complexity of the domain) | Cannot be reduced; must be scaffolded |
+| **Extraneous** | Load imposed by poor design (navigation, unclear labels, visual noise) | Eliminate this completely |
+| **Germane** | Load that builds understanding (learning, pattern recognition) | Preserve and support |
+
+Practical rules:
+- Every element of visual noise is extraneous load — remove it.
+- New UI patterns create extraneous load (Jakob's Law); use platform conventions.
+- Chunk complex tasks into steps of ≤3 decisions each.
+- Error messages that require decoding ("Error 422") create extraneous load; plain language removes it.
+
+---
+
+## Aesthetic-Usability Effect
+
+Users perceive **aesthetically pleasing designs as more usable**, even when functionality is identical — and this perception persists through initial usability problems. Implications:
+- A polished visual appearance buys tolerance for minor UX rough edges in early releases.
+- This effect is strongest on first impression; it degrades over time as behavioral friction compounds.
+- The effect can mask genuine usability problems in user testing if participants rate overall satisfaction rather than task completion.
+- Do NOT use the aesthetic-usability effect as a reason to defer fixing usability problems — it explains tolerance, not satisfaction.
+
+---
+
+## Doherty Threshold
+
+A system that responds within **400ms** keeps users in a state of flow. Response times above 400ms cause users to shift attention, leading to a productivity drop that compounds with task complexity. Named after W.J. Doherty and R.H. Thadhani (IBM, 1982). Implications:
+- Interactive responses (button click → visible feedback) must be ≤400ms.
+- For operations > 400ms, show optimistic UI immediately and settle in the background.
+- For operations > 1000ms, use a progress indicator.
+- For operations > 10s, provide a way to continue other tasks (async notification on complete).
+- Loading spinners that appear within 400ms reduce perceived wait; those that appear late increase it.
+
+---
+
+## Flow (Csikszentmihalyi)
+
+Users enter a **flow state** when task difficulty matches their skill level exactly — high enough to engage, low enough to feel achievable. Flow is characterized by complete absorption, loss of time awareness, and intrinsic motivation. Implications:
+- Progressive difficulty: onboarding tasks should be trivially easy; expert tasks should provide just enough challenge.
+- Interruptions break flow permanently for that session; avoid modal interruptions in high-focus workflows.
+- Clear goals + immediate feedback are the two design levers for inducing flow (H-01, H-05).
+- Forms designed for flow: one question per screen, immediate validation, visible progress.
+- Notification design: distinguish ambient notifications (don't break flow) from critical interruptions (must break flow).
+
+---
+
 ## How to Score During Verification
 
 For each NNG heuristic (H-01 through H-10), rate 0–4:

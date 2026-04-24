@@ -26,6 +26,16 @@ Do not reorder. Do not inline this preamble. Do not splice dynamic content ahead
 
 The `/gdd:warm-cache` command (ships in Plan 10.1-02) pre-warms this identical prefix in the Anthropic cache before a design sprint, so the first real agent spawn of the sprint is already a cache hit on the shared-preamble bytes. You do not need to do anything special to participate — just keep the import directive at the top of your body.
 
+## Design Philosophy Layer (Phase 19.6)
+
+The framework is anchored to three design philosophy references that agents may read during brief, audit, and verify stages:
+
+- `reference/first-principles.md` — 3-invariant framework (body, attention, memory); reducibility test for every design element
+- `reference/emotional-design.md` — Norman's visceral / behavioral / reflective cross-cutting scoring lens
+- `reference/component-authoring.md` — Kowalski/Sonner 6-principle component quality standard (P-01 through P-06)
+
+These references encode *why* the heuristics and anti-patterns exist — not rules to follow, but constraints derived from human biology and cognition. Agents that read these files apply them as lenses, not checklists.
+
 ---
 
 *Imported by: every file under `agents/*.md` (except `agents/README.md`). Maintained as part of Phase 10.1 (OPT-07) and Phase 14.5 (L0/L2 split). Edits to this file affect every agent simultaneously — verify across the full agent suite before committing.*

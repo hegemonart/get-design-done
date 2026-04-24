@@ -4,6 +4,27 @@
   "generated_at": "2026-04-24T00:00:00.000Z",
   "entries": [
     {
+      "name": "component-authoring",
+      "path": "reference/component-authoring.md",
+      "type": "heuristic",
+      "phase": 19.6,
+      "description": "Kowalski/Sonner 6-principle component quality standard (P-01 Minimal API, P-02 Composability, P-03 Defaults, P-04 Animation as State, P-05 Accessibility First, P-06 Edge Honesty) with grep-able audit signals"
+    },
+    {
+      "name": "emotional-design",
+      "path": "reference/emotional-design.md",
+      "type": "heuristic",
+      "phase": 19.6,
+      "description": "Don Norman's visceral/behavioral/reflective three-level cross-cutting scoring lens with per-level rubrics and cross-level conflict patterns"
+    },
+    {
+      "name": "first-principles",
+      "path": "reference/first-principles.md",
+      "type": "heuristic",
+      "phase": 19.6,
+      "description": "3-invariant framework (body/attention/memory) with grep-able principle→code pairs and reducibility test; wired into design-discussant brief stage"
+    },
+    {
       "name": "DEPRECATIONS",
       "path": "reference/DEPRECATIONS.md",
       "type": "schema",

@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.19.5",
+  "version": "1.19.6",
   "description": "A Claude Code plugin for systematic design improvement",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -89,7 +89,16 @@
     "experience-archive",
     "recall",
     "relevance-counter",
-    "record-contract"
+    "record-contract",
+    "first-principles",
+    "emotional-design",
+    "component-authoring",
+    "disney-12-principles",
+    "peak-end-rule",
+    "loss-aversion",
+    "cognitive-load",
+    "doherty-threshold",
+    "rams-lens"
   ],
   "skills": [
     "SKILL.md"

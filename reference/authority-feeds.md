@@ -4,8 +4,8 @@
 >
 > **Anti-slop thesis:** No Dribbble. No Behance. No LinkedIn. No generic trending aggregators. See `.planning/PROJECT.md` and `.planning/phases/13.2-external-authority-watcher/13.2-CONTEXT.md` §D-08.
 
-**Last reviewed:** 2026-04-19
-**Feed count:** 26 (updated each time a feed is added or removed)
+**Last reviewed:** 2026-04-24
+**Feed count:** 28 (updated each time a feed is added or removed)
 
 ---
 
@@ -46,6 +46,8 @@
 - **[Scott Jehl](https://scottjehl.com/)** — `kind: named-practitioner` · `url: https://scottjehl.com/feed/` · `cadence-hint: monthly` · *Progressive enhancement and web performance; long-form durable analysis.*
 - **[Heydon Pickering](https://heydonworks.com/)** — `kind: named-practitioner` · `url: https://heydonworks.com/feed.xml` · `cadence-hint: irregular` · *Accessibility-first component design; Inclusive Components author.*
 - **[Una Kravets](https://una.im/)** — `kind: named-practitioner` · `url: https://una.im/feed.xml` · `cadence-hint: monthly` · *Chrome DevRel on CSS; surfaces and explains new platform capabilities.*
+- **[Don Norman — jnd.org](https://jnd.org/)** — `kind: named-practitioner` · `url: https://jnd.org/feed/` · `cadence-hint: monthly` · *Don Norman's essays on emotional design, affordances, cognitive design, and human-centered AI. Primary source for `reference/emotional-design.md`.*
+- **[Vitsœ — Dieter Rams](https://www.vitsoe.com/gb/about/good-design)** — `kind: named-practitioner` · `url: https://www.vitsoe.com/feed` · `cadence-hint: irregular` · *Canonical source for Rams's 10 Principles of Good Design. Published by Vitsœ, who worked directly with Rams at Braun. Primary source for the Rams Lens in `reference/checklists.md`.*
 
 ## User-added Are.na channels (user-extensible)
 

@@ -4,6 +4,36 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.19.6] — 2026-04-24
+
+### Added — Design Philosophy Layer
+
+Adds a generative reasoning spine on top of the defensive (anti-patterns) and descriptive (heuristics) layers. Purely additive knowledge + lens integration — no new agents, skills, or commands.
+
+**New `reference/first-principles.md`:** 3-invariant framework (body / attention / memory) with grep-able principle→code pairs and a reducibility test for every design element. Wired into `design-discussant` as Step 0.5 — three invariant questions prepended to the brief-stage interview; answers recorded as `[Invariant]` D-XX decisions in STATE.md.
+
+**New `reference/emotional-design.md`:** Don Norman's visceral / behavioral / reflective three-level framework as a cross-cutting scoring lens. Per-level scoring rubrics (1–4) and a cross-level conflict table. Wired into `design-auditor` (Step 4.5 Emotional Design Overlay appended to DESIGN-AUDIT.md) and `design-reflector` (visceral/behavioral divergence check in Section 1).
+
+**New `reference/component-authoring.md`:** Emil Kowalski / Sonner 6-principle component quality standard — P-01 Minimal API, P-02 Composability, P-03 Defaults, P-04 Animation as State, P-05 Accessibility First, P-06 Edge Honesty — with grep-able audit signals and an ARIA contract table by component type. Wired into design-auditor (Pillar 7 sub-check), design-discussant (`--spec` mode question), and design-verifier must-have checklist.
+
+**`reference/heuristics.md` extended:** Added Peak-End Rule, Loss Aversion, Cognitive Load Theory (intrinsic / extraneous / germane), Aesthetic-Usability Effect, Doherty Threshold (400ms), and Flow (Csikszentmihalyi) — completing the psychology foundations layer.
+
+**`reference/motion-advanced.md`:** Disney's 12 Principles UX mapping stub replaced with full authoring — all 12 principles translated to interface motion with code examples (Squash and Stretch, Anticipation, Staging, Straight Ahead vs Pose to Pose, Follow Through, Slow In/Slow Out, Arcs, Secondary Action, Timing, Exaggeration, Solid Drawing, Appeal).
+
+**`reference/checklists.md`:** Added Rams Lens (10 questions mapping Dieter Rams's principles) and Sonner / Component-Authoring Lens (6 P-0N questions) as post-audit self-checks.
+
+**`reference/shared-preamble.md`:** Added Design Philosophy Layer block pointing to the three new reference files — ensures all agents are aware of the philosophy spine.
+
+**`reference/authority-feeds.md`:** Added `jnd.org` (Don Norman) and `vitsoe.com` (Dieter Rams / Vitsœ) as named-practitioner feeds. Feed count: 26 → 28.
+
+**`design-auditor`:** Required reading expanded with `reference/emotional-design.md` and `reference/component-authoring.md`. Step 4.5 (Emotional Design Overlay) added to execution steps.
+
+**`design-discussant`:** Step 0.5 (First-Principles Invariants) prepends three invariant questions during brief/discover stage.
+
+**`design-reflector`:** Section 1 extended with four principles-check prompts: reducibility, memory-load, peak-end, and error-redemption.
+
+---
+
 ## [1.19.5] — 2026-04-24
 
 ### Added — Cross-Cycle Memory: Recall, Checkpoints, Experience Archive

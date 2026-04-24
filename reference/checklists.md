@@ -162,3 +162,33 @@ Use this checklist after the main design review for pixel-level craft verificati
 - [ ] No `transition: all` anywhere (see BAN-12 transition-all)
 - [ ] No `will-change: all` anywhere (see BAN-13 will-change-all)
 - [ ] `prefers-reduced-motion` respected via `MotionConfig` or `useReducedMotion()`
+
+---
+
+## Rams Lens — 10 Design Questions
+
+Dieter Rams's 10 principles of good design (Vitsœ/Braun, 1970s–80s) applied as a self-audit lens. Each question maps to one principle.
+
+- [ ] **Innovative** — Does this design solve the problem in a way that was not possible or obvious before?
+- [ ] **Useful** — Does every element serve the primary function? Nothing decorative that doesn't earn its place?
+- [ ] **Aesthetic** — Is the visual appearance the minimum necessary for legibility and emotional resonance?
+- [ ] **Understandable** — Can the user figure out how to use this without reading documentation or a tooltip?
+- [ ] **Unobtrusive** — Does the design stay in the background and let the content or task take focus?
+- [ ] **Honest** — Does the design not imply capabilities, quality, or status that the product doesn't have?
+- [ ] **Long-lasting** — Is this design free of trend-dependent choices (gradients, micro-styles) that will age in 12 months?
+- [ ] **Thorough** — Have edge cases been considered and handled (empty states, error states, loading states, overflow text)?
+- [ ] **Environmentally friendly** — Is the performance footprint minimal? (image sizes, JS bundle, font weight)
+- [ ] **As little design as possible** — If you removed 20% of the design decisions, would the product be worse? If not, remove them.
+
+---
+
+## Sonner / Component-Authoring Lens — 6 Questions
+
+Emil Kowalski's component-authoring principles applied as a per-component self-audit. Full reference: `reference/component-authoring.md`.
+
+- [ ] **P-01 API surface** — Does this component work correctly in 1 line with zero configuration?
+- [ ] **P-02 Composability** — Does this component compose via slots/children, not via style-configuration props?
+- [ ] **P-03 Defaults** — Are the defaults so sensible that most consumers never need to pass any props?
+- [ ] **P-04 Animation** — Does every animation in this component communicate a state change? No decorative loops?
+- [ ] **P-05 Accessibility** — Does this component have a complete ARIA contract before any visual styling?
+- [ ] **P-06 Edge honesty** — Are known failure modes documented with `// KNOWN:` or `// EDGE:` comments?

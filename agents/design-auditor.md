@@ -62,6 +62,8 @@ Minimum expected files:
 - `reference/data-visualization.md` — chart-choice matrix, color-blind palettes, axis conventions (use for chart-heavy projects)
 - `reference/rtl-cjk-cultural.md` — RTL mirroring, CJK typography, cultural color meanings (use when i18n or multi-locale is in scope)
 - `reference/information-architecture.md` — nav pattern catalog, menu-depth rules, wayfinding (use when nav structure is in scope)
+- `reference/emotional-design.md` — Norman's visceral/behavioral/reflective cross-cutting lens; apply after pillar scoring as an informational overlay (see Emotional Design Overlay section below)
+- `reference/component-authoring.md` (if present) — Kowalski/Sonner P-01–P-06 principles; apply as sub-check within Pillar 7 (Micro-Polish) for component-heavy UIs
 
 ---
 
@@ -333,6 +335,16 @@ For each of the 7 pillars:
 ### Step 4: Write DESIGN-AUDIT.md
 
 Write `.design/DESIGN-AUDIT.md` using the output format below.
+
+### Step 4.5: Emotional Design Overlay
+
+After pillar scoring, apply the three-level lens from `reference/emotional-design.md`:
+
+1. **Visceral** — map Pillar 3 (Color) + Pillar 2 (Visual Hierarchy) → does the aesthetic surface convey the intended emotional register within 3 seconds?
+2. **Behavioral** — map Pillar 6 (Experience Design) + H-01/H-09 signals → does feedback arrive within 400ms? Are errors human-readable?
+3. **Reflective** — is there a designed peak moment in the primary flow? Does brand voice carry through to empty states?
+
+Emit a `## Emotional Design Overlay` section in DESIGN-AUDIT.md (informational; does not affect /28 score). Flag any cross-level conflict (e.g., high behavioral + low visceral) as a priority finding.
 
 ### Step 5: Emit Completion Marker
 

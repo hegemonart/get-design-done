@@ -746,9 +746,198 @@ Fresh eyes catch what in-the-moment iteration misses. Animations feel correct wh
 
 ## Disney's 12 Principles — UX Mapping
 
-<!-- STUB: Disney's 12 Principles UX mapping — Phase 19.6 will author this section -->
-<!-- Cross-reference: reference/motion-easings.md, reference/motion-spring.md -->
+Original source: Frank Thomas & Ollie Johnston, *The Illusion of Life: Disney Animation* (1981). The 12 principles were developed for hand-drawn character animation; the UX mappings below translate each to interface motion.
 
-*This section is reserved for Phase 19.6 (Design Philosophy Layer). A full UX mapping of all 12 principles will be authored there and this stub will be replaced.*
+---
+
+### 1. Squash and Stretch
+
+**Animation:** Objects deform under force — squash on impact, stretch during fast movement.
+
+**UX mapping:** Scale feedback communicates physical weight and responsiveness.
+```tsx
+// Press: squash slightly (wider, shorter)
+// Release: snap back through scale(1.05) → scale(1)
+<motion.button
+  whileTap={{ scaleX: 1.05, scaleY: 0.95 }}
+  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+/>
+```
+**Rule:** Constrain squash/stretch to ≤5% deviation — more reads as glitchy, not physical.
+
+---
+
+### 2. Anticipation
+
+**Animation:** A small preparatory motion before the main action (e.g., a character bending knees before jumping).
+
+**UX mapping:** Preview animations prime the user for what's about to happen.
+```tsx
+// Drawer that "breathes" slightly before opening
+<motion.div
+  animate={isOpen ? { x: 0 } : { x: -8 }}
+  initial={{ x: -8 }}
+  transition={{ type: "spring", stiffness: 300, damping: 24 }}
+/>
+```
+**Rule:** Anticipation delays should be ≤80ms; longer delays read as lag, not anticipation.
+
+---
+
+### 3. Staging
+
+**Animation:** Present one idea at a time; the primary action draws the eye; secondary elements are subordinate.
+
+**UX mapping:** One primary motion per state change. All other motion is either absent or staggered to follow.
+- Never animate two elements of equal visual weight simultaneously
+- Use stagger to create a reading order for entering content
+- The element the user acted on should move first
+
+---
+
+### 4. Straight Ahead vs Pose to Pose
+
+**Animation:** Straight-ahead: draw each frame in sequence. Pose-to-pose: define key positions and interpolate.
+
+**UX mapping:** All CSS transitions and spring animations are pose-to-pose by definition — you define start and end states. This means:
+- Transitions retarget smoothly when interrupted (see CSS Transitions vs Keyframes section above)
+- The in-between frames are computed by the engine, not designed
+- Design the **poses** (states) carefully; the interpolation handles itself
+
+---
+
+### 5. Follow Through and Overlapping Action
+
+**Animation:** Parts of an object continue moving after the main action stops; related elements finish at slightly different times.
+
+**UX mapping:** Stagger exit animations and let secondary elements settle slightly after primary.
+```tsx
+// List exit: items stagger out with slight delay between each
+const container = {
+  exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
+};
+const item = {
+  exit: { opacity: 0, y: -8, transition: { duration: 0.2 } },
+};
+```
+**Rule:** Follow-through delay ≤60ms per level. Beyond this, the UI feels sluggish.
+
+---
+
+### 6. Slow In and Slow Out
+
+**Animation:** Objects accelerate from rest and decelerate to a stop; they are never at constant velocity.
+
+**UX mapping:** Never use `linear` easing for UI transitions. Always use a curve that starts slow, speeds up, and decelerates.
+```css
+/* The standard Material/web ease — correct for most UI */
+transition: transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+
+/* Enter (slow in) */
+transition: transform 0.24s cubic-bezier(0, 0, 0.2, 1);
+
+/* Exit (slow out) */
+transition: transform 0.2s cubic-bezier(0.4, 0, 1, 1);
+```
+**Rule:** `linear` easing is only valid for: scroll-driven animations tied to position, and progress bar fills.
+
+---
+
+### 7. Arcs
+
+**Animation:** Objects in the real world move in slight arcs, not straight lines.
+
+**UX mapping:** For spatial transitions (element moving from one position to another), a slight arc feels more natural than a straight-line translate. Achieved by animating both axes with slightly different timing:
+```tsx
+<motion.div
+  initial={{ x: -40, y: 10, opacity: 0 }}
+  animate={{ x: 0, y: 0, opacity: 1 }}
+  transition={{
+    x: { type: "spring", stiffness: 300, damping: 28 },
+    y: { type: "spring", stiffness: 300, damping: 28, delay: 0.04 },
+    opacity: { duration: 0.2 },
+  }}
+/>
+```
+**Rule:** Arcs apply only to spatial motion. Opacity, scale, and color changes do not arc.
+
+---
+
+### 8. Secondary Action
+
+**Animation:** A supporting action that reinforces the primary one (e.g., a character's hair bouncing while they walk).
+
+**UX mapping:** A small supplementary animation that confirms and amplifies the main interaction.
+- Toast notification: icon pulses briefly after the toast appears (secondary action confirming the event)
+- Success state: checkmark draws itself after the confirmation color appears
+- Delete: item fades + the list count badge decrements with a small number-flip animation
+
+**Rule:** Secondary actions must complete before or simultaneously with the primary — never after. They reinforce, not extend.
+
+---
+
+### 9. Timing
+
+**Animation:** Duration communicates physical weight. Fast = light and snappy. Slow = heavy and significant.
+
+**UX mapping:**
+
+| Duration | Use for |
+|---|---|
+| 80–120ms | Micro-interactions: hover states, active states, icon swaps |
+| 150–200ms | Standard component transitions: dropdowns, tooltips, toasts |
+| 220–300ms | Page-level state changes, drawer open/close, modal appear |
+| 300–500ms | Full-page route transitions |
+| > 500ms | Reserved for intentionally cinematic moments only |
+
+**Rule:** Match duration to the visual weight of the element. A small icon swap at 300ms feels lethargic; a full-page transition at 80ms feels jarring.
+
+---
+
+### 10. Exaggeration
+
+**Animation:** Push key poses slightly beyond reality for emphasis and clarity.
+
+**UX mapping:** Slight overshoot in spring animations communicates energy and intention.
+```tsx
+// Slight overshoot via underdamped spring — not bouncy, but alive
+<motion.div
+  animate={{ scale: 1 }}
+  transition={{ type: "spring", stiffness: 400, damping: 22, mass: 0.8 }}
+/>
+// Peak scale ≈ 1.03–1.05 before settling — imperceptible consciously, felt physically
+```
+**Rule:** Exaggeration in UI should be invisible when you're looking for it. If users notice the bounce, it's too much. Target spring `bounce` values of 0.1–0.2.
+
+---
+
+### 11. Solid Drawing
+
+**Animation:** Characters have weight, depth, and obey perspective; they feel three-dimensional.
+
+**UX mapping:** UI elements should feel visually grounded — not floating. Shadows, depth layering, and transform-origin choices communicate which layer an element lives on.
+- Drawers and sheets slide from an edge — they feel physically attached
+- Modals emerge from center or from the triggering element — they float above the page
+- Tooltips appear near the cursor — they are attached to the pointer
+- `transform-origin` must match where the element conceptually emerges from
+
+---
+
+### 12. Appeal
+
+**Animation:** Characters have a quality that makes the audience want to watch them — not necessarily cute, but interesting.
+
+**UX mapping:** Animation has personality that is consistent with the product's brand.
+
+| Product type | Animation personality |
+|---|---|
+| Financial / serious tools | Crisp, minimal, sub-150ms, no bounce |
+| Consumer apps | Warm, slightly slower, gentle ease-out |
+| Playful / creative tools | Spring physics, slight overshoot, expressive icon animations |
+| Data dashboards | Smooth, purposeful, transitions that reveal data sequentially |
+
+**Rule:** Animation personality must be decided once per product and applied consistently. Mixed personalities (snappy in one area, bouncy in another) destroy cohesion.
+
+---
 
 See also: `reference/motion-easings.md`, `reference/motion-spring.md`, `reference/framer-motion-patterns.md`
