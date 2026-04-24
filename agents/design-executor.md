@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 color: yellow
 default-tier: sonnet
 tier-rationale: "Follows an Opus-authored plan; executes rather than plans"
-size_budget: XL
+size_budget: XXL
 parallel-safe: conditional-on-touches
 typical-duration-seconds: 60
 reads-only: false
