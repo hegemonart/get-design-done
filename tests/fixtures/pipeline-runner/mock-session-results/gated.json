@@ -1,0 +1,9 @@
+{
+  "status": "completed",
+  "transcript_path": "",
+  "turns": 1,
+  "usage": { "input_tokens": 50, "output_tokens": 75, "usd_cost": 0.001 },
+  "final_text": "Results so far:\n\n<!-- AWAIT_USER_GATE: name=\"approve-plan\" -->\n\nPlease approve.",
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] }
+}

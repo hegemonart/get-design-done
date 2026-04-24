@@ -1,0 +1,9 @@
+{
+  "status": "completed",
+  "transcript_path": "",
+  "turns": 2,
+  "usage": { "input_tokens": 0, "output_tokens": 0, "usd_cost": 0 },
+  "final_text": "## PLAN COMPLETE\n\nPlan locked: 3 waves, token extraction + spacing normalization. See .design/DESIGN-PLAN.md.",
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] }
+}

@@ -4,6 +4,84 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.21.0] — 2026-04-24
+
+Phase 21 GDD SDK Headless milestone — the plugin now runs unchanged on Claude Code, OpenAI Codex CLI, and Gemini CLI, and ships a full `gdd-sdk` CLI that executes the design pipeline without a harness. 12 plans (21-01 through 21-12), 50+ commits, 936 tests.
+
+### Added
+
+- **Headless SDK** — new `bin/gdd-sdk` CLI that runs the full design pipeline
+  without Claude Code. Subcommands: `run`, `stage <name>`, `query <op>`,
+  `audit`, `init`. Publishes as `gdd-sdk` in `package.json` `bin`. See
+  `docs/HEADLESS.md` (Phase 23 deliverable) for CI integration guidance.
+- **Session runner** (`scripts/lib/session-runner/`) — typed wrapper around
+  `@anthropic-ai/claude-agent-sdk` with USD/token budget caps, turn caps,
+  transcript capture, structured error mapping via `gdd-errors` taxonomy.
+  Emits `session.started`, `session.completed`, `session.budget_exceeded`
+  events on the shared event stream.
+- **Context engine** (`scripts/lib/context-engine/`) — per-stage file
+  manifest + markdown-aware truncation that preserves frontmatter, every
+  heading, and the first paragraph of each section for files larger than
+  8 KiB. Keeps session prompts within budget without dropping load-bearing
+  context.
+- **Tool scoping** (`scripts/lib/tool-scoping/`) — per-stage allowed-tools
+  enforcement at session creation. Verify is read-only; Explore adds web;
+  Design permits shell mutations. Per-agent frontmatter overrides via
+  `parseAgentTools()` for agent-level deviations.
+- **Structured logger** (`scripts/lib/logger/`) — leveled (debug/info/warn/
+  error) with JSONL output in headless mode, ANSI-colored stderr in
+  interactive mode. `warn`/`error` also emit `ErrorEvent` on the event
+  stream for CI consumers.
+- **Pipeline runner** (`scripts/lib/pipeline-runner/`) — brief → explore →
+  plan → design → verify state machine with retry-once, halt logic,
+  human-gate callbacks, config-driven step skipping. Emits
+  `pipeline.started`, `pipeline.completed`, `pipeline.halted`.
+- **Explore parallel runner** (`scripts/lib/explore-parallel-runner/`) —
+  4 mappers (token, component-taxonomy, a11y, visual-hierarchy) concurrent
+  with streaming synthesizer. Honors `parallelism_safe` agent frontmatter
+  for opt-in isolation.
+- **Discuss parallel runner** (`scripts/lib/discuss-parallel-runner/`) —
+  N discussant variants (user-journey, technical-constraint, brand-fit,
+  accessibility) concurrent, aggregator dedupes and clusters questions.
+- **`gdd-sdk init`** (`scripts/lib/init-runner/`) — new-project bootstrap
+  spawning 4 parallel researchers (design-system-audit, brand-context,
+  accessibility-baseline, competitive-references) + synthesizer producing
+  `.design/DESIGN-CONTEXT.md` draft.
+- **Cross-harness portability** (`scripts/lib/harness/`) — the plugin now
+  runs unchanged on Claude Code, OpenAI Codex CLI, and Gemini CLI. Ships
+  `reference/codex-tools.md`, `reference/gemini-tools.md`, `AGENTS.md`
+  (Codex), `GEMINI.md` (Gemini). The `gdd-state` MCP server works on all
+  three harnesses; harness detection is runtime-driven.
+- **E2E headless integration test** — `tests/e2e-headless.test.ts` with a
+  dry-run variant (always runs) and a live variant (gated on
+  `ANTHROPIC_API_KEY`). CI workflow gains an `e2e-headless` job.
+- **Phase 21 regression baseline** at `test-fixture/baselines/phase-21/` —
+  directory list, module list, agent list, connections list, CLI
+  subcommand list, event-type list. Enforced by
+  `tests/phase-21-baseline.test.cjs`.
+
+### Changed
+
+- `@anthropic-ai/claude-agent-sdk` added as a runtime dependency (was
+  previously only referenced in docs).
+- `package.json` `bin` now exports `gdd-sdk` in addition to
+  `get-design-done` and `gdd-state-mcp`.
+- `package.json` `files` adds `bin/` to the publish include list so the
+  `gdd-sdk` trampoline ships with the npm package.
+- `package.json` `keywords` expanded with headless / CLI / cross-harness
+  tokens (`headless`, `cli`, `codex`, `gemini`, `mcp`, `parallel-agents`,
+  `agent-sdk`) for npm search surface.
+
+### Infrastructure
+
+- New regression baseline at `test-fixture/baselines/phase-21/`.
+- CI workflow gains an `e2e-headless` job (dry-run on every PR; live on
+  main-branch push with `ANTHROPIC_API_KEY` secret).
+- `tests/semver-compare.test.cjs` `OFF_CADENCE_VERSIONS` now includes
+  `1.21.0` as the second off-cadence minor bump after `1.20.0`.
+
+---
+
 ## [1.20.0] — 2026-04-24
 
 Phase 20 SDK foundation milestone — the shift from "design pipeline" to "typed SDK + MCP server + resilience primitives + event stream". 16 plans (20-00 through 20-15), 50+ commits, 645+ tests.

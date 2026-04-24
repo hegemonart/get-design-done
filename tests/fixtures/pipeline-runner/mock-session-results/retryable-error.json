@@ -1,0 +1,14 @@
+{
+  "status": "error",
+  "transcript_path": "",
+  "turns": 0,
+  "usage": { "input_tokens": 0, "output_tokens": 0, "usd_cost": 0 },
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] },
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "rate limited by provider",
+    "kind": "state_conflict",
+    "context": {}
+  }
+}

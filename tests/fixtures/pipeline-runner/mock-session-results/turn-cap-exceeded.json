@@ -1,0 +1,8 @@
+{
+  "status": "turn_cap_exceeded",
+  "transcript_path": "",
+  "turns": 10,
+  "usage": { "input_tokens": 50000, "output_tokens": 20000, "usd_cost": 0.45 },
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] }
+}

@@ -61,6 +61,14 @@ const EXPECTED_SEQUENCE = [
 //     error-classifier / iteration-budget). Closeout shipped the
 //     race-condition test (4 workers × 500 ops), phase-20 regression
 //     baseline, v1.20.0 CHANGELOG, and version-sync across manifests.
+//   - 1.21.0 → Phase 21 GDD SDK Headless (gdd-sdk-headless milestone).
+//     12 plans (21-01 through 21-12): session-runner, context-engine,
+//     tool-scoping, logger, pipeline-runner state machine, 3 parallel
+//     runners (explore-parallel / discuss-parallel / init), gdd-sdk CLI
+//     (run/stage/query/audit/init), cross-harness layer (Codex + Gemini
+//     support via AGENTS.md / GEMINI.md), E2E headless test harness.
+//     Closeout shipped README + CHANGELOG + manifest bumps + Phase-21
+//     regression baseline.
 const OFF_CADENCE_VERSIONS = new Set([
   '1.0.7.2',
   '1.13.3',
@@ -81,6 +89,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   '1.19.5',
   '1.19.6',
   '1.20.0',
+  '1.21.0',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

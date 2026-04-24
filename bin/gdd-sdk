@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+// bin/gdd-sdk — Plan 21-09 Task 7 (SDK-21).
+//
+// CJS trampoline: spawns `node --experimental-strip-types` against the
+// real TS entry point in `scripts/lib/cli/index.ts` and forwards argv +
+// exit code. Windows-compatible (npm's generated .cmd shim on Windows
+// has no way to inject the --experimental-strip-types flag otherwise).
+//
+// Why a trampoline:
+//   POSIX shebangs can use `#!/usr/bin/env -S node --experimental-strip-types`,
+//   but Windows cmd.exe does not honor shebangs. npm's auto-generated
+//   .cmd shim invokes plain `node bin/gdd-sdk` without passing the
+//   experimental flag. The trampoline re-launches node with the flag
+//   explicitly so both platforms end up at the same TS entry.
+
+'use strict';
+
+const { spawn } = require('node:child_process');
+const path = require('node:path');
+
+const entry = path.resolve(
+  __dirname,
+  '..',
+  'scripts',
+  'lib',
+  'cli',
+  'index.ts',
+);
+
+const child = spawn(
+  process.execPath,
+  ['--experimental-strip-types', entry, ...process.argv.slice(2)],
+  { stdio: 'inherit', shell: false },
+);
+
+child.on('exit', (code, signal) => {
+  if (signal) {
+    // Re-raise the signal to ourselves so the parent shell sees the same
+    // termination mode (e.g., Ctrl+C propagates as SIGINT exit).
+    try {
+      process.kill(process.pid, signal);
+    } catch {
+      process.exit(1);
+    }
+    return;
+  }
+  process.exit(typeof code === 'number' ? code : 0);
+});
+
+child.on('error', (err) => {
+  // Failure to spawn node itself — extremely rare; surface to stderr.
+  // eslint-disable-next-line no-console
+  console.error('gdd-sdk: failed to launch TypeScript entry:', err.message);
+  process.exit(3);
+});

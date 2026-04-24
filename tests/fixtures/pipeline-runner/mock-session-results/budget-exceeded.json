@@ -1,0 +1,8 @@
+{
+  "status": "budget_exceeded",
+  "transcript_path": "",
+  "turns": 5,
+  "usage": { "input_tokens": 1000000, "output_tokens": 500000, "usd_cost": 10.5 },
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] }
+}

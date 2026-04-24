@@ -1,0 +1,7 @@
+{
+  "name": "gdd-e2e-fixture",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plan 21-11 E2E headless fixture. File-shape only — no runnable code; deliberately imperfect for audit-style pipeline exercise.",
+  "dependencies": { "react": "^18.3.0" }
+}

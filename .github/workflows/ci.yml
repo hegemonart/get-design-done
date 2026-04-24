@@ -180,3 +180,39 @@ jobs:
             echo "See CONTRIBUTING.md for the override process."
             exit 1
           fi
+
+  e2e-headless:
+    name: "E2E headless (dry-run + conditional live)"
+    needs: [test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: E2E dry-run (zero API cost; always runs)
+        run: node --test --experimental-strip-types tests/e2e-headless.test.ts
+
+      - name: E2E live (main-branch push + secret only)
+        # Plan 21-11: live mode is gated on BOTH the branch refname
+        # (refs/heads/main) AND the presence of the Anthropic secret.
+        # PR builds from forks never see the secret, so this step is a
+        # no-op there; PR coverage relies on the dry-run step above.
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GDD_E2E_LIVE: '1'
+        run: |
+          if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+            echo "# skip e2e-headless live: secret not available on this runner"
+            exit 0
+          fi
+          node --test --experimental-strip-types tests/e2e-headless.test.ts

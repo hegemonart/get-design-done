@@ -1,0 +1,10 @@
+{"type":"session.started","timestamp":"2026-04-24T00:00:00.000Z","sessionId":"s1","payload":{"stage":"brief"}}
+{"type":"stage.entered","timestamp":"2026-04-24T00:01:00.000Z","sessionId":"s1","stage":"brief","payload":{}}
+{"type":"stage.exited","timestamp":"2026-04-24T00:05:00.000Z","sessionId":"s1","stage":"brief","payload":{"outcome":"pass"}}
+{"type":"stage.entered","timestamp":"2026-04-24T00:06:00.000Z","sessionId":"s1","stage":"explore","payload":{}}
+{"type":"stage.exited","timestamp":"2026-04-24T00:30:00.000Z","sessionId":"s1","stage":"explore","payload":{"outcome":"pass"}}
+{"type":"stage.entered","timestamp":"2026-04-24T00:31:00.000Z","sessionId":"s1","stage":"plan","payload":{}}
+{"type":"stage.exited","timestamp":"2026-04-24T00:45:00.000Z","sessionId":"s1","stage":"plan","payload":{"outcome":"pass"}}
+{"type":"error","timestamp":"2026-04-24T00:46:00.000Z","sessionId":"s1","payload":{"level":"warn","msg":"test warn"}}
+{"type":"session.completed","timestamp":"2026-04-24T00:47:00.000Z","sessionId":"s1","payload":{"status":"completed"}}
+{"type":"pipeline.completed","timestamp":"2026-04-24T00:48:00.000Z","sessionId":"gdd-pipeline-12345","payload":{"status":"completed"}}

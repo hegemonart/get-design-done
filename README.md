@@ -29,7 +29,7 @@ npx @hegemonart/get-design-done@latest
 
 <br>
 
-[Why I Built This](#why-i-built-this) · [How It Works](#how-it-works) · [Canvas Tools](#ai-native-canvas-tools) · [Component Generators](#component-generators) · [Commands](#commands) · [Connections](#connections) · [Why It Works](#why-it-works)
+[Why I Built This](#why-i-built-this) · [How It Works](#how-it-works) · [Headless SDK](#headless-sdk) · [Canvas Tools](#ai-native-canvas-tools) · [Component Generators](#component-generators) · [Commands](#commands) · [Connections](#connections) · [Why It Works](#why-it-works)
 
 </div>
 
@@ -104,17 +104,27 @@ Built-in quality gates catch real problems: Handoff Faithfulness scoring on Clau
 - **Component generators** — 21st.dev Magic MCP adds a prior-art gate before any greenfield build; Magic Patterns generates DS-aware components with a `preview_url` for visual verification. Both feed into a shared `design-component-generator` agent.
 - **Twelve tool connections** — Four new connections (paper.design, pencil.dev, 21st.dev, Magic Patterns) join the original eight. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable.
 
-## What's New in v1.20.0
+## What's New in v1.21.0
 
-**Resilience primitives** (headline upgrade) — the pipeline now survives Anthropic API rate limits, 429 responses, and context-overflow errors without manual restart. New modules: jittered backoff, rate-guard, error-classifier, iteration-budget. See [`reference/error-recovery.md`](reference/error-recovery.md) for the recovery protocol. Connection probes and long-running loops use these primitives instead of fixed sleeps.
+**Headless SDK** (headline upgrade) — the plugin now ships a `gdd-sdk` CLI that runs the full design pipeline without Claude Code. Five subcommands (`run`, `stage`, `query`, `audit`, `init`) work on any CI runner with Node 22+ and an `ANTHROPIC_API_KEY`. See the [Headless SDK](#headless-sdk) section below for examples.
 
-**Typed state core** — `.design/STATE.md` mutations are now lockfile-safe. Parallel executors can concurrently update `task_progress` and `<blockers>` on the same file with zero corruption — validated by a 4-way race-condition test (2000 concurrent ops, <60s). The legacy `Read → regex → Write` pattern is deprecated in favor of the typed API.
+**Parallel researchers** — four new runners execute concurrent specialized agents with a streaming synthesizer: `explore-parallel-runner` (4 mappers: token, component-taxonomy, a11y, visual-hierarchy), `discuss-parallel-runner` (N discussants: user-journey, technical-constraint, brand-fit, accessibility), and `init-runner` (4 researchers for `gdd-sdk init` bootstrap). A `pipeline-runner` state machine orchestrates brief → explore → plan → design → verify with retry-once, halt logic, and human-gate callbacks.
 
-**`gdd-state` MCP server** — 11 typed tools (`gdd_state__get`, `__update_progress`, `__transition_stage`, `__add_blocker`, `__resolve_blocker`, `__add_decision`, `__add_must_have`, `__set_status`, `__checkpoint`, `__probe_connections`, `__frontmatter_update`) replace ad-hoc STATE.md edits. Every mutation emits a typed event to `.design/telemetry/events.jsonl`, giving downstream consumers a structured audit trail next to the existing `costs.jsonl` cost stream.
+**Cross-harness portability** — the plugin runs unchanged on Claude Code, OpenAI Codex CLI, and Gemini CLI. Codex auto-loads [`AGENTS.md`](AGENTS.md); Gemini auto-loads [`GEMINI.md`](GEMINI.md). Tool-name translations live in [`reference/codex-tools.md`](reference/codex-tools.md) and [`reference/gemini-tools.md`](reference/gemini-tools.md). The `gdd-state` MCP server works on all three harnesses.
 
-**TypeScript foundation** — `tsc --noEmit` typechecks the whole SDK; JSON schemas codegen to `reference/schemas/generated.d.ts`; hooks + Tier-1 scripts migrated to `.ts` and executed directly via Node 22 `--experimental-strip-types` (no bundler step).
+**Session primitives** — `session-runner` (typed wrapper around `@anthropic-ai/claude-agent-sdk` with USD/token budget caps, turn caps, transcript capture), `context-engine` (per-stage file manifest + markdown-aware truncation preserving frontmatter, headings, and first paragraph of each section), `tool-scoping` (per-stage allowed-tools enforcement with per-agent frontmatter overrides), and a structured `logger` (leveled, JSONL in headless mode, ANSI-colored in interactive mode).
 
-**Prompt sanitizer** — strips interactive-only constructs (AskUserQuestion, STOP, `/gdd:` slash commands) from skill bodies. Preparatory work for headless-runner support.
+**E2E headless integration test** — `tests/e2e-headless.test.ts` with a dry-run variant (always runs) and a live variant gated on `ANTHROPIC_API_KEY`. CI gains an `e2e-headless` job.
+
+### Previously in v1.20.0
+
+**Resilience primitives** — the pipeline survives Anthropic API rate limits, 429 responses, and context-overflow errors without manual restart. Modules: jittered backoff, rate-guard, error-classifier, iteration-budget. See [`reference/error-recovery.md`](reference/error-recovery.md).
+
+**Typed state core** — `.design/STATE.md` mutations are lockfile-safe. Parallel executors concurrently update `task_progress` and `<blockers>` on the same file with zero corruption (validated by 4-way race-condition test, 2000 concurrent ops, <60s).
+
+**`gdd-state` MCP server** — 11 typed tools (`gdd_state__get`, `__update_progress`, `__transition_stage`, `__add_blocker`, `__resolve_blocker`, `__add_decision`, `__add_must_have`, `__set_status`, `__checkpoint`, `__probe_connections`, `__frontmatter_update`) replace ad-hoc STATE.md edits. Every mutation emits a typed event to `.design/telemetry/events.jsonl`.
+
+**TypeScript foundation** — `tsc --noEmit` typechecks the whole SDK; JSON schemas codegen to `reference/schemas/generated.d.ts`; hooks + Tier-1 scripts migrated to `.ts` and executed directly via Node 22 `--experimental-strip-types`.
 
 ---
 
@@ -487,6 +497,37 @@ No Dribbble. No Behance. No LinkedIn. No generic "trending" aggregators. See `re
 ### How the report feeds reflection
 
 The watcher writes `.design/authority-report.md` — new entries classified into five buckets (`spec-change`, `heuristic-update`, `pattern-guidance`, `craft-tip`, `skip`) with a one-sentence rationale each. `/gdd:reflect` reads the report alongside internal telemetry and proposes reference-file updates. Nothing auto-ships — you review every proposal via `/gdd:apply-reflections`.
+
+---
+
+## Headless SDK
+
+Run the full GDD pipeline without Claude Code:
+
+```bash
+npx gdd-sdk init                      # bootstrap a new project
+npx gdd-sdk run                       # full pipeline (brief → verify)
+npx gdd-sdk stage explore --parallel  # single stage with parallel mappers
+npx gdd-sdk query position            # typed STATE.md read
+npx gdd-sdk audit --baseline <dir>    # regression check
+```
+
+Requires Node 22+ and an `ANTHROPIC_API_KEY`. Works on any CI runner.
+
+Internally the SDK stitches together the Phase-21 runner modules:
+`session-runner` (budget + turn cap + transcript), `context-engine` (per-stage
+file manifest + markdown truncation), `tool-scoping` (per-stage allowed-tools),
+`pipeline-runner` (brief → verify state machine with retry-once + human-gate
+callbacks), and `explore-parallel` / `discuss-parallel` / `init` for the
+concurrent researcher stages.
+
+### Cross-harness
+
+The plugin runs unchanged on Claude Code, OpenAI Codex CLI, and Gemini CLI.
+See [`reference/codex-tools.md`](reference/codex-tools.md) and
+[`reference/gemini-tools.md`](reference/gemini-tools.md) for the tool
+translations; Codex auto-loads [`AGENTS.md`](AGENTS.md) and Gemini auto-loads
+[`GEMINI.md`](GEMINI.md). The `gdd-state` MCP server works on all three.
 
 ---
 

@@ -1,0 +1,9 @@
+{
+  "status": "completed",
+  "transcript_path": "",
+  "turns": 1,
+  "usage": { "input_tokens": 0, "output_tokens": 0, "usd_cost": 0 },
+  "final_text": "## BRIEF COMPLETE\n\nBrief acknowledged. See .design/BRIEF.md for the audit goal: extract tokens, normalize spacing, document variants.",
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] }
+}

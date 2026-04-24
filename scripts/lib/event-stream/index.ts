@@ -61,7 +61,17 @@ let cachedHost: string | null = null;
  */
 export function getWriter(opts?: WriterOptions): EventWriter {
   if (defaultWriter === null) {
-    defaultWriter = new EventWriter(opts ?? {});
+    // Honor GDD_EVENTS_PATH env var as the first-choice default path
+    // when the caller doesn't pass an explicit `opts.path`. Lets test
+    // harnesses and Plan 21-11's E2E subprocess steer the on-disk
+    // stream into a fixture-specific directory without chdir'ing the
+    // entire process. Explicit `opts.path` always wins.
+    const envPath: string | undefined = process.env['GDD_EVENTS_PATH'];
+    const finalOpts: WriterOptions =
+      opts?.path === undefined && envPath !== undefined && envPath.length > 0
+        ? { ...(opts ?? {}), path: envPath }
+        : (opts ?? {});
+    defaultWriter = new EventWriter(finalOpts);
   }
   return defaultWriter;
 }

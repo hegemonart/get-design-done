@@ -1,0 +1,9 @@
+{
+  "status": "completed",
+  "transcript_path": "",
+  "turns": 2,
+  "usage": { "input_tokens": 0, "output_tokens": 0, "usd_cost": 0 },
+  "final_text": "## EXPLORE COMPLETE\n\nMappers finished. See .design/DESIGN-PATTERNS.md for tokens/components/accessibility/visual-hierarchy synthesis.",
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] }
+}

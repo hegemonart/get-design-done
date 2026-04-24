@@ -1,6 +1,10 @@
 # Pipeline artifacts — project-specific output, not part of the plugin itself
 .design/
 
+# Except the E2E fixture's seeded .design/ (Plan 21-11) — ships in repo for tests
+!test-fixture/headless-e2e/.design/
+!test-fixture/headless-e2e/.design/**
+
 # OS
 .DS_Store
 Thumbs.db

@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.20.0",
+  "version": "1.21.0",
   "description": "A Claude Code plugin for systematic design improvement",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -20,6 +20,7 @@
     "scripts/",
     "connections/",
     "reference/",
+    "bin/",
     "SKILL.md",
     "README.md",
     "CHANGELOG.md",
@@ -27,7 +28,8 @@
   ],
   "bin": {
     "get-design-done": "./scripts/install.cjs",
-    "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts"
+    "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts",
+    "gdd-sdk": "./bin/gdd-sdk"
   },
   "publishConfig": {
     "access": "public",
@@ -45,7 +47,9 @@
     "scan:injection": "node scripts/run-injection-scanner-ci.cjs",
     "test:size-budget": "node --test tests/agent-size-budget.test.cjs",
     "release:extract-changelog": "node scripts/extract-changelog-section.cjs",
-    "verify:version-sync": "node scripts/verify-version-sync.cjs"
+    "verify:version-sync": "node scripts/verify-version-sync.cjs",
+    "typecheck:session-runner": "tsc --noEmit",
+    "gdd-sdk": "node --experimental-strip-types scripts/lib/cli/index.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -65,56 +69,20 @@
     "reflection",
     "tested",
     "ci",
-    "iconography",
-    "brand-voice",
-    "performance-budget",
-    "framer-motion",
-    "motion-design",
-    "micro-polish",
-    "surfaces",
-    "make-interfaces-feel-better",
-    "palette-catalog",
-    "style-vocabulary",
-    "industry-palettes",
-    "ui-style-vocabulary",
-    "variable-fonts",
-    "container-queries",
-    "view-transitions",
-    "motion-vocabulary",
-    "motion-easings",
-    "transition-taxonomy",
-    "gesture-mechanics",
-    "clip-path-animation",
-    "component-specs",
-    "design-system-benchmarks",
-    "i18n",
-    "user-research",
-    "information-architecture",
-    "form-patterns",
-    "data-viz",
-    "platforms",
-    "cross-cycle-memory",
-    "fts5",
-    "checkpoints",
-    "experience-archive",
-    "recall",
-    "relevance-counter",
-    "record-contract",
-    "first-principles",
-    "emotional-design",
-    "component-authoring",
-    "disney-12-principles",
-    "peak-end-rule",
-    "loss-aversion",
-    "cognitive-load",
-    "doherty-threshold",
-    "rams-lens"
+    "headless",
+    "cli",
+    "codex",
+    "gemini",
+    "mcp",
+    "parallel-agents",
+    "agent-sdk"
   ],
   "skills": [
     "SKILL.md"
   ],
   "hooks": "hooks/hooks.json",
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.119",
     "@modelcontextprotocol/sdk": "^1.0.0"
   }
 }

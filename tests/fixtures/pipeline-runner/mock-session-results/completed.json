@@ -1,0 +1,9 @@
+{
+  "status": "completed",
+  "transcript_path": "",
+  "turns": 1,
+  "usage": { "input_tokens": 100, "output_tokens": 200, "usd_cost": 0.0033 },
+  "final_text": "stage completed successfully",
+  "tool_calls": [],
+  "sanitizer": { "applied": [], "removedSections": [] }
+}
