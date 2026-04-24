@@ -35,9 +35,12 @@ async function main(): Promise<void> {
   const iterations: number = Number(iterationsArg);
   const workerId: number = Number(workerIdArg);
   if (!statePath || !Number.isFinite(iterations) || !Number.isFinite(workerId)) {
-    throw new Error(
-      `race-worker: missing/invalid args. Got statePath=${statePath}, iterations=${iterationsArg}, workerId=${workerIdArg}`,
-    );
+    // Silent no-op when loaded without worker argv — this file lives under
+    // tests/fixtures/ and the `npm test` glob `tests/**/*.ts` would pick it
+    // up if we threw. The actual worker behavior is exercised via
+    // child_process.fork() in tests/race-condition-state-mutation.test.ts,
+    // which always supplies all three argv slots.
+    return;
   }
 
   const summary: WorkerSummary = {
