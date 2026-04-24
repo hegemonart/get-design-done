@@ -220,7 +220,12 @@ async function cmdServe(parsed) {
   const tailFrom = parsed.flags.tail
     ? resolvePath(parsed.flags.tail)
     : resolvePath(undefined);
-  const handle = await mod.startServer({ port, token, tailFrom });
+  // Bridge live bus → ws transport. The transport is CommonJS and cannot
+  // require .ts directly, so we import the bus here and pass subscribeAll
+  // as a callback factory.
+  const { subscribeAll } = await import('../lib/event-stream/index.ts');
+  const subscribe = (handler) => subscribeAll(handler);
+  const handle = await mod.startServer({ port, token, tailFrom, subscribe });
   stderr.write(`gdd-events: WebSocket listening on :${port} (auth required)\n`);
   // Keep the process alive until SIGINT/SIGTERM.
   await new Promise((resolve) => {
