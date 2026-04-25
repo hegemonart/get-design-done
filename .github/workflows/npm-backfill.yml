@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         # Note: refs/heads/main by default — intentionally not the tag.
 
       - name: Setup Node.js 22
