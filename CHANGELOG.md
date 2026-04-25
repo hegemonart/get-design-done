@@ -4,6 +4,68 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.23.0] — 2026-04-25
+
+Phase 23 GDD SDK Domain Primitives milestone — lands the highest-leverage code primitives from the ROADMAP "GDD SDK Domain Primitives" entry as typed Node modules with tests. 10 atomic plans (23-01 through 23-10), additive — every Phase 20/21/22 consumer keeps working unchanged. Distribution as separate `@hegemonart/gdd-sdk` npm package and screenshot-capture orchestration are explicitly deferred to follow-up phases.
+
+### Added
+
+- **JSON output contracts** — `reference/output-contracts/planner-decision.schema.json` + `verifier-decision.schema.json` (Draft-07). `scripts/lib/parse-contract.cjs` gains `parsePlannerDecision()` and `parseVerifierDecision()` riding the same extract→parse→validate pipeline as the existing `parseMotionMap`. Lets `/gdd:synthesize` consume planner output without regex-parsing markdown headings, and lets executor↔verifier ping-pong on a typed envelope. (Plan 23-01)
+
+- **Solidify-with-rollback gate** — `scripts/lib/design-solidify.mjs` runs the typecheck/build/targeted-test triplet for a task and, on any failure, rolls the working tree back via `git stash` (configurable: `stash` | `hard` | `none`) and emits a `solidify.rollback` event onto the Phase 22 causal chain. Optional `emit()` callback for event-stream telemetry sink. Authored as `.mjs` to sidestep the Phase 22 Node 24 + Windows + .mjs↔.ts loader bug. (Plan 23-02)
+
+- **Touches: analyzer + parallelism decision engine** — `scripts/lib/touches-analyzer/index.cjs` parses `Touches:` lines from task markdown into glob lists and produces a pairwise verdict (`parallel` | `sequential`) for any two tasks. Encodes today's prompt-only heuristic into auditable code. Verdict rules (first match wins): empty → unknown-touches; literal equality → shared-glob; shared component dir → shared-component-dir; resolved-file overlap → shared-file; otherwise → disjoint. (Plan 23-03)
+
+- **Audit aggregator** — `scripts/lib/audit-aggregator/index.cjs` takes `Array<Finding>` from N audit-agents, dedups by `{file, line, rule_id}`, scores via severity-weighted formula (P0:8/P1:4/P2:2/P3:1), and returns sorted top-N + tally summary. Default merge picks higher-confidence → higher-severity → lex-earliest agent → first-seen. Confidence outside `[0, 1]` clamped with one `process.emitWarning` per call. Cross-platform path normalization. (Plan 23-04)
+
+- **Reference resolver** — `scripts/lib/reference-resolver.cjs` adds the resolution direction on top of the Phase 14.5 reference-registry. `resolve('forms')` / `resolve('type:forms')` → `{name, path, type, excerpt}` with a 200-char excerpt suitable for inlining into agent prompts. Lookup order: exact name → slug match → singularize fuzzy → type-only-when-unique. Ambiguous match throws `RangeError` with candidates. `resolveAll(keys, {ignoreMissing})` for bulk. `excerptOf(path, {maxChars})` strips frontmatter / fenced code / HTML comments / markdown headers. (Plan 23-05)
+
+- **Touches pattern miner** — `scripts/lib/touches-pattern-miner.cjs` scans `.design/archive/cycle-*/tasks/*.md` after `/gdd:complete-cycle`, canonicalizes signatures (lowercase + backslash-normalize + cycle-slug strip + dedup + sort), and proposes crystallization candidates when a signature recurs in ≥3 tasks across ≥2 cycles. Writes `.design/learnings/touches-patterns.json` atomically (`.tmp` + rename). **NEVER auto-applies** — `/gdd:apply-reflections` is the materialization gate. (Plan 23-06)
+
+- **Image diff + visual baseline manager** — `scripts/lib/visual-baseline/diff.cjs` compares two PNG buffers. With `pngjs` installed (probeOptional), decodes both and counts pixels whose R/G/B/A channels differ beyond the tolerance (default 4). Without `pngjs`, falls back to bytewise SHA-256 equality. `scripts/lib/visual-baseline/index.cjs` exposes `compareToBaseline(key, pngBuffer)` and `applyBaseline(key, pngBuffer)`; reads/writes `.design/baselines/<key>.png`; rejects path-traversal keys. `pngjs@7` declared as optional dep. Defers Playwright/Preview MCP screenshot capture orchestration to a later phase. (Plan 23-07)
+
+- **Design-token reader (multi-source)** — `scripts/lib/design-tokens/index.cjs` facades over four pure-JS readers producing the uniform `{tokens, source, format, warnings}` shape:
+  * `css-vars.cjs` — extracts `--token: value;` from CSS/SCSS, last-write-wins, strips block comments, warns on `$scss-vars`
+  * `js-const.cjs` — spawn-node harness evaluates CJS/ESM exports, recognises `{tokens: …}` / default / direct bag, flattens nested with `.` separator
+  * `tailwind.cjs` — same harness, walks `theme` + `theme.extend` per scale (extend overrides base)
+  * `figma.cjs` — parses `{variableCollections}` shape OR already-flattened bag; emits `rgb(R, G, B)` for color values, per-mode tokens for multi-mode variables
+  Auto-detection by extension + content sniff. (Plan 23-08)
+
+- **Domain primitives bundle** — three checkers sharing a single hit shape (`{rule_id, severity P0-P3, summary, evidence?, line?, file}`):
+  * `domain-primitives/nng.cjs` — runs grep-style heuristic rules loaded from `reference/heuristics.md` fenced yaml blocks; caller may inject `opts.rules` to bypass file-load
+  * `domain-primitives/anti-patterns.cjs` — same yaml extractor against `reference/anti-patterns.md`
+  * `domain-primitives/wcag.cjs` (no axe-core dep) — `contrastRatio()` (WCAG 1.4.3 luminance), `checkContrast({fg, bg, level: AA|AAA})`, `checkTapTarget({width, height, level})` (AA 24×24, AAA 44×44), `checkAriaLabels({content})` (interactive elements without text + aria-label)
+  Both NNG + anti-pattern files allow no parseable yaml today (treated as empty registry); robust to gradual rule population. (Plan 23-09)
+
+### Changed
+
+- `tests/semver-compare.test.cjs` `OFF_CADENCE_VERSIONS` gains `1.23.0`.
+- `test-fixture/baselines/phase-20/resilience-primitives.txt` gains `reference-resolver.cjs` (alphabetical between `reference-registry.cjs` and `relevance-counter.cjs`) and `touches-pattern-miner.cjs` (alphabetical at end).
+
+### Tests
+
+- `tests/output-contracts-23-01.test.cjs` — planner + verifier contracts (14 tests)
+- `tests/design-solidify.test.cjs` — solidify gate, all rollback modes (6)
+- `tests/touches-analyzer.test.cjs` — parser + verdict + matrix (17)
+- `tests/audit-aggregator.test.cjs` — dedup + score + tallies (15)
+- `tests/reference-resolver.test.cjs` — resolution rules + excerpts (12)
+- `tests/touches-pattern-miner.test.cjs` — canonicalize + thresholds + atomic write (10)
+- `tests/visual-baseline.test.cjs` — diff modes + baseline round-trip (14, pngjs-optional path skipped when absent)
+- `tests/design-tokens.test.cjs` — 4 readers + facade auto-detect (15)
+- `tests/domain-primitives.test.cjs` — NNG + anti-pattern + WCAG checkers (18)
+- `tests/phase-23-baseline.test.cjs` — Phase 23 regression baseline (12)
+
+Total: 133 new tests. All Phase 20/21/22 tests still green.
+
+### Deferred
+
+- **`@hegemonart/gdd-sdk` separate npm package** — out of scope; build/packaging project of its own.
+- **Screenshot capture orchestration** (Playwright + Claude Preview MCP wrapper) — needs live MCP infra to validate.
+- **Spec↔code↔visual triangulation verifier** — depends on Phase 16/17 component specs being fleshed out.
+- **Knowledge-graph typed query layer** + cycle/workstream model SDK + pause/resume context serializer SDK + per-stage budget allocator SDK + git operations primitive + handoff bundle parser + intel store typed reader/writer — each is roadmap-text-sized and warrants its own phase scope.
+
+---
+
 ## [1.22.0] — 2026-04-25
 
 Phase 22 GDD SDK Observability milestone — the single-typed `BaseEvent` envelope from Phase 20 grows into a queryable, redacted, transport-able observability layer with tail/grep/WebSocket consumers and a causal event chain. 10 plans (22-01 through 22-10), additive — every Phase 20 + Phase 21 consumer keeps working unchanged.
