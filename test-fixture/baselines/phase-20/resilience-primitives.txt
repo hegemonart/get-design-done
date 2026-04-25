@@ -18,3 +18,4 @@ reference-resolver.cjs
 relevance-counter.cjs
 spring.cjs
 start-findings-engine.cjs
+touches-pattern-miner.cjs
