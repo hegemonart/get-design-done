@@ -4,6 +4,25 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.24.2] — 2026-04-25
+
+Dependabot cleanup — patches the one real transitive vulnerability flagged on `main` and configures Dependabot to stop scanning inert framework-detection test fixtures. No behavior change for end users; security/quality patch on top of v1.24.1.
+
+### Fixed
+
+- **`fast-json-patch` < 3.1.1 prototype pollution (high)** — pulled in transitively via `ajv-cli@5.0.0` (dev-only, used by `npm run validate:schemas`). `ajv-cli@5` declares `fast-json-patch: ^2.0.0` and there is no newer `ajv-cli` release that drops the dep, so we add an `npm overrides` entry forcing `fast-json-patch` to `^3.1.1` for all transitive resolutions. `validate:schemas` continues to pass; the fast-json-patch v2→v3 API change only affects ajv-cli's `migrate` subcommand which we do not invoke (we run the `ajv` validator binary directly via `npx -p ajv-cli -p ajv-formats ajv`).
+
+### Added
+
+- **`.github/dependabot.yml`** — explicit Dependabot scope. By default Dependabot walks every `package.json` in the repo, which includes the inert manifests under `test-fixture/src/ui-detection/*/`. Those exist solely so `tests/detect-ui-root.test.cjs` and `tests/start-findings-engine.test.cjs` can read dependency *names* out of them to verify framework-detection heuristics — they are never `npm install`-ed and the pinned vulnerable versions of vite / next / react-router / fastify never execute in CI or production. The new config opts in only the root npm tree and the GitHub Actions ecosystem, leaving the fixture tree alone.
+
+### Tests
+
+- `tests/phase-24-baseline.test.cjs` — manifest-alignment assertions bumped to `1.24.2`.
+- `tests/semver-compare.test.cjs` `OFF_CADENCE_VERSIONS` gains `1.24.2`.
+
+---
+
 ## [1.24.1] — 2026-04-25
 
 CodeQL code-scanning cleanup — closes all 10 open alerts on `main` (1 error, 9 warnings). No behavior change for end users; security/quality patch on top of v1.24.0.

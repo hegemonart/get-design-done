@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.24.1",
+  "version": "1.24.2",
   "description": "A Claude Code plugin for systematic design improvement",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -90,5 +90,8 @@
   "optionalDependencies": {
     "pngjs": "^7.0.0",
     "ws": "^8.20.0"
+  },
+  "overrides": {
+    "fast-json-patch": "^3.1.1"
   }
 }

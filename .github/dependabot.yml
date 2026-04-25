@@ -1,0 +1,33 @@
+version: 2
+
+# Dependabot configuration.
+#
+# Why this file exists: by default Dependabot enumerates every package.json in
+# the repo, including the inert framework-detection fixtures under
+# `test-fixture/src/ui-detection/*/package.json`. Those manifests are NEVER
+# `npm install`-ed — they exist purely so `tests/detect-ui-root.test.cjs` and
+# `tests/start-findings-engine.test.cjs` can read dependency NAMES out of them
+# to verify framework-detection heuristics. The vulnerable code these fixtures
+# pin (vite / next / react-router / fastify) is never executed in CI or
+# production, so version bumps there are noise.
+#
+# This config explicitly opts in only the directories whose dependencies
+# actually run, leaving the fixture trees alone.
+updates:
+  # Real runtime + dev dependencies.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+
+  # GitHub Actions in workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"
