@@ -204,11 +204,176 @@ function loadMotionMapSchema(projectRoot) {
   return JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 }
 
+// ---------------------------------------------------------------------------
+// Phase 23 Plan 23-01 — planner + verifier decision contracts.
+//
+// These parsers ride the same extract→parse→validate pipeline as
+// parseMotionMap. Validation is structural (required fields, enums,
+// types) — full JSON Schema validation is delegated to ajv when callers
+// want strict enforcement; the in-line validators keep the no-deps
+// guarantee for the hot path.
+// ---------------------------------------------------------------------------
+
+const VALID_VERIFIER_VERDICTS = ['pass', 'fail', 'gap'];
+const VALID_GAP_SEVERITIES = ['P0', 'P1', 'P2', 'P3'];
+const VALID_VERIFIER_CONFIDENCE = ['high', 'med', 'low'];
+
+function validatePlannerDecision(data) {
+  const errors = [];
+  if (!data || typeof data !== 'object') {
+    return { ok: false, errors: ['Top-level value is not an object'] };
+  }
+  if (data.schema_version !== '1.0.0') {
+    errors.push(`schema_version must be "1.0.0" (got ${JSON.stringify(data.schema_version)})`);
+  }
+  if (typeof data.plan_id !== 'string' || data.plan_id.length === 0) {
+    errors.push('plan_id is required (non-empty string)');
+  }
+  if (!Array.isArray(data.tasks) || data.tasks.length === 0) {
+    errors.push('tasks must be a non-empty array');
+  } else {
+    data.tasks.forEach((task, i) => {
+      const tag = `tasks[${i}]`;
+      if (!task || typeof task !== 'object') {
+        errors.push(`${tag} is not an object`);
+        return;
+      }
+      if (typeof task.task_id !== 'string' || task.task_id.length === 0) {
+        errors.push(`${tag}.task_id is required (non-empty string)`);
+      }
+      if (typeof task.summary !== 'string' || task.summary.length < 3) {
+        errors.push(`${tag}.summary required, ≥3 chars`);
+      }
+      if (!Array.isArray(task.touches) || task.touches.some((t) => typeof t !== 'string')) {
+        errors.push(`${tag}.touches must be an array of strings`);
+      }
+      if (task.dependencies !== undefined &&
+          (!Array.isArray(task.dependencies) ||
+           task.dependencies.some((d) => typeof d !== 'string'))) {
+        errors.push(`${tag}.dependencies must be an array of strings`);
+      }
+      if (task.parallel_safe !== undefined && typeof task.parallel_safe !== 'boolean') {
+        errors.push(`${tag}.parallel_safe must be boolean`);
+      }
+      if (task.estimated_minutes !== undefined &&
+          (typeof task.estimated_minutes !== 'number' || task.estimated_minutes < 0)) {
+        errors.push(`${tag}.estimated_minutes must be a non-negative number`);
+      }
+    });
+  }
+  if (!Array.isArray(data.waves) || data.waves.length === 0) {
+    errors.push('waves must be a non-empty array');
+  } else {
+    data.waves.forEach((wave, i) => {
+      const tag = `waves[${i}]`;
+      if (!wave || typeof wave !== 'object') {
+        errors.push(`${tag} is not an object`);
+        return;
+      }
+      if (typeof wave.wave !== 'string' || wave.wave.length === 0) {
+        errors.push(`${tag}.wave required (non-empty string)`);
+      }
+      if (!Array.isArray(wave.task_ids) || wave.task_ids.length === 0) {
+        errors.push(`${tag}.task_ids must be a non-empty array`);
+      }
+    });
+  }
+  return errors.length === 0 ? { ok: true, data } : { ok: false, errors };
+}
+
+function validateVerifierDecision(data) {
+  const errors = [];
+  if (!data || typeof data !== 'object') {
+    return { ok: false, errors: ['Top-level value is not an object'] };
+  }
+  if (data.schema_version !== '1.0.0') {
+    errors.push(`schema_version must be "1.0.0" (got ${JSON.stringify(data.schema_version)})`);
+  }
+  if (!VALID_VERIFIER_VERDICTS.includes(data.verdict)) {
+    errors.push(`verdict must be one of [${VALID_VERIFIER_VERDICTS.join('|')}] (got ${JSON.stringify(data.verdict)})`);
+  }
+  if (!Array.isArray(data.gaps)) {
+    errors.push('gaps must be an array');
+  } else {
+    data.gaps.forEach((gap, i) => {
+      const tag = `gaps[${i}]`;
+      if (!gap || typeof gap !== 'object') {
+        errors.push(`${tag} is not an object`);
+        return;
+      }
+      if (typeof gap.id !== 'string' || gap.id.length === 0) {
+        errors.push(`${tag}.id is required (non-empty string)`);
+      }
+      if (!VALID_GAP_SEVERITIES.includes(gap.severity)) {
+        errors.push(`${tag}.severity must be one of [${VALID_GAP_SEVERITIES.join('|')}]`);
+      }
+      if (typeof gap.area !== 'string' || gap.area.length === 0) {
+        errors.push(`${tag}.area is required (non-empty string)`);
+      }
+      if (typeof gap.summary !== 'string' || gap.summary.length < 3) {
+        errors.push(`${tag}.summary required, ≥3 chars`);
+      }
+    });
+  }
+  if (!Array.isArray(data.must_fix_before_ship) ||
+      data.must_fix_before_ship.some((s) => typeof s !== 'string')) {
+    errors.push('must_fix_before_ship must be an array of strings');
+  }
+  if (!VALID_VERIFIER_CONFIDENCE.includes(data.confidence)) {
+    errors.push(`confidence must be one of [${VALID_VERIFIER_CONFIDENCE.join('|')}]`);
+  }
+  return errors.length === 0 ? { ok: true, data } : { ok: false, errors };
+}
+
+/**
+ * Extract + validate the planner decision JSON block from markdown output.
+ * @param {string} markdown
+ * @returns {{ ok: true, data: object } | { ok: false, error: string }}
+ */
+function parsePlannerDecision(markdown) {
+  const extracted = extractJsonBlock(markdown);
+  if (!extracted.ok) return { ok: false, error: extracted.error };
+  const parsed = parseJson(extracted.raw);
+  if (!parsed.ok) return { ok: false, error: parsed.error };
+  const validated = validatePlannerDecision(parsed.data);
+  if (!validated.ok) {
+    return {
+      ok: false,
+      error: `Planner decision contract violations:\n${validated.errors.map((e) => `  - ${e}`).join('\n')}`,
+    };
+  }
+  return { ok: true, data: validated.data };
+}
+
+/**
+ * Extract + validate the verifier decision JSON block from markdown output.
+ * @param {string} markdown
+ * @returns {{ ok: true, data: object } | { ok: false, error: string }}
+ */
+function parseVerifierDecision(markdown) {
+  const extracted = extractJsonBlock(markdown);
+  if (!extracted.ok) return { ok: false, error: extracted.error };
+  const parsed = parseJson(extracted.raw);
+  if (!parsed.ok) return { ok: false, error: parsed.error };
+  const validated = validateVerifierDecision(parsed.data);
+  if (!validated.ok) {
+    return {
+      ok: false,
+      error: `Verifier decision contract violations:\n${validated.errors.map((e) => `  - ${e}`).join('\n')}`,
+    };
+  }
+  return { ok: true, data: validated.data };
+}
+
 module.exports = {
   parseMotionMap,
+  parsePlannerDecision,
+  parseVerifierDecision,
   parseGenericContract,
   loadMotionMapSchema,
   validateMotionMap,
+  validatePlannerDecision,
+  validateVerifierDecision,
   extractJsonBlock,
   parseJson,
   // Exported for testing
@@ -217,4 +382,7 @@ module.exports = {
   VALID_TRANSITION_FAMILIES,
   VALID_DURATION_CLASSES,
   VALID_TRIGGERS,
+  VALID_VERIFIER_VERDICTS,
+  VALID_GAP_SEVERITIES,
+  VALID_VERIFIER_CONFIDENCE,
 };

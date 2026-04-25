@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "verifier-decision.schema.json",
+  "title": "Verifier Decision Output Contract",
+  "description": "Schema for the structured JSON block emitted by design-verifier. Drives executor↔verifier ping-pong with a typed envelope rather than free-form prose.",
+  "type": "object",
+  "required": ["schema_version", "verdict", "gaps", "must_fix_before_ship", "confidence"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["pass", "fail", "gap"],
+      "description": "pass = ship-ready, gap = remediable, fail = re-plan."
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "area", "summary"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "severity": {
+            "type": "string",
+            "enum": ["P0", "P1", "P2", "P3"]
+          },
+          "area": {
+            "type": "string",
+            "description": "Free-form domain tag — e.g. 'a11y', 'motion', 'tokens'."
+          },
+          "summary": { "type": "string", "minLength": 3 },
+          "evidence": {
+            "type": "string",
+            "description": "Citation: file:line reference or audit excerpt."
+          },
+          "remediation": {
+            "type": "string",
+            "description": "One-line proposed fix."
+          }
+        }
+      }
+    },
+    "must_fix_before_ship": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Subset of gap.id values that block ship — typically the P0/P1 ones."
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "med", "low"],
+      "description": "Verifier's self-rated confidence — drives whether to escalate to a second pass."
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Free-form notes — not code-consumed."
+    }
+  }
+}

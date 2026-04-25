@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "planner-decision.schema.json",
+  "title": "Planner Decision Output Contract",
+  "description": "Schema for the structured JSON block emitted by design-planner. Lets /gdd:synthesize and downstream consumers (executor, audit aggregator) read planner output without regex-parsing markdown.",
+  "type": "object",
+  "required": ["schema_version", "plan_id", "tasks", "waves"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "plan_id": {
+      "type": "string",
+      "description": "Stable identifier — e.g. '23-04' or 'PLAN.md'.",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["task_id", "summary", "touches"],
+        "additionalProperties": false,
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable per-plan task identifier (e.g. T-01, 23-04-T-1)."
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 3
+          },
+          "touches": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "File globs the task is expected to read or write."
+          },
+          "dependencies": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Other task_ids that must complete first.",
+            "default": []
+          },
+          "parallel_safe": {
+            "type": "boolean",
+            "description": "Hint from the planner — the parallelism decision engine confirms via Touches: analysis.",
+            "default": false
+          },
+          "estimated_minutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Rough wall-clock estimate; consumed by budget allocator."
+          },
+          "acceptance": {
+            "type": "string",
+            "description": "Free-form acceptance criteria copy."
+          }
+        }
+      }
+    },
+    "waves": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["wave", "task_ids"],
+        "additionalProperties": false,
+        "properties": {
+          "wave": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Wave label (e.g. 'A', 'B', 'C')."
+          },
+          "task_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Free-form planner-side rationale — not consumed by code."
+    }
+  }
+}
