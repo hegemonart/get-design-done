@@ -1,3 +1,5 @@
+adaptive-mode.cjs
+bandit-router.cjs
 blast-radius.cjs
 dangerous-patterns.cjs
 design-search.cjs
@@ -6,9 +8,11 @@ easings.cjs
 error-classifier.cjs
 event-chain.cjs
 glob-match.cjs
+hedge-ensemble.cjs
 iteration-budget.cjs
 jittered-backoff.cjs
 lockfile.cjs
+mmr-rerank.cjs
 parse-contract.cjs
 probe-optional.cjs
 rate-guard.cjs

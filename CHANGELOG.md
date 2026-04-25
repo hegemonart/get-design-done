@@ -4,6 +4,56 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.23.5] — 2026-04-25
+
+Phase 23.5 No-Regret Adaptive Layer milestone — turns the passive Phase 22–23 observability + validation infrastructure into a closed self-tuning loop. Three tightly-scoped no-regret algorithms sharing one feature-flag ladder. Single-user viable via informed Beta-prior bootstrap (no shared telemetry required). Ships as a decimal patch on the v1.23 minor — does NOT shift Phase 24 → v1.24.0.
+
+### Added
+
+- **Bandit router** — `scripts/lib/bandit-router.cjs` implements contextual Thompson sampling over `(agent_type, touches_size_bin) → {haiku, sonnet, opus}`. Per-arm `Beta(α, β)` posterior at `.design/telemetry/posterior.json` (atomic .tmp + rename). Discounted Thompson via per-arm time-decay factor `ρ^days_since_last_use` applied at sample time (default ρ=0.988 → 60-day half-life). Informed bootstrap: each arm starts at `Beta(α, β)` with α weighted toward the historical tier success rate (haiku=0.6, sonnet=0.8, opus=0.85) and `α + β ≈ 10` so 5–10 local samples shift the posterior. Two-stage lexicographic reward: `if !solidify_pass: 0; elif user_undo_in_session: 0; else: 1 − λ · normalize(cost + ε · wall_time)`. API: `pull / update / reset / loadPosterior / savePosterior / computeReward`. Touches-size bins: `tiny <5`, `small 5–15`, `medium 16–50`, `large >50` globs. (Plan 23.5-01)
+
+- **Hedge ensemble** — `scripts/lib/hedge-ensemble.cjs` implements parameter-free AdaNormalHedge weighted-majority over verifier + checker agents. Weights persist at `.design/telemetry/hedge-weights.json`. Update rule: `η_i = sqrt(ln(N) / max(1, cumLoss2_i))` per-agent learning rate; `w_i *= exp(-η_i * loss_i)`; renormalise. Vote semantics: weighted sum normalised by the SUM of voting agents' weights — agents in the pool that didn't vote this round don't dilute the verdict. API: `loss / vote / weights / loadWeights / saveWeights`. Default vote threshold 0.5. (Plan 23.5-02)
+
+- **MMR re-rank** — `scripts/lib/mmr-rerank.cjs` implements Maximal Marginal Relevance over scored items. Solves the "all 5 surfaced learnings are about the same thing" failure mode in the Phase 14.5 decision-injector. Greedy criterion: `next = argmax_{i ∉ selected} λ * relevance(i) − (1 − λ) * max_sim(i, selected)`. Similarity = Jaccard on word n-grams (default n=2). λ default 0.7. No external deps, no embedding API. API: `rerank / similarity / tokenize / ngrams / jaccard`. (Plan 23.5-03)
+
+- **Adaptive-mode feature flag ladder** — `scripts/lib/adaptive-mode.cjs` is the single source of truth for which Phase 23.5 components are active. Three modes:
+  - `static` (DEFAULT) — Phase 10.1 behaviour. Static `tier_overrides` applies. No posterior writes / no hedge updates / no MMR.
+  - `hedge` — Adds AdaNormalHedge consensus + MMR re-rank. Routing still static (bandit OFF). Safest intro level.
+  - `full` — Adds bandit Thompson-sampling routing + reflector confidence-interval proposals. Both posterior + hedge persist.
+  Read from `.design/budget.json.adaptive_mode` with safe fallback to `static` on missing/malformed/unknown values. API: `getMode / setMode / caps / isBanditEnabled / isHedgeEnabled / isMmrEnabled / isReflectorProposalsEnabled`. (Plan 23.5-04)
+
+### Changed
+
+- `tests/semver-compare.test.cjs` `OFF_CADENCE_VERSIONS` gains `1.23.5`.
+- `test-fixture/baselines/phase-20/resilience-primitives.txt` regenerated alphabetically with all four new `.cjs` modules added.
+
+### Tests
+
+- `tests/bandit-router.test.cjs` — bin partitioning, prior elevation per tier, beta sampling, pull persistence, missing-input throws, update/reward/clamp, reset, decay-toward-prior, all reward branches, load+save, 60-round convergence smoke test (18 tests)
+- `tests/hedge-ensemble.test.cjs` — init uniform, high-loss penalty, normalisation, simple vs weighted vote, boolean=numeric equivalence, custom threshold, empty votes, loss clamp, NaN throw, round-trip (14)
+- `tests/mmr-rerank.test.cjs` — tokenize edges, ngram size+fallback, similarity properties, λ=1 pure relevance, λ=0 pure diversity, textOf/relevanceOf overrides, empty input, non-array throw, k>length truncation, defaults, jaccard guards, canonical "5 D-13 hits" scenario (18)
+- `tests/adaptive-mode.test.cjs` — missing-file fallback, malformed-JSON fallback, unknown-mode quiet fallback, all 3 capability matrices, all 4 predicates, setMode preserves other fields, parent-dir creation, mode rejection, exports, absolute-path support (13)
+- `tests/phase-23.5-baseline.test.cjs` — Phase 23.5 regression baseline (8)
+
+Total: 71 new tests. All Phase 20/21/22/23 tests still green.
+
+### Reflector integration
+
+The Phase 22 code-level reflector reads `posterior.json` + hedge weights at run time (under `adaptive_mode: "full"`). When `stddev(Beta(α, β)) < 0.05` for a single-arm dominant tier, it proposes `tier_overrides` updates via `/gdd:apply-reflections`. Pure-read; never auto-writes. Same proposal pattern as Plan 23-06 touches pattern miner.
+
+### Deferred (evidence-gated, per ROADMAP)
+
+- Hierarchical shared prior (revisit after 20+ cycles of single-user convergence data)
+- Dense-embedding retrieval (revisit if MMR-only miss-rate exceeds 15%)
+- Offline policy evaluation harness (bootstraps from bandit's stochastic logs once accumulated)
+- Auto changepoint detection (manual `/gdd:bandit-reset --reason "<msg>"` covers v1)
+
+### Explicitly out of scope
+
+- HDBSCAN auto-crystallization, BOCPD changepoint detection, Personalized PageRank, MinHash/LSH dedup, Borda/Kemeny rank aggregation, submodular greedy — each rejected with rationale in ROADMAP.md.
+
+---
+
 ## [1.23.0] — 2026-04-25
 
 Phase 23 GDD SDK Domain Primitives milestone — lands the highest-leverage code primitives from the ROADMAP "GDD SDK Domain Primitives" entry as typed Node modules with tests. 10 atomic plans (23-01 through 23-10), additive — every Phase 20/21/22 consumer keeps working unchanged. Distribution as separate `@hegemonart/gdd-sdk` npm package and screenshot-capture orchestration are explicitly deferred to follow-up phases.
