@@ -15,6 +15,12 @@ paths = [
   '''test-fixture/baselines/''',
   '''node_modules/''',
   '''\.design/''',
+  # tests/redact.test.cjs contains intentional fake JWTs + PEM blocks
+  # used to exercise the Phase 22 secret-scrubber regex registry. The
+  # whole point of those test fixtures is for gitleaks-style detectors
+  # to flag them in source — but the redact module is what consumes
+  # them at runtime, not the leaked-credential surface.
+  '''tests/redact\.test\.cjs''',
 ]
 regexes = [
   # Placeholder tokens used in reference docs and examples

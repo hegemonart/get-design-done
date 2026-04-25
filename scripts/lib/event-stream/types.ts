@@ -112,6 +112,112 @@ export type ErrorEvent = BaseEvent & {
   payload: { code: string; message: string; kind: string };
 };
 
+// ---------------------------------------------------------------------------
+// Phase 22 — pre-registered subtypes expansion (Plan 22-01)
+// ---------------------------------------------------------------------------
+
+/** Wave orchestration — Plan 21 parallel-mapper / wave execution. */
+export type WaveStartedEvent = BaseEvent & {
+  type: 'wave.started';
+  payload: { wave: string; plan_count: number };
+};
+export type WaveCompletedEvent = BaseEvent & {
+  type: 'wave.completed';
+  payload: { wave: string; duration_ms: number; outcome: 'pass' | 'fail' };
+};
+
+/** STATE.md mutation lifecycle (Plan 20-03). */
+export type BlockerAddedEvent = BaseEvent & {
+  type: 'blocker.added';
+  payload: { id: string; summary: string; source: string };
+};
+export type DecisionAddedEvent = BaseEvent & {
+  type: 'decision.added';
+  payload: { id: string; summary: string; source: string };
+};
+export type MustHaveAddedEvent = BaseEvent & {
+  type: 'must_have.added';
+  payload: { id: string; summary: string; source: string };
+};
+
+/** Parallelism decision engine output — Plan 21 explore-parallel-runner. */
+export type ParallelismVerdictEvent = BaseEvent & {
+  type: 'parallelism.verdict';
+  payload: { task_ids: string[]; verdict: 'parallel' | 'sequential'; reason: string };
+};
+
+/** Phase 10.1 cost-telemetry event-stream sink. */
+export type CostUpdateEvent = BaseEvent & {
+  type: 'cost.update';
+  payload: { agent: string; tier: string; usd: number; tokens_in: number; tokens_out: number };
+};
+
+/** Rate-guard / backoff stream (Plan 20-10, 20-11). */
+export type RateLimitEvent = BaseEvent & {
+  type: 'rate_limit';
+  payload: { provider: string; reset_at: string; remaining: number };
+};
+export type ApiRetryEvent = BaseEvent & {
+  type: 'api.retry';
+  payload: { provider: string; attempt: number; delay_ms: number; reason: string };
+};
+
+/** Context-window churn; emitted by `hooks/context-exhaustion.ts`. */
+export type CompactBoundaryEvent = BaseEvent & {
+  type: 'compact.boundary';
+  payload: { tokens_before: number; tokens_after: number };
+};
+
+/** MCP liveness probe from connection-probe primitive (Plan 22-08). */
+export type McpProbeEvent = BaseEvent & {
+  type: 'mcp.probe';
+  payload: { name: string; status: 'ok' | 'degraded' | 'down'; latency_ms?: number };
+};
+
+/** Reflector proposal (Phase 11 post-cycle reflector → event stream). */
+export type ReflectionProposedEvent = BaseEvent & {
+  type: 'reflection.proposed';
+  payload: { kind: string; target_file: string; summary: string };
+};
+
+/** Connection state transitions emitted by `connection-probe` (Plan 22-08). */
+export type ConnectionStatusChangeEvent = BaseEvent & {
+  type: 'connection.status_change';
+  payload: { name: string; from: string; to: string };
+};
+
+/** Per-tool-call trajectory (Plan 22-03). */
+export type ToolCallStartedEvent = BaseEvent & {
+  type: 'tool_call.started';
+  payload: { tool: string; args_hash: string };
+};
+export type ToolCallCompletedEvent = BaseEvent & {
+  type: 'tool_call.completed';
+  payload: {
+    tool: string;
+    args_hash: string;
+    result_hash: string;
+    latency_ms: number;
+    status: 'ok' | 'error';
+  };
+};
+
+/** Agent-level lifecycle (Plan 21 pipeline-runner / subagent spawn). */
+export type AgentSpawnEvent = BaseEvent & {
+  type: 'agent.spawn';
+  payload: { agent: string; task_id?: string; tier?: string };
+};
+export type AgentOutcomeEvent = BaseEvent & {
+  type: 'agent.outcome';
+  payload: {
+    agent: string;
+    task_id?: string;
+    outcome: 'pass' | 'fail' | 'halted';
+    duration_ms: number;
+    cost_usd?: number;
+  };
+};
+
 /**
  * Union of all pre-registered event types. Not a closed enum at the
  * envelope level — callers can emit unknown types — but downstream
@@ -124,4 +230,52 @@ export type KnownEvent =
   | StageEnteredEvent
   | StageExitedEvent
   | HookFiredEvent
-  | ErrorEvent;
+  | ErrorEvent
+  | WaveStartedEvent
+  | WaveCompletedEvent
+  | BlockerAddedEvent
+  | DecisionAddedEvent
+  | MustHaveAddedEvent
+  | ParallelismVerdictEvent
+  | CostUpdateEvent
+  | RateLimitEvent
+  | ApiRetryEvent
+  | CompactBoundaryEvent
+  | McpProbeEvent
+  | ReflectionProposedEvent
+  | ConnectionStatusChangeEvent
+  | ToolCallStartedEvent
+  | ToolCallCompletedEvent
+  | AgentSpawnEvent
+  | AgentOutcomeEvent;
+
+/**
+ * Runtime list of all pre-registered event `type` strings. Used by the
+ * Phase 22 baseline test and the CLI transport's `--list-types`
+ * subcommand.
+ */
+export const KNOWN_EVENT_TYPES: readonly string[] = [
+  'state.mutation',
+  'state.transition',
+  'stage.entered',
+  'stage.exited',
+  'hook.fired',
+  'error',
+  'wave.started',
+  'wave.completed',
+  'blocker.added',
+  'decision.added',
+  'must_have.added',
+  'parallelism.verdict',
+  'cost.update',
+  'rate_limit',
+  'api.retry',
+  'compact.boundary',
+  'mcp.probe',
+  'reflection.proposed',
+  'connection.status_change',
+  'tool_call.started',
+  'tool_call.completed',
+  'agent.spawn',
+  'agent.outcome',
+] as const;

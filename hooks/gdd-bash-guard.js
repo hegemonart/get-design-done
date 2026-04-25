@@ -15,6 +15,7 @@
 
 const path = require('path');
 const { match } = require(path.join(__dirname, '..', 'scripts', 'lib', 'dangerous-patterns.cjs'));
+const { emitHookFired } = require('./_hook-emit.js'); // Plan 22-09 wire-in
 
 async function main() {
   let buf = '';
@@ -22,11 +23,13 @@ async function main() {
 
   let payload;
   try { payload = JSON.parse(buf || '{}'); } catch {
+    emitHookFired('gdd-bash-guard', 'allow', { reason: 'parse-error' });
     process.stdout.write(JSON.stringify({ continue: true }));
     return;
   }
 
   if (payload?.tool_name && payload.tool_name !== 'Bash') {
+    emitHookFired('gdd-bash-guard', 'allow', { reason: 'non-bash-tool' });
     process.stdout.write(JSON.stringify({ continue: true }));
     return;
   }
@@ -34,6 +37,10 @@ async function main() {
   const command = payload?.tool_input?.command ?? '';
   const r = match(command);
   if (r.matched) {
+    emitHookFired('gdd-bash-guard', 'block', {
+      severity: r.severity,
+      pattern: r.pattern,
+    });
     process.stdout.write(JSON.stringify({
       continue: false,
       stopReason: `gdd-bash-guard: dangerous command blocked (${r.severity}): ${r.description} [${r.pattern}]`,
@@ -41,6 +48,7 @@ async function main() {
     return;
   }
 
+  emitHookFired('gdd-bash-guard', 'allow', { reason: 'no-match' });
   process.stdout.write(JSON.stringify({ continue: true }));
 }
 

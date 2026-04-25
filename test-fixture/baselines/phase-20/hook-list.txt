@@ -1,3 +1,4 @@
+_hook-emit.js
 budget-enforcer.ts
 context-exhaustion.ts
 first-run-nudge.sh
@@ -6,5 +7,6 @@ gdd-decision-injector.js
 gdd-mcp-circuit-breaker.js
 gdd-protected-paths.js
 gdd-read-injection-scanner.ts
+gdd-trajectory-capture.js
 hooks.json
 update-check.sh

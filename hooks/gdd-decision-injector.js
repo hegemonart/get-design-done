@@ -203,10 +203,12 @@ async function main() {
   const backendLabel = BACKEND || (useRgGlobal ? 'ripgrep' : 'node-grep');
   const block = buildRecallBlock(hits, basename, backendLabel);
   if (!block) {
+    try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'no-hits', { backend: backendLabel }); } catch { /* swallow */ }
     process.stdout.write(JSON.stringify({ continue: true }));
     return;
   }
 
+  try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'inject', { backend: backendLabel, hit_count: hits.length }); } catch { /* swallow */ }
   process.stdout.write(JSON.stringify({
     continue: true,
     hookSpecificOutput: { hookEventName: 'PreToolUse', additionalContext: block },

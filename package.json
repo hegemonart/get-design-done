@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "description": "A Claude Code plugin for systematic design improvement",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -29,7 +29,8 @@
   "bin": {
     "get-design-done": "./scripts/install.cjs",
     "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts",
-    "gdd-sdk": "./bin/gdd-sdk"
+    "gdd-sdk": "./bin/gdd-sdk",
+    "gdd-events": "./scripts/cli/gdd-events.mjs"
   },
   "publishConfig": {
     "access": "public",
@@ -84,5 +85,8 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.119",
     "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "ws": "^8.20.0"
   }
 }

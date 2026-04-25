@@ -98,6 +98,11 @@ async function main() {
       : cand.replace(/\\/g, '/');
     const r = matches(rel, protectedPaths);
     if (r.matched) {
+      try {
+        require('./_hook-emit.js').emitHookFired('gdd-protected-paths', 'block', {
+          path: rel, pattern: r.pattern,
+        });
+      } catch { /* swallow */ }
       process.stdout.write(JSON.stringify({
         continue: false,
         stopReason: `gdd-protected-paths: '${rel}' is a protected path (matched '${r.pattern}'). To override, lift the path from the default glob list or explicitly edit via an approved workflow (e.g., /gdd:update, plan execution).`,
@@ -106,6 +111,9 @@ async function main() {
     }
   }
 
+  try {
+    require('./_hook-emit.js').emitHookFired('gdd-protected-paths', 'allow');
+  } catch { /* swallow */ }
   process.stdout.write(JSON.stringify({ continue: true }));
 }
 

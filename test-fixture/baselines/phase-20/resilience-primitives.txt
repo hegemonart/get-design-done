@@ -4,6 +4,7 @@ design-search.cjs
 detect-ui-root.cjs
 easings.cjs
 error-classifier.cjs
+event-chain.cjs
 glob-match.cjs
 iteration-budget.cjs
 jittered-backoff.cjs
@@ -11,6 +12,7 @@ lockfile.cjs
 parse-contract.cjs
 probe-optional.cjs
 rate-guard.cjs
+redact.cjs
 reference-registry.cjs
 relevance-counter.cjs
 spring.cjs
