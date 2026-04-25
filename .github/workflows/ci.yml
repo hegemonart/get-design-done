@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: ["**"]
 
+# Least-privilege default for all jobs. GITHUB_TOKEN is read-only unless a job
+# overrides this block. Gitleaks runs with GITLEAKS_ENABLE_COMMENTS=false so it
+# does not require pull-requests: write.
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: "Lint (markdown + frontmatter + stale-refs)"

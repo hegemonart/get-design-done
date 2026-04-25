@@ -113,9 +113,8 @@ test('skill-brief-mcp-migration: frontmatter tools lists MCP entries', () => {
     'mcp__gdd_state__get',
   ];
   for (const tool of required) {
-    assert.match(
-      fm,
-      new RegExp(tool.replace(/_/g, '_')),
+    assert.ok(
+      fm.includes(tool),
       `frontmatter tools: should list "${tool}"`,
     );
   }

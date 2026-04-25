@@ -28,7 +28,8 @@ if (!fs.existsSync(changelogPath)) {
 
 const body = fs.readFileSync(changelogPath, 'utf8').replace(/\r\n/g, '\n');
 const lines = body.split('\n');
-const headingRe = new RegExp(`^##\\s*\\[${version.replace(/\./g, '\\.')}\\]`);
+const escapedVersion = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const headingRe = new RegExp(`^##\\s*\\[${escapedVersion}\\]`);
 const nextHeadingRe = /^##\s*\[/;
 
 let capture = false;

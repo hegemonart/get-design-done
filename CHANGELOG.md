@@ -4,6 +4,24 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.24.1] — 2026-04-25
+
+CodeQL code-scanning cleanup — closes all 10 open alerts on `main` (1 error, 9 warnings). No behavior change for end users; security/quality patch on top of v1.24.0.
+
+### Fixed
+
+- **`scripts/extract-changelog-section.cjs:31`** — `js/regex-injection` (error) + `js/incomplete-sanitization`. The CLI version arg was only escaping `.` before being interpolated into `new RegExp(...)`. Now escapes the full regex meta-char set `[.*+?^${}()|[\]\\]` via the same helper used elsewhere in the test suite.
+- **`tests/mapper-schema.test.cjs:15`** — `js/incomplete-sanitization`. `extractSchemaKeys()` now uses the full meta-char escape on the slice-name input before constructing the heading regex.
+- **`tests/skill-brief-mcp-migration.test.cjs:118`** — `js/identity-replacement`. The MCP-tool-presence check used `tool.replace(/_/g, '_')` (a no-op) inside `new RegExp(...)`. Replaced with a literal substring check (`assert.ok(fm.includes(tool))`) — MCP tool names are alphanumeric+underscore, so no regex is needed.
+- **`.github/workflows/ci.yml`** — `actions/missing-workflow-permissions` (×6 jobs). Added a top-level `permissions: contents: read` block. Inherited by all 6 jobs (lint / validate / test / security / size-budget / e2e-headless). Gitleaks runs with `GITLEAKS_ENABLE_COMMENTS: false` so it does not require `pull-requests: write`.
+
+### Tests
+
+- `tests/phase-24-baseline.test.cjs` — manifest-alignment assertions bumped to `1.24.1`.
+- `tests/semver-compare.test.cjs` `OFF_CADENCE_VERSIONS` gains `1.24.1`.
+
+---
+
 ## [1.24.0] — 2026-04-25
 
 Phase 24 Multi-Runtime Installer milestone — `npx @hegemonart/get-design-done` with no flags now launches a polished interactive install session (`@clack/prompts`) that walks the user through a multi-select of all 14 supported AI coding runtimes plus a Global/Local radio. Scripted / CI installs continue to work via the existing flag surface unchanged. Strict superset over v1.23.5: any non-zero invocation still works exactly as before.

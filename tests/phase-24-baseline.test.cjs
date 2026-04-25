@@ -3,7 +3,7 @@
 // Phase 24 regression baseline. Asserts:
 //   - All 14 runtimes shipped.
 //   - install lib modules export their advertised surface.
-//   - 3 manifests + semver-compare expected sequence agree on 1.24.0.
+//   - 3 manifests + semver-compare expected sequence agree on 1.24.1.
 //   - The runtimes baseline file at test-fixture/baselines/phase-24/runtimes.txt
 //     matches the runtimes module exactly.
 
@@ -14,20 +14,20 @@ const path = require('node:path');
 
 const REPO_ROOT = path.join(__dirname, '..');
 
-test('phase-24 baseline: package.json is at 1.24.0', () => {
+test('phase-24 baseline: package.json is at 1.24.1', () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
-  assert.equal(pkg.version, '1.24.0');
+  assert.equal(pkg.version, '1.24.1');
 });
 
-test('phase-24 baseline: plugin.json is at 1.24.0', () => {
+test('phase-24 baseline: plugin.json is at 1.24.1', () => {
   const plugin = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'), 'utf8'));
-  assert.equal(plugin.version, '1.24.0');
+  assert.equal(plugin.version, '1.24.1');
 });
 
-test('phase-24 baseline: marketplace.json is at 1.24.0 in both slots', () => {
+test('phase-24 baseline: marketplace.json is at 1.24.1 in both slots', () => {
   const market = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'marketplace.json'), 'utf8'));
-  assert.equal(market.metadata.version, '1.24.0');
-  assert.equal(market.plugins[0].version, '1.24.0');
+  assert.equal(market.metadata.version, '1.24.1');
+  assert.equal(market.plugins[0].version, '1.24.1');
 });
 
 test('phase-24 baseline: @clack/prompts is a runtime dependency', () => {

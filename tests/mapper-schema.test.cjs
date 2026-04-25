@@ -11,8 +11,7 @@ const { REPO_ROOT } = require('./helpers.ts');
  * Returns an array of keys or null if the heading / block / JSON is unparseable.
  */
 function extractSchemaKeys(intelSchemaContent, sliceName) {
-  // Escape dots in sliceName for the regex
-  const safeName = sliceName.replace(/\./g, '\\.');
+  const safeName = sliceName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const section = intelSchemaContent.split(new RegExp(`###\\s+${safeName}`, 'i'))[1];
   if (!section) return null;
   const jsonMatch = section.match(/```json\n([\s\S]*?)\n```/);
