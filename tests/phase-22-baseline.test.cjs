@@ -84,9 +84,12 @@ test('phase-22 baseline: bash-guard, protected-paths, decision-injector all refe
   }
 });
 
-test('phase-22 baseline: package.json version is 1.22.x', () => {
+test('phase-22 baseline: package.json version is ≥1.22.0', () => {
   const pkg = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^1\.22\./);
+  // Phase 22 ships at 1.22.0; later phases bump. Assert minor ≥22.
+  const m = pkg.version.match(/^1\.(\d+)\./);
+  assert.ok(m, `unexpected version shape: ${pkg.version}`);
+  assert.ok(Number(m[1]) >= 22, `expected ≥1.22.0, got ${pkg.version}`);
 });
 
 test('phase-22 baseline: CHANGELOG has [1.22.0] section', () => {

@@ -94,9 +94,11 @@ test('phase-23 baseline: pngjs declared as optionalDependency', () => {
   assert.ok(pkg.optionalDependencies && pkg.optionalDependencies.pngjs);
 });
 
-test('phase-23 baseline: package.json version is 1.23.x', () => {
+test('phase-23 baseline: package.json version is ≥1.23.0', () => {
   const pkg = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^1\.23\./);
+  const m = pkg.version.match(/^1\.(\d+)\./);
+  assert.ok(m, `unexpected version shape: ${pkg.version}`);
+  assert.ok(Number(m[1]) >= 23, `expected ≥1.23.0, got ${pkg.version}`);
 });
 
 test('phase-23 baseline: CHANGELOG has [1.23.0] section', () => {
