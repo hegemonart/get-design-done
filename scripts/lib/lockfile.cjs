@@ -76,9 +76,14 @@ async function acquire(path, opts) {
       if (existing === null) continue;
 
       const parsed = parseLock(existing);
-      if (parsed === null || isStale(parsed, staleMs)) {
-        // Clear stale/garbage lock; race-tolerant — if it's already gone
-        // we'll just get ENOENT, no-op.
+      // Only clear when we're confident the lock is stale: the payload
+      // parses AND the PID/age check says so. An unparseable payload is
+      // treated as fresh — on Windows, AV/indexer can transiently deny
+      // reads (EACCES/EPERM/EBUSY), and clearing under that condition
+      // would let two writers race and lose increments.
+      if (parsed !== null && isStale(parsed, staleMs)) {
+        // Clear stale lock; race-tolerant — if it's already gone we get
+        // ENOENT, no-op.
         try { fs.unlinkSync(lockPath); } catch { /* ignore */ }
         continue;
       }
@@ -174,4 +179,23 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-module.exports = { acquire };
+/**
+ * `fs.renameSync` wrapper that retries once on Windows EPERM/EBUSY/EACCES.
+ * AV scanners and the file-indexer can briefly hold a destination open
+ * after another process closed it, causing rename to fail even when the
+ * advisory lock is correctly held.
+ *
+ * Mirrors the inline retry in scripts/lib/gdd-state/index.ts mutate().
+ */
+async function renameWithRetry(from, to) {
+  try {
+    fs.renameSync(from, to);
+  } catch (err) {
+    const code = err && typeof err === 'object' ? err.code : undefined;
+    if (code !== 'EPERM' && code !== 'EBUSY' && code !== 'EACCES') throw err;
+    await sleep(50);
+    fs.renameSync(from, to);
+  }
+}
+
+module.exports = { acquire, renameWithRetry };

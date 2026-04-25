@@ -21,7 +21,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { acquire } = require('./lockfile.cjs');
+const { acquire, renameWithRetry } = require('./lockfile.cjs');
 
 const STATE_PATH_REL = path.join('.design', 'iteration-budget.json');
 const DEFAULT_BUDGET = 50;
@@ -82,7 +82,7 @@ async function writeStateAtomic(state) {
     const merged = state.mergeFn ? state.mergeFn(latest || state.seed) : state.seed;
     const tmp = `${p}.tmp.${process.pid}.${Date.now()}`;
     fs.writeFileSync(tmp, JSON.stringify(merged, null, 2) + '\n', 'utf8');
-    fs.renameSync(tmp, p);
+    await renameWithRetry(tmp, p);
     return merged;
   } finally {
     await release();

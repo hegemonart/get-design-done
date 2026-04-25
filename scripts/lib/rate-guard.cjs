@@ -30,7 +30,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { acquire } = require('./lockfile.cjs');
+const { acquire, renameWithRetry } = require('./lockfile.cjs');
 
 const STATE_DIR_REL = path.join('.design', 'rate-limits');
 const LOCK_MAX_WAIT_MS = 3_000;
@@ -203,7 +203,7 @@ async function atomicWriteState(absPath, state) {
   try {
     const tmp = `${absPath}.tmp.${process.pid}.${Date.now()}`;
     fs.writeFileSync(tmp, JSON.stringify(state, null, 2) + '\n', 'utf8');
-    fs.renameSync(tmp, absPath);
+    await renameWithRetry(tmp, absPath);
   } finally {
     await release();
   }
