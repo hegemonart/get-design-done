@@ -87,6 +87,16 @@ Nutze es, wenn dir wichtig ist, dass Tokens passen, Kontrast WCAG besteht, Motio
 
 Du musst kein Designer sein. Die Pipeline bringt Design-Disziplin in den Agenten-Workflow: Sie extrahiert Kontext, fragt nur nach fehlenden Entscheidungen, verankert Arbeit in Referenzen und fängt Probleme ab, die man sonst zu spät findet.
 
+## Gesponsert von
+
+<div align="center">
+
+<a href="https://www.humbleteam.com/" aria-label="Humbleteam">
+  <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam" width="360">
+</a>
+
+</div>
+
 ### v1.24.0 Highlights — Multi-Runtime-Installer
 
 - **`@clack/prompts` interaktive Mehrfachauswahl** — `npx @hegemonart/get-design-done` ohne Flags öffnet jetzt eine polierte Checkbox-UI für alle 14 unterstützten Runtimes (Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline) plus ein Global-/Local-Radio.

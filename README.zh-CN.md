@@ -87,6 +87,16 @@ GDD 适合所有用 AI 编码智能体交付 UI、并且希望结果不止第一
 
 你不必是专业设计师。流水线会把设计纪律带进智能体工作流:它抽取上下文、只追问缺失决策、用参考资料约束工作,并捕获那些人们通常太晚才发现的问题。
 
+## 赞助方
+
+<div align="center">
+
+<a href="https://www.humbleteam.com/" aria-label="Humbleteam">
+  <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam" width="360">
+</a>
+
+</div>
+
 ### v1.24.0 亮点 —— 多运行时安装器
 
 - **`@clack/prompts` 交互式多选** —— `npx @hegemonart/get-design-done` 不带任何 flag 时,会打开针对全部 14 个支持运行时(Claude Code、OpenCode、Gemini CLI、Kilo、Codex、Copilot、Cursor、Windsurf、Antigravity、Augment、Trae、Qwen Code、CodeBuddy、Cline)的复选框 UI,以及 Global / Local 单选。任意子集均可,确认后即完成。
