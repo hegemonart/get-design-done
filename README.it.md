@@ -107,11 +107,16 @@ Note di rilascio complete in [CHANGELOG.md](CHANGELOG.md).
 ---
 
 <p align="center">
-  <strong>Supported by</strong><br><br>
-  <a href="https://www.humbleteam.com/" aria-label="Humbleteam">
-    <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam" width="180">
-  </a>
+  <strong>Supported by</strong>
 </p>
+
+<div align="center">
+  <a href="https://www.humbleteam.com/" aria-label="Humbleteam">
+    <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam logo" width="180">
+  </a>
+  <br>
+  <sub>Product design partner for ambitious startups and AI products.</sub>
+</div>
 
 ---
 
