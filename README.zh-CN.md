@@ -107,9 +107,9 @@ GDD 适合所有用 AI 编码智能体交付 UI、并且希望结果不止第一
 ---
 
 <p align="center">
-  <strong>Supported by</strong><br><br>
-  <a href="https://www.humbleteam.com/" aria-label="Humbleteam">
-    <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam" width="180">
+  <a href="https://www.humbleteam.com/" target="_blank" rel="noopener noreferrer" title="Humbleteam - product design partner">
+    <strong>Supported by Humbleteam</strong><br><br>
+    <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam product design partner" width="180">
   </a>
 </p>
 
