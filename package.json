@@ -53,11 +53,11 @@
     "gdd-sdk": "node --experimental-strip-types scripts/lib/cli/index.ts"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^25.6.0",
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.1",
     "json-schema-to-typescript": "^15.0.0",
-    "typescript": "^5.5.0"
+    "typescript": "^6.0.3"
   },
   "keywords": [
     "claude",
