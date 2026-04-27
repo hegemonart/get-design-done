@@ -106,15 +106,12 @@ Vollständige Release-Notes in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
-## Supported By
-
-<div align="center">
-
-<a href="https://www.humbleteam.com/" aria-label="Humbleteam">
-  <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam" width="220">
-</a>
-
-</div>
+<p align="center">
+  <sub>Supported by</sub><br>
+  <a href="https://www.humbleteam.com/" aria-label="Humbleteam">
+    <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam" width="180">
+  </a>
+</p>
 
 ---
 
@@ -195,7 +192,6 @@ claude plugin install get-design-done@get-design-done
 
 </details>
 
----
 
 ## Wie es funktioniert
 
