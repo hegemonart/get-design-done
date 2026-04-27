@@ -1,7 +1,7 @@
 {
   "name": "@hegemonart/get-design-done",
   "version": "1.24.2",
-  "description": "A Claude Code plugin for systematic design improvement",
+  "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
   "repository": {

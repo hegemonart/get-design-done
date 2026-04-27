@@ -2,16 +2,16 @@
 
 # GET DESIGN DONE
 
-**English** · [简体中文](README.zh-CN.md)
+**English** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
-**Agent-orchestrated design pipeline for Claude Code. Five stages, thirty-three specialized agents, twelve tool connections — from brief to verified shipping work.**
+**A design-quality pipeline for AI coding agents: brief → explore → plan → implement → verify.**
 
-**Solves the "Claude made it look fine but nothing ties together" problem: no design system extraction, no reference grounding, no verification against the brief.**
+**Get Design Done keeps AI-generated UI tied to your brief, your design system, your references, and your quality gates. Works with Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline.**
 
 [![npm version](https://img.shields.io/npm/v/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
 [![npm downloads](https://img.shields.io/npm/dm/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
-[![GitHub stars](https://img.shields.io/github/stars/hegemonart/get-design-done?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/get-design-done)
 [![CI](https://img.shields.io/github/actions/workflow/status/hegemonart/get-design-done/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI)](https://github.com/hegemonart/get-design-done/actions/workflows/ci.yml)
+[![GitHub stars](https://img.shields.io/github/stars/hegemonart/get-design-done?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/get-design-done)
 [![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
@@ -21,15 +21,15 @@
 npx @hegemonart/get-design-done@latest
 ```
 
-**One command. Works on macOS, Linux, and Windows. Requires Claude Code + Node 22/24.**
+**Works on macOS, Linux, and Windows.**
 
 <br>
 
-*"Claude ships code fast. Get Design Done makes sure it ships design."*
+*"AI coding agents ship UI fast. Get Design Done makes sure it ships as design."*
 
 <br>
 
-[Why I Built This](#why-i-built-this) · [How It Works](#how-it-works) · [Headless SDK](#headless-sdk) · [Canvas Tools](#ai-native-canvas-tools) · [Component Generators](#component-generators) · [Commands](#commands) · [Connections](#connections) · [Why It Works](#why-it-works)
+[Why I Built This](#why-i-built-this) · [How It Works](#how-it-works) · [Commands](#commands) · [Connections](#connections) · [Why It Works](#why-it-works)
 
 </div>
 
@@ -44,91 +44,65 @@ npx @hegemonart/get-design-done@latest
 > /gdd:handoff ./my-design.html
 > ```
 >
-> This parses the bundle's CSS custom properties into D-XX design decisions, runs the verification pass with Handoff Faithfulness scoring, and optionally writes implementation status back to Figma. Full format at [`connections/claude-design.md`](connections/claude-design.md).
+> Parses the bundle's CSS custom properties into D-XX design decisions, runs the verification pass with Handoff Faithfulness scoring, and optionally writes implementation status back to Figma.
 
 ---
 
 ## Why I Built This
 
-I'm a designer who ships with Claude Code. The code-side workflow (GSD, Speckit, BMAD) is mature. The design-side workflow is not.
+I'm a designer who ships with AI coding agents. The code-side workflow is mature: specs, tasks, tests, commits, review loops. The design-side workflow was not.
 
-What I kept running into: Claude happily generates UI, but the output is *disconnected*. Tokens don't match the existing system. Contrast ratios silently drift below WCAG. Hierarchy gets reinvented per screen. Anti-patterns from old stacks leak into new ones. And none of it is caught until the PR review, because nothing verified the output against the original design brief.
+What I kept running into: the agent could generate a screen that looked fine in isolation, but the work was disconnected. Tokens did not match the existing system. Contrast ratios drifted below WCAG. Hierarchy got reinvented per screen. Old anti-patterns leaked into new components. And because nothing verified the output against the original brief, the problems usually surfaced late, in PR review or after handoff.
 
-So I built Get Design Done. Same philosophy as GSD — **the complexity is in the system, not in your workflow**. Behind the scenes: thirty-three specialized agents, a queryable intel store, tier-aware model routing, twelve tool connections, and a self-improvement loop that tunes itself from measured telemetry. What you see: a few commands that just work.
+So I built Get Design Done: a design pipeline that gives AI coding agents the same kind of structure developers already expect from engineering workflows. It captures the brief, maps the current design system, grounds decisions in references, decomposes the work into atomic tasks, executes those tasks, and verifies the result before you ship.
 
-The pipeline does the work *and* verifies it. I trust the workflow. It gets design done.
+Behind the scenes: 37 specialized agents, a queryable intel store, tier-aware model routing, 12 optional tool connections, atomic commits, and a no-regret adaptive layer that learns from solidify-with-rollback outcomes. What you use day to day: a few `/gdd:*` commands that keep design work coherent.
 
 — **Hegemon**
 
 ---
 
-Design-side vibecoding has the same failure mode as code-side vibecoding: describe what you want, AI generates something, it looks plausible, it falls apart at scale because nothing tied the output back to the brief.
+AI-generated design has the same failure mode as AI-generated code: describe what you want, get something plausible, then watch it fall apart at scale because no system tied the output back to the brief.
 
-Get Design Done fixes that. It's the context engineering layer for design work in Claude Code. Capture the brief, inventory the system, ground in real references, decompose into atomic design tasks, verify against the brief — then ship.
+Get Design Done is the context engineering layer for design work. It turns "make this UI better" into a traceable cycle: brief → inventory → references → plan → implementation → verification.
+
+---
+
+## What You Get
+
+- **Brief-grounded design work** — every cycle starts with the problem, audience, constraints, success metrics, and must-haves.
+- **Design-system extraction** — GDD inventories tokens, typography, spacing, components, motion, accessibility, dark mode, and design debt before planning changes.
+- **Reference-backed decisions** — agents use embedded design references plus optional Figma, Refero, Pinterest, Storybook, Chromatic, Preview, Claude Design, paper.design, pencil.dev, Graphify, 21st.dev Magic, and Magic Patterns connections.
+- **Atomic execution** — design tasks are decomposed by dependency, run in safe waves, and committed independently.
+- **Verification before shipping** — audits check brief fit, token integration, WCAG contrast, component conformance, motion consistency, dark-mode architecture, and design anti-patterns.
+- **Rollback on failed validation** — solidify-with-rollback validates each task before it sticks; failed work is automatically reverted.
 
 ---
 
 ## Who This Is For
 
-Anyone shipping UI with Claude Code who expects the output to actually hold up — engineers, designers, design-engineers, solo founders. If you care that tokens match, contrast passes WCAG, and the result ties back to what you asked for, this is for you.
+GDD is for engineers, designers, design engineers, founders, and product builders who ship UI with AI coding agents and need the result to hold together beyond the first screenshot.
 
-You don't need to be a designer. The pipeline carries the design expertise so you don't have to — it extracts the system, grounds in references, verifies against the brief, and catches the things people usually miss.
+Use it when you care that tokens match, contrast passes WCAG, motion feels cohesive, components follow your system, and the final implementation still matches what you asked for.
 
-Built-in quality gates catch real problems: Handoff Faithfulness scoring on Claude Design bundles, contrast audits across the full palette × surface matrix, anti-pattern detection from the NNG catalog, dark-mode architecture verification, and motion-system consistency checks.
+You do not need to be a designer to benefit from it. The pipeline carries the design discipline into the agent workflow: it extracts context, asks only for missing decisions, grounds the work in references, and catches the issues people usually find too late.
 
-### v1.19.0 Highlights — Full Knowledge Coverage (18 reference files)
+### v1.24.0 Highlights — Multi-Runtime Installer
 
-- **Knowledge-layer complete** — The plugin now ships **18 reference files** covering every major design-knowledge domain identified in the 2026-04-18 coverage audit. Agents have authoritative answers on platform conventions, internationalization, research methodology, information architecture, form design, and data visualization — in addition to the foundational knowledge from v1.15.0.
-- **7 new Phase 19 references** — `platforms.md` (iOS/Android/web/visionOS/watchOS), `rtl-cjk-cultural.md` (RTL + CJK + cultural color), `onboarding-progressive-disclosure.md`, `user-research.md` (method matrix, A/B, ethics), `information-architecture.md` (nav patterns, tree-test benchmarks), `form-patterns.md` (Wroblewski label research, autocomplete taxonomy, CAPTCHA ethics), `data-visualization.md` (25 chart types, Okabe-Ito palette, dashboard patterns — UUPM MIT).
-- **New `type:forms` executor task type** — `design-executor` now has a dedicated 7-step checklist for form audits: label position, validation timing, autocomplete tokens, inputmode hints, password UX, multi-step state, and CAPTCHA compliance.
-- **Platform + locale detection in context-builder** — `design-context-builder` now explicitly prompts for locale/RTL/CJK requirements (Area 2) and device targets with platform references (Area 6), ensuring downstream agents receive the full platform context.
+- **`@clack/prompts` interactive multi-select** — `npx @hegemonart/get-design-done` with no flags now opens a polished checkbox UI for all 14 supported runtimes (Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline) plus a Global / Local radio. Pick any subset, confirm, done.
+- **Idempotent + foreign-AGENTS.md-safe** — re-running the installer never duplicates entries, never overwrites runtime-specific instructions you've added, and a Confirmation step shows the diff before any file is written.
+- **Scripted CI surface preserved** — every existing flag (`--claude`, `--cursor`, `--all`, `--global`, `--local`, `--uninstall`, `--config-dir`) keeps working unchanged. Interactive mode activates only when no runtime flag is passed.
+- **Multi-select uninstall** — `--uninstall` without a runtime flag also enters interactive multi-select to pick which runtimes to remove from.
 
-### v1.18.0 Highlights — Advanced Craft References + Motion Vocabulary
+### Previous releases
 
-- **4 advanced craft references** — `variable-fonts-loading.md` (variable axes, font-display trade-offs, WOFF2 subsetting, fallback metric overrides, GRAD axis for dark mode), `image-optimization.md` (WebP/AVIF/JPEG XL matrix, srcset math, LQIP/BlurHash, CDN transforms, image budgets), `css-grid-layout.md` (subgrid, container queries, fluid `clamp()` typography, logical properties, safe areas, anchor positioning), `motion-advanced.md` (spring physics, FLIP, View Transitions API, gesture/drag mechanics, clip-path animations, blur crossfades, Framer Motion hardware-accel gotcha, motion cohesion, next-day review).
-- **Motion vocabulary (RN MIT upstream)** — `motion-easings.md` (12 canonical curve presets, `--ease-*` token catalog), `motion-interpolate.md` (input→output range + 4 extrapolation modes: extend/identity/clamp/wrap), `motion-spring.md` (gentle/wobbly/stiff/slow presets with 60fps settle-times). Optional math helpers at `scripts/lib/easings.cjs` and `scripts/lib/spring.cjs`.
-- **Transition taxonomy (hyperframes Apache-2.0)** — `motion-transition-taxonomy.md` names 8 controlled families (3d, blur, cover, destruction, dissolve, distortion, grid, light) so motion-mapper output diffs cleanly cycle-over-cycle.
-- **Structured motion-map output** — `motion-mapper` now emits a JSON block at the top of `.design/map/motion.md` conforming to `reference/output-contracts/motion-map.schema.json`. Every animation binding declares easing (canonical or custom+justification), transition family, duration class, and trigger type. `scripts/lib/parse-contract.cjs` validates and returns structured data or actionable error.
-- **Agent wiring** — `token-mapper` gains easing consolidation (raw `cubic-bezier()` → `--ease-*` token recommendations); `design-executor` reads craft references per task type; `design-auditor` scores gesture patterns and clip-path animations as advanced-craft signal (positive, not a penalty).
+- **v1.23.5** — No-Regret Adaptive Layer (Thompson sampling bandit + AdaNormalHedge ensemble + MMR rerank; single-user via informed-prior bootstrap, no opt-in telemetry).
+- **v1.23.0** — SDK Domain Primitives (solidify-with-rollback gate, JSON output contracts, auto-crystallization of `Touches:` patterns).
+- **v1.22.0** — SDK Observability (~24 typed event types, per-tool-call trajectory, append-only event chain, secret scrubber).
+- **v1.21.0** — Headless SDK (`gdd-sdk` CLI runs full pipeline without Claude Code, parallel researchers, cross-harness MCP).
+- **v1.20.0** — SDK Foundation (resilience primitives, lockfile-safe `STATE.md`, `gdd-state` MCP server with 11 typed tools, TypeScript foundation).
 
-### v1.15.0 Highlights — Design Knowledge Expansion
-
-- **10 new foundational references** — `iconography.md`, `performance.md`, `brand-voice.md`, `visual-hierarchy-layout.md`, `gestalt.md`, `design-system-guidance.md`, `design-systems-catalog.md`, `framer-motion-patterns.md`, `palette-catalog.md`, `style-vocabulary.md`. Agents now have authoritative answers on icon sizing, Web Vitals budgets, brand voice axes, Gestalt principles, DS governance, and 40+ industry-vertical color palettes.
-- **MIFB micro-polish track** — MIT content from [Jakub Krehel](https://jakub.kr/writing/details-that-make-interfaces-feel-better): new `reference/surfaces.md` (concentric radius, 3-layer shadow), `text-wrap: balance/pretty`, canonical press scale `0.96`, `AnimatePresence initial={false}`, `bounce: 0` icon cross-fade, and 4 new BAN entries. All four mapper agents gain "Micro-polish findings" detection. New 7th audit pillar: **Micro-polish** (5%).
-- **UUPM data ingest** — One-shot MIT snapshot from [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) v2.5.0: icon metaphor taxonomy, React perf heuristics, 20+ industry verticals, 24 landing-page archetypes, 57 font pairings, 40+ WCAG-verified palettes, 38+ UI aesthetic styles — all rewritten in GDD voice.
-- **⚠️ Breaking** — 7th audit pillar changes Anti-Pattern Compliance weight (10%→5%). Cross-cycle score comparisons spanning v1.14.x and v1.15.0 should account for this weight shift.
-
-### v1.14.0 Highlights
-
-- **AI-native canvas tools** — paper.design (MCP canvas read/write, screenshot verification) and pencil.dev (git-tracked `.pen` spec files, no MCP required) complete a full canvas→code→verify→canvas round-trip.
-- **Component generators** — 21st.dev Magic MCP adds a prior-art gate before any greenfield build; Magic Patterns generates DS-aware components with a `preview_url` for visual verification. Both feed into a shared `design-component-generator` agent.
-- **Twelve tool connections** — Four new connections (paper.design, pencil.dev, 21st.dev, Magic Patterns) join the original eight. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable.
-
-## What's New in v1.24.0
-
-**Multi-runtime installer** (headline upgrade) — `npx @hegemonart/get-design-done` with no flags now opens a polished interactive multi-select (`@clack/prompts`) for all 14 supported AI coding runtimes — Claude Code, OpenCode, Gemini CLI, Kilo Code, OpenAI Codex CLI, GitHub Copilot CLI, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline. Pick any subset, choose Global or Local, confirm, done. Idempotent + foreign-AGENTS.md-safe. Scripted CI installs continue to work via the existing flag surface unchanged. See the [Getting Started](#getting-started) section below.
-
-### Previously in v1.21.0
-
-**Headless SDK** (headline upgrade) — the plugin now ships a `gdd-sdk` CLI that runs the full design pipeline without Claude Code. Five subcommands (`run`, `stage`, `query`, `audit`, `init`) work on any CI runner with Node 22+ and an `ANTHROPIC_API_KEY`. See the [Headless SDK](#headless-sdk) section below for examples.
-
-**Parallel researchers** — four new runners execute concurrent specialized agents with a streaming synthesizer: `explore-parallel-runner` (4 mappers: token, component-taxonomy, a11y, visual-hierarchy), `discuss-parallel-runner` (N discussants: user-journey, technical-constraint, brand-fit, accessibility), and `init-runner` (4 researchers for `gdd-sdk init` bootstrap). A `pipeline-runner` state machine orchestrates brief → explore → plan → design → verify with retry-once, halt logic, and human-gate callbacks.
-
-**Cross-harness portability** — the plugin runs unchanged on Claude Code, OpenAI Codex CLI, and Gemini CLI. Codex auto-loads [`AGENTS.md`](AGENTS.md); Gemini auto-loads [`GEMINI.md`](GEMINI.md). Tool-name translations live in [`reference/codex-tools.md`](reference/codex-tools.md) and [`reference/gemini-tools.md`](reference/gemini-tools.md). The `gdd-state` MCP server works on all three harnesses.
-
-**Session primitives** — `session-runner` (typed wrapper around `@anthropic-ai/claude-agent-sdk` with USD/token budget caps, turn caps, transcript capture), `context-engine` (per-stage file manifest + markdown-aware truncation preserving frontmatter, headings, and first paragraph of each section), `tool-scoping` (per-stage allowed-tools enforcement with per-agent frontmatter overrides), and a structured `logger` (leveled, JSONL in headless mode, ANSI-colored in interactive mode).
-
-**E2E headless integration test** — `tests/e2e-headless.test.ts` with a dry-run variant (always runs) and a live variant gated on `ANTHROPIC_API_KEY`. CI gains an `e2e-headless` job.
-
-### Previously in v1.20.0
-
-**Resilience primitives** — the pipeline survives Anthropic API rate limits, 429 responses, and context-overflow errors without manual restart. Modules: jittered backoff, rate-guard, error-classifier, iteration-budget. See [`reference/error-recovery.md`](reference/error-recovery.md).
-
-**Typed state core** — `.design/STATE.md` mutations are lockfile-safe. Parallel executors concurrently update `task_progress` and `<blockers>` on the same file with zero corruption (validated by 4-way race-condition test, 2000 concurrent ops, <60s).
-
-**`gdd-state` MCP server** — 11 typed tools (`gdd_state__get`, `__update_progress`, `__transition_stage`, `__add_blocker`, `__resolve_blocker`, `__add_decision`, `__add_must_have`, `__set_status`, `__checkpoint`, `__probe_connections`, `__frontmatter_update`) replace ad-hoc STATE.md edits. Every mutation emits a typed event to `.design/telemetry/events.jsonl`.
-
-**TypeScript foundation** — `tsc --noEmit` typechecks the whole SDK; JSON schemas codegen to `reference/schemas/generated.d.ts`; hooks + Tier-1 scripts migrated to `.ts` and executed directly via Node 22 `--experimental-strip-types`.
+For full release notes see [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -138,85 +112,22 @@ Built-in quality gates catch real problems: Handoff Faithfulness scoring on Clau
 npx @hegemonart/get-design-done@latest
 ```
 
-In a TTY this opens a polished interactive multi-select (`@clack/prompts`) — pick which AI runtimes to install into and whether to install Globally or Locally. Press `[a]` to select all 14 supported runtimes at once. In non-TTY contexts (CI, pipes), the same command falls back to `--claude --global` for full backwards compatibility with v1.23.5 and earlier.
+The installer prompts you to choose:
+1. **Runtime** — Claude Code, OpenCode, Gemini, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline, or all (interactive multi-select — pick multiple runtimes in a single session)
+2. **Location** — Global (all projects) or local (current project only)
 
-After install, restart the affected runtime(s) (or run `/reload-plugins` for Claude Code) and the pipeline is live.
-
-**Supported runtimes** *(v1.24.0+)*
-
-Claude Code, OpenCode, Gemini CLI, Kilo Code, OpenAI Codex CLI, GitHub Copilot CLI, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline.
-
-Claude Code uses marketplace registration (`extraKnownMarketplaces` + `enabledPlugins` in `settings.json`); the other 13 runtimes follow the AGENTS.md / GEMINI.md convention — the installer drops a fingerprinted instructions file in the runtime's config dir (and refuses to overwrite an existing AGENTS.md it didn't author).
-
-**What the installer does**
-
-- For Claude Code: registers the `github:hegemonart/get-design-done` marketplace in `extraKnownMarketplaces` and flips `enabledPlugins["get-design-done@get-design-done"]` to `true`.
-- For AGENTS.md runtimes: drops a fingerprinted `AGENTS.md` (or `GEMINI.md`) in the runtime's config dir.
-- Preserves every other key in your settings — theme, permissions, other marketplaces — untouched.
-- Idempotent: safe to re-run; no duplicate entries; foreign AGENTS.md files are never overwritten.
-
-On first Claude Code launch after install, a `SessionStart` bootstrap hook provisions the companion reference library `~/.claude/libs/awesome-design-md` (idempotent — subsequent sessions run `git pull --ff-only`).
-
-### First run — `/gdd:start` *(v1.14.7+)*
-
-```
-/gdd:start
-```
-
-Run this once in any frontend repo. The skill asks five short questions, scans your `components/` directory (with framework-aware fallback for `src/components/`, `app/components/`, `packages/ui/`, `apps/*/components/`), and writes `.design/START-REPORT.md` with three concrete findings — each with file:line evidence — plus one `best_first_proof` and a single suggested next command. Takes ≤5 minutes, never touches source code, and never enters the pipeline state machine.
-
-A one-line SessionStart nudge surfaces `/gdd:start` in fresh repos; run `/gdd:start --dismiss-nudge` to silence it per install.
-
-### Non-interactive install (CI, Docker, scripts)
-
-```bash
-# Dry-run: print the diff, don't write (Claude Code only by default)
-npx @hegemonart/get-design-done@latest --dry-run
-
-# Custom config dir (Docker, non-default Claude root)
-CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done@latest
-
-# Pick specific runtimes (any flag → scripted, no prompts)
-npx @hegemonart/get-design-done@latest --claude --opencode --gemini
-
-# Install into every supported runtime
-npx @hegemonart/get-design-done@latest --all
-
-# Local install (drops files into the current working directory)
-npx @hegemonart/get-design-done@latest --opencode --local
-
-# Uninstall — bare flag enters interactive multi-select of detected runtimes
-npx @hegemonart/get-design-done@latest --uninstall
-
-# Uninstall scripted (no prompt)
-npx @hegemonart/get-design-done@latest --uninstall --claude --gemini
-```
-
-Per-runtime env-var overrides: `CLAUDE_CONFIG_DIR`, `OPENCODE_CONFIG_DIR`, `GEMINI_CONFIG_DIR`, `CODEX_HOME`, `CURSOR_CONFIG_DIR`, `KILO_CONFIG_DIR`, `COPILOT_CONFIG_DIR`, `WINDSURF_CONFIG_DIR`, `ANTIGRAVITY_CONFIG_DIR`, `AUGMENT_CONFIG_DIR`, `TRAE_CONFIG_DIR`, `QWEN_CONFIG_DIR`, `CODEBUDDY_CONFIG_DIR`, `CLINE_CONFIG_DIR`. Each falls back to `$HOME / $USERPROFILE` joined with the runtime's default subdirectory (e.g. `~/.claude`, `~/.gemini`, `~/.config/opencode`).
-
-### Alternative: Claude Code CLI
-
-Prefer to skip the npm package entirely? Use the native plugin CLI:
-
-```bash
-claude plugin marketplace add hegemonart/get-design-done
-claude plugin install get-design-done@get-design-done
-```
-
-This is what the installer wires up for you — `npx` is just one command instead of two.
-
-Verify any install path with:
+Verify with:
 
 ```
 /gdd:help
 ```
 
 > [!TIP]
-> Run Claude Code with `--dangerously-skip-permissions` for the intended frictionless flow. GDD is built for autonomous multi-stage execution; approving every file read and `git commit` defeats the purpose.
+> Run Claude Code with `--dangerously-skip-permissions` for a frictionless experience. GDD is designed for autonomous multi-stage execution — approving each Read and `git commit` defeats the purpose.
 
 ### Staying Updated
 
-Get Design Done ships frequent patch releases. To pick up the latest plugin contract, run the installer again — it's idempotent and upgrades the registered marketplace entry in place:
+GDD ships often. Update by re-running the installer (it's idempotent — updates registered marketplace entries in place):
 
 ```bash
 npx @hegemonart/get-design-done@latest
@@ -228,13 +139,72 @@ Or from inside Claude Code:
 /gdd:update
 ```
 
-`/gdd:update` previews the changelog before applying. Local customizations in `reference/` are preserved — use `/gdd:reapply-patches` if they need re-stitching after a structural release. A `SessionStart` hook surfaces a one-line banner when a newer release is available, gated so it never interrupts an active pipeline stage.
+`/gdd:update` previews the changelog before applying. Local modifications under `reference/` are preserved — if a structural update needs re-stitching, run `/gdd:reapply-patches`. When a new release lands, the SessionStart hook prints a one-line banner gated by state-machine logic so it never interrupts a running stage.
+
+<details>
+<summary><strong>Non-interactive Install (Docker, CI, Scripts)</strong></summary>
+
+```bash
+# Claude Code
+npx @hegemonart/get-design-done --claude --global   # Install to ~/.claude/
+npx @hegemonart/get-design-done --claude --local    # Install to ./.claude/
+
+# OpenCode
+npx @hegemonart/get-design-done --opencode --global # Install to ~/.config/opencode/
+
+# Gemini CLI
+npx @hegemonart/get-design-done --gemini --global   # Install to ~/.gemini/
+
+# Kilo
+npx @hegemonart/get-design-done --kilo --global     # Install to ~/.kilo/
+
+# Codex
+npx @hegemonart/get-design-done --codex --global    # Install to ~/.codex/
+
+# Copilot
+npx @hegemonart/get-design-done --copilot --global  # Install to ~/.copilot/
+
+# Cursor
+npx @hegemonart/get-design-done --cursor --global   # Install to ~/.cursor/
+
+# Windsurf, Antigravity, Augment, Trae, Qwen, CodeBuddy, Cline
+npx @hegemonart/get-design-done --windsurf --global
+npx @hegemonart/get-design-done --antigravity --global
+npx @hegemonart/get-design-done --augment --global
+npx @hegemonart/get-design-done --trae --global
+npx @hegemonart/get-design-done --qwen --global
+npx @hegemonart/get-design-done --codebuddy --global
+npx @hegemonart/get-design-done --cline --global
+
+# All runtimes
+npx @hegemonart/get-design-done --all --global
+
+# Dry run (print diff, write nothing)
+npx @hegemonart/get-design-done --dry-run
+
+# Custom config dir (Docker, non-default Claude root)
+CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done
+```
+
+</details>
+
+<details>
+<summary><strong>Alternative: Claude Code CLI</strong></summary>
+
+```bash
+claude plugin marketplace add hegemonart/get-design-done
+claude plugin install get-design-done@get-design-done
+```
+
+This is what the npx installer does for you — `npx` just collapses two commands into one.
+
+</details>
 
 ---
 
 ## How It Works
 
-> **New to the codebase?** Run `/gdd:map` first. It spawns 5 parallel specialist mappers (tokens, components, visual hierarchy, a11y, motion) and writes `.design/map/` — rich structured data the Explore stage consumes, much better than the grep-based fallback.
+> **New to an existing codebase?** Run `/gdd:map` first. It dispatches 5 specialist mappers in parallel (tokens, components, visual hierarchy, a11y, motion) and writes structured JSON to `.design/map/` — much higher signal than the grep-based fallback in Explore.
 
 ### 1. Brief
 
@@ -242,15 +212,7 @@ Or from inside Claude Code:
 /gdd:brief
 ```
 
-One command captures the design problem before any scanning or exploration. The skill asks five questions via `AskUserQuestion` — one at a time, only for unanswered sections:
-
-1. **Problem** — The user-facing outcome you're solving
-2. **Audience** — Primary user, device, context
-3. **Constraints** — Tech stack, brand, time, a11y requirements
-4. **Success Metrics** — How you'll know it worked
-5. **Scope** — What's in, what's out
-
-You approve the brief. Now the rest of the pipeline has something to verify against.
+Captures the design problem before any scanning or exploration. The skill interviews via `AskUserQuestion`, one question at a time, only for unanswered sections: problem, audience, constraints, success metrics, scope.
 
 **Creates:** `.design/BRIEF.md`
 
@@ -262,17 +224,9 @@ You approve the brief. Now the rest of the pipeline has something to verify agai
 /gdd:explore
 ```
 
-**Unified inventory + interview.** (The old `scan` and `discover` commands are deprecated aliases that route here.)
+Inventories the current codebase's design system: colors, typography, spacing, components, motion, a11y, dark-mode. Five parallel mappers + a `design-discussant` interview produce three artifacts. Connection probes detect Figma, Refero, Storybook, Chromatic, Preview, Pinterest, Claude Design, paper.design, pencil.dev, Graphify, 21st.dev Magic, and Magic Patterns availability.
 
-The skill probes all twelve connection slots (Figma, Refero, Pinterest, Preview, Storybook, Chromatic, Graphify, Claude Design, paper.design, pencil.dev, 21st.dev, Magic Patterns), then:
-
-1. **Inventory scan** — If `.design/map/` exists and is fresher than `src/`, consumes the structured map output. Otherwise runs a grep-based inventory pass
-2. **Design interview** — Spawns `design-discussant`, which runs an adaptive interview grounded in the brief and what it found in the code
-3. **Baseline audit** — Writes `DESIGN.md` (current state), `DESIGN-DEBT.md` (known gaps), and `DESIGN-CONTEXT.md` (decisions + architectural responsibility map + Mermaid flow diagram)
-
-The deeper you engage in the interview, the more the downstream planner and executors build *your* vision rather than reasonable defaults.
-
-**Creates:** `DESIGN.md`, `DESIGN-DEBT.md`, `DESIGN-CONTEXT.md`
+**Creates:** `.design/DESIGN.md`, `.design/DESIGN-DEBT.md`, `.design/DESIGN-CONTEXT.md`, `.design/map/{tokens,components,a11y,motion,visual-hierarchy}.{md,json}`
 
 ---
 
@@ -282,15 +236,9 @@ The deeper you engage in the interview, the more the downstream planner and exec
 /gdd:plan
 ```
 
-The skill:
+Decomposes Explore output into atomic, wave-coordinated, dependency-analyzed design tasks. Each task carries explicit `Touches:` paths, parallel-safety tags, and acceptance criteria. `design-planner` (opus) authors; `design-plan-checker` (haiku) gate-checks against the brief goal before execution.
 
-1. **Researches** — `design-phase-researcher` investigates how to implement, guided by `DESIGN-CONTEXT.md` decisions. Consults Graphify knowledge graph when available, so dependency queries are O(1) instead of grep-based guessing
-2. **Plans** — `design-planner` decomposes into atomic tasks, annotates with Chromatic change-risk and Storybook component fan-out
-3. **Verifies** — `design-plan-checker` validates the plan against the brief and context, loops until it passes
-
-Each task is small enough to execute in a fresh context window. No degradation, no abbreviated outputs.
-
-**Creates:** `DESIGN-PLAN.md`
+**Creates:** `.design/DESIGN-PLAN.md`
 
 ---
 
@@ -300,16 +248,28 @@ Each task is small enough to execute in a fresh context window. No degradation, 
 /gdd:design
 ```
 
-The skill runs the plan. For each task:
+Executes plan tasks in waves. Each task gets a dedicated `design-executor` agent with a fresh 200k context, atomic git commit, and automatic deviation handling per in-context rules. Parallel-safe tasks run in worktrees.
 
-1. **Fresh context per task** — Full context budget for implementation, zero accumulated garbage
-2. **Tier-aware routing** — Each agent carries a `default-tier` frontmatter field (haiku/sonnet/opus); the router + `budget.json` override determine actual tier per spawn. Cheap work runs on Haiku; precise work on Opus
-3. **Atomic commits per task** — Every task gets its own commit, keeping git history surgical
-4. **Streaming synthesizer** — Parallel-agent outputs collapse through a single Haiku call before returning to main context, so the orchestrator stays cache-aligned
+**Solidify-with-rollback** (v1.23.0) — every task validates (typecheck + build + targeted test) before locking in. Validation fails → `git stash` revert. Each task is atomic commit-or-revert.
 
-Walk away, come back to completed work with a clean commit history.
+**Creates:** `.design/tasks/task-NN.md` per task, atomic git commit per task
 
-**Creates:** `DESIGN-SUMMARY.md`, plus per-task commits
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  WAVE EXECUTION                                                    │
+├────────────────────────────────────────────────────────────────────┤
+│                                                                    │
+│  WAVE 1 (parallel)          WAVE 2 (parallel)         WAVE 3       │
+│  ┌─────────┐ ┌─────────┐    ┌─────────┐ ┌─────────┐    ┌─────────┐ │
+│  │ Task 01 │ │ Task 02 │ →  │ Task 03 │ │ Task 04 │ →  │ Task 05 │ │
+│  │ tokens  │ │ a11y    │    │ button  │ │ form    │    │ verify  │ │
+│  └─────────┘ └─────────┘    └─────────┘ └─────────┘    └─────────┘ │
+│       │           │              ↑           ↑              ↑      │
+│       └───────────┴──────────────┴───────────┴──────────────┘      │
+│              Touches: paths drive dependency analysis              │
+│                                                                    │
+└────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -319,53 +279,45 @@ Walk away, come back to completed work with a clean commit history.
 /gdd:verify
 ```
 
-**This is where the pipeline proves the output matches the brief.**
+Verifies against the brief — must-haves, NN/g heuristics, audit rubric, token integration. Three agents run in sequence: `design-auditor` (6-pillar 1–4 score), `design-verifier` (goal-backward), `design-integration-checker` (greps D-XX decisions back to code). On failures, produces a structured gap list and enters a verify→fix loop via `design-fixer`.
 
-The skill spawns four agents in sequence, each with cheap-gate precursors:
-
-1. **`design-verifier`** — Scores output against brief + context + plan. Runs visual verification via Preview (Playwright screenshots) when available, plus Chromatic delta narration on the visual regression diff
-2. **`design-auditor`** — Runs the NNG heuristic sweep, WCAG contrast pass across the full palette × surface matrix, typography system audit, motion framework audit, and anti-pattern detector
-3. **`design-integration-checker`** — Cross-file consistency: token naming, component taxonomy, visual hierarchy, a11y labels
-4. **`design-fixer`** — Proposes fixes for each gap, scoped and prioritized
-
-If handoff mode (`/gdd:verify --post-handoff` or `/gdd:handoff <bundle>`), an additional **Handoff Faithfulness** section scores color / typography / spacing / component-structure adherence with PASS/WARN/FAIL thresholds.
-
-**Creates:** `DESIGN-VERIFICATION.md`
+**Creates:** `.design/DESIGN-VERIFICATION.md`, gap-fix commits if issues found
 
 ---
 
 ### 6. Ship → Reflect → Next Cycle
 
 ```
-/gdd:ship                    # Clean PR branch + gh pr create
-/gdd:reflect                 # Post-cycle improvement proposals
-/gdd:apply-reflections       # Review + selectively apply proposals
-/gdd:complete-cycle          # Archive cycle to .design/archive/cycle-N/
-/gdd:new-cycle               # Start next cycle with fresh STATE.md
+/gdd:ship                    # Generate clean PR branch (filters .design/ commits)
+/gdd:reflect                 # design-reflector reads telemetry + learnings
+/gdd:apply-reflections       # Review and selectively apply reflector proposals
+/gdd:complete-cycle          # Archive cycle artifacts, write EXPERIENCE.md
+/gdd:new-cycle               # Open a new design cycle
 ```
 
-Or let the router figure out the next step:
+Or auto-route:
 
 ```
 /gdd:next                    # Auto-detect state and run the next step
 ```
 
-Loop **brief → explore → plan → design → verify → ship** per cycle. Each cycle reflects on itself and proposes improvements to the system — frontmatter estimates, tier assignments, reference additions, budget caps, question pruning, global-skill promotion. You decide what to accept.
+Each cycle gets a brief, scan, plan, execution, verification, and a per-cycle `EXPERIENCE.md` (~100–200 lines: Goal / Decisions made / Learnings graduated / What died / Handoff to next cycle) that becomes the highest-priority source for the decision-injector hook.
 
 ---
 
-### Standalone commands (no pipeline init required)
+### Fast Mode
 
 ```
-/gdd:handoff <bundle.html>   # Skip explore/plan, route direct to verify
-/gdd:style Button            # Generate component handoff doc
-/gdd:darkmode                # Audit dark mode architecture + contrast
-/gdd:compare                 # Delta between baseline and verification
-/gdd:sketch                  # Multi-variant HTML exploration
-/gdd:spike                   # Timeboxed feasibility experiment
-/gdd:figma-write <mode>      # Write decisions back to Figma
-/gdd:graphify <subcommand>   # Manage Graphify knowledge graph
+/gdd:fast "<task>"
 ```
+
+For trivial single-file fixes that don't need the full pipeline. Skips the router, cache-manager, and telemetry. Same atomic-commit guarantees.
+
+```
+/gdd:quick
+```
+
+For ad-hoc tasks that need GSD-style guarantees but skip optional gates (no phase-researcher, no assumptions analyzer, no integration-checker). Faster than the full pipeline; safer than `/gdd:fast`.
 
 ---
 
@@ -373,502 +325,243 @@ Loop **brief → explore → plan → design → verify → ship** per cycle. Ea
 
 ### Context Engineering
 
-Claude Code does great design work *if* you give it the context it needs. Most workflows don't. GDD handles the context layer for you:
+AI coding CLIs are powerful **if** you feed them context. Most people don't.
+
+GDD handles it for you:
 
 | File | What it does |
 |------|--------------|
-| `.design/BRIEF.md` | Problem, audience, constraints, metrics, scope — the verification target |
-| `.design/DESIGN.md` | Current-state inventory: tokens, components, hierarchy, a11y, motion |
-| `.design/DESIGN-DEBT.md` | Known gaps and technical-design debt |
-| `.design/DESIGN-CONTEXT.md` | D-XX decisions, architectural responsibility map, Mermaid flow diagram |
-| `.design/DESIGN-PLAN.md` | Atomic tasks with Touches:, Chromatic risk, Storybook fan-out |
-| `.design/DESIGN-SUMMARY.md` | What happened per task, committed to history |
-| `.design/DESIGN-VERIFICATION.md` | Scored audit against brief + context + plan |
-| `.design/STATE.md` | Position, connections, handoff source, decisions — memory across sessions |
-| `.design/intel/` | 10 queryable JSON slices: files, exports, symbols, tokens, components, patterns, dependencies, decisions, debt, cross-reference graph |
-| `.design/CYCLES.md` | Cycle lifecycle + archived cycles in `.design/archive/` |
+| `.design/BRIEF.md` | The cycle's problem, audience, success metrics |
+| `.design/DESIGN.md` | Current design-system snapshot (tokens, components, hierarchy) |
+| `.design/DESIGN-CONTEXT.md` | D-XX decisions, interview answers, upstream/downstream constraints |
+| `.design/DESIGN-PLAN.md` | Atomic tasks, wave choreography, dependencies |
+| `.design/DESIGN-VERIFICATION.md` | Verification result, gap list, Handoff Faithfulness score |
+| `.design/intel/` | Queryable knowledge layer: token fan-out, component call-graph, decision traceability |
+| `.design/archive/cycle-N/EXPERIENCE.md` | Per-cycle retrospective for cross-cycle memory |
+| `.design/telemetry/events.jsonl` | Typed event stream across stages |
+| `.design/telemetry/posterior.json` | Bandit posterior (when `adaptive_mode != static`) |
 
-Size budgets are tiered per agent (XXL: 700, XL: 500, Large: 300, Default: 200 lines). Stay under, get consistent output. The `agent-size-budget` CI job blocks violations.
+Size limits where Claude's quality degrades. Stay under, get consistency.
 
-### 33 Specialized Agents
+### 37 Specialized Agents
 
-Every stage uses the same pattern: a thin orchestrator skill spawns specialized agents, collects results, routes to the next step.
+Each stage is a thin orchestrator that spawns specialized agents. Heavy lifting happens in fresh 200k contexts, not your main session.
 
 | Stage | Orchestrator does | Agents do |
-|-------|------------------|-----------|
-| Brief | Runs interview, writes BRIEF.md | — |
-| Map | Coordinates parallel spawn | 5 mappers investigate tokens, components, visual hierarchy, a11y, motion |
-| Explore | Probes connections, runs inventory | `design-context-builder` + `design-context-checker` gate → full checker |
-| Plan | Validates, manages iteration | `design-phase-researcher`, `design-planner`, `design-plan-checker` loop |
-| Design | Dispatches tasks | `design-executor` per task, streaming-synthesizer merge |
-| Verify | Presents results, routes fixes | `design-verifier`, `design-auditor`, `design-integration-checker`, `design-fixer` (each with cheap Haiku gate precursor) |
-| Post-cycle | Review proposals | `design-reflector` reads telemetry + learnings, proposes improvements |
-
-All agents carry `default-tier: haiku|sonnet|opus` + `tier-rationale` in frontmatter. Every agent opens with `@reference/shared-preamble.md` so the first agent in a session pays full cost and the rest ride Anthropic's 5-minute prompt cache.
+|-------|-------------------|-----------|
+| Brief | one-question interview | (no subagents — leaf skill) |
+| Explore | spawns 5 mappers + discussant | 5 parallel mappers, design-discussant, research-synthesizer |
+| Plan | spawns researcher + planner + checker | design-phase-researcher (optional), design-planner (opus), design-plan-checker (haiku) |
+| Design | wave coordination + worktree isolation | design-executor per task, design-fixer on solidify failure |
+| Verify | spawns auditor + verifier + checker | design-auditor (6-pillar score), design-verifier (goal-backward), design-integration-checker (D-XX → code) |
+| Reflect | reads telemetry + learnings | design-reflector (opus), design-authority-watcher, design-update-checker |
 
 ### 12 Tool Connections
 
-Every connection is optional. The pipeline degrades gracefully — a grep-based fallback exists for every missing tool.
+All optional — the pipeline degrades gracefully when any connection is unavailable:
 
-| Connection | Type | Purpose |
-|-----------|------|---------|
-| Figma | MCP (auto-detects any `/figma/i` server — remote or desktop) | Token extraction, design context pre-population, write-back via `use_figma` (remote only; annotate, tokenize, Code Connect) |
-| Refero | MCP (`mcp__refero__*`) | Reference design search during exploration |
-| Pinterest | MCP (`mcp__mcp-pinterest__*`) | Visual inspiration boards alongside Refero |
-| Preview (Playwright) | MCP (`mcp__Claude_Preview__*`) | Live page screenshots for visual verification |
-| Storybook | HTTP (`localhost:6006`) | Component inventory, a11y per story, story stubs |
-| Chromatic | CLI (`npx chromatic`) | Visual regression delta narration and change-risk scoping |
-| Graphify | CLI (`graphify`) | Knowledge graph: component↔token↔decision relationships |
-| Claude Design | Bundle adapter | Parse HTML export → D-XX decisions, Handoff Faithfulness scoring |
-| paper.design | MCP (`mcp__paper-design__*`) | Canvas read/write, component tree + computed styles, screenshot verification |
-| pencil.dev | File (`.pen` YAML) | Git-tracked design specs; no MCP — pipeline reads and writes `.pen` files directly |
-| 21st.dev Magic MCP | MCP + CLI | Prior-art gate before greenfield builds; component search + generation; SVGL brand logos |
-| Magic Patterns | MCP / API key | DS-aware component generation; `preview_url` feeds visual verification |
+- **Figma** (read + write + Code Connect) — annotations, token bindings, implementation status write-back
+- **Refero** — design reference search
+- **Pinterest** — visual reference grounding
+- **Claude Design** — handoff bundle import (`/gdd:handoff`)
+- **Storybook** — component-spec lookup
+- **Chromatic** — visual regression baseline diff
+- **Preview** — Playwright + Claude Preview MCP for runtime screenshots
+- **paper.design** — MCP canvas read/write for round-trip verification
+- **pencil.dev** — git-tracked `.pen` spec files
+- **Graphify** — knowledge-graph export
+- **21st.dev Magic** — prior-art component search before greenfield builds
+- **Magic Patterns** — DS-aware component generation with `preview_url`
 
-See [`connections/connections.md`](connections/connections.md) for the full index and capability matrix.
+### Embedded Design References
+
+The plugin ships **18+ reference files** covering every major design-knowledge domain. Agents have authoritative answers without web search:
+
+- **Heuristics** — NN/g 10, Don Norman emotional design (visceral/behavioral/reflective), Dieter Rams 10, Disney 12 (motion), Sonner / Emil Kowalski component-authoring lens, Peak-End Rule, Loss Aversion, Cognitive Load Theory, Aesthetic-Usability Effect, Doherty Threshold, Flow.
+- **Components** — 35 component specs (Material 3, Apple HIG, Radix, shadcn, Polaris, Carbon, Fluent, Atlassian, Ant, Mantine, Chakra, Base Web, Spectrum, Lightning, Evergreen, Gestalt) with locked spec template (Purpose · Anatomy · Variants · States · Sizing · Typography · Keyboard · Motion · Do/Don't · Anti-patterns · Citations · Grep signatures).
+- **Visual + brand** — gestalt principles, visual-hierarchy, brand-voice, palette catalog (161 industry palettes), style vocabulary (67 UI aesthetics), iconography (Lucide / Phosphor / Heroicons / Radix Icons / Tabler / SF Symbols).
+- **Motion** — 12 canonical easings (RN MIT) + 8 transition families (hyperframes Apache-2.0) + spring presets + interpolation taxonomy + advanced craft (gesture mechanics, clip-path, blur crossfades, View Transitions API, WAAPI).
+- **Platform + a11y** — WCAG 2.1 AA thresholds, platforms (iOS / Android / web / visionOS / watchOS), RTL + CJK + cultural color, form patterns (Wroblewski label research, autocomplete taxonomy, CAPTCHA ethics).
+- **Anti-patterns** — regex-signature catalog matched by `design-pattern-mapper`.
 
 ### Atomic Git Commits
 
-Each task gets its own commit immediately after completion:
+Each design task gets its own commit immediately after completion:
 
-```bash
-abc123f docs(cycle-1): DESIGN-CONTEXT.md decisions locked
-def456g feat(cycle-1): unify button tokens across surfaces
-hij789k feat(cycle-1): fix dark-mode contrast on CardMuted
-lmn012o feat(cycle-1): motion tokens for modal presentation
+```
+abc123f docs(08-02): complete user-card token plan
+def456g feat(08-02): unify card surface tokens with --color-bg-elevated
+hij789k feat(08-02): replace inline padding with --space-* scale
+lmn012o test(08-02): assert card.spec passes WCAG contrast 4.5:1
 ```
 
-> [!NOTE]
-> **Benefits:** `git bisect` finds the exact task that broke contrast. Each task is independently revertable via `/gdd:undo`. Clear history for Claude in future sessions. `/gdd:pr-branch` strips `.design/` and `.planning/` commits for a clean code-review branch.
+Git bisect finds exact failing task. Each task is independently revertable. Solidify-with-rollback adds a per-task validation gate so a broken task 3 never corrupts tasks 4–10 before verify runs.
 
-### Self-Improvement
+### Self-Improvement Loop
 
-After each design cycle, `/gdd:reflect` reads `.design/learnings/`, `.design/telemetry/costs.jsonl`, and `.design/agent-metrics.json` and proposes concrete improvements:
+After every cycle, `design-reflector` (opus) reads `events.jsonl`, `agent-metrics.json`, and `learnings/`, then proposes diffs:
 
-- **Frontmatter updates** — agent duration estimates and tier assignments from measured data
-- **Reference additions** — anti-patterns and heuristics that appeared ≥3 cycles
-- **Budget adjustments** — cost caps tuned from actual spend patterns
-- **Question pruning** — discussant questions that consistently got low-value answers
-- **Global skill promotion** — project findings promoted to `~/.claude/gdd/global-skills/` for cross-project use
+- **Tier overrides** — "design-verifier on plans <300 lines: drop to haiku, no measured quality regression"
+- **Parallelism rules** — "token-mapper + component-taxonomy-mapper conflict on `Touches: src/styles/`; serialize"
+- **Reference additions** — "L-12 cited 9 times across cycles 3–5; promote to `reference/heuristics.md`"
+- **Frontmatter updates** — "design-executor `typical-duration-seconds: 60` measured at 142s; propose 120s"
 
-**Nothing auto-applies.** Every proposal requires explicit review via `/gdd:apply-reflections` — diff, accept, skip, or edit each one. The discipline mirrors the `design-figma-writer` proposal→confirm pattern.
+`/gdd:apply-reflections` shows the diff and asks before applying. Nothing auto-applies. The **No-Regret Adaptive Layer** (v1.23.5) layers a Thompson sampling bandit + AdaNormalHedge ensemble + MMR rerank on top, viable in single-user mode via informed-prior bootstrap.
+
+### Cost Governance
+
+- **`gdd-router` skill** — deterministic intent → fast / quick / full routing. No model call.
+- **`gdd-cache-manager`** — Layer-B explicit cache with SHA-256 input-hash + 5-min TTL awareness.
+- **`budget-enforcer` PreToolUse hook** — enforces tier overrides, hard caps, lazy-spawn gates from `.design/budget.json`.
+- **Per-spawn cost telemetry** — `.design/telemetry/costs.jsonl` rows feed `/gdd:optimize` rule-based recommendations.
+
+Targets 50–70% per-task token-cost reduction with no quality-floor regression.
 
 ---
-
-## Component Benchmark Corpus
-
-Per-component design specifications harvested from 18 major design systems and synthesized into a locked, agent-consumable format. Every spec is ≤350 lines, greppable, diff-friendly, and cross-linked to `reference/anti-patterns.md`.
-
-**Wave 1 — Inputs (v1.16.0)**: Button · Input · Select/Combobox · Checkbox · Radio · Switch · Link · Label
-
-**Wave 2 — Containers (v1.16.0)**: Card · Modal/Dialog · Drawer/Sheet · Popover · Tooltip · Accordion · Tabs
-
-**Wave 3 — Feedback (v1.17.0)**: Toast · Alert · Progress · Skeleton · Badge · Chip
-
-**Wave 4 — Navigation & Data (v1.17.0)**: Menu · Navbar · Sidebar · Breadcrumbs · Pagination · Table · List · Tree · Command-palette
-
-**Wave 5 — Advanced (v1.17.0)**: Date-picker · Slider · File-upload · Rich-text editor · Stepper
-
-**Total: 35 specs** across 5 waves. Each spec: WAI-ARIA keyboard contracts (verbatim), NORM/DIVERGE convergence analysis, grep signatures for `design-auditor` conformance scoring, and a failing-example block.
-
-**Pipeline integration (v1.17.0):**
-- `design-auditor` — detects component implementations via grep signatures, scores conformance against specs, emits Component Conformance addendum
-- `design-executor` — reads matching spec as pre-flight contract for `type:components` tasks
-- `design-doc-writer` — scaffolds handoff docs from spec anatomy/variants when a benchmark spec exists
-- `design-pattern-mapper` — writes `.design/map/component-convergence.md` (matched/absent components + convergence %)
-
-```bash
-/gdd:benchmark button                  # harvest + synthesize a single spec
-/gdd:benchmark --wave 1                # run all Wave 1 specs
-/gdd:benchmark --list                  # coverage table
-/gdd:benchmark --refresh modal-dialog  # re-harvest after design-system update
-```
-
-Sources: `connections/design-corpora.md` — Material 3, Apple HIG, Radix, WAI-ARIA APG, shadcn/ui, Polaris, Carbon, Fluent 2, Primer, Atlassian, Ant Design, Mantine, Chakra, Base Web, Nord, Spectrum, Lightning, Gestalt (Pinterest).
-
----
-
-## Authority Watcher
-
-Subscribe to a curated whitelist of design-authority sources, diff it against a snapshot, and feed only genuinely new, classified entries into the Self-Improvement reflector. Authority monitoring — not trend watching.
-
-```bash
-# On-demand diff + classify
-/gdd:watch-authorities
-
-# Force re-seed the snapshot (recovery for a corrupted snapshot)
-/gdd:watch-authorities --refresh
-
-# Surface backlog since a specific date
-/gdd:watch-authorities --since 2026-01-01
-
-# Limit to a single feed (debugging)
-/gdd:watch-authorities --feed wai-aria-apg
-
-# Schedule recurring runs (requires the scheduled-tasks MCP)
-/gdd:watch-authorities --schedule weekly
-```
-
-### What the whitelist covers
-
-See [`reference/authority-feeds.md`](reference/authority-feeds.md). 26 curated feeds grouped by kind:
-
-- **Spec sources** — WAI-ARIA APG, Material 3, Apple HIG, Fluent 2, W3C Design Tokens CG
-- **Component systems** — Radix, shadcn/ui, Polaris, Carbon, Primer, Atlassian, Ant, Mantine
-- **Research institutions** — Nielsen Norman Group, Laws of UX, Baymard
-- **Named practitioners** — 10 writers filtered for spec-adjacent, durable, original analysis
-- **User-added Are.na channels** — extensibility point; add your own via a PR to the Are.na section, no config file or schema editing required
-
-### What is explicitly rejected
-
-No Dribbble. No Behance. No LinkedIn. No generic "trending" aggregators. See `reference/authority-feeds.md` §"Rejected kinds" — the exclusions are CI-enforced, not just documented.
-
-### How the report feeds reflection
-
-The watcher writes `.design/authority-report.md` — new entries classified into five buckets (`spec-change`, `heuristic-update`, `pattern-guidance`, `craft-tip`, `skip`) with a one-sentence rationale each. `/gdd:reflect` reads the report alongside internal telemetry and proposes reference-file updates. Nothing auto-ships — you review every proposal via `/gdd:apply-reflections`.
-
----
-
-## Headless SDK
-
-Run the full GDD pipeline without Claude Code:
-
-```bash
-npx gdd-sdk init                      # bootstrap a new project
-npx gdd-sdk run                       # full pipeline (brief → verify)
-npx gdd-sdk stage explore --parallel  # single stage with parallel mappers
-npx gdd-sdk query position            # typed STATE.md read
-npx gdd-sdk audit --baseline <dir>    # regression check
-```
-
-Requires Node 22+ and an `ANTHROPIC_API_KEY`. Works on any CI runner.
-
-Internally the SDK stitches together the Phase-21 runner modules:
-`session-runner` (budget + turn cap + transcript), `context-engine` (per-stage
-file manifest + markdown truncation), `tool-scoping` (per-stage allowed-tools),
-`pipeline-runner` (brief → verify state machine with retry-once + human-gate
-callbacks), and `explore-parallel` / `discuss-parallel` / `init` for the
-concurrent researcher stages.
-
-### Cross-harness
-
-The plugin runs unchanged on Claude Code, OpenAI Codex CLI, and Gemini CLI.
-See [`reference/codex-tools.md`](reference/codex-tools.md) and
-[`reference/gemini-tools.md`](reference/gemini-tools.md) for the tool
-translations; Codex auto-loads [`AGENTS.md`](AGENTS.md) and Gemini auto-loads
-[`GEMINI.md`](GEMINI.md). The `gdd-state` MCP server works on all three.
-
----
-
-## AI-Native Canvas Tools
-
-get-design-done integrates with canvas tools that treat the design canvas as both source AND destination — enabling a full canvas→code→verify→canvas round-trip.
-
-### paper.design
-
-Read component trees, computed styles, and screenshots from the paper.design canvas. Write design decisions back via annotate / tokenize / roundtrip modes.
-
-**Setup:**
-```bash
-claude mcp add paper-design --transport http https://mcp.paper.design/sse
-```
-
-**Capabilities:**
-- `explore` — reads canvas selection, JSX tree, computed styles into DESIGN-CONTEXT.md
-- `design` — `design-paper-writer` agent writes annotations, token bindings, and status back to canvas
-- `verify` — `get_screenshot` captures component snapshots for `? VISUAL` checks (Phase 4C)
-
-See [`connections/paper-design.md`](connections/paper-design.md) for full setup and probe pattern.
-
-### pencil.dev
-
-Git-tracked `.pen` YAML files are canonical design specs. No MCP required — the pipeline reads and writes `.pen` files directly.
-
-**Setup:** Install the pencil.dev VS Code / Cursor extension. Add `.pen` files to your project.
-
-**Capabilities:**
-- `explore` — discovers `.pen` files; synthesizer merges token declarations with code
-- `design` — `design-pencil-writer` agent writes DESIGN-DEBT findings and status back as `.pen` comments / spec updates (atomic git commits)
-- `verify` — spec-vs-implementation diff: declared token values vs. actual CSS values
-
-See [`connections/pencil-dev.md`](connections/pencil-dev.md) for `.pen` file format and pipeline integration.
-
----
-
-## Component Generators
-
-Component generators produce UI component code from natural-language descriptions, targeting your project's design system.
-
-### 21st.dev Magic MCP
-
-Marketplace search + AI component generation. Built-in prior-art gate: the explore stage searches 21st.dev before any greenfield component build. If an existing component fits ≥80%, adoption is recommended over custom build.
-
-**Setup:**
-```bash
-npx @21st-dev/magic@latest init
-# Set TWENTY_FIRST_API_KEY environment variable
-```
-
-**Capabilities:**
-- `explore` — prior-art gate: `21st_magic_component_search` before greenfield builds
-- `design` — `design-component-generator` (21st.dev impl): search → generate → adopt
-- `explore/design` — `svgl_get_brand_logo` for brand logo/icon SVGs
-
-See [`connections/21st-dev.md`](connections/21st-dev.md) for setup and prior-art gate logic.
-
-### Magic Patterns
-
-DS-aware component generation via the Magic Patterns Claude connector (no manual setup when enabled) or API key fallback. Returns a `preview_url` for visual verification.
-
-**Setup (Claude connector):** Enable Magic Patterns in your Claude environment — no additional steps.
-
-**Setup (API key):**
-```bash
-claude mcp add magic-patterns --transport http https://mcp.magicpatterns.com/sse \
-  -e MAGIC_PATTERNS_API_KEY=$MAGIC_PATTERNS_API_KEY
-```
-
-**Capabilities:**
-- `design` — `design-component-generator` (magic-patterns impl): generate → annotate → regenerate
-- `verify` — `preview_url` from generation feeds `? VISUAL` check in Phase 8 Preview
-
-See [`connections/magic-patterns.md`](connections/magic-patterns.md) for probe pattern and DS detection.
-
----
-
-## Safety + Recall Floor
-
-Starting with v1.14.6, GDD ships three defense-in-depth hooks, the first cross-cycle recall primitive, and a typed reference index:
-
-- **Bash guard** (`hooks/gdd-bash-guard.js`) — PreToolUse:Bash blocks ~45 dangerous shell patterns after Unicode NFKC + ANSI + zero-width/bidi normalization, so `rm\u200B -rf /`, bidi-override obfuscations, and hex-encoded exec sequences fail closed.
-- **Protected paths** (`hooks/gdd-protected-paths.js`) — PreToolUse:Edit|Write|Bash refuses to mutate `reference/**`, `skills/**`, `commands/**`, `hooks/**`, `.design/archive/**`, `.design/config.json`, `.design/telemetry/**`, `.git/**`, both plugin manifests, and anything the user appends under `.design/config.json.protected_paths` (merge-only — user configs cannot reduce the default set).
-- **Blast-radius preflight** (`scripts/lib/blast-radius.cjs`) — `design-executor` refuses tasks above `.design/config.json.blast_radius.max_files_per_task` (default 10), `max_lines_per_task` (default 400), or `max_mcp_calls_per_task` (default 30); writes a blocker to STATE.md with a diff summary.
-- **Decision-injector** (`hooks/gdd-decision-injector.js`) — PreToolUse:Read on any `.design/**.md | reference/**.md | .planning/**.md` ≥ 1500 bytes surfaces the top-15 matching D-XX decisions, L-NN learnings, and prior-cycle summary excerpts that reference the opened file. Grep backend; Phase 19.5 upgrades to FTS5 transparently.
-
-**Reference index** — `reference/registry.json` (schema: `reference/registry.schema.json`) indexes every `reference/*.md` by typed category (`heuristic | preamble | motion | defaults | meta-rules | …`). Agents can query `list({type: "heuristic"})` instead of grep-hunting import strings. `scripts/build-intel.cjs` enforces round-trip on every `reference/**` change: missing entries, dangling entries, and duplicates fail the build.
-
-**L0/L2 cache-locality split** — the 5 framework-invariant rules (Required Reading Discipline, Writes Protocol, Deviation Handling, Completion Markers, Context-Exhaustion & Budget Awareness) now live in `reference/meta-rules.md` (tier L0). `reference/shared-preamble.md` becomes an L0 aggregator importing `meta-rules.md` first, so Phase 15+ L2 churn (heuristics, anti-patterns, checklists) no longer invalidates the L0 prompt-cache prefix.
-
-**Figma authoring-redirect** — `/gdd:figma-write` is a decision-writer (annotations, token bindings, Code Connect, implementation-status). For authoring new Figma content (create pages, populate library components, build layouts from scratch), use `figma:figma-generate-design` from the Figma plugin — it runs outside the Figma plugin sandbox. `design-figma-writer` Step 0.5 detects author-intent (EN + RU) and emits a bilingual redirect citing the four sandbox pitfalls in `reference/figma-sandbox.md`. The MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) caps `use_figma | use_paper | use_pencil` at 30 calls/task and 3 consecutive timeouts by default (see `reference/mcp-budget.default.json`), logging per-call JSONL at `.design/telemetry/mcp-budget.jsonl`.
 
 ## Commands
 
-All commands use the `/gdd:` namespace.
-
-### Core pipeline
+### Core Pipeline
 
 | Command | What it does |
 |---------|--------------|
-| `/gdd:brief` | Stage 1 — problem, audience, constraints, metrics, scope |
-| `/gdd:explore [--skip-interview] [--skip-scan]` | Stage 2 — inventory scan + design interview |
-| `/gdd:plan` | Stage 3 — research + decompose into atomic tasks + verify plan |
-| `/gdd:design` | Stage 4 — execute tasks with fresh context per task |
-| `/gdd:verify [--post-handoff]` | Stage 5 — verifier + auditor + integration checker + fixer |
-| `/gdd:handoff <bundle>` | Skip explore/plan, route direct to verify from Claude Design bundle |
-| `/gdd:next` | Auto-detect pipeline state and run next step |
-| `/gdd:map` | Parallel codebase mapping — 5 specialist mappers |
+| `/gdd:brief` | Stage 1 — capture the design brief |
+| `/gdd:explore` | Stage 2 — codebase inventory + interview |
+| `/gdd:plan` | Stage 3 — produce DESIGN-PLAN.md |
+| `/gdd:design` | Stage 4 — execute plan in waves |
+| `/gdd:verify` | Stage 5 — verify against brief |
+| `/gdd:ship` | Generate clean PR branch (filters .design/ commits) |
+| `/gdd:next` | Auto-route to the next stage based on STATE.md |
+| `/gdd:do <text>` | Natural-language router — picks the right command |
+| `/gdd:fast <text>` | One-shot trivial fix, no pipeline |
+| `/gdd:quick` | Ad-hoc task with GDD guarantees but skipped optional gates |
 
-### Lifecycle
-
-| Command | What it does |
-|---------|--------------|
-| `/gdd:start [--budget] [--skip-interview] [--dismiss-nudge]` | First-Run Proof Path — scans UI code, emits `.design/START-REPORT.md`, never enters pipeline state |
-| `/gdd:new-project [--name]` | Initialize project — PROJECT.md + STATE.md + cycle-1 |
-| `/gdd:new-cycle [<goal>]` | Start new design cycle |
-| `/gdd:complete-cycle [<note>]` | Archive cycle to `.design/archive/cycle-N/` |
-| `/gdd:ship [--draft]` | Clean PR branch + `gh pr create` |
-
-### Standalone
+### First-Run + Onboarding
 
 | Command | What it does |
 |---------|--------------|
-| `/gdd:style [ComponentName]` | Generate component handoff doc |
-| `/gdd:darkmode` | Audit dark mode architecture + contrast |
-| `/gdd:compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md |
-| `/gdd:figma-write <mode>` | Write decisions back to Figma (annotate/tokenize/mappings) |
-| `/gdd:graphify <subcommand>` | Manage Graphify knowledge graph (build/query/status/diff) |
-| `/gdd:sketch [topic] [--variants N]` | Multi-variant HTML exploration |
-| `/gdd:spike [hypothesis] [--timebox]` | Timeboxed feasibility experiment |
-| `/gdd:sketch-wrap-up`, `/gdd:spike-wrap-up` | Distill winner + findings into project-local convention skills |
+| `/gdd:start` | First-run proof path — top-3 design issues in your repo (no `.design/` footprint until you opt in) |
+| `/gdd:new-project` | Initialize a GDD project (PROJECT.md + STATE.md + first cycle) |
+| `/gdd:connections` | Onboarding wizard for the 12 external integrations |
 
-### Audit & Self-Improvement
+### Cycle Lifecycle
 
 | Command | What it does |
 |---------|--------------|
-| `/gdd:audit [--retroactive] [--quick]` | Wraps verifier + auditor + reflector |
-| `/gdd:reflect [--dry-run] [--cycle]` | On-demand post-cycle reflection |
-| `/gdd:apply-reflections [--filter]` | Review + selectively apply reflection proposals |
-| `/gdd:optimize` | Emit cost-optimization recommendations from telemetry |
-| `/gdd:warm-cache` | Pre-warm common agent prompts for prompt cache |
+| `/gdd:new-cycle` | Open a new design cycle |
+| `/gdd:complete-cycle` | Archive cycle artifacts + write per-cycle EXPERIENCE.md |
+| `/gdd:pause` / `/gdd:resume` | Numbered checkpoints — pause mid-stage, resume from any saved checkpoint |
+| `/gdd:continue` | Alias for `/gdd:resume` (latest checkpoint) |
+| `/gdd:timeline` | Narrative retrospective across cycles + git log |
 
-### Knowledge Layer
-
-| Command | What it does |
-|---------|--------------|
-| `/gdd:analyze-dependencies [--slice]` | Token fan-out, component call-graph, decision traceability, circular dep detection |
-| `/gdd:extract-learnings [--cycle]` | Extract decisions, lessons, patterns, surprises → LEARNINGS.md |
-| `/gdd:skill-manifest [--refresh]` | Browse all registered skills + agents from intel store |
-
-### Execution speed
+### Iteration + Decisions
 
 | Command | What it does |
 |---------|--------------|
-| `/gdd:quick [--skip <agent>] [stage]` | Run pipeline skipping optional agents for speed |
-| `/gdd:fast <task>` | Trivial inline task — no subagents, no pipeline, no artifacts |
-| `/gdd:do <natural language>` | Natural-language router — parses intent, confirms, dispatches |
-| `/gdd:discuss [topic] [--all]` | Adaptive design interview — appends D-XX decisions to STATE.md |
+| `/gdd:discuss [topic]` | Adaptive design interview — `--all` for batch gray areas, `--spec` for ambiguity scoring |
+| `/gdd:list-assumptions` | Surface hidden design assumptions before planning |
+| `/gdd:sketch [idea]` | Multi-variant HTML mockup exploration — browser-openable directly |
+| `/gdd:spike [idea]` | Timeboxed feasibility experiment with hypothesis + verdict |
+| `/gdd:sketch-wrap-up` / `/gdd:spike-wrap-up` | Package findings into project-local skill |
+| `/gdd:audit` | Wraps `design-verifier` + `design-auditor` + `design-reflector`. `--retroactive` audits the full cycle |
+| `/gdd:reflect` | Run `design-reflector` on demand — produces `.design/reflections/<cycle-slug>.md` |
+| `/gdd:apply-reflections` | Review and selectively apply reflector proposals — diff before apply |
 
-### Idea capture
-
-| Command | What it does |
-|---------|--------------|
-| `/gdd:note <add\|list\|promote> [text]` | Zero-friction notes → NOTES.md |
-| `/gdd:plant-seed [--trigger] [text]` | Forward-looking idea with trigger condition |
-| `/gdd:add-backlog [text]` | Park an idea in backlog |
-| `/gdd:review-backlog` | Promote or archive parked items |
-| `/gdd:todo <add\|list\|pick>` | Design-scoped todo list |
-
-### Session
+### Memory + Knowledge Layer
 
 | Command | What it does |
 |---------|--------------|
-| `/gdd:pause [context]` | Write session handoff to `.design/HANDOFF.md` |
-| `/gdd:resume` | Restore context and route to next step |
-| `/gdd:progress [--forensic]` | Pipeline position + recommended next action |
-| `/gdd:health` | Artifact health report for `.design/` |
-| `/gdd:stats` | Cycle metrics — decisions, commits, todos |
-| `/gdd:help` | Full command list |
+| `/gdd:recall <query>` | FTS5-backed search across cycle archives, learnings, decisions, EXPERIENCE.md files |
+| `/gdd:extract-learnings` | Mine cycle artifacts for patterns + decisions + lessons |
+| `/gdd:note <text>` | Zero-friction idea capture — append, list, promote to todo |
+| `/gdd:plant-seed <idea>` | Forward-looking idea with trigger condition — surfaces at the right cycle |
+| `/gdd:analyze-dependencies` | Token fan-out, component call-graphs, decision traceability, circular dependency detection |
+| `/gdd:skill-manifest` | List all GDD skills + agents from the intel store |
+| `/gdd:graphify` | Build, query, inspect, diff the project knowledge graph |
+| `/gdd:watch-authorities` | Diff the design-authority feed whitelist + classify into 5 buckets |
 
-### Safety
-
-| Command | What it does |
-|---------|--------------|
-| `/gdd:undo [<sha>]` | Safe revert with dependency check |
-| `/gdd:pr-branch [<base>]` | Strip `.design/` + `.planning/` commits for clean code-review branch |
-| `/gdd:debug [<symptom>]` | Symptom-driven design investigation with persistent state |
-| `/gdd:list-assumptions [--area]` | Surface implicit design assumptions baked into the codebase |
-
-### Configuration
+### Connections
 
 | Command | What it does |
 |---------|--------------|
-| `/gdd:settings <profile\|parallelism\|cleanup\|show>` | Manage `.design/config.json` |
-| `/gdd:update [--dry-run]` | Update plugin to latest release |
-| `/gdd:reapply-patches [--dry-run]` | Reapply `reference/` customizations after an update |
+| `/gdd:figma-write` | Write design decisions back to Figma (annotate / tokenize / roundtrip) |
+| `/gdd:handoff <bundle>` | Import a Claude Design bundle and skip Stages 1–3 |
+| `/gdd:darkmode` | Audit dark-mode implementation (CSS custom props / Tailwind dark: / JS class toggle) |
+| `/gdd:compare` | Compute delta between DESIGN.md baseline and DESIGN-VERIFICATION.md result |
+| `/gdd:style <Component>` | Generate component handoff doc (DESIGN-STYLE-[Component].md) |
 
-Full command reference with argument specs: [`SKILL.md`](SKILL.md).
+### Diagnostic + Forensic
+
+| Command | What it does |
+|---------|--------------|
+| `/gdd:scan` | Codebase design-system inventory (no STATE.md write) |
+| `/gdd:map` | 5 parallel codebase mappers (tokens / components / a11y / motion / visual-hierarchy) |
+| `/gdd:debug [desc]` | Symptom-driven design investigation with persistent state |
+| `/gdd:health` | Reports `.design/` artifact health — staleness, missing files, token drift |
+| `/gdd:progress` | Show pipeline position; `--forensic` runs 6-check integrity audit |
+| `/gdd:stats` | Cycle stats — decisions made, tasks completed, commits, timeline, git metrics |
+| `/gdd:optimize` | Rule-based cost analysis + tier-override recommendations |
+| `/gdd:warm-cache` | Pre-warm Anthropic prompt cache across all agents that import shared-preamble |
+
+### Distribution + Update
+
+| Command | What it does |
+|---------|--------------|
+| `/gdd:update` | Update GDD with changelog preview |
+| `/gdd:reapply-patches` | Restitch local `reference/` modifications after structural updates |
+| `/gdd:check-update` | Manual update check — `--refresh` bypasses 24h TTL, `--dismiss` hides nudge |
+| `/gdd:settings` | Configure `.design/config.json` — profile / parallelism / cleanup |
+| `/gdd:set-profile <profile>` | Switch model profile (quality / balanced / budget / inherit) |
+| `/gdd:undo` | Safe design change revert — uses git log + dependency check |
+| `/gdd:pr-branch` | Create clean PR branch by filtering out `.design/` and `.planning/` commits |
+
+### Backlog + Notes
+
+| Command | What it does |
+|---------|--------------|
+| `/gdd:todo` | Add / list / pick design tasks |
+| `/gdd:add-backlog <idea>` | Park a design idea for a future cycle |
+| `/gdd:review-backlog` | Review parked items + promote to active cycle todo |
+
+### Help
+
+| Command | What it does |
+|---------|--------------|
+| `/gdd:help` | Full command list + usage |
+| `/gdd:bandit-reset` | Reset adaptive-layer posterior on Anthropic model release |
 
 ---
 
 ## Connections
 
-All connections are optional — the pipeline degrades gracefully when any connection is unavailable.
+GDD ships with 12 tool connections. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable. Configure with `/gdd:connections`.
 
-### Figma MCP (reads + writes)
+| Connection | Purpose | Probe |
+|------------|---------|-------|
+| **Figma** | Read tokens, components, screenshots; write annotations, Code Connect, implementation status | `mcp__figma__get_metadata` + `use_figma` |
+| **Refero** | Design reference search across catalogued sources | `mcp__refero__search` |
+| **Pinterest** | Visual reference grounding for brand-voice + style | OAuth + MCP |
+| **Claude Design** | Handoff bundle import (`/gdd:handoff`) — skip Stages 1–3 | URL or local file |
+| **Storybook** | Component-spec lookup at port 6006 | HTTP probe |
+| **Chromatic** | Visual regression baseline diff | API key |
+| **Preview** | Playwright + Claude Preview MCP runtime screenshots | `mcp__Claude_Preview__preview_*` |
+| **paper.design** | MCP canvas read/write for canvas → code → verify → canvas round-trip | `mcp__paper__use_paper` |
+| **pencil.dev** | Git-tracked `.pen` spec files (no MCP required) | `.pen` files in repo |
+| **Graphify** | Knowledge-graph export | `mcp__graphify__*` |
+| **21st.dev Magic** | Prior-art component search before greenfield builds | `mcp__magic__search` |
+| **Magic Patterns** | DS-aware component generation with `preview_url` | `mcp__magic-patterns__generate` |
 
-The pipeline auto-detects any Figma MCP variant — remote (reads + writes) or desktop (reads only). When active, `explore` reads Figma variables and pre-populates design decisions from your file, and `design-figma-writer` writes decisions back via `use_figma` — annotates frames, tokenizes local styles, registers Code Connect mappings. Proposal → confirm discipline with `--dry-run` and `--confirm-shared` guards. Falls back to code-only analysis when no Figma MCP is configured.
-
-**Preferred install (Claude Code plugin — bundles MCP + Figma's official skills):**
-
-```
-claude plugin install figma@claude-plugins-official
-```
-
-**Manual install (remote MCP — reads + writes):**
-
-```
-claude mcp add --transport http figma https://mcp.figma.com/mcp
-```
-
-**Desktop MCP (reads only):** optionally enabled via the Figma desktop app's Dev Mode. Useful when writes are not needed. Register under server name `figma-desktop` — the probe auto-detects it.
-
-Setup: [`connections/figma.md`](connections/figma.md). If you previously registered the remote MCP with the legacy URL `https://mcp.figma.com/v1/sse`, remove and re-add with the current URL `https://mcp.figma.com/mcp` (Streamable HTTP).
-
-> ⚠︎ **Authoring new Figma content?** `/gdd:figma-write` is a *decision-writer* (annotations, token bindings, Code Connect). For **creating pages, populating with library components, building doc layouts from scratch**, use `figma:figma-generate-design` from the Figma plugin — it runs outside the plugin sandbox. See [`reference/figma-sandbox.md`](reference/figma-sandbox.md) for the four sandbox pitfalls the MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) protects you from (defaults: 30 calls/task, 3 consecutive timeouts → break).
-
-### Refero MCP
-
-When Refero is active, `explore` pulls visual references to ground design decisions. Requires an API token in `~/.claude.json`:
-
-```json
-{
-  "mcpServers": {
-    "refero": {
-      "type": "http",
-      "url": "https://mcp.refero.design/mcp",
-      "headers": { "Authorization": "Bearer YOUR_REFERO_TOKEN" }
-    }
-  }
-}
-```
-
-Falls back to `~/.claude/libs/awesome-design-md/`. Setup: [`connections/refero.md`](connections/refero.md).
-
-### Pinterest MCP
-
-When the Pinterest MCP (`terryso/mcp-pinterest`) is active, `explore` pulls visual inspiration boards alongside Refero. ToolSearch-only probe — no API key required. Fallback chain: Pinterest → Refero → awesome-design-md. Setup: [`connections/pinterest.md`](connections/pinterest.md).
-
-### Preview (Playwright)
-
-When the Claude Preview MCP is active, `verify` runs live page screenshots on `? VISUAL` verification gaps, so the auditor grades actual rendered output rather than inferring from code. Setup: [`connections/preview.md`](connections/preview.md).
-
-### Storybook
-
-When Storybook is running on `localhost:6006`, `explore` pulls component inventory, `verify` runs per-story a11y passes, and `design` can generate `.stories.tsx` stubs. Setup: [`connections/storybook.md`](connections/storybook.md).
-
-### Chromatic
-
-When Chromatic CLI is available, `plan` uses `--trace-changed=expanded` for change-risk scoping and `verify` narrates visual regression deltas. Setup: [`connections/chromatic.md`](connections/chromatic.md).
-
-### Graphify
-
-When Graphify CLI is available, `plan` and `design-integration-checker` consult the component↔token↔decision knowledge graph before grep searches — dependency queries become O(1). Setup: [`connections/graphify.md`](connections/graphify.md).
-
-### Claude Design
-
-Drop a Claude Design bundle (HTML export from [claude.ai/design](https://claude.ai/design)) into your project root and run `/gdd:handoff <path>`. The pipeline skips Explore → Plan, parses the bundle CSS custom properties into D-XX design decisions, runs `verify --post-handoff` for Handoff Faithfulness scoring, and optionally writes implementation status back to Figma. Full format: [`connections/claude-design.md`](connections/claude-design.md).
-
-### paper.design
-
-When the paper.design MCP is active, `explore` reads the canvas selection (JSX tree, computed styles) into `DESIGN-CONTEXT.md`, `design` writes annotations and token bindings back to the canvas, and `verify` captures component screenshots for visual checks. Setup: [`connections/paper-design.md`](connections/paper-design.md).
-
-```bash
-claude mcp add paper-design --transport http https://mcp.paper.design/sse
-```
-
-### pencil.dev
-
-No MCP required. Add `.pen` YAML files to your project and install the pencil.dev VS Code / Cursor extension. `explore` discovers and merges `.pen` token declarations; `design` writes DESIGN-DEBT findings back as spec updates; `verify` diffs declared token values against actual CSS. Setup: [`connections/pencil-dev.md`](connections/pencil-dev.md).
-
-### 21st.dev Magic MCP
-
-When active, `explore` runs a prior-art gate (`21st_magic_component_search`) before any greenfield component build — if an existing component fits ≥80%, adoption is recommended. `design` generates components via search → generate → adopt. Also provides `svgl_get_brand_logo` for brand SVGs. Setup: [`connections/21st-dev.md`](connections/21st-dev.md).
-
-```bash
-npx @21st-dev/magic@latest init
-```
-
-### Magic Patterns
-
-When the Magic Patterns connector is active (via Claude environment or API key), `design` generates DS-aware components and feeds the `preview_url` into visual verification. Setup: [`connections/magic-patterns.md`](connections/magic-patterns.md).
+For full connection details and probe patterns, see [`connections/connections.md`](connections/connections.md).
 
 ---
 
 ## Configuration
 
-GDD stores project settings in `.design/config.json`. Configure via `/gdd:settings` or edit directly.
+GDD stores project settings in `.design/config.json`. Configure during `/gdd:new-project` or update with `/gdd:settings`.
 
-### Core
+### Model Profiles
 
-| Setting | Options | Default | What it controls |
-|---------|---------|---------|------------------|
-| `mode` | `yolo`, `interactive` | `interactive` | Auto-approve vs confirm at each step |
-| `profile` | `quality`, `balanced`, `budget`, `inherit` | `balanced` | Model tier policy (see below) |
-| `parallelism` | `aggressive`, `conservative`, `off` | `conservative` | Wave parallelism for `design` stage |
-
-### Model profiles
-
-Each agent carries a `default-tier: haiku|sonnet|opus` in frontmatter. The active profile + `tier_overrides` in `budget.json` determine actual tier per spawn.
+Control which Claude model each agent uses. Balance quality vs token spend.
 
 | Profile | Planning | Execution | Verification |
 |---------|----------|-----------|--------------|
@@ -877,178 +570,136 @@ Each agent carries a `default-tier: haiku|sonnet|opus` in frontmatter. The activ
 | `budget` | Sonnet | Sonnet | Haiku |
 | `inherit` | Inherit | Inherit | Inherit |
 
-Use `inherit` when using non-Anthropic providers or to follow the current runtime model selection.
+Switch profiles:
 
-### Budget + optimization
+```
+/gdd:set-profile budget
+```
 
-`.design/budget.json` controls the cost layer:
+Use `inherit` when using non-Anthropic providers or to follow the runtime's current model selection.
+
+### Adaptive Mode
+
+`.design/budget.json#adaptive_mode` ladder (v1.23.5):
+
+| Mode | What it does |
+|------|--------------|
+| `static` (default) | Phase 10.1 behavior — static D-13 tier map |
+| `hedge` | AdaNormalHedge ensemble + MMR rerank engaged. Bandit router still reads static map. Safest intro. |
+| `full` | Bandit router + Hedge + MMR all active, reading/writing `.design/telemetry/posterior.json` |
+
+### Parallelism
+
+| Setting | Default | What it controls |
+|---------|---------|------------------|
+| `parallelism.enabled` | `true` | Run independent tasks in worktrees |
+| `parallelism.min_estimated_savings_seconds` | `30` | Skip parallelization below this threshold |
+| `parallelism.max_concurrent_workers` | `4` | Hard cap on simultaneous worktrees |
+
+### Quality Gates
+
+| Setting | Default | What it controls |
+|---------|---------|------------------|
+| `solidify.rollback_mode` | `"stash"` | `stash` / `hard` / `none` — how to revert on validation failure |
+| `solidify.commands` | autodetect | Override typecheck / build / test commands |
+| `verify.iterations_max` | `3` | Cap on verify→fix loop iterations |
+| `connection.figma_writeback` | `proposal` | `proposal` / `auto` — confirm before writing |
+
+---
+
+## Security
+
+### Built-in Hardening
+
+GDD ships defense-in-depth security since Phase 14.5:
+
+- **`hooks/gdd-bash-guard.js`** — PreToolUse:Bash blocks ~50 dangerous patterns (`rm -rf /`, `chmod 777`, `curl | sh`, `git reset --hard`, fork bombs) after Unicode NFKC + ANSI normalization.
+- **`hooks/gdd-protected-paths.js`** — PreToolUse:Edit/Write/Bash enforces `protected_paths` glob list (defaults: `reference/**`, `.design/archive/**`, `skills/**`, `commands/**`, `hooks/**`, `.design/config.json`, `.design/telemetry/**`).
+- **`hooks/gdd-read-injection-scanner.ts`** — scans inbound Read content for invisible-Unicode (zero-width, word-joiner, BOM, bidi overrides) + HTML-comment + secret-exfil patterns.
+- **`scripts/lib/blast-radius.cjs`** — `design-executor` preflight refuses tasks above `max_files_per_task: 10` / `max_lines_per_task: 400`.
+- **`hooks/gdd-mcp-circuit-breaker.js`** — breaks consecutive-timeout loops on `use_figma` / `use_paper` / `use_pencil`.
+
+### Protecting Sensitive Files
+
+Add sensitive paths to your runtime's deny list:
 
 ```json
 {
-  "per_task_cap_usd": 2.00,
-  "per_phase_cap_usd": 20.00,
-  "tier_overrides": {
-    "design-planner": "opus",
-    "design-verifier": "haiku"
-  },
-  "auto_downgrade_on_cap": true,
-  "cache_ttl_seconds": 3600,
-  "enforcement_mode": "enforce"
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/secrets/*)",
+      "Read(**/*credential*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)"
+    ]
+  }
 }
 ```
 
-`enforcement_mode`: `enforce` (hard-block on cap breach) | `warn` (warn + continue) | `log` (silent log). Use `log` during adoption to observe the hook's decisions without blocking.
-
-Full schema: [`reference/config-schema.md`](reference/config-schema.md).
-
----
-
-## Knowledge Layer
-
-The knowledge layer gives the pipeline persistent memory and O(1) lookups across all design surface files.
-
-### Intel store (`.design/intel/`)
-
-Ten queryable JSON slices that index the design surface:
-
-| Slice | Contents |
-|-------|----------|
-| `files.json` | All tracked files with mtime + git hash |
-| `exports.json` | Named exports: skill commands + agent names |
-| `symbols.json` | Markdown headings + section anchors |
-| `tokens.json` | Design token references (color, spacing, typography, radius) |
-| `components.json` | Component names + referencing files |
-| `patterns.json` | Design pattern classifications by concern |
-| `dependencies.json` | @-reference and reads-from relationships |
-| `decisions.json` | Architectural decisions from DESIGN-CONTEXT.md |
-| `debt.json` | Design debt items from DESIGN-DEBT.md |
-| `graph.json` | Cross-reference graph: nodes + edges |
-
-Build the intel store:
-
-```bash
-node scripts/build-intel.cjs --force
-```
-
-Incremental updates fire automatically via the `gdd-intel-updater` agent after file edits.
-
-### Context exhaustion hook
-
-`hooks/context-exhaustion.js` auto-records a `<paused>` resumption block in `.design/STATE.md` when session context reaches 85%. Run `/gdd:resume` in the next session to restore context.
-
----
-
-## Optimization Layer
-
-Every `/gdd:*` command and agent spawn passes through a cross-cutting optimization layer designed to reduce token cost without regressing on design quality.
-
-- **`gdd-router` skill** — First-step intent router. Returns the right execution path (`fast|quick|full`) with model-tier overrides and a cache-hit check before any downstream spawn.
-- **`gdd-cache-manager` skill + `/gdd:warm-cache`** — Pre-warms common agent system prompts so Anthropic's 5-minute prompt cache fires on the shared preamble across a session.
-- **`budget-enforcer` PreToolUse hook** — Intercepts every `Agent` spawn. Hard-blocks on cap breach, auto-downgrades at the soft threshold, short-circuits on cache hit.
-- **Lazy checker gates** — Cheap Haiku heuristic decides whether to spawn the expensive full checker for each verification stage.
-- **Streaming synthesizer** — Parallel-mapper outputs collapse through a single Haiku call before returning to main context, keeping the orchestrator cache-aligned.
-- **Cost telemetry** — `.design/telemetry/costs.jsonl` records every spawn decision. Aggregated to `.design/agent-metrics.json` and consumed by `/gdd:optimize` and `design-reflector`.
-
----
-
-## Testing & CI
-
-GDD ships with a locked test suite. Every push and PR runs a five-job pipeline across a cross-platform matrix — Node 22/24 × Linux/macOS/Windows.
-
-### Run tests locally
-
-```bash
-npm test
-```
-
-Zero third-party test dependencies — the runner is Node's built-in `node:test` + `node:assert/strict`.
-
-### CI pipeline
-
-```
-lint → validate → test (matrix) → security + size-budget
-```
-
-- **Lint** — markdownlint + blocking link checker
-- **Validate** — JSON schema validation, agent frontmatter validator, stale-ref detector, `claude plugin validate .`
-- **Test** — Node 22/24 × Linux/macOS/Windows, fail-fast disabled
-- **Security** — shellcheck on `scripts/`, secrets scan, injection scanner over all shipped skills/agents
-- **Size-budget** — Blocking tier enforcement (XXL: 700, XL: 500, Large: 300, Default: 200 lines)
-
-### Release automation
-
-`.github/workflows/release.yml` auto-tags and publishes a GitHub Release when `.claude-plugin/plugin.json` version changes. Release body is extracted from the matching `CHANGELOG.md` section.
-
-Every PR must pass `npm test` before merging to `main`. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the re-lock procedure when baselines change.
-
----
-
-## What ships with the plugin
-
-- `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` — manifest
-- `SKILL.md` — root pipeline router
-- `skills/` — 55 stage + standalone skills
-- `agents/` — 33 specialized agent specs
-- `connections/` — 12 connection specs
-- `reference/` — curated design reference (shared preamble, model tiers, model prices, schemas, DEPRECATIONS, config schema)
-- `hooks/`, `scripts/bootstrap.sh`
-
----
-
-## Develop locally
-
-```bash
-git clone https://github.com/hegemonart/get-design-done.git
-cd get-design-done
-npm ci
-npm test
-claude --plugin-dir ./
-```
-
-From inside Claude Code:
-
-```
-/reload-plugins
-claude plugin validate .
-```
-
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch strategy, PR checklist, required checks, and baseline re-lock procedure.
+> [!IMPORTANT]
+> Because GDD generates markdown files that become LLM system prompts, any user-controlled text flowing into `.design/` artifacts is a potential indirect prompt-injection vector. The injection scanner catches such vectors at multiple layers — but defense-in-depth is best practice.
 
 ---
 
 ## Troubleshooting
 
 **Commands not found after install?**
-- Restart Claude Code to reload commands/skills
-- Verify files exist in `~/.claude/plugins/marketplaces/hegemonart/get-design-done/` or the npm install path
-- Run `/gdd:help` to list registered commands
+- Restart your runtime to reload commands/skills
+- Verify files exist at `~/.claude/skills/get-design-done/` for global Claude Code installs
+- For local installs, verify `./.claude/skills/get-design-done/`
+- Run `/gdd:help` to confirm registration
 
-**Pipeline stuck or artifacts missing?**
-```
-/gdd:health
-/gdd:progress --forensic
-```
-The forensic mode runs a 6-check integrity audit — stale artifacts, dangling decisions, unfinished handoffs, orphan cycles, schema drift, injection-scanner warnings.
+**Pipeline stuck mid-stage?**
+- `/gdd:resume` — restore from the most recent numbered checkpoint
+- `/gdd:health` — diagnose `.design/` artifact issues
+- `/gdd:progress --forensic` — 6-check integrity audit
 
-**Want to see what the router and budget-enforcer are doing?**
-Set `enforcement_mode: "log"` in `.design/budget.json` — the hook writes every decision to `.design/telemetry/costs.jsonl` without blocking.
+**Cost overruns?**
+- `/gdd:optimize` — rule-based recommendations
+- `/gdd:set-profile budget` — switch to budget tier
+- Set `adaptive_mode: "full"` in `.design/budget.json` — bandit will learn cheap-and-correct tier per agent over 5–10 cycles
 
 **Updating to the latest version?**
-See [Staying Updated](#staying-updated). Short version: `npx @hegemonart/get-design-done@latest` or `/gdd:update`.
-
-### Uninstall
-
 ```bash
-claude plugin uninstall get-design-done@get-design-done
+npx @hegemonart/get-design-done@latest
 ```
 
-To reverse the `npx` installer, remove the two keys it wrote — either by hand or with a one-liner:
+**Using Docker / containers?**
 
 ```bash
-node -e "const f=require('os').homedir()+'/.claude/settings.json';const j=require(f);delete j.extraKnownMarketplaces?.['get-design-done'];delete j.enabledPlugins?.['get-design-done@get-design-done'];require('fs').writeFileSync(f,JSON.stringify(j,null,2))"
+CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done
 ```
 
-This removes all GDD skills, agents, hooks, and registration while preserving your other configurations and your `.design/` project artifacts.
+### Uninstalling
+
+```bash
+# Global installs (per-runtime)
+npx @hegemonart/get-design-done --claude --global --uninstall
+npx @hegemonart/get-design-done --opencode --global --uninstall
+npx @hegemonart/get-design-done --gemini --global --uninstall
+npx @hegemonart/get-design-done --kilo --global --uninstall
+npx @hegemonart/get-design-done --codex --global --uninstall
+npx @hegemonart/get-design-done --copilot --global --uninstall
+npx @hegemonart/get-design-done --cursor --global --uninstall
+npx @hegemonart/get-design-done --windsurf --global --uninstall
+npx @hegemonart/get-design-done --antigravity --global --uninstall
+npx @hegemonart/get-design-done --augment --global --uninstall
+npx @hegemonart/get-design-done --trae --global --uninstall
+npx @hegemonart/get-design-done --qwen --global --uninstall
+npx @hegemonart/get-design-done --codebuddy --global --uninstall
+npx @hegemonart/get-design-done --cline --global --uninstall
+
+# Multi-select interactive uninstall (no runtime flag)
+npx @hegemonart/get-design-done --uninstall
+
+# Local installs (current project)
+npx @hegemonart/get-design-done --claude --local --uninstall
+# ... same flags as above with --local
+```
+
+This removes all GDD commands, agents, hooks, and settings while preserving other configurations.
 
 ---
 
@@ -1060,6 +711,6 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 <div align="center">
 
-**Claude Code is powerful. Get Design Done makes it ship design.**
+**Claude Code ships code. Get Design Done makes sure it ships design.**
 
 </div>
