@@ -80,6 +80,26 @@ const iterationBudget = nodeRequire('../scripts/lib/iteration-budget.cjs') as ty
  * for every hook invocation. The tool_input shape is tool-specific;
  * this hook only consumes Agent-shaped tool_input so we narrow here.
  */
+/** Phase 25 / D-04, D-05: router complexity-class enum. */
+export type ComplexityClass = 'S' | 'M' | 'L' | 'XL';
+
+/**
+ * Phase 25 / D-05: router decision payload as surfaced on
+ * tool_input.context.router_decision. Only the fields this hook reads
+ * are typed; the router emits more (model_tier_overrides,
+ * estimated_cost_usd, cache_hits) but they are not consumed here.
+ */
+interface RouterDecision {
+  path?: 'fast' | 'quick' | 'full';
+  complexity_class?: ComplexityClass;
+  [key: string]: unknown;
+}
+
+interface ToolInputContext {
+  router_decision?: RouterDecision;
+  [key: string]: unknown;
+}
+
 interface ToolInput {
   subagent_type?: string;
   agent?: string;
@@ -91,6 +111,7 @@ interface ToolInput {
   _default_tier?: string;
   _tier_downgraded?: boolean;
   lazy_skipped?: boolean;
+  context?: ToolInputContext;
   [key: string]: unknown;
 }
 
@@ -198,6 +219,46 @@ const BUDGET_DEFAULTS: Required<
   cache_ttl_seconds: 3600,
   enforcement_mode: 'enforce',
 };
+
+/**
+ * Phase 25 / D-05: optional per-class cap map on .design/budget.json.
+ * Documented in reference/config-schema.md as `class_caps_usd?: { S?: number; M?: number; L?: number; XL?: number }`.
+ * Read through the BudgetSchema index signature so we don't have to
+ * regenerate the schema for an additive optional field.
+ */
+type ClassCapsUsd = Partial<Record<ComplexityClass, number>>;
+
+function readClassCaps(budget: BudgetSchema): ClassCapsUsd | undefined {
+  const raw = (budget as { class_caps_usd?: unknown }).class_caps_usd;
+  if (raw === undefined || raw === null || typeof raw !== 'object') {
+    return undefined;
+  }
+  const out: ClassCapsUsd = {};
+  for (const k of ['S', 'M', 'L', 'XL'] as const) {
+    const v = (raw as Record<string, unknown>)[k];
+    if (typeof v === 'number' && Number.isFinite(v) && v > 0) {
+      out[k] = v;
+    }
+  }
+  return out;
+}
+
+/**
+ * Phase 25 / D-05: resolve the per-spawn cap. If the router decision
+ * payload contains a `complexity_class` AND `.design/budget.json#class_caps_usd[class]`
+ * is defined, use that. Otherwise fall back to `per_task_cap_usd`.
+ */
+function resolvePerSpawnCap(
+  budget: ResolvedBudget,
+  complexityClass: ComplexityClass | undefined,
+): number {
+  if (complexityClass !== undefined) {
+    const caps = readClassCaps(budget);
+    const classCap = caps?.[complexityClass];
+    if (classCap !== undefined) return classCap;
+  }
+  return budget.per_task_cap_usd;
+}
 
 /**
  * Concrete budget shape after defaults-merge. Every field becomes
@@ -490,6 +551,27 @@ export async function main(): Promise<void> {
   const inputHash =
     typeof toolInput._input_hash === 'string' ? toolInput._input_hash : null;
 
+  // Phase 25 / D-05: extract complexity_class from router decision.
+  // Absent payload → legacy per_task_cap behavior (no regression).
+  // Present payload with class === 'S' → skip enforcement entirely
+  // (defensive: the typical S path is upstream short-circuit where
+  // router never ran and this hook still applies legacy caps; an
+  // explicit S signal here means a caller bypassed the upstream skip
+  // and is asking us to honor the class).
+  const routerDecision: RouterDecision | undefined =
+    toolInput.context?.router_decision !== undefined &&
+    typeof toolInput.context.router_decision === 'object' &&
+    toolInput.context.router_decision !== null
+      ? toolInput.context.router_decision
+      : undefined;
+  const complexityClass: ComplexityClass | undefined =
+    routerDecision?.complexity_class !== undefined &&
+    (['S', 'M', 'L', 'XL'] as const).includes(
+      routerDecision.complexity_class as ComplexityClass,
+    )
+      ? (routerDecision.complexity_class as ComplexityClass)
+      : undefined;
+
   const { cycle, phase } = readCycleAndPhase();
   const cyclePhase = { cycle, phase };
 
@@ -512,6 +594,38 @@ export async function main(): Promise<void> {
   }
 
   const budget = loadBudget();
+
+  // Phase 25 / D-05: explicit S-class short-circuit. The typical S path
+  // skips the router entirely and this hook never runs at all (the
+  // command's SKILL.md does the deterministic skip upstream). When we
+  // DO see complexity_class === 'S' in the payload it means a caller
+  // routed an S-class command through the hook anyway — honor the
+  // class by skipping enforcement (no cap check, no downgrade) but
+  // still write a zero-cost telemetry row + emit an 'allow' event so
+  // observability stays consistent.
+  if (complexityClass === 'S') {
+    writeTelemetry({
+      agent,
+      tier:
+        toolInput._tier_override ??
+        toolInput._default_tier ??
+        'haiku',
+      tokens_in: Number(toolInput._tokens_in_est ?? 0),
+      tokens_out: Number(toolInput._tokens_out_est ?? 0),
+      cache_hit: false,
+      est_cost_usd: Number(toolInput._est_cost_usd ?? 0),
+      enforcement_mode: budget.enforcement_mode,
+      _cyclePhase: cyclePhase,
+    });
+    emitHookFired('allow', cycle);
+    const response: ToolOutput = {
+      continue: true,
+      suppressOutput: true,
+      modified_tool_input: toolInput,
+    };
+    process.stdout.write(JSON.stringify(response));
+    return;
+  }
 
   // Branch B: cache short-circuit (D-05).
   if (inputHash !== null) {
@@ -589,9 +703,15 @@ export async function main(): Promise<void> {
   const estCost = Number(toolInput._est_cost_usd ?? 0);
   const phaseSpend = currentPhaseSpend(phase);
 
+  // Phase 25 / D-05: per-spawn cap is class-specific when
+  // complexity_class is present and class_caps_usd[class] is defined.
+  // Falls back to per_task_cap_usd for backwards compatibility — when
+  // no router decision is supplied, behavior is identical to pre-25.
+  const perSpawnCap = resolvePerSpawnCap(budget, complexityClass);
+
   if (budget.enforcement_mode === 'enforce') {
-    // Branch C: 100% per_task cap hard block.
-    if (estCost >= budget.per_task_cap_usd) {
+    // Branch C: 100% per-spawn cap hard block (class-specific or per_task).
+    if (estCost >= perSpawnCap) {
       writeTelemetry({
         agent,
         tier:
@@ -607,10 +727,14 @@ export async function main(): Promise<void> {
         _cyclePhase: cyclePhase,
       });
       emitHookFired('block', cycle);
+      const capLabel =
+        complexityClass !== undefined && perSpawnCap !== budget.per_task_cap_usd
+          ? `class_caps_usd.${complexityClass}`
+          : 'per-task';
       const response: ToolOutput = {
         continue: false,
         suppressOutput: false,
-        message: `Budget cap reached for per-task. Estimated: $${estCost.toFixed(4)}, cap: $${budget.per_task_cap_usd.toFixed(2)}. Raise cap in .design/budget.json or retry after next task.`,
+        message: `Budget cap reached for ${capLabel}. Estimated: $${estCost.toFixed(4)}, cap: $${perSpawnCap.toFixed(2)}. Raise cap in .design/budget.json or retry after next task.`,
       };
       process.stdout.write(JSON.stringify(response));
       return;
@@ -640,18 +764,19 @@ export async function main(): Promise<void> {
       process.stdout.write(JSON.stringify(response));
       return;
     }
-    // 80% soft-threshold downgrade (D-03): task-scoped.
+    // 80% soft-threshold downgrade (D-03): task-scoped, against the
+    // resolved per-spawn cap so class-specific caps participate.
     if (
       budget.auto_downgrade_on_cap &&
-      estCost >= 0.8 * budget.per_task_cap_usd
+      estCost >= 0.8 * perSpawnCap
     ) {
       toolInput._tier_override = 'haiku';
       toolInput._tier_downgraded = true;
     }
   } else if (budget.enforcement_mode === 'warn') {
-    if (estCost >= budget.per_task_cap_usd) {
+    if (estCost >= perSpawnCap) {
       process.stderr.write(
-        `gdd-budget-enforcer WARN: per-task cap will be exceeded ($${estCost.toFixed(4)} >= $${budget.per_task_cap_usd})\n`,
+        `gdd-budget-enforcer WARN: per-spawn cap will be exceeded ($${estCost.toFixed(4)} >= $${perSpawnCap})\n`,
       );
     }
   }

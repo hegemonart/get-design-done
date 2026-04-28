@@ -179,6 +179,36 @@ TTL driving `.design/cache-manifest.json` entry expiry per D-08 Layer B.
 
 `enforce | warn | log` per D-11. `enforce` (default) is D-02 behavior; `warn` prints warnings but allows spawn; `log` is advisory-only (useful for adoption on existing projects mid-flight).
 
+### `class_caps_usd` (Phase 25 / D-05, optional)
+
+Optional per-class per-spawn cap map. Lets you set tighter caps for trivial commands and looser caps for autonomous flows independently. Read by `hooks/budget-enforcer.ts` when the router decision payload (`tool_input.context.router_decision.complexity_class`) is present. Falls back to `per_task_cap_usd` when the field is absent OR no router decision is supplied (full back-compat with pre-Phase-25 callers).
+
+```json
+{
+  "class_caps_usd": {
+    "S": 0.05,
+    "M": 0.50,
+    "L": 1.50,
+    "XL": 5.00
+  }
+}
+```
+
+Schema:
+
+```ts
+class_caps_usd?: { S?: number; M?: number; L?: number; XL?: number }
+```
+
+Resolution order for the per-spawn cap:
+
+1. If `complexity_class` is in `tool_input.context.router_decision` AND `class_caps_usd[class]` is a positive finite number → use it.
+2. Otherwise → use `per_task_cap_usd`.
+
+Class `S` is special: when `complexity_class === "S"` is supplied to the hook, enforcement is skipped entirely (no cap check, no auto-downgrade) — class-S commands typically short-circuit the router upstream so this hook never runs at all; the explicit S handling is the defensive path. See `skills/router/SKILL.md` for the canonical `S → fast (short-circuited)`, `M → fast`, `L → quick`, `XL → full` mapping.
+
+`per_phase_cap_usd` is unchanged by this field — phase-cumulative enforcement always uses the global per-phase cap regardless of class.
+
 ## Bootstrap behavior
 
 If `.design/budget.json` is missing when any `/gdd:*` command runs, `scripts/bootstrap.sh` writes the Default Config values (per D-12). Don't block the spawn — defaults are sensible.
