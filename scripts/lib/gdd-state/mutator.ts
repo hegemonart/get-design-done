@@ -29,6 +29,10 @@ import {
   type MustHave,
   type ParsedState,
   type Position,
+  type PrototypingBlock,
+  type SketchEntry,
+  type SkippedEntry,
+  type SpikeEntry,
 } from './types.ts';
 
 /**
@@ -250,6 +254,8 @@ function emitBlock(
       return emitDecisions(state.decisions, rawBody);
     case 'must_haves':
       return emitMustHaves(state.must_haves, rawBody);
+    case 'prototyping':
+      return emitPrototyping(state.prototyping, rawBody);
     case 'connections':
       return emitConnections(state.connections, rawBody);
     case 'blockers':
@@ -340,6 +346,101 @@ function emitBlockers(blockers: Blocker[], rawBody: string | null): string {
   return blockers.map((b) => `[${b.stage}] [${b.date}]: ${b.text}`).join('\n');
 }
 
+/**
+ * Emit the body of a `<prototyping>` block (Phase 25 Plan 25-01).
+ *
+ * Returns `null` when the block should be omitted entirely — i.e. the
+ * parsed state has `prototyping === null` AND no raw body is on file.
+ * That signal short-circuits `emitBlock` so we don't litter the output
+ * with empty `<prototyping></prototyping>` pairs on fresh files.
+ *
+ * Fidelity rule (matches the other blocks): when `rawBody` round-trips
+ * through `tryReparsePrototyping` and matches the current value
+ * structurally, emit the raw body verbatim. Otherwise canonicalize.
+ */
+function emitPrototyping(
+  block: PrototypingBlock | null,
+  rawBody: string | null,
+): string | null {
+  if (block === null && rawBody === null) return null;
+  if (block === null) {
+    // Block was present in source but state set it to null — caller wants
+    // to drop the block. Still return null so emitBlock skips emission.
+    return null;
+  }
+  if (rawBody !== null) {
+    const reparsed = tryReparsePrototyping(rawBody);
+    if (reparsed !== null && prototypingEqual(reparsed, block)) {
+      return rawBody;
+    }
+  }
+  return canonicalPrototyping(block);
+}
+
+function canonicalPrototyping(block: PrototypingBlock): string {
+  const lines: string[] = [];
+  for (const s of block.sketches) {
+    lines.push(canonicalSketch(s));
+  }
+  for (const sp of block.spikes) {
+    lines.push(canonicalSpike(sp));
+  }
+  for (const sk of block.skipped) {
+    lines.push(canonicalSkipped(sk));
+  }
+  return lines.join('\n');
+}
+
+function canonicalSketch(s: SketchEntry): string {
+  const parts: string[] = [
+    `slug=${formatPrototypingAttr(s.slug)}`,
+    `cycle=${formatPrototypingAttr(s.cycle)}`,
+    `decision=${formatPrototypingAttr(s.decision)}`,
+    `status=${formatPrototypingAttr(s.status)}`,
+  ];
+  for (const [k, v] of Object.entries(s.extra_attrs)) {
+    parts.push(`${k}=${formatPrototypingAttr(v)}`);
+  }
+  return `<sketch ${parts.join(' ')}/>`;
+}
+
+function canonicalSpike(s: SpikeEntry): string {
+  const parts: string[] = [
+    `slug=${formatPrototypingAttr(s.slug)}`,
+    `cycle=${formatPrototypingAttr(s.cycle)}`,
+    `decision=${formatPrototypingAttr(s.decision)}`,
+    `verdict=${formatPrototypingAttr(s.verdict)}`,
+    `status=${formatPrototypingAttr(s.status)}`,
+  ];
+  for (const [k, v] of Object.entries(s.extra_attrs)) {
+    parts.push(`${k}=${formatPrototypingAttr(v)}`);
+  }
+  return `<spike ${parts.join(' ')}/>`;
+}
+
+function canonicalSkipped(s: SkippedEntry): string {
+  const parts: string[] = [
+    `at=${formatPrototypingAttr(s.at)}`,
+    `cycle=${formatPrototypingAttr(s.cycle)}`,
+    `reason=${formatPrototypingAttr(s.reason)}`,
+  ];
+  for (const [k, v] of Object.entries(s.extra_attrs)) {
+    parts.push(`${k}=${formatPrototypingAttr(v)}`);
+  }
+  return `<skipped ${parts.join(' ')}/>`;
+}
+
+/**
+ * Format an attribute value for emission. We always quote with double
+ * quotes for canonical output: this avoids ambiguity on values containing
+ * whitespace, equal signs, or solidus. Embedded `"` are escaped to `&quot;`
+ * which is what the parser already strips when re-reading. Empty strings
+ * are emitted as `""` (the parser tolerates them).
+ */
+function formatPrototypingAttr(v: string): string {
+  return `"${v.replace(/"/g, '&quot;')}"`;
+}
+
 function emitTimestamps(
   ts: Record<string, string>,
   rawBody: string | null,
@@ -411,6 +512,70 @@ function blockersEqual(a: Blocker[], b: Blocker[]): boolean {
     const y = b[i];
     if (x === undefined || y === undefined) return false;
     if (x.stage !== y.stage || x.date !== y.date || x.text !== y.text) return false;
+  }
+  return true;
+}
+
+function prototypingEqual(
+  a: PrototypingBlock,
+  b: PrototypingBlock,
+): boolean {
+  if (a.sketches.length !== b.sketches.length) return false;
+  if (a.spikes.length !== b.spikes.length) return false;
+  if (a.skipped.length !== b.skipped.length) return false;
+  for (let i = 0; i < a.sketches.length; i++) {
+    if (!sketchEqual(a.sketches[i]!, b.sketches[i]!)) return false;
+  }
+  for (let i = 0; i < a.spikes.length; i++) {
+    if (!spikeEqual(a.spikes[i]!, b.spikes[i]!)) return false;
+  }
+  for (let i = 0; i < a.skipped.length; i++) {
+    if (!skippedEqual(a.skipped[i]!, b.skipped[i]!)) return false;
+  }
+  return true;
+}
+
+function sketchEqual(a: SketchEntry, b: SketchEntry): boolean {
+  return (
+    a.slug === b.slug &&
+    a.cycle === b.cycle &&
+    a.decision === b.decision &&
+    a.status === b.status &&
+    extraAttrsEqual(a.extra_attrs, b.extra_attrs)
+  );
+}
+
+function spikeEqual(a: SpikeEntry, b: SpikeEntry): boolean {
+  return (
+    a.slug === b.slug &&
+    a.cycle === b.cycle &&
+    a.decision === b.decision &&
+    a.verdict === b.verdict &&
+    a.status === b.status &&
+    extraAttrsEqual(a.extra_attrs, b.extra_attrs)
+  );
+}
+
+function skippedEqual(a: SkippedEntry, b: SkippedEntry): boolean {
+  return (
+    a.at === b.at &&
+    a.cycle === b.cycle &&
+    a.reason === b.reason &&
+    extraAttrsEqual(a.extra_attrs, b.extra_attrs)
+  );
+}
+
+function extraAttrsEqual(
+  a: Record<string, string>,
+  b: Record<string, string>,
+): boolean {
+  const ak = Object.keys(a);
+  const bk = Object.keys(b);
+  if (ak.length !== bk.length) return false;
+  for (let i = 0; i < ak.length; i++) {
+    if (ak[i] !== bk[i]) return false;
+    const key = ak[i]!;
+    if (a[key] !== b[key]) return false;
   }
   return true;
 }
@@ -551,6 +716,140 @@ function tryReparseBlockers(raw: string): Blocker[] | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Reparse a `<prototyping>` body for fidelity comparison. Mirrors the
+ * shape of `parsePrototypingBody` in parser.ts but is intentionally
+ * separate (and tolerant) — returns `null` on any structural surprise so
+ * the caller falls back to canonical emission rather than throwing.
+ *
+ * Unlike the parser, this helper does NOT throw on missing required
+ * attributes. If the source body has been hand-edited into something the
+ * parser would reject, we treat it as "definitely changed" and return
+ * `null` so the canonical writer takes over.
+ */
+function tryReparsePrototyping(raw: string): PrototypingBlock | null {
+  try {
+    const sketches: SketchEntry[] = [];
+    const spikes: SpikeEntry[] = [];
+    const skipped: SkippedEntry[] = [];
+    const selfClose = /^<([a-z_]+)(\s+[^>]*?)?\s*\/>\s*$/;
+    for (const line of raw.split('\n')) {
+      const t = line.trim();
+      if (t === '' || t.startsWith('<!--')) continue;
+      const m = t.match(selfClose);
+      if (!m) {
+        // Anything non-comment that isn't a self-closing tag means the
+        // raw body is no longer a clean match for the parsed value.
+        return null;
+      }
+      const tag = m[1] ?? '';
+      const attrs = parseAttrInline(m[2] ?? '');
+      if (tag === 'sketch') {
+        const slug = attrs['slug'];
+        const cycle = attrs['cycle'];
+        const decision = attrs['decision'];
+        const status = attrs['status'] ?? 'resolved';
+        if (slug === undefined || cycle === undefined || decision === undefined) {
+          return null;
+        }
+        if (status !== 'resolved') return null;
+        sketches.push({
+          slug,
+          cycle,
+          decision,
+          status: 'resolved',
+          extra_attrs: extractExtras(attrs, [
+            'slug',
+            'cycle',
+            'decision',
+            'status',
+          ]),
+        });
+      } else if (tag === 'spike') {
+        const slug = attrs['slug'];
+        const cycle = attrs['cycle'];
+        const decision = attrs['decision'];
+        const verdict = attrs['verdict'];
+        const status = attrs['status'] ?? 'resolved';
+        if (
+          slug === undefined ||
+          cycle === undefined ||
+          decision === undefined ||
+          verdict === undefined
+        ) {
+          return null;
+        }
+        if (verdict !== 'yes' && verdict !== 'no' && verdict !== 'partial') {
+          return null;
+        }
+        if (status !== 'resolved') return null;
+        spikes.push({
+          slug,
+          cycle,
+          decision,
+          verdict,
+          status: 'resolved',
+          extra_attrs: extractExtras(attrs, [
+            'slug',
+            'cycle',
+            'decision',
+            'verdict',
+            'status',
+          ]),
+        });
+      } else if (tag === 'skipped') {
+        const at = attrs['at'];
+        const cycle = attrs['cycle'];
+        const reason = attrs['reason'];
+        if (at === undefined || cycle === undefined || reason === undefined) {
+          return null;
+        }
+        skipped.push({
+          at,
+          cycle,
+          reason,
+          extra_attrs: extractExtras(attrs, ['at', 'cycle', 'reason']),
+        });
+      } else {
+        // Unknown self-closing tag — return null to force canonical path.
+        return null;
+      }
+    }
+    return { sketches, spikes, skipped };
+  } catch {
+    return null;
+  }
+}
+
+/** Mirror of parser's `parsePrototypingAttrs` — kept local to avoid
+ *  cross-file circular reach (mutator must not import parser internals). */
+function parseAttrInline(span: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  const re = /([a-zA-Z_][\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s/>]+))/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(span)) !== null) {
+    const key = m[1] ?? '';
+    const value: string =
+      (m[2] !== undefined ? m[2] : undefined) ??
+      (m[3] !== undefined ? m[3] : undefined) ??
+      m[4] ??
+      '';
+    if (key !== '') out[key] = value;
+  }
+  return out;
+}
+
+function extractExtras(
+  all: Record<string, string>,
+  known: readonly string[],
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(all)) {
+    if (!known.includes(k)) out[k] = v;
+  }
+  return out;
 }
 
 function tryReparseTimestamps(

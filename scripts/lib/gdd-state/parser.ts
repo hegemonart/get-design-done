@@ -31,6 +31,8 @@ import {
   isConnectionStatus,
   isDecisionStatus,
   isMustHaveStatus,
+  isPrototypingEntryStatus,
+  isSpikeVerdict,
   type Blocker,
   type ConnectionStatus,
   type Decision,
@@ -40,13 +42,25 @@ import {
   type MustHaveStatus,
   type ParsedState,
   type Position,
+  type PrototypingBlock,
+  type PrototypingEntryStatus,
+  type SketchEntry,
+  type SkippedEntry,
+  type SpikeEntry,
+  type SpikeVerdict,
 } from './types.ts';
 
-/** Block names recognized by the parser in canonical order. */
+/** Block names recognized by the parser in canonical order.
+ *
+ * Phase 25 Plan 25-01 inserted `prototyping` between `must_haves` and
+ * `connections` (matches the position chosen for STATE-TEMPLATE.md). The
+ * block is OPTIONAL — most fresh files don't carry it, so the serializer
+ * omits the block entirely when `state.prototyping === null`. */
 export const BLOCK_ORDER = [
   'position',
   'decisions',
   'must_haves',
+  'prototyping',
   'connections',
   'blockers',
   'parallelism_decision',
@@ -62,6 +76,7 @@ export interface RawBlockBodies {
   position: string | null;
   decisions: string | null;
   must_haves: string | null;
+  prototyping: string | null;
   connections: string | null;
   blockers: string | null;
   parallelism_decision: string | null;
@@ -77,6 +92,7 @@ export interface BlockGaps {
   position: string;
   decisions: string;
   must_haves: string;
+  prototyping: string;
   connections: string;
   blockers: string;
   parallelism_decision: string;
@@ -106,6 +122,7 @@ const EMPTY_RAW_BODIES: RawBlockBodies = {
   position: null,
   decisions: null,
   must_haves: null,
+  prototyping: null,
   connections: null,
   blockers: null,
   parallelism_decision: null,
@@ -193,6 +210,7 @@ export function parse(raw: string): ParseResult {
     position: '',
     decisions: '',
     must_haves: '',
+    prototyping: '',
     connections: '',
     blockers: '',
     parallelism_decision: '',
@@ -244,6 +262,7 @@ export function parse(raw: string): ParseResult {
   let blockers: Blocker[] = [];
   let parallelism_decision: string | null = null;
   let todos: string | null = null;
+  let prototyping: PrototypingBlock | null = null;
   let timestamps: Record<string, string> = {};
 
   for (const blk of blocks) {
@@ -261,6 +280,9 @@ export function parse(raw: string): ParseResult {
         break;
       case 'must_haves':
         must_haves = parseMustHavesBody(rawBody, fileLineOfBody);
+        break;
+      case 'prototyping':
+        prototyping = parsePrototypingBody(rawBody, fileLineOfBody);
         break;
       case 'connections':
         connections = parseConnectionsBody(rawBody, fileLineOfBody);
@@ -305,6 +327,7 @@ export function parse(raw: string): ParseResult {
     blockers,
     parallelism_decision,
     todos,
+    prototyping,
     timestamps,
     body_preamble,
     body_trailer,
@@ -500,6 +523,211 @@ function parseBlockersBody(body: string, startLine: number): Blocker[] {
       );
     }
     out.push({ stage: m[1] ?? '', date: m[2] ?? '', text: m[3] ?? '' });
+  }
+  return out;
+}
+
+/**
+ * Parse the body of a `<prototyping>` block (Phase 25 Plan 25-01 / D-01).
+ *
+ * Recognized self-closing children (each on its own line, attribute order
+ * tolerant, unknown attributes preserved into `extra_attrs` for forward
+ * compat):
+ *   <sketch slug=… cycle=… decision=D-XX status=resolved/>
+ *   <spike slug=… cycle=… decision=D-XX verdict=yes|no|partial status=resolved/>
+ *   <skipped at=… cycle=… reason=…/>
+ *
+ * Lines that are blank, HTML comments, or unrecognized self-closing tags
+ * are tolerated (forward-compat). Required attributes that are missing or
+ * carry an invalid enum value throw `ParseError` so operators see a real
+ * problem instead of a silent drop.
+ */
+function parsePrototypingBody(body: string, startLine: number): PrototypingBlock {
+  const sketches: SketchEntry[] = [];
+  const spikes: SpikeEntry[] = [];
+  const skipped: SkippedEntry[] = [];
+  const lines = body.split('\n');
+  // Match an XML-ish self-closing tag: `<name attr=value attr="quoted"/>`.
+  // We capture the tag name and the attribute span; attributes are split
+  // by `parsePrototypingAttrs` (handles both quoted and bare values).
+  const selfClose = /^<([a-z_]+)(\s+[^>]*?)?\s*\/>\s*$/;
+  for (let i = 0; i < lines.length; i++) {
+    const line = (lines[i] ?? '').trim();
+    if (line === '' || line.startsWith('<!--')) continue;
+    const m = line.match(selfClose);
+    if (!m) {
+      // Unknown shape inside the block — tolerate (forward-compat). Don't
+      // throw; downstream sketch/spike-wrap-up flows may add new child
+      // tags before the parser learns about them.
+      continue;
+    }
+    const tag = m[1] ?? '';
+    const attrs = parsePrototypingAttrs(m[2] ?? '');
+    const fileLine = startLine + i;
+    if (tag === 'sketch') {
+      sketches.push(buildSketchEntry(attrs, fileLine));
+    } else if (tag === 'spike') {
+      spikes.push(buildSpikeEntry(attrs, fileLine));
+    } else if (tag === 'skipped') {
+      skipped.push(buildSkippedEntry(attrs, fileLine));
+    }
+    // else: unknown self-closing tag inside <prototyping> — ignore.
+  }
+  return { sketches, spikes, skipped };
+}
+
+/**
+ * Split a self-closing-tag attribute span into a `{name → value}` map.
+ * Handles double-quoted, single-quoted, and bare (no-whitespace) values.
+ * Unknown to whitespace tokenization is fine here because attribute names
+ * in our schema are simple identifiers.
+ */
+function parsePrototypingAttrs(span: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  // Token shape: `name="dq"`, `name='sq'`, or `name=bare`. Bare values run
+  // until the next whitespace or EOS. Greedy regex with three alternatives
+  // walks the span position-by-position.
+  const re = /([a-zA-Z_][\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s/>]+))/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(span)) !== null) {
+    const key = m[1] ?? '';
+    const value: string =
+      (m[2] !== undefined ? m[2] : undefined) ??
+      (m[3] !== undefined ? m[3] : undefined) ??
+      m[4] ??
+      '';
+    if (key !== '') out[key] = value;
+  }
+  return out;
+}
+
+function buildSketchEntry(
+  attrs: Record<string, string>,
+  fileLine: number,
+): SketchEntry {
+  const slug = attrs['slug'];
+  const cycle = attrs['cycle'];
+  const decision = attrs['decision'];
+  const status = attrs['status'] ?? 'resolved';
+  if (slug === undefined) {
+    throw new ParseError('<sketch/> missing required attribute slug', fileLine);
+  }
+  if (cycle === undefined) {
+    throw new ParseError('<sketch/> missing required attribute cycle', fileLine);
+  }
+  if (decision === undefined) {
+    throw new ParseError(
+      '<sketch/> missing required attribute decision',
+      fileLine,
+    );
+  }
+  if (!isPrototypingEntryStatus(status)) {
+    throw new ParseError(
+      `<sketch/> invalid status: ${status}`,
+      fileLine,
+    );
+  }
+  return {
+    slug,
+    cycle,
+    decision,
+    status: status as PrototypingEntryStatus,
+    extra_attrs: extractExtraAttrs(attrs, ['slug', 'cycle', 'decision', 'status']),
+  };
+}
+
+function buildSpikeEntry(
+  attrs: Record<string, string>,
+  fileLine: number,
+): SpikeEntry {
+  const slug = attrs['slug'];
+  const cycle = attrs['cycle'];
+  const decision = attrs['decision'];
+  const verdict = attrs['verdict'];
+  const status = attrs['status'] ?? 'resolved';
+  if (slug === undefined) {
+    throw new ParseError('<spike/> missing required attribute slug', fileLine);
+  }
+  if (cycle === undefined) {
+    throw new ParseError('<spike/> missing required attribute cycle', fileLine);
+  }
+  if (decision === undefined) {
+    throw new ParseError(
+      '<spike/> missing required attribute decision',
+      fileLine,
+    );
+  }
+  if (verdict === undefined) {
+    throw new ParseError(
+      '<spike/> missing required attribute verdict',
+      fileLine,
+    );
+  }
+  if (!isSpikeVerdict(verdict)) {
+    throw new ParseError(
+      `<spike/> invalid verdict: ${verdict}`,
+      fileLine,
+    );
+  }
+  if (!isPrototypingEntryStatus(status)) {
+    throw new ParseError(
+      `<spike/> invalid status: ${status}`,
+      fileLine,
+    );
+  }
+  return {
+    slug,
+    cycle,
+    decision,
+    verdict: verdict as SpikeVerdict,
+    status: status as PrototypingEntryStatus,
+    extra_attrs: extractExtraAttrs(attrs, [
+      'slug',
+      'cycle',
+      'decision',
+      'verdict',
+      'status',
+    ]),
+  };
+}
+
+function buildSkippedEntry(
+  attrs: Record<string, string>,
+  fileLine: number,
+): SkippedEntry {
+  const at = attrs['at'];
+  const cycle = attrs['cycle'];
+  const reason = attrs['reason'];
+  if (at === undefined) {
+    throw new ParseError('<skipped/> missing required attribute at', fileLine);
+  }
+  if (cycle === undefined) {
+    throw new ParseError(
+      '<skipped/> missing required attribute cycle',
+      fileLine,
+    );
+  }
+  if (reason === undefined) {
+    throw new ParseError(
+      '<skipped/> missing required attribute reason',
+      fileLine,
+    );
+  }
+  return {
+    at,
+    cycle,
+    reason,
+    extra_attrs: extractExtraAttrs(attrs, ['at', 'cycle', 'reason']),
+  };
+}
+
+function extractExtraAttrs(
+  all: Record<string, string>,
+  known: readonly string[],
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(all)) {
+    if (!known.includes(k)) out[k] = v;
   }
   return out;
 }

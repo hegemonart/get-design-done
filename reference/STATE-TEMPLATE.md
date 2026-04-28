@@ -55,6 +55,16 @@ skipped_stages: ""
 <!-- Valid status values: pending | pass | fail -->
 </must_haves>
 
+<prototyping>
+<!-- Phase 25: appended by sketch-wrap-up / spike-wrap-up + the prototype-gate. -->
+<!-- Three child element types, each on its own line: -->
+<!-- <sketch slug="…" cycle="…" decision="D-XX" status="resolved"/> -->
+<!-- <spike slug="…" cycle="…" decision="D-XX" verdict="yes|no|partial" status="resolved"/> -->
+<!-- <skipped at="explore|plan" cycle="…" reason="…"/> -->
+<!-- The block is omitted entirely on fresh files; add it only when the first -->
+<!-- sketch / spike / skipped entry is appended. -->
+</prototyping>
+
 <connections>
 <!-- Detected at scan entry or via /gdd:connections; updated if connections become available mid-pipeline. -->
 <!-- Format: <connection_name>: <available | unavailable | not_configured> -->
@@ -148,6 +158,16 @@ Discover stage populates with observable behaviors. Verify stage updates status.
 - `M-<NN>`: sequential identifier
 - `[description]`: testable behavior or artifact
 - `status`: `pending` (default), `pass` (verify confirmed), `fail` (verify rejected)
+
+### `<prototyping>`
+
+Phase 25 surface (D-01). A checkpoint log — NOT a stage. Tracks sketch and spike outcomes plus cycle-scoped skip suppressions for the prototype gate.
+
+- `<sketch slug=… cycle=… decision=D-XX status=resolved/>` — written by `sketch-wrap-up` after a sketch resolves into a D-XX decision.
+- `<spike slug=… cycle=… decision=D-XX verdict=yes|no|partial status=resolved/>` — written by `spike-wrap-up` after a spike resolves; `verdict` captures the answer.
+- `<skipped at=… cycle=… reason=…/>` — written by the prototype gate when the user declines to sketch/spike at a firing point. Cycle-scoped suppression (D-02): a `<skipped/>` entry suppresses re-asking for the rest of the named cycle.
+
+The block is **optional** — fresh STATE.md files do not carry it. The serializer omits the block entirely when no entries exist; appending the first entry is what materializes the block.
 
 ### `<connections>`
 
