@@ -30,6 +30,9 @@ import {
   type ParsedState,
   type Position,
   type PrototypingBlock,
+  type QualityGateBlock,
+  type QualityGateRun,
+  type QualityGateStatus,
   type SketchEntry,
   type SkippedEntry,
   type SpikeEntry,
@@ -256,6 +259,8 @@ function emitBlock(
       return emitMustHaves(state.must_haves, rawBody);
     case 'prototyping':
       return emitPrototyping(state.prototyping, rawBody);
+    case 'quality_gate':
+      return emitQualityGate(state.quality_gate, rawBody);
     case 'connections':
       return emitConnections(state.connections, rawBody);
     case 'blockers':
@@ -441,6 +446,56 @@ function formatPrototypingAttr(v: string): string {
   return `"${v.replace(/"/g, '&quot;')}"`;
 }
 
+/**
+ * Emit the body of a `<quality_gate>` block (Phase 25 Plan 25-03).
+ *
+ * Returns `null` when the block should be omitted entirely — i.e. the
+ * parsed state has `quality_gate === null` AND no raw body is on file.
+ * Mirror of `emitPrototyping`'s short-circuit behavior so fresh STATE.md
+ * files don't carry an empty `<quality_gate></quality_gate>` pair.
+ *
+ * Fidelity rule (matches the other blocks): when `rawBody` round-trips
+ * through `tryReparseQualityGate` and matches the current value
+ * structurally, emit the raw body verbatim. Otherwise canonicalize.
+ */
+function emitQualityGate(
+  block: QualityGateBlock | null,
+  rawBody: string | null,
+): string | null {
+  if (block === null && rawBody === null) return null;
+  if (block === null) {
+    // Block was present in source but state set it to null — caller wants
+    // to drop the block. Still return null so emitBlock skips emission.
+    return null;
+  }
+  if (rawBody !== null) {
+    const reparsed = tryReparseQualityGate(rawBody);
+    if (reparsed !== null && qualityGateEqual(reparsed, block)) {
+      return rawBody;
+    }
+  }
+  return canonicalQualityGate(block);
+}
+
+function canonicalQualityGate(block: QualityGateBlock): string {
+  if (block.run === null) return '';
+  return canonicalQualityGateRun(block.run);
+}
+
+function canonicalQualityGateRun(run: QualityGateRun): string {
+  const parts: string[] = [
+    `started_at=${formatPrototypingAttr(run.started_at)}`,
+    `completed_at=${formatPrototypingAttr(run.completed_at)}`,
+    `status=${formatPrototypingAttr(run.status)}`,
+    `iteration=${formatPrototypingAttr(String(run.iteration))}`,
+    `commands_run=${formatPrototypingAttr(run.commands_run)}`,
+  ];
+  for (const [k, v] of Object.entries(run.extra_attrs)) {
+    parts.push(`${k}=${formatPrototypingAttr(v)}`);
+  }
+  return `<run ${parts.join(' ')}/>`;
+}
+
 function emitTimestamps(
   ts: Record<string, string>,
   rawBody: string | null,
@@ -578,6 +633,26 @@ function extraAttrsEqual(
     if (a[key] !== b[key]) return false;
   }
   return true;
+}
+
+function qualityGateEqual(
+  a: QualityGateBlock,
+  b: QualityGateBlock,
+): boolean {
+  if (a.run === null && b.run === null) return true;
+  if (a.run === null || b.run === null) return false;
+  return qualityGateRunEqual(a.run, b.run);
+}
+
+function qualityGateRunEqual(a: QualityGateRun, b: QualityGateRun): boolean {
+  return (
+    a.started_at === b.started_at &&
+    a.completed_at === b.completed_at &&
+    a.status === b.status &&
+    a.iteration === b.iteration &&
+    a.commands_run === b.commands_run &&
+    extraAttrsEqual(a.extra_attrs, b.extra_attrs)
+  );
 }
 
 function recordsEqual(
@@ -850,6 +925,86 @@ function extractExtras(
     if (!known.includes(k)) out[k] = v;
   }
   return out;
+}
+
+/**
+ * Reparse a `<quality_gate>` body for fidelity comparison. Mirror of
+ * `tryReparsePrototyping` — returns `null` on any structural surprise so
+ * the caller falls back to canonical emission rather than throwing.
+ *
+ * Tolerant of multiple `<run/>` lines (last-wins, matching the parser),
+ * blank lines, and comments. Strict on attribute presence and enum
+ * validity — a hand-edited body that drops `commands_run` will fail to
+ * round-trip and fall through to canonical form, which is correct.
+ */
+function tryReparseQualityGate(raw: string): QualityGateBlock | null {
+  try {
+    let run: QualityGateRun | null = null;
+    const selfClose = /^<([a-z_]+)(\s+[^>]*?)?\s*\/>\s*$/;
+    for (const line of raw.split('\n')) {
+      const t = line.trim();
+      if (t === '' || t.startsWith('<!--')) continue;
+      const m = t.match(selfClose);
+      if (!m) {
+        // Anything non-comment that isn't a self-closing tag means the
+        // raw body is no longer a clean match for the parsed value.
+        return null;
+      }
+      const tag = m[1] ?? '';
+      if (tag !== 'run') {
+        // Unknown self-closing tag inside <quality_gate> — force canonical.
+        return null;
+      }
+      const attrs = parseAttrInline(m[2] ?? '');
+      const started_at = attrs['started_at'];
+      const completed_at = attrs['completed_at'];
+      const status = attrs['status'];
+      const iterationRaw = attrs['iteration'];
+      const commands_run = attrs['commands_run'];
+      if (
+        started_at === undefined ||
+        completed_at === undefined ||
+        status === undefined ||
+        iterationRaw === undefined ||
+        commands_run === undefined
+      ) {
+        return null;
+      }
+      if (
+        status !== 'pass' &&
+        status !== 'fail' &&
+        status !== 'timeout' &&
+        status !== 'skipped'
+      ) {
+        return null;
+      }
+      const iteration = Number(iterationRaw);
+      if (
+        !Number.isFinite(iteration) ||
+        !Number.isInteger(iteration) ||
+        iteration < 0
+      ) {
+        return null;
+      }
+      run = {
+        started_at,
+        completed_at,
+        status: status as QualityGateStatus,
+        iteration,
+        commands_run,
+        extra_attrs: extractExtras(attrs, [
+          'started_at',
+          'completed_at',
+          'status',
+          'iteration',
+          'commands_run',
+        ]),
+      };
+    }
+    return { run };
+  } catch {
+    return null;
+  }
 }
 
 function tryReparseTimestamps(

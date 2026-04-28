@@ -32,6 +32,7 @@ import {
   isDecisionStatus,
   isMustHaveStatus,
   isPrototypingEntryStatus,
+  isQualityGateStatus,
   isSpikeVerdict,
   type Blocker,
   type ConnectionStatus,
@@ -44,6 +45,9 @@ import {
   type Position,
   type PrototypingBlock,
   type PrototypingEntryStatus,
+  type QualityGateBlock,
+  type QualityGateRun,
+  type QualityGateStatus,
   type SketchEntry,
   type SkippedEntry,
   type SpikeEntry,
@@ -55,12 +59,18 @@ import {
  * Phase 25 Plan 25-01 inserted `prototyping` between `must_haves` and
  * `connections` (matches the position chosen for STATE-TEMPLATE.md). The
  * block is OPTIONAL — most fresh files don't carry it, so the serializer
- * omits the block entirely when `state.prototyping === null`. */
+ * omits the block entirely when `state.prototyping === null`.
+ *
+ * Phase 25 Plan 25-03 inserted `quality_gate` immediately after
+ * `prototyping` (the two are conceptually related — both are
+ * checkpoint-style blocks that surface mid-pipeline gate outcomes). Same
+ * optionality rules as `prototyping`. */
 export const BLOCK_ORDER = [
   'position',
   'decisions',
   'must_haves',
   'prototyping',
+  'quality_gate',
   'connections',
   'blockers',
   'parallelism_decision',
@@ -77,6 +87,7 @@ export interface RawBlockBodies {
   decisions: string | null;
   must_haves: string | null;
   prototyping: string | null;
+  quality_gate: string | null;
   connections: string | null;
   blockers: string | null;
   parallelism_decision: string | null;
@@ -93,6 +104,7 @@ export interface BlockGaps {
   decisions: string;
   must_haves: string;
   prototyping: string;
+  quality_gate: string;
   connections: string;
   blockers: string;
   parallelism_decision: string;
@@ -123,6 +135,7 @@ const EMPTY_RAW_BODIES: RawBlockBodies = {
   decisions: null,
   must_haves: null,
   prototyping: null,
+  quality_gate: null,
   connections: null,
   blockers: null,
   parallelism_decision: null,
@@ -211,6 +224,7 @@ export function parse(raw: string): ParseResult {
     decisions: '',
     must_haves: '',
     prototyping: '',
+    quality_gate: '',
     connections: '',
     blockers: '',
     parallelism_decision: '',
@@ -263,6 +277,7 @@ export function parse(raw: string): ParseResult {
   let parallelism_decision: string | null = null;
   let todos: string | null = null;
   let prototyping: PrototypingBlock | null = null;
+  let quality_gate: QualityGateBlock | null = null;
   let timestamps: Record<string, string> = {};
 
   for (const blk of blocks) {
@@ -283,6 +298,9 @@ export function parse(raw: string): ParseResult {
         break;
       case 'prototyping':
         prototyping = parsePrototypingBody(rawBody, fileLineOfBody);
+        break;
+      case 'quality_gate':
+        quality_gate = parseQualityGateBody(rawBody, fileLineOfBody);
         break;
       case 'connections':
         connections = parseConnectionsBody(rawBody, fileLineOfBody);
@@ -328,6 +346,7 @@ export function parse(raw: string): ParseResult {
     parallelism_decision,
     todos,
     prototyping,
+    quality_gate,
     timestamps,
     body_preamble,
     body_trailer,
@@ -730,6 +749,109 @@ function extractExtraAttrs(
     if (!known.includes(k)) out[k] = v;
   }
   return out;
+}
+
+/**
+ * Parse the body of a `<quality_gate>` block (Phase 25 Plan 25-03).
+ *
+ * The block houses at most one self-closing `<run/>` element. Multiple
+ * `<run/>` lines are not part of the v1.25 schema — append-mode would
+ * be overkill (the SKILL overwrites on every gate completion). If the
+ * source carries multiple, we accept the LAST one (most recent wins) so
+ * a hand-edit that adds a newer entry above an older one still parses
+ * sensibly. Lines that are blank or HTML comments are tolerated.
+ *
+ * Required attributes: `started_at`, `completed_at`, `status`,
+ * `iteration`, `commands_run`. Missing attributes throw `ParseError` so
+ * operators see the problem (mirrors prototyping behavior). `iteration`
+ * must parse as a finite non-negative integer.
+ */
+function parseQualityGateBody(body: string, startLine: number): QualityGateBlock {
+  let run: QualityGateRun | null = null;
+  const lines = body.split('\n');
+  const selfClose = /^<([a-z_]+)(\s+[^>]*?)?\s*\/>\s*$/;
+  for (let i = 0; i < lines.length; i++) {
+    const line = (lines[i] ?? '').trim();
+    if (line === '' || line.startsWith('<!--')) continue;
+    const m = line.match(selfClose);
+    if (!m) {
+      // Forward-compat: tolerate unknown shapes inside the block.
+      continue;
+    }
+    const tag = m[1] ?? '';
+    if (tag !== 'run') continue; // forward-compat for unknown child tags
+    const attrs = parsePrototypingAttrs(m[2] ?? '');
+    run = buildQualityGateRun(attrs, startLine + i);
+  }
+  return { run };
+}
+
+function buildQualityGateRun(
+  attrs: Record<string, string>,
+  fileLine: number,
+): QualityGateRun {
+  const started_at = attrs['started_at'];
+  const completed_at = attrs['completed_at'];
+  const status = attrs['status'];
+  const iterationRaw = attrs['iteration'];
+  const commands_run = attrs['commands_run'];
+  if (started_at === undefined) {
+    throw new ParseError(
+      '<quality_gate> <run/> missing required attribute started_at',
+      fileLine,
+    );
+  }
+  if (completed_at === undefined) {
+    throw new ParseError(
+      '<quality_gate> <run/> missing required attribute completed_at',
+      fileLine,
+    );
+  }
+  if (status === undefined) {
+    throw new ParseError(
+      '<quality_gate> <run/> missing required attribute status',
+      fileLine,
+    );
+  }
+  if (!isQualityGateStatus(status)) {
+    throw new ParseError(
+      `<quality_gate> <run/> invalid status: ${status}`,
+      fileLine,
+    );
+  }
+  if (iterationRaw === undefined) {
+    throw new ParseError(
+      '<quality_gate> <run/> missing required attribute iteration',
+      fileLine,
+    );
+  }
+  const iteration = Number(iterationRaw);
+  if (!Number.isFinite(iteration) || !Number.isInteger(iteration) || iteration < 0) {
+    throw new ParseError(
+      `<quality_gate> <run/> iteration not a non-negative integer: ${iterationRaw}`,
+      fileLine,
+    );
+  }
+  if (commands_run === undefined) {
+    throw new ParseError(
+      '<quality_gate> <run/> missing required attribute commands_run',
+      fileLine,
+    );
+  }
+  return {
+    started_at,
+    completed_at,
+    status: status as QualityGateStatus,
+    iteration,
+    commands_run,
+    extra_attrs: extractExtraAttrs(attrs, [
+      'started_at',
+      'completed_at',
+      'status',
+      'iteration',
+      'commands_run',
+    ]),
+  };
 }
 
 function parseTimestampsBody(

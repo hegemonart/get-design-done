@@ -212,6 +212,15 @@ export interface ParsedState {
    * block (preserves byte-identical round-trip).
    */
   prototyping: PrototypingBlock | null;
+  /**
+   * Parsed `<quality_gate>` block (Phase 25 Plan 25-03 / D-06..D-09).
+   * `null` when the block is absent in the source — the serializer omits
+   * the block entirely in that case rather than emitting an empty
+   * `<quality_gate>` pair. A non-null instance with `run === null` is
+   * permitted but only emitted when the source already had a present-but-
+   * empty block (preserves byte-identical round-trip).
+   */
+  quality_gate: QualityGateBlock | null;
   timestamps: Record<string, string>;
   /** Verbatim span between frontmatter end and the first recognized block. */
   body_preamble: string;
@@ -285,4 +294,79 @@ export function isPrototypingEntryStatus(
   value: unknown,
 ): value is PrototypingEntryStatus {
   return value === 'resolved';
+}
+
+/**
+ * Status of a `<quality_gate>` run (Phase 25 Plan 25-03 / D-06..D-09).
+ *
+ * - `pass`     — every detected command exited 0 within the timeout budget.
+ * - `fail`     — at least one command failed AND the fix loop reached
+ *                `max_iters` without producing a clean run. Verify entry
+ *                refuses on this status (Plan 25-07 territory).
+ * - `timeout`  — the parallel command run exceeded
+ *                `quality_gate.timeout_seconds`. Treated as a non-blocking
+ *                warning per D-07 — verify entry warns, does not refuse.
+ * - `skipped`  — the detection chain (D-06) resolved zero commands. The
+ *                gate emits a notice and continues; verify entry does not
+ *                block on `skipped`.
+ */
+export type QualityGateStatus = 'pass' | 'fail' | 'timeout' | 'skipped';
+
+/**
+ * Single resolved run captured in the `<quality_gate>` block (Phase 25
+ * Plan 25-03 / D-06..D-09). Append-mode would be overkill — only the most
+ * recent run is retained. The wrap-up flow (the SKILL's Step 5) overwrites
+ * this entry on every gate completion.
+ *
+ * Shape mirrors the corresponding `<run …/>` self-closing tag attribute set:
+ *   `<run started_at=… completed_at=… status=… iteration=N commands_run="lint,typecheck,test"/>`
+ *
+ * `commands_run` is a comma-separated list rather than a `string[]` so the
+ * STATE block stays a single self-closing tag — no nested children, no
+ * order ambiguity in serialization.
+ *
+ * Unknown attributes seen on the `<run/>` tag are preserved in `extra_attrs`
+ * for forwards-compat (mirrors the prototyping pattern).
+ */
+export interface QualityGateRun {
+  /** ISO 8601 timestamp at which Step 2 (parallel run) entered. */
+  started_at: string;
+  /** ISO 8601 timestamp at which the gate produced its terminal status. */
+  completed_at: string;
+  /** Terminal status emitted by Step 6 (event emission). */
+  status: QualityGateStatus;
+  /**
+   * Loop count from Step 4 (fix loop). `1` = single clean pass; `2..N` =
+   * required at least one fixer iteration; `N === max_iters` with
+   * `status === 'fail'` = bounded exhaustion.
+   */
+  iteration: number;
+  /**
+   * Comma-separated list of command names actually executed in Step 2 —
+   * e.g. `"lint,typecheck,test"`. Empty string when `status === 'skipped'`.
+   */
+  commands_run: string;
+  /** Forward-compat passthrough — same semantics as on `SketchEntry`. */
+  extra_attrs: Record<string, string>;
+}
+
+/**
+ * Parsed `<quality_gate>` block. The block houses a single most-recent
+ * `<run/>` entry; `null` on `ParsedState` means the block is absent in the
+ * source (no gate has run yet on this STATE.md). `run === null` inside a
+ * non-null block represents a present-but-empty block (rare — the SKILL
+ * always writes a `<run/>` before closing).
+ */
+export interface QualityGateBlock {
+  run: QualityGateRun | null;
+}
+
+/** Type-guard for `QualityGateStatus`. */
+export function isQualityGateStatus(value: unknown): value is QualityGateStatus {
+  return (
+    value === 'pass' ||
+    value === 'fail' ||
+    value === 'timeout' ||
+    value === 'skipped'
+  );
 }

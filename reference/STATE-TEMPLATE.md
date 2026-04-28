@@ -65,6 +65,15 @@ skipped_stages: ""
 <!-- sketch / spike / skipped entry is appended. -->
 </prototyping>
 
+<quality_gate>
+<!-- Phase 25 (Plan 25-03): written by the quality-gate skill (Stage 4.5). -->
+<!-- Houses a single most-recent <run/> entry — append-mode would be overkill. -->
+<!-- Format: -->
+<!-- <run started_at="…" completed_at="…" status="pass|fail|timeout|skipped" iteration="N" commands_run="lint,typecheck,test"/> -->
+<!-- The block is omitted entirely on fresh files; add it only when the first -->
+<!-- gate completion overwrites the entry. -->
+</quality_gate>
+
 <connections>
 <!-- Detected at scan entry or via /gdd:connections; updated if connections become available mid-pipeline. -->
 <!-- Format: <connection_name>: <available | unavailable | not_configured> -->
@@ -168,6 +177,18 @@ Phase 25 surface (D-01). A checkpoint log — NOT a stage. Tracks sketch and spi
 - `<skipped at=… cycle=… reason=…/>` — written by the prototype gate when the user declines to sketch/spike at a firing point. Cycle-scoped suppression (D-02): a `<skipped/>` entry suppresses re-asking for the rest of the named cycle.
 
 The block is **optional** — fresh STATE.md files do not carry it. The serializer omits the block entirely when no entries exist; appending the first entry is what materializes the block.
+
+### `<quality_gate>`
+
+Phase 25 surface (Plan 25-03 / D-06..D-09). Captures the most recent run of the Stage 4.5 quality gate (lint / typecheck / test / visual-regression) between Design and Verify. The block houses a single self-closing `<run/>` element — append-mode is overkill, so each gate completion overwrites the entry.
+
+- `started_at` — ISO 8601 at which the parallel command run entered.
+- `completed_at` — ISO 8601 at which the gate produced its terminal status.
+- `status` — `pass | fail | timeout | skipped`. `pass` clears the verify-entry gate; `fail` blocks; `timeout` warns + proceeds (D-07); `skipped` indicates the detection chain resolved zero commands.
+- `iteration` — non-negative integer fix-loop count (D-08). `1` = single clean pass; `N === max_iters` with `status === 'fail'` = bounded exhaustion.
+- `commands_run` — comma-separated names of the commands actually executed in Step 2 (e.g., `lint,typecheck,test`). Empty string when `status === 'skipped'`.
+
+The block is **optional** — fresh STATE.md files do not carry it. The serializer omits the block entirely when `quality_gate === null`; the SKILL writes the first `<run/>` to materialize it.
 
 ### `<connections>`
 
