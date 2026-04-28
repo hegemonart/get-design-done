@@ -166,18 +166,30 @@ Either path is acceptable. The on-disk shape is identical.
 
 ## Step 6 — Event emission (D-09)
 
-Emit lifecycle events to `.design/events.jsonl` via the existing `appendEvent()` API (`scripts/lib/events/append.ts` or equivalent — same surface used by Phase 22 telemetry). One event per JSONL line. Schema:
+Emit lifecycle events to `.design/events.jsonl` via the existing `appendEvent()` surface exported from `scripts/lib/event-stream/index.ts` — the same module Phase 22 telemetry, the budget-enforcer, the read-injection scanner, and the gdd-state MCP server already write through. Do not roll a bespoke writer; the singleton in `event-stream/index.ts` is persist-first / broadcast-second and never throws on the persist path, which is the contract this skill relies on.
 
-| Event | When | Required fields |
-|-------|------|-----------------|
-| `quality_gate_started` | Entry to Step 2 | `commands` (string[]), `timeout_seconds`, `max_iters` |
-| `quality_gate_iteration` | Entry to each Step 4 retry | `iteration` (int ≥ 2) |
-| `quality_gate_pass` | Step 3 returned `pass` | `iteration`, `commands_run` (string[]) |
-| `quality_gate_fail` | Step 4 reached `max_iters` | `iteration`, `classified_failures` (object) |
-| `quality_gate_timeout` | Step 2 budget elapsed | `unfinished_commands` (string[]) |
-| `quality_gate_skipped` | Step 1 Tier 3 fired | `reason` (string) |
+Import shape:
 
-All events carry the standard `ts`, `cycle`, `stage` fields injected by `appendEvent`. Do not invent additional event names — downstream consumers (reflector, telemetry) match on this exact list.
+```ts
+import { appendEvent } from '../../scripts/lib/event-stream/index.ts';
+```
+
+Each emission is a single `appendEvent({...})` call with `type` set to one of the six names in the table below. Pass the event-specific payload fields verbatim — `appendEvent` stamps `_meta` (pid, host, source) and the JSONL writer captures the canonical `ts` from the writer surface. The `cycle` and `stage` fields are stamped by the same path used elsewhere in Phase 22+ (consumers match on `type`; treat `ts`, `cycle`, `stage` as injected, not caller-supplied).
+
+One event per JSONL line. Schema and lifecycle map:
+
+| Event | When (lifecycle position) | Required fields |
+|-------|---------------------------|-----------------|
+| `quality_gate_started` | Step 2 entry — fired ONCE per skill invocation, immediately before any `Bash` spawn. Carries the resolved command list from Step 1 so downstream telemetry can correlate `started` → terminal event. | `commands` (string[]), `timeout_seconds` (number), `max_iters` (number) |
+| `quality_gate_iteration` | Step 4 entry — fired ONCE per retry, with `iteration` set to the new (post-increment) loop counter. The first run is implicit (covered by `started`); only retries `≥ 2` emit `iteration`. | `iteration` (int ≥ 2) |
+| `quality_gate_pass` | Step 3 returned `status: "pass"` — terminal happy path. Fires before Step 5 (STATE write) so a consumer tailing the stream sees the verdict before the on-disk run record. | `iteration` (final loop counter), `commands_run` (string[]) |
+| `quality_gate_fail` | Step 4 reached `max_iters` without convergence — terminal failure path. The verify-entry gate (Step 2.5 of `skills/verify/SKILL.md`) is the sole consumer that *acts* on this; this skill exits successfully regardless. | `iteration` (final loop counter, equal to `max_iters`), `classified_failures` (object — same shape as `quality-gate-runner` agent output) |
+| `quality_gate_timeout` | Step 2 wall-clock budget elapsed — terminal warn path (per D-07 verify treats this as a warning, not a block). Fires before Step 5 STATE write, same ordering as `pass`/`fail`. | `unfinished_commands` (string[]) |
+| `quality_gate_skipped` | Step 1 Tier 3 fired (no commands resolved) — terminal no-op path. Fires before the synthetic `<run/>` is written to STATE.md. | `reason` (string — e.g. `"no commands resolved"`) |
+
+All six events carry the standard `ts`, `cycle`, `stage` fields injected by `appendEvent` / the writer. Do not invent additional event names — the verify-entry gate, reflector, and Phase 22 telemetry consumers match on this exact list. Do not emit any of these names from any path other than the lifecycle positions above (e.g., do not emit `quality_gate_started` again on a Step 4 retry — that's what `quality_gate_iteration` is for).
+
+**Failure-mode contract:** `appendEvent()` swallows persist failures internally. If the writer cannot open `.design/events.jsonl`, the skill MUST still proceed — the event stream is observability, not correctness. The STATE.md write in Step 5 is the durable record consumers MUST rely on; events.jsonl is the supplementary timeline.
 
 ## Output Contract
 

@@ -18,6 +18,28 @@ tools: mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__ad
 
 1. `mcp__gdd_state__transition_stage` with `to: "verify"`.
 2. `mcp__gdd_state__get` → snapshot `state`. Read `state.must_haves` — this is the verification checklist; each M-XX starts at `status: pending` and will be flipped to `pass` or `fail` as verification concludes.
+
+#### Step 2.5 — Quality-gate gate (D-08, D-09)
+
+Before resume detection, inspect `state.quality_gate` from the same snapshot. The Stage 4.5 quality-gate skill (see `skills/quality-gate/SKILL.md`) writes a single `<run/>` element capturing the most recent run; this step is the verify-side consumer of that result. Three branches, evaluated in order:
+
+- **`state.quality_gate?.run?.status === "fail"`** → Refuse to advance. The fix loop in `quality-gate/SKILL.md` Step 4 reached `max_iters` without converging, and the verify stage MUST NOT paper over it. Print a blocker reason that includes the iteration count and the `commands_run` field from the run, then call:
+
+  ```
+  mcp__gdd_state__add_blocker({
+    stage: "verify",
+    text: "quality-gate failed at iteration <N> (commands: <commands_run>) — re-run /gdd:quality-gate before /gdd:verify"
+  })
+  ```
+
+  Exit immediately with the failure surface visible to the user. Do NOT call `mcp__gdd_state__update_progress` to open the verify stage; the gate refused entry, so the stage was never opened.
+
+- **`state.quality_gate?.run?.status === "timeout"` OR `=== "skipped"`** → Print a one-line warning naming the status and the `commands_run` value, then continue normally. Per D-07 these are signals, not walls: a slow test suite must not hostage the pipeline, and a project with no detectable quality commands must not block verify entry. The warning surfaces the degraded state without halting.
+
+- **`state.quality_gate?.run?.status === "pass"` OR `state.quality_gate === null`** → Continue silently. `pass` is the happy path; `null` means the gate has never been run for this cycle (the user skipped Stage 4.5 entirely, which is permitted — verify only *checks* the gate result, never *runs* the gate itself, per the 25-07 out-of-scope clause).
+
+This step is a pure read against the snapshot already loaded in Step 2 — no extra MCP call is required.
+
 3. Resume detection (read `state.position.status` from the snapshot):
    - If `status==in_progress` and `.design/DESIGN-VERIFICATION.md` exists: RESUME — skip re-spawning agents, go to Step 2 (gap-response loop).
    - Otherwise: call `mcp__gdd_state__update_progress` with `task_progress: "0/3"`, `status: "in_progress"` to open the stage, then proceed to Step 1.
