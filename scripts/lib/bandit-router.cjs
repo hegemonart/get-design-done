@@ -1,6 +1,7 @@
 /**
  * bandit-router.cjs — contextual Thompson-sampling bandit over
- * (agent_type, touches_size_bin) → {haiku, sonnet, opus} (Plan 23.5-01).
+ * (agent_type, touches_size_bin[, delegate]) → {haiku, sonnet, opus}
+ * (Plan 23.5-01 + Plan 27-07 delegate dimension).
  *
  * Replaces Phase 10.1's static tier_overrides map when the user opts
  * into adaptive_mode = "full". The static map continues to apply when
@@ -10,12 +11,25 @@
  *   .design/telemetry/posterior.json
  *     { schema_version: '1.0.0',
  *       generated_at: ISO,
- *       arms: [{agent, bin, tier, alpha, beta, last_used, count}] }
+ *       arms: [{agent, bin, tier, delegate?, alpha, beta, last_used, count}] }
+ *
+ * The `delegate` field on an arm is OPTIONAL (Plan 27-07 / D-08). Existing
+ * callers that pass only `(agent, bin)` continue to read/write arms with
+ * `delegate === undefined`, which behaves identically to delegate='none'
+ * (i.e., the local-call slice). New callers can opt into the delegate
+ * dimension via `pullWithDelegate()` / `updateWithDelegate()` which
+ * persist `delegate ∈ {none, gemini, codex, cursor, copilot, qwen}`.
+ *
+ * Bootstrap discipline (D-08):
+ *   - delegate='none' arms inherit Phase 23.5's TIER_PRIOR (informed).
+ *   - delegate ∈ {gemini, codex, cursor, copilot, qwen} arms start
+ *     neutral — the same TIER_PRIOR shape, on the assumption that we
+ *     have no prior to favour any delegate over local; data drives.
  *
  * Atomic .tmp + rename. Discounted Thompson via per-arm time-decay
  * factor `rho^days_since_last_use` applied at sample time, not stored.
  *
- * Reward computation (D-06): two-stage lexicographic
+ * Reward computation (D-06): two-stage lexicographic — UNCHANGED.
  *   if !solidify_pass:           reward = 0
  *   elif user_undo_in_session:   reward = 0
  *   else:                        reward = 1 - lambda * normalize(cost + epsilon * wall_time)
@@ -45,11 +59,25 @@ const TIER_PRIOR = Object.freeze({
 const PRIOR_STRENGTH = 10;
 const DEFAULT_TIERS = Object.freeze(['haiku', 'sonnet', 'opus']);
 
+// Plan 27-07 / D-08. Delegate context dimension. 'none' = local Anthropic
+// call; the other 5 are peer-CLI delegations via ACP/ASP. Adding this as
+// a third context dimension expands the arm space 6× (78 → ~468 contexts).
+const DELEGATE_NONE = 'none';
+const DEFAULT_DELEGATES = Object.freeze([
+  DELEGATE_NONE,
+  'gemini',
+  'codex',
+  'cursor',
+  'copilot',
+  'qwen',
+]);
+
 const DEFAULT_PRIORS = Object.freeze({
   decay: DEFAULT_DECAY,
   strength: PRIOR_STRENGTH,
   tiers: DEFAULT_TIERS,
   perTier: TIER_PRIOR,
+  delegates: DEFAULT_DELEGATES,
 });
 
 const TOUCHES_BINS = Object.freeze([
@@ -141,12 +169,47 @@ function priorFor(tier, strength) {
   };
 }
 
-function findArm(arms, agent, bin, tier) {
-  return arms.find((a) => a.agent === agent && a.bin === bin && a.tier === tier);
+/**
+ * @param {object[]} arms
+ * @param {string} agent
+ * @param {string} bin
+ * @param {string} tier
+ * @param {string} [delegate] — when provided, match arms with that
+ *   delegate label. When omitted, match arms with no delegate field
+ *   (legacy Phase 23.5 slice — equivalent to delegate='none' for
+ *   bootstrap purposes but persisted distinctly to preserve
+ *   round-trippability of existing posterior files).
+ */
+function findArm(arms, agent, bin, tier, delegate) {
+  if (delegate === undefined) {
+    return arms.find(
+      (a) =>
+        a.agent === agent &&
+        a.bin === bin &&
+        a.tier === tier &&
+        a.delegate === undefined,
+    );
+  }
+  return arms.find(
+    (a) =>
+      a.agent === agent &&
+      a.bin === bin &&
+      a.tier === tier &&
+      a.delegate === delegate,
+  );
 }
 
-function ensureArm(posterior, agent, bin, tier, strength) {
-  let arm = findArm(posterior.arms, agent, bin, tier);
+/**
+ * Ensure an arm exists, creating it with the informed prior when missing.
+ *
+ * For Plan 27-07: when `delegate` is provided, the arm is persisted with
+ * that label. Bootstrap is identical for delegate='none' (inherits Phase
+ * 23.5 prior — no migration needed because the legacy slice and the
+ * 'none' slice are independent contexts) and for the 5 peer delegates
+ * (each starts neutral with the same TIER_PRIOR shape; data drives).
+ */
+function ensureArm(posterior, agent, bin, tier, strength, delegate) {
+  let arm = findArm(posterior.arms, agent, bin, tier, delegate);
   if (arm) return arm;
   const { alpha, beta } = priorFor(tier, strength);
   arm = {
@@ -158,6 +221,9 @@ function ensureArm(posterior, agent, bin, tier, strength) {
     last_used: null,
     count: 0,
   };
+  if (delegate !== undefined) {
+    arm.delegate = delegate;
+  }
   posterior.arms.push(arm);
   return arm;
 }
@@ -311,6 +377,143 @@ function update(input) {
 }
 
 /**
+ * Pull an arm with the delegate context dimension (Plan 27-07 / D-08).
+ *
+ * Joint sample over `tiers × delegates` — i.e., 3 × 6 = 18 arms in the
+ * default case. Returns the (tier, delegate) pair with the highest
+ * sampled posterior. Bumps the chosen arm's last_used + count.
+ *
+ * Caller-restricted delegate set:
+ *   - For `delegate_to: none` agents (Plan 27-06 frontmatter), the caller
+ *     should pass `delegates: ['none']` to constrain sampling to the
+ *     local-call slice — the bandit will not explore peer delegations.
+ *   - For agents without `delegate_to` (default), the caller may either
+ *     omit delegates (legacy `pull()` behaviour) or pass DEFAULT_DELEGATES
+ *     to enable adaptive routing across the full 18-arm space.
+ *
+ * @param {{
+ *   agent: string,
+ *   bin: string,
+ *   tiers?: string[],
+ *   delegates?: string[],
+ *   baseDir?: string,
+ *   posteriorPath?: string,
+ *   decay?: number,
+ *   strength?: number,
+ *   now?: Date,
+ * }} input
+ * @returns {{
+ *   tier: string,
+ *   delegate: string,
+ *   samples: Record<string, Record<string, number>>,
+ *   posteriorPath: string,
+ * }}
+ */
+function pullWithDelegate(input) {
+  if (!input || typeof input.agent !== 'string' || input.agent.length === 0) {
+    throw new TypeError('bandit-router.pullWithDelegate: agent (string) required');
+  }
+  if (typeof input.bin !== 'string' || input.bin.length === 0) {
+    throw new TypeError('bandit-router.pullWithDelegate: bin (string) required');
+  }
+  const tiers = input.tiers ?? DEFAULT_TIERS;
+  const delegates = input.delegates ?? DEFAULT_DELEGATES;
+  if (!Array.isArray(delegates) || delegates.length === 0) {
+    throw new TypeError(
+      'bandit-router.pullWithDelegate: delegates must be a non-empty array',
+    );
+  }
+  const strength = input.strength ?? PRIOR_STRENGTH;
+  const now = input.now ?? new Date();
+
+  const posterior = loadPosterior(input);
+  /** @type {Record<string, Record<string, number>>} */
+  const samples = {};
+  let bestTier = tiers[0];
+  let bestDelegate = delegates[0];
+  let bestSample = -1;
+  for (const delegate of delegates) {
+    samples[delegate] = {};
+    for (const tier of tiers) {
+      const arm = ensureArm(posterior, input.agent, input.bin, tier, strength, delegate);
+      const decayed = decayArm(arm, { decay: input.decay, now, strength });
+      const s = sampleBeta(decayed.alpha, decayed.beta);
+      samples[delegate][tier] = s;
+      if (s > bestSample) {
+        bestSample = s;
+        bestTier = tier;
+        bestDelegate = delegate;
+      }
+    }
+  }
+  const chosen = ensureArm(
+    posterior,
+    input.agent,
+    input.bin,
+    bestTier,
+    strength,
+    bestDelegate,
+  );
+  chosen.last_used = now.toISOString();
+  chosen.count += 1;
+  const written = savePosterior(posterior, input);
+  return {
+    tier: bestTier,
+    delegate: bestDelegate,
+    samples,
+    posteriorPath: written,
+  };
+}
+
+/**
+ * Update the posterior with a reward signal — delegate-aware variant.
+ *
+ * Reward signal is UNCHANGED from Phase 23.5 (D-08): two-stage
+ * lexicographic via `computeReward()` — correctness first, cost as
+ * tiebreaker. The delegate dimension is applied at the arm-locator
+ * level, not the reward computation.
+ *
+ * @param {{
+ *   agent: string,
+ *   bin: string,
+ *   tier: string,
+ *   delegate: string,
+ *   reward: number,
+ *   baseDir?: string,
+ *   posteriorPath?: string,
+ *   strength?: number,
+ * }} input
+ * @returns {{alpha: number, beta: number, posteriorPath: string}}
+ */
+function updateWithDelegate(input) {
+  if (!input) throw new TypeError('bandit-router.updateWithDelegate: input required');
+  for (const k of ['agent', 'bin', 'tier', 'delegate']) {
+    if (typeof input[k] !== 'string' || input[k].length === 0) {
+      throw new TypeError(
+        `bandit-router.updateWithDelegate: ${k} (string) required`,
+      );
+    }
+  }
+  if (typeof input.reward !== 'number' || Number.isNaN(input.reward)) {
+    throw new TypeError('bandit-router.updateWithDelegate: reward (number) required');
+  }
+  const r = Math.min(1, Math.max(0, input.reward));
+  const posterior = loadPosterior(input);
+  const arm = ensureArm(
+    posterior,
+    input.agent,
+    input.bin,
+    input.tier,
+    input.strength ?? PRIOR_STRENGTH,
+    input.delegate,
+  );
+  arm.alpha += r;
+  arm.beta += 1 - r;
+  const p = savePosterior(posterior, input);
+  return { alpha: arm.alpha, beta: arm.beta, posteriorPath: p };
+}
+
+/**
  * Two-stage lexicographic reward (D-06).
  *
  *   if !solidify_pass: 0
@@ -350,6 +553,8 @@ function computeReward(input) {
 module.exports = {
   pull,
   update,
+  pullWithDelegate,
+  updateWithDelegate,
   reset,
   loadPosterior,
   savePosterior,
@@ -360,6 +565,8 @@ module.exports = {
   priorFor,
   DEFAULT_PRIORS,
   DEFAULT_TIERS,
+  DEFAULT_DELEGATES,
+  DELEGATE_NONE,
   TIER_PRIOR,
   PRIOR_STRENGTH,
   TOUCHES_BINS,
