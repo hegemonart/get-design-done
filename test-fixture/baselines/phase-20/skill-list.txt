@@ -35,6 +35,7 @@ plan
 plant-seed
 pr-branch
 progress
+quality-gate
 quick
 reapply-patches
 recall
@@ -56,6 +57,7 @@ style
 synthesize
 timeline
 todo
+turn-closeout
 undo
 update
 verify

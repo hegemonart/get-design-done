@@ -472,6 +472,34 @@
     "typical-duration-seconds",
     "writes"
   ],
+  "prototype-gate.md": [
+    "color",
+    "default-tier",
+    "description",
+    "model",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
+  "quality-gate-runner.md": [
+    "color",
+    "default-tier",
+    "description",
+    "model",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
   "token-mapper.md": [
     "color",
     "default-tier",

@@ -87,6 +87,8 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `analyze-dependencies [--slice <name>]` | `get-design-done:analyze-dependencies` | Query the `.design/intel/` store — dependency slices, graph queries, phase-scoped reads |
 | `extract-learnings [--cycle <slug>]` | `get-design-done:extract-learnings` | Extract decisions, lessons, patterns, and surprises from a completed cycle → `.design/cycles/<slug>/LEARNINGS.md` |
 | `skill-manifest [--refresh]` | `get-design-done:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
+| `quality-gate` | `get-design-done:quality-gate` | Phase 25 — parallel lint/type/test/visual command runner; classifies failures via quality-gate-runner agent |
+| `turn-closeout` | `get-design-done:turn-closeout` | Phase 25 — Stop-hook mirror skill; finalizes per-turn STATE blocks and emits closeout events |
 | `watch-authorities [--refresh] [--since <date>] [--feed <name>] [--schedule <cadence>]` | `get-design-done:gdd-watch-authorities` | Run design-authority-watcher — fetch curated feeds, diff snapshot, classify new entries → `.design/authority-report.md` (consumed by `/gdd:reflect`) |
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |

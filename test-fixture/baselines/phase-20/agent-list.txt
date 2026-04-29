@@ -34,5 +34,7 @@ gdd-graphify-sync.md
 gdd-intel-updater.md
 gdd-learnings-extractor.md
 motion-mapper.md
+prototype-gate.md
+quality-gate-runner.md
 token-mapper.md
 visual-hierarchy-mapper.md

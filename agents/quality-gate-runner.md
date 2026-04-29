@@ -111,3 +111,15 @@ Schema:
 - **Do not** consult external services or MCP tools. Classification is a pure function of the supplied input.
 - **Do not** exceed `size_budget: S`. If `outputs[*].stderr` is unexpectedly large, prefer to summarize from the first 4 KB of each stderr rather than refuse.
 - The output JSON object must be parseable with `JSON.parse` — no trailing comma, no comments, no surrounding markdown.
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
+
+## GATE COMPLETE

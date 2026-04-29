@@ -8,5 +8,6 @@ gdd-mcp-circuit-breaker.js
 gdd-protected-paths.js
 gdd-read-injection-scanner.ts
 gdd-trajectory-capture.js
+gdd-turn-closeout.js
 hooks.json
 update-check.sh

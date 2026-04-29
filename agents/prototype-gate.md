@@ -108,3 +108,15 @@ Schema:
 - **Do not** read or write STATE.md outside of the cycle-skip lookup described above.
 - **Do not** consult external services or MCP tools. Signal scoring is purely a function of the supplied inputs.
 - **Do not** exceed `size_budget: S`. If inputs are unexpectedly large, prefer to score signals on the first 8 KB of each file rather than refuse to answer.
+
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"<name>","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<what was produced or learned>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
+
+## GATE COMPLETE
