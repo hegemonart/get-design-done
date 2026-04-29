@@ -384,6 +384,15 @@ function computeCost(args, opts) {
  * event-stream import); .cjs callers (non-CC mirrors) compose this with
  * the JSONL line shape used in tier-resolver.cjs's `emitEvent()`.
  *
+ * Phase 27 / Plan 27-08 (D-09) extension — additive: cost rows now
+ * optionally carry `runtime_role` ("host" | "peer", default "host" when
+ * absent for back-compat) and `peer_id` (set only when
+ * `runtime_role === "peer"`). Pre-Phase-27 callers that don't pass these
+ * fields get the legacy shape with `runtime_role: "host"` stamped — so
+ * the cost-aggregator + reflector cross-runtime arbitrage
+ * (`scripts/lib/cost-arbitrage.cjs`) never sees an absent role tag and
+ * mixed-role cycle history rolls up correctly without crashing.
+ *
  * @param {object} args
  * @param {string} args.runtime
  * @param {string} args.agent
@@ -392,10 +401,18 @@ function computeCost(args, opts) {
  * @param {number} args.tokens_in
  * @param {number} args.tokens_out
  * @param {number|null} args.cost_usd
+ * @param {('host'|'peer')} [args.runtime_role]
+ *   Phase 27. Defaults to `"host"` when absent.
+ * @param {string|null} [args.peer_id]
+ *   Phase 27. The peer-CLI ID when `runtime_role === "peer"` (e.g.
+ *   `"gemini"`, `"codex"`). Omitted from output when absent or when
+ *   `runtime_role === "host"`.
  * @returns {object}
  */
 function buildCostEventPayload(args) {
-  return {
+  const role = args && args.runtime_role === 'peer' ? 'peer' : 'host';
+  /** @type {Record<string, unknown>} */
+  const out = {
     runtime: args.runtime,
     agent: args.agent,
     model_id: args.model_id,
@@ -405,7 +422,54 @@ function buildCostEventPayload(args) {
     cost_usd: typeof args.cost_usd === 'number' && Number.isFinite(args.cost_usd)
       ? args.cost_usd
       : null,
+    runtime_role: role,
   };
+  // peer_id is only meaningful when role === "peer"; we omit it for
+  // host rows to keep the legacy on-disk shape stable for cost-aggregator
+  // tests that snapshot the line content.
+  if (role === 'peer') {
+    const pid = args && typeof args.peer_id === 'string' && args.peer_id.length > 0
+      ? args.peer_id
+      : null;
+    out.peer_id = pid;
+  }
+  return out;
+}
+
+/**
+ * Phase 27 / Plan 27-08 helper — derive `(runtime_role, peer_id)` from a
+ * router decision shape, mirroring `modelFromResolved`'s contract:
+ *
+ *   - When the router decision carries `runtime_role: "peer"` AND
+ *     `peer_id: "<non-empty-string>"`, return `{ role: 'peer', peer_id }`.
+ *   - When the decision is absent, malformed, or not flagged as peer-mode,
+ *     return `{ role: 'host', peer_id: null }`.
+ *
+ * Plan 27-06's session-runner sets `runtime_role` + `peer_id` on its
+ * router-decision payload before invoking the budget-enforcer hook; this
+ * helper is the pure backend lookup that the hook (and any non-CC
+ * cost-recorder mirror) calls to thread those values into the cost row.
+ *
+ * Defensive on every shape — never throws on null / wrong type. Returning
+ * `host` on every error path keeps the legacy back-compat default
+ * everywhere.
+ *
+ * @param {unknown} routerDecision
+ * @returns {{ role: 'host' | 'peer', peer_id: string | null }}
+ */
+function roleFromRouterDecision(routerDecision) {
+  if (!routerDecision || typeof routerDecision !== 'object') {
+    return { role: 'host', peer_id: null };
+  }
+  const role = routerDecision.runtime_role;
+  if (role !== 'peer') return { role: 'host', peer_id: null };
+  const pid = routerDecision.peer_id;
+  if (typeof pid !== 'string' || pid.length === 0) {
+    // peer-flagged but no peer_id is malformed — degrade to host to
+    // avoid emitting a half-tagged cost row.
+    return { role: 'host', peer_id: null };
+  }
+  return { role: 'peer', peer_id: pid };
 }
 
 /**
@@ -435,6 +499,10 @@ module.exports = {
   computeCost,
   buildCostEventPayload,
   modelFromResolved,
+  // Plan 27-08 (D-09): runtime-role + peer-id derivation from router
+  // decision. Used by the .ts hook and any non-CC cost-recorder mirror to
+  // thread peer-delegation tags into cost.jsonl rows.
+  roleFromRouterDecision,
   parsePriceTable,
   loadPriceTable,
   priceTablePath,

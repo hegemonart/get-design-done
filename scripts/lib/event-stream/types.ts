@@ -218,6 +218,87 @@ export type AgentOutcomeEvent = BaseEvent & {
   };
 };
 
+// ---------------------------------------------------------------------------
+// Phase 27 — peer-CLI delegation lifecycle (Plan 27-08, D-09)
+// ---------------------------------------------------------------------------
+//
+// Additive extension. Every event keeps existing fields. Peer-call events
+// gain two payload tags:
+//
+//   * `runtime_role: "host" | "peer"` — defaults to `"host"` if absent at
+//     read time (so all pre-Phase-27 events continue to read as host-mode).
+//     Only the three `peer_call_*` events below MUST carry it as `"peer"`.
+//   * `peer_id` — the peer-CLI ID (`"gemini"`, `"codex"`, `"cursor"`,
+//     `"copilot"`, `"qwen"`, …) — set when `runtime_role === "peer"`.
+//
+// `costs.jsonl` cost rows (`cost_recorded` / `cost.update`) gain the same
+// two tags so Phase 26's reflector cross-runtime arbitrage continues to
+// roll up correctly with mixed-role data. See
+// `scripts/lib/budget-enforcer.cjs#buildCostEventPayload` for the cost-row
+// extension.
+//
+// Plan 27-06 owns the actual emission call sites in session-runner; this
+// file provides the shape + symbolic constants so 27-06 can import the
+// type names without redefining them.
+
+/**
+ * Narrow union for the runtime-role tag. Pre-Phase-27 events do not carry
+ * this field; readers MUST default to `"host"` when absent.
+ */
+export type RuntimeRole = 'host' | 'peer';
+
+/**
+ * Emitted by session-runner (Plan 27-06) when a peer-CLI delegation is
+ * about to start. `latency_ms` is captured on the corresponding
+ * `peer_call_complete` / `peer_call_failed` event; this event marks the
+ * boundary so chain-walkers can pair started/complete via shared
+ * sessionId + peer_id + role.
+ */
+export type PeerCallStartedEvent = BaseEvent & {
+  type: 'peer_call_started';
+  payload: {
+    runtime_role: 'peer';
+    peer_id: string;
+    role: string;
+  };
+};
+
+/**
+ * Emitted by session-runner on successful peer-CLI delegation.
+ * `cost_usd` is computed via the shared cost backend (Plan 26-05)
+ * extended with `runtime_role` + `peer_id` tags so the cost-aggregator
+ * rolls up peer spend correctly.
+ */
+export type PeerCallCompleteEvent = BaseEvent & {
+  type: 'peer_call_complete';
+  payload: {
+    runtime_role: 'peer';
+    peer_id: string;
+    role: string;
+    latency_ms: number;
+    tokens_in: number;
+    tokens_out: number;
+    cost_usd: number | null;
+  };
+};
+
+/**
+ * Emitted by session-runner when peer-CLI delegation fails (peer-absent,
+ * peer-error, timeout). D-07: failure is transparent — session-runner
+ * falls back to the local Anthropic call — so this event is purely a
+ * measurement signal for the reflector. `error_class` mirrors
+ * Plan 20-04's `classify(err).kind`.
+ */
+export type PeerCallFailedEvent = BaseEvent & {
+  type: 'peer_call_failed';
+  payload: {
+    runtime_role: 'peer';
+    peer_id: string;
+    role: string;
+    error_class: string;
+  };
+};
+
 /**
  * Union of all pre-registered event types. Not a closed enum at the
  * envelope level — callers can emit unknown types — but downstream
@@ -247,7 +328,10 @@ export type KnownEvent =
   | ToolCallStartedEvent
   | ToolCallCompletedEvent
   | AgentSpawnEvent
-  | AgentOutcomeEvent;
+  | AgentOutcomeEvent
+  | PeerCallStartedEvent
+  | PeerCallCompleteEvent
+  | PeerCallFailedEvent;
 
 /**
  * Runtime list of all pre-registered event `type` strings. Used by the
@@ -278,4 +362,44 @@ export const KNOWN_EVENT_TYPES: readonly string[] = [
   'tool_call.completed',
   'agent.spawn',
   'agent.outcome',
+  // Phase 27 / Plan 27-08 — peer-CLI delegation lifecycle (D-09).
+  'peer_call_started',
+  'peer_call_complete',
+  'peer_call_failed',
 ] as const;
+
+// ---------------------------------------------------------------------------
+// Phase 27 / Plan 27-08 — symbolic constants for peer-CLI event names.
+// ---------------------------------------------------------------------------
+//
+// Plan 27-06 (session-runner) imports these by name rather than copying
+// string literals so a downstream rename is a single-source-of-truth edit.
+// All three are also present in `KNOWN_EVENT_TYPES` above for the registry
+// test in `tests/event-types-registry.test.ts`.
+
+/** Event type emitted when a peer-CLI delegation starts. See `PeerCallStartedEvent`. */
+export const PEER_CALL_STARTED = 'peer_call_started' as const;
+/** Event type emitted when a peer-CLI delegation succeeds. See `PeerCallCompleteEvent`. */
+export const PEER_CALL_COMPLETE = 'peer_call_complete' as const;
+/** Event type emitted when a peer-CLI delegation fails (D-07: transparent fallback). See `PeerCallFailedEvent`. */
+export const PEER_CALL_FAILED = 'peer_call_failed' as const;
+
+/**
+ * Frozen set of all three peer-call event names. Convenient for
+ * downstream code that wants to gate "is this a peer-call event?" checks
+ * (e.g. the cost-aggregator's mixed-role roll-up).
+ */
+export const PEER_CALL_EVENT_TYPES: readonly string[] = [
+  PEER_CALL_STARTED,
+  PEER_CALL_COMPLETE,
+  PEER_CALL_FAILED,
+] as const;
+
+/**
+ * Default runtime-role tag for events that pre-date Phase 27. Readers
+ * SHOULD substitute this when `payload.runtime_role` is absent so legacy
+ * event-stream consumers continue to read uniformly. Stamping at write
+ * time on every emission would be a much larger surface change — see
+ * Plan 27-08 deviation notes for rationale.
+ */
+export const DEFAULT_RUNTIME_ROLE: RuntimeRole = 'host';

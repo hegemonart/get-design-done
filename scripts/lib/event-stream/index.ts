@@ -50,8 +50,21 @@ export type {
   ToolCallCompletedEvent,
   AgentSpawnEvent,
   AgentOutcomeEvent,
+  // Phase 27 / Plan 27-08 — peer-CLI delegation events (D-09).
+  RuntimeRole,
+  PeerCallStartedEvent,
+  PeerCallCompleteEvent,
+  PeerCallFailedEvent,
 } from './types.ts';
-export { KNOWN_EVENT_TYPES } from './types.ts';
+export {
+  KNOWN_EVENT_TYPES,
+  // Phase 27 / Plan 27-08 — symbolic constants for peer-CLI event names.
+  PEER_CALL_STARTED,
+  PEER_CALL_COMPLETE,
+  PEER_CALL_FAILED,
+  PEER_CALL_EVENT_TYPES,
+  DEFAULT_RUNTIME_ROLE,
+} from './types.ts';
 export { EventBus } from './emitter.ts';
 export type { EventHandler, Unsubscribe } from './emitter.ts';
 export { EventWriter, DEFAULT_EVENTS_PATH, DEFAULT_MAX_LINE_BYTES } from './writer.ts';
