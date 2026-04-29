@@ -46,12 +46,6 @@
       "description": "3-invariant framework (body/attention/memory) with grep-able principle→code pairs and reducibility test; wired into design-discussant brief stage"
     },
     {
-      "name": "BRANCH-PROTECTION",
-      "path": "reference/BRANCH-PROTECTION.md",
-      "type": "meta-rules",
-      "description": "Two-phase rollout policy for main-branch protection (D-16 / D-17) — advisory + enforcing modes applied via scripts/apply-branch-protection.sh"
-    },
-    {
       "name": "DEPRECATIONS",
       "path": "reference/DEPRECATIONS.md",
       "type": "schema",
