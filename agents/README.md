@@ -64,6 +64,66 @@ color: blue
 
 ---
 
+## Runtime-neutral reasoning class (alias for default-tier)
+
+**Phase 26 (v1.26.0).** Agents may carry an optional `reasoning-class: high|medium|low` field as a runtime-neutral alias for `default-tier`. The alias exists because `default-tier`'s enum (`opus|sonnet|haiku`) hard-codes Anthropic model names, while the multi-runtime installer (Phase 24) ships agents to 14 runtimes whose authors do not all use those names. `reasoning-class` describes the *reasoning density* the agent needs without naming a vendor's model lineup.
+
+**This field is additive, not a replacement.** `default-tier: opus|sonnet|haiku` remains the authoritative, required field for v1.26 and is the source of truth that `hooks/budget-enforcer.ts`, `skills/router/SKILL.md`, and `agents/gdd-intel-updater.md` read. Both fields may coexist on the same agent during the transition window. The long-term winner — which field is canonical and which is deprecated — is data-gated per Phase 28+ measurement of adoption rates (CONTEXT D-10); no deprecation lands in v1.26.
+
+### Frontmatter shape
+
+| Field | Type | Accepted values | Required | Purpose |
+|-------|------|-----------------|----------|---------|
+| `reasoning-class` | enum | `high`, `medium`, `low` | optional | Runtime-neutral name for the reasoning-density tier this agent needs. Equivalent to `default-tier` per the equivalence table below. |
+
+### Equivalence (locked in CONTEXT D-10)
+
+| `reasoning-class` | `default-tier` | Typical role classes |
+|-------------------|----------------|----------------------|
+| `high`            | `opus`         | Planners, critics, advisors, strategic reflectors. |
+| `medium`          | `sonnet`       | Researchers, mappers, doc-writers, executors, fixers. |
+| `low`             | `haiku`        | Verifiers and checkers with deterministic rubrics. |
+
+The mapping is bidirectional and exhaustive — there is no `reasoning-class` value without a `default-tier` equivalent and vice versa. See `reference/model-tiers.md` for the per-class role rationale (the tier-selection guide that `default-tier` is keyed against — `reasoning-class` inherits the same semantics through the equivalence above).
+
+### Coexistence rule
+
+Both fields may appear in the same agent's frontmatter:
+
+```yaml
+---
+name: design-planner
+default-tier: opus
+reasoning-class: high
+tier-rationale: "Authors DESIGN-PLAN.md — the contract every downstream agent follows"
+---
+```
+
+When both are present, the values MUST be equivalent per the table above. Mismatched dual annotations (e.g. `default-tier: opus` paired with `reasoning-class: medium`) are a validation error — `scripts/validate-frontmatter.ts` (extended in Plan 26-08) enforces equivalence at lint time. If only one of the two is present, the validator accepts it and downstream consumers use the equivalence table to derive the missing field.
+
+### How runtime-aware tooling reads either field
+
+Downstream consumers (`skills/router/SKILL.md`, `hooks/budget-enforcer.ts`, `scripts/lib/budget-enforcer.cjs`, `agents/gdd-intel-updater.md`) accept either field individually and map between them via the equivalence table:
+
+- **`default-tier` only** — consumers read `default-tier` directly. This is the v1.26 baseline state for all 26 shipped agents.
+- **`reasoning-class` only** — consumers map `high → opus`, `medium → sonnet`, `low → haiku` and feed the resulting tier into `tier-resolver.cjs` (Plan 26-02) for runtime-correct model resolution. Consumers that have not yet been updated to read `reasoning-class` natively still see a valid `default-tier` semantically (via the alias), so no consumer breaks when an agent author chooses the runtime-neutral name.
+- **Both present** — consumers prefer `default-tier` for now (v1.26 canonical), with `reasoning-class` carried through to telemetry (`gdd-intel-updater` writes both fields to `.design/intel/agent-tiers.json` per Plan 26-08) so adoption can be measured for the Phase 28 deprecation gate.
+
+### Rollout policy for v1.26
+
+- The 26 existing agents continue to carry `default-tier` only — **no per-agent retrofit lands in v1.26**. New agents (added in Phase 27+) MAY carry `reasoning-class` instead of, or alongside, `default-tier`.
+- Validators, intel-updater, router, and budget-enforcer accept either field starting in v1.26 (Plans 26-04, 26-05, 26-08).
+- Adoption is measured by `gdd-intel-updater` over `agents/*.md` changes; if alias adoption stays below 50% by Phase 28, `default-tier` remains canonical and the alias is deprecated. If alias wins majority share, the reverse. **No deprecation in v1.26.**
+
+### Cross-references
+
+- `reference/model-tiers.md` — tier-selection guide and per-agent map for `default-tier`. The same role-class rationale applies to `reasoning-class` via the equivalence table.
+- `reference/runtime-models.md` (Plan 26-01) — per-runtime tier→model adapter that consumes the resolved tier (whether sourced from `default-tier` or via `reasoning-class` alias).
+- `scripts/validate-frontmatter.ts` (Plan 26-08) — validator extension that accepts the optional field and enforces equivalence when both are present.
+- `.planning/phases/26-headless-model-resolver/CONTEXT.md` D-10, D-11 — decision lineage for additive-alias and equivalence-enforced semantics.
+
+---
+
 ## Required Reading Pattern
 
 When an agent must read specific files before acting, the orchestrating stage embeds a `<required_reading>` block in the prompt it passes to `Task`. The block is part of the **prompt string**, not the agent file.
