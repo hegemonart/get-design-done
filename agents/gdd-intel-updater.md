@@ -19,6 +19,7 @@ writes:
   - .design/intel/decisions.json
   - .design/intel/debt.json
   - .design/intel/graph.json
+  - .design/intel/agent-tiers.json
 ---
 
 @reference/shared-preamble.md
@@ -63,6 +64,38 @@ Expected: `components.json decisions.json debt.json dependencies.json exports.js
 
 Report any missing slices as warnings.
 
+### Step 3.5 — Sync `.design/intel/agent-tiers.json` (Plan 26-08)
+
+Phase 26 introduced the runtime-neutral `reasoning-class` alias for `default-tier` (CONTEXT D-10/D-11). Downstream tooling that wants tier information without re-parsing markdown reads `.design/intel/agent-tiers.json`. Both fields MUST be populated per agent so consumers do not have to know the equivalence table — the intel-updater is the single source of truth that fills the missing field via the locked map:
+
+| `reasoning-class` | `default-tier` |
+|-------------------|----------------|
+| `high`            | `opus`         |
+| `medium`          | `sonnet`       |
+| `low`             | `haiku`        |
+
+Walk every `agents/*.md` file (skip `README.md`), parse its frontmatter, and emit one entry per agent into `.design/intel/agent-tiers.json` with the shape:
+
+```json
+{
+  "schema_version": 1,
+  "generated_at": "<ISO-8601-UTC>",
+  "agents": {
+    "design-planner": { "default-tier": "opus", "reasoning-class": "high" },
+    "design-verifier": { "default-tier": "haiku", "reasoning-class": "low" }
+  }
+}
+```
+
+Population rules:
+
+1. If both `default-tier` and `reasoning-class` are present in the agent's frontmatter, write both verbatim (validator already enforced equivalence at lint time — see `scripts/validate-frontmatter.ts`).
+2. If only `default-tier` is present (the v1.26 baseline state for all 26 shipped agents), derive `reasoning-class` from the table above and write both.
+3. If only `reasoning-class` is present, derive `default-tier` from the table above and write both.
+4. If neither is present, omit the agent from the JSON and emit a warning — the upstream `validate-frontmatter` gate would have caught this at CI; the intel-updater stays non-throwing on lint-edges.
+
+Validation is exclusively the validator's job; this step assumes the gate has passed and writes the queryable index. If a pre-existing `.design/intel/agent-tiers.json` is present, overwrite it atomically (write to a `.tmp` then `rename`).
+
 ### Step 4 — Report summary
 
 Print a concise update summary:
@@ -71,7 +104,7 @@ Print a concise update summary:
 ━━━ Intel store updated ━━━
 Files indexed:  <N>
 Changed files:  <N>
-Slices written: 10
+Slices written: 11 (10 build-intel slices + agent-tiers.json from Step 3.5)
 Generated:      <timestamp>
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
