@@ -106,6 +106,49 @@ Read `.design/telemetry/costs.jsonl` (if exists). Aggregate per agent:
 
 If `.design/budget.json` doesn't exist: note "budget.json not found — Phase 10.1 budget governance required."
 
+### 7. Cross-runtime cost arbitrage (Phase 26 — D-09)
+
+**Why this exists:** Phase 24 ships gdd to 14 runtimes (claude, codex, gemini, qwen, …). The same `(agent, tier)` pair can cost dramatically different amounts depending on which runtime executed the spawn — runtime-author pricing varies, and the user may already be paying for one runtime via subscription while paying per-token in another. This section surfaces those arbitrage opportunities as **structured, measurable signals** — never hand-wavy assumptions.
+
+**Data source:** `.design/telemetry/events.jsonl` — filter entries where `type === 'cost.update'`. Each cost row is tagged with `payload.runtime` (Plan 26-05) so spawns from different runtimes are attributable apples-to-apples. The reflector reads cost events from this stream alongside Section 6's `costs.jsonl` rollup; events.jsonl is authoritative for runtime attribution.
+
+**The rule:**
+
+For each `(agent, tier)` pair observed in the last 5 cycles (D-09 default window):
+
+1. Bucket cost events by `(agent, tier, runtime, cycle)` and sum within each bucket. Sum-then-average is critical: a cycle that ran 4 design-verifier spawns in claude and 1 in codex must NOT inflate claude's per-cycle average by a factor of 4. Sum the 4 spawns into one cycle-sum, then average across the cycles where the runtime appeared.
+2. Compute `avg_cost_per_cycle` per `(agent, tier, runtime)` triple, restricted to the recency window.
+3. For each pair that has ≥2 runtimes in the window, find the cheapest and most expensive runtime. Compute `delta_pct = (max_avg - min_avg) / min_avg`.
+4. If `delta_pct > 0.5` (50%, D-09 starting heuristic), emit a structured `cost_arbitrage` proposal.
+
+**Important guardrails (failure modes the rule must avoid):**
+
+- **Mixed-runtime cycles must not crash or double-count.** A single cycle where some agent spawns ran in CC and others in Codex is normal — runtime attribution is per-spawn (`payload.runtime`), never per-cycle.
+- **Single-runtime-only history is silent.** If only one runtime has events for an `(agent, tier)` pair in the window, no arbitrage can be computed — emit nothing rather than a misleading "no comparison available" proposal.
+- **Zero-cost denominators are skipped.** A runtime that averaged $0 in the window would produce `delta_pct: Infinity`; skip the pair rather than emit a useless signal.
+- **The 50% threshold is a starting heuristic.** Bandit-style learning over arbitrage outcomes (was the proposal applied? did costs drop?) is **Phase 23.5+ territory** — it lives in the bandit posterior, NOT here. This section's job is to surface measurement signals; tier-selection learning is a separate data product.
+
+**Helper:** `scripts/lib/cost-arbitrage.cjs` exports `analyze(events, options) → proposals[]` implementing the above rule deterministically. The executor agent following this skill loads `events.jsonl`, parses each line as JSON (skipping malformed lines), and passes the array of envelopes to `analyze()`. No re-derivation of the rule in prose — call the helper.
+
+**Proposal output shape** (one entry per arbitrage signal, JSON-serializable for `/gdd:apply-reflections`):
+
+```json
+{
+  "type": "cost_arbitrage",
+  "agent": "design-reflector",
+  "tier": "opus",
+  "runtimes": {
+    "claude": { "avg_cost_per_cycle": 0.42, "n_cycles": 5 },
+    "codex":  { "avg_cost_per_cycle": 1.10, "n_cycles": 5 }
+  },
+  "delta_pct": 0.617,
+  "proposal": "Switch design-reflector tier=opus invocations from codex to claude for ~62% cost saving",
+  "evidence_window": "last_5_cycles"
+}
+```
+
+Render each `cost_arbitrage` entry into the Proposals section as a `[BUDGET]`-tagged proposal carrying the structured payload verbatim — `/gdd:apply-reflections` will route it to the runtime-routing layer (Phase 26's tier-resolver / runtime-detect) rather than to `.design/budget.json`.
+
 ---
 
 ## Proposals
