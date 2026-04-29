@@ -72,6 +72,38 @@ function resolveHookPath(): string {
 const nodeRequire = createRequire(resolveHookPath());
 const rateGuard = nodeRequire('../scripts/lib/rate-guard.cjs') as typeof import('../scripts/lib/rate-guard.cjs');
 const iterationBudget = nodeRequire('../scripts/lib/iteration-budget.cjs') as typeof import('../scripts/lib/iteration-budget.cjs');
+// Plan 26-05: shared cost-computation backend for the resolved_models
+// consumer path. Pure module — takes (model_id, runtime, token_counts) →
+// cost_usd by reading per-runtime price tables under reference/prices/.
+// See scripts/lib/budget-enforcer.cjs for the lookup chain.
+interface BudgetEnforcerBackend {
+  computeCost(args: {
+    model_id?: string | null;
+    tier?: string | null;
+    runtime: string;
+    tokens_in: number;
+    tokens_out: number;
+    cache_hit?: boolean;
+  }): {
+    cost_usd: number | null;
+    model: string | null;
+    tier: string | null;
+    runtime_used: string | null;
+    fallback: boolean;
+    reason: string | null;
+  };
+  modelFromResolved(resolved: unknown, agent: string): string | null;
+}
+const budgetBackend = nodeRequire('../scripts/lib/budget-enforcer.cjs') as BudgetEnforcerBackend;
+// Plan 26-05: runtime detection for the cost-event runtime tag. Returns
+// 'claude' for the CC hook context (CLAUDE_CONFIG_DIR is set when CC is
+// the host), null when running outside any of the 14 runtime envs (e.g.
+// CI matrix). The hook defaults the null case to 'claude' since the .ts
+// hook only runs inside CC anyway.
+interface RuntimeDetectModule {
+  detect(): string | null;
+}
+const runtimeDetect = nodeRequire('../scripts/lib/runtime-detect.cjs') as RuntimeDetectModule;
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -92,6 +124,25 @@ export type ComplexityClass = 'S' | 'M' | 'L' | 'XL';
 interface RouterDecision {
   path?: 'fast' | 'quick' | 'full';
   complexity_class?: ComplexityClass;
+  /**
+   * Phase 26 / D-07: per-agent concrete model name resolved by the
+   * router via `scripts/lib/tier-resolver.cjs`. Strict superset of
+   * `model_tier_overrides` — existing consumers still read tier names
+   * from `model_tier_overrides`; new consumers read `resolved_models`
+   * for runtime-correct cost lookup.
+   */
+  resolved_models?: Record<string, string>;
+  /**
+   * Phase 26 / D-08: runtime ID the router computed `resolved_models`
+   * against. Optional; the hook falls back to `runtime-detect.cjs`
+   * when absent.
+   */
+  runtime?: string;
+  /**
+   * Phase 25 back-compat: tier-name overrides per agent. Phase 26 keeps
+   * this as the legacy fallback path when `resolved_models` is absent.
+   */
+  model_tier_overrides?: Record<string, string>;
   [key: string]: unknown;
 }
 
@@ -520,6 +571,53 @@ function emitHookFired(decision: HookDecision, cycle?: string): void {
   }
 }
 
+/**
+ * Plan 26-05 / D-08: emit a `cost_recorded` event with runtime tag,
+ * concrete model, tier, token counts, and computed cost. Cost-aggregator
+ * downstream rolls these up per-runtime AND per-tier so reflector class-
+ * specific cost analysis (Phase 26-06) can compare apples-to-apples
+ * across runtimes.
+ *
+ * The event uses the BaseEvent envelope shape (free-form `type` per
+ * Phase 22 events.jsonl contract). Fail-open like every other emit in
+ * this hook — never block the spawn on a telemetry failure.
+ */
+function emitCostRecorded(
+  payload: {
+    runtime: string;
+    agent: string;
+    model_id: string | null;
+    tier: string | null;
+    tokens_in: number;
+    tokens_out: number;
+    cost_usd: number | null;
+  },
+  cycle?: string,
+): void {
+  const ev = {
+    type: 'cost_recorded',
+    timestamp: new Date().toISOString(),
+    sessionId: getSessionId(),
+    ...(cycle !== undefined && cycle !== 'unknown' ? { cycle } : {}),
+    payload: {
+      runtime: payload.runtime,
+      agent: payload.agent,
+      model_id: payload.model_id,
+      tier: payload.tier,
+      tokens_in: payload.tokens_in,
+      tokens_out: payload.tokens_out,
+      cost_usd: payload.cost_usd,
+    },
+  };
+  try {
+    // BaseEvent shape; cost_recorded is a free-form subtype (the
+    // Phase 22 events stream is structurally validated, not enum-locked).
+    appendEvent(ev as unknown as HookFiredEvent);
+  } catch {
+    // Fail open.
+  }
+}
+
 // ── main ────────────────────────────────────────────────────────────────────
 
 async function readStdin(): Promise<string> {
@@ -787,13 +885,54 @@ export async function main(): Promise<void> {
     toolInput._tier_override = budget.tier_overrides[agent];
   }
 
+  // Plan 26-05 / D-07 + D-08: resolved_models consumer path. When the
+  // router decision payload carries a concrete model ID for this agent
+  // under `resolved_models`, look up the cost in the per-runtime price
+  // table by model ID. Otherwise fall back to the legacy tier-name
+  // lookup (which still resolves through claude.md as the default
+  // runtime — back-compat with v1.25.x callers).
+  const resolvedModelId = budgetBackend.modelFromResolved(
+    routerDecision?.resolved_models,
+    agent,
+  );
+  const resolvedTier =
+    toolInput._tier_override ?? toolInput._default_tier ?? 'sonnet';
+  // Runtime tag: prefer the router's explicit `runtime` (D-08) field;
+  // fall back to env-var detection; default to 'claude' since the .ts
+  // hook itself only runs inside Claude Code.
+  const runtimeId =
+    (typeof routerDecision?.runtime === 'string' && routerDecision.runtime.length > 0
+      ? routerDecision.runtime
+      : runtimeDetect.detect()) ?? 'claude';
+
+  // Compute runtime-aware cost via the shared backend. Failures return
+  // null cost; we emit the event regardless so the cost-aggregator sees
+  // the lookup attempt (Phase 22 events.jsonl tagging).
+  const costLookup = budgetBackend.computeCost({
+    model_id: resolvedModelId,
+    tier: resolvedTier,
+    runtime: runtimeId,
+    tokens_in: Number(toolInput._tokens_in_est ?? 0),
+    tokens_out: Number(toolInput._tokens_out_est ?? 0),
+    cache_hit: false,
+  });
+  emitCostRecorded(
+    {
+      runtime: runtimeId,
+      agent,
+      model_id: resolvedModelId ?? costLookup.model,
+      tier: costLookup.tier ?? resolvedTier,
+      tokens_in: Number(toolInput._tokens_in_est ?? 0),
+      tokens_out: Number(toolInput._tokens_out_est ?? 0),
+      cost_usd: costLookup.cost_usd,
+    },
+    cycle,
+  );
+
   // Branch E: standard spawn-allowed (includes tier-downgraded path).
   writeTelemetry({
     agent,
-    tier:
-      toolInput._tier_override ??
-      toolInput._default_tier ??
-      'sonnet',
+    tier: resolvedTier,
     tokens_in: Number(toolInput._tokens_in_est ?? 0),
     tokens_out: Number(toolInput._tokens_out_est ?? 0),
     cache_hit: false,

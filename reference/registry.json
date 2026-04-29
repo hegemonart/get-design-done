@@ -452,7 +452,106 @@
       "name": "model-prices",
       "path": "reference/model-prices.md",
       "type": "data",
-      "description": "Anthropic model pricing table used by the telemetry aggregator"
+      "phase": 26,
+      "description": "Phase 26 D-08 router — links to per-runtime price sub-tables under reference/prices/<runtime>.md (claude/codex/gemini/qwen canonical, 10 stubs); read by scripts/lib/budget-enforcer.cjs"
+    },
+    {
+      "name": "prices-claude",
+      "path": "reference/prices/claude.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Anthropic Claude Code pricing (canonical Anthropic table preserved from v1.25 model-prices.md; haiku/sonnet/opus rows + size_budget token ranges)"
+    },
+    {
+      "name": "prices-codex",
+      "path": "reference/prices/codex.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — OpenAI Codex CLI pricing (gpt-5/gpt-5-mini/gpt-5-nano seed; provenance <TODO> at https://openai.com/api/pricing/)"
+    },
+    {
+      "name": "prices-gemini",
+      "path": "reference/prices/gemini.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Google Gemini CLI pricing (gemini-2.5-pro/flash/flash-lite seed; provenance <TODO> at https://ai.google.dev/pricing)"
+    },
+    {
+      "name": "prices-qwen",
+      "path": "reference/prices/qwen.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Alibaba Qwen CLI pricing (qwen3-max/plus/flash seed; provenance <TODO> at https://www.alibabacloud.com/help/en/model-studio/billing-for-models)"
+    },
+    {
+      "name": "prices-kilo",
+      "path": "reference/prices/kilo.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Kilo Code pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-copilot",
+      "path": "reference/prices/copilot.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — GitHub Copilot CLI pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-cursor",
+      "path": "reference/prices/cursor.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Cursor pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-windsurf",
+      "path": "reference/prices/windsurf.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Windsurf pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-antigravity",
+      "path": "reference/prices/antigravity.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Antigravity pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-augment",
+      "path": "reference/prices/augment.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Augment Code pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-trae",
+      "path": "reference/prices/trae.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Trae pricing (stub; possibly single_tier runtime; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-codebuddy",
+      "path": "reference/prices/codebuddy.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Tencent CodeBuddy pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+    },
+    {
+      "name": "prices-cline",
+      "path": "reference/prices/cline.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — Cline pricing (stub; BYO-API-key runtime, default model pricing only)"
+    },
+    {
+      "name": "prices-opencode",
+      "path": "reference/prices/opencode.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 D-08 sub-table — OpenCode pricing (stub; BYO-API-key runtime, default model pricing only)"
     },
     {
       "name": "model-tiers",
