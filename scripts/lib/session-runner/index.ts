@@ -86,6 +86,221 @@ const RATE_GUARD_PROVIDER = 'anthropic';
 /** Default retries (first attempt + 1 retry). */
 const DEFAULT_MAX_RETRIES = 2;
 
+// ── Plan 27-06 — Peer-CLI delegation primitives ─────────────────────────────
+//
+// Lazy registry loader: the registry is a .cjs module under scripts/lib/peer-cli
+// landed by Plan 27-05. Tests inject a stub via SessionRunnerOptions.registryOverride;
+// real callers fall through to the live module. Resolution is anchored to the
+// repo root via the same `_nodeRequire` we use for jittered-backoff/rate-guard
+// so the runner survives test sandboxes that chdir.
+//
+// We swallow load errors and return null → caller treats as "no peer available"
+// → falls back to local SDK. This keeps the session-runner functional even on
+// fresh checkouts where Plan 27-05 hasn't landed yet.
+
+interface PeerRegistry {
+  dispatch: (
+    role: string,
+    tier: string | null,
+    text: string,
+    opts: { cwd?: string; [k: string]: unknown },
+  ) => Promise<{ result: unknown; peer: string; protocol: 'acp' | 'asp' } | null>;
+}
+
+let _peerRegistryCache: PeerRegistry | null | undefined;
+
+/**
+ * Resolve the peer-CLI registry. Memoized; returns null if the module
+ * isn't installable (missing file, require throws, shape mismatch).
+ * Tests bypass this entirely by passing `registryOverride` on the
+ * SessionRunnerOptions.
+ */
+function loadPeerRegistry(): PeerRegistry | null {
+  if (_peerRegistryCache !== undefined) return _peerRegistryCache;
+  try {
+    const mod = _nodeRequire(
+      _resolve(_REPO_ROOT, 'scripts/lib/peer-cli/registry.cjs'),
+    );
+    if (mod && typeof mod === 'object' && typeof (mod as { dispatch?: unknown }).dispatch === 'function') {
+      _peerRegistryCache = mod as PeerRegistry;
+      return _peerRegistryCache;
+    }
+  } catch {
+    // registry.cjs missing or threw on require — treat as "no peers available"
+  }
+  _peerRegistryCache = null;
+  return _peerRegistryCache;
+}
+
+/**
+ * Visible-for-testing reset of the peer-registry cache. The session-runner
+ * caches the registry module after first resolve so production runs don't
+ * re-require it per call; tests that swap process state (chdir into a
+ * sandbox, write a different registry.cjs, etc.) can call this between
+ * tests to force reload. Production code never calls this.
+ */
+export function _resetPeerRegistryCache(): void {
+  _peerRegistryCache = undefined;
+}
+
+/**
+ * Parse a `delegate_to` value into (peer, role). Returns null when the
+ * value is missing, the literal "none" opt-out, or doesn't match the
+ * `<peer>-<role>` shape. The session-runner uses this to figure out
+ * which role to ask the registry for.
+ *
+ * Note: validate-frontmatter.ts already enforces the value shape at lint
+ * time — by the time a `delegate_to` reaches session-runner it's been
+ * validated against the capability matrix. We re-parse here defensively
+ * because the runner is consumed by tests that may pass arbitrary
+ * strings, and the cost of an extra split is trivial.
+ */
+function parseDelegateTo(value: string | undefined): { peer: string; role: string } | null {
+  if (typeof value !== 'string' || value.length === 0) return null;
+  if (value === 'none') return null;
+  const dashIdx = value.indexOf('-');
+  if (dashIdx <= 0 || dashIdx >= value.length - 1) return null;
+  return {
+    peer: value.slice(0, dashIdx),
+    role: value.slice(dashIdx + 1),
+  };
+}
+
+/**
+ * Try to dispatch a session via peer-CLI before falling back to the
+ * Anthropic SDK. Returns either a fully-built SessionResult on peer
+ * success, or null when the caller should continue to the local path.
+ *
+ * Per CONTEXT D-07 (transparent fallback): every failure path inside
+ * this helper returns null — peer-absent, registry-load-failure,
+ * adapter-error, dispatch-throw, anything. The local SDK path then
+ * runs as if the delegation never happened. Failure is observable
+ * only as a placeholder log call (and, once Plan 27-08 wires real
+ * events, as a `peer_call_failed` chain entry).
+ */
+async function tryDelegate(args: {
+  opts: SessionRunnerOptions;
+  sanitizedPrompt: string;
+  transcriptPath: string;
+  sessionId: string;
+  sanitizer: { sanitized: string; applied: readonly string[]; removedSections: readonly string[] };
+}): Promise<SessionResult | null> {
+  const { opts, sanitizedPrompt, transcriptPath, sanitizer } = args;
+  const parsed = parseDelegateTo(opts.delegateTo);
+  if (parsed === null) return null; // not configured / explicit opt-out
+
+  const role = typeof opts.delegateRole === 'string' && opts.delegateRole.length > 0
+    ? opts.delegateRole
+    : parsed.role;
+  const tier = opts.delegateTier === undefined ? null : opts.delegateTier;
+
+  const dispatcher: PeerRegistry['dispatch'] | null = (() => {
+    if (typeof opts.registryOverride === 'function') return opts.registryOverride;
+    const reg = loadPeerRegistry();
+    return reg !== null ? reg.dispatch : null;
+  })();
+  if (dispatcher === null) {
+    // No registry available at all — fall through to local. Phase 22
+    // event emission (Plan 27-08) hooks here as `peer_call_failed`
+    // with reason="registry_missing". For now, a placeholder stderr
+    // breadcrumb so operators can grep for delegation drops without
+    // CI-failing on stdout pollution.
+    _logPeerCallFailed({ peer: parsed.peer, role, errorClass: 'registry_missing' });
+    return null;
+  }
+
+  let dispatchResult: { result: unknown; peer: string; protocol: 'acp' | 'asp' } | null = null;
+  try {
+    dispatchResult = await dispatcher(role, tier, sanitizedPrompt, { cwd: process.cwd() });
+  } catch (err) {
+    _logPeerCallFailed({
+      peer: parsed.peer,
+      role,
+      errorClass: 'dispatch_threw',
+      message: err instanceof Error ? err.message : String(err),
+    });
+    return null; // transparent fallback
+  }
+
+  if (dispatchResult === null) {
+    // Registry returned null — peer absent, capability mismatch, or
+    // adapter-side error. Per D-07 we fall back silently.
+    _logPeerCallFailed({ peer: parsed.peer, role, errorClass: 'registry_returned_null' });
+    return null;
+  }
+
+  // Peer succeeded. Build a SessionResult that mirrors the local path's
+  // shape so downstream consumers (stage-handlers, transcript readers,
+  // tests) treat both paths uniformly. We do NOT write a transcript file
+  // for delegated calls in v1.27.0 — the peer broker (Plan 27-03) keeps
+  // its own logs and Plan 27-08 wires the events that observers need.
+  // The transcript_path field still points at the would-be path so any
+  // consumer that probes it sees a stable string (existsSync will be
+  // false, which is correct: the file isn't ours to write).
+  const finalText = _coerceFinalText(dispatchResult.result);
+  return {
+    status: 'completed',
+    transcript_path: transcriptPath,
+    turns: 1,
+    usage: { input_tokens: 0, output_tokens: 0, usd_cost: 0 },
+    ...(finalText !== undefined ? { final_text: finalText } : {}),
+    tool_calls: [],
+    sanitizer: {
+      applied: [...sanitizer.applied],
+      removedSections: [...sanitizer.removedSections],
+    },
+  };
+}
+
+/** Best-effort extract a final text string from the adapter's free-form result. */
+function _coerceFinalText(result: unknown): string | undefined {
+  if (typeof result === 'string' && result.length > 0) return result;
+  if (result !== null && typeof result === 'object') {
+    const obj = result as Record<string, unknown>;
+    if (typeof obj['final_text'] === 'string' && obj['final_text'].length > 0) {
+      return obj['final_text'] as string;
+    }
+    if (typeof obj['text'] === 'string' && obj['text'].length > 0) {
+      return obj['text'] as string;
+    }
+    if (typeof obj['output'] === 'string' && obj['output'].length > 0) {
+      return obj['output'] as string;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Placeholder for Plan 27-08's `peer_call_failed` event. Until 27-08
+ * wires real `appendEvent('peer_call_failed', ...)`, we write a single
+ * stderr line so operators can grep for silent delegation drops. We
+ * deliberately don't go through `appendEvent` here because the Phase 22
+ * event-stream hasn't gained a `peer_call_failed` type yet (that's
+ * 27-08's job) and pushing an unknown event type today would create a
+ * migration mess for the reflector.
+ */
+function _logPeerCallFailed(args: {
+  peer: string;
+  role: string;
+  errorClass: string;
+  message?: string;
+}): void {
+  // One-line, machine-greppable. Quiet by default in test runs (NODE_ENV)
+  // so the test output stays clean. Operators set GDD_PEER_DEBUG=1 to see
+  // the breadcrumb in production logs.
+  if (process.env['GDD_PEER_DEBUG'] !== '1') return;
+  const payload = JSON.stringify({
+    type: 'peer_call_failed',
+    peer_id: args.peer,
+    role: args.role,
+    error_class: args.errorClass,
+    ...(args.message !== undefined ? { message: args.message } : {}),
+    ts: new Date().toISOString(),
+  });
+  // eslint-disable-next-line no-console
+  console.error(`[peer-cli] ${payload}`);
+}
+
 /** Baseline retry backoff parameters (matches jittered-backoff defaults for
  *  the SDK-retry case; 1s base → 30s cap). */
 const RETRY_BACKOFF = { baseMs: 1000, maxMs: 30_000 } as const;

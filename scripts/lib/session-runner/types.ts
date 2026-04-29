@@ -118,6 +118,66 @@ export interface SessionRunnerOptions {
     applied: readonly string[];
     removedSections: readonly string[];
   };
+
+  /**
+   * Phase 27 (Plan 27-06) — peer-CLI delegation.
+   *
+   * Optional. When set to `<peer>-<role>` (e.g. `gemini-research`), the
+   * session-runner attempts to dispatch the call to the named peer-CLI
+   * via `scripts/lib/peer-cli/registry.cjs#dispatch` BEFORE invoking the
+   * local Anthropic SDK. The peer's response, when successful, becomes
+   * the SessionResult — no SDK call is made.
+   *
+   * Fallback (CONTEXT D-07): if the registry returns `null` (peer
+   * absent / opt-out / adapter error / dispatch error) OR throws, the
+   * session-runner silently retries with the local Anthropic SDK. The
+   * caller never sees the peer failure — failure is a measurement
+   * signal, not a cycle-breaker.
+   *
+   * Special values:
+   *   - `none`      → explicit opt-out; never delegate. Same as omitting the field.
+   *   - undefined   → default behavior; never delegate.
+   *
+   * The session-runner never reads agent frontmatter on its own. Callers
+   * (pipeline-runner, explore, discuss, etc.) are responsible for
+   * resolving the agent's `delegate_to:` frontmatter and passing it
+   * through this option.
+   */
+  delegateTo?: string;
+
+  /**
+   * Phase 27 (Plan 27-06) — role hint for peer-CLI dispatch.
+   *
+   * Used only when `delegateTo` is set. Defaults to the role parsed out
+   * of `delegateTo` (e.g. `delegateTo: "gemini-research"` → role
+   * `"research"`). Provide explicitly when the caller wants to override
+   * the parsed value (rare).
+   */
+  delegateRole?: string;
+
+  /**
+   * Phase 27 (Plan 27-06) — tier hint for peer-CLI dispatch.
+   *
+   * Currently advisory; the registry's capability matrix doesn't gate
+   * on tier. Used by adapters for telemetry and by Plan 27-08 events.
+   * Defaults to null (let the adapter pick).
+   */
+  delegateTier?: string | null;
+
+  /**
+   * Phase 27 (Plan 27-06) — registry override for tests.
+   *
+   * Default loads `scripts/lib/peer-cli/registry.cjs` lazily on first
+   * delegation attempt. Tests inject a stub `dispatch()` to avoid
+   * spawning real peers. The override mirrors the registry's `dispatch`
+   * signature: `(role, tier, text, opts) => Promise<{result,peer,protocol} | null>`.
+   */
+  registryOverride?: (
+    role: string,
+    tier: string | null,
+    text: string,
+    opts: { cwd?: string; [k: string]: unknown },
+  ) => Promise<{ result: unknown; peer: string; protocol: 'acp' | 'asp' } | null>;
 }
 
 /**

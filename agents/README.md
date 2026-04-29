@@ -124,6 +124,35 @@ Downstream consumers (`skills/router/SKILL.md`, `hooks/budget-enforcer.ts`, `scr
 
 ---
 
+## Peer-CLI delegation (delegate_to)
+
+Phase 27 introduces an **optional** frontmatter field `delegate_to:` that lets an agent OPT IN to running on a peer CLI (Codex via ASP; Gemini/Cursor/Copilot/Qwen via ACP) instead of the in-process Anthropic SDK call.
+
+| Property | Value |
+|----------|-------|
+| Field | `delegate_to: <peer>-<role> \| none` |
+| Required | NO — optional, additive |
+| Default | absent = use local Anthropic call (existing behavior) |
+| Valid values | `gemini-research`, `gemini-exploration`, `codex-execute`, `cursor-debug`, `cursor-plan`, `copilot-review`, `copilot-research`, `qwen-write`, or `none` (explicit opt-out) |
+| Validator | `scripts/validate-frontmatter.ts` (Plan 27-06) — checks format + cross-references the capability matrix in `scripts/lib/peer-cli/registry.cjs`. Mismatched `<peer>-<role>` values that aren't in the matrix → validation error. |
+
+**Behavior at runtime:**
+- When session-runner spawns an agent with `delegate_to: gemini-research`, it tries `peer-cli/registry.dispatch('research', tier, prompt, opts)` first. On null result (peer absent OR peer error per D-07) it transparently falls back to the local Anthropic call. The skill never sees the peer failure.
+- `delegate_to: none` explicitly skips registry dispatch (security-sensitive agents).
+- Absent field = same as not setting it = local Anthropic call (unchanged behavior).
+
+**Opt-in gating:** Even with `delegate_to:` set on an agent, dispatch only fires if the peer is in `.design/config.json#peer_cli.enabled_peers` allowlist (populated by the install-time nudge in Plan 27-11; default empty). This keeps cost surprises off — users explicitly authorize each peer.
+
+**Telemetry:** Peer calls emit `peer_call_started` / `peer_call_complete` / `peer_call_failed` events in `events.jsonl`, tagged with `runtime_role: "peer"` and `peer_id` (Plan 27-08). Cost rows in `costs.jsonl` carry the same tags so reflector cross-runtime arbitrage (Phase 26) extends naturally.
+
+**Cross-references:**
+- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) — capability matrix + dispatch.
+- `scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs` (Plan 27-04) — per-peer thin adapters.
+- `reference/peer-cli-capabilities.md` (Plan 27-05) — full capability matrix doc.
+- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-06, D-07, D-11 — decision lineage.
+
+---
+
 ## Required Reading Pattern
 
 When an agent must read specific files before acting, the orchestrating stage embeds a `<required_reading>` block in the prompt it passes to `Task`. The block is part of the **prompt string**, not the agent file.
