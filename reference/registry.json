@@ -639,6 +639,13 @@
       "description": "Rules for serial/parallel agent dispatch and Touches conflict detection"
     },
     {
+      "name": "peer-cli-capabilities",
+      "path": "reference/peer-cli-capabilities.md",
+      "type": "meta-rules",
+      "phase": 27,
+      "description": "Phase 27 peer-CLI delegation capability matrix — which peer (codex/copilot/cursor/gemini/qwen) claims which agent role, protocol (ACP/ASP), tie-break order, and opt-in gating semantics"
+    },
+    {
       "name": "performance",
       "path": "reference/performance.md",
       "type": "heuristic",
