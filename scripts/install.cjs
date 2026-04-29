@@ -109,6 +109,14 @@ function summariseResults(results) {
     const status = r.action;
     lines.push(`${tag}• ${r.runtime.padEnd(12)} ${status.padEnd(16)} ${r.path}`);
     if (r.reason) lines.push(`    ${r.reason}`);
+    // Phase 26 D-06 — surface the models.json side-effect inline so
+    // operators see what was written / would be written / was removed.
+    if (r.modelsJson) {
+      const m = r.modelsJson;
+      const mTag = m.dryRun ? '[dry-run] ' : '';
+      lines.push(`${mTag}    ↳ models.json   ${m.action.padEnd(16)} ${m.path}`);
+      if (m.reason) lines.push(`        ${m.reason}`);
+    }
   }
   return lines.join('\n');
 }

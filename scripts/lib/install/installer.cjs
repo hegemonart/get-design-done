@@ -6,7 +6,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { getRuntime } = require('./runtimes.cjs');
+const { getRuntime, getRuntimeModels } = require('./runtimes.cjs');
 const { resolveConfigDir } = require('./config-dir.cjs');
 const {
   mergeClaudeSettings,
@@ -14,6 +14,15 @@ const {
   buildAgentsFileContent,
   isPluginOwned,
 } = require('./merge.cjs');
+
+// Phase 26 D-06 — schema for the per-runtime models.json file emitted into
+// each runtime's config directory at install time. Forward-compatible: new
+// fields land additive; breaking changes bump `schema_version`.
+const MODELS_JSON_SCHEMA_VERSION = 1;
+const MODELS_JSON_FILE = 'models.json';
+const MODELS_JSON_SOURCE = 'reference/runtime-models.md';
+const MODELS_JSON_FINGERPRINT_KEY = 'generated_by';
+const MODELS_JSON_FINGERPRINT_VALUE = 'get-design-done';
 
 function loadJsonOr(empty, filePath) {
   if (!fs.existsSync(filePath)) return empty;
@@ -48,13 +57,20 @@ function installRuntime(runtimeId, opts) {
   const dryRun = Boolean(opts && opts.dryRun);
   const configDir = resolveConfigDir(runtimeId, opts);
 
+  let result;
   if (runtime.kind === 'claude-marketplace') {
-    return installClaudeMarketplace(runtime, configDir, dryRun);
+    result = installClaudeMarketplace(runtime, configDir, dryRun);
+  } else if (runtime.kind === 'agents-md') {
+    result = installAgentsMd(runtime, configDir, dryRun);
+  } else {
+    throw new Error(`Unsupported runtime kind: ${runtime.kind}`);
   }
-  if (runtime.kind === 'agents-md') {
-    return installAgentsMd(runtime, configDir, dryRun);
-  }
-  throw new Error(`Unsupported runtime kind: ${runtime.kind}`);
+
+  // Phase 26 D-06 — emit per-runtime models.json into the same config-dir.
+  // Side-effect attached to the primary result so existing callers see the
+  // unchanged shape AND get visibility into the second file.
+  result.modelsJson = installModelsJson(runtime, configDir, dryRun, opts);
+  return result;
 }
 
 function uninstallRuntime(runtimeId, opts) {
@@ -62,13 +78,20 @@ function uninstallRuntime(runtimeId, opts) {
   const dryRun = Boolean(opts && opts.dryRun);
   const configDir = resolveConfigDir(runtimeId, opts);
 
+  let result;
   if (runtime.kind === 'claude-marketplace') {
-    return uninstallClaudeMarketplace(runtime, configDir, dryRun);
+    result = uninstallClaudeMarketplace(runtime, configDir, dryRun);
+  } else if (runtime.kind === 'agents-md') {
+    result = uninstallAgentsMd(runtime, configDir, dryRun);
+  } else {
+    throw new Error(`Unsupported runtime kind: ${runtime.kind}`);
   }
-  if (runtime.kind === 'agents-md') {
-    return uninstallAgentsMd(runtime, configDir, dryRun);
-  }
-  throw new Error(`Unsupported runtime kind: ${runtime.kind}`);
+
+  // Phase 26 D-06 — clean up the models.json we wrote on install.
+  // Idempotent: missing file → unchanged; foreign file (no fingerprint) is
+  // left alone, mirroring the AGENTS.md skipped-foreign discipline.
+  result.modelsJson = uninstallModelsJson(runtime, configDir, dryRun);
+  return result;
 }
 
 function installClaudeMarketplace(runtime, configDir, dryRun) {
@@ -203,6 +226,154 @@ function uninstallAgentsMd(runtime, configDir, dryRun) {
   };
 }
 
+// Phase 26 D-06 — `models.json` emission per runtime config-dir.
+//
+// Format (locked by CONTEXT D-06):
+//   {
+//     "tier_to_model": { "opus": "<model>", "sonnet": "<model>", "haiku": "<model>" },
+//     "reasoning_class_to_model": { "high": "<model>", "medium": "<model>", "low": "<model>" },
+//     "runtime": "<runtime-id>",
+//     "schema_version": 1,
+//     "generated_at": "<ISO-timestamp>",
+//     "source": "reference/runtime-models.md",
+//     "generated_by": "get-design-done"
+//   }
+//
+// `generated_by` is the fingerprint uninstall uses to decide whether the
+// file is plugin-owned (mirroring the AGENTS.md fingerprint discipline in
+// merge.cjs).
+
+function buildModelsJsonPayload(runtime, opts) {
+  const entry = getRuntimeModels(runtime.id, opts);
+  if (!entry) return null;
+  // Flatten { model: "..." } rows into bare strings per CONTEXT D-06's
+  // schema example. provider_model_id (if present in the source) is dropped
+  // here — runtime harnesses that need it can re-read runtime-models.md.
+  const flatten = (rowMap) => {
+    const out = {};
+    for (const k of Object.keys(rowMap)) {
+      out[k] = rowMap[k].model;
+    }
+    return out;
+  };
+  return {
+    tier_to_model: flatten(entry.tier_to_model),
+    reasoning_class_to_model: flatten(entry.reasoning_class_to_model),
+    runtime: runtime.id,
+    schema_version: MODELS_JSON_SCHEMA_VERSION,
+    generated_at: (opts && opts.now) || new Date().toISOString(),
+    source: MODELS_JSON_SOURCE,
+    [MODELS_JSON_FINGERPRINT_KEY]: MODELS_JSON_FINGERPRINT_VALUE,
+  };
+}
+
+function isModelsJsonPluginOwned(parsed) {
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
+  return parsed[MODELS_JSON_FINGERPRINT_KEY] === MODELS_JSON_FINGERPRINT_VALUE;
+}
+
+function installModelsJson(runtime, configDir, dryRun, opts) {
+  const target = path.join(configDir, MODELS_JSON_FILE);
+  const payload = buildModelsJsonPayload(runtime, opts);
+  if (!payload) {
+    // Runtime has no entry in runtime-models.md (e.g., research tail). Skip
+    // emission rather than writing an incomplete file. Surfaces as
+    // "skipped-no-data" in install summary so the operator can see why.
+    return {
+      path: target,
+      action: 'skipped-no-data',
+      dryRun,
+      reason: `No tier→model entry for runtime "${runtime.id}" in ${MODELS_JSON_SOURCE}`,
+    };
+  }
+  ensureDir(configDir, dryRun);
+
+  const desired = `${JSON.stringify(payload, null, 2)}\n`;
+
+  if (fs.existsSync(target)) {
+    let current;
+    try {
+      current = fs.readFileSync(target, 'utf8');
+    } catch (err) {
+      // Read failure is unusual but non-fatal — surface and continue.
+      return {
+        path: target,
+        action: 'skipped-foreign',
+        dryRun,
+        reason: `Could not read existing ${MODELS_JSON_FILE}: ${err.message}`,
+      };
+    }
+    let parsed = null;
+    try {
+      parsed = JSON.parse(current);
+    } catch {
+      // Corrupted/foreign JSON we did not write — leave it alone.
+      return {
+        path: target,
+        action: 'skipped-foreign',
+        dryRun,
+        reason: `Existing ${MODELS_JSON_FILE} is not valid JSON; refusing to overwrite.`,
+      };
+    }
+    if (!isModelsJsonPluginOwned(parsed)) {
+      return {
+        path: target,
+        action: 'skipped-foreign',
+        dryRun,
+        reason: `Existing ${MODELS_JSON_FILE} was not authored by this plugin; refusing to overwrite.`,
+      };
+    }
+    // Compare ignoring `generated_at` so re-runs aren't perpetually "updated"
+    // just because the timestamp moved.
+    if (modelsJsonContentEqual(parsed, payload)) {
+      return { path: target, action: 'unchanged', dryRun };
+    }
+    if (!dryRun) atomicWrite(target, desired);
+    return { path: target, action: 'updated', dryRun };
+  }
+  if (!dryRun) atomicWrite(target, desired);
+  return { path: target, action: 'created', dryRun };
+}
+
+function modelsJsonContentEqual(a, b) {
+  // Strip `generated_at` from both sides — every other field must match
+  // byte-for-byte for the install to be a true no-op.
+  const stripTs = (o) => {
+    const copy = { ...o };
+    delete copy.generated_at;
+    return copy;
+  };
+  return JSON.stringify(stripTs(a)) === JSON.stringify(stripTs(b));
+}
+
+function uninstallModelsJson(runtime, configDir, dryRun) {
+  const target = path.join(configDir, MODELS_JSON_FILE);
+  if (!fs.existsSync(target)) {
+    return { path: target, action: 'unchanged', dryRun };
+  }
+  let parsed = null;
+  try {
+    parsed = JSON.parse(fs.readFileSync(target, 'utf8'));
+  } catch {
+    return {
+      path: target,
+      action: 'skipped-foreign',
+      dryRun,
+      reason: `Existing ${MODELS_JSON_FILE} is not valid JSON; not removing.`,
+    };
+  }
+  if (!isModelsJsonPluginOwned(parsed)) {
+    return {
+      path: target,
+      action: 'skipped-foreign',
+      dryRun,
+      reason: `Existing ${MODELS_JSON_FILE} was not authored by this plugin; not removing.`,
+    };
+  }
+  if (!dryRun) fs.unlinkSync(target);
+  return { path: target, action: 'removed', dryRun };
+}
+
 function detectInstalled(opts) {
   const installed = [];
   const { listRuntimes } = require('./runtimes.cjs');
@@ -241,4 +412,10 @@ module.exports = {
   installRuntime,
   uninstallRuntime,
   detectInstalled,
+  // Phase 26 D-06 — exported for tests / external tooling that wants to
+  // preview the payload without performing a write.
+  buildModelsJsonPayload,
+  MODELS_JSON_FILE,
+  MODELS_JSON_SCHEMA_VERSION,
+  MODELS_JSON_SOURCE,
 };

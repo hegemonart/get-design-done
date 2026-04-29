@@ -161,6 +161,47 @@ function listRuntimeIds() {
   return RUNTIMES.map((r) => r.id);
 }
 
+// Phase 26 D-06 — `tier_to_model` lookup helper.
+//
+// `getRuntimeModels(runtimeId, { cwd? })` resolves the per-runtime tier→model
+// adapter from `reference/runtime-models.md` via `parse-runtime-models.cjs`.
+// Returns `null` when the runtime has no entry in runtime-models.md (i.e.,
+// the data source ships rows for fewer than 14 runtimes during the rolling
+// research tail described in CONTEXT D-02). Caller is responsible for
+// degrading gracefully (e.g., installer skips models.json emission when null).
+//
+// The parsed payload is cached per `cwd` to avoid re-reading the markdown
+// on each runtime in a multi-runtime install loop.
+
+const _modelsCache = new Map();
+
+function getParsedRuntimeModels(opts) {
+  const cwd = (opts && opts.cwd) || null;
+  const cacheKey = cwd || '<default>';
+  if (_modelsCache.has(cacheKey)) return _modelsCache.get(cacheKey);
+  // Lazy require avoids a hard dep cycle if runtimes.cjs is imported in
+  // contexts that don't ship the reference/ tree (theoretical — not used today).
+  const { parseRuntimeModels } = require('./parse-runtime-models.cjs');
+  const parsed = parseRuntimeModels(cwd ? { cwd } : {});
+  _modelsCache.set(cacheKey, parsed);
+  return parsed;
+}
+
+function getRuntimeModels(runtimeId, opts) {
+  // Validate the runtime id up-front — this catches typos in the installer
+  // entry rather than silently returning null for "claud" vs "claude".
+  getRuntime(runtimeId);
+  const parsed = getParsedRuntimeModels(opts);
+  const entry = parsed.runtimes.find((r) => r.id === runtimeId);
+  return entry || null;
+}
+
+// Test-only hook: drop the cached parse result. Used by tests that mutate
+// the source markdown between assertions.
+function _resetRuntimeModelsCache() {
+  _modelsCache.clear();
+}
+
 module.exports = {
   RUNTIMES,
   REPO,
@@ -169,4 +210,6 @@ module.exports = {
   getRuntime,
   listRuntimes,
   listRuntimeIds,
+  getRuntimeModels,
+  _resetRuntimeModelsCache,
 };
