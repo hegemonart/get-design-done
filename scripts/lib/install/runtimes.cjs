@@ -50,6 +50,8 @@ const RUNTIMES = Object.freeze([
     configDirFallback: '.gemini',
     kind: 'agents-md',
     files: ['GEMINI.md'],
+    // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
+    peerBinary: process.platform === 'win32' ? 'gemini.cmd' : 'gemini',
   },
   {
     id: 'kilo',
@@ -66,6 +68,8 @@ const RUNTIMES = Object.freeze([
     configDirFallback: '.codex',
     kind: 'agents-md',
     files: ['AGENTS.md'],
+    // Phase 27 (Plan 27-11): peer-CLI delegation binary, ASP protocol.
+    peerBinary: process.platform === 'win32' ? 'codex.cmd' : 'codex',
   },
   {
     id: 'copilot',
@@ -74,6 +78,8 @@ const RUNTIMES = Object.freeze([
     configDirFallback: '.copilot',
     kind: 'agents-md',
     files: ['AGENTS.md'],
+    // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
+    peerBinary: process.platform === 'win32' ? 'copilot.cmd' : 'copilot',
   },
   {
     id: 'cursor',
@@ -82,6 +88,8 @@ const RUNTIMES = Object.freeze([
     configDirFallback: '.cursor',
     kind: 'agents-md',
     files: ['AGENTS.md'],
+    // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
+    peerBinary: process.platform === 'win32' ? 'cursor-agent.cmd' : 'cursor-agent',
   },
   {
     id: 'windsurf',
@@ -122,6 +130,8 @@ const RUNTIMES = Object.freeze([
     configDirFallback: '.qwen',
     kind: 'agents-md',
     files: ['AGENTS.md'],
+    // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
+    peerBinary: process.platform === 'win32' ? 'qwen.cmd' : 'qwen',
   },
   {
     id: 'codebuddy',
@@ -202,6 +212,52 @@ function _resetRuntimeModelsCache() {
   _modelsCache.clear();
 }
 
+// Phase 27 (Plan 27-11) — peer-CLI detection helpers.
+//
+// `listPeerCapableRuntimes()` returns the entries that carry a `peerBinary`
+// field — the 5 runtimes that gdd can DELEGATE to (codex, gemini, cursor,
+// copilot, qwen). The other 9 runtimes (claude, opencode, kilo, windsurf,
+// antigravity, augment, trae, codebuddy, cline) are install targets only.
+//
+// `detectInstalledPeers({ which? })` checks each peer-capable runtime's
+// `peerBinary` against the system PATH and returns the IDs of the peers
+// that are installed locally. The `which` parameter is injectable for
+// tests — the production caller passes a real `which`/`where` shim.
+
+function listPeerCapableRuntimes() {
+  return RUNTIMES.filter((r) => typeof r.peerBinary === 'string');
+}
+
+function detectInstalledPeers(opts) {
+  const opts2 = opts || {};
+  const whichFn = opts2.which || _defaultWhich;
+  const detected = [];
+  for (const r of listPeerCapableRuntimes()) {
+    try {
+      if (whichFn(r.peerBinary)) {
+        detected.push(r.id);
+      }
+    } catch (_e) {
+      // ENOENT / non-zero exit = not installed; never throw.
+    }
+  }
+  return detected;
+}
+
+function _defaultWhich(binary) {
+  const { execSync } = require('node:child_process');
+  const cmd = process.platform === 'win32' ? 'where' : 'which';
+  try {
+    const out = execSync(`${cmd} ${binary}`, {
+      stdio: ['ignore', 'pipe', 'ignore'],
+      encoding: 'utf8',
+    }).trim();
+    return out.length > 0 ? out.split(/\r?\n/)[0] : null;
+  } catch (_e) {
+    return null;
+  }
+}
+
 module.exports = {
   RUNTIMES,
   REPO,
@@ -211,5 +267,7 @@ module.exports = {
   listRuntimes,
   listRuntimeIds,
   getRuntimeModels,
+  listPeerCapableRuntimes,
+  detectInstalledPeers,
   _resetRuntimeModelsCache,
 };
