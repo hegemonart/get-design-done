@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done.example/schemas/runtime-models.schema.json",
+  "title": "Runtime Models — Tier-to-Model Map",
+  "description": "Parsed shape of reference/runtime-models.md — the per-runtime tier→model adapter source-of-truth shipped in Phase 26 (D-01..D-03). Consumed by scripts/lib/install/parse-runtime-models.cjs at install time and scripts/lib/tier-resolver.cjs at runtime. Strict enums catch typos at install time, not at runtime. Schema versioned via $schema_version for forward-compat (D-03).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema_version", "runtimes"],
+  "properties": {
+    "$schema_version": {
+      "const": 1,
+      "description": "Top-level schema version (D-03). Bump on breaking changes; downstream consumers must check before parsing."
+    },
+    "runtimes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/runtimeEntry" }
+    }
+  },
+  "definitions": {
+    "runtimeEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "tier_to_model", "reasoning_class_to_model", "provenance"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Runtime ID. MUST match one of the 14 runtime IDs exported from scripts/lib/install/runtimes.cjs (Phase 24 D-02 lock).",
+          "enum": [
+            "claude",
+            "codex",
+            "gemini",
+            "qwen",
+            "kilo",
+            "copilot",
+            "cursor",
+            "windsurf",
+            "antigravity",
+            "augment",
+            "trae",
+            "codebuddy",
+            "cline",
+            "opencode"
+          ]
+        },
+        "single_tier": {
+          "type": "boolean",
+          "description": "When true, the runtime exposes a single model that maps to all three tiers (D-02). Downstream consumers (router, budget-enforcer) may render a UI affordance noting tier-selection has no cost effect for this runtime."
+        },
+        "tier_to_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["opus", "sonnet", "haiku"],
+          "description": "Map of canonical Anthropic tier names (D-03) to the runtime's concrete model identifier. All three keys are required even when single_tier=true (assign the same model three times).",
+          "properties": {
+            "opus": { "$ref": "#/definitions/modelRow" },
+            "sonnet": { "$ref": "#/definitions/modelRow" },
+            "haiku": { "$ref": "#/definitions/modelRow" }
+          }
+        },
+        "reasoning_class_to_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["high", "medium", "low"],
+          "description": "Map of runtime-neutral reasoning-class names (D-10 alias) to the runtime's concrete model identifier. Equivalence with tier_to_model is enforced by Phase 26-08 frontmatter validator (high↔opus, medium↔sonnet, low↔haiku).",
+          "properties": {
+            "high": { "$ref": "#/definitions/modelRow" },
+            "medium": { "$ref": "#/definitions/modelRow" },
+            "low": { "$ref": "#/definitions/modelRow" }
+          }
+        },
+        "provenance": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Source citations for this runtime's tier map. At minimum one entry pointing at the runtime-author docs URL plus retrieval timestamp + last-validated cycle. Phase 13.2 authority-watcher uses this to flag drift.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_url", "retrieved_at", "last_validated_cycle"],
+            "properties": {
+              "source_url": {
+                "type": "string",
+                "minLength": 1,
+                "description": "URL of the runtime-author documentation that authoritatively names the tier→model mapping. Placeholder URLs prefixed with `<TODO: confirm at ...>` are acceptable for v1.26 ship and flag the row as researcher-fill-needed."
+              },
+              "retrieved_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when the source URL was retrieved."
+              },
+              "last_validated_cycle": {
+                "type": "string",
+                "minLength": 1,
+                "description": "GDD cycle ID that last validated this row (e.g. '2026-04-29-v1.26')."
+              },
+              "note": {
+                "type": "string",
+                "description": "Optional inline note (e.g. 'TODO: confirm at runtime-author docs', 'single-tier runtime — same model x3')."
+              }
+            }
+          }
+        }
+      }
+    },
+    "modelRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model"],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Public model name as documented by the runtime author."
+        },
+        "provider_model_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional internal/provider model ID for runtimes whose API identifiers differ from the public name (D-03)."
+        }
+      }
+    }
+  }
+}

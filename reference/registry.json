@@ -461,6 +461,13 @@
       "description": "Per-agent default tier map and rationale"
     },
     {
+      "name": "runtime-models",
+      "path": "reference/runtime-models.md",
+      "type": "data",
+      "phase": 26,
+      "description": "Phase 26 per-runtime tier→model adapter source-of-truth (D-01) — 14 runtimes (claude/codex/gemini/qwen/kilo/copilot/cursor/windsurf/antigravity/augment/trae/codebuddy/cline/opencode), each row carries opus|sonnet|haiku tier map, high|medium|low reasoning-class alias, and provenance (URL + retrieval timestamp + last-validated cycle); validated against reference/schemas/runtime-models.schema.json"
+    },
+    {
       "name": "motion",
       "path": "reference/motion.md",
       "type": "motion",
