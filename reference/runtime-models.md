@@ -118,7 +118,7 @@ Google's Gemini CLI runtime. Public tier docs at https://ai.google.dev/gemini-ap
 
 ## qwen — Qwen Code
 
-Alibaba's Qwen Code runtime. Public tier docs at https://qwenlm.github.io/qwen-code/. Seed picks per CONTEXT.md D-02.
+Alibaba's Qwen Code runtime. Public tier docs at https://github.com/QwenLM/qwen-code. Seed picks per CONTEXT.md D-02.
 
 ```json
 {
@@ -135,7 +135,7 @@ Alibaba's Qwen Code runtime. Public tier docs at https://qwenlm.github.io/qwen-c
   },
   "provenance": [
     {
-      "source_url": "https://qwenlm.github.io/qwen-code/",
+      "source_url": "https://github.com/QwenLM/qwen-code",
       "retrieved_at": "2026-04-29T00:00:00.000Z",
       "last_validated_cycle": "2026-04-29-v1.26",
       "note": "Qwen Code public model catalog."
