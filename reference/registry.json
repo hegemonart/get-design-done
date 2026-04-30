@@ -46,6 +46,13 @@
       "description": "3-invariant framework (body/attention/memory) with grep-able principle→code pairs and reducibility test; wired into design-discussant brief stage"
     },
     {
+      "name": "peer-protocols",
+      "path": "reference/peer-protocols.md",
+      "type": "meta-rules",
+      "phase": 27,
+      "description": "Phase 27 ACP + ASP protocol cheat sheet for peer-CLI delegation — line-delimited JSON-RPC framing, initialize/prompt/threadStart/turn lifecycle, per-peer ACP entry points, error-path resolution semantics"
+    },
+    {
       "name": "DEPRECATIONS",
       "path": "reference/DEPRECATIONS.md",
       "type": "schema",

@@ -126,6 +126,37 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     both fields current. Closeout shipped 4 new tests + Phase-26
   //     baseline + CHANGELOG + `docs/MULTI-RUNTIME-MODELS.md` ops guide.
   '1.26.0',
+  //   - 1.27.0 → Phase 27 Peer-CLI Delegation Layer (gdd-peer-cli-
+  //     delegation milestone). 11 feature plans (27-01..27-11) + closeout
+  //     (27-12). Closes the OUTBOUND half of multi-runtime: Phase 24 made
+  //     gdd installable on 14 runtimes; Phase 21 made the same pipeline
+  //     run on each; Phase 26 made tier→model resolve correctly per
+  //     runtime; v1.27.0 adds the missing piece — a host running CC can
+  //     OPTIONALLY delegate `gemini-research` / `codex-execute` /
+  //     `cursor-debug` etc. role calls to local peer-CLIs for cost or
+  //     quality wins, with transparent fallback to in-process Anthropic
+  //     SDK on peer-absent / peer-error (D-07). Wave A (27-01..27-03):
+  //     ACP client (line-delimited JSON-RPC over stdio for Gemini /
+  //     Cursor / Copilot / Qwen) + ASP client (Codex App Server Protocol)
+  //     + spawn-cmd (Windows .cmd EINVAL fix per D-04) + broker-lifecycle
+  //     (long-lived per `(peer, workspace)` per D-03). Wave B (27-04,
+  //     27-05): 5 per-peer thin adapters + central registry dispatch +
+  //     `reference/peer-cli-capabilities.md` capability matrix (D-05).
+  //     Wave C (27-06..27-08): agent frontmatter `delegate_to:` (additive
+  //     D-06) + session-runner peer-first dispatch + Phase 23.5 bandit
+  //     posterior `delegate?` context dimension (D-08) + Phase 22 event
+  //     chain `runtime_role: host|peer` + `peer_id` + `peer_call_*`
+  //     events (D-09). Wave D (27-09..27-11): `/gdd:peers` capability
+  //     matrix command (D-10) + `peer-cli-customize` + `peer-cli-add`
+  //     skills + `peerBinary` field on runtimes.cjs + install-time peer-
+  //     detection nudge (opt-in per D-11). Closeout (27-12) shipped 2
+  //     new tests (peer-cli-end-to-end + phase-27-baseline) + version-
+  //     agnostic baseline refactor of phase-2{4,5,6}-baseline tests
+  //     (Phase 26 lesson per D-12) + manifests + CHANGELOG + ops guide
+  //     `docs/PEER-DELEGATION.md` + `reference/peer-protocols.md`
+  //     ACP+ASP cheat sheet + `NOTICE` Apache-2.0 attribution for
+  //     cc-multi-cli (D-14) + `test-fixture/baselines/phase-27/`.
+  '1.27.0',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

@@ -1,0 +1,52 @@
+get-design-done
+Copyright (c) 2026 hegemonart
+
+This product includes software developed by third parties under the
+Apache License, Version 2.0. See https://www.apache.org/licenses/LICENSE-2.0
+for the full license text.
+
+──────────────────────────────────────────────────────────────────────────────
+Phase 27 — Peer-CLI Delegation Layer (v1.27.0, 2026-04-30)
+──────────────────────────────────────────────────────────────────────────────
+
+The peer-CLI delegation layer ports protocol shapes and skill patterns from:
+
+  greenpolo/cc-multi-cli-plugin (https://github.com/greenpolo/cc-multi-cli)
+  License: Apache License, Version 2.0
+  Version reference: cc-multi-cli v2.0.0 (shipped 2026-04-24)
+
+The following gdd files re-derive logic, contracts, or procedural patterns
+from cc-multi-cli's source. We re-derive in our own runtime (CommonJS in
+gdd's case; cc-multi-cli ships ESM); we do NOT vendor their runtime —
+their hub assumes Claude-as-host while gdd needs any-runtime-as-host.
+Attribution is provided here per Apache 2.0 §4.
+
+  scripts/lib/peer-cli/acp-client.cjs
+    └─ Adapts the line-delimited JSON-RPC + initialize/prompt/notification
+       framing from cc-multi-cli's `acp-client.mjs`.
+
+  scripts/lib/peer-cli/asp-client.cjs
+    └─ Adapts the App Server Protocol thread-start + thread-resume + turn
+       lifecycle from cc-multi-cli's `asp-client.mjs`. service_name and
+       experimentalRawEvents conventions match cc-multi-cli.
+
+  scripts/lib/peer-cli/spawn-cmd.cjs
+    └─ Implements the Windows `.cmd` EINVAL workaround documented in
+       cc-multi-cli's `transport-decisions.md`
+       (`spawn(`"<absolute-fwd-slash-path>" <args>`, [], {shell: true})`).
+
+  skills/peer-cli-customize/SKILL.md
+    └─ Procedural pattern adapted from cc-multi-cli's `customize` skill.
+
+  skills/peer-cli-add/SKILL.md
+    └─ Procedural pattern adapted from cc-multi-cli's `multi-cli-anything`
+       skill, including the verification ladder, model-ID `-preview`-suffix
+       trap, and Windows quirk handling.
+
+────────────────────────────────────────────────────────────────────────
+
+Note on the broader codebase: get-design-done as a whole is licensed under
+the MIT License (see LICENSE). The Apache 2.0 attribution above applies
+specifically to the listed files, which contain re-derived shapes from
+the cited Apache 2.0 source. The MIT and Apache 2.0 licenses are
+compatible — see https://www.apache.org/legal/resolved.html#category-a.

@@ -31,6 +31,9 @@ next
 note
 optimize
 pause
+peer-cli-add
+peer-cli-customize
+peers
 plan
 plant-seed
 pr-branch

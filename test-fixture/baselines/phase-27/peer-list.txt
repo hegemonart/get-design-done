@@ -1,0 +1,5 @@
+codex
+copilot
+cursor
+gemini
+qwen

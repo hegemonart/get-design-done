@@ -14,23 +14,20 @@ const path = require('node:path');
 
 const REPO_ROOT = path.join(__dirname, '..');
 
-test('phase-24 baseline: package.json is at 1.26.0', () => {
-  // Manifest-alignment assertions track the current shipping version per the
-  // "ship-it-together" pattern (D-12 of every closeout phase). Bumped from
-  // 1.24.2 → 1.26.0 in Phase 25 closeout (Plan 25-09).
+test('phase-24 baseline: all 4 manifests aligned on current version (Phase 27 D-12 — version-agnostic)', () => {
+  // Phase 26 closeout taught us: hardcoding "1.25.0" in this test breaks every
+  // future closeout. Phase 27 D-12 refactors the assertion to read package.json
+  // dynamically and assert all 4 manifest slots agree on whatever-the-current-
+  // shipping-version-is. Closeouts no longer need to bump literal version
+  // strings here.
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
-  assert.equal(pkg.version, '1.26.0');
-});
-
-test('phase-24 baseline: plugin.json is at 1.26.0', () => {
   const plugin = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'), 'utf8'));
-  assert.equal(plugin.version, '1.26.0');
-});
-
-test('phase-24 baseline: marketplace.json is at 1.26.0 in both slots', () => {
   const market = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'marketplace.json'), 'utf8'));
-  assert.equal(market.metadata.version, '1.26.0');
-  assert.equal(market.plugins[0].version, '1.26.0');
+  const v = pkg.version;
+  assert.match(v, /^\d+\.\d+\.\d+/, 'package.json version must be a valid semver');
+  assert.equal(plugin.version, v, 'plugin.json must agree with package.json');
+  assert.equal(market.metadata.version, v, 'marketplace.json metadata.version must agree with package.json');
+  assert.equal(market.plugins[0].version, v, 'marketplace.json plugins[0].version must agree with package.json');
 });
 
 test('phase-24 baseline: @clack/prompts is a runtime dependency', () => {

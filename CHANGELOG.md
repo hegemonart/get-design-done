@@ -4,6 +4,56 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.27.0] — 2026-04-30
+
+Phase 27 Peer-CLI Delegation Layer milestone — closes the **outbound** half of multi-runtime. Phase 24 made gdd installable on 14 runtimes; Phase 21 made the same pipeline run on each; Phase 26 made tier→model resolve correctly per runtime. v1.27.0 adds the missing piece: gdd agents OPTIONALLY delegate to local peer CLIs (Codex via App Server Protocol; Gemini/Cursor/Copilot/Qwen via Agent Client Protocol) when measurably cheaper or higher-quality for the role. Falls back to in-process Anthropic SDK when peer is unavailable. Honors Phase 26 tier maps + Phase 22 event chain + Phase 23.5 bandit posterior — `delegate?` becomes another arm in `(agent_type × tier × delegate)` Thompson sampling, no new ML.
+
+### Added
+
+- **ACP client** — `scripts/lib/peer-cli/acp-client.cjs` (Plan 27-01, commit `4a2d201`). Line-delimited JSON-RPC over stdio for Gemini/Cursor/Copilot/Qwen. `initialize` handshake, `prompt` method, notification stream, 16 MiB line-buffer overflow guard. 7 tests pass.
+- **ASP client** — `scripts/lib/peer-cli/asp-client.cjs` (Plan 27-02, commit `06fcdf6`). Codex App Server Protocol. `threadStart` + `threadResume` + `turn` lifecycle. `service_name = "gdd_peer_delegation"`. Error path resolves with `{status:"error"}` rather than throwing. 12 tests pass.
+- **spawn-cmd Windows fix + broker-lifecycle** — `scripts/lib/peer-cli/spawn-cmd.cjs` + `broker-lifecycle.cjs` (Plan 27-03, commit `f9228cf`). `.cmd` EINVAL workaround per cc-multi-cli `transport-decisions.md` (D-04). Long-lived broker per `(peer, workspace)` over Unix socket on POSIX, named pipe on Windows (D-03). 18 tests pass.
+- **Per-peer adapters** — `scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs` (Plan 27-04, commit `d58ab4f`). 5 thin wrappers with role→prompt-prefix maps + slash-command translation. 39 tests pass.
+- **Registry + capability matrix** — `scripts/lib/peer-cli/registry.cjs` + `reference/peer-cli-capabilities.md` (Plan 27-05, commit `6ef4d27`). `findPeerFor(role, tier)` central dispatch, per-peer health probe, deterministic alphabetical tie-break. Per-peer capability matrix (D-05): codex→execute, gemini→research/exploration, cursor→debug/plan, copilot→review/research, qwen→write. 32 tests pass.
+- **Agent `delegate_to:` frontmatter + session-runner peer-first dispatch** — `scripts/validate-frontmatter.ts` + `scripts/lib/session-runner/index.ts` (Plan 27-06, commit `4644d8e`). Optional additive frontmatter field; values are `<peer>-<role>` per capability matrix or `none` (explicit opt-out). Session-runner tries delegate first; transparent fallback on peer-absent OR peer-error per D-07. 8 tests pass.
+- **Bandit posterior `delegate?` context dimension** — `scripts/lib/bandit-router.cjs` (Plan 27-07, commit `824bcf5`). Arm space expands from `(agent_type, touches_size_bin)` to `(agent_type, touches_size_bin, delegate)` where `delegate ∈ {none, gemini, codex, cursor, copilot, qwen}`. Bootstrap: existing priors carry forward as the `none` arm; 5 delegation arms start neutral. Reward signal unchanged (two-stage lexicographic). 12 tests pass.
+- **Event chain `runtime_role` + `peer_id` + `peer_call_*` event types** — `scripts/lib/event-stream/types.ts` + `index.ts` + `scripts/lib/budget-enforcer.cjs` (Plan 27-08, commit `fd561ed`). Additive Phase 22 extension — every event optionally tags `runtime_role: "host" | "peer"` (defaults `"host"` for back-compat) and `peer_id`. 3 new event types: `peer_call_started`, `peer_call_complete`, `peer_call_failed`. costs.jsonl cost rows tag the same fields so Phase 26's reflector cost-arbitrage extends naturally. 8 tests pass.
+- **`/gdd:peers` capability matrix command** — `skills/peers/SKILL.md` (Plan 27-09, commit `51ae40e`). Single-command discoverability — markdown table with peer × installed? × allowlisted? × claimed roles × posterior delta vs local.
+- **`peer-cli-customize` + `peer-cli-add` skills** — `skills/peer-cli-customize/SKILL.md` + `skills/peer-cli-add/SKILL.md` (Plan 27-10, commit `4f07daf`). Customize rewires per-agent `delegate_to:` mappings; add walks the verification ladder for adding a brand-new peer (Apache 2.0 attribution comment in each — see NOTICE).
+- **`peerBinary?` field on runtimes + detection helpers** — `scripts/lib/install/runtimes.cjs` (Plan 27-11, commit `0e2fb92`). 5 peer-capable runtimes (codex, gemini, cursor, copilot, qwen) gain platform-aware `peerBinary` paths. `listPeerCapableRuntimes()` and `detectInstalledPeers()` exported for `/gdd:peers` and the install-time nudge. 8 tests pass.
+
+### Tests
+
+- 11 new test files (148 total new test cases) covering protocol clients, registry, adapters, frontmatter delegation, bandit dimension, event tagging, peer detection, end-to-end peer-call flow, and the phase-27 baseline.
+- Phase 24/25/26 baseline tests refactored to be **version-agnostic** (D-12) — they read `package.json#version` dynamically and assert all 4 manifests align. No more literal-version hardcodes that break every closeout (Phase 26 lesson applied).
+
+### Decisions
+
+D-01 through D-14 — see `.planning/phases/27-peer-cli-delegation/CONTEXT.md` for the full decision register. Highlights:
+
+- **D-01 / D-02** — ACP for 4 peers, ASP for Codex. Port shapes from cc-multi-cli (Apache 2.0) with `NOTICE` attribution; do NOT vendor their hub (Claude-as-host assumption is incompatible with our any-runtime-as-host model).
+- **D-03 / D-04** — Long-lived broker per `(peer, workspace)`. Windows `.cmd` EINVAL workaround documented in `spawn-cmd.cjs` so future maintainers don't "clean it up".
+- **D-05** — Per-peer capability matrix is the dispatch source-of-truth. Roles a peer doesn't claim → registry refuses dispatch.
+- **D-06 / D-07** — `delegate_to:` is additive optional; `none` is explicit opt-out; fallback on peer-absent OR peer-error is transparent to the calling skill.
+- **D-08** — Bandit posterior gains `delegate?` dimension. 6× context expansion (~78 → ~468 contexts). Bootstrap discipline: existing priors carry forward as `delegate=none`; 5 delegation arms start neutral.
+- **D-09** — Event chain extension is additive; `runtime_role` defaults `"host"` for back-compat; only the new `peer_call_*` events MUST carry `"peer"`.
+- **D-10 / D-11** — `/gdd:peers` is single-command discoverability; install-time nudge is OPT-IN (default empty `enabled_peers`); `--no-peer-prompt` flag suppresses for CI.
+- **D-12** — Version-agnostic baseline tests (Phase 26 closeout lesson). `phase-NN-baseline.test.cjs` no longer hardcodes literal versions.
+- **D-14** — `NOTICE` Apache 2.0 attribution for cc-multi-cli ships with v1.27.0 (mandatory per Apache 2.0 §4 for derivative-shape code).
+
+### Documentation
+
+- `docs/PEER-DELEGATION.md` (new) — ops guide covering when delegation fires, how to disable per-peer, fallback diagnostics, broker lifecycle troubleshooting, and Windows `.cmd` quirks.
+- `reference/peer-protocols.md` (new) — ACP + ASP protocol cheat sheet for protocol authors and skill writers.
+- `agents/README.md` — new `Peer-CLI delegation (delegate_to)` section documenting the field, valid values, opt-in gating, telemetry hookup, and cross-references.
+- `NOTICE` (new) — Apache 2.0 attribution for cc-multi-cli's `acp-client.mjs`, `asp-client.mjs`, `transport-decisions.md`, and `customize` / `multi-cli-anything` skill patterns.
+
+### Known gaps
+
+- Plan 27-11's interactive post-install peer-detection prompt (the `npx get-design-done` UX nudge: "I see you have Codex + Gemini installed — wire them as peers? [y/N]") is documented in CONTEXT.md D-11 but not yet wired into `scripts/install.cjs`. The detection helper (`detectInstalledPeers()`) IS shipped — what's missing is the `@clack/prompts` interactive integration. Users can manually populate `.design/config.json#peer_cli.enabled_peers` for now; `/gdd:peers` shows the current state. Tracked for Phase 28 hygiene or a 1.27.x patch if demand warrants.
+
+---
+
 ## [1.26.0] — 2026-04-29
 
 Phase 26 Headless Model Resolver milestone — closes the model-selection gap left by Phase 24's distribution headlessness. `default-tier: opus|sonnet|haiku` frontmatter now actually does something on the 13 non-Claude runtimes the multi-runtime installer ships to. Three layers gain runtime-awareness without a breaking change: the agent frontmatter (additive `reasoning-class` alias), the router output (additive `resolved_models` field), and the cost telemetry (per-runtime price tables + runtime-tagged events.jsonl rows). The phase ships **structure** — adapter layer, resolvers, schemas, contracts — not editorial picks for which model each runtime treats as opus/sonnet/haiku; those come from runtime adapter authors with provenance citations baked into `reference/runtime-models.md`.

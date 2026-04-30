@@ -1,0 +1,5 @@
+codex:asp
+copilot:acp
+cursor:acp
+gemini:acp
+qwen:acp

@@ -22,24 +22,15 @@ const REPO_ROOT = path.join(__dirname, '..');
 
 // --- Manifest alignment (D-12) -----------------------------------------
 
-test('phase-25 baseline: package.json is at 1.26.0', () => {
+test('phase-25 baseline: all 4 manifests aligned on current version (Phase 27 D-12 — version-agnostic)', () => {
   const pkg = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'));
-  assert.equal(pkg.version, '1.26.0');
-});
-
-test('phase-25 baseline: plugin.json is at 1.26.0', () => {
-  const plugin = JSON.parse(
-    fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'), 'utf8'),
-  );
-  assert.equal(plugin.version, '1.26.0');
-});
-
-test('phase-25 baseline: marketplace.json is at 1.26.0 in both slots', () => {
-  const market = JSON.parse(
-    fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'marketplace.json'), 'utf8'),
-  );
-  assert.equal(market.metadata.version, '1.26.0');
-  assert.equal(market.plugins[0].version, '1.26.0');
+  const plugin = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'plugin.json'), 'utf8'));
+  const market = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, '.claude-plugin', 'marketplace.json'), 'utf8'));
+  const v = pkg.version;
+  assert.match(v, /^\d+\.\d+\.\d+/, 'package.json version must be a valid semver');
+  assert.equal(plugin.version, v, 'plugin.json must agree with package.json');
+  assert.equal(market.metadata.version, v, 'marketplace.json metadata.version must agree with package.json');
+  assert.equal(market.plugins[0].version, v, 'marketplace.json plugins[0].version must agree with package.json');
 });
 
 test('phase-25 baseline: CHANGELOG.md has a [1.25.0] block', () => {
