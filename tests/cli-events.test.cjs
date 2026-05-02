@@ -43,13 +43,17 @@ function seedEvents(events) {
   return { dir, path };
 }
 
-test('22-06: list-types prints all 23 types', { skip: SKIP_PLATFORM }, () => {
+test('22-06: list-types prints all 26 types (23 Phase 20+22, +3 Phase 27 peer_call_*)', { skip: SKIP_PLATFORM }, () => {
   const r = runCli(['list-types']);
   assert.equal(r.status, 0, `stderr: ${r.stderr}`);
   const lines = r.stdout.trim().split('\n');
-  assert.equal(lines.length, 23);
+  assert.equal(lines.length, 26);
   assert.ok(lines.includes('stage.entered'));
   assert.ok(lines.includes('agent.outcome'));
+  // Phase 27 additions:
+  assert.ok(lines.includes('peer_call_started'));
+  assert.ok(lines.includes('peer_call_complete'));
+  assert.ok(lines.includes('peer_call_failed'));
 });
 
 test('22-06: tail dumps events in order without --follow', { skip: SKIP_PLATFORM }, () => {
