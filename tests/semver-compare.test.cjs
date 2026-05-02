@@ -157,6 +157,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     ACP+ASP cheat sheet + `NOTICE` Apache-2.0 attribution for
   //     cc-multi-cli (D-14) + `test-fixture/baselines/phase-27/`.
   '1.27.0',
+  '1.27.1',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

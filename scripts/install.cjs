@@ -18,8 +18,9 @@
 
 const path = require('node:path');
 
-const { listRuntimes, listRuntimeIds } = require('./lib/install/runtimes.cjs');
+const { listRuntimes, listRuntimeIds, detectInstalledPeers, listPeerCapableRuntimes } = require('./lib/install/runtimes.cjs');
 const { installRuntime, uninstallRuntime } = require('./lib/install/installer.cjs');
+const fs = require('node:fs');
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -60,6 +61,7 @@ function helpText() {
     '  --uninstall     Remove the plugin from selected runtimes',
     '  --dry-run       Print the diff without writing',
     '  --config-dir D  Override the config directory',
+    '  --no-peer-prompt  Suppress the post-install peer-CLI detection nudge',
     '  --help, -h      Show this message',
     '',
     'Environment overrides (per-runtime):',
@@ -195,6 +197,103 @@ async function main() {
         : 'Restart the affected runtime(s) for the plugin to load.',
       '',
     ].join('\n'),
+  );
+
+  // v1.27.1 — Plan 27-11 wiring: post-install peer-CLI detection nudge.
+  // Fires only on real install (not uninstall, not dry-run) when not
+  // suppressed by --no-peer-prompt. Silently skips when no peers detected.
+  // Always opt-in: writes .design/config.json#peer_cli.enabled_peers
+  // ONLY on explicit y/Y; default is no.
+  if (!uninstall && !dryRun && !flags.has('--no-peer-prompt')) {
+    try {
+      await maybeNudgePeerCli({ flags });
+    } catch (e) {
+      // Nudge is non-critical. Surface a one-line warning but don't fail
+      // the install — the plugin is fully functional without peer-CLI.
+      process.stderr.write(
+        `\n[peer-cli] post-install nudge skipped: ${e && e.message ? e.message : e}\n`,
+      );
+    }
+  }
+}
+
+// v1.27.1 — Plan 27-11: post-install nudge. Detects installed peer CLIs,
+// asks the user (interactive y/N) whether to wire them as peers, writes
+// .design/config.json#peer_cli.enabled_peers on yes. Default = NO (opt-in).
+async function maybeNudgePeerCli({ flags }) {
+  const detected = detectInstalledPeers();
+  if (!detected || detected.length === 0) {
+    // Nothing detected — silent skip. (No bad UX of "we found 0 peers".)
+    return;
+  }
+
+  // Build the human-readable peer line for the prompt.
+  const allPeerCapable = listPeerCapableRuntimes();
+  const detectedDisplay = detected
+    .map((id) => {
+      const r = allPeerCapable.find((x) => x.id === id);
+      return r && r.displayName ? r.displayName : id;
+    })
+    .join(', ');
+
+  process.stdout.write(
+    [
+      '',
+      '✓ Detected peer CLIs: ' + detectedDisplay,
+      '',
+      'gdd v1.27.0 introduced optional peer-CLI delegation. With your',
+      'agents\\u2019 frontmatter `delegate_to:` set, gdd can route specific',
+      'roles through these peer CLIs (cost or quality wins per Phase 23.5',
+      'bandit). You can change this anytime via .design/config.json.',
+      '',
+    ].join('\n'),
+  );
+
+  // Decide interactive vs scripted. shouldUseInteractive lives in this
+  // file; reuse it. If non-TTY, default to no (silent opt-out) so CI
+  // installers don't hang waiting for input.
+  let confirmed = false;
+  if (shouldUseInteractive(flags)) {
+    try {
+      const clack = require('@clack/prompts');
+      const ans = await clack.confirm({
+        message: 'Enable peer-CLI delegation for these peers?',
+        initialValue: false,
+      });
+      confirmed = (ans === true);
+    } catch {
+      // @clack/prompts unavailable — silently default to no.
+      confirmed = false;
+    }
+  }
+
+  if (!confirmed) {
+    process.stdout.write(
+      'Skipped — peer-CLI delegation remains disabled.\n' +
+      'Enable later by adding to .design/config.json:\n' +
+      '  { "peer_cli": { "enabled_peers": ' + JSON.stringify(detected) + ' } }\n\n',
+    );
+    return;
+  }
+
+  // Write the allowlist. Merge with any existing .design/config.json.
+  const cfgPath = path.join(process.cwd(), '.design', 'config.json');
+  let cfg = {};
+  try {
+    if (fs.existsSync(cfgPath)) {
+      cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
+    }
+  } catch {
+    cfg = {};
+  }
+  if (!cfg.peer_cli || typeof cfg.peer_cli !== 'object') cfg.peer_cli = {};
+  cfg.peer_cli.enabled_peers = detected;
+  fs.mkdirSync(path.dirname(cfgPath), { recursive: true });
+  fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2) + '\n');
+  process.stdout.write(
+    `✓ Wrote .design/config.json — peer-CLI enabled for: ${detected.join(', ')}\n` +
+    '  Set delegate_to: <peer>-<role> on agent frontmatter to opt agents in.\n' +
+    '  See docs/PEER-DELEGATION.md for the full ops guide.\n\n',
   );
 }
 

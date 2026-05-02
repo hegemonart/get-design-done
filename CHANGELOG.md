@@ -4,6 +4,30 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.27.1] — 2026-04-30
+
+Phase 27 wiring patch — closes the production-integration gaps left by v1.27.0's "structural ship". v1.27.0 landed all peer-CLI library code + tests + docs but the helpers were exported without callers, so `delegate_to:` on agent frontmatter was validated and then ignored at runtime. v1.27.1 wires the four integration points so delegation actually fires for users who set `delegate_to:` AND allowlist the peer.
+
+### Fixed
+
+- **`session-runner.run()` now invokes `tryDelegate` (Plan 27-06 wiring)** — when `opts.delegateTo` is set to a `<peer>-<role>` value AND the registry can route AND the peer is in `.design/config.json#peer_cli.enabled_peers`, the prompt runs on the peer-CLI and `run()` returns the peer result. On peer-absent / peer-error / null result, falls through transparently to the local Anthropic SDK loop (D-07). Previously the `tryDelegate` helper existed in the file but `run()` never called it.
+
+- **Real `appendEvent('peer_call_started|complete|failed', ...)` emission (Plan 27-08 wiring)** — replaced the stderr-only placeholder in session-runner with three real event-emission calls. Events flow through Phase 22's `appendEvent()` API using the constants registered in v1.27.0, tagged with `runtime_role: 'peer'` and `peer_id`. Reflector cross-runtime cost-arbitrage (Plan 26-06) now sees peer telemetry. `GDD_PEER_DEBUG=1` continues to mirror the failed events to stderr for live tailing.
+
+- **`install.cjs` interactive peer-detection nudge (Plan 27-11 wiring)** — after a successful (non-uninstall, non-dry-run) install in a TTY, scans `peerBinary` paths via `detectInstalledPeers()`. If 1+ peer detected, prompts via `@clack/prompts` with `confirm()` (default: NO). On yes, writes `.design/config.json#peer_cli.enabled_peers`. New `--no-peer-prompt` flag suppresses the prompt entirely (CI-friendly). Silent skip when zero peers detected. Default-NO preserves the opt-in trust contract (D-11).
+
+### Out of scope (known, deferred)
+
+- **Bandit `pullWithDelegate` caller (Plan 27-07 wiring)** — `pullWithDelegate` and `updateWithDelegate` ship in the bandit module surface (v1.27.0) but no production caller invokes them yet. Wiring requires `gdd-router` SKILL.md change (procedural, not code) which is out of scope for a wiring patch. Phase 28+ territory once the integration shape is decided. The `delegate?` dimension stays exported as a library extension for ad-hoc use.
+
+### Tests
+
+- Existing 23 peer-CLI session-runner / events / end-to-end tests pass after wiring.
+- Existing 33 install.cjs + peer-detect tests pass after the nudge addition.
+- Full Phase 27 surface tests stay green; no new test files (this is a wiring patch, not a new surface).
+
+---
+
 ## [1.27.0] — 2026-04-30
 
 Phase 27 Peer-CLI Delegation Layer milestone — closes the **outbound** half of multi-runtime. Phase 24 made gdd installable on 14 runtimes; Phase 21 made the same pipeline run on each; Phase 26 made tier→model resolve correctly per runtime. v1.27.0 adds the missing piece: gdd agents OPTIONALLY delegate to local peer CLIs (Codex via App Server Protocol; Gemini/Cursor/Copilot/Qwen via Agent Client Protocol) when measurably cheaper or higher-quality for the role. Falls back to in-process Anthropic SDK when peer is unavailable. Honors Phase 26 tier maps + Phase 22 event chain + Phase 23.5 bandit posterior — `delegate?` becomes another arm in `(agent_type × tier × delegate)` Thompson sampling, no new ML.

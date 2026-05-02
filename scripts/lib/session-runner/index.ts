@@ -200,14 +200,21 @@ async function tryDelegate(args: {
     return reg !== null ? reg.dispatch : null;
   })();
   if (dispatcher === null) {
-    // No registry available at all — fall through to local. Phase 22
-    // event emission (Plan 27-08) hooks here as `peer_call_failed`
-    // with reason="registry_missing". For now, a placeholder stderr
-    // breadcrumb so operators can grep for delegation drops without
-    // CI-failing on stdout pollution.
-    _logPeerCallFailed({ peer: parsed.peer, role, errorClass: 'registry_missing' });
+    // No registry available at all — fall through to local.
+    _logPeerCallFailed({
+      peer: parsed.peer, role, errorClass: 'registry_missing',
+      sessionId: args.sessionId, stage: opts.stage,
+    });
     return null;
   }
+
+  // v1.27.1 — emit peer_call_started before dispatcher invocation so the
+  // events.jsonl trail captures the attempt even if the dispatcher hangs.
+  _logPeerCallStarted({
+    peer: parsed.peer, role,
+    sessionId: args.sessionId, stage: opts.stage,
+  });
+  const dispatchStartedAt = Date.now();
 
   let dispatchResult: { result: unknown; peer: string; protocol: 'acp' | 'asp' } | null = null;
   try {
@@ -218,6 +225,8 @@ async function tryDelegate(args: {
       role,
       errorClass: 'dispatch_threw',
       message: err instanceof Error ? err.message : String(err),
+      sessionId: args.sessionId,
+      stage: opts.stage,
     });
     return null; // transparent fallback
   }
@@ -225,9 +234,27 @@ async function tryDelegate(args: {
   if (dispatchResult === null) {
     // Registry returned null — peer absent, capability mismatch, or
     // adapter-side error. Per D-07 we fall back silently.
-    _logPeerCallFailed({ peer: parsed.peer, role, errorClass: 'registry_returned_null' });
+    _logPeerCallFailed({
+      peer: parsed.peer, role, errorClass: 'registry_returned_null',
+      sessionId: args.sessionId, stage: opts.stage,
+    });
     return null;
   }
+
+  // v1.27.1 — peer round-trip succeeded. Emit peer_call_complete with the
+  // measured latency. Token counts + cost are 0 / null because adapters
+  // don't surface usage in v1.27 (Plan 27-04 spec deferred it); reflector
+  // tolerates null cost (Plan 26-06 cost-arbitrage analysis).
+  _logPeerCallComplete({
+    peer: dispatchResult.peer,
+    role,
+    latencyMs: Date.now() - dispatchStartedAt,
+    tokensIn: 0,
+    tokensOut: 0,
+    costUsd: null,
+    sessionId: args.sessionId,
+    stage: opts.stage,
+  });
 
   // Peer succeeded. Build a SessionResult that mirrors the local path's
   // shape so downstream consumers (stage-handlers, transcript readers,
@@ -271,34 +298,122 @@ function _coerceFinalText(result: unknown): string | undefined {
 }
 
 /**
- * Placeholder for Plan 27-08's `peer_call_failed` event. Until 27-08
- * wires real `appendEvent('peer_call_failed', ...)`, we write a single
- * stderr line so operators can grep for silent delegation drops. We
- * deliberately don't go through `appendEvent` here because the Phase 22
- * event-stream hasn't gained a `peer_call_failed` type yet (that's
- * 27-08's job) and pushing an unknown event type today would create a
- * migration mess for the reflector.
+ * v1.27.1 — wires Plan 27-08's `peer_call_failed` event for real.
+ * Phase 22 `appendEvent` accepts the new event type (registered in
+ * KNOWN_EVENT_TYPES via Plan 27-08), so the reflector and downstream
+ * telemetry consumers see delegation drops as a measurement signal.
+ *
+ * Errors from `appendEvent` (e.g., events.jsonl unwritable) are
+ * swallowed — peer-call telemetry is observability, not critical
+ * path. STATE.md remains the durable record of session outcomes.
+ *
+ * Operators can additionally set `GDD_PEER_DEBUG=1` to emit a
+ * one-line stderr breadcrumb mirroring the event for live tailing.
  */
 function _logPeerCallFailed(args: {
   peer: string;
   role: string;
   errorClass: string;
   message?: string;
+  sessionId?: string;
+  stage?: SessionRunnerOptions['stage'];
 }): void {
-  // One-line, machine-greppable. Quiet by default in test runs (NODE_ENV)
-  // so the test output stays clean. Operators set GDD_PEER_DEBUG=1 to see
-  // the breadcrumb in production logs.
-  if (process.env['GDD_PEER_DEBUG'] !== '1') return;
-  const payload = JSON.stringify({
-    type: 'peer_call_failed',
-    peer_id: args.peer,
-    role: args.role,
-    error_class: args.errorClass,
-    ...(args.message !== undefined ? { message: args.message } : {}),
-    ts: new Date().toISOString(),
-  });
-  // eslint-disable-next-line no-console
-  console.error(`[peer-cli] ${payload}`);
+  try {
+    appendEvent({
+      type: 'peer_call_failed',
+      timestamp: new Date().toISOString(),
+      sessionId: args.sessionId ?? 'unknown',
+      ...(args.stage !== undefined && args.stage !== 'init' && args.stage !== 'custom' ? { stage: args.stage } : {}),
+      payload: {
+        runtime_role: 'peer',
+        peer_id: args.peer,
+        role: args.role,
+        error_class: args.errorClass,
+        ...(args.message !== undefined ? { message: args.message } : {}),
+      },
+    });
+  } catch {
+    // Telemetry is best-effort — never let an event-stream failure
+    // break the actual session flow.
+  }
+  if (process.env['GDD_PEER_DEBUG'] === '1') {
+    const payload = JSON.stringify({
+      type: 'peer_call_failed',
+      peer_id: args.peer,
+      role: args.role,
+      error_class: args.errorClass,
+      ...(args.message !== undefined ? { message: args.message } : {}),
+      ts: new Date().toISOString(),
+    });
+    // eslint-disable-next-line no-console
+    console.error(`[peer-cli] ${payload}`);
+  }
+}
+
+/**
+ * v1.27.1 — emit `peer_call_started` event. Fired once at the beginning
+ * of a delegation attempt, before the dispatcher is invoked. Pairs with
+ * `peer_call_complete` (success path) or `peer_call_failed` (any failure
+ * path, transparent to caller per D-07).
+ */
+function _logPeerCallStarted(args: {
+  peer: string;
+  role: string;
+  sessionId?: string;
+  stage?: SessionRunnerOptions['stage'];
+}): void {
+  try {
+    appendEvent({
+      type: 'peer_call_started',
+      timestamp: new Date().toISOString(),
+      sessionId: args.sessionId ?? 'unknown',
+      ...(args.stage !== undefined && args.stage !== 'init' && args.stage !== 'custom' ? { stage: args.stage } : {}),
+      payload: {
+        runtime_role: 'peer',
+        peer_id: args.peer,
+        role: args.role,
+      },
+    });
+  } catch {
+    // best-effort
+  }
+}
+
+/**
+ * v1.27.1 — emit `peer_call_complete` event. Fired after a successful
+ * dispatcher round-trip. Cost is null when the adapter doesn't return
+ * usage data (some peers don't surface token counts); the reflector
+ * tolerates null cost for arbitrage analysis (Plan 26-06).
+ */
+function _logPeerCallComplete(args: {
+  peer: string;
+  role: string;
+  latencyMs: number;
+  tokensIn: number;
+  tokensOut: number;
+  costUsd: number | null;
+  sessionId?: string;
+  stage?: SessionRunnerOptions['stage'];
+}): void {
+  try {
+    appendEvent({
+      type: 'peer_call_complete',
+      timestamp: new Date().toISOString(),
+      sessionId: args.sessionId ?? 'unknown',
+      ...(args.stage !== undefined && args.stage !== 'init' && args.stage !== 'custom' ? { stage: args.stage } : {}),
+      payload: {
+        runtime_role: 'peer',
+        peer_id: args.peer,
+        role: args.role,
+        latency_ms: args.latencyMs,
+        tokens_in: args.tokensIn,
+        tokens_out: args.tokensOut,
+        cost_usd: args.costUsd,
+      },
+    });
+  } catch {
+    // best-effort
+  }
 }
 
 /** Baseline retry backoff parameters (matches jittered-backoff defaults for
@@ -621,6 +736,38 @@ export async function run(opts: SessionRunnerOptions): Promise<SessionResult> {
     } else {
       opts.signal.addEventListener('abort', onExternalAbort, { once: true });
     }
+  }
+
+  // -- 6.5. Peer-CLI delegation try (Plan 27-06 wiring, v1.27.1). ---------
+  // If the agent's frontmatter declares `delegate_to: <peer>-<role>` AND the
+  // peer is allowlisted AND the registry can route, run the prompt on the
+  // peer-CLI and return early. On peer-absent / peer-error / null result,
+  // fall through transparently to the local SDK loop (D-07).
+  //
+  // tryDelegate is a no-op when opts.delegateTo is undefined / 'none', when
+  // the registry can't load, when the peer isn't allowlisted, when the
+  // dispatcher returns null, or when the dispatcher throws. In all those
+  // cases tryDelegate returns null and we proceed to the local SDK path.
+  const peerResult = await tryDelegate({
+    opts,
+    sanitizedPrompt,
+    transcriptPath,
+    sessionId,
+    sanitizer: sanResult,
+  });
+  if (peerResult !== null) {
+    emit('session.completed', opts.stage, sessionId, {
+      stage: opts.stage,
+      sessionId,
+      status: peerResult.status,
+      turns: peerResult.turns,
+      usage: peerResult.usage,
+      transcript_path: transcriptPath,
+      sanitizer: { applied: [...peerResult.sanitizer.applied], removedSections: [...peerResult.sanitizer.removedSections] },
+    });
+    transcript.close();
+    if (opts.signal !== undefined) opts.signal.removeEventListener('abort', onExternalAbort);
+    return peerResult;
   }
 
   // -- 7. Retry-once loop. ------------------------------------------------

@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
