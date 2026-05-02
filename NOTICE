@@ -11,7 +11,7 @@ Phase 27 — Peer-CLI Delegation Layer (v1.27.0, 2026-04-30)
 
 The peer-CLI delegation layer ports protocol shapes and skill patterns from:
 
-  greenpolo/cc-multi-cli-plugin (https://github.com/greenpolo/cc-multi-cli)
+  greenpolo/cc-multi-cli-plugin (https://github.com/greenpolo/cc-multi-cli-plugin)
   License: Apache License, Version 2.0
   Version reference: cc-multi-cli v2.0.0 (shipped 2026-04-24)
 

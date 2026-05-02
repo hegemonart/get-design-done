@@ -21,8 +21,8 @@
 // string with `shell: true`. We forward-slash the path so Windows shell
 // resolves it correctly even when the path contains backslashes:
 //
-//     // BROKEN on Windows for .cmd shims:
-//     spawn('C:\\Users\\me\\AppData\\Local\\codex.cmd', ['app-server'])
+//     // BROKEN on Windows for .cmd shims (absPath ends in .cmd):
+//     spawn(absPath, ['app-server'])
 //
 //     // WORKS everywhere (.cmd via cmd.exe; non-.cmd via direct exec):
 //     const fwd = absPath.replace(/\\/g, '/');
