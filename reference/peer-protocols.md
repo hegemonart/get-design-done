@@ -4,7 +4,7 @@
 
 For ops-level guidance (when delegation fires, how to enable/disable, fallback diagnostics), see `docs/PEER-DELEGATION.md`.
 
-Protocol shapes are adapted from [`greenpolo/cc-multi-cli`](https://github.com/greenpolo/cc-multi-cli) under Apache 2.0 — see `NOTICE` for full attribution.
+Protocol shapes are adapted from [`greenpolo/cc-multi-cli-plugin`](https://github.com/greenpolo/cc-multi-cli-plugin) under Apache 2.0 — see `NOTICE` for full attribution.
 
 ---
 
