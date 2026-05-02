@@ -37,7 +37,7 @@
     "provenance": true
   },
   "scripts": {
-    "test": "node --test --experimental-strip-types \"tests/**/*.cjs\" \"tests/**/*.ts\"",
+    "test": "node --test --experimental-strip-types \"tests/**/*.test.cjs\" \"tests/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "codegen:schemas": "node --experimental-strip-types scripts/codegen-schema-types.ts",
     "lint:md": "npx --yes markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.planning\" \"#.claude\" \"#test-fixture/baselines\"",

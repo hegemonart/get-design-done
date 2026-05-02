@@ -4,8 +4,19 @@ import assert from 'node:assert/strict';
 
 import { KNOWN_EVENT_TYPES } from '../scripts/lib/event-stream/index.ts';
 
-test('22-01: KNOWN_EVENT_TYPES has all 23 pre-registered subtypes', () => {
-  assert.equal(KNOWN_EVENT_TYPES.length, 23);
+test('22-01: KNOWN_EVENT_TYPES has all 26 pre-registered subtypes', () => {
+  assert.equal(KNOWN_EVENT_TYPES.length, 26);
+});
+
+test('27-08: each Phase 27 peer-call subtype is registered', () => {
+  const required = [
+    'peer_call_started',
+    'peer_call_complete',
+    'peer_call_failed',
+  ];
+  for (const t of required) {
+    assert.ok(KNOWN_EVENT_TYPES.includes(t), `missing Phase-27 type: ${t}`);
+  }
 });
 
 test('22-01: each Phase 20 subtype is registered', () => {
