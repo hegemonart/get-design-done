@@ -1755,6 +1755,76 @@ A 2026-04-29 review of GDD's feedback architecture surfaced three structural gap
 - Issue templates in the destination repo (`.github/ISSUE_TEMPLATE/`): does the phase ship template files there, or assume maintainer maintains separately? Default: phase ships proposed templates as `reference/issue-templates/`; merge to destination repo is maintainer's decision.
 - Update-integrity diff: always-show on every upgrade, opt-in by default, or only when pseudonymization/redaction/disclaimer text changed? Default: only on relevant-file changes (lower noise).
 
+### Phase 31: Figma Off-Context Extractor + Variables Sync Plugin
+
+**Goal**: Ship `gsd-figma-extract` — a plugin command that pulls a Figma design system from REST API into a compact, queryable local digest (DESIGN.md + tokens.json + components.json) **without** raw JSON ever entering Claude context, plus a thin Figma plugin "GDD Sync" that fills the Variables-API-Enterprise gap by reading `figma.variables` from inside Figma and POSTing JSON to a local receiver. Validated by Spike 001 (commit `c3a9cf6`, `.planning/spikes/001-figma-offcontext-extractor/`): 898× compression on a 167-component DS (223 MB raw → 254 KB digest), 0 Claude tokens consumed during extraction, 0 Figma MCP calls. The two known gaps from the spike — Variables API 403 (Enterprise-only) and the legacy-styles → 0-tokens bug — both have concrete solutions designed in this phase.
+
+**Depends on**: Phase 14 (AI-Native Design Tool Connections — Figma MCP context exists; this phase is the off-context complement). Soft-coupled to Phase 23 (Visual & Token Engines) — token canonicalization could later consume this digest as input. Independent of in-flight SDK phases (20–23).
+
+**Target version**: v1.31.0.
+
+**Why this phase exists**:
+
+The current Figma path through GDD goes via Figma MCP (`mcp__3860b164…__get_design_context`, `get_variable_defs`, etc.), which is fine for spot questions but **economically catastrophic for whole-DS migration**: a 200-component design system pulls ~50–500K Claude tokens and hundreds of MCP calls when read interactively. The spike proved the alternative — a local Node script hitting Figma REST and packaging the result on disk — is **898× cheaper in Claude tokens** with zero MCP usage. Figma's REST `/files` endpoint is gated by a personal access token, not by tier, so this works on Free-plan files. The single remaining REST gap is `/files/:key/variables/local` returning 403 on non-Enterprise plans, which we close by writing a tiny Figma plugin that reads `figma.variables` (full access on every Figma tier) and posts the JSON to a localhost receiver our extractor briefly stands up. End state: any user on any Figma plan can run one command, click one button in Figma, and walk away with a compact LLM-readable spec for their entire DS.
+
+**Success Criteria** (what must be TRUE):
+
+1. **`gsd-figma-extract <file_key>` command** at `skills/figma-extract/SKILL.md`. Phase 28.5-compliant length cap. Accepts file URL or key, reads `FIGMA_TOKEN` from env, never logs or persists the token. End-to-end run on a Free-tier DS produces non-empty digest including the `## Tokens` section.
+2. **Off-context guarantee**: extractor writes raw JSON only to `<spike-or-phase-cache>/raw/*.json` on disk. The skill's tool surface explicitly excludes any raw-JSON Read by Claude. Static test asserts the SKILL.md never instructs reading `raw/*.json`.
+3. **Two-stage pipeline preserved**: `pull.cjs` (REST + receiver) and `digest.cjs` (packager) ship as separate Node modules. Re-run digest without re-pulling. Raw cache gitignored.
+4. **Variant rollup default-on**: digest never emits COMPONENT children of COMPONENT_SET as separate entries. Test asserts on the spike fixture: 167 entries, not 2,593.
+5. **Three-path token extraction**:
+   - **Path A — Variables API** (Enterprise): direct `/files/:key/variables/local` if 200; skip on 403 with one-line warning.
+   - **Path B — `/styles` + `/nodes?ids=`** two-step fallback: fixes the spike's "0 tokens" bug. Test asserts non-empty `tokens.json` against a styles-only fixture.
+   - **Path C — Plugin sync**: GDD Sync Figma plugin posts `figma.variables` snapshot to localhost; receiver merges into digest pipeline. Plain-text never written to disk before user consent (printed-payload-then-confirm UX).
+6. **Figma plugin "GDD Sync"** at `figma-plugin/` (TypeScript, ≤500 LOC total). One button — "Export to GDD" — that calls `figma.variables.getLocalVariableCollections()` + `getLocalVariables()`, packages JSON, POSTs to `localhost:5179/variables`. Plugin manifest declares no network domains beyond `localhost`. README documents (a) Figma Community install once published, (b) dev-build install for testing now.
+7. **Local HTTP receiver** at `scripts/lib/figma-extract/receiver.cjs`: ephemeral — only listens during the active `gsd-figma-extract` run, binds to `127.0.0.1:5179` (not 0.0.0.0), validates payload schema, writes `raw/variables.json`, then closes. Test asserts no listener after extract exits, asserts refusal of non-localhost connections.
+8. **Drop `geometry=paths`** on the file pull. Saves ~30% raw size; geometry is thrown away in digest. Test asserts the request URL does NOT contain `geometry=paths`.
+9. **`--component <name>` filter** on digest: produces a per-component slice (~500 tokens) instead of the full DESIGN.md. Useful when an LLM is working on one specific component. Tested via fixture.
+10. **`gsd-health` extension**: shows `figma extract: ready (token set)` / `figma extract: token missing` / `figma extract: plugin sync needed for variables (Free tier detected)` status line. Tested on three states.
+11. **Token never persisted**. Static-analysis test scans `scripts/lib/figma-extract/` for any `writeFile.*FIGMA_TOKEN`, `console.log.*FIGMA_TOKEN`, or other persistence/log primitives that include the token variable. Fails build on any.
+12. **Compression target on regression fixture**: digest ≤ 25 KB and DESIGN.md ≤ 20K tokens for the spike's 167-component DS (the only real-world fixture we have). Snapshot test on `digest/DESIGN.md` against committed golden file.
+13. Regression baseline at `test-fixture/baselines/phase-31/`: golden DESIGN.md from spike DS, fixture file responses for offline replay (sanitized — no real DS), receiver lifecycle, plugin schema validation, three-path token-extraction routing, static-analysis token-isolation check.
+
+**Scope:**
+
+- **Wave A — Productionize spike (3 plans, parallel-safe):**
+  - [ ] 31-01-PLAN.md — `scripts/lib/figma-extract/pull.cjs` (productionized `extract.mjs`): drops `geometry=paths`, structured logging, retry+backoff, per-endpoint timing, supports file URL or key, writes `raw/*.json`. Tests on offline fixture replay. (FIGMA-01)
+  - [ ] 31-02-PLAN.md — `scripts/lib/figma-extract/digest.cjs` (productionized `digest.mjs`): variant rollup default-on, `--component` filter, three-path token assembly skeleton (Variables / styles+nodes / plugin), DESIGN.md format with stable section ordering. Tests on snapshot of golden DESIGN.md. (FIGMA-02)
+  - [ ] 31-03-PLAN.md — Two-step `/styles` + `/nodes?ids=` lookup that fixes the spike's "0 tokens" bug. Resolves each style's source node via batched `/nodes` call, extracts paint/typography/effect from the returned node payload. Tests on styles-only fixture asserting non-empty tokens. (FIGMA-03)
+
+- **Wave B — Figma plugin + receiver (3 plans, parallel after A):**
+  - [ ] 31-04-PLAN.md — `figma-plugin/` scaffolding: `manifest.json` (network access scoped to `localhost` only), `code.ts` sandbox + `ui.html` shell, build via Figma's standard `@figma/plugin-typings`. README with (a) Community install path (post-publish), (b) dev-install via "Import plugin from manifest." Tests on plugin schema + manifest-network-scope assertion. (FIGMA-04)
+  - [ ] 31-05-PLAN.md — Plugin variables export: reads `figma.variables.getLocalVariableCollections()` + `getLocalVariables()`, resolves aliases to readable refs, includes mode metadata, POSTs to `localhost:5179/variables`. Plugin UI shows "exported N variables across M collections — close." Tests on the variable-shape fixture. (FIGMA-05)
+  - [ ] 31-06-PLAN.md — `scripts/lib/figma-extract/receiver.cjs`: ephemeral 127.0.0.1:5179 server, payload schema validation (json-schema), writes `raw/variables.json`, exits on receipt or timeout. Tests on receiver-lifecycle + non-localhost refusal + schema-rejection paths. (FIGMA-06)
+
+- **Wave C — UX + integration (3 plans, parallel after B):**
+  - [ ] 31-07-PLAN.md — `skills/figma-extract/SKILL.md` (Phase 28.5-compliant, ≤100 lines): orchestrates pull → optional plugin-sync wait → digest. Prints "open Figma → run GDD Sync plugin" instructions only when plugin-sync needed (Path C path). Static test asserts SKILL never reads `raw/*.json`. (FIGMA-07)
+  - [ ] 31-08-PLAN.md — `--component <name>` filter on digest: per-component slice (~500 tokens), supports glob (e.g. `--component "Button*"`). Tests on fixture asserting size + content correctness. (FIGMA-08)
+  - [ ] 31-09-PLAN.md — `gsd-health` extension showing extractor readiness state (token set, plugin presence detection, last-extract timestamp). Tests on three states. (FIGMA-09)
+
+- **Wave D — Closeout (1 plan):**
+  - [ ] 31-10-PLAN.md — **Phase closeout**: tests + golden fixture under `test-fixture/baselines/phase-31/` (sanitized — no real DS data); `package.json` + `plugin.json` + `marketplace.json` refresh (keywords: `figma`, `extractor`, `design-system-sync`); `CHANGELOG.md` v1.31.0; NOTICE attribution if any third-party patterns adopted; static-analysis token-isolation test in CI; README "Figma off-context extraction" section; **roadmap closeout (rule #14)**: flip checkboxes 31-01..31-10 + status table + version-sequence prose. (FIGMA-10)
+
+**Explicitly out of scope** (discussed and rejected, defer to future phases):
+
+- **Code Connect mapping / component → React codegen**. The digest is the spec; codegen consumes it but is a separate phase. Avoiding scope creep that would block this from shipping.
+- **Automatic GitHub sync of the digest** (e.g., commit `digest/DESIGN.md` to a target repo on every Figma change). Webhook + auth surface is too large for this phase. Manual workflow is acceptable for v1.
+- **Multiple Figma files in one extract**. Single `file_key` per run for v1. Multi-file workflows compose at the user level.
+- **Component instance counting / usage analytics**. Out of scope for the digest.
+- **Pixel-perfect rendering / image export**. The plugin could emit PNGs via `figma.exportAsync` but adds binary-payload + Code Connect dependencies; deferred.
+- **Real-time sync / file-watching**. Run-on-demand only.
+- **Hosting the receiver on a non-localhost port or with auth**. Exposes a network surface for ~zero benefit; receiver stays 127.0.0.1-only and ephemeral.
+- **Custom DTCG-format export from the plugin**. Plugin emits Figma-shape JSON; canonical DTCG transform happens in the digest stage where the rest of the token logic lives.
+
+**Open questions for `/gsd-discuss-phase 31`**:
+
+- Plugin distribution: ship now as private dev-build with documented import flow, or block on Figma Community publish review (~1–2 weeks)? Default: ship dev-install path in v1.31.0; Community submission as a follow-up checkbox in 31-10 not blocking the version cut.
+- Receiver port (5179): hardcoded constant or CLI override? Default: hardcoded; if conflict in the wild, change in a patch release.
+- Three-path token resolution order: which path wins on conflict (e.g., a token defined as both a published Style and a Variable with the same name)? Default: Variables > plugin sync > styles. Document and add a `--prefer-styles` escape hatch.
+- Should plugin emit ALL variables or only those exposed in published collections? Default: all — easier to audit what we send, user filters at digest stage.
+- Cache invalidation: time-based (1h TTL on `raw/*.json`)? content-based (Figma `ETag`/`If-Modified-Since`)? Default: content-based via Figma's response `version` field, fall back to wall-clock TTL of 1h.
+
 ## Parallelization: Phases 20–23 (SDK Build-Out)
 
 The SDK build-out is the largest parallelizable unit in the roadmap — 54 plans across 4 phases, dominated by **disjoint module work**. Cross-phase parallelism is feasible because Phase 22 (observability) only needs Phase 20's event-stream foundation, not Phase 21's pipeline runner.
