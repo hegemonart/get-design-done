@@ -95,6 +95,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] [Phase 32](#phase-32-skill-auto-trigger-discipline--defensive-guardrails) — Skill Auto-Trigger Discipline + Defensive Guardrails — v1.32.0
 - [ ] [Phase 33](#phase-33-skill-behavior-tests--pressure-scenario-harness) — Skill Behavior Tests (Pressure-Scenario Harness) — v1.33.0
 - [ ] [Phase 33.5](#phase-335-gdd-runtime-security-hardening-inserted) — GDD Runtime Security Hardening — **NEW (INSERTED 2026-05-16)** — v1.33.5
+- [ ] [Phase 33.6](#phase-336-openrouter-provider-adapter-inserted) — OpenRouter Provider Adapter — **NEW (INSERTED 2026-05-16)** — v1.33.6
 - [ ] **Phase 34 — Non-Web Output Layer** *(split into 3 sub-phases)*:
   - [ ] [Phase 34.1] — Native Mobile (Swift / Compose / Flutter) — v1.34.1
   - [ ] [Phase 34.2] — Email (MJML + Litmus/Email-on-Acid) — v1.34.2
@@ -2986,6 +2987,57 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 ---
 
+### Phase 33.6: OpenRouter Provider Adapter (INSERTED)
+
+**Goal**: Add OpenRouter as a tier-resolver provider so users can route any agent's `default-tier` through OpenRouter's aggregator catalog instead of (or alongside) direct Anthropic/OpenAI/Gemini calls. Closes the gap that Phase 26 ships per-runtime tier→model maps for 14 native runtimes but has no story for users who want one-API-key access to Claude/GPT/Llama/Gemini across the catalog. **Extends Phase 26** semantically — placed at 33.6 only because Phase 26 already shipped (v1.26.0) and Phase 33.5 must land first to harden the new outbound REST surface.
+
+**Depends on**: **Phase 33.5** (Security Hardening — **hard dep**: 33.6 introduces the plugin's first plugin-side outbound REST client to a third-party catalog endpoint; must land under 33.5's audited baseline including static-analysis CI gate, secret-scrubbing, and explicit allowlist). **Phase 26** (tier-resolver.cjs as plugin point; runtime-models.md format for tier definitions). **Phase 22** (cost events tagged with provider for telemetry). Soft-coupled to **Phase 27.5** (bandit posterior reads cost data and CAN evaluate OpenRouter as a cost arbitrage source — but no posterior dimension extension; see out-of-scope).
+
+**Target version**: v1.33.6 *(decimal — CHANGELOG-only per convention)*.
+
+**Why this phase exists**: A 2026-05-16 audit raised OpenRouter support as a user-facing gap. Direct user impact: single API key vs N keys, automatic provider fallback when one is rate-limited, lower-cost open models (Llama 3.x, DeepSeek) accessible from inside GDD without separate auth dance. The earlier "Phase 27.7" proposal was rejected for three reasons documented in conversation: (a) wrong semantic banner — 27.x is peer-CLI delegation, not provider proxy; (b) outbound REST surface before Phase 33.5 audit; (c) static `reference/openrouter-models.md` would go stale fast because OpenRouter pricing + catalog churns weekly. 33.6 fixes all three.
+
+**Success Criteria**:
+
+1. **`connections/openrouter.md`** — connection-doc per Phase 14 template: capability matrix entry (`canvas: no`, `generator: yes`, `model-router: yes`), setup section (`OPENROUTER_API_KEY` env, optional `OPENROUTER_BASE_URL` for self-hosted proxies), probe pattern, fallback when key absent (graceful degrade — tier resolution falls back to native provider).
+2. **`scripts/lib/tier-resolver-openrouter.cjs`** — Phase 26 plug-in adapter exporting `resolve(tier) → openrouter_model_id`. Reads cached catalog from `.design/cache/openrouter-models.json`.
+3. **`scripts/lib/openrouter/catalog-fetcher.cjs`** — dynamic fetch from `https://openrouter.ai/api/v1/models` with 24h TTL (per Phase 13.3 update-checker pattern), atomic write, retry-with-backoff (Phase 20 resilience primitives), explicit allowlist entry per Phase 33.5 static-analysis CI gate.
+4. **`reference/openrouter-tier-mapping.md`** — heuristic for tier→model classification (NOT static catalog — that's the dynamic cache): `high` = top-tier closed models (claude-sonnet/opus, gpt-5, gemini-2.5-pro), `medium` = mid-tier closed or top open (claude-haiku, gpt-5-mini, llama-70b), `low` = cheap open (llama-8b, qwen-flash). Catalog-fetcher applies the heuristic to live models; user can override via `.design/config.json: { "openrouter_tier_overrides": { "opus": "anthropic/claude-opus-4-7" } }`.
+5. **`runtimes.cjs` extension** — `openrouter` entry as a virtual runtime (no `configDirEnv`, no `peerBinary` — it's REST-only). `tier_to_model` is populated from cached catalog at install time + at `/gdd:update`.
+6. **Cost telemetry tagging** — Phase 22 `cost_update` events gain `provider: "openrouter"` field when the agent's `resolved_models` came from OpenRouter resolver. `reference/model-prices.md` gets `prices.openrouter.md` sub-table generated from the dynamic catalog.
+7. **`/gdd:openrouter-status`** skill — surfaces catalog freshness, current tier mappings, last-fetch timestamp, per-tier resolved model preview. `disable-model-invocation: true` (user-invoked only).
+8. **Catalog drift detection** — `agents/design-authority-watcher.md` (Phase 13.2) gains OpenRouter catalog as a feed: weekly diff vs cached snapshot, classifies catalog entries as `new-model` / `pricing-change` / `deprecated` / `withdrawn`. Surfaces only **deprecated/withdrawn** entries that match current `openrouter_tier_overrides` (so users learn their pinned model is going away).
+9. **Static-analysis security gate** (Phase 33.5 plumbing) — `scripts/lib/openrouter/` added to allowlist for outbound network primitives with explicit justification entry in `reference/gdd-threat-model.md`.
+10. Regression baseline at `test-fixture/baselines/phase-33.6/`: fixture catalog payload + golden tier-resolution + cache TTL behavior + fallback-when-no-key behavior + drift-detection output on synthetic deprecation event.
+
+**Scope:** ~4 plans across 2 waves.
+
+- **Wave A — Catalog + resolver (2 plans, parallel-safe):**
+  - [ ] 33.6-01-PLAN.md — `scripts/lib/openrouter/catalog-fetcher.cjs` + `.design/cache/openrouter-models.json` + retry + atomic write + Phase 33.5 allowlist entry. (OR-01)
+  - [ ] 33.6-02-PLAN.md — `scripts/lib/tier-resolver-openrouter.cjs` + `reference/openrouter-tier-mapping.md` + `runtimes.cjs` virtual-runtime entry. (OR-02)
+
+- **Wave B — Surface + telemetry + closeout (2 plans):**
+  - [ ] 33.6-03-PLAN.md — `connections/openrouter.md` + `/gdd:openrouter-status` skill + cost-event tagging + `prices.openrouter.md` generation + Phase 13.2 authority-watcher drift detection extension. (OR-03)
+  - [ ] 33.6-04-PLAN.md — **Phase closeout**: regression baseline; README mention (single paragraph + link to `connections/openrouter.md`); CHANGELOG v1.33.6; threat-model entry; **roadmap closeout (rule #14)**. (OR-04)
+
+**Explicitly out of scope**:
+
+- **Bandit posterior dimension extension** to `(agent, touches-bin, provider)`. Phase 23.5 explicitly deferred provider-arm context expansion "needs measurement-gated convergence proof first" — 33.6 inherits that discipline. Bandit reads OpenRouter cost-data as input but does NOT branch its posterior on provider. Revisit only if Phase 27.5 telemetry shows clear cross-provider arbitrage signal across ≥30 cycles.
+- **OpenRouter as peer-CLI delegate** — OpenRouter has no CLI surface; Phase 27 peer-CLI pattern doesn't apply. If OpenRouter ships a CLI later, separate phase.
+- **Auto-pricing arbitrage** — plugin won't switch provider mid-cycle on price changes; tier resolution is per-cycle-start deterministic. Dynamic arbitrage = Phase 27.5+ bandit territory.
+- **OpenRouter-only mode** — direct provider auth (Anthropic key for Claude Code) still primary. OpenRouter is opt-in alongside.
+- **Static `reference/openrouter-models.md` catalog** — dynamic fetch is mandatory; static catalog would go stale within weeks.
+- **OpenRouter rate-limit handling beyond Phase 20 primitives** — uses existing jittered-backoff + rate-guard + error-classifier.
+- **OpenRouter Vertex / Bedrock / Azure routing nuances** — adapter treats OpenRouter as one upstream; users who need specific cloud-provider routing configure via `OPENROUTER_BASE_URL`.
+
+**Open questions for `/gsd-discuss-phase 33.6`**:
+- Catalog TTL — 24h (default — matches Phase 13.3) vs 6h (catches pricing changes faster) vs 7d (cheaper). Default: 24h.
+- Tier-mapping heuristic source — hardcoded in `tier-resolver-openrouter.cjs` vs editable `reference/openrouter-tier-mapping.md` vs user-config-only. Default: heuristic in code + user override via config (most flexible).
+- Drift detection scope — Phase 13.2 authority-watcher (weekly cadence) vs fetcher-side per-update notify. Default: authority-watcher (user already has notification surface).
+- README placement — own README section vs paragraph inside Phase 14 "AI-Native Tools" section. Default: separate "Model providers" section in README, sibling to "AI-Native Tools".
+
+---
+
 ### Phase 36.5: Design-Artifact Export (`/gdd:export`) (INSERTED)
 
 **Goal**: Ship `/gdd:export` — packages a completed cycle's `.design/*.md` + screenshots + decisions into a stakeholder-shareable artifact (PDF / Notion page / static HTML site). Closes the gap that GDD's design-output lives only in the repo; stakeholders not sitting in code (PMs, execs, brand) currently have no way to consume it.
@@ -3368,6 +3420,7 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | **27.6. Pipeline Performance + Token-Cost Optimization (INSERTED)** — `agents/perf-analyzer.md` + `reference/perf-budget.md` CI gate + cache-warming refinement + parallel-mapper concurrency tuning + prompt-dedup | 0/5 (2+3 across 2 waves) | Planned | v1.27.6 | Depends on Phases 22, 23.5, 27.5 |
 | **30.5. Failure-Mode Catalogue (INSERTED)** — `reference/known-failure-modes.md` (≥20 entries) + `scripts/lib/failure-mode-matcher.cjs` + reflector proposal flow + authority-watcher candidate ingest | 0/3 (2+1 across 2 waves) | Planned | v1.30.5 | Depends on Phases 22, 30 |
 | **33.5. GDD Runtime Security Hardening (INSERTED)** — `reference/gdd-threat-model.md` (STRIDE per-component) + WebSocket bind hardening + MCP input validation + peer-CLI sandboxing + outbound network audit + secret-scan extension + SECURITY.md | 0/6 (2+3+1 across 3 waves) | Planned | v1.33.5 | Depends on Phases 14.5, 22, 27 |
+| **33.6. OpenRouter Provider Adapter (INSERTED)** — `connections/openrouter.md` + `scripts/lib/tier-resolver-openrouter.cjs` + dynamic catalog-fetcher (24h TTL, atomic cache) + `runtimes.cjs` virtual-runtime entry + `/gdd:openrouter-status` skill + cost-event tagging + Phase 13.2 catalog drift detection + Phase 33.5 outbound-allowlist entry | 0/4 (2+2 across 2 waves) | Planned | v1.33.6 | Depends on Phases 33.5, 26, 22 |
 | **36.5. Design-Artifact Export (INSERTED)** — `skills/export/SKILL.md` + PDF (Paged.js) + Notion (connection write-path) + static HTML + pseudonymize flag + PR integration | 0/5 (2+2+1 across 3 waves) | Planned | v1.36.5 | Depends on Phase 19.5, 36.1 |
 | **39.5. Deployment Coordination Loop (INSERTED)** — `agents/rollout-coordinator.md` + STATE `<rollout_status>` block + `verify_outcome` event + `/gdd:rollout-status` skill + Phase 39 bandit deployed_pct weighting | 0/4 (2+2 across 2 waves) | Planned | v1.39.5 | Depends on Phases 36.1, 39, 22 |
 | **40.5. GDD Self-Migration Tooling (INSERTED)** — `reference/deprecations.md` + `scripts/lib/deprecation-registry.cjs` + `/gdd:migrate` skill + CHANGELOG linter + deprecation completeness test | 0/5 (3+2 across 2 waves) | Planned | v1.40.5 | Depends on Phases 13.3, 40.1 |
