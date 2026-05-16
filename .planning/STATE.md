@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: milestone
-status: Phase 27 + v1.27.1 wiring patch shipped. Phase 31 (Figma Off-Context Extractor) in progress. Planned next — 27.5 / 28 / 28.5 / 29 / 30 / 31.5 / 32 / 33 / 42–48.
-stopped_at: v1.27.1 (2026-05-02). See ROADMAP.md Phase Details for all 48 phases.
-last_updated: "2026-05-16T07:30:00.000Z"
+status: Phase 27 + v1.27.1 wiring patch shipped. Phase 31 (Figma Off-Context Extractor) in progress. Roadmap rebalanced 2026-05-16 — 7 new decimal phases inserted (27.6, 30.5, 33.5, 36.5, 39.5, 40.5, 41.5), 5 phases split into sub-phases (34→34.1/2/3, 36→36.1/2/3, 37→37.1/2/3, 38→38.1/2, 40→40.1/2), Phase 35 renumbered → 49 (consumes 42 + 44).
+stopped_at: v1.27.1 (2026-05-02). See ROADMAP.md Phase Details for full phase list (1 → 49).
+last_updated: "2026-05-16T11:00:00.000Z"
 last_activity: 2026-05-16
 progress:
-  total_phases: 48
+  total_phases: 60
   completed_phases: 33
-  total_plans_approx: 220
+  total_plans_approx: 280
   completed_plans_approx: 178
-  percent: 69
+  percent: 55
 ---
 
 # Project State
@@ -31,19 +31,22 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 **In progress:**
 - Phase 31 — Figma Off-Context Extractor + Variables Sync Plugin (target v1.31.0). See [.planning/phases/31-figma-extractor-sync/PLAN.md](phases/31-figma-extractor-sync/PLAN.md).
 
-**Planned next** (no committed order yet; depends on what user prioritizes):
-- 27.5 — Bandit Production Integration (INSERTED) → v1.27.5
-- 28 — Foundational References Tier 2 → v1.28.0
-- 28.5 — Skill Authoring Contract + Skill Rework (INSERTED) → v1.28.5
-- 29 — Capability-Gap Telemetry + Self-Authoring → v1.29.0
-- 30 — Inbound Feedback Channel (Issue Reporter) → v1.30.0
-- 31.5 — Repo Structure Consolidation (INSERTED) → v1.28.0 *(positional)*
-- 32 — Skill Auto-Trigger Discipline → v1.32.0
-- 33 — Skill Behavior Tests → v1.33.0
-- 34–41 — non-web output, audit/pillar expansion, team surfaces, knowledge tier 3, AI tools wave 2, outcome-driven adaptation, ops/migration, team collaboration
-- 42–48 — "impeccable-gap closeout": `gdd-detect`, multi-harness compile, STYLE.md, HARNESSES.md, canonical domain refs, skill UX polish, `/gdd:live`
+**Planned next** (post-2026-05-16 rebalance — see [ROADMAP.md Overview](ROADMAP.md#planned-v1275--v1490)):
 
-**After all planned phases ship:** v1.48.0 (~21 minor releases beyond v1.27.1, ~150 new plans — roughly doubles existing codebase footprint).
+- **Near-term integration**: 27.5 (Bandit Prod), 27.6 (Perf Optimization — NEW), 28 (Tier-2 Refs), 28.5 (Skill Contract + Rework)
+- **Reflection + feedback**: 29 (Cap-Gap Self-Author), 30 (Issue Reporter), 30.5 (Failure-Mode Catalogue — NEW)
+- **Active project**: 31 (Figma Extractor), 31.5 (SDK Reorg)
+- **Skill discipline**: 32 (Auto-Trigger), 33 (Behavior Tests), 33.5 (Runtime Security — NEW)
+- **Output expansion (split-phases)**: 34.1 Native / 34.2 Email / 34.3 Print-PDF
+- **Team layer (split-phases + new)**: 36.1 PR Inline / 36.2 Notification / 36.3 Ticket Sync, 36.5 Export — NEW
+- **Knowledge (split-phases)**: 37.1 Domain Packs / 37.2 Motion Tools / 37.3 Conversational
+- **AI tools + greenfield (split)**: 38.1 Wave 2 connections / 38.2 Greenfield DS
+- **Adaptation**: 39 (Outcome-Driven), 39.5 (Deployment Loop — NEW)
+- **Ops (split + new)**: 40.1 DS Migration / 40.2 Cost Governance, 40.5 GDD Self-Migration — NEW
+- **Team mode + locale**: 41 (Collaboration), 41.5 (CLI Localization — NEW)
+- **Impeccable-gap closeout**: 42 (`gdd-detect`), 43 (multi-harness compile), 44 (STYLE.md), 45 (HARNESSES.md), 46 (canonical domain index), 47 (skill UX polish), 48 (`/gdd:live`), 49 (Audit & Pillar Expansion — was Phase 35; ships after 42 + 44)
+
+**After all planned phases ship:** v1.49.0 (~22 minor releases beyond v1.27.1, ~280 plans total — roughly 1.5× existing codebase).
 
 ## Phases shipped (33 through v1.27.1)
 

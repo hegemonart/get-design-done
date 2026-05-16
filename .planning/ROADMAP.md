@@ -77,25 +77,48 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] [Phase 26](#phase-26-headless-model-resolver--runtime-aware-tier-mapping) — Headless Model Resolver — v1.26.0 — 2026-04-29
 - [x] [Phase 27](#phase-27-peer-cli-delegation-layer--outbound-acpasp-workers) — Peer-CLI Delegation Layer — v1.27.0 (+ v1.27.1 wiring patch) — 2026-04-30 / 2026-05-02
 
-### Planned (v1.27.5 → v1.48.0)
+### Planned (v1.27.5 → v1.49.0)
+
+> **Numbering**: phase numbers are *positional labels*, target versions are monotonic semver. Phase X.Y always ships at v1.X.Y. New decimal phases inserted on 2026-05-16 fill gaps surfaced by the roadmap audit.
+>
+> **Split-phase legend**: Phases 34, 36, 37, 38, 40 each fan out into sub-phases (e.g., 34.1/34.2/34.3) at plan-phase time — see body for the split plan.
 
 - [ ] [Phase 27.5](#phase-275-bandit-production-integration-inserted) — Bandit Production Integration — INSERTED — v1.27.5
+- [ ] [Phase 27.6](#phase-276-pipeline-performance--token-cost-optimization-inserted) — Pipeline Performance + Token-Cost Optimization — **NEW (INSERTED 2026-05-16)** — v1.27.6
 - [ ] [Phase 28](#phase-28-foundational-references-tier-2--color-composition-proportion-i18n) — Foundational References Tier 2 — v1.28.0
 - [ ] [Phase 28.5](#phase-285-skill-authoring-contract--skill-rework--project-artifacts-inserted) — Skill Authoring Contract + Skill Rework — INSERTED — v1.28.5
 - [ ] [Phase 29](#phase-29-capability-gap-telemetry--self-authoring-of-agentsskills) — Capability-Gap Telemetry + Self-Authoring — v1.29.0
 - [ ] [Phase 30](#phase-30-inbound-feedback-channel--issue-reporter) — Inbound Feedback Channel (Issue Reporter) — v1.30.0
+- [ ] [Phase 30.5](#phase-305-failure-mode-catalogue-inserted) — Failure-Mode Catalogue — **NEW (INSERTED 2026-05-16)** — v1.30.5
 - [ ] [Phase 31](#phase-31-figma-off-context-extractor--variables-sync-plugin) — Figma Off-Context Extractor + Variables Sync — v1.31.0 — **IN PROGRESS** *(`.planning/phases/31-figma-extractor-sync/`)*
-- [ ] [Phase 31.5](#phase-315-repo-structure-consolidation--sdk-folder--npm-files-hardening--distribution-hygiene-inserted) — Repo Structure Consolidation — INSERTED — v1.28.0 *(positional rename; ships independent of 31)*
+- [ ] [Phase 31.5](#phase-315-repo-structure-consolidation--sdk-folder--npm-files-hardening--distribution-hygiene-inserted) — Repo Structure Consolidation — INSERTED — v1.31.5
 - [ ] [Phase 32](#phase-32-skill-auto-trigger-discipline--defensive-guardrails) — Skill Auto-Trigger Discipline + Defensive Guardrails — v1.32.0
 - [ ] [Phase 33](#phase-33-skill-behavior-tests--pressure-scenario-harness) — Skill Behavior Tests (Pressure-Scenario Harness) — v1.33.0
-- [ ] [Phase 34](#phase-34-non-web-output-layer--native-mobile--email--printpdf) — Non-Web Output Layer (Native Mobile + Email + Print/PDF) — v1.34.0
-- [ ] [Phase 35](#phase-35-audit--pillar-expansion--copy-pillar--debt-crawler--brief-critic--a11y-gate-hook) — Audit & Pillar Expansion — v1.35.0
-- [ ] [Phase 36](#phase-36-team-surfaces-layer--pr-inline-integration--notification-backplane--ticket-sync) — Team Surfaces Layer — v1.36.0
-- [ ] [Phase 37](#phase-37-knowledge-tier-3--domain-packs--motion-tool-verification--conversational-ui) — Knowledge Tier 3 (Domain Packs + Motion-Tool + Conversational UI) — v1.37.0
-- [ ] [Phase 38](#phase-38-ai-native-tools-wave-2--greenfield-design-system-bootstrap) — AI-Native Tools Wave 2 + Greenfield DS Bootstrap — v1.38.0
+- [ ] [Phase 33.5](#phase-335-gdd-runtime-security-hardening-inserted) — GDD Runtime Security Hardening — **NEW (INSERTED 2026-05-16)** — v1.33.5
+- [ ] **Phase 34 — Non-Web Output Layer** *(split into 3 sub-phases)*:
+  - [ ] [Phase 34.1] — Native Mobile (Swift / Compose / Flutter) — v1.34.1
+  - [ ] [Phase 34.2] — Email (MJML + Litmus/Email-on-Acid) — v1.34.2
+  - [ ] [Phase 34.3] — Print/PDF (Paged.js + PDFKit) — v1.34.3
+- [ ] **Phase 36 — Team Surfaces Layer** *(split into 3 sub-phases)*:
+  - [ ] [Phase 36.1] — PR Inline Integration (`pr-commenter` + `gh check create`) — v1.36.1
+  - [ ] [Phase 36.2] — Notification Backplane (Slack + Discord + email/webhook) — v1.36.2
+  - [ ] [Phase 36.3] — Ticket Sync (Linear + Jira bidirectional) — v1.36.3
+- [ ] [Phase 36.5](#phase-365-design-artifact-export-gddexport-inserted) — Design-Artifact Export (`/gdd:export` PDF/Notion/HTML) — **NEW (INSERTED 2026-05-16)** — v1.36.5
+- [ ] **Phase 37 — Knowledge Tier 3** *(split into 3 sub-phases)*:
+  - [ ] [Phase 37.1] — Domain Packs (finance + healthcare + gaming + civic) — v1.37.1
+  - [ ] [Phase 37.2] — Motion-Tool Verification (Lottie + Rive) — v1.37.2
+  - [ ] [Phase 37.3] — Conversational UI — v1.37.3
+- [ ] **Phase 38 — AI-Native Tools Wave 2 + Greenfield DS** *(split into 2 sub-phases)*:
+  - [ ] [Phase 38.1] — AI-Native Tools Wave 2 (Framer + Penpot + Webflow + v0.dev + Plasmic + Builder.io) — v1.38.1
+  - [ ] [Phase 38.2] — Greenfield DS Bootstrap (`/gdd:bootstrap-ds` + `ds-generator` + first-component scaffolding) — v1.38.2
 - [ ] [Phase 39](#phase-39-outcome-driven-adaptation--ab-variants--inbound-user-research-signals) — Outcome-Driven Adaptation (A/B + User-Research) — v1.39.0
-- [ ] [Phase 40](#phase-40-ops--migration--design-system-migration-workflows--long-horizon-cost-governance) — Ops & Migration — v1.40.0
+- [ ] [Phase 39.5](#phase-395-deployment-coordination-loop-inserted) — Deployment Coordination Loop — **NEW (INSERTED 2026-05-16)** — v1.39.5
+- [ ] **Phase 40 — Ops & Migration** *(split into 2 sub-phases)*:
+  - [ ] [Phase 40.1] — DS Migration Workflows (shadcn/Tailwind/MUI/Material codemods) — v1.40.1
+  - [ ] [Phase 40.2] — Long-Horizon Cost Governance (`/gdd:budget` + ROI dashboard) — v1.40.2
+- [ ] [Phase 40.5](#phase-405-gdd-self-migration-tooling-inserted) — GDD Self-Migration Tooling — **NEW (INSERTED 2026-05-16)** — v1.40.5
 - [ ] [Phase 41](#phase-41-team-collaboration-mode) — Team Collaboration Mode — v1.41.0
+- [ ] [Phase 41.5](#phase-415-gdd-cli-localization-inserted) — GDD CLI Localization — **NEW (INSERTED 2026-05-16)** — v1.41.5
 - [ ] [Phase 42](#phase-42-deterministic-anti-pattern-cli--gdd-detect) — Deterministic Anti-Pattern CLI (`gdd-detect`) — v1.42.0
 - [ ] [Phase 43](#phase-43-multi-harness-source-compilation--one-skill-source-n-provider-bundles) — Multi-Harness Source Compilation — v1.43.0
 - [ ] [Phase 44](#phase-44-editorial-quality-floor--stylemd--build-time-prose-lint) — Editorial Quality Floor (STYLE.md + prose lint) — v1.44.0
@@ -103,6 +126,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] [Phase 46](#phase-46-canonical-domain-reference-index--7-entry-point-references) — Canonical Domain Reference Index — v1.46.0
 - [ ] [Phase 47](#phase-47-skill-ux-polish--pinaliases--centralized-metadata--description-budget) — Skill UX Polish (pin/aliases + metadata) — v1.47.0
 - [ ] [Phase 48](#phase-48-in-browser-design-iteration--live-mode) — In-Browser Design Iteration (`/gdd:live`) — v1.48.0
+- [ ] [Phase 49](#phase-49-audit--pillar-expansion--copy-pillar--debt-crawler--brief-critic--a11y-gate-hook) — Audit & Pillar Expansion *(was Phase 35; ships after 42 + 44 which it consumes)* — v1.49.0
 
 ### Phase 42–48 dependency DAG
 
@@ -1651,14 +1675,14 @@ A fifth observation surfaces from `engineering/diagnose/SKILL.md`: **mattpocock'
   - [ ] 28.5-03-PLAN.md — `reference/architecture-vocabulary.md`: ports Ousterhout's *Philosophy of Software Design* glossary as adopted by mattpocock's `improve-codebase-architecture/LANGUAGE.md` (MIT attribution) — Module / Interface / Implementation / Depth / Seam / Adapter / Leverage / Locality definitions; key principles (deletion test, "interface is the test surface", "one adapter = hypothetical seam, two adapters = real seam"). GDD-flavored: cross-link to `design-system-guidance.md` for the design-system-level analog (component-as-module, design-token-as-interface) + `component-authoring.md` (Phase 19.6) for the component-library-level analog. Frontmatter + registry entry. (SKILLAUTH-03)
 
 - **Wave B — Skill rework (4 plans, parallel-safe within wave: disjoint skill buckets):**
-  - [ ] 28.5-04-PLAN.md — Rework Bucket 1: pipeline-stage skills (`gsd-spec-phase`, `gsd-discuss-phase`, `gsd-plan-phase`, `gsd-execute-phase`, `gsd-verify-work`, `gsd-ui-phase`, `gsd-ai-integration-phase`, `gsd-research-phase`, `gsd-explore`, `gsd-sketch`, `gsd-spike`). These are the longest and most complex; biggest 100-line wins. For each: extract domain-heavy content (research methodology, evaluation rubrics, decision matrices, output contracts, framework-selection trees) to existing or new `reference/` files; keep workflow + decision tree + step-by-step procedure in SKILL.md; standardize description to `<what>. Use when <triggers>.` form. Validator passes for all 11 skills. (SKILLAUTH-04)
-  - [ ] 28.5-05-PLAN.md — Rework Bucket 2: `impeccable-*` design family (impeccable, impeccable-shape, impeccable-critique, impeccable-colorize, impeccable-typeset, impeccable-layout, impeccable-overdrive, impeccable-bolder, impeccable-quieter, impeccable-clarify, impeccable-distill, impeccable-delight, impeccable-animate, impeccable-harden, impeccable-optimize, impeccable-polish, impeccable-adapt, impeccable-audit, ultimate-design ~19 skills). Mostly trim + cross-link cleanup since the design reference base (typography.md, palette-catalog.md, motion-* files, gestalt.md, etc.) already exists; tasks are (a) move inline design-vocabulary explanations to cross-links into `reference/`, (b) deduplicate principle-recitation across the family (Phase 19.6 added `shared-preamble.md` for this — extend that pattern), (c) standardize descriptions. Validator passes for all 19 skills. (SKILLAUTH-05)
-  - [ ] 28.5-06-PLAN.md — Rework Bucket 3: `gsd-*` orchestrator + utility skills (`gsd-help`, `gsd-stats`, `gsd-note`, `gsd-add-todo`, `gsd-check-todos`, `gsd-progress`, `gsd-health`, `gsd-update`, `gsd-undo`, `gsd-fast`, `gsd-quick`, `gsd-next`, `gsd-do`, `gsd-resume-work`, `gsd-pause-work`, `gsd-session-report`, `gsd-extract-learnings`, `gsd-set-profile`, `gsd-settings`, `gsd-graphify`, `gsd-thread`, `gsd-cleanup`, `gsd-from-gsd2`, `gsd-import`, `gsd-list-workspaces`, `gsd-list-phase-assumptions`, `gsd-new-workspace`, `gsd-remove-workspace`, `gsd-pr-branch`, `gsd-ship`, `gsd-reapply-patches`, `gsd-forensics`, `gsd-join-discord`, `gsd-manager`, `gsd-workstreams`, `gsd-profile-user`, `gsd-inbox` ~36 skills). Most are short already; targeted trims of the 5–10 that exceed the cap. Apply `disable-model-invocation: true` to pure shortcuts (`gsd-help`, `gsd-stats`, `gsd-note`, `gsd-join-discord`, etc.) so the router doesn't auto-fire them. Validator passes for all 36 skills. (SKILLAUTH-06)
-  - [ ] 28.5-07-PLAN.md — Rework Bucket 4: `gsd-*` analysis + audit skills (`gsd-scan`, `gsd-map-codebase`, `gsd-intel`, `gsd-spike-wrap-up`, `gsd-sketch-wrap-up`, `gsd-add-phase`, `gsd-remove-phase`, `gsd-insert-phase`, `gsd-add-backlog`, `gsd-review-backlog`, `gsd-add-tests`, `gsd-validate-phase`, `gsd-secure-phase`, `gsd-code-review`, `gsd-code-review-fix`, `gsd-debug`, `gsd-audit-fix`, `gsd-audit-uat`, `gsd-audit-milestone`, `gsd-analyze-dependencies`, `gsd-plan-milestone-gaps`, `gsd-milestone-summary`, `gsd-complete-milestone`, `gsd-new-milestone`, `gsd-new-project`, `gsd-eval-review`, `gsd-ui-review`, `gsd-review`, `gsd-docs-update`, `gsd-autonomous`, `gsd-plant-seed` ~31 skills). Where inline content qualifies as a proper reference (e.g., `gsd-debug`'s feedback-loop construction list, `gsd-secure-phase`'s threat-model patterns, `gsd-audit-milestone`'s milestone-completeness rubric, `gsd-code-review`'s severity classification), extract into `reference/` (creating new files when topic doesn't fit existing ones — e.g., `reference/debug-feedback-loops.md`, `reference/threat-modeling.md`, `reference/milestone-completeness-rubric.md`). Validator passes for all 31 skills. **Note**: `gsd-debug` Phase 1 patch is layered on top in Wave C; the rework here is the structural cap-compliance pass. (SKILLAUTH-07)
+  - [ ] 28.5-04-PLAN.md — Rework Bucket 1: pipeline-stage skills (`brief`, `discuss`, `plan`, `design`, `verify`, `explore`, `discover`, `scan`, `sketch`, `spike`, `new-cycle`, `complete-cycle`). These are the longest and most complex; biggest 100-line wins. For each: extract domain-heavy content (research methodology, evaluation rubrics, decision matrices, output contracts, framework-selection trees) to existing or new `reference/` files; keep workflow + decision tree + step-by-step procedure in SKILL.md; standardize description to `<what>. Use when <triggers>.` form. Validator passes for all 12 skills. *(Names corrected 2026-05-16: original list referenced GSD plugin's `gsd-*` skills which do not exist in GDD; GDD's actual pipeline skills are unprefixed.)* (SKILLAUTH-04)
+  - [ ] 28.5-05-PLAN.md — Rework Bucket 2: design-family skills that survived Phase 15 (`audit`, `style`, `darkmode`, `compare`, `design`, `figma-write`, `connections`, `benchmark`). The original list referenced ~19 `impeccable-*` skills, but Phase 15 removed those entirely — this bucket now targets the GDD design-output skills that remained. Mostly trim + cross-link cleanup since the design reference base (typography.md, palette-catalog.md, motion-* files, gestalt.md, etc.) already exists; tasks are (a) move inline design-vocabulary explanations to cross-links into `reference/`, (b) deduplicate principle-recitation via `shared-preamble.md` (extend the Phase 19.6 pattern), (c) standardize descriptions. Validator passes for all 8 skills. *(Rescoped 2026-05-16: was reworking deleted impeccable-* family; now targets surviving design-quality skills.)* (SKILLAUTH-05)
+  - [ ] 28.5-06-PLAN.md — Rework Bucket 3: orchestrator + utility skills (`help`, `stats`, `note`, `add-backlog`, `todo`, `progress`, `health`, `update`, `undo`, `fast`, `quick`, `next`, `do`, `resume`, `pause`, `extract-learnings`, `settings`, `graphify`, `pr-branch`, `ship`, `reapply-patches`, `list-assumptions`, `plant-seed`, `review-backlog`, `apply-reflections`, `reflect`, `cache-manager`, `warm-cache`, `router`, `synthesize`, `timeline`). Most are short already; targeted trims of the 5–10 that exceed the cap. Apply `disable-model-invocation: true` to pure shortcuts (`help`, `stats`, `note`, etc.) so the router doesn't auto-fire them. Validator passes for all 31 skills. *(Names corrected 2026-05-16: original `gsd-*` prefix dropped — GDD skills are unprefixed.)* (SKILLAUTH-06)
+  - [ ] 28.5-07-PLAN.md — Rework Bucket 4: analysis + audit skills (`scan`, `map`, `analyze-dependencies`, `sketch-wrap-up`, `spike-wrap-up`, `skill-manifest`, `debug`, `new-cycle`, `new-project`, `peers`, `peer-cli-add`, `peer-cli-customize`, `quality-gate`, `turn-closeout`, `start`, `recall`, `watch-authorities`, `figma-write`, `optimize`, `check-update`). Where inline content qualifies as a proper reference (e.g., `debug`'s feedback-loop construction list, audit-side threat-model patterns, milestone-completeness rubric, code-review severity classification), extract into `reference/` (creating new files when topic doesn't fit existing ones — e.g., `reference/debug-feedback-loops.md`, `reference/threat-modeling.md`, `reference/milestone-completeness-rubric.md`). Validator passes for all 20 skills. **Note**: `debug` Phase 1 patch is layered on top in Wave C; the rework here is the structural cap-compliance pass. *(Names corrected 2026-05-16: `gsd-*` prefix dropped; GDD-only audit/code-review/secure-phase commands removed from list as they do not exist in the get-design-done skill inventory.)* (SKILLAUTH-07)
 
 - **Wave C — Project-artifact wiring + content patches (3 plans, parallel-safe):**
-  - [ ] 28.5-08-PLAN.md — `gsd-discuss-phase` + `gsd-spec-phase` patches: gain inline `CONTEXT.md` glossary maintenance — when a fuzzy term gets resolved or a new domain concept gets named during the interview, write it to `CONTEXT.md` immediately (creating the file lazily if missing), don't batch. Format per `reference/context-md-format.md`. Multi-context repos handled via top-level `CONTEXT-MAP.md` pointing to per-context `<area>/CONTEXT.md` (mattpocock's bounded-context pattern). Skills also gain ADR-offer behavior: at end of grilling session, scan for decisions matching all three criteria (hard-to-reverse AND surprising-without-context AND real-tradeoff); offer to create `docs/adr/NNNN-<slug>.md` only when all three hold; explicitly skip routine decisions. `decision-injector` (Phase 14.5) extension: reads `CONTEXT.md` glossary entries and project-scoped ADRs as additive context alongside STATE.md cycle-scoped decisions; preamble injection includes any glossary terms whose `aliases` match terms appearing in the current task description. Tests cover: lazy creation of `CONTEXT.md`, term-resolution → write triggering, alias merge, ADR offer 3-criteria gate, decision-injector reads `CONTEXT.md` + ADRs additively. (SKILLAUTH-08)
-  - [ ] 28.5-09-PLAN.md — `gsd-debug` Phase 1 content patch: adopt mattpocock's feedback-loop discipline. New explicit Phase 1 ("Build a feedback loop") that mandates a deterministic, fast, agent-runnable pass/fail signal before any hypothesizing; lists the 10 construction paths in priority order (failing test → curl → CLI fixture → headless browser → trace replay → throwaway harness → fuzz → bisect harness → differential loop → HITL bash); includes "Iterate on the loop itself" sub-step (cache setup, narrow scope, pin time, seed RNG, isolate filesystem, freeze network); non-deterministic-bug branch ("raise reproduction rate to debuggable, not 'clean repro'"); explicit "do not proceed to Phase 2 until you have a loop you believe in" gate. Per the new contract, content beyond the workflow skeleton extracts to `reference/debug-feedback-loops.md` (created in 28.5-07 if not already there) — SKILL.md links one level deep. Tests cover: Phase 1 gate appears before any hypothesis-generation phase; reference link integrity. (SKILLAUTH-09)
+  - [ ] 28.5-08-PLAN.md — `discuss` + `brief` patches: gain inline `CONTEXT.md` glossary maintenance — when a fuzzy term gets resolved or a new domain concept gets named during the interview, write it to `CONTEXT.md` immediately (creating the file lazily if missing), don't batch. Format per `reference/context-md-format.md`. Multi-context repos handled via top-level `CONTEXT-MAP.md` pointing to per-context `<area>/CONTEXT.md` (mattpocock's bounded-context pattern). Skills also gain ADR-offer behavior: at end of grilling session, scan for decisions matching all three criteria (hard-to-reverse AND surprising-without-context AND real-tradeoff); offer to create `docs/adr/NNNN-<slug>.md` only when all three hold; explicitly skip routine decisions. `decision-injector` (Phase 14.5) extension: reads `CONTEXT.md` glossary entries and project-scoped ADRs as additive context alongside STATE.md cycle-scoped decisions; preamble injection includes any glossary terms whose `aliases` match terms appearing in the current task description. Tests cover: lazy creation of `CONTEXT.md`, term-resolution → write triggering, alias merge, ADR offer 3-criteria gate, decision-injector reads `CONTEXT.md` + ADRs additively. (SKILLAUTH-08)
+  - [ ] 28.5-09-PLAN.md — `debug` skill Phase 1 content patch: adopt mattpocock's feedback-loop discipline. New explicit Phase 1 ("Build a feedback loop") that mandates a deterministic, fast, agent-runnable pass/fail signal before any hypothesizing; lists the 10 construction paths in priority order (failing test → curl → CLI fixture → headless browser → trace replay → throwaway harness → fuzz → bisect harness → differential loop → HITL bash); includes "Iterate on the loop itself" sub-step (cache setup, narrow scope, pin time, seed RNG, isolate filesystem, freeze network); non-deterministic-bug branch ("raise reproduction rate to debuggable, not 'clean repro'"); explicit "do not proceed to Phase 2 until you have a loop you believe in" gate. Per the new contract, content beyond the workflow skeleton extracts to `reference/debug-feedback-loops.md` (created in 28.5-07 if not already there) — SKILL.md links one level deep. Tests cover: Phase 1 gate appears before any hypothesis-generation phase; reference link integrity. (SKILLAUTH-09)
   - [ ] 28.5-10-PLAN.md — New `/gdd:zoom-out` micro-skill: `skills/gdd-zoom-out/SKILL.md` ~10 lines, frontmatter `disable-model-invocation: true`, body: "I don't know this area of code well. Go up a layer of abstraction. Give me a map of all the relevant modules and callers, using the project's domain glossary (`CONTEXT.md`) vocabulary." Plus `commands/zoom-out.md` if the command surface needs a wrapper. Direct port of mattpocock's `engineering/zoom-out` (MIT attribution in NOTICE). Tests cover: skill resolves; `disable-model-invocation` honored (router doesn't auto-fire it); `CONTEXT.md` reference works. (SKILLAUTH-10)
 
 - **Wave D — Enforcement + closeout (2 plans):**
@@ -1818,6 +1842,13 @@ A 2026-04-29 review of GDD's feedback architecture surfaced three structural gap
 
 ### Phase 31: Figma Off-Context Extractor + Variables Sync Plugin
 
+> **2026-05-16 expansion**: original scope = tokens + components + types from `.fig`/REST. Expanded to also cover:
+> - **Image asset extraction** — PNG / SVG / WebP / Lottie export of selected nodes via Figma REST `images` endpoint; auto-density variants (1x/2x/3x); deduplication by content hash; output at `digest/assets/<frame-name>.<ext>`.
+> - **VRT integration trigger** — on Variables-mode change, emit `figma_variables_changed` event (Phase 22) that Chromatic/Percy/Lost-Pixel webhook consumers can act on; bake into `connections/chromatic.md` flow as an alternative trigger source.
+> - **Version pinning per `.fig`** — `digest/figma-versions.json` records `{file_key, version_id, captured_at, captured_by}` per extraction; `gdd-figma-extract diff <prev-version>` shows token / component / asset delta between two captures.
+>
+> These three additions ship as Wave D of Phase 31 (alongside the existing tokens + components + types waves).
+
 **Goal**: Ship `gdd-figma-extract` — a plugin command that pulls a Figma design system from REST API into a compact, queryable local digest (DESIGN.md + tokens.json + components.json) **without** raw JSON ever entering Claude context, plus a thin Figma plugin "GDD Sync" that fills the Variables-API-Enterprise gap by reading `figma.variables` from inside Figma and POSTing JSON to a local receiver. Validated by Spike 001 (commit `c3a9cf6`, `.planning/spikes/001-figma-offcontext-extractor/`): 898× compression on a 167-component DS (223 MB raw → 254 KB digest), 0 Claude tokens consumed during extraction, 0 Figma MCP calls. The two known gaps from the spike — Variables API 403 (Enterprise-only) and the legacy-styles → 0-tokens bug — both have concrete solutions designed in this phase.
 
 **Depends on**: Phase 14 (AI-Native Design Tool Connections — Figma MCP context exists; this phase is the off-context complement). Soft-coupled to Phase 23 (Visual & Token Engines) — token canonicalization could later consume this digest as input. Independent of in-flight SDK phases (20–23).
@@ -1894,7 +1925,7 @@ The current Figma path through GDD goes via Figma MCP (`mcp__3860b164…__get_de
 
 **Depends on**: nothing structural. Can land before Phase 28/29/30/31 or interleaved. Soft-coupled to Phase 31 (figma-extract lands at `scripts/lib/figma-extract/` — that path is project tooling, not SDK, and is unaffected by this reorg).
 
-**Target version**: v1.28.0.
+**Target version**: v1.31.5 *(decimal phase versioning; positional — ships AFTER Phase 31. 2026-05-16: was v1.28.0, reset to monotonic-with-phase-number.)*
 
 **Why this phase exists** (audit findings, 2026-05-04):
 
@@ -2011,6 +2042,11 @@ Three distinct regressions in repo organization, all observable to anyone browsi
 
 ### Phase 32: Skill Auto-Trigger Discipline + Defensive Guardrails
 
+> **2026-05-16 expansion**: in addition to authoring-contract hardening, this phase now covers:
+> - **Skill-discovery telemetry** — per-user-prompt, log which skills the router auto-picked (`router_pick` event in Phase 22 schema). Surfaces "which skills the LLM never reaches for despite their description."
+> - **Counterfactual A/B on descriptions** — `tests/skill-description-counterfactual.test.cjs` runs each skill against a fixed prompt with the current description vs a candidate description; reports rank-change. Lets Phase 33 behavior tests A/B description format without re-running full pipelines.
+> - **Description drift detection** — `scripts/lint-skill-descriptions.cjs` flags skills whose description has not been touched since their skill body changed ≥3× (signals stale description that may no longer reflect the skill).
+
 **Goal**: Close the auto-trigger gap between GDD's 70+ skills and the harness's skill-discovery layer. Inject a `using-gdd` discipline contract at session start (1%-rule, red-flags table, skill priority, `<SUBAGENT-STOP>` tag) so agents consult GDD skills systematically rather than opportunistically. Add `<HARD-GATE>` blocks at the 5 stage-transition skills (brief/explore/plan/design/verify) and rationalization tables to the 7 stage-orchestrator skills (those 5 plus discuss + audit). Validated by Phase 33's pressure-scenario tests: with the bootstrap and gates in place, agents under time/sunk-cost/authority pressure refuse to skip stages and cite the relevant gate, where the same agent without the bootstrap silently bypasses.
 
 **Depends on**: Phase 14 (bootstrap script + first-run-nudge hook plumbing — this phase extends the same hook surface), Phase 28.5 (skill authoring contract — `using-gdd/SKILL.md` itself targets ≤120 lines, well under 28.5's warn threshold; respects 28.5's frontmatter rules). Independent of Phase 31. Hard-precedes Phase 33 (behavior tests assert this phase's artifacts hold under pressure).
@@ -2091,6 +2127,11 @@ A fifth observation surfaces during scope: Phase 28.5 (in-flight) adopts mattpoc
 
 ### Phase 33: Skill Behavior Tests — Pressure-Scenario Harness
 
+> **2026-05-16 expansion**: behavior tests now also harvest from Phase 32's telemetry:
+> - **Pick-rate regression** — for each skill, baseline its auto-pick rate from `router_pick` events; flag ≥20% drops cycle-over-cycle.
+> - **Counterfactual harness** — reuse Phase 32's description-A/B infrastructure; behavior tests assert "skill X picked correctly for prompts in golden set" against multiple description candidates.
+> - **Adversarial corpus** — `tests/skill-behavior/adversarial/` contains prompts crafted to lure the wrong skill (e.g., "audit my color theme" should route to `audit`, not `darkmode`). Failures here are pre-merge blockers.
+
 **Goal**: Add a new test category that complements Phase 28.5's static validators (line count, frontmatter format) and Phase 32's static guardrails (HARD-GATE presence checks) with **behavior testing**: subagent runs against pressure scenarios that assert skills hold under stress. Ships baseline scenarios for the 7 stage skills + `using-gdd` discipline contract. Resolves Phase 28.5's open description-format decision empirically via A/B between trigger-only (superpowers) and `<what>. Use when` (mattpocock) variants.
 
 **Depends on**: Phase 32 (skill-discipline mechanism must exist before tests can verify it holds under pressure — `<HARD-GATE>`, `<SUBAGENT-STOP>`, rationalization tables are what the tests assert holds), Phase 28.5 (skill-authoring contract — scenarios cite which contract clause is under test; A/B evidence feeds back into 28.5's validator regex), Phase 22 (telemetry hooks — scenario runs emit events into the existing stream so reflector can consume).
@@ -2167,6 +2208,13 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 ### Phase 34: Non-Web Output Layer — Native Mobile + Email + Print/PDF
 
+> **2026-05-16 split decision**: at plan-phase time, scope is to be split into three independent sub-phases shipping incrementally:
+> - **Phase 34.1 — Native Mobile** (Swift / Compose / Flutter executors + emulator connections) → v1.34.1
+> - **Phase 34.2 — Email** (MJML compile + Litmus/Email-on-Acid connection) → v1.34.2
+> - **Phase 34.3 — Print/PDF** (Paged.js + PDFKit fallback + print-design.md) → v1.34.3
+>
+> Original scope below documents the full vision; each sub-phase carves out its own success criteria + waves at `/gsd-plan-phase 34.<N>` time.
+
 **Goal**: Extend GDD past web-only output. Today every executor agent emits React/HTML; Phase 14.7 explicitly defers native, Phase 19 ships platform *references* but zero generators. Phase 34 adds native code generation for **SwiftUI**, **Jetpack Compose**, and **Flutter** with a shared token bridge, plus email-template output and PDF/print output, behind a project-type detector that routes the brief to the matching path. Closes the largest market-expansion gap in the roadmap — designers shipping mobile or marketing collateral get the same pipeline treatment web users have had since v1.0.0.
 
 **Depends on**: Phase 23 (token-engine — shipped) for canonical token representation feeding native theme adapters; Phase 28 (i18n — planned) soft-coupled so RTL/CJK behavior propagates to native via shared layer. Independent of Phases 29/30/31.
@@ -2205,13 +2253,13 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 ---
 
-### Phase 35: Audit & Pillar Expansion — Copy Pillar + Debt Crawler + Brief Critic + a11y-Gate Hook
+### Phase 49: Audit & Pillar Expansion — Copy Pillar + Debt Crawler + Brief Critic + a11y-Gate Hook
 
 **Goal**: Close four audit-side gaps in one cohesive release. (a) Add a copy/UX-writing pillar to `design-auditor` — Phase 15 brand-voice + Phase 19 form-patterns + Phase 28 i18n give raw material, no scoring exists today. (b) Ship a project-wide retroactive debt crawler — `skills/audit/` is cycle-scoped, no agent walks an existing legacy codebase first-time-through. (c) Add brief-side critique — audit output happens, audit *input* never gets graded, vague briefs slip through. (d) Extend Phase 25 quality-gate's auto-detect list with a11y tools so accessibility regressions don't slip past Stage 4.5.
 
 **Depends on**: Phase 15 (brand-voice ref — shipped), Phase 19 (form-patterns — shipped), Phase 25 (quality-gate auto-detect — shipped, this phase extends it additively), Phase 28 (i18n — planned, soft-coupled so copy-auditor is i18n-aware).
 
-**Target version**: v1.35.0
+**Target version**: v1.49.0 *(renumbered from Phase 49 (was 35) on 2026-05-16 — ships AFTER Phase 42 + 44 which it consumes)*
 
 **Why this phase exists**: The 2026-05-16 gap audit found the audit surface evolved asymmetrically — output-quality grew (6 pillars, Phase 19.6 added Rams/Norman/Disney lenses, Phase 25 added quality-gate before verify) while input-quality stayed unaudited and copy/microcopy remained a second-class concern despite being the most-cited "AI-generated UI looks fine but the words are mush" complaint. Grouping these four gaps in one phase keeps the scoring-contract migration coherent (6→7→8 pillar is one breaking version bump, not two).
 
@@ -2242,6 +2290,13 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 ---
 
 ### Phase 36: Team Surfaces Layer — PR Inline Integration + Notification Backplane + Ticket Sync
+
+> **2026-05-16 split decision**: at plan-phase time, scope is to be split into three independent sub-phases shipping incrementally:
+> - **Phase 36.1 — PR Inline Integration** (`pr-commenter` agent + `gh check create` branch protection) → v1.36.1
+> - **Phase 36.2 — Notification Backplane** (Slack + Discord + email/webhook connections) → v1.36.2
+> - **Phase 36.3 — Ticket Sync** (Linear + Jira bidirectional, via `ticket-sync-agent`) → v1.36.3
+>
+> Original scope below documents the full vision; each sub-phase carves out its own success criteria + waves at `/gsd-plan-phase 36.<N>` time.
 
 **Goal**: Make GDD visible to teams, not just the engineer running the pipeline. Today `/gdd:ship` creates a PR via `gh` with body assembled from design artifacts, but verify failures and visual diffs never reach inline PR review surfaces, Slack/Linear/Jira channels, or branch-protection gates. This phase wires GDD outputs into the surfaces a non-GDD-running stakeholder actually watches.
 
@@ -2278,6 +2333,13 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 ---
 
 ### Phase 37: Knowledge Tier 3 — Domain Packs + Motion-Tool Verification + Conversational UI
+
+> **2026-05-16 split decision**: at plan-phase time, scope is to be split into three independent sub-phases shipping incrementally:
+> - **Phase 37.1 — Domain Packs** (finance + healthcare + gaming + civic — all 4 industries per user direction) → v1.37.1
+> - **Phase 37.2 — Motion-Tool Verification** (`connections/lottie.md` + `connections/rive.md` + `agents/motion-verifier.md`) → v1.37.2
+> - **Phase 37.3 — Conversational UI** (`reference/conversational-ui.md` + design-context-builder routing) → v1.37.3
+>
+> Original scope below documents the full vision; each sub-phase carves out its own success criteria + waves at `/gsd-plan-phase 37.<N>` time.
 
 **Goal**: Close three remaining reference-side gaps after Phase 28's foundational Tier-2 closes color/composition/proportion/i18n. **Domain** side: industry-specific patterns (finance, healthcare, gaming, civic). **Motion** side: runtime player verification for Lottie + Rive exports. **Conversational** side: bot/voice/prompt-as-UX flows. All three are reference-layer additions + small agent additions — no new pillar, no breaking scoring change.
 
@@ -2316,6 +2378,12 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 ---
 
 ### Phase 38: AI-Native Tools Wave 2 + Greenfield Design System Bootstrap
+
+> **2026-05-16 split decision**: at plan-phase time, scope is to be split into two independent sub-phases shipping incrementally:
+> - **Phase 38.1 — AI-Native Tools Wave 2** (Framer + Penpot + Webflow + v0.dev + Plasmic + Builder.io connections — all 6 per user direction) → v1.38.1
+> - **Phase 38.2 — Greenfield DS Bootstrap** (`/gdd:bootstrap-ds` + `agents/ds-generator.md` + `reference/ds-bootstrap-rubric.md` + first-component scaffolding) → v1.38.2
+>
+> Original scope below documents the full vision; each sub-phase carves out its own success criteria + waves at `/gsd-plan-phase 38.<N>` time.
 
 **Goal**: Two parallel tracks. **Wave 2** extends Phase 14's AI-native design-tool layer with the six tools backlogged in `connections/connections.md` — Framer, Penpot, Webflow, v0.dev, Plasmic, Builder.io Visual Copilot — each under the existing capability contract (canvas | generator | shared probe). **Greenfield bootstrap** closes the orthogonal gap: today GDD assumes a design system exists in code or in Figma; greenfield projects (MVPs, brand-new startups) have no DS for `design-context-builder` to map. Phase 38 adds `/gdd:bootstrap-ds` entry point that takes brand-input → emits a coherent token system + first-component scaffolding using Phase 16/17's benchmark corpus as the reference DNA.
 
@@ -2394,6 +2462,12 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 ---
 
 ### Phase 40: Ops & Migration — Design-System Migration Workflows + Long-Horizon Cost Governance
+
+> **2026-05-16 split decision**: at plan-phase time, scope is to be split into two independent sub-phases shipping incrementally:
+> - **Phase 40.1 — DS Migration Workflows** (codemods for shadcn v1→v2, Tailwind v3→v4, MUI v5→v6, Material 3→4; `agents/ds-migration-planner.md`) → v1.40.1
+> - **Phase 40.2 — Long-Horizon Cost Governance** (`/gdd:budget` forecast + `agents/cost-forecaster.md` + `budget.json.project_cap` + ROI dashboard) → v1.40.2
+>
+> Original scope below documents the full vision; each sub-phase carves out its own success criteria + waves at `/gsd-plan-phase 40.<N>` time.
 
 **Goal**: Two long-tail operational gaps. **DS migration:** shadcn v1→v2, Tailwind v3→v4, MUI v5→v6, Material 3→4 land breaking changes; today users hand-migrate. Phase 13.3 plugin-update-checker only handles GDD self-updates, not user DS upgrades. **Cost governance:** Phase 10.1 per-task caps + Phase 26 per-runtime telemetry + Phase 27.5 bandit cost-arbitrage track *cost*, never *forecast or hard-halt*. No project-level "halt at $X" exists.
 
@@ -2477,11 +2551,11 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 **Goal**: Ship `gdd-detect` — a standalone Node CLI that scans HTML/CSS/component code for the BAN-NN rules currently authored in `reference/anti-patterns.md` and surfaces findings as JSON or human-formatted output, with each finding linked to the specific reference paragraph that explains the alternative. Closes the gap that GDD's anti-pattern catalogue is consumable only by spawning a Claude session through `design-auditor` — no fast CI gate, no pre-commit hook, no zero-LLM regression check on shipped frontend. Inspired by `pbakaus/impeccable`'s `src/detect-antipatterns.mjs` (universal Node/Browser, 27+ rules with `skillSection` + `skillGuideline` schema linkage) and `bin/cli.js` (`npx impeccable detect <file|dir|url>`).
 
-**Depends on**: Phase 12 (CI surface) + `reference/anti-patterns.md` (existing BAN-NN catalogue is the source-of-truth list of rules to port). Soft-coupled to **Phase 35** (the debt-crawler in `agents/design-debt-crawler.md` becomes a consumer — it shells out to `gdd-detect --json` for the deterministic pass and adds LLM judgment on top, removing duplicated grep logic), **Phase 25** (quality-gate's auto-detect list gains `gdd-detect` as a registered linter alongside `axe`/`pa11y`/`lighthouse`), and **Phase 33** (behavior tests can assert quality-gate invokes the CLI). Independent of Phases 31.5 / 32 / 34 / 36–41.
+**Depends on**: Phase 12 (CI surface) + `reference/anti-patterns.md` (existing BAN-NN catalogue is the source-of-truth list of rules to port). Soft-coupled to **Phase 49** (was Phase 35 — the debt-crawler in `agents/design-debt-crawler.md` becomes a consumer — it shells out to `gdd-detect --json` for the deterministic pass and adds LLM judgment on top, removing duplicated grep logic), **Phase 25** (quality-gate's auto-detect list gains `gdd-detect` as a registered linter alongside `axe`/`pa11y`/`lighthouse`), and **Phase 33** (behavior tests can assert quality-gate invokes the CLI). Independent of Phases 31.5 / 32 / 34 / 36–41.
 
 **Target version**: v1.42.0.
 
-**Why this phase exists**: The 2026-05-04 impeccable comparison surfaced two patterns at one surface — gap **A** (deterministic executable rules) and gap **G** (rules tied to skill-section guidance for educational findings). Phase 35 ships `design-debt-crawler` as an LLM-powered exhaustive walker; Phase 42 ships the deterministic substrate that crawler reads. Without 42 the crawler re-implements grep in agent prose; with 42 the rule schema is one place and both agents and CI consume it. Phase 25 quality-gate currently auto-detects `axe`/`pa11y`/`lighthouse` (Phase 35 adds these); `gdd-detect` becomes the GDD-native sibling.
+**Why this phase exists**: The 2026-05-04 impeccable comparison surfaced two patterns at one surface — gap **A** (deterministic executable rules) and gap **G** (rules tied to skill-section guidance for educational findings). Phase 49 (was 35) ships `design-debt-crawler` as an LLM-powered exhaustive walker; Phase 42 ships the deterministic substrate that crawler reads. With 42 shipping first per the 2026-05-16 renumber, the rule schema is one place and both agents and CI consume it. Phase 25 quality-gate currently auto-detects `axe`/`pa11y`/`lighthouse` (Phase 49 adds these); `gdd-detect` becomes the GDD-native sibling.
 
 **Success Criteria** (what must be TRUE):
 
@@ -2510,10 +2584,10 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
   - [ ] 42-06-PLAN.md — Puppeteer URL scan (`optionalDependency`); explicit-install message on absence. (DETECT-06)
 
 - **Wave C — integration + closeout (2 plans):**
-  - [ ] 42-07-PLAN.md — `npm run lint:design`; pre-commit hook scaffold; `agents/design-auditor.md` rewrite to invoke `gdd-detect --json`; `hooks/gdd-quality-gate.js` (Phase 25) registers `gdd-detect`. If Phase 35 has landed, `agents/design-debt-crawler.md` also rewritten in same plan. (DETECT-07)
+  - [ ] 42-07-PLAN.md — `npm run lint:design`; pre-commit hook scaffold; `agents/design-auditor.md` rewrite to invoke `gdd-detect --json`; `hooks/gdd-quality-gate.js` (Phase 25) registers `gdd-detect`. After Phase 49 lands (its numbering ensures Phase 42 ships first), `agents/design-debt-crawler.md` is rewritten to invoke `gdd-detect --json`. (DETECT-07)
   - [ ] 42-08-PLAN.md — **Phase closeout**: regression baseline; `bin` entry in `package.json`; README CLI section; CHANGELOG v1.42.0; **roadmap closeout (rule #14)**. (DETECT-08)
 
-**Explicitly out of scope**: auto-fix mode (diagnostic only; Phase 35's `design-fixer` handles LLM proposals); cross-language scanning beyond HTML/CSS/JS/TS (SwiftUI/Flutter scanning is a Phase 34 sibling, not 42); custom user-defined rules (PR-only, no runtime plugin API); replacing `reference/anti-patterns.md` with JSON catalogue (markdown stays canonical *prose*; rule code is canonical *executable*; sync script keeps both consistent).
+**Explicitly out of scope**: auto-fix mode (diagnostic only; Phase 49's `design-fixer` handles LLM proposals); cross-language scanning beyond HTML/CSS/JS/TS (SwiftUI/Flutter scanning is a Phase 34 sibling, not 42); custom user-defined rules (PR-only, no runtime plugin API); replacing `reference/anti-patterns.md` with JSON catalogue (markdown stays canonical *prose*; rule code is canonical *executable*; sync script keeps both consistent).
 
 **Open questions for `/gsd-discuss-phase 42`**: jsdom required vs optional (default: required — it's small, lint:design is the default workflow); severity tiers — error/warn or error/warn/info (default: error/warn matches existing BAN binary); rule deprecation — hard-delete or preserve with `deprecated:` (default: preserve one minor, then delete).
 
@@ -2531,7 +2605,7 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 1. **`source/skills/`** mirrors current `skills/` with placeholders. All 70 SKILL.md files migrated. `skills/` becomes a build artifact (regenerated for the Claude Code default; CI asserts committed = generated).
 2. **Placeholder catalogue** at `reference/skill-placeholders.md`: complete list + per-harness substitution table + escape rule for literal `{{...}}`. Static test asserts every placeholder used is documented.
-3. **Provider config** at `scripts/lib/build/harness-configs.cjs` — one record per harness sourced from Phase 27's `runtime-detect` data. Schema mirrors impeccable's `providers.js`. Adding a 14th harness = one new entry. **Convergence with Phase 32**: if 32's emitter ships first, the env-var-based detection map there is migrated into `harness-configs.cjs` so both runtime injection (32) and compile-time substitution (43) read one source.
+3. **Provider config** at `scripts/lib/manifest/harnesses.cjs` *(2026-05-16: consolidated single manifest root — see SoT consolidation note in Phase 47 body)* — one record per harness sourced from Phase 27's `runtime-detect` data. Schema mirrors impeccable's `providers.js`. Adding a 14th harness = one new entry. **Convergence with Phase 32**: if 32's emitter ships first, the env-var-based detection map there is migrated into `harness-configs.cjs` so both runtime injection (32) and compile-time substitution (43) read one source.
 4. **Transformer factory** at `scripts/lib/build/factory.cjs`: pure `(skill, config) => transformedSkill`. No I/O. Unit-tested against fixture skills with all placeholder permutations.
 5. **Build orchestrator** at `scripts/build-skills.cjs` reads `source/skills/`, applies factory per provider config, writes `dist/<harness>/.<configDir>/skills/<skill>/SKILL.md`. Idempotent. Byte-stable on re-run.
 6. **Per-harness ZIP bundles** generated by `scripts/build-skills.cjs --zip`. README install section regenerated from `harness-configs.cjs`. Claude Code bundle ships in npm tarball by default (per Phase 31.5's allowlist — new entry `dist/claude-code/`); others on GitHub Releases.
@@ -2565,22 +2639,22 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 **Goal**: Ship `STYLE.md` at repo root + `scripts/lint-prose.cjs` build-time validator that fails CI on em dashes, AI-prose tells ("load-bearing", "highest-leverage", "delves", "seamless", "robust", "elevate", "empower", "underscore", "in today's", "let's dive in", "moreover", "furthermore", "tapestry"…), and double-hyphens in **the project's own user-facing prose**: README, CHANGELOG, SKILL.md bodies, agent docs, reference docs. Closes the gap that GDD authors a design-quality product but doesn't apply the same discipline to its own surface. Inspired directly by `pbakaus/impeccable`'s `STYLE.md` + `build.js` prose-validation pass.
 
-**Depends on**: Phase 12 (CI surface) + **Phase 28.5** (`validate-frontmatter` CI is the sibling check; 44 reuses its plumbing for skill-description-specific denylist application). Soft-coupled to **Phase 35** — Phase 35's `agents/copy-auditor.md` audits *user-facing copy in shipped design output* (button labels, errors, microcopy); Phase 44 audits *GDD's own documentation*. Adjacent but distinct surfaces; the denylist substrate at `scripts/lib/prose/denylist.json` is shared (Phase 35's copy-auditor can consume the same JSON for its baseline AI-tell pass, then layer brand-voice judgment on top).
+**Depends on**: Phase 12 (CI surface) + **Phase 28.5** (`validate-frontmatter` CI is the sibling check; 44 reuses its plumbing for skill-description-specific denylist application). Soft-coupled to **Phase 49** (was 35) — Phase 49's `agents/copy-auditor.md` audits *user-facing copy in shipped design output* (button labels, errors, microcopy); Phase 44 audits *GDD's own documentation*. Adjacent but distinct surfaces; the denylist substrate at `scripts/lib/manifest/prose-denylist.json` (see SoT consolidation note below) is shared (Phase 49's copy-auditor can consume the same JSON for its baseline AI-tell pass, then layer brand-voice judgment on top).
 
 **Target version**: v1.44.0.
 
-**Why this phase exists**: Impeccable's `build.js` blocks the build on AI-prose tells in user-facing copy. GDD has `reference/anti-patterns.md` for *design output* and (with Phase 35) `reference/copy-quality.md` for *shipped UI copy* — but no guard on *the project's own README/CHANGELOG/skill/reference prose*. Trust budget for a tool that audits design quality is degraded by sloppy authoring of its own surface; Phase 44 lifts that floor.
+**Why this phase exists**: Impeccable's `build.js` blocks the build on AI-prose tells in user-facing copy. GDD has `reference/anti-patterns.md` for *design output* and (with Phase 49) `reference/copy-quality.md` for *shipped UI copy* — but no guard on *the project's own README/CHANGELOG/skill/reference prose*. Trust budget for a tool that audits design quality is degraded by sloppy authoring of its own surface; Phase 44 lifts that floor.
 
 **Success Criteria** (what must be TRUE):
 
-1. **`STYLE.md` at repo root** — generated from `scripts/lib/prose/denylist.json` (source of truth) — denylist + per-phrase rationale + em-dash + double-hyphen rules + scope + escape syntax.
+1. **`STYLE.md` at repo root** — generated from `scripts/lib/manifest/prose-denylist.json` (source of truth — unified manifest root) — denylist + per-phrase rationale + em-dash + double-hyphen rules + scope + escape syntax.
 2. **`scripts/lint-prose.cjs`** scans `README.md`, `README.*.md`, `SKILL.md`, `skills/**/SKILL.md`, `agents/**/*.md`, `CHANGELOG.md`, `reference/**/*.md` minus documented exclusions. Outputs `file:line:column`. Exit codes 0/2/1.
 3. **`npm run lint:prose`** in `package.json` scripts; CI gate added.
 4. **Escape syntax**: code fences skipped; `<!-- prose-lint-disable phrase --> ... <!-- prose-lint-enable -->` blocks for legitimate quotes.
 5. **Locale handling**: Russian/Cyrillic-majority files skipped via simple heuristic (>50% Cyrillic chars). Denylists per locale at `scripts/lib/prose/denylist.<locale>.json`; v1 ships English only with empty locale placeholders.
 6. **One-time cleanup** (plan 44-03) fixes existing violations across scope to start CI green.
 7. **Frontmatter description denylist**: `validate-frontmatter` (Phase 28.5 surface) applies the same denylist to skill descriptions — the highest-impact prose surface.
-8. **Phase 35 substrate sharing**: `agents/copy-auditor.md` (when Phase 35 has shipped) consumes the same `denylist.json` as its baseline AI-tell pass before applying brand-voice + i18n judgment. Documented in Phase 35's plan refresh, not 44's scope.
+8. **Phase 49 substrate sharing**: `agents/copy-auditor.md` (Phase 49 ships AFTER 44 per renumber) consumes the same `denylist.json` as its baseline AI-tell pass before applying brand-voice + i18n judgment. Documented in Phase 49's plan refresh, not 44's scope.
 9. Regression baseline at `test-fixture/baselines/phase-44/`: positive + negative fixture files; locale-fallback behavior.
 
 **Scope:**
@@ -2613,7 +2687,7 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 **Success Criteria** (what must be TRUE):
 
 1. **`HARNESSES.md` at repo root**: capability matrix (rows = harnesses, columns = skill discovery / frontmatter fields supported / command syntax / MCP support / placeholder substitution / install path / status) + per-harness install instructions linked to Phase 43's `dist/<harness>/` bundles + `Last verified: YYYY-MM-DD`.
-2. **`reference/harness-matrix.json`** is the machine-readable source-of-truth. JSON Schema at `reference/schemas/harness-matrix.schema.json` + Ajv validator. HARNESSES.md is generated.
+2. **`scripts/lib/manifest/harnesses.json`** is the machine-readable source-of-truth — unified with Phase 43's `harness-configs.cjs` (single SoT). JSON Schema at `reference/schemas/harness-matrix.schema.json` + Ajv validator. HARNESSES.md is generated.
 3. **`scripts/generate-harnesses-md.cjs`** writes HARNESSES.md from JSON. CI drift gate: committed = generated.
 4. **Freshness check** at `scripts/check-harness-freshness.cjs`: warn (60 days) / fail (180 days). `gdd:health` surfaces per-harness status.
 5. **Status taxonomy**: `tested` (regression baseline + verified ≤60d), `experimental` (compiles but no baseline), `untested` (config exists, never run), `known-broken` (config exists, open issues). Each status has explicit matrix caveats.
@@ -2699,10 +2773,18 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 1. **`/gdd:pin <skill>`** at `skills/pin/SKILL.md` (Phase 28.5-compliant). Discovers all `.<harness>/skills/` dirs; writes alias stub with `<!-- gdd-pinned-skill source=<original-skill> -->` marker. `/gdd:unpin <skill>` reverses, refusing to delete without marker.
 2. **Pin honors metadata catalogue**: argument hints + descriptions + allow-lists for alias stubs come from `skill-metadata.json`, never from runtime frontmatter scrape.
-3. **`scripts/skill-metadata.json`** single source: `{<skill-id>: {description, argument_hint?, allowed_tools?, parallel_safe?, reads_only?, registered_in_phase}}`. All 70 skills migrated. JSON Schema + Ajv in CI.
+3. **`scripts/lib/manifest/skills.json`** single source: `{<skill-id>: {description, argument_hint?, allowed_tools?, parallel_safe?, reads_only?, registered_in_phase}}`. All 70 skills migrated. JSON Schema + Ajv in CI.
+
+> **2026-05-16 SoT consolidation note (cross-cutting 43/44/45/47)**: instead of four separate single-sources-of-truth scattered across `scripts/lib/`, all four (harnesses, prose denylist, skills, harness matrix) live under `scripts/lib/manifest/` as a unified manifest root:
+> - `scripts/lib/manifest/harnesses.{cjs,json}` (consolidates Phase 43's `harness-configs.cjs` + Phase 45's `harness-matrix.json` — runtime config + machine-readable matrix are two views of one canonical record)
+> - `scripts/lib/manifest/skills.json` (Phase 47)
+> - `scripts/lib/manifest/prose-denylist.json` (Phase 44)
+> - `scripts/lib/manifest/index.cjs` exporting typed readers for all four
+>
+> Each consuming phase ships its loader against the unified root; one CI drift gate covers all four; one JSON Schema dir at `scripts/lib/manifest/schemas/`. Phase whose plan-phase runs first creates the directory; subsequent phases extend it.
 4. **Frontmatter generation**: `scripts/generate-skill-frontmatter.cjs` reads metadata + body, regenerates frontmatter. Idempotent. CI drift gate: committed = generated. Invoked by Phase 43's compile pipeline if shipped.
 5. **Description budget**: `validate-frontmatter` extended with `description.length ≤ 1024` check. Existing skills audited and trimmed in plan 47-01 (CHANGELOG notes any user-visible description shortened beyond paraphrase).
-6. **Harness-config sharing with Phase 43**: pin discovery uses `scripts/lib/build/harness-configs.cjs` if 43 has shipped; ships own minimal copy at `scripts/lib/pin/harness-detect.cjs` otherwise (plan in 43 unifies later).
+6. **Harness-config sharing with Phase 43**: pin discovery uses `scripts/lib/manifest/harnesses.cjs` if 43 has shipped; ships own minimal copy at `scripts/lib/pin/harness-detect.cjs` otherwise (plan in 43 unifies later).
 7. **Cross-platform**: Linux/macOS/Windows path handling tested. Atomic write (`.tmp` + rename) for interrupt safety.
 8. **`/gdd:list-pins`** at `skills/list-pins/SKILL.md` shows pinned aliases per harness with source + last-pinned timestamp.
 9. **Phase 28.5 coordination**: if 28.5 hasn't locked its plan when 47 lands, the description-budget criterion folds into 28.5's open-question resolution and 47 keeps the catalogue + pin work only. Decision visible in plan 47-01.
@@ -2777,6 +2859,220 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 **Open questions for `/gsd-discuss-phase 48`**: N variants per generation (default: 3 with `--variants N`); session resume window (default: 30 days, prune via `gsd-cleanup`); harness degraded-mode declaration source (default: `harness-matrix.json` from Phase 45; runtime detect is fallback); commit-message authorship trailer (default: `Authored-via: gdd:live <session-id>`); HMR failure mode (default: warn-and-continue with manual-refresh notice).
 
 ---
+### Phase 27.6: Pipeline Performance + Token-Cost Optimization (INSERTED)
+
+**Goal**: After Phase 27.5 wires the bandit into production routing, telemetry from `costs.jsonl` + `trajectories/<cycle>.jsonl` finally lets us measure where the pipeline burns tokens, where cache misses happen, and where parallelism is leaving wall-clock on the table. This phase converts that telemetry into concrete optimizations. Closes the gap that GDD has cost *governance* (10.1, 23.5, 27.5, 40.2) but no *reduction* — token-per-cycle has only grown across phases 15–28 as the reference library expanded.
+
+**Depends on**: Phase 22 (event-chain + trajectories), Phase 23.5 (bandit posterior), Phase 27.5 (production routing live → real measurement data). Soft-coupled to Phase 46 (canonical reference index — if 46 lands first, token-load reduction is partly captured there).
+
+**Target version**: v1.27.6 *(decimal — CHANGELOG-only per convention)*.
+
+**Why this phase exists**: A 2026-05-16 audit identified that GDD has no "make `/gdd:scan` faster" or "reduce token consumption" work-stream. Phase 10.1 shipped router + cache-manager + budget enforcement, but the measurement loop ("did this cycle cost less than the last?") has no actionable hook. With Phase 27.5 live, the telemetry is now real — Phase 27.6 reads it.
+
+**Success Criteria**:
+
+1. **`agents/perf-analyzer.md`** reads `.design/telemetry/{costs,trajectories,events}.jsonl` cross-cycle and surfaces top-3 token-cost regressions per agent + cache-hit-rate deltas + p95 latency spikes.
+2. **`reference/perf-budget.md`** documents per-agent token-cost budgets (sourced from current p50 + buffer); CI gate at `tests/perf-budget.test.cjs` fails on >25% regression vs baseline across 3 cycles.
+3. **Cache-warming policy refinement** — Phase 10.1's `gdd-cache-manager` gains a recency × frequency × cost heuristic for what to pre-warm; eviction tested.
+4. **Parallel-mapper concurrency tuning** — Phase 7's parallel mapper limit (currently fixed) becomes data-driven from `parallelism_verdict` events.
+5. **Prompt-deduplication pass** — detect cases where the same reference file is read by ≥3 agents in the same cycle; offer a shared-context injection (via Phase 14.5 retrieval-contract preamble).
+6. Regression baseline at `test-fixture/baselines/phase-27.6/`: synthetic cycle replay measures token-cost delta + cache-hit-rate.
+
+**Scope:** ~5 plans across 2 waves.
+
+- **Wave A — Measurement (2 plans):** `agents/perf-analyzer.md` + telemetry reader; `reference/perf-budget.md` + CI gate.
+- **Wave B — Optimizations + closeout (3 plans):** cache-warming heuristic refinement; parallel-mapper data-driven concurrency; prompt-dedup + shared-context injection + closeout.
+
+**Explicitly out of scope**: cross-runtime cost arbitrage (Phase 26 territory); per-call model substitution (Phase 23.5 bandit territory); rewriting reference files to be shorter (Phase 46 territory).
+
+**Open questions for `/gsd-discuss-phase 27.6`**: regression-gate threshold (default 25%); cache-warming false-positive tolerance.
+
+---
+
+### Phase 30.5: Failure-Mode Catalogue (INSERTED)
+
+**Goal**: Populate `reference/known-failure-modes.md` (referenced by Phase 30's issue-reporter triage gate) with 20+ catalogued failure modes harvested from existing telemetry + closed issues + reflector observations. Without this, Phase 30's triage gate surfaces "this looks like X — try Y" suggestions against an empty catalogue.
+
+**Depends on**: Phase 22 (event-chain + trajectories — failure mode harvest source), Phase 30 (issue-reporter — primary consumer). Soft-coupled to Phase 11 (reflector — proposes catalogue additions during normal cycles).
+
+**Target version**: v1.30.5 *(decimal — CHANGELOG-only)*.
+
+**Why this phase exists**: Phase 30 ships the issue-reporter flow with `reference/known-failure-modes.md` as a triage gate. But populating that catalogue was never scoped. Without 20+ entries, the gate is a no-op for the first months of issue-reporter use. 30.5 makes the gate effective from day one.
+
+**Success Criteria**:
+
+1. **`reference/known-failure-modes.md`** with ≥20 entries; each entry has `{id, symptom, root_cause, fix, related_phases, first_observed_cycle}` schema.
+2. **`scripts/lib/failure-mode-matcher.cjs`** — fuzzy-match incoming issue draft against catalogue; surfaces top-3 candidates with confidence scores.
+3. **Reflector extension** — Phase 11's reflector proposes new catalogue entries when a `capability_gap` event recurs ≥3× with a new symptom signature.
+4. **Authority-watcher integration** — Phase 13.2's external authority feeds can land "common failure modes in design tooling" articles as catalogue candidates.
+5. Regression baseline at `test-fixture/baselines/phase-30.5/`: matcher accuracy on fixture issue drafts.
+
+**Scope:** ~3 plans across 2 waves.
+
+- **Wave A — Catalogue authoring (2 plans):** Schema + initial 20+ entries harvested from `closed-issues/*.md` + reflector logs; matcher implementation.
+- **Wave B — Reflector + watcher wiring + closeout (1 plan):** Reflector proposal flow + authority-watcher candidate ingest + closeout.
+
+**Explicitly out of scope**: auto-fix proposals based on catalogue match (diagnostic only); cross-user shared catalogue (privacy concerns, defer to Phase 41 / federated learnings).
+
+**Open questions for `/gsd-discuss-phase 30.5`**: matcher confidence threshold for auto-surface vs ask; catalogue ownership (maintainer-only writes vs community PR-accepted).
+
+---
+
+### Phase 33.5: GDD Runtime Security Hardening (INSERTED)
+
+**Goal**: Audit and harden GDD's own runtime surface — `hooks/budget-enforcer.ts`, MCP servers (`gdd-state`, peer-CLI dispatch), event-stream WebSocket transport, outbound `gh` CLI invocations, secret-scanning pipeline. Closes the gap that Phase 14.5 ships "safety + recall floor" for *user code being audited*, but no equivalent for GDD's *own runtime attack surface*.
+
+**Depends on**: Phase 14.5 (safety primitives — pattern reuse), Phase 22 (event-chain redact.cjs — extends), Phase 27 (peer-CLI dispatch — surface to harden). Soft-coupled to Phase 30 (issue-reporter outbound — same exfil-risk class).
+
+**Target version**: v1.33.5 *(decimal — CHANGELOG-only)*.
+
+**Why this phase exists**: 2026-05-16 audit found that as GDD grew from a single-process plugin (Phases 1–13) to a multi-MCP-server, peer-CLI-spawning, WebSocket-transport-emitting SDK (Phases 20–27), the security model never got formalized. `hooks/budget-enforcer.ts` reads STATE.md; the WebSocket transport (Phase 22-03) opens a network port; peer-CLI broker (Phase 27) spawns child processes. Each is a credential-stealing / prompt-injection / unauthorized-command surface that hasn't been threat-modeled in one place.
+
+**Success Criteria**:
+
+1. **`reference/gdd-threat-model.md`** — full STRIDE per component (hooks, MCP servers, peer-CLI, WebSocket transport, issue-reporter outbound).
+2. **WebSocket transport hardening** — token-auth required (already noted in Phase 22 success criteria; verify shipping reality) + localhost-bind default + opt-in remote-bind via explicit config; CI gate fails on bind-to-0.0.0.0 in default config.
+3. **MCP server input validation** — `gdd-state` MCP tools (11 typed) audited for path-traversal, JSON-bomb, oversized-payload; all 11 gain explicit input-schema gates.
+4. **Peer-CLI broker sandboxing** — child processes spawned with restricted env (no `GH_TOKEN`/`ANTHROPIC_API_KEY`/etc. unless explicitly forwarded), explicit allowlist via `.design/config.json`.
+5. **Outbound network audit** — static-analysis CI gate extends Phase 30's issue-reporter restriction to ALL plugin code: no `https://`, `fetch(`, `node:https`, `node-fetch`, `axios` outside an explicit allowlist (`hooks/update-check.sh`, `scripts/lib/authority-watcher/`, peer-CLI broker — each justified).
+6. **Secret-scan extension** — Phase 22 `redact.cjs` patterns audited against current secret formats (Anthropic, OpenAI, Gemini, GitHub fine-grained tokens, AWS session tokens, Stripe restricted keys); CI fuzzes with synthetic secrets.
+7. **Documentation** — `SECURITY.md` at repo root + responsible disclosure mailbox.
+8. Regression baseline at `test-fixture/baselines/phase-33.5/`: STRIDE checklist per-component + fuzz fixtures for each hardening surface.
+
+**Scope:** ~6 plans across 3 waves.
+
+- **Wave A — Threat model + audit (2 plans):** STRIDE doc; static-grep audit + report.
+- **Wave B — Hardening fixes (3 plans):** WebSocket + MCP input validation; peer-CLI sandboxing; secret-scan extension.
+- **Wave C — Closeout (1 plan):** SECURITY.md + disclosure mailbox + regression baseline.
+
+**Explicitly out of scope**: SAST/DAST commercial tooling (open-source semgrep / CodeQL OK); SOC-2 certification path (separate effort if monetization happens); penetration test (consider after this phase if user demand surfaces).
+
+**Open questions for `/gsd-discuss-phase 33.5`**: bind-0.0.0.0 opt-in mechanism (env var vs config); peer-CLI sandbox strictness (hard env-strip vs allowlist-forward); disclosure mailbox (Tidelift / private repo issue / direct email).
+
+---
+
+### Phase 36.5: Design-Artifact Export (`/gdd:export`) (INSERTED)
+
+**Goal**: Ship `/gdd:export` — packages a completed cycle's `.design/*.md` + screenshots + decisions into a stakeholder-shareable artifact (PDF / Notion page / static HTML site). Closes the gap that GDD's design-output lives only in the repo; stakeholders not sitting in code (PMs, execs, brand) currently have no way to consume it.
+
+**Depends on**: Phase 19.5 (cross-cycle memory — EXPERIENCE.md as canonical content source), Phase 36.1 (PR inline integration — `/gdd:export --pr` posts to PR description). Soft-coupled to Phase 41 (team collaboration — exported pages can host PR-comment threads).
+
+**Target version**: v1.36.5 *(decimal — CHANGELOG-only)*.
+
+**Why this phase exists**: 2026-05-16 audit found that the design-output → consumption loop dead-ends inside the repo. Phase 36's team surfaces handle *notification* (PR comment, Slack ping), not *artifact handoff* (here's the design review packet for next week's stakeholder meeting). Phase 36.5 closes that.
+
+**Success Criteria**:
+
+1. **`/gdd:export <cycle-id> --format pdf|notion|html`** at `skills/export/SKILL.md`.
+2. **PDF format** — Paged.js render of EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decision log + screenshots; print-styled.
+3. **Notion format** — `connections/notion.md` (write path) + page generation from same source; supports nested toggles + image upload.
+4. **Static HTML format** — single self-contained HTML file (inline CSS, base64 images) for email/Drive sharing; lighthouse score ≥90.
+5. **Pseudonymization opt-in** — Phase 30's `pseudonymize.cjs` available as `--pseudonymize` flag for external sharing.
+6. **PR integration** — `/gdd:export --pr` posts HTML preview link as PR comment (via Phase 36.1 `pr-commenter`).
+7. Regression baseline at `test-fixture/baselines/phase-36.5/`: golden PDF / HTML / Notion-page payload from fixture cycle.
+
+**Scope:** ~5 plans across 3 waves.
+
+- **Wave A — Export skeleton + HTML (2 plans):** `skills/export/SKILL.md`; static HTML renderer.
+- **Wave B — PDF + Notion (2 plans):** Paged.js PDF; `connections/notion.md` + page generator.
+- **Wave C — Closeout (1 plan):** PR integration + pseudonymize-flag + regression baseline.
+
+**Explicitly out of scope**: Confluence (Notion-only this phase); Figma export (Phase 31 territory); video walkthrough generation; collaborative editing of exported artifact (read-only handoff).
+
+**Open questions for `/gsd-discuss-phase 36.5`**: PDF page size default (US Letter vs A4 by locale); Notion API key management (per-user vs shared org token); static HTML JS-allowed or strict zero-JS.
+
+---
+
+### Phase 39.5: Deployment Coordination Loop (INSERTED)
+
+**Goal**: Bridge the gap between `/gdd:verify` passing and the design actually being live. Today `/gdd:ship` creates a PR; after merge, staging / canary / feature-flag rollout happens outside GDD. Phase 39.5 adds **rollout-aware orchestration**: `agents/rollout-coordinator.md` reads feature-flag service state (Phase 39's LaunchDarkly/Statsig/GrowthBook connections), tracks per-cycle "shipped-to-prod %", and closes the loop with `verify_outcome` events keyed to actual production data.
+
+**Depends on**: Phase 36.1 (PR inline — branch-protection signals), Phase 39 (A/B variants + feature-flag connections — primary signal source), Phase 22 (event-chain — `rollout_*` event types added).
+
+**Target version**: v1.39.5 *(decimal — CHANGELOG-only)*.
+
+**Why this phase exists**: The 2026-05-16 audit identified that GDD's pipeline ends at "PR merged". The post-merge journey (staging deploy → canary % → 100% rollout → outcome measurement) is invisible. Phase 39 ships A/B + experiment ingest, but doesn't connect the bandit's "design A wins" signal back to "is design A actually deployed to 100% of users?". 39.5 closes that.
+
+**Success Criteria**:
+
+1. **`agents/rollout-coordinator.md`** — reads feature-flag service via Phase 39 connections; reports per-cycle rollout state (`unrolled` / `staging-only` / `canary-N%` / `prod-100%`).
+2. **`STATE.md <rollout_status>` block** — populated per-cycle from coordinator output.
+3. **`verify_outcome` event class** — Phase 22 schema extension; bandit reads as a slow-loop reward source (separate from internal lint/test signals).
+4. **`/gdd:rollout-status <cycle>` skill** — surfaces stuck rollouts (e.g., "cycle X has been canary-10% for 14 days").
+5. **Phase 39 bandit integration** — `design_arms` posterior consumes `verify_outcome` events with `deployed_pct` weighting (a 10%-rolled-out variant counts less than a 100%-rolled-out variant).
+6. Regression baseline at `test-fixture/baselines/phase-39.5/`: fixture feature-flag API + golden rollout-status transitions.
+
+**Scope:** ~4 plans across 2 waves.
+
+- **Wave A — Coordinator + status (2 plans):** `agents/rollout-coordinator.md` + STATE block + skill surface; event schema extension.
+- **Wave B — Bandit weighting + closeout (2 plans):** Phase 39 posterior integration with deployed_pct weighting; closeout.
+
+**Explicitly out of scope**: GDD-initiated rollout (we read, we don't drive — feature-flag service stays primary surface); blue-green orchestration; rollback automation (notify only).
+
+**Open questions for `/gsd-discuss-phase 39.5`**: stuck-rollout threshold (default 14 days); deployed_pct weighting curve (linear vs sigmoid).
+
+---
+
+### Phase 40.5: GDD Self-Migration Tooling (INSERTED)
+
+**Goal**: GDD-on-GDD. When GDD itself ships breaking changes (skill renames, agent removals, frontmatter schema bumps, hook signature changes), provide a migration path for plugin users: deprecation registry + version-aware codemods + post-upgrade `/gdd:migrate` skill. Closes the gap that Phase 40.1 plans DS migration for *user code*, but GDD's own breaking changes (Phase 28.5 frontmatter contract, Phase 31.5 `sdk/` reorg, Phase 43 `source/skills/` move) ship with ad-hoc shim layers and no systematic story.
+
+**Depends on**: Phase 13.3 (update-checker — surfaces breaking-change notifications), Phase 40.1 (DS migration codegen — same machinery reused). Soft-coupled to Phase 31.5 (introduced the "one-version shim" pattern that this phase formalizes).
+
+**Target version**: v1.40.5 *(decimal — CHANGELOG-only)*.
+
+**Why this phase exists**: As GDD's surface stabilizes, the cost of breaking changes grows. Phase 31.5 introduced "shim layer for one minor version" as a one-off pattern. Phase 28.5 will rename skills (gsd-* → unprefixed). Phase 43 will move skills from `skills/` to `source/skills/`. Without a registered deprecation system, every breaking change re-invents shim logic.
+
+**Success Criteria**:
+
+1. **`reference/deprecations.md`** — schema for `{since_version, removed_in_version, old_path, new_path, migration_hint}`; populated retroactively from Phase 31.5 (`scripts/lib/` → `sdk/`) and Phase 28.5 (skill renames).
+2. **`scripts/lib/deprecation-registry.cjs`** — read at install + at `/gdd:update`; warns on stale imports/skill names; errors when running past `removed_in_version`.
+3. **`/gdd:migrate` skill** — applies known migrations from registry to user's `.design/config.json` + any project-local skill references; previews diff before applying.
+4. **CI gate** — Phase 12 test extension asserts every deprecation entry has a corresponding shim or removal in the codebase (no orphan entries).
+5. **`CHANGELOG.md` linter** — `scripts/lint-changelog.cjs` requires every minor-version bump to declare `## Breaking changes` section (even if empty); breaking changes must be in the registry.
+6. Regression baseline at `test-fixture/baselines/phase-40.5/`: migrate-from-v1.27 fixture → v1.40 + golden output.
+
+**Scope:** ~5 plans across 2 waves.
+
+- **Wave A — Registry + migration tooling (3 plans):** `reference/deprecations.md` schema + retroactive backfill; `deprecation-registry.cjs` install/update hook; `/gdd:migrate` skill.
+- **Wave B — CI gate + closeout (2 plans):** CHANGELOG linter + deprecation completeness test; closeout.
+
+**Explicitly out of scope**: auto-rewriting user code that imports from deprecated SDK paths (Phase 40.1 DS migration template can be repurposed by users); reverse migrations (downgrades — out-of-scope).
+
+**Open questions for `/gsd-discuss-phase 40.5`**: shim lifetime default (1 minor vs 2 minors vs major-version-only); `/gdd:migrate` consent (interactive vs `--yes`).
+
+---
+
+### Phase 41.5: GDD CLI Localization (INSERTED)
+
+**Goal**: GDD speaks English-only in `--help`, error messages, skill prompts, and command output. `reference/i18n.md` ships rules for *user designs*; nothing covers GDD's own surface. Phase 41.5 adds locale resolution + per-locale message tables for the highest-traffic surfaces.
+
+**Depends on**: Phase 28 (i18n.md as the rule source for what well-i18n'd output looks like — meta-eats-own-cooking), Phase 28.5 (skill description schema — descriptions become i18n-able). Soft-coupled to Phase 41 (team mode — multi-locale teams).
+
+**Target version**: v1.41.5 *(decimal — CHANGELOG-only)*.
+
+**Why this phase exists**: README is multilingual (`README.*.md`) — the public surface acknowledges GDD has international users. But the moment they install, the CLI talks English. Phase 41.5 fixes the lowest-effort, highest-impact subset: `--help`, common error messages, skill prompt headers. Full skill-body translation is deferred (massive volume; defer per locale demand).
+
+**Success Criteria**:
+
+1. **`scripts/lib/i18n/index.cjs`** — locale resolution from `process.env.LANG` + `.design/config.json: { "locale": "ru" }` override.
+2. **`scripts/lib/i18n/messages/{en,ru,uk,de,fr,zh,ja}.json`** — per-locale message tables for `--help`, top-20 error messages, skill prompt headers; v1 ships English fully + Russian as second locale + placeholders for others.
+3. **`/gdd:locale <code>` skill** — sets/inspects locale per project.
+4. **Frontmatter `description_i18n`** — opt-in field on skills + agents; falls back to English `description` when absent. Phase 28.5's validator extended.
+5. **Documentation** — `reference/cli-localization.md` documents the contribution path for adding a new locale (PR + translator-credits in NOTICE).
+6. Regression baseline at `test-fixture/baselines/phase-41.5/`: locale resolution + fallback + ru-message coverage.
+
+**Scope:** ~4 plans across 2 waves.
+
+- **Wave A — Resolver + tables (2 plans):** `scripts/lib/i18n/` + English + Russian message tables.
+- **Wave B — Skill frontmatter + closeout (2 plans):** `description_i18n` field + validator extension; `/gdd:locale` skill; contribution doc; closeout.
+
+**Explicitly out of scope**: full skill-body translation (massive volume; per-locale demand-gated); RTL CLI rendering (terminal-side concern, not plugin); voice/conversational localization (Phase 37.3 territory if shipped).
+
+**Open questions for `/gsd-discuss-phase 41.5`**: fallback chain (locale → base-locale → English vs locale → English direct); message-table format (flat JSON vs ICU MessageFormat); CI gate on completeness (strict-100% per locale vs warn-only).
+
+---
+
 ## Parallelization: Phases 20–23 (SDK Build-Out)
 
 The SDK build-out is the largest parallelizable unit in the roadmap — 54 plans across 4 phases, dominated by **disjoint module work**. Cross-phase parallelism is feasible because Phase 22 (observability) only needs Phase 20's event-stream foundation, not Phase 21's pipeline runner.
@@ -2959,7 +3255,7 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | 29. Capability-Gap Telemetry + Self-Authoring of Agents/Skills — typed `capability_gap` event in Phase 22 schema (sources: `/gdd:fast` no-skill-match + router unmatched-intent + reflector pattern-detection on `Touches:` clusters) + Stage 0 telemetry-only with `## Capability gaps observed` section in `.design/reflections/` + Stage 0→Stage 1 gate (K=3 stable clusters across M=10 cycles via posterior `stddev(Beta(α, β)) < 0.05`; user opt-in flip) + Stage 1 incubator authoring at `.design/reflections/incubator/<slug>/` with Phase 28.5-compliant frontmatter + `delegate_to: null` defensive default + `/gdd:apply-reflections` extension as new proposal class (accept / reject / defer / edit + diff vs nearest existing) + bandit-fairness `Beta(2, 8)` conservative prior on promoted arms via `posterior-store.cjs` `prior_class: "promoted_incubator"` + incubator TTL (P=30 days, `gsd-cleanup` archive, refresh on matching `context_hash`) + `scripts/validate-incubator-scope.cjs` scope guard (agents/ + skills/ only, no runtimes/transports/connections/hooks) | 0/7 (6 feature + 1 closeout across 3 waves) | Planned | v1.29.0 | Depends on Phases 11, 22, 23.5, 14.5 |
 | 30. Inbound Feedback Channel — Issue Reporter — `scripts/lib/pseudonymize.cjs` (separate layer from Phase 22-12 `redact.cjs`: git identity + paths + hostname + repo origin + env-vars + emails + IPs + stable per-user pseudonym `sha256(user_id + repo_origin)[:8]` for maintainer-side dedup) + `skills/report-issue/SKILL.md` (Phase 28.5-compliant) + hardcoded destination URL (immutability-tested constant) + consent-required submission (no `--yes`, no `GDD_AUTO_REPORT=1`) + payload-on-disk first at `.design/issue-drafts/<timestamp>-<fingerprint8>.md` + `gh`-CLI-only outbound (static-analysis CI gate on issue-reporter modules) + pre-submit dedup via `gh issue list --search` + `+1` / `me-too` flow + triage gate via `reference/known-failure-modes.md` + `GDD_DISABLE_ISSUE_REPORTER` env / `.design/config.json` kill-switch (visible in `gsd-health`) + `/gdd:update --show-privacy-diff` (auto-show on relevant-file upgrade) + `gh`-absent clipboard fallback + honest disclaimer (псевдонимизация, не анонимизация) mandatory in body and TUI | 0/8 (7 feature + 1 closeout across 3 waves) | Planned | v1.30.0 | Depends on Phase 22 |
 | 31. Figma Off-Context Extractor + Variables Sync Plugin — `scripts/figma-extract/` Node CLI extracting tokens/components/types from `.fig`/REST API into `digest/` (DESIGN.md/tokens.json/components.json) — runs without Figma Desktop; sibling Variables sync plugin for bi-directional Figma↔repo token round-trip; closes the gap where GDD requires live MCP for every Figma touchpoint. See `.planning/phases/31-figma-extractor-sync/PLAN.md` | 0/? (plan in progress) | In Progress | v1.31.0 | Depends on Phase 14, 23 (token-engine) |
-| **31.5. Repo Structure Consolidation (INSERTED)** — `git rm --cached -r .planning/ REVIEW.md` + new `sdk/` directory collecting cli/mcp/state/event-stream/primitives/errors from scattered `scripts/lib/` + narrowed `package.json: files` allowlist + npm-pack snapshot test. Zero user-facing surface change; `git mv` + one-version shim layer. Audited 2026-05-04. | 0/? (3-part fix across waves) | Planned | v1.28.0 *(positional rename — ships independent of 31)* | Independent — soft-couples to 31 |
+| **31.5. Repo Structure Consolidation (INSERTED)** — `git rm --cached -r .planning/ REVIEW.md` + new `sdk/` directory collecting cli/mcp/state/event-stream/primitives/errors from scattered `scripts/lib/` + narrowed `package.json: files` allowlist + npm-pack snapshot test. Zero user-facing surface change; `git mv` + one-version shim layer. Audited 2026-05-04. | 0/? (3-part fix across waves) | Planned | v1.31.5 | Independent — soft-couples to 31 |
 | 32. Skill Auto-Trigger Discipline + Defensive Guardrails — `reference/skill-authoring-contract.md` v2 hardening (always-emit `using-gdd` SessionStart contract + per-harness inject-format emitter) + `validate-skill-frontmatter.cjs` blocks ≥250-line SKILL.md + `tests/skill-trigger.test.cjs` golden-prompt suite confirms LLM picks the right skill | 0/? | Planned | v1.32.0 | Depends on Phase 28.5 |
 | 33. Skill Behavior Tests — Pressure-Scenario Harness — `tests/skill-behavior/` headless-runner harness invoking each skill against 3-tier scenario set (golden / ambiguous / adversarial); description-format A/B test catalogues which `<what>. Use when <triggers>.` phrasings rank skills correctly. Output feeds Phase 28.5 contract refinements. | 0/? | Planned | v1.33.0 | Depends on Phase 32, 21 (session-runner) |
 | 42. Deterministic Anti-Pattern CLI (`gdd-detect`) — standalone Node CLI for BAN-NN rules + rule-schema JSON + bidirectional reference linking + jsdom/Puppeteer optional + offline-isolated (static security test) + auditor/crawler integration | 0/8 (3+3+2 across 3 waves) | Planned | v1.42.0 | Depends on Phase 12. Soft: 35, 25, 33 |
@@ -2969,6 +3265,26 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | 46. Canonical Domain Reference Index — 7 entry-point references (`typography/color/spatial/motion/interaction/responsive/ux-writing.md`) indexing 38+ fragments; ≤300 lines each; registry `kind: "domain-index"`; expected 20–40% token-load reduction on multi-fragment skills | 0/5 (3+2 across 2 waves) | Planned | v1.46.0 | Depends on Phase 14.5, 15, 18, 19, 28. Soft: 31, 37, 42 |
 | 47. Skill UX Polish — `/gdd:pin <skill>` aliases (`/audit` etc.) + `scripts/skill-metadata.json` SoT + frontmatter generation + description ≤1024 char budget (overlaps Phase 28.5 — may fold) | 0/6 (3+2+1 across 3 waves) | Planned | v1.47.0 | Depends on Phase 28.5. Soft: 43 |
 | 48. In-Browser Design Iteration — `/gdd:live` in-browser variant iteration (user picks element → N variants → HMR → accept/discard) + session persistence + Phase 42 deterministic post-check + 12 test files | 0/11 (3+3+3+2 across 4 waves) | Planned | v1.48.0 | Depends on Phase 14, 22, 23, **42, 43, 46**. Soft: 39, 45 |
+| **27.6. Pipeline Performance + Token-Cost Optimization (INSERTED)** — `agents/perf-analyzer.md` + `reference/perf-budget.md` CI gate + cache-warming refinement + parallel-mapper concurrency tuning + prompt-dedup | 0/5 (2+3 across 2 waves) | Planned | v1.27.6 | Depends on Phases 22, 23.5, 27.5 |
+| **30.5. Failure-Mode Catalogue (INSERTED)** — `reference/known-failure-modes.md` (≥20 entries) + `scripts/lib/failure-mode-matcher.cjs` + reflector proposal flow + authority-watcher candidate ingest | 0/3 (2+1 across 2 waves) | Planned | v1.30.5 | Depends on Phases 22, 30 |
+| **33.5. GDD Runtime Security Hardening (INSERTED)** — `reference/gdd-threat-model.md` (STRIDE per-component) + WebSocket bind hardening + MCP input validation + peer-CLI sandboxing + outbound network audit + secret-scan extension + SECURITY.md | 0/6 (2+3+1 across 3 waves) | Planned | v1.33.5 | Depends on Phases 14.5, 22, 27 |
+| **36.5. Design-Artifact Export (INSERTED)** — `skills/export/SKILL.md` + PDF (Paged.js) + Notion (connection write-path) + static HTML + pseudonymize flag + PR integration | 0/5 (2+2+1 across 3 waves) | Planned | v1.36.5 | Depends on Phase 19.5, 36.1 |
+| **39.5. Deployment Coordination Loop (INSERTED)** — `agents/rollout-coordinator.md` + STATE `<rollout_status>` block + `verify_outcome` event + `/gdd:rollout-status` skill + Phase 39 bandit deployed_pct weighting | 0/4 (2+2 across 2 waves) | Planned | v1.39.5 | Depends on Phases 36.1, 39, 22 |
+| **40.5. GDD Self-Migration Tooling (INSERTED)** — `reference/deprecations.md` + `scripts/lib/deprecation-registry.cjs` + `/gdd:migrate` skill + CHANGELOG linter + deprecation completeness test | 0/5 (3+2 across 2 waves) | Planned | v1.40.5 | Depends on Phases 13.3, 40.1 |
+| **41.5. GDD CLI Localization (INSERTED)** — `scripts/lib/i18n/` resolver + en/ru message tables (placeholders for uk/de/fr/zh/ja) + `description_i18n` frontmatter + `/gdd:locale` skill | 0/4 (2+2 across 2 waves) | Planned | v1.41.5 | Depends on Phases 28, 28.5 |
+| **34.1. Native Mobile (split from Phase 34)** — Swift / Compose / Flutter executors + Xcode + Android emulator connections + native verify-stage adaptation | 0/? | Planned | v1.34.1 | Depends on Phase 23 |
+| **34.2. Email (split from Phase 34)** — `agents/email-executor.md` + MJML compile + Litmus/Email-on-Acid connection + `reference/email-design.md` | 0/? | Planned | v1.34.2 | Depends on Phase 23 |
+| **34.3. Print/PDF (split from Phase 34)** — `agents/pdf-executor.md` + Paged.js + PDFKit fallback + `reference/print-design.md` (bleed/CMYK/font-embedding) | 0/? | Planned | v1.34.3 | Depends on Phase 23 |
+| **36.1. PR Inline Integration (split from Phase 36)** — `agents/pr-commenter.md` + `gh api` inline review comments + `gh check create` for branch protection | 0/? | Planned | v1.36.1 | Depends on Phases 22, 25 |
+| **36.2. Notification Backplane (split from Phase 36)** — `connections/{slack,discord}.md` + email/webhook out + Phase 22 redact.cjs + Phase 30 pseudonymize.cjs guards | 0/? | Planned | v1.36.2 | Depends on Phases 22, 30 |
+| **36.3. Ticket Sync (split from Phase 36)** — `connections/{linear,jira}.md` + `agents/ticket-sync-agent.md` bidirectional + STATE `<ticket_links>` block + decision-injector reads ticket comments | 0/? | Planned | v1.36.3 | Depends on Phase 22 |
+| **37.1. Domain Packs (split from Phase 37)** — `reference/domains/{finance,healthcare,gaming,civic}-patterns.md` + domain detection in `design-context-builder.md` + per-domain auditor checklist additions | 0/? | Planned | v1.37.1 | Depends on Phases 18, 19, 28 |
+| **37.2. Motion-Tool Verification (split from Phase 37)** — `connections/{lottie,rive}.md` + `agents/motion-verifier.md` (state-machine graph validation + performance budget) | 0/? | Planned | v1.37.2 | Depends on Phase 18 |
+| **37.3. Conversational UI (split from Phase 37)** — `reference/conversational-ui.md` (voice + chatbot patterns) + design-context-builder routing for conversational project type | 0/? | Planned | v1.37.3 | Depends on Phase 19 |
+| **38.1. AI-Native Tools Wave 2 (split from Phase 38)** — `connections/{framer,penpot,webflow,v0-dev,plasmic,builder-io}.md` (all 6) under existing Phase 14 capability contract | 0/? | Planned | v1.38.1 | Depends on Phase 14 |
+| **38.2. Greenfield DS Bootstrap (split from Phase 38)** — `skills/bootstrap-ds/SKILL.md` + `agents/ds-generator.md` + `reference/ds-bootstrap-rubric.md` + first-component scaffolding | 0/? | Planned | v1.38.2 | Depends on Phases 23, 28 |
+| **40.1. DS Migration Workflows (split from Phase 40)** — `agents/ds-migration-planner.md` + `reference/migrations/{shadcn-v2,tailwind-v4,mui-v6,material-3-to-4}.md` + codemod generator + per-component impact scoring | 0/? | Planned | v1.40.1 | Depends on Phase 23 |
+| **40.2. Long-Horizon Cost Governance (split from Phase 40)** — `skills/budget/SKILL.md` + `agents/cost-forecaster.md` + `budget.json.project_cap` + hard-halt hook + ROI dashboard | 0/? | Planned | v1.40.2 | Depends on Phases 10.1, 19.5, 26, 27.5 |
 
 ## Deferred commands backlog (GSD-parity commands not yet scheduled)
 
