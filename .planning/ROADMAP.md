@@ -120,6 +120,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] [Phase 41](#phase-41-team-collaboration-mode) — Team Collaboration Mode — v1.41.0
 - [ ] [Phase 41.5](#phase-415-gdd-cli-localization-inserted) — GDD CLI Localization — **NEW (INSERTED 2026-05-16)** — v1.41.5
 - [ ] [Phase 42](#phase-42-deterministic-anti-pattern-cli--gdd-detect) — Deterministic Anti-Pattern CLI (`gdd-detect`) — v1.42.0
+- [ ] [Phase 42.5](#phase-425-sot-manifest-consolidation-inserted) — SoT Manifest Consolidation (`scripts/lib/manifest/`) — **NEW (INSERTED 2026-05-16)** — v1.42.5
 - [ ] [Phase 43](#phase-43-multi-harness-source-compilation--one-skill-source-n-provider-bundles) — Multi-Harness Source Compilation — v1.43.0
 - [ ] [Phase 44](#phase-44-editorial-quality-floor--stylemd--build-time-prose-lint) — Editorial Quality Floor (STYLE.md + prose lint) — v1.44.0
 - [ ] [Phase 45](#phase-45-harness-capability-matrix--consolidated-harnessesmd) — Harness Capability Matrix (HARNESSES.md) — v1.45.0
@@ -2591,6 +2592,46 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 **Open questions for `/gsd-discuss-phase 42`**: jsdom required vs optional (default: required — it's small, lint:design is the default workflow); severity tiers — error/warn or error/warn/info (default: error/warn matches existing BAN binary); rule deprecation — hard-delete or preserve with `deprecated:` (default: preserve one minor, then delete).
 
+### Phase 42.5: SoT Manifest Consolidation (INSERTED)
+
+**Goal**: Establish `scripts/lib/manifest/` as the single source-of-truth root for all roadmap-wide cross-phase metadata files. Phase 43 (harnesses), 44 (prose denylist), 45 (harness capability matrix), and 47 (skill metadata) each independently wanted their own `scripts/lib/<area>/<file>.{cjs,json}` SoT path. Without this phase, four separate manifest formats + four CI drift gates would ship; with it, one unified root + one CI gate + one schema directory covers all four.
+
+**Depends on**: Phase 28.5 (skill-authoring-contract — first downstream consumer of `manifest/skills.json`). Phase 42 (gdd-detect — first phase to ship under post-consolidation discipline). Soft-coupled to Phase 43, 44, 45, 47 (they all read from `manifest/` once it lands).
+
+**Target version**: v1.42.5 *(decimal — CHANGELOG-only per convention)*.
+
+**Why this phase exists**: A 2026-05-16 audit found that Phase 43 / 44 / 45 / 47 each scope a "single source of truth" in their own corner — `scripts/lib/build/harness-configs.cjs` (43), `scripts/lib/prose/denylist.json` (44), `reference/harness-matrix.json` (45), `scripts/skill-metadata.json` (47). Four "single sources" is a contradiction; each schema is hand-crafted; CI drift gates duplicate plumbing. Phase 42.5 lands the consolidation **before** the four consumer phases plan their work, so each plan can target the shared root from day one rather than refactoring later.
+
+**Success Criteria**:
+
+1. **`scripts/lib/manifest/`** directory exists with subdirs:
+   - `manifest/harnesses.{cjs,json}` — runtime config (43) + machine-readable matrix (45) as two views of one canonical record.
+   - `manifest/skills.json` — skill metadata (47).
+   - `manifest/prose-denylist.json` — AI-tell denylist (44).
+   - `manifest/schemas/` — JSON Schema for each manifest file; one Ajv validator entrypoint.
+   - `manifest/index.cjs` — typed readers exporting `readHarnesses()`, `readSkills()`, `readProseDenylist()` with caching.
+2. **`scripts/lib/manifest/loader.cjs`** — shared loader used by all four consumer phases; handles file-not-found gracefully (returns empty manifest with warning) so phases shipping out-of-order don't crash.
+3. **`scripts/lib/manifest/README.md`** — documents the contract: who writes which file, when, and CI drift expectations.
+4. **`scripts/validate-manifest.cjs`** — single CI entrypoint replacing per-file drift gates from 43/44/45/47.
+5. **Cross-phase migration plan** — each of 43/44/45/47 plan-phase artifacts gains a "use `manifest/` root" line in success criteria; existing `scripts/lib/build/`, `scripts/lib/prose/`, `reference/harness-matrix.json`, and `scripts/skill-metadata.json` are either symlinks or shim re-exports during their phase's plan-phase.
+6. **Phase 47 SoT-consolidation paragraph** (currently inline in Phase 47 body) gets reduced to "see Phase 42.5".
+7. Regression baseline at `test-fixture/baselines/phase-42.5/`: empty-manifest behavior; valid-fixture round-trip; CI drift detection.
+
+**Scope:** ~3 plans across 2 waves.
+
+- **Wave A — Directory + loader + schemas (2 plans, parallel-safe):**
+  - [ ] 42.5-01-PLAN.md — Create `scripts/lib/manifest/` skeleton + `loader.cjs` + schemas dir + `index.cjs` typed readers. (MANIFEST-01)
+  - [ ] 42.5-02-PLAN.md — `scripts/validate-manifest.cjs` CI entrypoint + README.md contract doc; update Phase 47 body to delegate SoT-consolidation paragraph. (MANIFEST-02)
+
+- **Wave B — Closeout (1 plan):**
+  - [ ] 42.5-03-PLAN.md — **Phase closeout**: regression baseline; cross-phase migration plan stub for 43/44/45/47 (each phase's plan-phase reads this); CHANGELOG v1.42.5; **roadmap closeout (rule #14)**. (MANIFEST-03)
+
+**Explicitly out of scope**: implementing 43/44/45/47 content (those phases ship their own data); hand-rolling per-domain validation logic (Ajv covers JSON Schema); unifying with `reference/*.md` markdown registries (Phase 14.5 territory — different consumer pattern); auto-generating frontmatter from manifest (Phase 47 territory).
+
+**Open questions for `/gsd-discuss-phase 42.5`**: manifest file format (JSON-only vs JSON + `.cjs` typed re-export — default both); loader caching strategy (read-once vs file-mtime invalidation — default file-mtime); migration shim lifetime (1 minor vs major version — default 1 minor matching Phase 31.5 precedent).
+
+---
+
 ### Phase 43: Multi-Harness Source Compilation — One Skill Source, N Provider Bundles
 
 **Goal**: Author each skill once with `{{model}}`, `{{command_prefix}}`, `{{config_file}}`, `{{ask_instruction}}` placeholders in `source/skills/` and compile per-harness bundles into `dist/<harness>/.<configDir>/skills/...` via a transformer-factory pattern. Closes the gap between the README's claim of 13 supported harnesses and the current reality where skill prose says "Claude Code" and `/gdd:` verbatim regardless of target. Compile-time complement to **Phase 27**'s runtime peer-CLI dispatch and **Phase 32**'s runtime per-harness `inject-using-gdd.sh` emitter — together they make the multi-harness story honest end-to-end at both build-time *and* run-time. Inspired by `pbakaus/impeccable`'s `scripts/build.js` + `scripts/lib/transformers/factory.js` (11 provider configs, one config object per new harness).
@@ -2775,13 +2816,7 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 2. **Pin honors metadata catalogue**: argument hints + descriptions + allow-lists for alias stubs come from `skill-metadata.json`, never from runtime frontmatter scrape.
 3. **`scripts/lib/manifest/skills.json`** single source: `{<skill-id>: {description, argument_hint?, allowed_tools?, parallel_safe?, reads_only?, registered_in_phase}}`. All 70 skills migrated. JSON Schema + Ajv in CI.
 
-> **2026-05-16 SoT consolidation note (cross-cutting 43/44/45/47)**: instead of four separate single-sources-of-truth scattered across `scripts/lib/`, all four (harnesses, prose denylist, skills, harness matrix) live under `scripts/lib/manifest/` as a unified manifest root:
-> - `scripts/lib/manifest/harnesses.{cjs,json}` (consolidates Phase 43's `harness-configs.cjs` + Phase 45's `harness-matrix.json` — runtime config + machine-readable matrix are two views of one canonical record)
-> - `scripts/lib/manifest/skills.json` (Phase 47)
-> - `scripts/lib/manifest/prose-denylist.json` (Phase 44)
-> - `scripts/lib/manifest/index.cjs` exporting typed readers for all four
->
-> Each consuming phase ships its loader against the unified root; one CI drift gate covers all four; one JSON Schema dir at `scripts/lib/manifest/schemas/`. Phase whose plan-phase runs first creates the directory; subsequent phases extend it.
+> **2026-05-16 SoT consolidation**: see **Phase 42.5 (SoT Manifest Consolidation)** — promoted from inline note to its own phase. Phase 42.5 ships `scripts/lib/manifest/` directory + loader + CI drift gate BEFORE this phase plans its work; Phase 47's `skill-metadata.json` reads from `manifest/skills.json` from day one (no separate SoT).
 4. **Frontmatter generation**: `scripts/generate-skill-frontmatter.cjs` reads metadata + body, regenerates frontmatter. Idempotent. CI drift gate: committed = generated. Invoked by Phase 43's compile pipeline if shipped.
 5. **Description budget**: `validate-frontmatter` extended with `description.length ≤ 1024` check. Existing skills audited and trimmed in plan 47-01 (CHANGELOG notes any user-visible description shortened beyond paraphrase).
 6. **Harness-config sharing with Phase 43**: pin discovery uses `scripts/lib/manifest/harnesses.cjs` if 43 has shipped; ships own minimal copy at `scripts/lib/pin/harness-detect.cjs` otherwise (plan in 43 unifies later).
@@ -3073,6 +3108,69 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 
 ---
 
+## Parallelization: Phase 48 ⊥ Phase 49 (Impeccable-Wave Tail)
+
+Phase 48 (`/gdd:live`) and Phase 49 (Audit & Pillar Expansion, was Phase 35) are the heaviest fingers at the tail of the impeccable-gap closeout wave — together they account for ~20 plans (48: 11 plans across 4 waves; 49: ~9 plans across 4 waves). Their dependency graphs intersect on Phase 42 + Phase 44, but **diverge after that**, which lets them run in parallel.
+
+**Why parallel is safe:**
+
+| Phase | Hard deps |
+|-------|-----------|
+| 48 | 14, 22, 23, **42, 43, 46** |
+| 49 | 15, 19, 25, 28, **42, 44** |
+
+Shared: Phase 42 only. Distinct: 48 needs 43 + 46 (multi-harness compile + canonical refs); 49 needs 44 + 28 (STYLE.md denylist + Tier-2 refs).
+
+**Touched-file overlap audit** (gates whether parallel worktrees are safe):
+
+- **48 touches**: `skills/live/`, `scripts/lib/live/`, `agents/*executor*` (read-only), `connections/preview.md`, `dist/<harness>/.../skills/live/` (Phase 43 compile-time output), `test-fixture/baselines/phase-48/`.
+- **49 touches**: `agents/copy-auditor.md`, `agents/design-auditor.md` (6→7 pillar migration — scoring contract version bump), `agents/design-debt-crawler.md`, `agents/brief-auditor.md`, `hooks/gdd-a11y-gate.js`, `reference/copy-quality.md`, `reference/debt-categories.md`, `reference/brief-quality-rubric.md`, `test-fixture/baselines/phase-49/`.
+
+**Zero file overlap.** 48 lives in the live-mode skill + browser-runtime surface; 49 lives in audit-pillar + agents surface.
+
+**Recommended schedule** (Opus velocity, 1 developer + AI, assumes 42 + 43 + 44 + 46 already shipped):
+
+```
+Day 1: Phase 48 Wave A (3 runtime/detection plans, parallel) ──┐
+       Phase 49 Wave A (3 copy-pillar plans, parallel)        ─┼─ parallel worktrees
+Day 2: Phase 48 Wave B (3 generation/post-check plans)        ──┐
+       Phase 49 Wave B (2 debt-crawler plans)                  ─┼─ parallel worktrees
+Day 3: Phase 48 Wave C (3 session/integration plans)          ──┐
+       Phase 49 Wave C (3 brief-critic + a11y-gate plans)      ─┼─ parallel worktrees
+Day 4: Phase 48 Wave D (2 multi-harness + closeout)           ──┐
+       Phase 49 Wave D (1 closeout)                            ─┼─ parallel worktrees
+```
+
+**Parallel worktree layout:**
+
+- `wt-phase-48-live-mode` — Days 1–4
+- `wt-phase-49-audit-pillar` — Days 1–4
+
+**Coordination seams:**
+
+1. **`agents/design-auditor.md` scoring-contract bump** (49's Wave A) MUST land before 48 ships its post-check integration if 48 plans to consume the new pillar shape. Practical mitigation: 48 stays on 6-pillar shape until 49 merges; cross-link in 49's plan.
+2. **`test-fixture/baselines/` directory** sees both `phase-48/` and `phase-49/` added — merge conflicts limited to baseline registry index file (if Phase 12's index is updated). Both phases append, never edit existing entries.
+3. **Phase 42's `gdd-detect`** is consumed by both: 48 as variant post-check, 49 as debt-crawler deterministic substrate. No conflict (read-only consumer pattern).
+4. **`CHANGELOG.md`**: both phases append v1.48.0 / v1.49.0 entries. Merge order = ship order = 48 → 49 (numeric, but no hard requirement); merge conflicts limited to ordering of recent entries — trivial.
+
+**What NOT to parallelize:**
+
+- 49 Wave C (`hooks/gdd-a11y-gate.js`) MUST NOT overlap 25's quality-gate work if any followup ships (25 already shipped at v1.25.0 — safe today). Re-verify at 49 plan-phase time.
+- If Phase 46 (canonical domain reference index) is mid-flight when 48/49 start, both phases consume reference index entries — merge 46 first.
+
+**Per-phase Opus-velocity time estimates** (single developer + Opus, no human bottleneck on review):
+
+| Phase | Plans | Waves | Estimate |
+|-------|-------|-------|----------|
+| 48 | 11 | 4 | 2 days |
+| 49 | ~9 | 4 | 1.5 days |
+| **Total (sequential)** | **~20** | **8** | **~3.5 days** |
+| **Total (with parallelism)** | **~20** | **8** | **~2 days** |
+
+Net savings: ~1.5 days at the tail of the roadmap — meaningful for the final-version push.
+
+---
+
 ## Parallelization: Phases 20–23 (SDK Build-Out)
 
 The SDK build-out is the largest parallelizable unit in the roadmap — 54 plans across 4 phases, dominated by **disjoint module work**. Cross-phase parallelism is feasible because Phase 22 (observability) only needs Phase 20's event-stream foundation, not Phase 21's pipeline runner.
@@ -3260,6 +3358,7 @@ Phases 1 → 6 execute in numeric order. Phases 7 and 8 can run in parallel (see
 | 32. Skill Auto-Trigger Discipline + Defensive Guardrails — `reference/skill-authoring-contract.md` v2 hardening (always-emit `using-gdd` SessionStart contract + per-harness inject-format emitter) + `validate-skill-frontmatter.cjs` blocks ≥250-line SKILL.md + `tests/skill-trigger.test.cjs` golden-prompt suite confirms LLM picks the right skill | 0/? | Planned | v1.32.0 | Depends on Phase 28.5 |
 | 33. Skill Behavior Tests — Pressure-Scenario Harness — `tests/skill-behavior/` headless-runner harness invoking each skill against 3-tier scenario set (golden / ambiguous / adversarial); description-format A/B test catalogues which `<what>. Use when <triggers>.` phrasings rank skills correctly. Output feeds Phase 28.5 contract refinements. | 0/? | Planned | v1.33.0 | Depends on Phase 32, 21 (session-runner) |
 | 42. Deterministic Anti-Pattern CLI (`gdd-detect`) — standalone Node CLI for BAN-NN rules + rule-schema JSON + bidirectional reference linking + jsdom/Puppeteer optional + offline-isolated (static security test) + auditor/crawler integration | 0/8 (3+3+2 across 3 waves) | Planned | v1.42.0 | Depends on Phase 12. Soft: 49, 25, 33 |
+| **42.5. SoT Manifest Consolidation (INSERTED)** — `scripts/lib/manifest/` root (harnesses + skills + prose-denylist) + Ajv schemas + shared loader + single CI drift gate; consolidates the four separate SoTs scoped by Phases 43/44/45/47 into one unified manifest dir | 0/3 (2+1 across 2 waves) | Planned | v1.42.5 | Depends on Phase 28.5, 42 |
 | 43. Multi-Harness Source Compilation — `source/skills/` with placeholders → `dist/<harness>/.<configDir>/skills/...` via transformer factory; 13 provider configs; per-harness ZIP bundles | 0/8 (3+3+2 across 3 waves) | Planned | v1.43.0 | Depends on Phase 27, 28.5, 31.5. Soft: 32, 45 |
 | 44. Editorial Quality Floor — STYLE.md + `scripts/lint-prose.cjs` denylist (em-dashes, AI-tells: "load-bearing", "delves", "elevate", etc.) + frontmatter description denylist + locale handling | 0/5 (2+2+1 across 3 waves) | Planned | v1.44.0 | Depends on Phase 12, 28.5. Soft: 49 |
 | 45. Harness Capability Matrix — `HARNESSES.md` at repo root with `Last verified:` stamp + 60d warn / 180d fail freshness gate + `reference/harness-matrix.json` SoT + `scripts/verify-harness.cjs` workflow | 0/5 (2+2+1 across 3 waves) | Planned | v1.45.0 | Depends on Phase 26, 27. Soft: 43, 32 |
