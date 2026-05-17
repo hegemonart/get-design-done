@@ -105,6 +105,76 @@ interface RuntimeDetectModule {
 }
 const runtimeDetect = nodeRequire('../scripts/lib/runtime-detect.cjs') as RuntimeDetectModule;
 
+// Plan 27.5-01: bandit production-integration shim. Hides pull /
+// pullWithDelegate choice from the hook; reads adaptive_mode + frontmatter
+// tier_override under the same gating discipline as Phase 23.5 D-07 and
+// Phase 27.5 D-05.
+interface BanditIntegrationModule {
+  consultBandit(args: {
+    agent: string;
+    bin: string;
+    delegate: string;
+    agentFrontmatter: { tier_override?: string; default_tier?: string };
+    adaptiveMode?: 'static' | 'hedge' | 'full';
+    baseDir?: string;
+    posteriorPath?: string;
+  }): {
+    tier: 'haiku' | 'sonnet' | 'opus';
+    decision_log: {
+      source:
+        | 'frontmatter'
+        | 'tier_override_bypass'
+        | 'bandit_pull'
+        | 'bandit_pull_with_delegate';
+      samples?: Record<string, number> | Record<string, Record<string, number>>;
+      delegate?: string;
+      adaptive_mode: 'static' | 'hedge' | 'full';
+      reason?: string;
+    };
+  };
+  recordOutcome(args: unknown): void;
+  DELEGATE_NONE: 'none';
+}
+const banditIntegration = nodeRequire(
+  '../scripts/lib/bandit-router/integration.cjs',
+) as BanditIntegrationModule;
+
+// Plan 27.5-02: adaptive-mode module surfaces the single gating predicate.
+interface AdaptiveModeModule {
+  getMode(opts?: {
+    baseDir?: string;
+    budgetPath?: string;
+    quiet?: boolean;
+  }): 'static' | 'hedge' | 'full';
+  isBanditEnabled(opts?: { baseDir?: string; budgetPath?: string }): boolean;
+}
+const adaptiveMode = nodeRequire(
+  '../scripts/lib/adaptive-mode.cjs',
+) as AdaptiveModeModule;
+
+// Plan 27.5-02: bin selection helper for bandit (agent, bin) addressing.
+// budget-enforcer doesn't currently surface glob_count; default to 'medium'
+// as a safe per-agent partition until a future plan wires the real count.
+interface BanditRouterCoreModule {
+  binForGlobCount(n: number): 'tiny' | 'small' | 'medium' | 'large';
+  DEFAULT_DELEGATES: readonly string[];
+}
+const banditRouterCore = nodeRequire(
+  '../scripts/lib/bandit-router.cjs',
+) as BanditRouterCoreModule;
+
+// Plan 27.5-02: tier-resolver translates bandit tier → concrete model.
+interface TierResolverModule {
+  resolve(
+    runtime: string,
+    tier: string,
+    opts?: { silent?: boolean },
+  ): string | null;
+}
+const tierResolver = nodeRequire(
+  '../scripts/lib/tier-resolver.cjs',
+) as TierResolverModule;
+
 // ── Types ───────────────────────────────────────────────────────────────────
 
 /**
@@ -618,6 +688,50 @@ function emitCostRecorded(
   }
 }
 
+/**
+ * Plan 27.5-02 / D-03: emit `bandit.tier_selected` event when the bandit
+ * is consulted (regardless of whether it overrode the prior tier). The
+ * event captures the prior tier, the bandit's pick, the sampled posterior
+ * (when applicable), the delegate dimension, and the runtime tag so
+ * Phase 11 reflector (27.5-04) and `/gdd:bandit-status` (27.5-05) can
+ * reconstruct decision history without re-reading the posterior file.
+ *
+ * Fail-open like every other emit in this hook.
+ */
+function emitBanditTierSelected(
+  payload: {
+    agent: string;
+    bin: string;
+    prior_tier: string;
+    selected_tier: 'haiku' | 'sonnet' | 'opus';
+    source:
+      | 'frontmatter'
+      | 'tier_override_bypass'
+      | 'bandit_pull'
+      | 'bandit_pull_with_delegate';
+    delegate: string;
+    adaptive_mode: 'static' | 'hedge' | 'full';
+    samples?: unknown;
+    runtime: string;
+    model_id: string | null;
+    reason?: string;
+  },
+  cycle?: string,
+): void {
+  const ev = {
+    type: 'bandit.tier_selected',
+    timestamp: new Date().toISOString(),
+    sessionId: getSessionId(),
+    ...(cycle !== undefined && cycle !== 'unknown' ? { cycle } : {}),
+    payload,
+  };
+  try {
+    appendEvent(ev as unknown as HookFiredEvent);
+  } catch {
+    // Fail open.
+  }
+}
+
 // ── main ────────────────────────────────────────────────────────────────────
 
 async function readStdin(): Promise<string> {
@@ -905,12 +1019,142 @@ export async function main(): Promise<void> {
       ? routerDecision.runtime
       : runtimeDetect.detect()) ?? 'claude';
 
+  // ── Plan 27.5-02 — bandit consultation ────────────────────────────────────
+  //
+  // D-01 / D-02 / D-03 / D-07: per-spawn after `resolved_models` is computed,
+  // before the SDK call. Skip conditions (all silent — no event, no override):
+  //   - adaptive_mode !== 'full' (D-07)
+  //   - toolInput._tier_downgraded === true (80% downgrade fired upstream —
+  //     bandit must not undo budget)
+  //
+  // When bandit fires, override resolved_models[agent] through tier-resolver
+  // so downstream consumers see the bandit's pick as the actual model.
+  // model_tier_overrides[agent] is preserved (D-03 back-compat).
+  const currentMode = adaptiveMode.getMode({ quiet: true });
+  const priorTier = resolvedTier; // captured before bandit override
+  // Mutable references for the cost/telemetry path; bandit may rewrite.
+  let effectiveTier: string = resolvedTier;
+  let effectiveModelId: string | null = resolvedModelId;
+
+  if (currentMode === 'full' && toolInput._tier_downgraded !== true) {
+    // Bin defaults to 'medium' — budget-enforcer doesn't currently surface
+    // glob_count; future plan can wire it. Per-agent bandit arms still
+    // converge correctly under a fixed bin (Phase 23.5 D-08). The function
+    // call below makes the integration point explicit for future plans.
+    void banditRouterCore.binForGlobCount(0);
+    const bin = 'medium';
+
+    // Source the frontmatter view from the in-flight toolInput. The hook
+    // reads frontmatter indirectly: _default_tier carries the agent's
+    // declared default-tier, _tier_override (if any) carries an explicit
+    // override the router emitted. For bandit purposes, _tier_override
+    // means "operator has already taken control" — the shim returns
+    // source='tier_override_bypass' (no posterior side effect).
+    const agentFrontmatter: {
+      tier_override?: string;
+      default_tier?: string;
+    } = {};
+    if (
+      typeof toolInput._tier_override === 'string' &&
+      toolInput._tier_override.length > 0
+    ) {
+      agentFrontmatter.tier_override = toolInput._tier_override;
+    }
+    if (
+      typeof toolInput._default_tier === 'string' &&
+      toolInput._default_tier.length > 0
+    ) {
+      agentFrontmatter.default_tier = toolInput._default_tier;
+    }
+
+    // Delegate dimension: budget-enforcer doesn't currently see the
+    // agent's delegate_to: frontmatter (session-runner does). For 27.5-02
+    // we always consult the local-call slice (delegate='none'); 27.5-03
+    // wires delegate=<peer> for the recordOutcome side.
+    const banditDelegate = banditIntegration.DELEGATE_NONE;
+
+    let banditResult: ReturnType<
+      BanditIntegrationModule['consultBandit']
+    > | null = null;
+    try {
+      banditResult = banditIntegration.consultBandit({
+        agent,
+        bin,
+        delegate: banditDelegate,
+        agentFrontmatter,
+        adaptiveMode: currentMode,
+      });
+    } catch {
+      // Fail open — never let a bandit error block a spawn.
+    }
+
+    if (banditResult !== null) {
+      // Translate the bandit tier into a concrete model. The tier-resolver
+      // emits its own fallback events (tier_resolution_fallback /
+      // tier_resolution_failed) when the runtime row is incomplete, so we
+      // don't need to re-emit those here.
+      const banditModel = tierResolver.resolve(
+        runtimeId,
+        banditResult.tier,
+        { silent: true },
+      );
+
+      // Apply override only when:
+      //   1. bandit actually picked a different tier than priorTier
+      //      (no-op write avoided)
+      //   2. tier-resolver returned a non-null model (fall back to
+      //      existing resolvedModelId on null)
+      //   3. source is 'bandit_pull' or 'bandit_pull_with_delegate'
+      //      (frontmatter/bypass paths don't override resolved_models)
+      if (
+        banditResult.tier !== priorTier &&
+        banditModel !== null &&
+        (banditResult.decision_log.source === 'bandit_pull' ||
+          banditResult.decision_log.source === 'bandit_pull_with_delegate')
+      ) {
+        // Override resolved_models[agent] without touching
+        // model_tier_overrides[agent] (D-03 back-compat).
+        if (routerDecision !== undefined) {
+          const rm = routerDecision.resolved_models ?? {};
+          rm[agent] = banditModel;
+          routerDecision.resolved_models = rm;
+        }
+        // Also stamp _tier_override on toolInput so downstream readers
+        // see the bandit's pick.
+        toolInput._tier_override = banditResult.tier;
+        effectiveTier = banditResult.tier;
+        effectiveModelId = banditModel;
+      }
+
+      // Emit one bandit.tier_selected event regardless of override outcome
+      // (the event captures the decision, not the override side effect).
+      emitBanditTierSelected(
+        {
+          agent,
+          bin,
+          prior_tier: priorTier,
+          selected_tier: banditResult.tier,
+          source: banditResult.decision_log.source,
+          delegate: banditResult.decision_log.delegate ?? banditDelegate,
+          adaptive_mode: banditResult.decision_log.adaptive_mode,
+          samples: banditResult.decision_log.samples,
+          runtime: runtimeId,
+          model_id: effectiveModelId ?? resolvedModelId,
+          ...(banditResult.decision_log.reason !== undefined
+            ? { reason: banditResult.decision_log.reason }
+            : {}),
+        },
+        cycle,
+      );
+    }
+  }
+
   // Compute runtime-aware cost via the shared backend. Failures return
   // null cost; we emit the event regardless so the cost-aggregator sees
   // the lookup attempt (Phase 22 events.jsonl tagging).
   const costLookup = budgetBackend.computeCost({
-    model_id: resolvedModelId,
-    tier: resolvedTier,
+    model_id: effectiveModelId,
+    tier: effectiveTier,
     runtime: runtimeId,
     tokens_in: Number(toolInput._tokens_in_est ?? 0),
     tokens_out: Number(toolInput._tokens_out_est ?? 0),
@@ -920,8 +1164,8 @@ export async function main(): Promise<void> {
     {
       runtime: runtimeId,
       agent,
-      model_id: resolvedModelId ?? costLookup.model,
-      tier: costLookup.tier ?? resolvedTier,
+      model_id: effectiveModelId ?? costLookup.model,
+      tier: costLookup.tier ?? effectiveTier,
       tokens_in: Number(toolInput._tokens_in_est ?? 0),
       tokens_out: Number(toolInput._tokens_out_est ?? 0),
       cost_usd: costLookup.cost_usd,
@@ -932,7 +1176,7 @@ export async function main(): Promise<void> {
   // Branch E: standard spawn-allowed (includes tier-downgraded path).
   writeTelemetry({
     agent,
-    tier: resolvedTier,
+    tier: effectiveTier,
     tokens_in: Number(toolInput._tokens_in_est ?? 0),
     tokens_out: Number(toolInput._tokens_out_est ?? 0),
     cache_hit: false,

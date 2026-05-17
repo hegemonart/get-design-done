@@ -9,7 +9,7 @@ tools: Read, Bash
 
 ## Role
 
-You are a deterministic discovery skill. You do not spawn agents and do not delegate to peers. You read `scripts/lib/install/runtimes.cjs`, `scripts/lib/peer-cli/registry.cjs`, `.design/config.json`, and (optionally) `.design/intel/bandit-posterior.json`, then emit a single Markdown table summarizing peer-CLI status.
+You are a deterministic discovery skill. You do not spawn agents and do not delegate to peers. You read `scripts/lib/install/runtimes.cjs`, `scripts/lib/peer-cli/registry.cjs`, `.design/config.json`, and (optionally) `.design/telemetry/posterior.json` (the canonical path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), then emit a single Markdown table summarizing peer-CLI status.
 
 ## Invocation Contract
 
@@ -44,11 +44,29 @@ For each peer, run `which <peerBinary>` (POSIX) or `where <peerBinary>` (Windows
 
 Read `.design/config.json`. The path is `peer_cli.enabled_peers` — an array of peer-IDs. Default: `[]` (empty, opt-in required). If the file or path is missing, treat as empty.
 
-### 5. (Optional) Read posterior win-rate
+### 5. (Optional) Read posterior reward-delta
 
-If `.design/intel/bandit-posterior.json` exists, look up the per-peer last-N-cycle delta (cost or correctness, whichever is the bandit's primary signal). For each peer, compute the average reward delta vs the `delegate=none` arm. Render as `-12% cost (last 5 cycles)` or `(no data yet)` when fewer than 3 cycles of evidence exist.
+Phase 27.5 (v1.27.5) wired the bandit posterior into production. Once 27.5-02 (budget-enforcer consultation) + 27.5-03 (session-runner outcome recording) have fired across enough spawns, the posterior at `.design/telemetry/posterior.json` (the canonical path declared by `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`) carries per-`(agent, bin, delegate, tier)` arms with measured reward.
 
-If the posterior file does not exist, surface "(no data yet)" for every peer.
+For each peer-id in {gemini, codex, cursor, copilot, qwen}:
+
+1. Read `.design/telemetry/posterior.json`. If missing or malformed → render "(no data yet)".
+2. Filter the `arms` array into `peerArms` where `delegate === <peer-id>` and `localArms` where `delegate === 'none'` OR `delegate === undefined` (the Phase 23.5 legacy slice is treated as the local-call slice).
+3. If `peerArms` is empty OR `localArms` is empty → "(no data yet)".
+4. Compute pooled posterior means:
+   - `peerMean = sum(arm.alpha across peerArms) / (sum(arm.alpha across peerArms) + sum(arm.beta across peerArms))`
+   - `localMean = sum(arm.alpha across localArms) / (sum(arm.alpha across localArms) + sum(arm.beta across localArms))`
+5. Compute `delta_pct = (peerMean - localMean) / localMean`.
+6. Require minimum sample evidence: `sum(arm.count)` for `peerArms` AND for `localArms` must each be `>= 3`. Else "(no data yet)".
+7. Render delta as:
+   - `+X% reward` when `delta_pct > 0.01`
+   - `-X% reward` when `delta_pct < -0.01`
+   - `~equal` when `abs(delta_pct) < 0.01`
+   Where X = `Math.round(abs(delta_pct) * 100)`.
+
+The reward signal is the Phase 23.5 two-stage lexicographic (correctness first, cost as tiebreaker — see `scripts/lib/bandit-router.cjs` `computeReward()`). Cost-only deltas live in `scripts/lib/cost-arbitrage.cjs` (Phase 26-06) and are surfaced via the design-reflector.
+
+If the posterior file does not exist (e.g., fresh install with no spawns yet, or `adaptive_mode` is `static`/`hedge`), surface "(no data yet)" for every peer.
 
 ### 6. Render the table
 
@@ -59,8 +77,8 @@ Emit the table in this exact shape:
 
 | Peer    | Installed | Allowlisted | Claimed roles            | Posterior delta vs local |
 |---------|-----------|-------------|--------------------------|--------------------------|
-| codex   | ✓         | ✓           | execute                  | -12% cost (last 5 cycles)|
-| gemini  | ✓         | ✓           | research, exploration    | -8%                      |
+| codex   | ✓         | ✓           | execute                  | -12% reward              |
+| gemini  | ✓         | ✓           | research, exploration    | -8% reward               |
 | cursor  | ✗         | ✗           | debug, plan              | (not installed)          |
 | copilot | ✓         | ✗           | review, research         | (opt-in disabled)        |
 | qwen    | ✓         | ✓           | write                    | (no data yet)            |
@@ -73,8 +91,9 @@ Emit the table in this exact shape:
 Rules for the third column ("Posterior delta vs local"):
 - If `Installed = ✗` → `(not installed)`.
 - Else if `Allowlisted = ✗` → `(opt-in disabled)`.
-- Else if posterior data has fewer than 3 cycles → `(no data yet)`.
-- Else compute and render the delta.
+- Else if `.design/telemetry/posterior.json` is missing → `(no data yet)`.
+- Else if either peer-side or local-side has fewer than 3 pulls → `(no data yet)`.
+- Else compute the reward-delta per Step 5 and render `+X% reward`, `-X% reward`, or `~equal`.
 
 ### 7. Done
 

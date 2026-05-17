@@ -80,11 +80,129 @@ const rateGuard = _nodeRequire(
   ingestHeaders: (provider: string, headers: unknown) => Promise<unknown>;
 };
 
+// ── Plan 27.5-03 — Bandit posterior feedback loop ────────────────────────────
+//
+// `integration.cjs` is the Phase 27.5-01 production-integration shim for the
+// Phase 23.5 bandit posterior. It exposes `recordOutcome({agent, bin, delegate,
+// tier, status, costUsd, adaptiveMode, baseDir?, posteriorPath?})` which writes
+// the (status + cost) reward back to the posterior arm for the (agent × bin ×
+// tier × delegate) joint. Per CONTEXT D-04, the call fires AFTER every
+// `emit('session.completed', …)` site so the posterior reflects the measured
+// signal — correctness + cost.
+//
+// The shim is no-throw (best-effort write). The session-runner wraps each
+// `recordOutcome` call in its own try/catch as a defensive belt-and-braces
+// guard against future shim changes.
+const banditIntegration = _nodeRequire(
+  _resolve(_REPO_ROOT, 'scripts/lib/bandit-router/integration.cjs'),
+) as {
+  recordOutcome: (input: {
+    agent: string;
+    bin: string;
+    delegate?: string;
+    tier: string;
+    status: string;
+    costUsd?: number;
+    adaptiveMode?: 'static' | 'hedge' | 'full';
+    baseDir?: string;
+    posteriorPath?: string;
+  }) => void;
+  DELEGATE_NONE: string;
+};
+
+// ── Plan 27.5-03 — adaptive-mode read once per run ──────────────────────────
+//
+// `adaptive-mode.cjs.getMode({quiet: true})` reads `.design/budget.json` and
+// returns `'static' | 'hedge' | 'full'`. We cache the resolved mode locally
+// on each `run()` invocation so the recordOutcome calls at the 4 terminal
+// emit sites all see the same value (consistent gating per session).
+const adaptiveModeLib = _nodeRequire(
+  _resolve(_REPO_ROOT, 'scripts/lib/adaptive-mode.cjs'),
+) as {
+  getMode: (opts?: { baseDir?: string; budgetPath?: string; quiet?: boolean }) => 'static' | 'hedge' | 'full';
+};
+
 /** Rate-guard provider key for the Anthropic Agent SDK. */
 const RATE_GUARD_PROVIDER = 'anthropic';
 
 /** Default retries (first attempt + 1 retry). */
 const DEFAULT_MAX_RETRIES = 2;
+
+/**
+ * Default bin marker for bandit posterior writes from session-runner.
+ *
+ * Per CONTEXT D-12, session-runner uses a deterministic placeholder bin
+ * (`'medium'`) for now; real complexity-class-based bin selection is
+ * deferred to a later plan. This matches the 27.5-02 budget-enforcer
+ * convention so the (agent × bin) posterior slices stay consistent
+ * across both write paths.
+ */
+const SESSION_RUNNER_DEFAULT_BIN = 'medium';
+
+/**
+ * Infer a tier ('opus' | 'sonnet' | 'haiku') from a model identifier.
+ *
+ * Used at the 4 terminal-emit sites where the final tier isn't already
+ * carried on `opts` — we fall back to inspecting `usage.model` (folded
+ * during the run loop from SDK chunks). Unknown / empty model names
+ * default to 'sonnet' (matches the DEFAULT_MODEL_RATE choice and is
+ * the safest middle tier for posterior arms).
+ */
+function tierFromModel(modelName: string | null | undefined): 'opus' | 'sonnet' | 'haiku' {
+  if (typeof modelName !== 'string' || modelName.length === 0) return 'sonnet';
+  const lower = modelName.toLowerCase();
+  if (lower.includes('opus')) return 'opus';
+  if (lower.includes('haiku')) return 'haiku';
+  return 'sonnet';
+}
+
+/**
+ * Best-effort bandit posterior write following `emit('session.completed', …)`.
+ *
+ * Per CONTEXT D-04: posterior updates happen AT the terminal emit site so the
+ * recorded reward reflects the same (status + cost) the rest of the system
+ * just observed. The shim (`integration.cjs`) is no-throw and short-circuits
+ * silently in static/hedge mode; the outer try/catch here is a defensive
+ * belt-and-braces guard for any future shim change.
+ *
+ * Failures NEVER bubble out — the session-runner contract is that `run()`
+ * never throws, and that contract MUST hold even when telemetry is broken.
+ */
+function _recordBanditOutcome(input: {
+  agent: string;
+  bin: string;
+  delegate: string;
+  tier: string;
+  status: string;
+  costUsd: number;
+  adaptiveMode: 'static' | 'hedge' | 'full';
+}): void {
+  try {
+    banditIntegration.recordOutcome({
+      agent: input.agent,
+      bin: input.bin,
+      delegate: input.delegate,
+      tier: input.tier,
+      status: input.status,
+      costUsd: input.costUsd,
+      adaptiveMode: input.adaptiveMode,
+    });
+  } catch (err) {
+    // Defensive: shim is no-throw, but a future change could regress.
+    // Telemetry failure must never break a session — swallow.
+    if (process.env['GDD_BANDIT_DEBUG'] === '1') {
+      try {
+        process.stderr.write(
+          '[session-runner] _recordBanditOutcome swallowed: ' +
+            (err instanceof Error ? err.message : String(err)) +
+            '\n',
+        );
+      } catch {
+        /* swallow */
+      }
+    }
+  }
+}
 
 // ── Plan 27-06 — Peer-CLI delegation primitives ─────────────────────────────
 //
@@ -680,6 +798,22 @@ export async function run(opts: SessionRunnerOptions): Promise<SessionResult> {
   const toolCalls: SessionResult['tool_calls'] = [];
   const usage = { input: 0, output: 0, model: null as string | null };
   let turns = 0;
+
+  // -- 3a. Resolve adaptive-mode once for the entire session (Plan 27.5-03). --
+  // Cached locally so all four `recordOutcome()` call sites below see the
+  // same gating decision (consistent posterior-write semantics across
+  // rate-limit, peer, turnCap=0, and terminal-completion paths).
+  //
+  // Wrapped in try/catch because adaptive-mode.getMode reads
+  // `.design/budget.json`; a broken fs.readFile / JSON.parse must not
+  // crash the session before it even starts. Fallback = 'static' which
+  // short-circuits the recordOutcome shim (no-op).
+  let adaptiveMode: 'static' | 'hedge' | 'full' = 'static';
+  try {
+    adaptiveMode = adaptiveModeLib.getMode({ quiet: true });
+  } catch {
+    // swallow — fallback to 'static' means no posterior writes
+  }
   let finalText: string | undefined;
 
   // -- 4. Emit session.started. -------------------------------------------
@@ -718,6 +852,20 @@ export async function run(opts: SessionRunnerOptions): Promise<SessionResult> {
       usage: result.usage,
       transcript_path: transcriptPath,
       sanitizer: { applied: [...result.sanitizer.applied], removedSections: [...result.sanitizer.removedSections] },
+    });
+    // Plan 27.5-03 — feedback loop. Posterior records the
+    // measured outcome (status + cost) for the (agent × bin × tier × delegate)
+    // slice. The rate-limit preflight failure path has no peer dispatch and no
+    // usage data (zero cost), so delegate=DELEGATE_NONE and tier falls back to
+    // 'sonnet' via tierFromModel(null). Shim no-ops in static/hedge mode.
+    _recordBanditOutcome({
+      agent: opts.stage,
+      bin: SESSION_RUNNER_DEFAULT_BIN,
+      delegate: banditIntegration.DELEGATE_NONE,
+      tier: tierFromModel(usage.model),
+      status: result.status,
+      costUsd: result.usage.usd_cost,
+      adaptiveMode,
     });
     transcript.close();
     return result;
@@ -765,6 +913,37 @@ export async function run(opts: SessionRunnerOptions): Promise<SessionResult> {
       transcript_path: transcriptPath,
       sanitizer: { applied: [...peerResult.sanitizer.applied], removedSections: [...peerResult.sanitizer.removedSections] },
     });
+    // Plan 27.5-03 — feedback loop, peer path. The
+    // delegate dimension is the peer name parsed from opts.delegateTo (e.g.
+    // 'gemini-research' → 'gemini'). Per CONTEXT D-04 we use the peer name
+    // for the delegate slice of the posterior so peer-success arms get the
+    // reward signal separately from local arms. Tier is 'sonnet' by default
+    // since the peer adapter doesn't surface a model identifier in v1.27.
+    // Re-parse opts.delegateTo here — tryDelegate already validated it but
+    // didn't expose the peer name on the returned SessionResult.
+    const _peerParsed = parseDelegateTo(opts.delegateTo);
+    const _delegate = _peerParsed !== null
+      ? _peerParsed.peer
+      : banditIntegration.DELEGATE_NONE;
+    // Tier resolution priority for the peer path:
+    //   1. opts.delegateTier when it's a bare tier name (opus/sonnet/haiku)
+    //   2. tierFromModel(opts.delegateTier) when it's a model id string
+    //   3. tierFromModel(usage.model) fallback
+    // tierFromModel() is safe for any string and returns 'sonnet' on miss,
+    // so the second branch covers both bare-tier and model-id inputs.
+    const _peerTier: 'opus' | 'sonnet' | 'haiku' =
+      typeof opts.delegateTier === 'string' && opts.delegateTier.length > 0
+        ? tierFromModel(opts.delegateTier)
+        : tierFromModel(usage.model);
+    _recordBanditOutcome({
+      agent: opts.stage,
+      bin: SESSION_RUNNER_DEFAULT_BIN,
+      delegate: _delegate,
+      tier: _peerTier,
+      status: peerResult.status,
+      costUsd: peerResult.usage.usd_cost,
+      adaptiveMode,
+    });
     transcript.close();
     if (opts.signal !== undefined) opts.signal.removeEventListener('abort', onExternalAbort);
     return peerResult;
@@ -795,6 +974,18 @@ export async function run(opts: SessionRunnerOptions): Promise<SessionResult> {
       usage: result.usage,
       transcript_path: transcriptPath,
       sanitizer: { applied: [...sanResult.applied], removedSections: [...sanResult.removedSections] },
+    });
+    // Plan 27.5-03 — feedback loop, turnCap=0 path. No
+    // SDK call was ever made, so no peer involvement and no model id was
+    // ever observed. Reward will be 0 (status !== 'completed') with cost 0.
+    _recordBanditOutcome({
+      agent: opts.stage,
+      bin: SESSION_RUNNER_DEFAULT_BIN,
+      delegate: banditIntegration.DELEGATE_NONE,
+      tier: tierFromModel(usage.model),
+      status,
+      costUsd: result.usage.usd_cost,
+      adaptiveMode,
     });
     transcript.close();
     if (opts.signal !== undefined) opts.signal.removeEventListener('abort', onExternalAbort);
@@ -889,6 +1080,21 @@ export async function run(opts: SessionRunnerOptions): Promise<SessionResult> {
     usage: result.usage,
     transcript_path: transcriptPath,
     sanitizer: { applied: [...sanResult.applied], removedSections: [...sanResult.removedSections] },
+  });
+  // Plan 27.5-03 — feedback loop, terminal main-loop path.
+  // This is the dominant write site: covers natural completion, budget cap,
+  // turn cap (after first turn), abort, and error (post-retry-exhaustion).
+  // Tier is inferred from the model actually observed during the run
+  // (usage.model). Delegate=DELEGATE_NONE because tryDelegate either returned
+  // null (we wouldn't be here otherwise) or wasn't invoked at all.
+  _recordBanditOutcome({
+    agent: opts.stage,
+    bin: SESSION_RUNNER_DEFAULT_BIN,
+    delegate: banditIntegration.DELEGATE_NONE,
+    tier: tierFromModel(usage.model),
+    status: result.status,
+    costUsd: result.usage.usd_cost,
+    adaptiveMode,
   });
 
   return result;

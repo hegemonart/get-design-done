@@ -151,6 +151,58 @@ Render each `cost_arbitrage` entry into the Proposals section as a `[BUDGET]`-ta
 
 ---
 
+### 8. Bandit-arbitrage analysis (Phase 27.5 — D-10)
+
+**Why this exists:** Phase 27.5 (v1.27.5) wired the bandit posterior + delegate dimension into production. The posterior now accumulates per-`(agent, bin, delegate, tier)` win-rates from real spawns. Once the posterior has enough data, the bandit's best-arm tier for an agent may differ from that agent's frontmatter `default-tier:` — a measurement signal that the frontmatter is stale. This section surfaces that signal as a `[FRONTMATTER]` proposal.
+
+**Data sources:**
+
+- `.design/telemetry/posterior.json` — the bandit posterior file written by Phase 23.5's `bandit-router.cjs` + Phase 27.5-02/03's production callers. Path matches `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`. If the file does not exist, skip this section with note "posterior.json not found — Phase 27.5 wiring required."
+- `agents/*.md` — read each agent's frontmatter `default-tier:` value. The reflector already parses frontmatter in Section 3 ("Agent Performance"); reuse that parse pass and build a `{agent: defaultTier}` map keyed by the agent's `name:` field.
+
+**The rule:**
+
+For each `(agent, bin)` slice in the posterior (defaulting to `delegate='none'` arms — focuses on local-call routing):
+
+1. Compute per-tier posterior mean = `α / (α + β)` and stddev = `sqrt(αβ / ((α+β)² · (α+β+1)))`.
+2. Identify `posterior_best_tier = argmax(mean)` across the tiers present in the slice.
+3. Gates (all must hold to emit):
+    - `sum(arm.count)` across the slice's tier rows >= 3 (D-10's "3+ cycles" proxy).
+    - `(best_mean - second_best_mean) / second_best_mean >= 0.5` (50% delta heuristic).
+    - `stddev(best_tier) < 0.05` (credible interval narrow enough).
+    - `frontmatter[agent].default-tier !== posterior_best_tier` (the actual stale signal).
+4. If all gates hold, emit a structured `bandit_arbitrage` proposal.
+
+**Important guardrails (failure modes the rule must avoid):**
+
+- **Single-tier-only history is silent.** If only one tier has been pulled for `(agent, bin)`, no comparison is possible — emit nothing rather than a misleading "winner" proposal.
+- **Wide credible intervals are silent.** Bandit posteriors are noisy early on; the 0.05 stddev gate ensures we only surface signals where the bandit is confident.
+- **The 50% threshold is a starting heuristic.** Same discipline as cost-arbitrage Section 7 — bandit-learning over which arbitrage proposals were APPLIED (and whether the posterior subsequently shifted) is a separate (future) phase.
+- **delegateFilter='none' is the v1.27.5 default.** Arbitrage analysis on the 5 peer-delegate slices is left for a future plan; current peer data is too sparse to credibly disagree with frontmatter.
+
+**Helper:** `scripts/lib/bandit-arbitrage.cjs` exports `analyze(posterior, options) → proposals[]` implementing the above rule deterministically. The executor agent following this skill loads the posterior via `bandit-router.loadPosterior()`, builds the `{agent: defaultTier}` map from `agents/*.md` frontmatter, and passes both to `analyze()`. No re-derivation of the rule in prose — call the helper.
+
+**Proposal output shape** (one entry per stale-frontmatter signal, JSON-serializable for `/gdd:apply-reflections`):
+
+```json
+{
+  "type": "bandit_arbitrage",
+  "agent": "design-verifier",
+  "bin": "medium",
+  "current_frontmatter_tier": "sonnet",
+  "posterior_best_tier": "opus",
+  "posterior_mean": { "haiku": 0.50, "sonnet": 0.62, "opus": 0.95 },
+  "posterior_stddev": { "haiku": 0.04, "sonnet": 0.03, "opus": 0.02 },
+  "pull_count": 18,
+  "proposal": "design-verifier (medium bin) frontmatter says sonnet but bandit picks opus (posterior mean 0.950 vs 0.620, 18 pulls, stddev 0.020) — update frontmatter or add tier_override: sonnet if intentional",
+  "evidence": "posterior_cred_int_narrow"
+}
+```
+
+Render each `bandit_arbitrage` entry into the Proposals section as a `[FRONTMATTER]`-tagged proposal carrying the structured payload verbatim. `/gdd:apply-reflections` routes the proposal to either (a) an `agents/<name>.md` frontmatter `default-tier:` update OR (b) a new `tier_override: <existing-tier>` add when the operator explicitly wants to keep the existing default-tier despite the measured drift.
+
+---
+
 ## Proposals
 
 After all sections, write a **Proposals** section. Number proposals sequentially. Every proposal must include evidence — no vague observations.
