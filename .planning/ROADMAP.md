@@ -85,6 +85,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] [Phase 27.5](#phase-275-bandit-production-integration-inserted) — Bandit Production Integration — INSERTED — v1.27.5
 - [ ] [Phase 27.6](#phase-276-pipeline-performance--token-cost-optimization-inserted) — Pipeline Performance + Token-Cost Optimization — **NEW (INSERTED 2026-05-16)** — v1.27.6
+- [ ] [Phase 27.7](#phase-277-gdd-mcp-server-inserted) — GDD MCP Server — **NEW (INSERTED 2026-05-17)** — v1.27.7
 - [ ] [Phase 28](#phase-28-foundational-references-tier-2--color-composition-proportion-i18n) — Foundational References Tier 2 — v1.28.0
 - [ ] [Phase 28.5](#phase-285-skill-authoring-contract--skill-rework--project-artifacts-inserted) — Skill Authoring Contract + Skill Rework — INSERTED — v1.28.5
 - [ ] [Phase 29](#phase-29-capability-gap-telemetry--self-authoring-of-agentsskills) — Capability-Gap Telemetry + Self-Authoring — v1.29.0
@@ -1981,10 +1982,11 @@ Three distinct regressions in repo organization, all observable to anyone browsi
 6. **`package.json: files` is an explicit allowlist.** New value:
    ```
    ".claude-plugin/", "agents/", "skills/", "hooks/", "connections/",
-   "reference/", "bin/", "sdk/",
+   "reference/", "bin/", "sdk/", "recipes/",
    "scripts/install.cjs", "scripts/cli/",
    "SKILL.md", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE"
    ```
+   *(2026-05-17 addition: `recipes/` is in the allowlist as scaffolding even though it ships empty in Phase 31.5 — see SC #14.)*
    Drops `scripts/` wholesale, drops `scripts/{bootstrap*,rollback-release.sh,apply-branch-protection.sh,release-smoke-test.cjs,verify-version-sync.cjs,extract-changelog-section.cjs,detect-stale-refs.cjs,run-injection-scanner-ci.cjs,injection-patterns.cjs,validate-*.ts,codegen-*.ts,aggregate-agent-metrics.ts,e2e/,tests/}` from the tarball. Keeps `scripts/install.cjs` (the npm postinstall entry referenced in `package.json: bin`) and `scripts/cli/` (existing user-facing CLI dir referenced from `package.json: bin.gdd-events`).
 7. **`npm pack --dry-run` golden snapshot test.** New `tests/npm-tarball-contents.test.cjs` runs `npm pack --dry-run --json`, normalizes to a sorted file list, diffs against `test-fixture/baselines/phase-31-5/tarball-manifest.txt`. Fails build on any addition or removal. Phase 31.5 commits the **new** golden + a one-line audit explaining each file kept/dropped vs. v1.27.1.
 8. **All existing tests pass against new paths AND old shim paths.** `tests/gdd-sdk-cli.test.ts`, `tests/fixtures/gdd-sdk-cli/{baseline,scaffold-project}/`, `tests/agent-size-budget.test.cjs`, and any test importing from `scripts/lib/{cli,mcp-servers,gdd-state,event-stream,gdd-errors,error-classifier,iteration-budget,jittered-backoff,lockfile}` is re-run twice — once via new `sdk/` paths, once via the deprecated shim paths — both must pass. Test asserts that the deprecation warning fires exactly once per import.
@@ -1993,14 +1995,17 @@ Three distinct regressions in repo organization, all observable to anyone browsi
 11. **`.gitignore` cleanup.** Confirms `.planning/`, `REVIEW.md`, `tmp_*.png` are ignored. The exception block for `test-fixture/headless-e2e/.design/` (Plan 21-11) is preserved verbatim. Old admin-script ignore lines (`reference/BRANCH-PROTECTION.md`, `scripts/apply-branch-protection.sh`) become redundant once those files are dropped from `package.json: files` — kept anyway as defense-in-depth.
 12. **CHANGELOG explicit migration note.** `CHANGELOG.md` v1.28.0 entry includes: tarball-contents diff (every file added/removed), shim-path deprecation notice with v1.29.0 removal target, "if you imported from `node_modules/@hegemonart/get-design-done/scripts/lib/...` directly, switch to `sdk/...`" guidance.
 13. **Regression baseline at `test-fixture/baselines/phase-31-5/`**: tarball-manifest.txt (golden file list); deprecation-warning fixture (snapshot of the warning string); shim-import test fixture (one minimal program per shim path).
+14. **`recipes/` scaffold + loader contract** *(2026-05-17 addition; see [storybloq-architecture-lessons.md §4.5](research/storybloq-architecture-lessons.md))*: new top-level `recipes/` directory + `scripts/lib/recipe-loader.cjs` contract. Modelled on Storybloq's `src/autonomous/recipes/coding.json` + `loader.ts` pattern. Phase 31.5 ships the directory + loader **empty of recipes** — populated downstream: Phase 32 (skill-trigger recipes), Phase 33.6 (per-provider recipes incl. OpenRouter), Phase 26 (per-runtime/per-model capability recipes), Phase 23.5 (bandit-arm recipe shape). Loader contract: `loadRecipe(name): Recipe`, SHA-keyed cache, schema validator at `reference/schemas/recipe.schema.json`. Tests: malformed recipe rejected by validator; loader caches by SHA; empty `recipes/` directory produces no error; `package.json: files` includes `recipes/` (per SC #6).
+15. **`sdk/` barrel + import-path table in `sdk/README.md`** *(2026-05-17 addition; see [storybloq-architecture-lessons.md §4.5](research/storybloq-architecture-lessons.md))*: `sdk/index.ts` is a two-line barrel modelled on Storybloq's `src/index.ts` (`export * from "./state/index.js"; export * from "./event-stream/index.js"; ...`). `sdk/README.md` (≤120 lines per Phase 28.5) ships with a per-module **import-path table** (module path → public import → covered helpers → stability tag) and a "what the SDK is" header. Tests: `tests/sdk-barrel-exports.test.cjs` asserts every public name listed in the table resolves through the barrel; `tests/sdk-readme-import-paths.test.cjs` asserts each documented path is importable from a freshly packed tarball (uses the Phase 31.5 headless-E2E install fixture).
 
 **Scope:**
 
-- **Wave A — Stop the leak (1 plan, lands first, mergeable independently of B/C):**
+- **Wave A — Stop the leak + recipes scaffold (2 plans, land first, mergeable independently of B/C):**
   - [ ] 31-5-01-PLAN.md — `git rm --cached -r .planning/ REVIEW.md tmp_support_preview.png`; verify ignore rules; add CI guard test (`tests/no-private-files-tracked.test.cjs`); confirm local copies remain on disk (`-r --cached` is non-destructive). Single atomic commit. Does NOT rewrite history (out of scope; see "Out of scope" below). (HYG-01)
+  - [ ] 31-5-01b-PLAN.md — *(2026-05-17 addition; SC #14)* Scaffold top-level `recipes/` directory + `scripts/lib/recipe-loader.cjs` (`loadRecipe(name): Recipe`, SHA-keyed cache) + `reference/schemas/recipe.schema.json`. Ships empty of recipes — populated by Phase 32 / 33.6 / 26 / 23.5. Update `package.json: files` to include `recipes/`. Tests: `tests/recipe-loader.test.cjs` (cache hit/miss, malformed reject, empty-dir no-error). Single atomic commit. Mergeable independently of 31-5-01 and Waves B/C. (RECIPE-SCAFFOLD-01)
 
 - **Wave B — Collect SDK (3 plans, parallel-safe after A; require Wave A only because A is a quick low-risk landing that cleans the working tree before larger moves):**
-  - [ ] 31-5-02-PLAN.md — `git mv` SDK files into `sdk/` per Success Criterion 2; create `sdk/README.md` documenting public import paths; update `bin/gdd-sdk` trampoline path. (SDK-MV-01)
+  - [ ] 31-5-02-PLAN.md — `git mv` SDK files into `sdk/` per Success Criterion 2; create `sdk/index.ts` barrel + `sdk/README.md` documenting public import paths (per SC #15: two-line barrel modelled on Storybloq's `src/index.ts`; README ships with module → public-import → helpers → stability table; ≤120 lines per Phase 28.5); update `bin/gdd-sdk` trampoline path; add `tests/sdk-barrel-exports.test.cjs` + `tests/sdk-readme-import-paths.test.cjs`. (SDK-MV-01)
   - [ ] 31-5-03-PLAN.md — Add `bin/gdd-state-mcp` explicit shim (mirror of `bin/gdd-sdk` pattern); update `package.json: bin.gdd-state-mcp` to point at the shim instead of the raw `.ts`. Verify Windows shim generation. (SDK-MV-02)
   - [ ] 31-5-04-PLAN.md — Write deprecation-shim re-exports at all old paths; emit `DeprecationWarning` once per import; add `tests/sdk-shim-deprecation.test.cjs` asserting both the re-export works and the warning fires. (SDK-MV-03)
 
@@ -2171,6 +2176,13 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 7. **CI integration** opt-in: `npm run test:behavior` is a separate script, gated on `ANTHROPIC_API_KEY` being set. Does NOT block CI (LLM behavior non-determinism makes strict block-on-fail infeasible). Failures surface in `gsd-health` and reflector telemetry, not as build failures. Documented in CONTRIBUTING.md as a manual-review tool.
 8. **Regression baseline** at `test-fixture/baselines/phase-33/`: golden behavior snapshots from passing runs (deterministic-mode tooling using temperature=0 + same seed where supported), scenario manifest snapshots, A/B evidence summary, runner-output schema validation, stub-LLM smoke test golden.
 
+**Research reading list** *(added 2026-05-17 — consume during `/gsd-research-phase 33` and `/gsd-plan-phase 33`)*:
+
+- [storybloq-architecture-lessons.md §4.4](research/storybloq-architecture-lessons.md) — Storybloq's [MANUAL_TEST_PLAN.md](https://github.com/Storybloq/storybloq/blob/main/MANUAL_TEST_PLAN.md) is a formal checklist of 33 groups × ~80 checks covering yargs error UX, leaf-only counts, snapshot retention, slug normalisation, EPIPE handling, Unicode in slugs, boundary values (retention = 20 vs 21), concurrent writes, filesystem errors, JSON contract consistency, and help/version trace cleanliness. **Format is reusable verbatim** as the starting carcass for Phase 33's pressure-scenario harness; substitute their feature axis (snapshot/recap/export/handover) for our **skill** or **pipeline-stage** axis.
+- **Specific group transplants worth keeping**: group 1 (clean error UX on missing flag — applies to every `/gdd:*` skill); group 24–26 ("empty project full lifecycle" → "empty `.design/` full pipeline"); group 27 (Unicode normalisation — Russian / Cyrillic / emoji in design-decision content); group 29 (EPIPE handling on `gdd-events | head -1`-style pipes); group 30 (JSON contract consistency — every command supports `--format json`); group 32 (concurrent writes — directly tests Phase 20 lockfile guarantees).
+- **What does NOT transfer**: Storybloq's plan is checklist-only (manual). Phase 33 automates via `scripts/lib/skill-behavior/runner.cjs` (per SC #1). Borrow the **structure** (group taxonomy + per-check rubric format), keep our **automation** (manifest-driven runner + N-attempts + majority rule + telemetry-emit).
+- **Side-effect candidate**: spawn a sibling `MANUAL_TEST_PLAN.md` at repo root covering the **non-skill** surface (CLI ergonomics, install paths, MCP handshake from Phase 27.7, npm tarball contents). The fully-automated `tests/skill-behavior/` covers skill discipline; a thin manual plan covers what's expensive to automate. Surface as a Phase 33 plan-phase question.
+
 **Scope:**
 
 - **Wave A — Runner + schema (2 plans, parallel-safe):**
@@ -2274,6 +2286,12 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 5. **`agents/brief-auditor.md`** + **`reference/brief-quality-rubric.md`** — 5 anti-patterns (vague verbs, missing audience, immeasurable success criteria, scope creep, missing anti-goals); wired into tail `/gdd:brief` as a non-blocking warning surface (`/gdd:discuss brief` offered when issues found).
 6. **`hooks/gdd-a11y-gate.js`** extends Phase 25 `skills/quality-gate/SKILL.md` auto-detect list with `axe`/`pa11y`/`lighthouse` script-name matchers; failure-type schema gains `a11y` class; `agents/quality-gate-runner.md` classification + `design-fixer` routing extends to a11y findings.
 7. Regression baseline at `test-fixture/baselines/phase-49/` covers 7-pillar audit (with copy), 8-pillar audit (with copy + future expansion slot), retroactive crawler on a legacy fixture, brief auditor on vague-brief fixture, a11y-gate end-to-end on a fixture with `axe` configured.
+
+**Research reading list** *(added 2026-05-17 — consume during `/gsd-research-phase 49` and `/gsd-plan-phase 49`)*:
+
+- [storybloq-architecture-lessons.md §4.3](research/storybloq-architecture-lessons.md) — direct architectural template for the pillar-expansion mechanism. Reading order: `review-lenses/finding-schema.ts` (unified output shape across lenses) → smallest concrete lens (`review-lenses/lenses/accessibility.ts`) → `review-lenses/orchestrator.ts` → `review-lenses/activation.ts` (per-diff gating — implementation pattern for SC #6 `gdd-a11y-gate.js`) → `review-lenses/blocking-policy.ts` (three-axis severity × confidence × pillar verdict) → `review-lenses/cache.ts` (issue-key SHA cache that survives cycle re-runs). All paths under [Storybloq/storybloq:src/autonomous/](https://github.com/Storybloq/storybloq/tree/main/src/autonomous/review-lenses).
+- Apply pattern, not content: **lens shapes** transfer (pillar = lens), **lens names** do not (copy ≠ clean-code). Phase 49's copy pillar is new ground; the contract shape comes from Storybloq, the rubric content stays GDD-native (`reference/copy-quality.md`).
+- Side-effect candidate: standardising on `finding` schema (`severity`, `confidence`, `issue-key`, `location`, `suggested-fix`) lets `design-verifier`, `design-fixer`, and `quality-gate-runner` consume a single shape across all pillars. Surface this as a Phase 49 plan-phase question if not already covered.
 
 **Scope:** ~9 plans across 4 waves
 
@@ -2869,6 +2887,15 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 11. **Test surface** at impeccable depth: per-feature suites for wrap / reference / accept / inject / poll / server / session-store / browser-{session,source,regression} / completion / recovery; one e2e with 600s timeout. ~12 test files target.
 12. Regression baseline at `test-fixture/baselines/phase-48/`: deterministic e2e replay; session persistence across interrupt; degraded mode on non-Puppeteer harness.
 
+**Research reading list** *(added 2026-05-17 — consume during `/gsd-research-phase 48` and `/gsd-plan-phase 48`)*:
+
+- [storybloq-architecture-lessons.md §4.2](research/storybloq-architecture-lessons.md) — direct architectural template for the long-lived browser-session stack. Storybloq's `src/channel/` + `src/autonomous/{liveness,health-model,orphan-detector,context-pressure,subprocess-registry,status-writer,telemetry-writer}.ts` is the exact substrate Phase 48 will need.
+- **Reading order for `48-01-PLAN.md` (dev-server detect + browser launch)**: [`channel/companion-protocol.ts`](https://github.com/Storybloq/storybloq/blob/main/src/channel/companion-protocol.ts) → [`autonomous/subprocess-registry.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/subprocess-registry.ts) — registry pattern for tracking the Puppeteer/HMR pair (SC #6 session persistence) → [`autonomous/liveness.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/liveness.ts) + [`health-model.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/health-model.ts) — poll-and-recover for dev-server + browser pair (SC #11 recovery test).
+- **Reading order for `48-07-PLAN.md` (session persistence + resume)**: [`autonomous/orphan-detector.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/orphan-detector.ts) — reap zombie Puppeteer instances on `--resume` (SC #6 "continue from <last_event>") → [`autonomous/resume-marker.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/resume-marker.ts) → [`autonomous/status-writer.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/status-writer.ts) → [`channel/inbox-watcher.ts`](https://github.com/Storybloq/storybloq/blob/main/src/channel/inbox-watcher.ts) — file-watcher pattern on `.design/live-sessions/<session-id>.json` for external listeners.
+- **Reading order for `48-08-PLAN.md` (scope guard)**: [`channel/pty-permission-contract.ts`](https://github.com/Storybloq/storybloq/blob/main/src/channel/pty-permission-contract.ts) — tier-of-permissions model directly maps to SC #10 scope-guard (block writes outside enumerated source set).
+- **Reading order for `48-09-PLAN.md` (event-stream + bandit feed-through)**: [`autonomous/telemetry-writer.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/telemetry-writer.ts) — typed-event writer pattern (SC #8); [`autonomous/context-pressure.ts`](https://github.com/Storybloq/storybloq/blob/main/src/autonomous/context-pressure.ts) — backpressure on event-stream emit (mitigates flood from rapid `live_pick` storms).
+- **Apply pattern, not content**: Storybloq's stack manages code-task autonomy; Phase 48 manages design-iteration. The session-lifecycle, recovery, and observability patterns transfer; the stage-machine inside `autonomous/guide.ts` does not.
+
 **Scope:**
 
 - **Wave A — runtime + detection (3 plans, parallel-safe):**
@@ -2912,16 +2939,85 @@ A second motivator: Phase 32 ships `using-gdd` with a pure-trigger description (
 3. **Cache-warming policy refinement** — Phase 10.1's `gdd-cache-manager` gains a recency × frequency × cost heuristic for what to pre-warm; eviction tested.
 4. **Parallel-mapper concurrency tuning** — Phase 7's parallel mapper limit (currently fixed) becomes data-driven from `parallelism_verdict` events.
 5. **Prompt-deduplication pass** — detect cases where the same reference file is read by ≥3 agents in the same cycle; offer a shared-context injection (via Phase 14.5 retrieval-contract preamble).
-6. Regression baseline at `test-fixture/baselines/phase-27.6/`: synthetic cycle replay measures token-cost delta + cache-hit-rate.
+6. **`PreCompact` + `SessionStart` snapshot/recap hooks** *(2026-05-17 addition; see [storybloq-architecture-lessons.md §4.6](research/storybloq-architecture-lessons.md))*: `hooks/gdd-precompact-snapshot.js` writes an atomic snapshot of STATE.md sections + last-N event-chain entries to `.design/snapshots/<ts>.json` immediately before Claude Code compacts context, so post-compact reflection retains the session tail. `hooks/gdd-sessionstart-recap.js` emits a diff-since-last-snapshot summary at session boot. Harness-aware: Claude Code emits `PreCompact`, Codex does not — Codex falls back to a `pre-large-context-action` interception declared in `harness-matrix.json` (Phase 45 dependency; for v1.27.6 the Codex path is no-op with a one-line stderr notice). Tests on snapshot atomicity (lockfile-safe), recap diff correctness on a fixture, and absent-`PreCompact` harness fallback.
+7. Regression baseline at `test-fixture/baselines/phase-27.6/`: synthetic cycle replay measures token-cost delta + cache-hit-rate; snapshot atomicity fixture (interrupted-mid-write replay); recap-diff golden against fixture STATE.md transitions.
 
-**Scope:** ~5 plans across 2 waves.
+**Scope:** ~6 plans across 2 waves.
 
 - **Wave A — Measurement (2 plans):** `agents/perf-analyzer.md` + telemetry reader; `reference/perf-budget.md` + CI gate.
-- **Wave B — Optimizations + closeout (3 plans):** cache-warming heuristic refinement; parallel-mapper data-driven concurrency; prompt-dedup + shared-context injection + closeout.
+- **Wave B — Optimizations + hooks + closeout (4 plans):** cache-warming heuristic refinement; parallel-mapper data-driven concurrency; **`hooks/gdd-precompact-snapshot.js` + `hooks/gdd-sessionstart-recap.js` + harness-aware fallback** (storybloq §4.6 transplant); prompt-dedup + shared-context injection + closeout.
 
 **Explicitly out of scope**: cross-runtime cost arbitrage (Phase 26 territory); per-call model substitution (Phase 23.5 bandit territory); rewriting reference files to be shorter (Phase 46 territory).
 
 **Open questions for `/gsd-discuss-phase 27.6`**: regression-gate threshold (default 25%); cache-warming false-positive tolerance.
+
+---
+
+### Phase 27.7: GDD MCP Server (INSERTED)
+
+**Goal**: Ship a Model Context Protocol server (`gdd-mcp`) that exposes GDD's read-mostly project state — STATE.md sections, phases, decisions, plans, telemetry, intel slices, latest reflections — as typed MCP tools that import the **same** `sdk/*` modules the CLI uses. Sessions started against a GDD project pull context in 3 MCP calls instead of 100+ file reads.
+
+**Depends on**: Phase 20 (`sdk/mcp/gdd-state/server.ts` MCP scaffolding + lockfile-safe STATE reads — shipped), Phase 22 (event-chain JSONL as telemetry source — shipped), Phase 23 (`.design/intel/` slices — shipped), Phase 11 (`.design/reflections/` — shipped). Soft-coupled to Phase 31.5 (SDK reorg — if 31.5 lands first, MCP tools import from `sdk/state/*`, `sdk/event-stream/*`, `sdk/primitives/*`; if 27.7 lands first, the migration in 31.5 includes the MCP server in its `git mv` set). Soft-coupled to Phase 42.5 (SoT manifest consolidation — when `manifest/skills.json` lands, the `gdd_skills_list` tool reads it instead of globbing).
+
+**Target version**: v1.27.7 *(decimal — CHANGELOG-only per convention)*.
+
+**Why this phase exists** (research summary, see [`.planning/research/storybloq-architecture-lessons.md`](research/storybloq-architecture-lessons.md) §2 + §4.1):
+
+A 2026-05-17 architectural audit against Storybloq v1.2.0 produced measured evidence: the MCP-priming session loaded a same-size project in **3 seconds / ~32k tokens** vs **1 min 41 s / ~46.5k tokens** for file-reading priming on the same project. Per session: −30% tokens, 34× faster. Over 20 sessions on a typical user's project: ~282k tokens saved on context loading alone.
+
+GDD today has the substrate (STATE.md sections, event-chain, intel slices, reflections, decisions) but no MCP read surface. `/gdd:progress`, `/gdd:resume`, `/gdd:next`, the cold-boot of `/gdd:live` (Phase 48), and `/gdd:check-update --prompt` all currently pay the file-read cost. This phase is the lowest-cost, highest-leverage transplant available.
+
+**Success Criteria** (what must be TRUE):
+
+1. **`bin/gdd-mcp` shim** mirrors the `bin/gdd-state-mcp` pattern (Phase 31.5 SC #5). Trampoline executes `sdk/mcp/gdd-mcp/server.ts` under `--experimental-strip-types` (or post-31.5 the equivalent shipped path). Tests on Windows shim generation.
+2. **Auto-discovery of project root** — server walks up from CWD until it finds `.design/` OR `.planning/` OR `.claude-plugin/plugin.json`. Same algorithm Storybloq uses for `.story/`. Stdin/stdout MCP transport; no port allocation.
+3. **Tool set v1 — read-only, ≤12 tools.** Caps scope creep that produced Storybloq's 43-tool sprawl. Each tool wraps exactly one existing `scripts/lib/*.cjs` or `sdk/*` helper — **no new I/O code paths**:
+   - `gdd_status` — current cycle phase, branch, last-N decisions, last-N completed plans, blocker count.
+   - `gdd_phase_current` — current phase from STATE.md `<position>`.
+   - `gdd_phases_list` — phases from ROADMAP overview parse (status checkbox + version + name).
+   - `gdd_plans_list` — plans for the current phase from STATE.md `<plans>` block.
+   - `gdd_decisions_list` — D-XX decisions from STATE.md `<decisions>`, optionally filtered by status.
+   - `gdd_intel_get` — slice query against `.design/intel/` (slice id + optional shape filter).
+   - `gdd_telemetry_query` — typed reader over `.design/telemetry/*.jsonl` with `--type`, `--since`, `--limit`.
+   - `gdd_cycle_recap` — diff of STATE.md sections + decisions + completed plans since the last snapshot.
+   - `gdd_reflections_latest` — latest cycle reflection from `.design/reflections/`.
+   - `gdd_learnings_digest` — compact `lessons digest`-style summary of active learnings (≤5 KB).
+   - `gdd_events_tail` — last N events from event-chain with `--type` filter.
+   - `gdd_health` — read-only mirror of `gsd-health` output as MCP payload.
+4. **Zero write tools in v1.** Mutation surfaces (decision append, plan completion, blocker clear) are deferred to Phase 30 / Phase 41 needs. Static test asserts the tool registry contains zero tools whose name contains `_create`, `_update`, `_delete`, `_append`, `_clear`, `_write`, or `_set`.
+5. **Same TS modules as CLI** — `sdk/mcp/gdd-mcp/tools.ts` imports from `sdk/state/*`, `sdk/event-stream/*`, `scripts/lib/intel-store.cjs`, `scripts/lib/reflections-reader.cjs`, etc. Tool implementations are ≤30 LOC each — every implementation is a thin wrapper. Lint rule asserts no `fs.*` or `path.*` imports inside `sdk/mcp/gdd-mcp/tools.ts` directly (must go through `sdk/*` or `scripts/lib/*`).
+6. **Setup integration** — Phase 24 installer (`scripts/install.cjs`) gains an additive `--register-mcp` step that runs `claude mcp add gdd -s user -- gdd-mcp` for Claude Code, `codex mcp add gdd -- gdd-mcp` for Codex when detected. Idempotent. Tests on absent-`claude`-CLI and absent-`codex`-CLI fallback paths (silent skip with one-line stderr notice).
+7. **Skill-side adoption** — `skills/progress/SKILL.md`, `skills/resume/SKILL.md`, `skills/next/SKILL.md` each gain a fenced `## MCP path (preferred)` block citing the 2–3 MCP tools that load context fastest, with a `## File-read path (fallback)` block below for harnesses without MCP. Stage-skill bodies (`brief`, `explore`, `plan`, `design`, `verify`) untouched in this phase — adoption there is Phase 32 territory.
+8. **Discovery doc** — `sdk/mcp/gdd-mcp/README.md` (Phase 28.5-compliant, ≤120 lines): one-paragraph what+why, tool-by-tool input/output schema table, manual-register snippets for Claude Code and Codex, "when to prefer MCP vs file reads" decision rule (cribbed from Storybloq's `SESSION_PRIMING_COMPARISON.md` shape, GDD-specific numbers).
+9. **Benchmark baseline** — `test-fixture/baselines/phase-27-7/priming-benchmark.json` captures token + wall-clock cost of the 3-call MCP path vs the equivalent file-reading path on a synthetic fixture project. Goal is **≥30% token reduction** vs file-reading baseline (Storybloq measured −30%; expected GDD floor given the same architectural pattern). Failure surfaces as a Phase 27.7 success-criterion regression, not a CI build failure (LLM-driven flake on the file-reading side makes hard-block infeasible).
+10. **`scripts/install.cjs --doctor` extension** — detects whether `gdd-mcp` is registered with any harness; if not, prints a one-line nudge with the manual-register command. `gsd-health` gains a `MCP server: registered with claude | not registered | unknown` row.
+11. Regression baseline at `test-fixture/baselines/phase-27-7/`: tool-registry snapshot (12 tools listed, no write tools), one MCP-handshake fixture, priming-benchmark JSON, install-doctor fixture, headless E2E (Phase 31.5 pattern) packs → installs → server starts → handshake succeeds.
+
+**Scope:** ~7 plans across 3 waves.
+
+- **Wave A — Server + tool set (3 plans, parallel-safe):**
+  - [ ] 27-7-01-PLAN.md — `sdk/mcp/gdd-mcp/server.ts` (MCP boot, project-root discovery, transport, tool registration) + `bin/gdd-mcp` shim. Tests on handshake + project-root walk-up. (MCP-01)
+  - [ ] 27-7-02-PLAN.md — Tool set v1 implementations (≤30 LOC each) for the 12 read-only tools per SC #3. Tests on each tool's input schema + output shape + thin-wrapper assertion. (MCP-02)
+  - [ ] 27-7-03-PLAN.md — Lint rule asserting no direct `fs.*`/`path.*` in `tools.ts`; static test asserting zero write-tool names per SC #4. (MCP-03)
+
+- **Wave B — Adoption + setup (3 plans, parallel-safe after A):**
+  - [ ] 27-7-04-PLAN.md — `scripts/install.cjs --register-mcp` extension (Claude + Codex registration, idempotent, absent-CLI fallback). `gsd-health` MCP-status row. Tests on idempotent re-run + absent-CLI paths. (MCP-04)
+  - [ ] 27-7-05-PLAN.md — Skill-side adoption in `skills/progress/`, `skills/resume/`, `skills/next/` (`## MCP path (preferred)` + `## File-read path (fallback)` blocks). Tests on skill structural compliance (Phase 28.5 validator). (MCP-05)
+  - [ ] 27-7-06-PLAN.md — `sdk/mcp/gdd-mcp/README.md` (≤120 lines) + priming-benchmark fixture at `test-fixture/baselines/phase-27-7/priming-benchmark.json` capturing the −30% target on a synthetic project. (MCP-06)
+
+- **Wave C — Closeout (1 plan):**
+  - [ ] 27-7-07-PLAN.md — **Phase closeout**: regression baselines (tool-registry snapshot, MCP handshake fixture, install-doctor fixture, headless E2E); README + `plugin.json` + `marketplace.json` refresh (add `mcp-server`, `context-loading`, `cross-session` keywords); CHANGELOG v1.27.7 entry; **roadmap closeout (rule #14)**. (MCP-07)
+
+**Explicitly out of scope** (defer or reject):
+
+- **Write tools in v1.** `gdd_decision_append`, `gdd_blocker_clear`, `gdd_plan_complete`, etc. are deferred. Mutation belongs to slash-skills + lockfile-safe writers (Phase 20 surface), not to an MCP tool callable by any client. Re-examine when Phase 30 (issue reporter) or Phase 41 (team mode) shows demand.
+- **Tool sprawl past 12.** Storybloq grew to 43 tools because read + write + autonomous-mode + review-lens orchestration all share the surface. Our autonomous surface is `/gdd:do`; our review surface is `agents/*`; both speak to humans through skills, not MCP. Re-examine when measured token-cost data justifies an additional tool.
+- **Live (streaming) MCP resources.** Phase 48 (`/gdd:live`) handles long-lived browser sessions through `channel/`-style subprocess registry; MCP server stays request/response in v1.
+- **GraphQL-style query language inside `gdd_intel_get`.** Slice id + shape filter is sufficient for v1. Re-examine if Phase 42.5 consolidates the manifest to a queryable shape.
+- **Auto-disable / kill-switch.** Phase 30's `GDD_DISABLE_ISSUE_REPORTER=1` pattern is appropriate for an outbound surface; an inbound read-only MCP server doesn't need it. Skipping reduces sources of truth.
+- **Multi-project federation.** One server, one project root. Two GDD projects in two terminals = two MCP servers. Federation is a Phase 41 (team mode) question, not a 27.7 question.
+
+**Open questions for `/gsd-discuss-phase 27.7`**: tool count cap (default 12); benchmark target (default −30% token vs file-read on synthetic project); install registers MCP by default or opt-in (default: opt-in via `scripts/install.cjs --register-mcp`); doctor-nudge tone (default: one line, non-blocking, dismissable via `.design/config.json#mcp_nudge: false`).
 
 ---
 
