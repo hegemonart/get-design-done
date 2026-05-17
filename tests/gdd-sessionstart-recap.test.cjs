@@ -234,8 +234,8 @@ test('27.6-05: new_events_since_snapshot counted from events.jsonl by timestamp'
 test('27.6-05: latest snapshot is picked when multiple snapshots are present', () => {
   const dir = setupTmp('multi');
   try {
-    // Older snapshot
-    writeSnapshot(dir, '2026-05-18T10:00:00.000Z', {
+    // Older snapshot.
+    const olderPath = writeSnapshot(dir, '2026-05-18T10:00:00.000Z', {
       schema_version: '1.0.0',
       timestamp: '2026-05-18T10:00:00.000Z',
       cycle_id: 'v1.27.4',
@@ -243,8 +243,7 @@ test('27.6-05: latest snapshot is picked when multiple snapshots are present', (
       last_n_events: [],
       last_n_decisions: ['D-old: ancient'],
     });
-    // Small wait so mtimes differ deterministically; then newer snapshot.
-    // Use atomic writeFile to ensure newer mtime is later.
+    // Newer snapshot.
     const newerPath = writeSnapshot(dir, '2026-05-18T14:00:00.000Z', {
       schema_version: '1.0.0',
       timestamp: '2026-05-18T14:00:00.000Z',
@@ -253,9 +252,15 @@ test('27.6-05: latest snapshot is picked when multiple snapshots are present', (
       last_n_events: [],
       last_n_decisions: ['D-recent: from newer snapshot'],
     });
-    // Touch newer file again to ensure its mtime is the highest.
-    const now = Date.now() / 1000;
-    require('node:fs').utimesSync(newerPath, now, now);
+
+    // Force mtimes deterministically to defeat NTFS ~100ms resolution drift.
+    // Older = 1 hour ago; newer = now. Two-second spread guarantees the
+    // hook's mtime sort selects the newer file regardless of filesystem
+    // timestamp precision.
+    const fs = require('node:fs');
+    const nowSec = Date.now() / 1000;
+    fs.utimesSync(olderPath, nowSec - 3600, nowSec - 3600);
+    fs.utimesSync(newerPath, nowSec, nowSec);
 
     writeState(
       dir,
