@@ -5,8 +5,10 @@ first-run-nudge.sh
 gdd-bash-guard.js
 gdd-decision-injector.js
 gdd-mcp-circuit-breaker.js
+gdd-precompact-snapshot.js
 gdd-protected-paths.js
 gdd-read-injection-scanner.ts
+gdd-sessionstart-recap.js
 gdd-trajectory-capture.js
 gdd-turn-closeout.js
 hooks.json

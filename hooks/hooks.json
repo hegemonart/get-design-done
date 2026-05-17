@@ -24,6 +24,14 @@
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/first-run-nudge.sh\""
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-sessionstart-recap.js\""
+          }
+        ]
       }
     ],
     "PreToolUse": [
@@ -107,6 +115,16 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-turn-closeout.js\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-precompact-snapshot.js\""
           }
         ]
       }

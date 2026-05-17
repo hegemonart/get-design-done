@@ -168,6 +168,17 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     docs + baseline). Off-cadence because v1.27 line is the parent
   //     mainline; 27.5 is the integration-decimal phase per CONTEXT.md D-12.
   '1.27.5',
+  //   - 1.27.6 → Phase 27.6 Pipeline Performance + Token-Cost Optimization.
+  //     6 plans (27.6-01..27.6-06): perf-analyzer reflector + telemetry-reader
+  //     library + cost-regression detection; reference/perf-budget.md + CI
+  //     regression gate; cache-warming heuristic refinement (multiplicative
+  //     recency × frequency × cost); parallel-mapper data-driven concurrency
+  //     (min(cpu-1, last_optimum) capped at 8); PreCompact snapshot +
+  //     SessionStart recap hooks (storybloq §4.6 transplant); prompt-dedup
+  //     analyzer + closeout (4 manifests + CHANGELOG + docs + baseline).
+  //     Off-cadence because v1.27 line is the parent mainline; 27.6 is the
+  //     optimization-decimal phase per CONTEXT.md D-12.
+  '1.27.6',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

@@ -660,6 +660,13 @@
       "description": "Phase 27 peer-CLI delegation capability matrix — which peer (codex/copilot/cursor/gemini/qwen) claims which agent role, protocol (ACP/ASP), tie-break order, and opt-in gating semantics"
     },
     {
+      "name": "perf-budget",
+      "path": "reference/perf-budget.md",
+      "type": "meta-rules",
+      "phase": 27.6,
+      "description": "Phase 27.6 per-agent token-cost budget reference and CI regression-gate documentation; budgets sourced from current p50 + 25% buffer (D-05), CI gate fails on >25% regression vs baseline across 3 cycles (D-01); thresholds configurable via .design/budget.json"
+    },
+    {
       "name": "performance",
       "path": "reference/performance.md",
       "type": "heuristic",

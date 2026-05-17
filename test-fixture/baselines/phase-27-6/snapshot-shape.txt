@@ -1,0 +1,11 @@
+schema_version: 1.0.0
+fields_top_level: schema_version, timestamp, cycle_id, state_md_sections, last_n_events, last_n_decisions
+fields_state_md_sections: frontmatter, decisions, blockers, session
+last_n_events_max_count: 50
+last_n_decisions_max_count: 10
+snapshot_dir: .design/snapshots
+snapshot_filename_format: <ISO-timestamp-replaced-colons-with-dashes>.json
+retention_policy: last-10 LRU (D-08)
+atomic_write_pattern: .tmp + rename via scripts/lib/lockfile.cjs::acquire
+recap_sidecar: .design/snapshots/last-recap.json
+harness_fallback: codex no-op with stderr notice (D-10)

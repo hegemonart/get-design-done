@@ -29,6 +29,7 @@
 
 import { OperationFailedError } from '../gdd-errors/index.ts';
 import { getLogger } from '../logger/index.ts';
+import { resolveConcurrency } from '../parallelism-engine/concurrency-tuner.cjs';
 
 import {
   spawnAggregator,
@@ -137,9 +138,12 @@ export async function run(
 ): Promise<DiscussRunnerResult> {
   const logger = getLogger();
   const specs = opts.discussants ?? DEFAULT_DISCUSSANTS;
+  // Phase 27.6 D-07: data-driven concurrency default. Falls back to
+  // min(cpu-1, 8) when no `parallelism.verdict` events exist in
+  // .design/telemetry/events.jsonl. Explicit `opts.concurrency` still wins.
   const concurrency = opts.concurrency !== undefined && opts.concurrency > 0
     ? opts.concurrency
-    : 4;
+    : resolveConcurrency();
   const cwd = opts.cwd ?? process.cwd();
 
   logger.info('discuss.runner.started', {

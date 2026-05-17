@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-05-18T00:00:00.000Z",
+  "method": "synthetic-cycle-replay",
+  "phase": "27.6",
+  "agents": {
+    "design-verifier": { "p50_usd": 0.04, "hit_rate": 0.55, "p95_ms": 12000 },
+    "design-planner": { "p50_usd": 0.08, "hit_rate": 0.40, "p95_ms": 18000 },
+    "design-executor": { "p50_usd": 0.06, "hit_rate": 0.50, "p95_ms": 15000 },
+    "design-context-checker": { "p50_usd": 0.02, "hit_rate": 0.65, "p95_ms": 6000 },
+    "design-reflector": { "p50_usd": 0.10, "hit_rate": 0.35, "p95_ms": 22000 },
+    "design-discussant": { "p50_usd": 0.05, "hit_rate": 0.45, "p95_ms": 11000 },
+    "perf-analyzer": { "p50_usd": 0.10, "hit_rate": 0.30, "p95_ms": 22000 }
+  },
+  "notes": "Phase 27.6 synthetic baseline per D-03. Per-agent budgets = p50 + 25% buffer per D-05. Re-locked in follow-up commit after 1-2 real production cycles accumulate (chore(27.6): recalibrate perf-budget against measured cycles)."
+}
