@@ -4,6 +4,56 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.27.6] — 2026-05-18
+
+### Added
+
+- **Phase 27.6 — Pipeline Performance + Token-Cost Optimization** (6 plans). After 27.5 wired the bandit into production routing, telemetry from `.design/telemetry/{costs,trajectories,events}.jsonl` finally measures real spawns; this phase converts that telemetry into concrete optimizations.
+  - `agents/perf-analyzer.md` + `scripts/lib/perf-analyzer/` (Plan 27.6-01) — reflector-tier agent that reads telemetry cross-cycle and surfaces top-3 token-cost regressions per agent + cache-hit-rate deltas + p95 latency spikes. Spawned by `/gdd:reflect` or `/gdd:audit`, NOT per-cycle (D-04).
+  - `reference/perf-budget.md` + `tests/perf-budget.test.cjs` (Plan 27.6-02) — per-agent budget table + CI regression gate that fails on >25% regression vs baseline across 3 cycles (D-01). Thresholds configurable via `.design/budget.json#perf_regression_threshold`.
+  - `scripts/lib/cache/gdd-cache-manager.cjs` (Plan 27.6-03) — cache-warming heuristic refinement: multiplicative `recency × frequency × cost` score (D-06) + top-N ranking + LRU eviction within warmed set + false-positive event emission when >20% of warmed entries evict before use (D-02).
+  - `scripts/lib/parallelism-engine/concurrency-tuner.cjs` (Plan 27.6-04) — data-driven concurrency resolver reading `parallelism.verdict` events; default becomes `min(cpu-1, last_observed_optimum)` capped at 8 (D-07). Both explore-parallel-runner and discuss-parallel-runner now use the resolver when `opts.concurrency` is omitted.
+  - `hooks/gdd-precompact-snapshot.js` + `hooks/gdd-sessionstart-recap.js` (Plan 27.6-05) — Storybloq §4.6 transplant. PreCompact hook writes atomic snapshots to `.design/snapshots/<ts>.json` (D-08; retention last-10 LRU); SessionStart recap emits markdown to stderr + JSON sidecar at `.design/snapshots/last-recap.json` (D-09). Harness-aware: Codex no-op with stderr notice (D-10, Phase 45 dep for full path).
+  - `scripts/lib/prompt-dedup/index.cjs` + `reference/retrieval-contract.md` extension (Plan 27.6-06) — D-11 dedup: when ≥ 3 agents in same cycle read same `reference/*.md`, the retrieval-contract preamble adds a "shared context loaded once" marker.
+  - `docs/PERF-OPTIMIZATION.md` (Plan 27.6-06) — operator guide covering all 6 plans, 12 D-XX decisions, the CI regression gate, perf-analyzer proposals, cache-warming tuning, concurrency resolver, snapshot/recap hooks, Codex no-op fallback, prompt-dedup, recalibration process, and troubleshooting.
+
+### Decisions locked
+
+- D-01: Regression-gate threshold = 25% (configurable via `.design/budget.json#perf_regression_threshold`).
+- D-02: Cache-warming false-positive tolerance = 20% (configurable via `.design/budget.json#cache_warming_falsepositive_threshold`).
+- D-03: Baseline data = synthetic cycle replay; real-cycle calibration in a follow-up patch after 1-2 production cycles.
+- D-04: `perf-analyzer` is reflector-tier (not per-cycle).
+- D-05: Per-agent budgets = current p50 + 25% buffer initially.
+- D-06: Cache-warming heuristic = multiplicative `recency × frequency × cost`.
+- D-07: Parallel-mapper concurrency reads `parallelism.verdict` events; default = `min(cpu-1, last_optimum)` capped at 8.
+- D-08: PreCompact snapshot uses `scripts/lib/lockfile.cjs` for atomicity (atomic `.tmp` + rename); retention last-10 LRU.
+- D-09: SessionStart recap emits markdown to stderr + JSON sidecar to `.design/snapshots/last-recap.json`.
+- D-10: Codex no-op fallback (stderr notice; Phase 45 dep for full path).
+- D-11: Prompt-dedup injects at Phase 14.5 retrieval-contract preamble (≥ 3 agents reading same ref → shared-context marker).
+- D-12: 4 manifests lockstep + CHANGELOG + OFF_CADENCE + baseline at `test-fixture/baselines/phase-27-6/`.
+
+### Out of scope (deferred)
+
+- Cross-runtime cost arbitrage (Phase 26 territory).
+- Per-call model substitution (Phase 23.5 bandit territory).
+- Rewriting reference files (Phase 46 territory).
+- Codex `pre-large-context-action` interception (Phase 45 dep).
+- Cache-warming auto-tuning of heuristic weights — measurement-gated follow-up.
+- Real-cycle baseline calibration — deferred to follow-up patch.
+
+### Test coverage
+
+- `tests/perf-analyzer-cost-regression.test.cjs` — ≥10 tests for detection rules (Plan 27.6-01).
+- `tests/perf-budget.test.cjs` — ≥6 tests for CI gate including cold-start tolerance (Plan 27.6-02).
+- `tests/gdd-cache-manager-warming.test.cjs` — ≥6 tests for warming heuristic (Plan 27.6-03).
+- `tests/concurrency-tuner.test.cjs` — ≥5 tests for D-07 algorithm (Plan 27.6-04).
+- `tests/gdd-precompact-snapshot.test.cjs` — ≥6 tests including atomicity + harness fallback (Plan 27.6-05).
+- `tests/gdd-sessionstart-recap.test.cjs` — ≥4 tests for diff + Codex no-op (Plan 27.6-05).
+- `tests/prompt-dedup.test.cjs` — 12 tests for D-11 threshold + cycle scoping + alphabetic sort + malformed-event filter (Plan 27.6-06).
+- `tests/phase-27-6-baseline.test.cjs` — version-agnostic regression baseline (Plan 27.6-06).
+
+---
+
 ## [1.27.5] — 2026-05-17
 
 ### Added
