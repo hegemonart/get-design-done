@@ -122,16 +122,26 @@ function detectCostRegressions({ rows, baseline, thresholdPct, cyclesRequired } 
     const flatCosts = recentCycles.flatMap((c) => bucket.cycles.get(c));
     const current = p50(flatCosts);
     const base = baselineEntry.p50_usd;
+
+    // Contract (plan 27.6-01 behavior): "an agent's p50 USD-cost across
+    // the LAST cyclesRequired cycles is >= baseline_p50 × (1 + thresholdPct/100)".
+    // Apply the multiplicative form directly so the threshold-boundary case
+    // (e.g. baseline=0.05, current=0.0625, thresholdPct=25) is exact rather
+    // than dropping a ULP into the < side after a divide-and-multiply.
     let delta_pct;
+    let isRegression;
     if (base === 0) {
       delta_pct = current === 0 ? 0 : Infinity;
+      isRegression = current > 0; // base=0+current>0 → always regression (D-01 edge)
     } else {
+      const threshold = base * (1 + _thresholdPct / 100);
       delta_pct = ((current - base) / base) * 100;
+      isRegression = current >= threshold;
     }
 
     agents_evaluated += 1;
 
-    if (delta_pct >= _thresholdPct) {
+    if (isRegression) {
       candidates.push({
         agent,
         baseline_p50_usd: base,
