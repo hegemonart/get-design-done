@@ -1,4 +1,5 @@
 adaptive-mode.cjs
+bandit-arbitrage.cjs
 bandit-router.cjs
 blast-radius.cjs
 budget-enforcer.cjs
