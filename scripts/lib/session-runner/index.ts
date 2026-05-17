@@ -80,11 +80,129 @@ const rateGuard = _nodeRequire(
   ingestHeaders: (provider: string, headers: unknown) => Promise<unknown>;
 };
 
+// ── Plan 27.5-03 — Bandit posterior feedback loop ────────────────────────────
+//
+// `integration.cjs` is the Phase 27.5-01 production-integration shim for the
+// Phase 23.5 bandit posterior. It exposes `recordOutcome({agent, bin, delegate,
+// tier, status, costUsd, adaptiveMode, baseDir?, posteriorPath?})` which writes
+// the (status + cost) reward back to the posterior arm for the (agent × bin ×
+// tier × delegate) joint. Per CONTEXT D-04, the call fires AFTER every
+// `emit('session.completed', …)` site so the posterior reflects the measured
+// signal — correctness + cost.
+//
+// The shim is no-throw (best-effort write). The session-runner wraps each
+// `recordOutcome` call in its own try/catch as a defensive belt-and-braces
+// guard against future shim changes.
+const banditIntegration = _nodeRequire(
+  _resolve(_REPO_ROOT, 'scripts/lib/bandit-router/integration.cjs'),
+) as {
+  recordOutcome: (input: {
+    agent: string;
+    bin: string;
+    delegate?: string;
+    tier: string;
+    status: string;
+    costUsd?: number;
+    adaptiveMode?: 'static' | 'hedge' | 'full';
+    baseDir?: string;
+    posteriorPath?: string;
+  }) => void;
+  DELEGATE_NONE: string;
+};
+
+// ── Plan 27.5-03 — adaptive-mode read once per run ──────────────────────────
+//
+// `adaptive-mode.cjs.getMode({quiet: true})` reads `.design/budget.json` and
+// returns `'static' | 'hedge' | 'full'`. We cache the resolved mode locally
+// on each `run()` invocation so the recordOutcome calls at the 4 terminal
+// emit sites all see the same value (consistent gating per session).
+const adaptiveModeLib = _nodeRequire(
+  _resolve(_REPO_ROOT, 'scripts/lib/adaptive-mode.cjs'),
+) as {
+  getMode: (opts?: { baseDir?: string; budgetPath?: string; quiet?: boolean }) => 'static' | 'hedge' | 'full';
+};
+
 /** Rate-guard provider key for the Anthropic Agent SDK. */
 const RATE_GUARD_PROVIDER = 'anthropic';
 
 /** Default retries (first attempt + 1 retry). */
 const DEFAULT_MAX_RETRIES = 2;
+
+/**
+ * Default bin marker for bandit posterior writes from session-runner.
+ *
+ * Per CONTEXT D-12, session-runner uses a deterministic placeholder bin
+ * (`'medium'`) for now; real complexity-class-based bin selection is
+ * deferred to a later plan. This matches the 27.5-02 budget-enforcer
+ * convention so the (agent × bin) posterior slices stay consistent
+ * across both write paths.
+ */
+const SESSION_RUNNER_DEFAULT_BIN = 'medium';
+
+/**
+ * Infer a tier ('opus' | 'sonnet' | 'haiku') from a model identifier.
+ *
+ * Used at the 4 terminal-emit sites where the final tier isn't already
+ * carried on `opts` — we fall back to inspecting `usage.model` (folded
+ * during the run loop from SDK chunks). Unknown / empty model names
+ * default to 'sonnet' (matches the DEFAULT_MODEL_RATE choice and is
+ * the safest middle tier for posterior arms).
+ */
+function tierFromModel(modelName: string | null | undefined): 'opus' | 'sonnet' | 'haiku' {
+  if (typeof modelName !== 'string' || modelName.length === 0) return 'sonnet';
+  const lower = modelName.toLowerCase();
+  if (lower.includes('opus')) return 'opus';
+  if (lower.includes('haiku')) return 'haiku';
+  return 'sonnet';
+}
+
+/**
+ * Best-effort bandit posterior write following `emit('session.completed', …)`.
+ *
+ * Per CONTEXT D-04: posterior updates happen AT the terminal emit site so the
+ * recorded reward reflects the same (status + cost) the rest of the system
+ * just observed. The shim (`integration.cjs`) is no-throw and short-circuits
+ * silently in static/hedge mode; the outer try/catch here is a defensive
+ * belt-and-braces guard for any future shim change.
+ *
+ * Failures NEVER bubble out — the session-runner contract is that `run()`
+ * never throws, and that contract MUST hold even when telemetry is broken.
+ */
+function _recordBanditOutcome(input: {
+  agent: string;
+  bin: string;
+  delegate: string;
+  tier: string;
+  status: string;
+  costUsd: number;
+  adaptiveMode: 'static' | 'hedge' | 'full';
+}): void {
+  try {
+    banditIntegration.recordOutcome({
+      agent: input.agent,
+      bin: input.bin,
+      delegate: input.delegate,
+      tier: input.tier,
+      status: input.status,
+      costUsd: input.costUsd,
+      adaptiveMode: input.adaptiveMode,
+    });
+  } catch (err) {
+    // Defensive: shim is no-throw, but a future change could regress.
+    // Telemetry failure must never break a session — swallow.
+    if (process.env['GDD_BANDIT_DEBUG'] === '1') {
+      try {
+        process.stderr.write(
+          '[session-runner] _recordBanditOutcome swallowed: ' +
+            (err instanceof Error ? err.message : String(err)) +
+            '\n',
+        );
+      } catch {
+        /* swallow */
+      }
+    }
+  }
+}
 
 // ── Plan 27-06 — Peer-CLI delegation primitives ─────────────────────────────
 //
