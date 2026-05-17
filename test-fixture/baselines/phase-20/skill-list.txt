@@ -2,6 +2,7 @@ add-backlog
 analyze-dependencies
 apply-reflections
 audit
+bandit-status
 benchmark
 brief
 cache-manager
