@@ -153,4 +153,14 @@ The numbers come straight from `detectCostRegressions().summary` and the lengths
 
 Stay within the cross-cycle measurement loop. Surface proposals; the operator reviews and applies.
 
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"perf-analyzer","cycle":"<cycle from STATE.md>","stage":"reflection","one_line_insight":"<top regression hypothesis or 'no regressions detected'>","artifacts_written":[".design/perf/<cycle-slug>.md"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`. The `artifacts_written` array MUST list the per-cycle perf proposal file. If no proposals were generated (cold-start tolerance), still write the `.md` (with a "no regressions detected" body) and emit the line with the artifact path.
+
 ## PERF ANALYSIS COMPLETE

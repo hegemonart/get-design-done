@@ -472,6 +472,20 @@
     "typical-duration-seconds",
     "writes"
   ],
+  "perf-analyzer.md": [
+    "color",
+    "default-tier",
+    "description",
+    "model",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
   "prototype-gate.md": [
     "color",
     "default-tier",
