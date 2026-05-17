@@ -89,6 +89,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `skill-manifest [--refresh]` | `get-design-done:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
 | `quality-gate` | `get-design-done:quality-gate` | Phase 25 — parallel lint/type/test/visual command runner; classifies failures via quality-gate-runner agent |
 | `turn-closeout` | `get-design-done:turn-closeout` | Phase 25 — Stop-hook mirror skill; finalizes per-turn STATE blocks and emits closeout events |
+| `bandit-status` | `get-design-done:bandit-status` | Phase 27.5 — read-only diagnostic surface for the bandit posterior; per-(agent, bin, delegate, tier) snapshots (alpha, beta, mean, stddev, count, last-used). Use `/gdd:bandit-reset` to mutate. |
 | `peers` | `get-design-done:peers` | Phase 27 — `/gdd:peers` capability matrix command; shows installed peer-CLIs (codex/gemini/cursor/copilot/qwen), allowlist status, claimed roles, posterior delta vs local |
 | `peer-cli-customize` | `get-design-done:peer-cli-customize` | Phase 27 — rewire role→peer mappings on a per-agent basis (edits frontmatter `delegate_to:` directly) |
 | `peer-cli-add` | `get-design-done:peer-cli-add` | Phase 27 — guided ladder for adding a brand-new peer (verification ladder + adapter scaffolding + capability-matrix update) |
