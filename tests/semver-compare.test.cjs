@@ -158,6 +158,16 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     cc-multi-cli (D-14) + `test-fixture/baselines/phase-27/`.
   '1.27.0',
   '1.27.1',
+  //   - 1.27.5 → Phase 27.5 Bandit Production Integration. Wires Phase 23.5's
+  //     bandit posterior + Phase 27-07's delegate dimension into a real
+  //     production routing path (budget-enforcer.ts consultBandit per spawn +
+  //     session-runner.ts recordOutcome per session.completed). 6 plans
+  //     (27.5-01..27.5-06): integration shim + budget-enforcer wiring +
+  //     session-runner wiring + reflector bandit-arbitrage Section 8 +
+  //     peers/bandit-status skills + closeout (4 manifests + CHANGELOG +
+  //     docs + baseline). Off-cadence because v1.27 line is the parent
+  //     mainline; 27.5 is the integration-decimal phase per CONTEXT.md D-12.
+  '1.27.5',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
