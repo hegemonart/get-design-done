@@ -4,6 +4,51 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.27.5] — 2026-05-17
+
+### Added
+
+- **Phase 27.5 — Bandit Production Integration** (6 plans). Wires Phase 23.5's bandit posterior + Phase 27-07's `delegate?` dimension into a real production routing path. After v1.27.5, `default-tier:` becomes a default (cold-start prior), not a final answer — the bandit picks the final tier from measurement when `adaptive_mode: full`.
+  - `scripts/lib/bandit-router/integration.cjs` (Plan 27.5-01) — thin shim exposing `consultBandit({agent, bin, delegate, agentFrontmatter, adaptiveMode}) → {tier, decision_log}` and `recordOutcome({agent, bin, delegate, tier, status, costUsd, adaptiveMode}) → void`. Hides `pull` vs `pullWithDelegate` choice. Best-effort posterior write per D-04.
+  - `hooks/budget-enforcer.ts` (Plan 27.5-02) — bandit consultation per Agent spawn after `resolved_models` is computed, before SDK call. Overrides `resolved_models[agent]` via `tier-resolver.cjs` when the bandit picks a different tier than the router emitted. Emits `bandit.tier_selected` event per spawn. Respects `tier_override:` frontmatter bypass (D-05), `adaptive_mode` gate (D-07), and the 80% auto-downgrade guard.
+  - `scripts/lib/session-runner/index.ts` (Plan 27.5-03) — calls `recordOutcome()` after every `emit('session.completed', ...)` site (4 call sites: rate-limited, peer-success, turn-cap-zero, terminal retry-exit). Adds 3 optional fields to `SessionRunnerOptions`: `agent`, `bin`, `tier`. Posterior write is best-effort; missing fields silent.
+  - `agents/design-reflector.md` Section 8 (Plan 27.5-04) — bandit-arbitrage analysis surfaces "agent X frontmatter says sonnet but bandit picks opus" as `[FRONTMATTER]` proposals after 3+ pulls with credible interval < 0.05 and ≥ 50% mean delta vs second-best tier (D-10). New module `scripts/lib/bandit-arbitrage.cjs` mirrors Phase 26-06's cost-arbitrage shape.
+  - `skills/peers/SKILL.md` Step 5 + new `skills/bandit-status/SKILL.md` (Plan 27.5-05) — `/gdd:peers` now reads canonical posterior path `.design/telemetry/posterior.json` and renders real per-peer reward-delta when posterior is populated. New read-only `/gdd:bandit-status` skill surfaces per-`(agent, bin, delegate, tier)` posterior snapshots (alpha/beta/mean/stddev/count/last-used). Strictly read-only per D-11.
+  - `docs/BANDIT-INTEGRATION.md` + `reference/bandit-integration.md` (Plan 27.5-06) — operator guide + developer cheat sheet.
+
+### Decisions locked
+
+- D-01: `hooks/budget-enforcer.ts` is the bandit consultation site (single canonical routing decision point).
+- D-02: Per-spawn timing, after `resolved_models` computed, before SDK call.
+- D-03: Override `resolved_models[agent]` with bandit tier through `tier-resolver.cjs`. Preserve `model_tier_overrides[agent]` unchanged (back-compat).
+- D-04: `update()` called in session-runner's terminal-emit path after `session.completed`. Best-effort posterior write — errors swallowed.
+- D-05: `tier_override:` frontmatter is the explicit per-agent bandit-bypass surface.
+- D-06: Posterior path stays at `.design/telemetry/posterior.json` (Phase 23.5 D-08 unchanged).
+- D-07: Bandit consultation gated by `adaptive_mode` (static + hedge silent; full active).
+- D-08: Reward function unchanged from Phase 23.5 (two-stage lexicographic correctness + cost).
+- D-09: Cold-start prior for the 5 peer delegate arms uses neutral `TIER_PRIOR` (no bias toward any peer).
+- D-10: Reflector bandit-arbitrage reuses `cost-arbitrage.cjs` shape (50% threshold, mirror Phase 26-06).
+- D-11: `/gdd:bandit-status` is read-only (use `/gdd:bandit-reset` from Phase 23.5 to mutate).
+- D-12: All 6 plans land together with one CHANGELOG block; 4 manifests bump lockstep.
+
+### Out of scope (deferred)
+
+- Auto-failover when bandit recommends a delegate not in `enabled_peers` — bandit stays advisory.
+- Cross-cycle posterior decay — Phase 23.5 D-12 already specifies discounted Thompson sampling.
+- Per-task bandit dimensions beyond `(agent, bin, delegate)` — needs convergence proof first.
+- Removing frontmatter `default-tier:` — additive only; deprecation is Phase 30+.
+- Bandit-driven complexity_class selection — different decision domain.
+
+### Test coverage
+
+- `tests/bandit-router-integration.test.cjs` — 25+ tests covering all 5 paths × adaptive_mode × tier_override × delegate (Plan 27.5-01).
+- `tests/budget-enforcer-bandit.test.cjs` — 8+ tests for hook consultation branches (Plan 27.5-02).
+- `tests/session-runner-bandit-outcome.test.cjs` — 6+ tests for recordOutcome paths (Plan 27.5-03).
+- `tests/bandit-arbitrage.test.cjs` — 6+ tests for reflector analyzer (Plan 27.5-04).
+- `tests/phase-27-5-baseline.test.cjs` — manifests + baseline + integration-exports regression (Plan 27.5-06).
+
+---
+
 ## [1.27.1] — 2026-04-30
 
 Phase 27 wiring patch — closes the production-integration gaps left by v1.27.0's "structural ship". v1.27.0 landed all peer-CLI library code + tests + docs but the helpers were exported without callers, so `delegate_to:` on agent frontmatter was validated and then ignored at runtime. v1.27.1 wires the four integration points so delegation actually fires for users who set `delegate_to:` AND allowlist the peer.
