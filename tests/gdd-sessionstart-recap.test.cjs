@@ -22,7 +22,11 @@ const { spawnSync } = require('node:child_process');
 const HOOK_PATH = resolve(__dirname, '..', 'hooks', 'gdd-sessionstart-recap.js');
 
 function setupTmp(prefix) {
-  const dir = mkdtempSync(join(tmpdir(), `gdd-ssr-${prefix}-`));
+  // realpathSync resolves macOS /var → /private/var symlink so paths
+  // returned by writeSnapshot() match what the hook records after its
+  // own filesystem walk.
+  const raw = mkdtempSync(join(tmpdir(), `gdd-ssr-${prefix}-`));
+  const dir = require('node:fs').realpathSync(raw);
   mkdirSync(join(dir, '.design', 'snapshots'), { recursive: true });
   mkdirSync(join(dir, '.design', 'telemetry'), { recursive: true });
   return dir;
