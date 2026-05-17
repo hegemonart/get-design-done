@@ -25,6 +25,22 @@ A `/gdd:recall "term"` query that returns 5 Layer-1 hits ≈ 400 tokens. Opening
 
 Layer 1 becomes `scripts/lib/design-search.cjs` — same protocol, same output shape, but backed by `.design/search.db` instead of grep. Agents do not need to change anything; the backend swap is transparent.
 
+## Phase 27.6 — Shared-Context Dedup (D-11)
+
+When >= 3 distinct agents in the same cycle read the same `reference/*.md` file, the Phase 14.5 retrieval-contract preamble is extended with a "shared context loaded once" marker — subsequent agents see a content-hash reference instead of the full file body. This reduces redundant token consumption per cycle.
+
+The detection lives in `scripts/lib/prompt-dedup/index.cjs::detectDuplicateReferenceReads` and runs at retrieval-contract injection time. The threshold (3 agents) matches Phase 27.6 D-11 and is tunable via the `threshold` argument to `detectDuplicateReferenceReads`.
+
+Operator opt-out: set `GDD_DEDUP_OPT_OUT=1` in the spawning agent's environment to bypass dedup for that read.
+
+Event emission: each dedup decision emits a `dedup.injection` event via `appendEvent` so the Phase 27.6-01 perf-analyzer can surface "the same file is read N agents times per cycle" as a `[CONTEXT-WASTE]` proposal.
+
+Cross-references:
+
+- `scripts/lib/prompt-dedup/index.cjs` — analyzer + injection text builder.
+- `tests/prompt-dedup.test.cjs` — detection rule tests.
+- `agents/perf-analyzer.md` — consumes `dedup.injection` events for cross-cycle analysis.
+
 ---
 
 *Imported by every skill that reads `.design/` artifacts: `/gdd:progress`, `/gdd:resume`, `/gdd:reflect`, `/gdd:pause`, `/gdd:recall` (Phase 19.5+), `/gdd:timeline` (Phase 19.5+). Tier: preamble. Phase: 14.5.*
