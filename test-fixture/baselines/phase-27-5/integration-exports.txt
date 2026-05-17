@@ -1,0 +1,9 @@
+module: scripts/lib/bandit-router/integration.cjs
+exports: consultBandit, recordOutcome, DELEGATE_NONE
+consultBandit_arguments: agent, bin, delegate, agentFrontmatter, adaptiveMode, baseDir, posteriorPath
+consultBandit_returns: tier, decision_log
+decision_log_source_values: frontmatter, tier_override_bypass, bandit_pull, bandit_pull_with_delegate
+recordOutcome_arguments: agent, bin, delegate, tier, status, costUsd, adaptiveMode, baseDir, posteriorPath
+recordOutcome_returns: void
+DELEGATE_NONE_value: none
+error_discipline: best-effort (D-04, swallow on write failure)

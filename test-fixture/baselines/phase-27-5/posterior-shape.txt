@@ -1,0 +1,9 @@
+schema_version: 1.0.0
+fields_top_level: schema_version, generated_at, arms
+fields_arm: agent, bin, tier, alpha, beta, last_used, count
+fields_arm_optional: delegate
+delegate_values_legal: none, gemini, codex, cursor, copilot, qwen, undefined
+tier_values_legal: haiku, sonnet, opus
+bin_values_legal: tiny, small, medium, large
+posterior_path: .design/telemetry/posterior.json
+write_discipline: atomic (.tmp + rename)
