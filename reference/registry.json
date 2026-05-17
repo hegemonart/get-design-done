@@ -96,6 +96,13 @@
       "description": "Whitelist of design-authority feed sources for the watcher"
     },
     {
+      "name": "bandit-integration",
+      "path": "reference/bandit-integration.md",
+      "type": "meta-rules",
+      "phase": 27.5,
+      "description": "Phase 27.5 bandit production-integration cheat sheet — consultBandit + recordOutcome shim signatures, adaptive_mode gate semantics, reward function (Phase 23.5 D-08 unchanged), posterior path .design/telemetry/posterior.json, call-site map (budget-enforcer + session-runner + design-reflector Section 8)"
+    },
+    {
       "name": "brand-voice",
       "path": "reference/brand-voice.md",
       "type": "heuristic",
