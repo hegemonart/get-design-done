@@ -25,6 +25,7 @@
 import { resolve as resolvePath } from 'node:path';
 
 import { getLogger } from '../logger/index.ts';
+import { resolveConcurrency } from '../parallelism-engine/concurrency-tuner.cjs';
 
 import {
   isParallelismSafe,
@@ -120,7 +121,10 @@ export async function run(
 ): Promise<ExploreRunnerResult> {
   const specs: readonly MapperSpec[] = opts.mappers ?? DEFAULT_MAPPERS;
   const cwd: string = opts.cwd ?? process.cwd();
-  const concurrency: number = opts.concurrency ?? 4;
+  // Phase 27.6 D-07: data-driven concurrency default. Falls back to
+  // min(cpu-1, 8) when no `parallelism.verdict` events exist in
+  // .design/telemetry/events.jsonl. Explicit `opts.concurrency` still wins.
+  const concurrency: number = opts.concurrency ?? resolveConcurrency();
 
   const logger = getLogger().child('explore.runner');
 
