@@ -116,6 +116,13 @@
       "description": "Per-category gate checklists"
     },
     {
+      "name": "color-theory",
+      "path": "reference/color-theory.md",
+      "type": "palette",
+      "phase": 28,
+      "description": "Color-theory foundation — color spaces (sRGB / HSL / OKLCH / LCH), six harmonies in OKLCH, simultaneous contrast, color-blindness palettes (deutan/protan/tritan), color interpolation in animation (OKLCH path vs sRGB muddy-mid)"
+    },
+    {
       "name": "component-accordion",
       "path": "reference/components/accordion.md",
       "type": "component-spec",
@@ -338,10 +345,24 @@
       "description": "Locked 12-section spec shape for component benchmarks (Purpose → Failing example)"
     },
     {
+      "name": "composition",
+      "path": "reference/composition.md",
+      "type": "layout",
+      "phase": 28,
+      "description": "Compositional fundamentals — rule of thirds, φ/√2/√3/√5 root rectangles, Fibonacci, focal-point construction, visual-weight calculus (size × contrast × isolation × complexity), optical-vs-mathematical centering, Z/F/Gutenberg eye-flow"
+    },
+    {
       "name": "config-schema",
       "path": "reference/config-schema.md",
       "type": "schema",
       "description": "Schema documentation for .design/config.json"
+    },
+    {
+      "name": "contrast-advanced",
+      "path": "reference/contrast-advanced.md",
+      "type": "heuristic",
+      "phase": 28,
+      "description": "APCA (WCAG 3 draft) contrast — Lc 75/60/45/30 thresholds, why WCAG 2.1 4.5:1 misranks thin/large/colored text, dual-target pattern with WCAG 2.1 AA, Lc↔WCAG-2.1 conversion table"
     },
     {
       "name": "css-grid-layout",
@@ -416,6 +437,13 @@
       "type": "heuristic",
       "tier": "L2",
       "description": "NNG heuristics + GDD-specific rubrics used by auditor / verifier"
+    },
+    {
+      "name": "i18n",
+      "path": "reference/i18n.md",
+      "type": "heuristic",
+      "phase": 28,
+      "description": "i18n engineering primitives — text expansion per locale, CSS logical properties, RTL mirroring + directional-icon flip, bidi isolation, Intl.* family (DateTimeFormat / NumberFormat / PluralRules / RelativeTimeFormat / ListFormat / Collator / Segmenter), ICU MessageFormat, Unicode hygiene, multi-script font stacks, WCAG i18n; spec source for design-verifier i18n probes + explore i18n-readiness probe"
     },
     {
       "name": "iconography",
@@ -696,6 +724,13 @@
       "path": "reference/project-skills-guide.md",
       "type": "heuristic",
       "description": "Guide for authoring project-skill artifacts (sketch/spike wrap-ups)"
+    },
+    {
+      "name": "proportion-systems",
+      "path": "reference/proportion-systems.md",
+      "type": "layout",
+      "phase": 28,
+      "description": "Whole-UI proportion systems — 4pt / 8pt / √2 baseline grids, baseline-grid lock, vertical rhythm, modular relationships across type + spacing + sizing + radius scales"
     },
     {
       "name": "protected-paths.default",
