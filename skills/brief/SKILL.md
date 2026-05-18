@@ -1,6 +1,6 @@
 ---
 name: gdd-brief
-description: "Design intake — captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md (Stage 1 of 5)"
+description: "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before /gdd:explore."
 argument-hint: "[--re-brief to redo intake on existing project]"
 tools: Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get
 ---

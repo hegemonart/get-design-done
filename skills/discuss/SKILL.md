@@ -1,6 +1,6 @@
 ---
 name: gdd-discuss
-description: "Adaptive design interview — spawns design-discussant to gather decisions via one-question-at-a-time questioning. Writes D-XX decisions to STATE.md <decisions> block."
+description: "Adaptive design interview command that spawns design-discussant in normal / --all / --spec mode to gather decisions via one-question-at-a-time AskUserQuestion, writing D-XX entries to STATE.md <decisions>. Use when locking design decisions outside the main pipeline or backfilling missing context."
 argument-hint: "[topic] [--all] [--spec] [--cycle <name>]"
 tools: Read, Write, Task
 ---

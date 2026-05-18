@@ -1,6 +1,6 @@
 ---
 name: gdd-complete-cycle
-description: "Archive current cycle artifacts and prepare for the next cycle. Updates CYCLES.md, moves artifacts to .design/archive/cycle-N/."
+description: "Cycle closeout command that marks CYCLES.md entry complete, archives pipeline artifacts to .design/archive/cycle-N/, generates EXPERIENCE.md, rebuilds the search index, and resets STATE.md. Use when a design cycle has shipped and you're ready to start the next one."
 argument-hint: "[<retrospective note>]"
 tools: Read, Write, Bash, AskUserQuestion
 ---
