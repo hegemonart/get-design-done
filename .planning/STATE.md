@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: → v1.27.1)
 status: Phase 28 (Foundational References Tier 2) closed out — v1.28.0 shipped (2026-05-18). 4-manifest lockstep, CHANGELOG block, OFF_CADENCE add, 6 phase-28 baseline files, 9-test version-agnostic regression suite, scoped ROADMAP flip (7 inline + 1 overview). 5 new ref files (color-theory, composition, proportion-systems, i18n, contrast-advanced) + 2 verifier i18n probes + 1 explore i18n-readiness probe + 12 additive cross-link insertions + 2 orthogonal audit-scoring lens-tags. Phase 27 + v1.27.7 (gdd-mcp) shipped prior. Phase 31 (Figma Off-Context Extractor) in progress. Roadmap rebalanced 2026-05-16.
-last_updated: "2026-05-18T10:53:29.630Z"
+last_updated: "2026-05-18T11:13:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 38
-  completed_plans: 31
-  percent: 82
+  completed_plans: 33
+  percent: 87
 ---
 
 # Project State
