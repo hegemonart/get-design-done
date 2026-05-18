@@ -1,6 +1,6 @@
 ---
 name: gdd-audit
-description: "Run design audit — wraps design-verifier + design-auditor + design-reflector. --retroactive audits the full cycle scope."
+description: "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 6-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix."
 argument-hint: "[--retroactive] [--quick] [--no-reflect]"
 tools: Read, Write, Task, Glob, Bash
 ---
@@ -8,6 +8,8 @@ tools: Read, Write, Task, Glob, Bash
 # /gdd:audit
 
 Wraps the existing `design-auditor`, `design-verifier`, and `design-integration-checker` agents — no new auditor logic here. Parses flags, spawns the right combination, prints summary.
+
+For the 6-pillar scoring rubric this skill aggregates, see `../../reference/audit-scoring.md`. For the shared design-quality pillar set that frames the score categories, see `../../reference/shared-preamble.md`.
 
 ## Modes
 
