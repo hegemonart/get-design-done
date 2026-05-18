@@ -52,46 +52,7 @@ Based on user choice:
 
 ### 4. Apply Logic by Proposal Type
 
-#### [FRONTMATTER]
-1. Extract agent name from Change field (e.g., `agents/design-verifier.md`)
-2. Read the agent file
-3. Find the frontmatter line matching the field being changed
-4. Use Edit tool to update the specific line
-5. Append `**Applied**: <date>` to the proposal in reflections file
-
-#### [REFERENCE]
-1. Extract target file path from Change field (e.g., `reference/heuristics.md`)
-2. If file exists: append the drafted text using Edit tool
-3. If file doesn't exist: create it with a minimal header + the drafted text using Write tool
-4. Append `**Applied**: <date>` to proposal in reflections file
-
-#### [BUDGET]
-1. Read `.design/budget.json`
-2. Locate the key path from the Change field (e.g., `design-verifier.per_run_cap_usd`)
-3. Update the value
-4. Write updated JSON back to `.design/budget.json`
-5. Append `**Applied**: <date>` to proposal in reflections file
-
-#### [QUESTION]
-1. Read `agents/design-discussant.md`
-2. Find the question text specified in the Change field
-3. If pruning: remove the question lines using Edit tool
-4. If rewording: replace the question text using Edit tool
-5. Append `**Applied**: <date>` to proposal in reflections file
-
-#### [GLOBAL-SKILL]
-1. Extract target filename from Change field (e.g., `design-color-conventions.md`)
-2. Ensure `~/.claude/gdd/global-skills/` directory exists (create with `mkdir -p` if not)
-3. If target file exists: append new content using Edit tool (add a `---` separator first)
-4. If target file doesn't exist: create with header + content using Write tool:
-   ```markdown
-   # <Topic> Conventions (Global)
-   *Promoted from project: <project-name>, cycle: <cycle-slug>*
-
-   <content>
-   ```
-5. Print: "Global skill written to ~/.claude/gdd/global-skills/<name>.md — auto-loads in all future gdd sessions"
-6. Append `**Applied**: <date>` to proposal in reflections file
+After the user chooses `a` (apply) or `e` (edit-then-apply), branch on the proposal's bracketed type tag and follow the per-type apply procedure in `./reference/apply-reflections-procedure.md` — one numbered procedure each for `[FRONTMATTER]`, `[REFERENCE]`, `[BUDGET]`, `[QUESTION]`, `[GLOBAL-SKILL]`. All branches end with `**Applied**: <date>` appended to the proposal block in the reflections file.
 
 ### 5. Summary
 
