@@ -1,0 +1,24 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-05-18T00:00:00.000Z",
+  "phase": "27.7",
+  "server": "gdd-mcp",
+  "count": 12,
+  "readonly_count": 12,
+  "tools": [
+    "gdd_status",
+    "gdd_cycle_recap",
+    "gdd_decisions_list",
+    "gdd_events_tail",
+    "gdd_health",
+    "gdd_intel_get",
+    "gdd_learnings_digest",
+    "gdd_phase_current",
+    "gdd_phases_list",
+    "gdd_plans_list",
+    "gdd_reflections_latest",
+    "gdd_telemetry_query"
+  ],
+  "write_tools": [],
+  "notes": "Phase 27.7 — 12 read-only tools; canonical snapshot for D-03 (cap) + D-04 (no-write) regression detection. Tool names sourced from scripts/mcp-servers/gdd-mcp/tools/index.ts TOOL_MODULES registry."
+}
