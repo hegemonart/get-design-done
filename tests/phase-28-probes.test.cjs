@@ -73,7 +73,7 @@ describe('28-06: explore i18n-readiness probe (D-04)', () => {
   // + cross-link summary; the verbatim probe content lives in the
   // reference file. Assertions read SKILL + linked reference together.
   const explore = read('skills/explore/SKILL.md');
-  const procedurePath = path.join(REPO_ROOT, 'reference', 'explore-procedure.md');
+  const procedurePath = path.join(REPO_ROOT, 'skills', 'explore', 'explore-procedure.md');
   const procedure = fs.existsSync(procedurePath) ? fs.readFileSync(procedurePath, 'utf8') : '';
   const surface = explore + '\n\n' + procedure;
 

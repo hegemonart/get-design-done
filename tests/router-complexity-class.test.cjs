@@ -33,7 +33,7 @@ const ROUTER_SKILL = path.join(REPO_ROOT, 'skills', 'router', 'SKILL.md');
 // declaration + cross-link summary; the verbatim heuristic table lives
 // in the reference file. Assertions that scan the heuristic table now
 // read SKILL + linked reference together as the canonical surface.
-const ROUTER_RULES = path.join(REPO_ROOT, 'reference', 'router-rules.md');
+const ROUTER_RULES = path.join(REPO_ROOT, 'skills', 'router', 'router-rules.md');
 
 function readRouter() {
   return fs.readFileSync(ROUTER_SKILL, 'utf8');

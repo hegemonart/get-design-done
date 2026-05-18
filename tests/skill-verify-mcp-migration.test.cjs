@@ -38,7 +38,8 @@ const AFTER_PATH = path.join(
 // reference/verify-procedure.md per the <=100-line authoring contract.
 const PROCEDURE_PATH = path.join(
   REPO_ROOT,
-  'reference',
+  'skills',
+  'verify',
   'verify-procedure.md',
 );
 
