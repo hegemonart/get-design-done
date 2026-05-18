@@ -269,3 +269,32 @@ For each NNG heuristic (H-01 through H-10), rate 0–4:
 - 75–89: Good, minor issues
 - 60–74: Acceptable, improvement needed
 - <60: Significant UX problems, redesign required
+
+---
+
+## Dependency-cycle detection
+
+Algorithm consumed by `skills/analyze-dependencies/SKILL.md` Analysis 4. Detects cycles
+in the `@`-reference graph (File A → File B → File A) by DFS with path-tracking.
+
+**Input:** adjacency map `{from: [to, ...]}` built from `.design/intel/graph.json#edges`.
+
+**Algorithm:**
+
+```text
+visited = {}; path = []; cycles = []
+function dfs(node):
+  if node in path:
+    cycle_start = path.index(node)
+    cycles.append(path[cycle_start:] + [node])
+    return
+  if node in visited: return
+  visited.add(node); path.append(node)
+  for neighbor in adjacency[node]: dfs(neighbor)
+  path.pop()
+```
+
+**Bias notes:** the DFS visits each node at most once per traversal, so duplicate cycles
+across multiple entry points are deduped by the `visited` guard. The `path.index(node)`
+slice captures only the cycle suffix; nodes before the entry point are not part of the
+cycle. Pre-existing acyclic chains stay invisible — only back-edges surface.
