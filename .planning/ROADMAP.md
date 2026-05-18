@@ -85,7 +85,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] [Phase 27.5](#phase-275-bandit-production-integration-inserted) — Bandit Production Integration — INSERTED — v1.27.5
 - [x] [Phase 27.6](#phase-276-pipeline-performance--token-cost-optimization-inserted) — Pipeline Performance + Token-Cost Optimization — **NEW (INSERTED 2026-05-16)** — v1.27.6
-- [ ] [Phase 27.7](#phase-277-gdd-mcp-server-inserted) — GDD MCP Server — **NEW (INSERTED 2026-05-17)** — v1.27.7
+- [x] [Phase 27.7](#phase-277-gdd-mcp-server-inserted) — GDD MCP Server — **NEW (INSERTED 2026-05-17)** — v1.27.7 — 2026-05-18
 - [ ] [Phase 28](#phase-28-foundational-references-tier-2--color-composition-proportion-i18n) — Foundational References Tier 2 — v1.28.0
 - [ ] [Phase 28.5](#phase-285-skill-authoring-contract--skill-rework--project-artifacts-inserted) — Skill Authoring Contract + Skill Rework — INSERTED — v1.28.5
 - [ ] [Phase 29](#phase-29-capability-gap-telemetry--self-authoring-of-agentsskills) — Capability-Gap Telemetry + Self-Authoring — v1.29.0
@@ -2996,17 +2996,17 @@ GDD today has the substrate (STATE.md sections, event-chain, intel slices, refle
 **Scope:** ~7 plans across 3 waves.
 
 - **Wave A — Server + tool set (3 plans, parallel-safe):**
-  - [ ] 27-7-01-PLAN.md — `sdk/mcp/gdd-mcp/server.ts` (MCP boot, project-root discovery, transport, tool registration) + `bin/gdd-mcp` shim. Tests on handshake + project-root walk-up. (MCP-01)
-  - [ ] 27-7-02-PLAN.md — Tool set v1 implementations (≤30 LOC each) for the 12 read-only tools per SC #3. Tests on each tool's input schema + output shape + thin-wrapper assertion. (MCP-02)
-  - [ ] 27-7-03-PLAN.md — Lint rule asserting no direct `fs.*`/`path.*` in `tools.ts`; static test asserting zero write-tool names per SC #4. (MCP-03)
+  - [x] 27-7-01-PLAN.md — `sdk/mcp/gdd-mcp/server.ts` (MCP boot, project-root discovery, transport, tool registration) + `bin/gdd-mcp` shim. Tests on handshake + project-root walk-up. (MCP-01)
+  - [x] 27-7-02-PLAN.md — Tool set v1 implementations (≤30 LOC each) for the 12 read-only tools per SC #3. Tests on each tool's input schema + output shape + thin-wrapper assertion. (MCP-02)
+  - [x] 27-7-03-PLAN.md — Lint rule asserting no direct `fs.*`/`path.*` in `tools.ts`; static test asserting zero write-tool names per SC #4. (MCP-03)
 
 - **Wave B — Adoption + setup (3 plans, parallel-safe after A):**
-  - [ ] 27-7-04-PLAN.md — `scripts/install.cjs --register-mcp` extension (Claude + Codex registration, idempotent, absent-CLI fallback). `gsd-health` MCP-status row. Tests on idempotent re-run + absent-CLI paths. (MCP-04)
-  - [ ] 27-7-05-PLAN.md — Skill-side adoption in `skills/progress/`, `skills/resume/`, `skills/next/` (`## MCP path (preferred)` + `## File-read path (fallback)` blocks). Tests on skill structural compliance (Phase 28.5 validator). (MCP-05)
-  - [ ] 27-7-06-PLAN.md — `sdk/mcp/gdd-mcp/README.md` (≤120 lines) + priming-benchmark fixture at `test-fixture/baselines/phase-27-7/priming-benchmark.json` capturing the −30% target on a synthetic project. (MCP-06)
+  - [x] 27-7-04-PLAN.md — `scripts/install.cjs --register-mcp` extension (Claude + Codex registration, idempotent, absent-CLI fallback). `gsd-health` MCP-status row. Tests on idempotent re-run + absent-CLI paths. (MCP-04)
+  - [x] 27-7-05-PLAN.md — Skill-side adoption in `skills/progress/`, `skills/resume/`, `skills/next/` (`## MCP path (preferred)` + `## File-read path (fallback)` blocks). Tests on skill structural compliance (Phase 28.5 validator). (MCP-05)
+  - [x] 27-7-06-PLAN.md — `sdk/mcp/gdd-mcp/README.md` (≤120 lines) + priming-benchmark fixture at `test-fixture/baselines/phase-27-7/priming-benchmark.json` capturing the −30% target on a synthetic project. (MCP-06)
 
 - **Wave C — Closeout (1 plan):**
-  - [ ] 27-7-07-PLAN.md — **Phase closeout**: regression baselines (tool-registry snapshot, MCP handshake fixture, install-doctor fixture, headless E2E); README + `plugin.json` + `marketplace.json` refresh (add `mcp-server`, `context-loading`, `cross-session` keywords); CHANGELOG v1.27.7 entry; **roadmap closeout (rule #14)**. (MCP-07)
+  - [x] 27-7-07-PLAN.md — **Phase closeout**: regression baselines (tool-registry snapshot, MCP handshake fixture, install-doctor fixture, headless E2E); README + `plugin.json` + `marketplace.json` refresh (add `mcp-server`, `context-loading`, `cross-session` keywords); CHANGELOG v1.27.7 entry; **roadmap closeout (rule #14)**. (MCP-07)
 
 **Explicitly out of scope** (defer or reject):
 
