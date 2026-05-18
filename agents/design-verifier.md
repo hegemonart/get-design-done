@@ -161,6 +161,49 @@ Before → After
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 
+### i18n probes
+
+Two additive probes (Phase 28, D-03 orthogonal lens — not a new pillar). Findings tagged `i18n_readiness`. Existing probes / verdicts / output format unchanged.
+
+#### Probe 1 — Hardcoded-string scan
+
+Catalogues hardcoded user-facing strings that should flow through an i18n library. Regex catalog (matches the 4 D-10 library patterns from `./reference/i18n.md` §Verifier Integration Spec):
+
+```txt
+react-intl:  <FormattedMessage\s+id="[^"]+"
+next-intl:   \bt\(\s*['"][a-zA-Z][\w.]*['"]
+i18next:     \bt\(\s*['"][a-zA-Z][\w.]*['"]\s*,\s*\{
+vue-i18n:    \$t\(\s*['"][a-zA-Z][\w.]*['"]
+```
+
+Allow-list seed (skip lines matching any) — prevents day-1 false-positive flood by exempting strings that never reach the UI:
+
+```txt
+console\.(log|error|warn|info|debug)        — dev logging
+^\s*/\*.*\*/\s*$                            — dev-only block comments
+data-testid="[^"]+"                         — test selectors
+className="[^"]+"                           — CSS class names
+import\s+.*\s+from\s+['"][^'"]+['"]         — import paths
+```
+
+Severity: `MINOR` by default; raised to `MAJOR` if the count of unique violating files exceeds 10 (systemic problem, not a one-off oversight). Tag: `i18n_readiness`. Output line in the verifier report: `i18n_readiness: <N> hardcoded strings in <M> files — see ./reference/i18n.md §ICU MessageFormat`. See `./reference/audit-scoring.md` §Lens-Tags for the orthogonal-lens definition; the probe does NOT change the Phase 1 category-score weights.
+
+#### Probe 2 — +40% text-overflow simulation
+
+Simulates the worst-case LTR locale expansion (RU/FI/PL family at +40% — see `./reference/i18n.md` §Text Expansion). JA/ZH/KO are −50% on the contracting side, so +40% is the conservative upper-bound for layout-overflow planning across LTR locales. The pseudo-code below is the integration contract:
+
+```txt
+FOR every text node T in rendered DOM:
+  original    := T.textContent
+  expanded    := original repeated/padded until length(expanded) = length(original) × 1.4
+  T.textContent := expanded
+  measure: T.parentElement.scrollWidth > T.parentElement.clientWidth?
+    YES → finding(selector(T.parentElement), original, "overflows at +40% expansion")
+  T.textContent := original   // restore
+```
+
+Prefer Preview MCP screenshot-diff if a Preview client is attached (catches overflow + clipping + ellipsis + wrapping changes in one pass); fall back to in-process DOM measurement (`scrollWidth > clientWidth`) when running headless. Tag: `i18n_readiness`. Severity `MINOR` per finding; raised to `MAJOR` if more than 10 components overflow. Output line: `i18n_readiness: <N> components overflow at +40% text expansion — widen containers or allow text wrap`.
+
 ---
 
 ## Phase 2 — Must-Have Check
