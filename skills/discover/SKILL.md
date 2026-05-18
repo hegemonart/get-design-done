@@ -1,6 +1,6 @@
 ---
 name: discover
-description: "Stage 1.5 of 4 — thin orchestrator that spawns design-context-builder (auto-detect + interview) and design-context-checker (6-dimension validator) to produce DESIGN-CONTEXT.md."
+description: "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after /gdd:scan when a fast-path context build is wanted instead of the full /gdd:explore."
 argument-hint: "[--auto]"
 user-invocable: true
 ---
@@ -9,171 +9,64 @@ user-invocable: true
 
 **Stage 1.5 of 4.** Produces `.design/DESIGN-CONTEXT.md`.
 
+Full procedure detail: `../../reference/discover-procedure.md`.
+
 ---
 
 ## State Integration
 
 1. Read `.design/STATE.md`.
-   - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=discover, status=in_progress, task_progress=0/1, and log warning: "STATE.md not found — created fresh. If this is a resumed session, run /get-design-done:scan first."
-   - If present and stage==discover and status==in_progress: RESUME — continue existing interview; do not reset.
-   - Otherwise: normal transition — set frontmatter stage=discover, <position> stage=discover, status=in_progress, task_progress=0/1.
-2. **Probe connection availability** — ToolSearch runs FIRST because MCP tools may be in the deferred tool set. This is the canonical probe pattern (spec lives in `connections/connections.md`; copied inline because SKILL.md has no include mechanism — if the probe pattern changes, update all stages that copied it).
+   - **Missing** -> create minimal skeleton from `reference/STATE-TEMPLATE.md` (stage=discover, status=in_progress, task_progress=0/1) and log warning "STATE.md not found — created fresh. If this is a resumed session, run /get-design-done:scan first."
+   - **Present + stage==discover + status==in_progress** -> RESUME (continue interview; do not reset).
+   - **Otherwise** -> normal transition: set frontmatter stage=discover, `<position>` stage=discover, status=in_progress, task_progress=0/1.
+2. Probe connection availability. ToolSearch runs FIRST (MCP tools may be in the deferred tool set). Run three probes — A (Figma, variant-agnostic with prefix tiebreaker), B (Refero, ToolSearch-only), C (Pinterest, ToolSearch-only). After all probes, write `<connections>` to STATE.md so the builder doesn't re-probe. Full probe specs: `../../reference/discover-procedure.md` §Connection Probes.
+3. Update `last_checkpoint`. Write STATE.md.
 
-   **A — Figma probe (variant-agnostic):**
-
-   ```
-   A1. ToolSearch({ query: "figma get_metadata use_figma", max_results: 10 })
-   A2. Parse tool names matching /^mcp__([^_]*figma[^_]*)__(get_metadata|use_figma)$/i
-       into read-capable and write-capable prefix sets.
-   A3. Empty read set → figma: not_configured (skip all Figma paths)
-       One or more matches → pick prefix via tiebreaker:
-         (1) both-sets > reads-only,
-         (2) `figma` > others,
-         (3) non-`figma-desktop` > desktop,
-         (4) alphabetical.
-   A4. Call {prefix}get_metadata:
-         Success → figma: available (prefix=mcp__<prefix>__, writes=<true|false>)
-         Error   → figma: unavailable
-   ```
-
-   **B — Refero probe (ToolSearch presence is sufficient — no tool call needed):**
-
-   ```
-   B1. ToolSearch({ query: "refero", max_results: 5 })
-   B2. Empty result  → refero: not_configured
-       Non-empty     → refero: available
-   ```
-
-   **C — Pinterest probe (ToolSearch-only, same pattern as Refero):**
-
-   ```
-   C1. ToolSearch({ query: "mcp-pinterest", max_results: 5 })
-   C2. Empty result  → pinterest: not_configured
-       Non-empty     → pinterest: available
-   ```
-
-   No live `pinterest_search` call at probe time — ToolSearch presence is sufficient. The synthesizer makes the actual search calls.
-
-   After all probes (A, B, C), update `.design/STATE.md` `<connections>` with the results and continue. Downstream stages (design-context-builder) read `<connections>` from STATE.md rather than re-probing.
-3. Update last_checkpoint. Write STATE.md.
+---
 
 ## Auto Mode
 
-Auto Mode CSS detection (when `auto_mode: true` is passed to the builder):
-  1. If tailwind.config.{js,cjs,mjs,ts} exists → Tailwind-only project
-     - Skip CSS file grep
-     - Parse tailwind.config for color palette, spacing scale, font families
-     - Use tailwind.config values as the baseline style signal
-  2. Else → fall through to existing CSS file grep logic
+When `--auto` is passed to the builder: if `tailwind.config.{js,cjs,mjs,ts}` exists -> Tailwind-only project (skip CSS file grep, parse tailwind.config for palette/spacing/font, use those as the baseline style signal). Else fall through to the existing CSS file grep logic. Detail: `../../reference/discover-procedure.md` §Auto Mode.
+
+---
 
 ## Step 1 — Spawn design-context-builder
 
-Task("design-context-builder", """
-<required_reading>
-@.design/STATE.md
-@reference/audit-scoring.md
-@reference/anti-patterns.md
-</required_reading>
+Spawn `design-context-builder` -> `.design/DESIGN-CONTEXT.md`. The agent auto-detects via grep/glob first and interviews only for areas where auto-detect returned no confident answer. Baseline audit directory chain: `src/` -> `app/` -> `pages/` -> `lib/` -> flag "layout unknown". Common gray areas to probe (Area 7): font-change risk, token-layer introduction risk, component rebuild-vs-restyle. Wait for `## CONTEXT COMPLETE`, then update STATE.md `task_progress = 0.5`. Full prompt: `../../reference/discover-procedure.md` §Step 1.
 
-You are the design-context-builder agent. Auto-detect existing design system
-state via grep/glob before asking questions. Interview the user ONLY for areas
-where auto-detect returned no confident answer. Write .design/DESIGN-CONTEXT.md.
-
-Baseline audit directory detection (ordered fallback chain):
-  1. If src/ exists → use src/
-  2. Elif app/ exists → use app/ (Next.js App Router)
-  3. Elif pages/ exists → use pages/ (Next.js Pages Router)
-  4. Elif lib/ exists → use lib/ (library-only projects)
-  5. Else → flag "layout unknown", skip baseline, note in DESIGN-CONTEXT.md
-
-Common gray areas to probe during discovery (Area 7):
-  1. font-change risk — switching type families when existing UI has body copy in a specific family. Ask: "Is the current body font intentional or inherited? OK to change?"
-  2. token-layer introduction risk — adding CSS custom properties to a codebase that uses direct values. Ask: "Do you want design tokens (--primary, --surface) or inline values (hex, rgb)?"
-  3. Component rebuild vs restyle — when to keep existing component, when to rebuild from scratch. Ask: "For <component>, restyle in place or rebuild?"
-
-Context:
-  auto_mode: <true|false>
-
-Output file: .design/DESIGN-CONTEXT.md
-Emit `## CONTEXT COMPLETE` when done.
-""")
-
-Wait for `## CONTEXT COMPLETE`. Update STATE.md task_progress = 0.5.
+---
 
 ## Step 1.75 — Lazy gate: should design-context-checker run? (Plan 10.1-04, D-21)
 
-Spawn the cheap Haiku gate before the full context-checker:
+Spawn the cheap Haiku gate `design-context-checker-gate` before the full checker. It applies the single-file heuristic (is `DESIGN-CONTEXT.md` in `git diff --name-only HEAD~1..HEAD`?) and emits JSON + `## GATE COMPLETE`. On `spawn: false`: append `lazy_skipped: true` telemetry row, skip Step 2, set STATE.md `<position>` as if checker passed. On `spawn: true`: proceed to Step 2. On first-run discover the gate always returns `spawn: true` (builder just wrote the file); the gate meaningfully short-circuits only on re-runs where the builder made no changes. Full prompt: `../../reference/discover-procedure.md` §Step 1.75.
 
-    Task("design-context-checker-gate", """
-    <required_reading>
-    @.design/STATE.md
-    </required_reading>
+**Parallel synthesizer note:** discover does not spawn parallel researchers in v1, so `skills/synthesize/` is not wired here. If future variants spawn N parallel interviewers, wire synthesize between dispatch and collate as in `skills/map/` Step 3.5.
 
-    You are the design-context-checker-gate.
-
-    Context:
-      diff_files: <git diff --name-only HEAD~1..HEAD>
-      diff_body: (not needed — single-file heuristic)
-      baseline_sha: <HEAD~1>
-
-    Apply the heuristic (DESIGN-CONTEXT.md in diff_files?). Emit JSON + `## GATE COMPLETE`.
-    """)
-
-Wait for `## GATE COMPLETE`. Parse JSON:
-
-- `spawn: false` → append `lazy_skipped: true` telemetry row for `design-context-checker`, skip Step 2, set STATE.md `<position>` as if checker passed (rationale: DESIGN-CONTEXT.md didn't change, last validation still holds), emit `design-context-checker skipped — <rationale>`.
-- `spawn: true` → proceed to Step 2 as currently written.
-
-**Note:** On first-run discover, the builder just wrote DESIGN-CONTEXT.md so the gate returns `spawn: true`. The gate meaningfully short-circuits only on re-runs where the builder made no changes.
-
-**Parallel synthesizer note:** discover does not spawn parallel researchers in v1, so `skills/synthesize/` is not wired here. If future variants spawn N parallel interviewers/auto-detectors, wire synthesize between dispatch and collate as in `skills/map/` Step 3.5.
+---
 
 ## Step 2 — Spawn design-context-checker
 
-Task("design-context-checker", """
-<required_reading>
-@.design/STATE.md
-@.design/DESIGN-CONTEXT.md
-</required_reading>
+Spawn `design-context-checker` with `<required_reading>` on STATE.md + DESIGN-CONTEXT.md. The agent validates DESIGN-CONTEXT.md across 6 dimensions and returns APPROVED or BLOCKED with per-dimension verdicts. Wait for `## CONTEXT CHECK COMPLETE`. Full prompt: `../../reference/discover-procedure.md` §Step 2.
 
-You are the design-context-checker agent. Validate DESIGN-CONTEXT.md across
-6 dimensions. Return APPROVED or BLOCKED with per-dimension verdicts.
-
-Emit `## CONTEXT CHECK COMPLETE` when done.
-""")
-
-Wait for `## CONTEXT CHECK COMPLETE`.
+---
 
 ## Step 3 — Handle checker verdict
 
-If APPROVED: proceed to state update.
-If BLOCKED: present dimensions that BLOCKED to user, offer fix-and-retry loop
-(re-spawn builder with specific fix instructions). Do not proceed to planning.
+- **APPROVED** -> proceed to state update.
+- **BLOCKED** -> present blocked dimensions to user, offer fix-and-retry loop (re-spawn builder with specific fix instructions). Do not proceed to planning.
 
 ---
 
 ## State Update (exit)
 
-1. Set <position> status=completed, task_progress=1/1.
-2. Set <timestamps> discover_completed_at=<ISO 8601 now>.
-3. Update last_checkpoint. Write STATE.md.
+1. Set `<position>` `status=completed`, `task_progress=1/1`.
+2. Set `<timestamps>` `discover_completed_at=<ISO 8601 now>`.
+3. Update `last_checkpoint`. Write STATE.md.
 
 ---
 
 ## After Writing
 
-```
-━━━ Discovery complete ━━━
-Saved: .design/DESIGN-CONTEXT.md
-
-Baseline score: [N]/100 ([grade])
-Key issues: [top issue 1], [top issue 2], [top issue 3]
-
-Next: /get-design-done:plan
-  → Decomposes your context into executable design tasks.
-━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-Do not proceed to planning automatically unless `--auto` was passed.
+Print the "=== Discovery complete ===" block with saved path, baseline score, top key issues, and next step (`/get-design-done:plan`). Do not proceed to planning automatically unless `--auto` was passed. Template: `../../reference/discover-procedure.md` §After Writing.
 
 ## DISCOVER COMPLETE
