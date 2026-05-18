@@ -4,6 +4,7 @@ description: "Pre-warms Anthropic's 5-min prompt cache across all agents that im
 user-invocable: true
 argument-hint: "[--agents <comma-list>]"
 tools: Read, Bash, Grep
+disable-model-invocation: true
 ---
 
 # warm-cache

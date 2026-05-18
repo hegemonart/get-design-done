@@ -3,6 +3,7 @@ name: start
 description: "First-Run Proof Path — one command that scans your UI code and returns one concrete first fix. Leaf command, no STATE.md writes, no pipeline entry. Writes .design/START-REPORT.md and exits."
 argument-hint: "[--budget <fast|balanced|thorough>] [--skip-interview] [--dismiss-nudge]"
 tools: Read, Grep, Glob, Bash, Write, Task
+disable-model-invocation: true
 ---
 
 # Get Design Done — /gdd:start
