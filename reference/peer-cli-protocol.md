@@ -62,7 +62,7 @@ adapter's leading comment.
 
 ## Adapter scaffold shape
 
-Use the existing five adapters at `scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs`
+Use the existing five adapters at `../scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs`
 as templates. Pick the closest match by protocol (ASP if `<protocol> = asp`, otherwise
 ACP). Each adapter exports:
 
@@ -72,6 +72,27 @@ ACP). Each adapter exports:
 - `ROLES_CLAIMED` — array of role identifiers the peer claims.
 - `ROLE_PREFIX` — per-role prompt prefix object (empty string when no prefix needed).
 - `name`, `protocol` — string identifiers.
+
+Canonical skeleton (ACP variant; for ASP swap to `createAspClient` from `asp-client.cjs`):
+
+```js
+'use strict';
+const { createAcpClient } = require('../acp-client.cjs');
+
+const ROLES_CLAIMED = ['<role-1>', '<role-2>'];
+const ROLE_PREFIX = { '<role-1>': '', '<role-2>': '' };
+
+function claims(role) { return ROLES_CLAIMED.includes(role); }
+async function dispatch({ command, args, cwd, env }, role, text, opts) {
+  if (!claims(role)) throw new Error(`<peer-id> does not claim role: ${role}`);
+  const client = createAcpClient({ command, args, cwd, env });
+  try {
+    await client.initialize({ protocolVersion: '2025-06-18' });
+    return await client.prompt((ROLE_PREFIX[role] || '') + text, { onNotification: opts?.onNotification });
+  } finally { await client.close(); }
+}
+module.exports = { claims, dispatch, ROLES_CLAIMED, ROLE_PREFIX, name: '<peer-id>', protocol: '<protocol>' };
+```
 
 ## Three-file footprint (peer add)
 
