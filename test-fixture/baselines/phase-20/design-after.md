@@ -10,7 +10,7 @@ tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get
 
 **Stage 4 of 5** in the get-design-done pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
 
-Full procedure detail: `../../reference/design-procedure.md`.
+Full procedure detail: `./design-procedure.md`.
 
 ---
 
@@ -20,7 +20,7 @@ Full procedure detail: `../../reference/design-procedure.md`.
 2. `mcp__gdd_state__get` -> snapshot `state`; read `state.position.wave` for execution plan.
 3. Abort only if `.design/DESIGN-PLAN.md` is missing: "No plan found. Run `/get-design-done:plan` first."
 
-Detail: `../../reference/design-procedure.md` §Stage entry.
+Detail: `./design-procedure.md` §Stage entry.
 
 ---
 
@@ -30,7 +30,7 @@ Detail: `../../reference/design-procedure.md` §Stage entry.
 - `--parallel` -> `parallel_mode=true` (use worktree isolation for `Parallel: true` tasks).
 - **Directionally-open check** (skipped if `auto_mode`): scan DESIGN-PLAN.md for tasks whose criteria read "explore N directions" / "pick a visual approach" and suggest `/gdd:sketch` first.
 - **Project-local conventions**: include any `./.claude/skills/design-*-conventions.md` and `~/.claude/gdd/global-skills/*.md` in every executor's `<required_reading>` — global conventions inform but do not override project-local D-XX decisions.
-- **`.stories.tsx` stub**: after each new component file is created by the executor, emit a CSF stub alongside if `.storybook/` exists or `"storybook"` is in `package.json`, even with the dev server offline. Detail: `../../reference/design-procedure.md` §.stories.tsx Stub.
+- **`.stories.tsx` stub**: after each new component file is created by the executor, emit a CSF stub alongside if `.storybook/` exists or `"storybook"` is in `package.json`, even with the dev server offline. Detail: `./design-procedure.md` §.stories.tsx Stub.
 
 ---
 
@@ -49,7 +49,7 @@ For each wave in order:
 3. **Parallel batch** (when `parallel_mode=true` AND any `Parallel: true` tasks in wave): announce the partition, spawn all `Parallel: true` tasks via concurrent `Task("design-executor", ..., isolation: "worktree")` calls in ONE response, wait for all `## EXECUTION COMPLETE` markers, merge worktrees (non-overlapping `Touches:` guarantees no conflicts; surface any conflict to the user before continuing), then `update_progress` + `checkpoint`.
 4. **Sequential tail** (`Parallel: false` or `parallel_mode=false`): spawn one `design-executor` at a time (no worktree isolation), waiting for each `## EXECUTION COMPLETE` and emitting `update_progress` per task; `checkpoint` after the final task of the wave.
 
-Full executor prompts (parallel + sequential variants) and the merge-worktrees protocol: `../../reference/design-procedure.md` §Step 2.
+Full executor prompts (parallel + sequential variants) and the merge-worktrees protocol: `./design-procedure.md` §Step 2.
 
 ---
 
@@ -70,12 +70,12 @@ Check task-NN.md files for `status: deviation`. If found: `mcp__gdd_state__get` 
 
 ## After Completion
 
-Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/get-design-done:verify`). Template: `../../reference/design-procedure.md` §After Completion.
+Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/get-design-done:verify`). Template: `./design-procedure.md` §After Completion.
 
 ---
 
 ## Figma Write Dispatch
 
-After all tasks finish, if STATE.md `<connections>` has `figma: available`, offer the user the figma-write opt-in prompt (modes: annotate / tokenize / mappings, with optional `--dry-run`). Spawn `design-figma-writer` with the selected mode on "yes"; skip silently on "no". NEVER auto-run without confirmation. Full prompt + dispatch logic: `../../reference/design-procedure.md` §Figma Write Dispatch.
+After all tasks finish, if STATE.md `<connections>` has `figma: available`, offer the user the figma-write opt-in prompt (modes: annotate / tokenize / mappings, with optional `--dry-run`). Spawn `design-figma-writer` with the selected mode on "yes"; skip silently on "no". NEVER auto-run without confirmation. Full prompt + dispatch logic: `./design-procedure.md` §Figma Write Dispatch.
 
 ## DESIGN COMPLETE
