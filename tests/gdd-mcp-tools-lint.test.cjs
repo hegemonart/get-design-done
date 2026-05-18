@@ -20,7 +20,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 
-const { lintMcpToolsDir } = require('../scripts/lib/mcp-tools-lint');
+const { lintMcpToolsDir } = require('../scripts/lib/mcp-tools-lint/index.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const PROD_TOOLS_DIR = path.join(
