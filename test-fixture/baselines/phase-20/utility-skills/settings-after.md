@@ -3,6 +3,7 @@ name: gdd-settings
 description: "Manage .design/config.json settings. Subcommands: profile, parallelism, cleanup, show."
 argument-hint: "<profile <name>|parallelism <key> <value>|cleanup|show>"
 tools: Read, Write, AskUserQuestion, Bash, mcp__gdd_state__get, mcp__gdd_state__frontmatter_update
+disable-model-invocation: true
 ---
 
 # gdd-settings

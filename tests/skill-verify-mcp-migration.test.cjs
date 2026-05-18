@@ -27,6 +27,20 @@ const BEFORE_PATH = path.join(
   'phase-20',
   'verify-before.md',
 );
+const AFTER_PATH = path.join(
+  REPO_ROOT,
+  'test-fixture',
+  'baselines',
+  'phase-20',
+  'verify-after.md',
+);
+// Phase 28.5-04 extracted verify procedure detail to
+// reference/verify-procedure.md per the <=100-line authoring contract.
+const PROCEDURE_PATH = path.join(
+  REPO_ROOT,
+  'reference',
+  'verify-procedure.md',
+);
 
 function readSkill() {
   return fs.readFileSync(SKILL_PATH, 'utf8');
@@ -34,6 +48,20 @@ function readSkill() {
 
 function readBefore() {
   return fs.readFileSync(BEFORE_PATH, 'utf8');
+}
+
+/**
+ * Phase 28.5 closeout (Plan 28.5-12): the Bucket 1 pipeline-stage rework
+ * (Plan 28.5-04) moved verify-procedure detail to
+ * reference/verify-procedure.md. Content-preservation assertions read
+ * SKILL + linked reference together as the canonical surface.
+ */
+function readSkillSurface() {
+  const skill = fs.readFileSync(SKILL_PATH, 'utf8');
+  const procedure = fs.existsSync(PROCEDURE_PATH)
+    ? fs.readFileSync(PROCEDURE_PATH, 'utf8')
+    : '';
+  return skill + '\n\n' + procedure;
 }
 
 function readFrontmatter(body) {
@@ -100,20 +128,24 @@ test('verify-migration: exactly one transition_stage call at stage entry', () =>
 });
 
 test('verify-migration: update-in-place idiom is documented', () => {
-  const body = readSkill();
+  // Phase 28.5-04 moved this load-bearing idiom to
+  // reference/verify-procedure.md per <=100-line authoring contract.
+  // Read SKILL + linked reference together so the idiom presence is
+  // preserved across the extraction.
+  const body = readSkillSurface();
   // The idiom phrase is load-bearing — it documents to future readers why
   // there is no dedicated `update_must_have_status` tool. Absence here
   // means the idiom was silently dropped; fail loudly.
   assert.match(
     body,
     /update-in-place/,
-    'skill must document the "update-in-place" idiom inline (see "Flipping a must-have status")',
+    'SKILL + reference must document the "update-in-place" idiom (see "Flipping a must-have status")',
   );
   // Also sanity-check the canonical heading for the idiom section.
   assert.match(
     body,
     /##\s+Flipping a must-have status/,
-    'skill must contain a "Flipping a must-have status" section',
+    'SKILL + reference must contain a "Flipping a must-have status" section',
   );
 });
 
@@ -176,8 +208,13 @@ test('verify-migration: stage-exit calls update_progress + set_status + checkpoi
 });
 
 test('verify-migration: orchestration prose (auditor/verifier/integration-checker) unchanged in count', () => {
+  // Phase 28.5-04 moved orchestration prose to
+  // reference/verify-procedure.md per <=100-line authoring contract.
+  // Read SKILL + linked reference together so the per-agent reference
+  // count is preserved across the extraction (must be >= baseline,
+  // since the reference can add context but not drop mentions).
   const before = readBefore();
-  const after = readSkill();
+  const after = readSkillSurface();
   for (const agent of [
     'design-auditor',
     'design-verifier',
@@ -186,22 +223,25 @@ test('verify-migration: orchestration prose (auditor/verifier/integration-checke
     const re = new RegExp(agent, 'g');
     const beforeCount = countMatches(before, re);
     const afterCount = countMatches(after, re);
-    assert.equal(
-      afterCount,
-      beforeCount,
-      `count of "${agent}" references must be identical pre/post (before=${beforeCount}, after=${afterCount})`,
+    assert.ok(
+      afterCount >= beforeCount,
+      `count of "${agent}" references regressed across migration (before=${beforeCount}, after=${afterCount}; surface = SKILL + reference/verify-procedure.md)`,
     );
   }
 });
 
 test('verify-migration: line count within ±15% of pre-migration baseline', () => {
-  const before = readBefore().split('\n').length;
-  const after = readSkill().split('\n').length;
-  const min = Math.floor(before * 0.85);
-  const max = Math.ceil(before * 1.15);
+  // Phase 28.5 closeout: re-anchored to AFTER_PATH because Plan 28.5-04
+  // intentionally trimmed skills/verify/SKILL.md to the <=100-line
+  // authoring contract by extracting procedure detail to
+  // reference/verify-procedure.md.
+  const baseline = fs.readFileSync(AFTER_PATH, 'utf8').split('\n').length;
+  const live = readSkill().split('\n').length;
+  const min = Math.floor(baseline * 0.85);
+  const max = Math.ceil(baseline * 1.15);
   assert.ok(
-    after >= min && after <= max,
-    `line count drift: before=${before}, after=${after}, allowed [${min}, ${max}]`,
+    live >= min && live <= max,
+    `line count drift: after-baseline=${baseline}, live=${live}, allowed [${min}, ${max}]`,
   );
 });
 

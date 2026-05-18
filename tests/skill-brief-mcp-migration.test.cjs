@@ -180,16 +180,24 @@ test('skill-brief-mcp-migration: interview prompts also present in pre-migration
 });
 
 test('skill-brief-mcp-migration: line count within ±15% of pre-migration', () => {
-  const before = fs.readFileSync(BEFORE_PATH, 'utf8');
-  const after = fs.readFileSync(SKILL_PATH, 'utf8');
-  const beforeLines = before.split('\n').length;
-  const afterLines = after.split('\n').length;
-  const delta = Math.abs(afterLines - beforeLines) / beforeLines;
+  // Phase 28.5 closeout (Plan 28.5-12) changed the comparison anchor from
+  // BEFORE_PATH (pre-Plan-20-07) to AFTER_PATH (post-Plan-20-07,
+  // post-Phase-28.5) because Plan 28.5-04 (Bucket 1 pipeline-stage rework)
+  // intentionally trimmed brief SKILL.md to the <=100-line authoring
+  // contract by extracting procedure detail to reference/. Drift is now
+  // measured against the regenerated post-migration baseline; if the
+  // SKILL changes intentionally again, regen the after.md fixture per
+  // the byte-for-byte test's guidance.
+  const baseline = fs.readFileSync(AFTER_PATH, 'utf8');
+  const live = fs.readFileSync(SKILL_PATH, 'utf8');
+  const baselineLines = baseline.split('\n').length;
+  const liveLines = live.split('\n').length;
+  const delta = Math.abs(liveLines - baselineLines) / baselineLines;
   assert.ok(
     delta <= LINE_COUNT_TOLERANCE,
     `SKILL.md line count drift ${(delta * 100).toFixed(1)}% exceeds ` +
       `±${(LINE_COUNT_TOLERANCE * 100).toFixed(0)}% tolerance ` +
-      `(before=${beforeLines}, after=${afterLines})`,
+      `(after-baseline=${baselineLines}, live=${liveLines})`,
   );
 });
 
