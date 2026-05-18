@@ -97,13 +97,13 @@ describe('Phase 28-07: CHANGELOG + OFF_CADENCE', () => {
   test('28-07: CHANGELOG has a current-version block at top (within first 50 lines)', () => {
     // Version-agnostic: look for the current VERSION's block, not hardcoded 1.28.0
     const head50 = read('CHANGELOG.md').split(/\r?\n/).slice(0, 50).join('\n');
-    const escaped = VERSION.replace(/\./g, '\\.');
+    const escaped = VERSION.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     assert.match(head50, new RegExp(`^## \\[${escaped}\\]`, 'm'));
   });
 
   test('28-07: tests/semver-compare.test.cjs contains OFF_CADENCE_VERSIONS.add for current version', () => {
     const semver = read('tests/semver-compare.test.cjs');
-    const escaped = VERSION.replace(/\./g, '\\.');
+    const escaped = VERSION.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     assert.match(semver, new RegExp(`OFF_CADENCE_VERSIONS\\.add\\(['"]${escaped}['"]\\)`));
   });
 });
