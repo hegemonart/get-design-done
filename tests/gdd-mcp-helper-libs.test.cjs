@@ -32,7 +32,7 @@ function tmp(prefix) {
 // =========================================================================
 
 test('27.7-02: roadmap-reader.parsePhases extracts heading + version + checkbox', () => {
-  const lib = require(path.join(LIB_DIR, 'roadmap-reader'));
+  const lib = require(path.join(LIB_DIR, 'roadmap-reader', 'index.cjs'));
   const md = [
     '# Roadmap',
     '',
@@ -64,7 +64,7 @@ test('27.7-02: roadmap-reader.parsePhases extracts heading + version + checkbox'
 });
 
 test('27.7-02: roadmap-reader.readRoadmapMd reads file from .planning/ROADMAP.md', async () => {
-  const lib = require(path.join(LIB_DIR, 'roadmap-reader'));
+  const lib = require(path.join(LIB_DIR, 'roadmap-reader', 'index.cjs'));
   const root = tmp('roadmap-reader-read');
   fs.mkdirSync(path.join(root, '.planning'), { recursive: true });
   fs.writeFileSync(
@@ -81,7 +81,7 @@ test('27.7-02: roadmap-reader.readRoadmapMd reads file from .planning/ROADMAP.md
 // =========================================================================
 
 test('27.7-02: snapshot-reader.readLatestSnapshot throws SnapshotNotFoundError when dir absent', async () => {
-  const lib = require(path.join(LIB_DIR, 'snapshot-reader'));
+  const lib = require(path.join(LIB_DIR, 'snapshot-reader', 'index.cjs'));
   const root = tmp('snapshot-reader-absent');
   let threw = null;
   try {
@@ -96,7 +96,7 @@ test('27.7-02: snapshot-reader.readLatestSnapshot throws SnapshotNotFoundError w
 });
 
 test('27.7-02: snapshot-reader.readLatestSnapshot returns null when dir empty', async () => {
-  const lib = require(path.join(LIB_DIR, 'snapshot-reader'));
+  const lib = require(path.join(LIB_DIR, 'snapshot-reader', 'index.cjs'));
   const root = tmp('snapshot-reader-empty');
   fs.mkdirSync(path.join(root, '.design', 'snapshots'), { recursive: true });
   const result = await lib.readLatestSnapshot(root);
@@ -104,7 +104,7 @@ test('27.7-02: snapshot-reader.readLatestSnapshot returns null when dir empty', 
 });
 
 test('27.7-02: snapshot-reader.readLatestSnapshot returns newest snapshot by mtime', async () => {
-  const lib = require(path.join(LIB_DIR, 'snapshot-reader'));
+  const lib = require(path.join(LIB_DIR, 'snapshot-reader', 'index.cjs'));
   const root = tmp('snapshot-reader-newest');
   const dir = path.join(root, '.design', 'snapshots');
   fs.mkdirSync(dir, { recursive: true });
@@ -140,7 +140,7 @@ test('27.7-02: snapshot-reader.readLatestSnapshot returns newest snapshot by mti
 // =========================================================================
 
 test('27.7-02: intel-store.readSlice throws IntelNotFoundError when dir absent', async () => {
-  const lib = require(path.join(LIB_DIR, 'intel-store'));
+  const lib = require(path.join(LIB_DIR, 'intel-store', 'index.cjs'));
   const root = tmp('intel-store-absent');
   let threw = null;
   try {
@@ -154,7 +154,7 @@ test('27.7-02: intel-store.readSlice throws IntelNotFoundError when dir absent',
 });
 
 test('27.7-02: intel-store.readSlice returns parsed JSON when slice exists', async () => {
-  const lib = require(path.join(LIB_DIR, 'intel-store'));
+  const lib = require(path.join(LIB_DIR, 'intel-store', 'index.cjs'));
   const root = tmp('intel-store-exists');
   const dir = path.join(root, '.design', 'intel');
   fs.mkdirSync(dir, { recursive: true });
@@ -168,7 +168,7 @@ test('27.7-02: intel-store.readSlice returns parsed JSON when slice exists', asy
 });
 
 test('27.7-02: intel-store.readSlice returns null when slice id not found', async () => {
-  const lib = require(path.join(LIB_DIR, 'intel-store'));
+  const lib = require(path.join(LIB_DIR, 'intel-store', 'index.cjs'));
   const root = tmp('intel-store-missing-slice');
   const dir = path.join(root, '.design', 'intel');
   fs.mkdirSync(dir, { recursive: true });
@@ -177,7 +177,7 @@ test('27.7-02: intel-store.readSlice returns null when slice id not found', asyn
 });
 
 test('27.7-02: intel-store.listSlices returns array of slice ids', () => {
-  const lib = require(path.join(LIB_DIR, 'intel-store'));
+  const lib = require(path.join(LIB_DIR, 'intel-store', 'index.cjs'));
   const root = tmp('intel-store-list');
   const dir = path.join(root, '.design', 'intel');
   fs.mkdirSync(dir, { recursive: true });
@@ -194,7 +194,7 @@ test('27.7-02: intel-store.listSlices returns array of slice ids', () => {
 // =========================================================================
 
 test('27.7-02: reflections-reader.readLatestReflection throws when dir absent', async () => {
-  const lib = require(path.join(LIB_DIR, 'reflections-reader'));
+  const lib = require(path.join(LIB_DIR, 'reflections-reader', 'index.cjs'));
   const root = tmp('reflections-reader-absent');
   let threw = null;
   try {
@@ -208,7 +208,7 @@ test('27.7-02: reflections-reader.readLatestReflection throws when dir absent', 
 });
 
 test('27.7-02: reflections-reader.readLatestReflection returns newest by mtime', async () => {
-  const lib = require(path.join(LIB_DIR, 'reflections-reader'));
+  const lib = require(path.join(LIB_DIR, 'reflections-reader', 'index.cjs'));
   const root = tmp('reflections-reader-newest');
   const dir = path.join(root, '.design', 'reflections');
   fs.mkdirSync(dir, { recursive: true });
@@ -225,7 +225,7 @@ test('27.7-02: reflections-reader.readLatestReflection returns newest by mtime',
 });
 
 test('27.7-02: reflections-reader.digestReflections truncates to <= 5 KB', () => {
-  const lib = require(path.join(LIB_DIR, 'reflections-reader'));
+  const lib = require(path.join(LIB_DIR, 'reflections-reader', 'index.cjs'));
   const big = 'A'.repeat(20000);
   const reflections = [
     { cycle: 'c1', path: 'a.md', content: big },
@@ -241,7 +241,7 @@ test('27.7-02: reflections-reader.digestReflections truncates to <= 5 KB', () =>
 // =========================================================================
 
 test('27.7-02: gsd-health-mirror.getHealthChecks returns 4 checks', async () => {
-  const lib = require(path.join(LIB_DIR, 'gsd-health-mirror'));
+  const lib = require(path.join(LIB_DIR, 'gsd-health-mirror', 'index.cjs'));
   const root = tmp('gsd-health-mirror');
   // Create a minimal project surface
   fs.mkdirSync(path.join(root, '.planning'), { recursive: true });

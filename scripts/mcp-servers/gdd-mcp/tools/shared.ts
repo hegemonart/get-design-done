@@ -34,10 +34,63 @@ export function okResponse(data: Record<string, unknown>): ToolResponse {
  * Map an error into a tool-response `{success:false, error}` object.
  * Single entry point for every handler — keeps the error-shape decision
  * in one place.
+ *
+ * Plan 27.7-02 Warning #5 projection: when the underlying error carries
+ * a `code === 'directory_not_found'` property (set by
+ * SnapshotNotFoundError / IntelNotFoundError / ReflectionsNotFoundError),
+ * we surface it as `error.mcp_code` so MCP clients can distinguish a
+ * missing-data-source from a genuine bug. The original `code`/`kind`
+ * pair stays intact for the GDD error taxonomy.
  */
 export function errorResponse(err: unknown): ToolResponse {
   const payload = toToolError(err);
+  if (
+    typeof err === 'object' &&
+    err !== null &&
+    'code' in err &&
+    (err as { code?: unknown }).code === 'directory_not_found'
+  ) {
+    const error = { ...payload.error, mcp_code: 'directory_not_found' };
+    return { success: false, error: error as ToolErrorPayload['error'] };
+  }
   return { success: false, error: payload.error };
+}
+
+/**
+ * Resolve <root>/.design/STATE.md. State path can be pinned via
+ * `process.env.GDD_STATE_PATH` (mirrors the gdd-state server).
+ */
+export function resolveStatePath(): string {
+  const override = process.env['GDD_STATE_PATH'];
+  if (typeof override === 'string' && override.length > 0) {
+    return override;
+  }
+  return join(resolveProjectRoot(), '.design', 'STATE.md');
+}
+
+/** Resolve <root>/.planning/ROADMAP.md. */
+export function resolveRoadmapPath(): string {
+  return join(resolveProjectRoot(), '.planning', 'ROADMAP.md');
+}
+
+/** Resolve <root>/.design/intel. */
+export function resolveIntelDir(): string {
+  return join(resolveProjectRoot(), '.design', 'intel');
+}
+
+/** Resolve <root>/.design/telemetry. */
+export function resolveTelemetryDir(): string {
+  return join(resolveProjectRoot(), '.design', 'telemetry');
+}
+
+/** Resolve <root>/.design/reflections. */
+export function resolveReflectionsDir(): string {
+  return join(resolveProjectRoot(), '.design', 'reflections');
+}
+
+/** Resolve <root>/.design/snapshots. */
+export function resolveSnapshotsDir(): string {
+  return join(resolveProjectRoot(), '.design', 'snapshots');
 }
 
 /**
