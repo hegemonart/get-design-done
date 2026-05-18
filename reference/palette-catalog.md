@@ -20,6 +20,8 @@ This catalog gives design agents and the brief-stage palette picker a pre-verifi
 
 **Step 4 — Adjust for brand uniqueness.** All values here are mid-point baselines. Shift the primary hue ±15°, adjust lightness ±10%, or introduce a proprietary tint to differentiate the brand. Do not use these hex values verbatim in production without at least one brand-distinguishing adjustment.
 
+**See:** [`./color-theory.md`](./color-theory.md) §Color Harmonies for the OKLCH model that grounds these hue-shift instructions (perceptual lightness preserved across hues; sRGB ±15° distorts perceived brightness asymmetrically across yellow/blue).
+
 **Step 5 — Verify pairing.** After choosing the palette, consult `reference/typography.md` for matching typeface pairings that reinforce the vertical's tone.
 
 ## WCAG Compliance Notes

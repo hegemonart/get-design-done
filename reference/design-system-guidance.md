@@ -33,6 +33,8 @@ Examples:
 - `--space-8: 8px`
 - `--font-size-16: 16px`
 
+**See:** [`./proportion-systems.md`](./proportion-systems.md) for the whole-UI proportion system covering 4pt/8pt/√2 baseline grids, baseline-grid lock, vertical rhythm, and modular relationships across type / spacing / sizing / radius scales — the primitive tokens above are the codified output of that system.
+
 Primitive tokens should never be used directly in component code. They exist only to feed the semantic layer. This constraint is essential: if components reference primitive tokens directly, you lose the ability to theme them without modifying component code.
 
 ### Semantic Layer (Roles)

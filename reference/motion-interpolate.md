@@ -280,3 +280,4 @@ This is equivalent to three separate interpolations chained by range.
 
 - Easing functions for the `easing` / `ease` parameter: [motion-easings.md](./motion-easings.md)
 - Spring-based animation (an alternative driver to progress/scroll): [motion-spring.md](./motion-spring.md)
+- Color-specific interpolation paths (sRGB muddy-mid transition vs OKLCH perceptual path): **See** [`./color-theory.md`](./color-theory.md) §Color Interpolation in Animation for the color-channel application of the same interpolation discipline.

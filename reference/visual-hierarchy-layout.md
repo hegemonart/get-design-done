@@ -75,6 +75,8 @@ The key discipline is intentionality. Asymmetry that emerges from neglect — un
 
 Rhythm in layout means that repetition creates a predictable visual beat that the eye can lock onto and traverse quickly. A card grid has rhythm. A consistent heading-body-space pattern has rhythm. Rhythm is not uniformity — it is the reliable expectation that similar content will appear in similar visual form. Break rhythm only to signal importance: a featured item in a grid that is twice the size says "this one matters."
 
+**See:** [`./composition.md`](./composition.md) §Visual-Weight Calculus for the `size × contrast × isolation × complexity` formula that quantifies why an asymmetric large/small pairing directs the eye toward the heavier element.
+
 ---
 
 ## Compositional Grids
@@ -95,6 +97,8 @@ Grids are not aesthetic choices — they are coordination mechanisms. A grid ali
 ### Baseline Grid
 
 A baseline grid aligns text and element heights to a consistent vertical increment — typically 4px or 8px. Every element's height, padding, and margin should be a multiple of this increment. The baseline grid is what makes a layout feel "settled" rather than arbitrarily positioned, because every vertical decision relates to a shared rhythm. In practice, use 8px as the primary increment and 4px for sub-increments only (e.g., within a component's internal padding).
+
+**See:** [`./composition.md`](./composition.md) §Golden Ratio and Root Rectangles + §Focal-Point Construction for the pre-Gestalt compositional foundations (φ-grid, root rectangles, rule-of-thirds intersections) that complement the responsive-column / baseline-grid coordinations above.
 
 ---
 

@@ -20,6 +20,8 @@ Icons are not scalable art objects that merely get bigger — they are optical i
 
 **Pixel alignment rules:** Icons on an even grid (16px, 24px, 32px) align their strokes to whole pixels. Icons on an odd grid (20px, 28px) should have strokes centered on 0.5px boundaries to avoid sub-pixel blur on non-retina displays. For SVG exports, always set `shape-rendering: crispEdges` on icon wrappers, and center the viewBox exactly on the pixel grid (e.g., `viewBox="0 0 24 24"`, not `"0.5 0.5 23 23"`). A stroke centered on the path boundary will anti-alias; a stroke offset by 0.5px will render sharply.
 
+**See:** [`./composition.md`](./composition.md) §Optical vs. Mathematical Centering for why icon glyphs (chevrons, play triangles, asymmetric arrows) need a small (−1 to −2px) nudge from mathematical center — the visual-weight asymmetry of the glyph shifts perceived center away from the geometric centroid.
+
 ---
 
 ## 2. Weight & Stroke Consistency
