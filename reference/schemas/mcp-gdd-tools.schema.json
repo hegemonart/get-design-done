@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/mcp-gdd-tools.schema.json",
+  "title": "McpGddTools",
+  "description": "Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02 will populate the 12 read-only tools). Individual tool schemas live under scripts/mcp-servers/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).",
+  "type": "object",
+  "properties": {
+    "tools": {
+      "type": "object",
+      "description": "Per-tool input/output schemas keyed by tool name (e.g. gdd_status, gdd_phase_current, gdd_phases_list, gdd_plans_list, gdd_decisions_list, gdd_intel_get, gdd_telemetry_query, gdd_cycle_recap, gdd_reflections_latest, gdd_learnings_digest, gdd_events_tail, gdd_health). Plan 27.7-02 populates entries.",
+      "properties": {}
+    }
+  },
+  "definitions": {
+    "ToolSchemaEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input", "output"],
+      "properties": {
+        "input": {
+          "type": "object",
+          "description": "JSON Schema fragment describing the tool's input parameters."
+        },
+        "output": {
+          "type": "object",
+          "description": "JSON Schema fragment describing the tool's response envelope.",
+          "required": ["type"],
+          "properties": {
+            "type": { "type": "string", "enum": ["object"] }
+          }
+        }
+      }
+    },
+    "ToolError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "kind"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": ["validation", "state_conflict", "operation_failed", "unknown"]
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "ToolResponseEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": { "type": "object" },
+        "error": { "$ref": "#/definitions/ToolError" }
+      }
+    }
+  }
+}

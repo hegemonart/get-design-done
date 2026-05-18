@@ -27,10 +27,11 @@
     "LICENSE"
   ],
   "bin": {
-    "get-design-done": "./scripts/install.cjs",
-    "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts",
+    "gdd-events": "./scripts/cli/gdd-events.mjs",
+    "gdd-mcp": "./scripts/mcp-servers/gdd-mcp/server.ts",
     "gdd-sdk": "./bin/gdd-sdk",
-    "gdd-events": "./scripts/cli/gdd-events.mjs"
+    "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts",
+    "get-design-done": "./scripts/install.cjs"
   },
   "publishConfig": {
     "access": "public",
