@@ -1,17 +1,15 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0.0
-milestone_name: milestone
+milestone_name: → v1.27.1)
 status: Phase 28 (Foundational References Tier 2) closed out — v1.28.0 shipped (2026-05-18). 4-manifest lockstep, CHANGELOG block, OFF_CADENCE add, 6 phase-28 baseline files, 9-test version-agnostic regression suite, scoped ROADMAP flip (7 inline + 1 overview). 5 new ref files (color-theory, composition, proportion-systems, i18n, contrast-advanced) + 2 verifier i18n probes + 1 explore i18n-readiness probe + 12 additive cross-link insertions + 2 orthogonal audit-scoring lens-tags. Phase 27 + v1.27.7 (gdd-mcp) shipped prior. Phase 31 (Figma Off-Context Extractor) in progress. Roadmap rebalanced 2026-05-16.
-stopped_at: v1.28.0 (2026-05-18 — Phase 28 closeout). See ROADMAP.md Phase Details for full phase list (1 → 49).
-last_updated: "2026-05-18T06:39:00.000Z"
-last_activity: 2026-05-18
+last_updated: "2026-05-18T10:53:29.630Z"
 progress:
-  total_phases: 60
-  completed_phases: 33
-  total_plans_approx: 280
-  completed_plans_approx: 178
-  percent: 55
+  total_phases: 6
+  completed_phases: 4
+  total_plans: 38
+  completed_plans: 31
+  percent: 82
 ---
 
 # Project State
@@ -29,6 +27,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 **Released:** **v1.27.1** (latest npm + git tag, 2026-05-02 — Peer-CLI Delegation wiring patch).
 
 **In progress:**
+
 - Phase 31 — Figma Off-Context Extractor + Variables Sync Plugin (target v1.31.0). See [.planning/phases/31-figma-extractor-sync/PLAN.md](phases/31-figma-extractor-sync/PLAN.md).
 
 **Planned next** (post-2026-05-16 rebalance — see [ROADMAP.md Overview](ROADMAP.md#planned-v1275--v1490)):
@@ -100,6 +99,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 ## Notes on this file
 
 Historical detail (per-phase plans, velocity tables, etc.) lives in:
+
 - [ROADMAP.md](ROADMAP.md) — phase specs, progress table, deferred backlog
 - `.planning/phases/<phase-N>/` — per-phase PLAN.md, CONTEXT.md, etc.
 - `CHANGELOG.md` (repo root) — user-facing version history
