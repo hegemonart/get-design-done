@@ -59,6 +59,23 @@ jobs:
       - name: Detect stale references
         run: node scripts/detect-stale-refs.cjs
 
+      - name: Validate skill-authoring contract
+        # Phase 28.5-11 / D-11: validate-skill-length is the load-bearing
+        # test contract. Exit 2 = blockers (fail build); exit 1 = warnings
+        # only (advisory; emit ::warning::); exit 0 = clean.
+        # STRICT_DESCRIPTION stays OFF per D-02 (Phase 33 A/B evidence will
+        # graduate strict form). Step output streams the validator summary
+        # plus per-skill findings so PR reviewers can see drift at a glance.
+        run: |
+          set +e
+          node scripts/validate-skill-length.cjs --quiet --json > /tmp/validator.json
+          EXIT=$?
+          set -e
+          node -e "const r = JSON.parse(require('fs').readFileSync('/tmp/validator.json','utf8')); console.log('Summary:', JSON.stringify(r.summary)); const bad = r.skills.filter(s => s.errors.length || s.warnings.length); if (bad.length) { console.log('Findings:'); for (const s of bad) { console.log(' ' + s.name + ' (' + s.lines + ' lines):', JSON.stringify({errors: s.errors.map(e=>e.code), warnings: s.warnings.map(w=>w.code)})); } } else { console.log('All skills clean.'); }"
+          if [ "$EXIT" = "2" ]; then echo "::error::Skill-authoring contract blockers present (exit 2)"; exit 2; fi
+          if [ "$EXIT" = "1" ]; then echo "::warning::Skill-authoring contract warnings present (advisory; exit 1)"; fi
+          exit 0
+
   validate:
     name: "Validate (schemas + plugin + shellcheck)"
     runs-on: ubuntu-latest
