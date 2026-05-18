@@ -38,20 +38,16 @@ export const TOOL_MODULES: readonly ToolModule[] = [] as const;
 
 /** Canonical count. The plan caps this at 12 — if you add a tool past
  *  that bound, update the plan, the combined schema, and the lint
- *  test. */
+ *  test (Plan 27.7-03). */
 export const TOOL_COUNT: number = TOOL_MODULES.length;
 
-// Compile-time assertion that we are within the 12-tool cap (D-03).
-// This is a type-level guard — if TOOL_COUNT ever exceeds 12, the
-// conditional type below resolves to `never` and the `_TOOL_COUNT_OK`
-// assignment fails at tsc time.
-type Le12<N extends number> = N extends 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-  ? true
-  : never;
-
-// Helper so `TOOL_COUNT` (a `number`) can be checked at the type level.
-// `as const` on TOOL_MODULES makes `TOOL_MODULES['length']` a literal
-// `number`, which lets us feed it into Le12 below.
-type ToolCount = (typeof TOOL_MODULES)['length'];
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _TOOL_COUNT_OK: Le12<ToolCount> = true;
+// Module-load runtime assertion of the 12-tool cap (D-03). A compile-time
+// type guard is fragile against `readonly ToolModule[]` (the length type
+// widens to `number`); the runtime check is cheap, deterministic, and
+// fails fast on server boot if the registry ever drifts past the cap.
+if (TOOL_COUNT > 12) {
+  throw new Error(
+    `gdd-mcp: TOOL_COUNT=${TOOL_COUNT} exceeds the 12-tool cap (D-03). ` +
+      'Add tool past 12 requires re-scoping in a new plan.',
+  );
+}
