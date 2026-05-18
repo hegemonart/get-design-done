@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "gdd_phase_current",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
+    },
+    "output": {
+      "type": "object",
+      "required": ["phase", "stage", "task_progress", "status"],
+      "properties": {
+        "phase": { "type": ["string", "null"] },
+        "stage": { "type": ["string", "null"] },
+        "task_progress": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

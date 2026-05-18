@@ -1,8 +1,8 @@
 // scripts/mcp-servers/gdd-mcp/tools/index.ts
 //
-// Tool registry for `gdd-mcp`. Plan 27.7-01 ships the empty scaffold;
-// Plan 27.7-02 populates with 12 read-only tools. The 12-tool cap is
-// D-03 (hard); enforce in Plan 27.7-03 lint test.
+// Tool registry for `gdd-mcp`. Plan 27.7-02 populates with 12 read-only
+// tools. The 12-tool cap is D-03 (hard); enforced at module load by a
+// runtime check + by tests in Plan 27.7-03.
 //
 // Convention (mirrors Phase 20 `gdd-state`):
 //   - Each tool exports `name`, `schemaPath`, and `handle` from its own
@@ -15,26 +15,48 @@
 
 import type { ToolResponse } from './shared.ts';
 
+import * as gdd_cycle_recap from './gdd_cycle_recap.ts';
+import * as gdd_decisions_list from './gdd_decisions_list.ts';
+import * as gdd_events_tail from './gdd_events_tail.ts';
+import * as gdd_health from './gdd_health.ts';
+import * as gdd_intel_get from './gdd_intel_get.ts';
+import * as gdd_learnings_digest from './gdd_learnings_digest.ts';
+import * as gdd_phase_current from './gdd_phase_current.ts';
+import * as gdd_phases_list from './gdd_phases_list.ts';
+import * as gdd_plans_list from './gdd_plans_list.ts';
+import * as gdd_reflections_latest from './gdd_reflections_latest.ts';
+import * as gdd_status from './gdd_status.ts';
+import * as gdd_telemetry_query from './gdd_telemetry_query.ts';
+
 export interface ToolModule {
   /** Public tool name exposed via MCP (e.g. "gdd_status"). */
   name: string;
   /** Path to the input/output Draft-07 JSON Schema, relative to this
-   *  module's directory. Plan 27.7-02 will add per-tool entries under
-   *  `../schemas/`. */
+   *  module's directory. Per-tool entries under `../schemas/`. */
   schemaPath: string;
   /** Executes the tool. Never throws — always returns a ToolResponse. */
   handle: (input: unknown) => Promise<ToolResponse>;
 }
 
 /**
- * Canonical tool registry for the server. Scaffold ships empty (Plan
- * 27.7-01); Plan 27.7-02 populates with 12 read-only tools. Order is
- * cosmetic — all tools are advertised equivalently in `tools/list`.
- *
- * D-03 (hard cap): `TOOL_MODULES.length` MUST be `<= 12`. Plan 27.7-03
- * adds a static lint asserting this.
+ * Canonical tool registry. 12 tools (D-03 hard cap). Order is
+ * alphabetical (after `gdd_status` which leads as the canonical entry).
+ * All tools are advertised equivalently in `tools/list`.
  */
-export const TOOL_MODULES: readonly ToolModule[] = [] as const;
+export const TOOL_MODULES: readonly ToolModule[] = [
+  gdd_status,
+  gdd_cycle_recap,
+  gdd_decisions_list,
+  gdd_events_tail,
+  gdd_health,
+  gdd_intel_get,
+  gdd_learnings_digest,
+  gdd_phase_current,
+  gdd_phases_list,
+  gdd_plans_list,
+  gdd_reflections_latest,
+  gdd_telemetry_query,
+] as const;
 
 /** Canonical count. The plan caps this at 12 — if you add a tool past
  *  that bound, update the plan, the combined schema, and the lint

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "gdd_status",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
+    },
+    "output": {
+      "type": "object",
+      "required": ["phase", "branch", "last_decisions", "last_completed_plans", "blocker_count"],
+      "properties": {
+        "phase": { "type": ["string", "null"] },
+        "branch": { "type": ["string", "null"] },
+        "last_decisions": { "type": "array", "items": { "type": "object" } },
+        "last_completed_plans": { "type": "array", "items": { "type": "object" } },
+        "blocker_count": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

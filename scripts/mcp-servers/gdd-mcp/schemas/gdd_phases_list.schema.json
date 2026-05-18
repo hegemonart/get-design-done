@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "gdd_phases_list",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
+    },
+    "output": {
+      "type": "object",
+      "required": ["phases"],
+      "properties": {
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["number", "name", "version", "checkbox_status"],
+            "properties": {
+              "number": { "type": "string" },
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "checkbox_status": { "type": "string", "enum": ["shipped", "planned", "unknown"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

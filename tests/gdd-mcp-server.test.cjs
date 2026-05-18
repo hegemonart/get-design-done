@@ -122,12 +122,12 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
     assert.ok(Array.isArray(toolsMod.TOOL_MODULES), 'TOOL_MODULES is array');
     assert.equal(
       toolsMod.TOOL_MODULES.length,
-      0,
-      'scaffold ships with 0 tools (Plan 27.7-02 fills in 12)',
+      12,
+      'Plan 27.7-02 populates 12 tools (D-03 hard cap)',
     );
     assert.equal(
       toolsMod.TOOL_COUNT,
-      0,
+      12,
       'TOOL_COUNT mirrors TOOL_MODULES.length',
     );
   });

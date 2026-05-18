@@ -122,19 +122,53 @@ function loadTools(): LoadedTool[] {
  * Tool descriptions — short, scannable, lifted from the plan. Skill
  * prose uses these verbatim when suggesting a tool to the model.
  *
- * Plan 27.7-01 ships an empty map (no tools yet). Plan 27.7-02 populates
- * 12 entries (one per tool: gdd_status, gdd_phase_current, gdd_phases_list,
- * gdd_plans_list, gdd_decisions_list, gdd_intel_get, gdd_telemetry_query,
- * gdd_cycle_recap, gdd_reflections_latest, gdd_learnings_digest,
- * gdd_events_tail, gdd_health).
+ * Plan 27.7-02 populates 12 entries — one per tool name in the canonical
+ * 12-tool list.
  */
-export const TOOL_DESCRIPTIONS: Record<string, string> = {};
+export const TOOL_DESCRIPTIONS: Record<string, string> = {
+  gdd_status:
+    'gdd_status: current cycle phase, branch, last-3 decisions, last-3 completed plans, blocker count.',
+  gdd_phase_current:
+    'gdd_phase_current: STATE.md <position> block (phase, stage, task_progress, status).',
+  gdd_phases_list:
+    'gdd_phases_list: parsed ROADMAP.md overview (phase number, name, target version, shipped/planned).',
+  gdd_plans_list:
+    'gdd_plans_list: plans tracked in STATE.md must_haves (optionally filtered by input.phase).',
+  gdd_decisions_list:
+    'gdd_decisions_list: decisions from STATE.md (optionally filtered by input.status).',
+  gdd_intel_get:
+    'gdd_intel_get: read a slice from .design/intel/ (input.slice_id required); directory_not_found if absent.',
+  gdd_telemetry_query:
+    'gdd_telemetry_query: typed reader over .design/telemetry/*.jsonl with type/since/limit filters.',
+  gdd_cycle_recap:
+    'gdd_cycle_recap: diff current STATE against latest .design/snapshots/ snapshot; directory_not_found if absent.',
+  gdd_reflections_latest:
+    'gdd_reflections_latest: newest .design/reflections/ file (excerpt <= 4 KB); directory_not_found if absent.',
+  gdd_learnings_digest:
+    'gdd_learnings_digest: aggregate last N reflections into a compact digest (<= 5 KB).',
+  gdd_events_tail:
+    'gdd_events_tail: last-N events from .design/telemetry/events.jsonl with optional type filter.',
+  gdd_health:
+    'gdd_health: read-only mirror of gdd-health SKILL — 4 checks (CLAUDE.md, .planning/, .design/, package.json).',
+};
 
 /** Human-readable annotation hints (MCP clients use these to style the
  *  tool in UI). `readOnlyHint: true` — tells clients this tool does NOT
- *  modify disk. v1 is read-only (D-04) so every entry will be `true`
- *  once Plan 27.7-02 populates this map. */
-export const TOOL_READONLY: Record<string, boolean> = {};
+ *  modify disk. v1 is read-only (D-04) so every entry is `true`. */
+export const TOOL_READONLY: Record<string, boolean> = {
+  gdd_status: true,
+  gdd_phase_current: true,
+  gdd_phases_list: true,
+  gdd_plans_list: true,
+  gdd_decisions_list: true,
+  gdd_intel_get: true,
+  gdd_telemetry_query: true,
+  gdd_cycle_recap: true,
+  gdd_reflections_latest: true,
+  gdd_learnings_digest: true,
+  gdd_events_tail: true,
+  gdd_health: true,
+};
 
 /**
  * Build the MCP server. The tools list and call handlers are the only
