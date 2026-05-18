@@ -67,6 +67,15 @@ After the health table, emit the plugin-update banner if one is present:
 
 Written by `hooks/update-check.sh`; suppressed mid-pipeline and when the latest release is dismissed.
 
+## Skill-length report
+
+After the health table, surface the Phase 28.5 skill-authoring contract drift signal by running `node scripts/validate-skill-length.cjs --quiet --json` and reading `summary` from stdout. Print two prose lines:
+
+- `Skill-length: <total> total | <clean> clean | <warnings> warn (>=100) | <blockers> block (>=250)`
+- If blockers > 0: list each blocker as `  - <name> (<lines> lines)`. Else: print `  All skills within contract.`
+
+Thresholds: warn >=100, block >=250 (D-01). Strict description-format off by default (D-02). See `./reference/health-skill-length-report.md` for the JSON shape and threshold rationale.
+
 ## Do Not
 
 - Do not mutate STATE.md — this skill is read-only. Only `mcp__gdd_state__get` is permitted.
