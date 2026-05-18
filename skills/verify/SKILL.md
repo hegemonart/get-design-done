@@ -10,7 +10,7 @@ tools: mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__ad
 
 **Stage 5 of 5** in the get-design-done pipeline. Thin orchestrator. Verification intelligence lives in three agents: design-auditor, design-verifier, and design-integration-checker.
 
-Full procedure detail: `../../reference/verify-procedure.md`.
+Full procedure detail: `./verify-procedure.md`.
 
 ---
 
@@ -22,26 +22,26 @@ Full procedure detail: `../../reference/verify-procedure.md`.
    - `"fail"` -> refuse to advance; call `mcp__gdd_state__add_blocker` with the iteration count + `commands_run`; exit. Do NOT open the stage.
    - `"timeout"` / `"skipped"` -> print one-line warning naming the status + `commands_run`, continue normally (signals, not walls).
    - `"pass"` / `null` -> continue silently.
-   Full decision tree: `../../reference/verify-procedure.md` §Quality-gate gate.
+   Full decision tree: `./verify-procedure.md` §Quality-gate gate.
 4. Resume detection — if `state.position.status==in_progress` and `.design/DESIGN-VERIFICATION.md` exists: RESUME to Step 2 (gap-response loop). Otherwise call `mcp__gdd_state__update_progress` with `task_progress: "0/3"`, `status: "in_progress"` and proceed.
 5. Missing STATE.md is a hard block — verify is never the entry point; upstream stages own bootstrap.
 
-**Flipping a must-have status:** `mcp__gdd_state__add_must_have` with the SAME `id` updates in-place (no separate update tool). Detail: `../../reference/verify-procedure.md` §Flipping a must-have status.
+**Flipping a must-have status:** `mcp__gdd_state__add_must_have` with the SAME `id` updates in-place (no separate update tool). Detail: `./verify-procedure.md` §Flipping a must-have status.
 
 ---
 
 ## Connection probes
 
-Run preview / storybook / chromatic probes at stage entry, then issue ONE batched `mcp__gdd_state__probe_connections` call with all results. Full probe specs (project detection, dev-server probe, CLI presence, token check) and downstream loops (storybook a11y, chromatic visual delta) are in `../../reference/verify-procedure.md` §Connection Probes.
+Run preview / storybook / chromatic probes at stage entry, then issue ONE batched `mcp__gdd_state__probe_connections` call with all results. Full probe specs (project detection, dev-server probe, CLI presence, token check) and downstream loops (storybook a11y, chromatic visual delta) are in `./verify-procedure.md` §Connection Probes.
 
 ---
 
 ## Prerequisites + flags
 
 - **DESIGN-PLAN.md prerequisite** (normal mode): missing -> block with "Verify requires DESIGN-PLAN.md. Run `/gdd:plan` first, or use `--post-handoff` if starting from a Claude Design handoff bundle."
-- **Post-handoff mode** (`--post-handoff` OR STATE.md `status: handoff-sourced`): skip the DESIGN-PLAN.md check; pass `post_handoff: true` + `handoff_path` to design-verifier; DESIGN-VERIFICATION.md gains a `## Handoff Faithfulness` section. Detail: `../../reference/verify-procedure.md` §Post-Handoff Mode.
+- **Post-handoff mode** (`--post-handoff` OR STATE.md `status: handoff-sourced`): skip the DESIGN-PLAN.md check; pass `post_handoff: true` + `handoff_path` to design-verifier; DESIGN-VERIFICATION.md gains a `## Handoff Faithfulness` section. Detail: `./verify-procedure.md` §Post-Handoff Mode.
 - **Flags:** `--auto` -> `auto_mode=true` (no interactive prompts; on gaps: save-and-exit); `--post-handoff` -> see above.
-- **Parallelism decision:** read `.design/config.json` + `reference/parallelism-rules.md`. Default serial (verifier depends on auditor output). Record via `mcp__gdd_state__set_status` before spawning. Detail: `../../reference/verify-procedure.md` §Parallelism Decision.
+- **Parallelism decision:** read `.design/config.json` + `reference/parallelism-rules.md`. Default serial (verifier depends on auditor output). Record via `mcp__gdd_state__set_status` before spawning. Detail: `./verify-procedure.md` §Parallelism Decision.
 
 ---
 
@@ -55,7 +55,7 @@ Initialize the fix-loop iteration counter to 0. Each full checker is preceded by
 
 **1c-gate -> 1c. design-integration-checker** (per-decision wiring check on each D-XX in DESIGN-CONTEXT.md) -> reports Connected / Orphaned / Missing counts. Wait for `## INTEGRATION CHECK COMPLETE`, then `task_progress: "3/3"`.
 
-Full agent prompts, lazy-gate decision logic, and telemetry-row shapes: `../../reference/verify-procedure.md` §Step 1.
+Full agent prompts, lazy-gate decision logic, and telemetry-row shapes: `./verify-procedure.md` §Step 1.
 
 ---
 
@@ -67,7 +67,7 @@ Consolidate gaps from both sources: verifier `## GAPS FOUND` (G-NN entries) and 
 - **Gaps + `auto_mode=true`** -> preserve DESIGN-VERIFICATION.md, `set_status: "blocked"`, `add_blocker` with the gap count, exit with the failure message.
 - **Gaps + `auto_mode=false`** -> proceed to Step 3.
 
-Detail: `../../reference/verify-procedure.md` §Step 2.
+Detail: `./verify-procedure.md` §Step 2.
 
 ---
 
@@ -79,7 +79,7 @@ Present the gap summary + 3-option menu (`[1] Fix now`, `[2] Save and exit`, `[3
 - **[2] Save and exit** -> preserve DESIGN-VERIFICATION.md, `set_status: "blocked"`, `add_blocker`, `checkpoint`, exit.
 - **[3] Accept as-is** -> flip each unmet M-XX to `status: "fail"`, `add_blocker` with "accepted with N unresolved gaps", proceed to Stage exit.
 
-Full prompts + branching: `../../reference/verify-procedure.md` §Step 3.
+Full prompts + branching: `./verify-procedure.md` §Step 3.
 
 ---
 
@@ -91,6 +91,6 @@ Full prompts + branching: `../../reference/verify-procedure.md` §Step 3.
 
 ## After Completion
 
-Print the `=== Verify complete ===` summary (status, gap counts, agent paths, next-step suggestion) from `../../reference/verify-procedure.md` §After Completion.
+Print the `=== Verify complete ===` summary (status, gap counts, agent paths, next-step suggestion) from `./verify-procedure.md` §After Completion.
 
 ## VERIFY COMPLETE

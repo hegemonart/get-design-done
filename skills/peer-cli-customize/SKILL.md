@@ -11,7 +11,7 @@ tools: Read, Edit, Bash, Grep
 
 ## Role
 
-You help the user rewire which peer-CLI delegate handles which agent's calls. The mechanism is direct file-edits to agent frontmatter (`delegate_to:` field added in Plan 27-06) — there is no runtime config layer. Your job is to make this safe and validatable. The rewire discipline (per-edit validation, three frontmatter cases, validator gate) lives in `./reference/peer-cli-protocol.md` §"Rewire discipline" so the procedure stays canonical across consumers.
+You help the user rewire which peer-CLI delegate handles which agent's calls. The mechanism is direct file-edits to agent frontmatter (`delegate_to:` field added in Plan 27-06) — there is no runtime config layer. Your job is to make this safe and validatable. The rewire discipline (per-edit validation, three frontmatter cases, validator gate) lives in `./../peer-cli-add/peer-cli-protocol.md` §"Rewire discipline" so the procedure stays canonical across consumers.
 
 ## Invocation Contract
 
@@ -36,7 +36,7 @@ Valid `<new-delegate-target>` values:
 
 ### Step 3 — Validate the proposed rewire
 
-Cross-check against the capability matrix per `./reference/peer-cli-protocol.md` §"Rewire discipline":
+Cross-check against the capability matrix per `./../peer-cli-add/peer-cli-protocol.md` §"Rewire discipline":
 
 1. The peer must exist in the matrix.
 2. The role must be in the peer's `claims` list.
@@ -46,7 +46,7 @@ If validation fails, surface the error and stop. Do not edit the file.
 
 ### Step 4 — Apply the edit
 
-Use the `Edit` tool. Three cases (per `./reference/peer-cli-protocol.md` §"Rewire discipline"):
+Use the `Edit` tool. Three cases (per `./../peer-cli-add/peer-cli-protocol.md` §"Rewire discipline"):
 
 - **Field absent, user wants to add:** insert `delegate_to: <new-target>` into frontmatter (between `default-tier:` and the next field, or at the end of frontmatter).
 - **Field present, user wants to change:** replace the value; preserve indentation.
@@ -71,11 +71,11 @@ Verify: /gdd:peers (shows updated allowlist + capability matrix).
 
 ## Edge cases
 
-See `./reference/peer-cli-protocol.md` §"Edge cases" for: rewire-to-unmatrixed-peer (direct user to `peer-cli-add` first), rewire-to-unclaimed-role (refuse with helpful list), bulk-rewire (require explicit confirmation), validator-fails-post-edit (revert and surface).
+See `./../peer-cli-add/peer-cli-protocol.md` §"Edge cases" for: rewire-to-unmatrixed-peer (direct user to `peer-cli-add` first), rewire-to-unclaimed-role (refuse with helpful list), bulk-rewire (require explicit confirmation), validator-fails-post-edit (revert and surface).
 
 ## Cross-references
 
-- `./reference/peer-cli-protocol.md` — rewire discipline, three frontmatter cases, edge cases.
+- `./../peer-cli-add/peer-cli-protocol.md` — rewire discipline, three frontmatter cases, edge cases.
 - `scripts/validate-frontmatter.ts` (Plan 27-06) — `delegate_to` validation.
 - `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) — capability matrix.
 - `skills/peer-cli-add/SKILL.md` — for adding a NEW peer (this skill rewires among existing peers).

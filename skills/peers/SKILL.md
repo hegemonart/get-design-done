@@ -9,7 +9,7 @@ tools: Read, Bash
 
 ## Role
 
-You are a deterministic discovery skill. You do not spawn agents and do not delegate to peers. You read `scripts/lib/install/runtimes.cjs`, `scripts/lib/peer-cli/registry.cjs`, `.design/config.json`, and (optionally) `.design/telemetry/posterior.json` (canonical path declared by `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), then emit a single Markdown table summarizing peer-CLI status. Protocol-level handshake details live in `./reference/peer-cli-protocol.md`.
+You are a deterministic discovery skill. You do not spawn agents and do not delegate to peers. You read `scripts/lib/install/runtimes.cjs`, `scripts/lib/peer-cli/registry.cjs`, `.design/config.json`, and (optionally) `.design/telemetry/posterior.json` (canonical path declared by `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), then emit a single Markdown table summarizing peer-CLI status. Protocol-level handshake details live in `./../peer-cli-add/peer-cli-protocol.md`.
 
 ## Invocation Contract
 
@@ -83,7 +83,7 @@ The table IS the output. No follow-up prose. Users act on it: `(opt-in disabled)
 
 ## Cross-references
 
-- `./reference/peer-cli-protocol.md` — ACP/ASP handshake + adapter scaffold (procedure ref shared with peer-cli-add/customize).
+- `./../peer-cli-add/peer-cli-protocol.md` — ACP/ASP handshake + adapter scaffold (procedure ref shared with peer-cli-add/customize).
 - `./reference/peer-cli-capabilities.md` (Plan 27-05) — full capability matrix doc.
 - `scripts/lib/peer-cli/registry.cjs` (Plan 27-05), `scripts/lib/install/runtimes.cjs` (Plan 27-11), `skills/peer-cli-customize/SKILL.md`, `skills/peer-cli-add/SKILL.md`, `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-10.
 

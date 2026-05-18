@@ -38,7 +38,7 @@ You are the deterministic cache-key computer and cache-manifest writer for the o
 
 ## Deterministic Input-Hash Algorithm
 
-The canonical reference implementation (single source of truth; `hooks/budget-enforcer.js` imports the same primitive via a shared helper) lives in `./reference/cache-policy.md#deterministic-input-hash-algorithm-layer-b` — it documents the JS implementation, the maintainer notes (sorted-unique paths, MISSING-file sentinel, agent-path bust behavior), the manifest shape, and TTL semantics in one place. Conform to the algorithm exactly so the hook and any orchestrator agree byte-for-byte.
+The canonical reference implementation (single source of truth; `hooks/budget-enforcer.js` imports the same primitive via a shared helper) lives in `./cache-policy.md#deterministic-input-hash-algorithm-layer-b` — it documents the JS implementation, the maintainer notes (sorted-unique paths, MISSING-file sentinel, agent-path bust behavior), the manifest shape, and TTL semantics in one place. Conform to the algorithm exactly so the hook and any orchestrator agree byte-for-byte.
 
 ## Integration Points
 
@@ -63,4 +63,4 @@ Per D-09:
 
 ## TTL Semantics
 
-Default `ttl_seconds` = `.design/budget.json.cache_ttl_seconds` = 3600s (1 hour) per D-10. `expires_at` is computed at write time and stored; readers do not recompute. Stale entries are lazily cleaned on read (no eager reaper in v1). Full TTL discussion: `./reference/cache-policy.md#ttl-semantics-layer-b`.
+Default `ttl_seconds` = `.design/budget.json.cache_ttl_seconds` = 3600s (1 hour) per D-10. `expires_at` is computed at write time and stored; readers do not recompute. Stale entries are lazily cleaned on read (no eager reaper in v1). Full TTL discussion: `./cache-policy.md#ttl-semantics-layer-b`.

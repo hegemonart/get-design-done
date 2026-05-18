@@ -41,7 +41,7 @@ disable-model-invocation: true
 
 ## Workflow
 
-Six steps, all documented in `./reference/start-procedure.md`. Companion file `./reference/start-interview.md` holds the 5-question copy + defaults + validation.
+Six steps, all documented in `./start-procedure.md`. Companion file `./reference/start-interview.md` holds the 5-question copy + defaults + validation.
 
 | Step | What it does | Where to look |
 |------|--------------|---------------|

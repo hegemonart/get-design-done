@@ -11,7 +11,7 @@ tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get
 
 **Purpose:** Unified exploration merging the former `scan` (inventory grep) and `discover` (context interview) stages. Produces `.design/DESIGN.md`, `.design/DESIGN-DEBT.md`, and `.design/DESIGN-CONTEXT.md`.
 
-Full procedure detail: `../../reference/explore-procedure.md`.
+Full procedure detail: `./explore-procedure.md`.
 
 ---
 
@@ -35,11 +35,11 @@ Probe six connections, then batch-write results via ONE `mcp__gdd_state__probe_c
 - **E — paper.design**: ToolSearch `mcp__paper` + live `get_selection` call.
 - **F — pencil.dev**: `find . -name "*.pen"` file-presence.
 
-Full probe specs + commit-results JSON shape: `../../reference/explore-procedure.md` §Step 1.
+Full probe specs + commit-results JSON shape: `./explore-procedure.md` §Step 1.
 
 ## Step 1.5 — 21st.dev Prior-Art Check (when `21st-dev: available`)
 
-For each greenfield component in scope: `21st_magic_component_search(component_name, limit: 3)`. Fit >= 80% -> add `<prior-art>` block to DESIGN.md recommending adoption; fit < 80% -> note as reference, build custom. If `svgl_get_brand_logo` available and brand assets are in scope, call per logo and save SVGs to `.design/assets/`. Skip entirely if no greenfield components in scope. Detail: `../../reference/explore-procedure.md` §Step 1.5.
+For each greenfield component in scope: `21st_magic_component_search(component_name, limit: 3)`. Fit >= 80% -> add `<prior-art>` block to DESIGN.md recommending adoption; fit < 80% -> note as reference, build custom. If `svgl_get_brand_logo` available and brand assets are in scope, call per logo and save SVGs to `.design/assets/`. Skip entirely if no greenfield components in scope. Detail: `./explore-procedure.md` §Step 1.5.
 
 ---
 
@@ -49,9 +49,9 @@ For each greenfield component in scope: `21st_magic_component_search(component_n
 
 **Parallelism decision**: read `.design/config.json` + `reference/parallelism-rules.md`. Record verdict via `mcp__gdd_state__set_status` (`"explore_parallel"` / `"explore_serial"`). Parallel -> multiple `Task()` in one response; serial -> sequential.
 
-Run the canonical scan grep/glob inventory (POSIX ERE, preserving PLAT-01/02): component detection (Glob `**/*.{tsx,jsx,vue,svelte}`), color extraction (hex / rgb / hsl / Tailwind arbitrary), typography scan (font-family / Tailwind `font-*` / `text-*`), motion scan (`transition` / `animate-` / `@keyframes` / `framer-motion`), token detection (tailwind.config / CSS custom properties / token JSON), layout detection (ordered fallback `src/` -> `app/` -> `pages/` -> `lib/` -> unknown). Write `.design/DESIGN.md` + `.design/DESIGN-DEBT.md`. Then `mcp__gdd_state__update_progress` for scan progress. Detail: `../../reference/explore-procedure.md` §Step 2.
+Run the canonical scan grep/glob inventory (POSIX ERE, preserving PLAT-01/02): component detection (Glob `**/*.{tsx,jsx,vue,svelte}`), color extraction (hex / rgb / hsl / Tailwind arbitrary), typography scan (font-family / Tailwind `font-*` / `text-*`), motion scan (`transition` / `animate-` / `@keyframes` / `framer-motion`), token detection (tailwind.config / CSS custom properties / token JSON), layout detection (ordered fallback `src/` -> `app/` -> `pages/` -> `lib/` -> unknown). Write `.design/DESIGN.md` + `.design/DESIGN-DEBT.md`. Then `mcp__gdd_state__update_progress` for scan progress. Detail: `./explore-procedure.md` §Step 2.
 
-**Step 2.x — i18n readiness probe (informational, per D-04)**: check `package.json` deps against `{react-intl, next-intl, i18next, vue-i18n, formatjs, lingui}` -> `framework-managed`; else grep `Intl.(DateTimeFormat|NumberFormat|...)` in `src/` -> `partial`; else `none`. Emit single line `Localization readiness: <state>` in the report. NO gate, NO blocking — surface signal only (D-07). Detail: `../../reference/explore-procedure.md` §Step 2.x.
+**Step 2.x — i18n readiness probe (informational, per D-04)**: check `package.json` deps against `{react-intl, next-intl, i18next, vue-i18n, formatjs, lingui}` -> `framework-managed`; else grep `Intl.(DateTimeFormat|NumberFormat|...)` in `src/` -> `partial`; else `none`. Emit single line `Localization readiness: <state>` in the report. NO gate, NO blocking — surface signal only (D-07). Detail: `./explore-procedure.md` §Step 2.x.
 
 ## Step 2.5 — Detect prior sketches and project-local conventions
 
@@ -71,7 +71,7 @@ Run the canonical scan grep/glob inventory (POSIX ERE, preserving PLAT-01/02): c
 - **3.d Record after each answer**: `mcp__gdd_state__add_decision` (atomic, auto-assigns D-NN); append a quality-classified JSON line to `.design/learnings/question-quality.jsonl`.
 - **3.e Produce DESIGN-CONTEXT.md**: summarize locked decisions, remaining gray areas, Figma tentatives. Frontmatter `status: complete`.
 
-Full interview protocol + JSON line schema: `../../reference/explore-procedure.md` §Step 3.
+Full interview protocol + JSON line schema: `./explore-procedure.md` §Step 3.
 
 ---
 

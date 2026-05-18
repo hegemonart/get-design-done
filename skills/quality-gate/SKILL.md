@@ -87,4 +87,4 @@ Emit one JSON object on stdout: `{status, iteration, commands_run, started_at, c
 - Do not invoke verify or design — Stage 4.5 sits strictly between.
 - Exit-code convention: `0` clean; non-zero classified as failure. Do not interpret stderr for pass/fail.
 
-For verify-side severity classification (when this gate's `status="fail"` reaches the verify entry gate), see `./reference/threat-modeling.md` — STRIDE dispositions are the audit-side framework that informs whether a failed quality gate blocks ship.
+For verify-side severity classification (when this gate's `status="fail"` reaches the verify entry gate), see `./threat-modeling.md` — STRIDE dispositions are the audit-side framework that informs whether a failed quality gate blocks ship.

@@ -9,7 +9,7 @@ user-invocable: true
 
 Generates a per-component style spec at `.design/DESIGN-STYLE-[ComponentName].md`. This is a **standalone command**, not a pipeline stage.
 
-For the full mode-detection logic, source-resolution fallback chain (10 paths), agent-spawn payload, and STYL-05 section spec, see `../../reference/style-doc-procedure.md`. For the cross-skill output discipline (artifact prefix, completion marker, MUST-NOT-write list), see `../../reference/shared-preamble.md#output-contract-reminders`. For the raw-hex audit signal used in Token Semantic Health Score, see `../../reference/shared-preamble.md#token-first-reasoning`.
+For the full mode-detection logic, source-resolution fallback chain (10 paths), agent-spawn payload, and STYL-05 section spec, see `./style-doc-procedure.md`. For the cross-skill output discipline (artifact prefix, completion marker, MUST-NOT-write list), see `../../reference/shared-preamble.md#output-contract-reminders`. For the raw-hex audit signal used in Token Semantic Health Score, see `../../reference/shared-preamble.md#token-first-reasoning`.
 
 Output artifact naming: `.design/DESIGN-STYLE-[ComponentName].md` — Title-cased component name, one file per invocation.
 
@@ -31,10 +31,10 @@ This separation is a pre-roadmap decision recorded in `.planning/STATE.md`: util
 
 ## Workflow
 
-1. **Argument check** — if `$ARGUMENTS` is empty, enter list mode (see `../../reference/style-doc-procedure.md#component-source-resolution`); display available components from `src/components/` + `.design/tasks/`, then exit.
-2. **Mode detect** — `DESIGN-SUMMARY.md` exists → post-pipeline; else `DESIGN.md` exists → pre-pipeline; else abort with a "run /get-design-done scan first" message. Full decision tree at `../../reference/style-doc-procedure.md#mode-detection`.
+1. **Argument check** — if `$ARGUMENTS` is empty, enter list mode (see `./style-doc-procedure.md#component-source-resolution`); display available components from `src/components/` + `.design/tasks/`, then exit.
+2. **Mode detect** — `DESIGN-SUMMARY.md` exists → post-pipeline; else `DESIGN.md` exists → pre-pipeline; else abort with a "run /get-design-done scan first" message. Full decision tree at `./style-doc-procedure.md#mode-detection`.
 3. **Source resolve** — search the 10-path fallback chain for a file matching the ComponentName. On zero matches: abort. On multiple matches: prompt the user to disambiguate.
-4. **Agent spawn** — dispatch `design-doc-writer` with the mode-specific `<required_reading>` block and the STYL-05 section list. The full Task payload + STYL-05 spec live in `../../reference/style-doc-procedure.md#agent-spawn-payload`.
+4. **Agent spawn** — dispatch `design-doc-writer` with the mode-specific `<required_reading>` block and the STYL-05 section list. The full Task payload + STYL-05 spec live in `./style-doc-procedure.md#agent-spawn-payload`.
 5. **Confirm + report** — after the agent emits `## DOC COMPLETE`, verify the output path exists and report success.
 
 ---
@@ -66,6 +66,6 @@ Resolves `src/components/Button.tsx`, detects post-pipeline mode (DESIGN-SUMMARY
 /get-design-done style
 ```
 
-Globs component files and prompts the user to specify a ComponentName. Exits without generating any file. See `../../reference/style-doc-procedure.md#component-source-resolution` for the full glob path list.
+Globs component files and prompts the user to specify a ComponentName. Exits without generating any file. See `./style-doc-procedure.md#component-source-resolution` for the full glob path list.
 
 ## STYLE COMPLETE
