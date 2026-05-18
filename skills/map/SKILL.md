@@ -8,7 +8,7 @@ user-invocable: true
 
 # Get Design Done — Map
 
-Parallel orchestrator. Spawns 5 specialist mappers, each writing one file under `.design/map/`. The explore stage consumes these when present.
+Parallel orchestrator. Spawns 5 specialist mappers, each writing one file under `.design/map/`. The explore stage consumes these when present. See `./reference/heuristics.md` §"Optimization rules" for parallel-spawn cost considerations.
 
 ## Mapper → Output
 
@@ -29,11 +29,7 @@ Parallel orchestrator. Spawns 5 specialist mappers, each writing one file under 
 
 ## Step 2 — Parallelism Decision
 
-Follow `reference/parallelism-rules.md`:
-
-- All 5 mappers have `parallel-safe: auto` with disjoint `writes:` (each writes a different `.design/map/*.md` file) → no hard-rule conflict.
-- `typical-duration-seconds` sum (~210s) minus slowest (~45s) ≈ 165s savings → clears `min_estimated_savings_seconds`.
-- Verdict: **parallel**.
+Per `reference/parallelism-rules.md`: all 5 mappers have `parallel-safe: auto` with disjoint `writes:` (each writes a different `.design/map/*.md` file) — no hard-rule conflict. `typical-duration-seconds` sum (~210s) minus slowest (~45s) ≈ 165s savings → clears `min_estimated_savings_seconds`. Verdict: **parallel**.
 
 Write the verdict to STATE.md:
 
@@ -48,11 +44,11 @@ Write the verdict to STATE.md:
 </parallelism_decision>
 ```
 
-If `--only` was passed, adjust `agents` and set `verdict: serial` with `reason: "single mapper requested"`.
+`--only` → adjust `agents` and set `verdict: serial` with `reason: "single mapper requested"`.
 
 ## Step 3 — Dispatch (concurrent)
 
-Spawn all selected mappers in a single response using multiple `Task()` calls. Standard prompt shape:
+Spawn all selected mappers in a single response with multiple `Task()` calls:
 
 ```
 Task("<mapper-name>", """
@@ -68,36 +64,17 @@ output file under .design/map/. Emit your completion marker when done.
 """)
 ```
 
-Wait for every mapper's completion marker:
-- `## TOKEN MAP COMPLETE`
-- `## COMPONENT MAP COMPLETE`
-- `## VISUAL HIERARCHY MAP COMPLETE`
-- `## A11Y MAP COMPLETE`
-- `## MOTION MAP COMPLETE`
+Wait for each completion marker: `## TOKEN MAP COMPLETE`, `## COMPONENT MAP COMPLETE`, `## VISUAL HIERARCHY MAP COMPLETE`, `## A11Y MAP COMPLETE`, `## MOTION MAP COMPLETE`.
 
 ## Step 3.5 — Synthesize parallel mapper outputs (Plan 10.1-04, D-13/D-14/D-15)
 
-Each mapper has already written its own `.design/map/*.md` (disjoint writes). Main-context doesn't need all 5 verbatim — invoke the `synthesize` skill inline:
+Each mapper has written its own `.design/map/*.md` (disjoint writes). Main-context doesn't need all 5 verbatim — invoke `synthesize` inline with `outputs:[<each file's text labelled "=== from <mapper> ==="]`, `directive: "Merge into cross-cutting DESIGN-PATTERNS.md preserving section headers; consolidate cross-mapper duplicates with source-agent names; target ~120 lines."`, `output_shape:"markdown"`.
 
-    Skill("synthesize", {
-      outputs: [
-        "=== from token-mapper ===\n" + <read .design/map/tokens.md>,
-        "=== from component-taxonomy-mapper ===\n" + <read .design/map/components.md>,
-        "=== from visual-hierarchy-mapper ===\n" + <read .design/map/visual-hierarchy.md>,
-        "=== from a11y-mapper ===\n" + <read .design/map/a11y.md>,
-        "=== from motion-mapper ===\n" + <read .design/map/motion.md>
-      ],
-      directive: "Merge into a single cross-cutting DESIGN-PATTERNS.md summary preserving each mapper's top-level section header. Consolidate duplicates across mappers into single entries with source-agent names listed. Target ~120 lines.",
-      output_shape: "markdown"
-    })
-
-Wait for `## SYNTHESIS COMPLETE`. Capture the merged markdown, write to `.design/DESIGN-PATTERNS.md` (overwrite if present). This becomes the primary explore-stage input; per-mapper `.design/map/*.md` files remain on disk as drill-down evidence.
-
-If `--only <name>` was passed (single mapper), skip this step entirely.
+Wait for `## SYNTHESIS COMPLETE`. Write merged markdown to `.design/DESIGN-PATTERNS.md` (overwrite if present) — the primary explore-stage input; per-mapper files remain as drill-down evidence. `--only` (single mapper) → skip this step.
 
 ## Step 4 — Collate
 
-Write `.design/DESIGN-MAP.md` — a thin index linking to each `.design/map/*.md` with a one-paragraph summary pulled from each file's header. If Step 3.5 ran, also cross-link to the synthesized `.design/DESIGN-PATTERNS.md` and note at the top: "See DESIGN-PATTERNS.md for the merged cross-cutting summary — this index preserves per-mapper drill-down."
+Write `.design/DESIGN-MAP.md` — thin index linking to each `.design/map/*.md` with a one-paragraph summary from each file's header. If Step 3.5 ran, also cross-link to `.design/DESIGN-PATTERNS.md` and note at the top: "See DESIGN-PATTERNS.md for the merged cross-cutting summary — this index preserves per-mapper drill-down."
 
 ## Step 5 — Report
 

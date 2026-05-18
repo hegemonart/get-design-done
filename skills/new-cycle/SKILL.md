@@ -7,7 +7,7 @@ tools: Read, Write, AskUserQuestion
 
 # /gdd:new-cycle
 
-The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pipeline run > Wave > Task**. Each cycle has a goal, tracks its own decisions, and can span many pipeline runs.
+The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pipeline run > Wave > Task**. Each cycle has a goal, tracks its own decisions, and can span many pipeline runs. See `./reference/milestone-completeness-rubric.md` §"Cycle level" for what counts as cycle completion (used by `/gdd:complete-cycle` to close the cycle).
 
 ## Steps
 
@@ -16,6 +16,7 @@ The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pip
 3. Generate cycle ID: read `.design/CYCLES.md` if present, find the max `cycle-N`, increment. If CYCLES.md is missing, start at `cycle-1`.
 4. Update `.design/STATE.md` frontmatter: set `cycle: cycle-N`.
 5. Create or append to `.design/CYCLES.md`:
+
    ```markdown
    ## cycle-N: <goal>
    **Started**: <date>
@@ -24,6 +25,7 @@ The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pip
    **Pipeline runs**: 0
    **Decisions made**: 0
    ```
+
 6. Reset the `<decisions>` section in STATE.md for the new cycle. Preserve prior decisions by prepending a comment marker `<!-- prior cycle decisions archived in CYCLES.md -->`.
 7. Print: "Cycle cycle-N started. Run `@get-design-done brief` or `@get-design-done explore` to begin."
 
