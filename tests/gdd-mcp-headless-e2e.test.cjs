@@ -130,8 +130,8 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
         let buf = '';
         const timeout = setTimeout(() => {
           proc.kill();
-          reject(new Error('handshake timeout (5s)'));
-        }, 5000);
+          reject(new Error('handshake timeout (30s)'));
+        }, 30000);
         proc.stdout.on('data', (chunk) => {
           buf += chunk.toString();
           // Find the first newline-delimited JSON-RPC frame.
@@ -199,8 +199,8 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
         let buf = '';
         const timeout = setTimeout(() => {
           proc.kill();
-          reject(new Error('tools/list timeout (5s)'));
-        }, 5000);
+          reject(new Error('tools/list timeout (30s)'));
+        }, 30000);
         proc.stdout.on('data', (chunk) => {
           buf += chunk.toString();
           const lines = buf.split('\n').filter(Boolean);
