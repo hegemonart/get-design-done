@@ -144,6 +144,37 @@ Write findings to:
 
 Record scan progress: call `mcp__gdd_state__update_progress` with `task_progress: "<completed>/<total>"` to reflect the scan pass.
 
+### Step 2.x — i18n readiness probe (informational)
+
+Phase 28 D-04 probe — 3-state classification, **informational only**. NO gate, NO blocking, NO required-action. Output appears as a single line in the explore report.
+
+Classification logic (matches `./reference/i18n.md` §Explore Integration Spec):
+
+```txt
+1. Read package.json (dependencies + devDependencies).
+
+2. Check against library matrix:
+     react-intl, next-intl, i18next, vue-i18n, formatjs, lingui
+   ≥1 library found in deps or devDeps → state = "framework-managed"
+                                          → STOP, emit line, exit probe.
+
+3. Else (no library):
+     grep -RE "Intl\.(DateTimeFormat|NumberFormat|PluralRules|RelativeTimeFormat|ListFormat|Collator|Segmenter)" src/
+   ≥1 match → state = "partial"
+              → emit line, exit probe.
+
+4. Else: state = "none"
+         → emit line, exit probe.
+```
+
+Output line in explore report (single informational line, per D-04):
+
+```txt
+Localization readiness: framework-managed | partial | none
+```
+
+(Exactly one of the three values, single line.) A consumer downstream (a planning agent, a roadmap reviewer, the user) can act on the signal if a gap is meaningful for the project, but the probe itself never forces a step — surface signal, do not bolt on a new pillar (D-07 orthogonal-lens discipline).
+
 ## Step 2.5 — Detect prior sketches and project-local conventions
 
 **Sketches**: If `.design/sketches/` exists, list all sketch slugs — group by those with `WINNER.md` (completed wrap-ups) vs without (pending). Call `mcp__gdd_state__set_status` with a brief note (e.g., `status: "explore_sketches_present"`) so downstream stages see the history. Include the inventory in DESIGN.md under a "Prior Explorations" section.
