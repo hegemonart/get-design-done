@@ -4,6 +4,70 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.28.0] — 2026-05-18
+
+### Phase 28 — Foundational References Tier 2 — Color, Composition, Proportion, i18n
+
+Closes 4 foundational-fundamentals gaps + 1 contrast layer surfaced by the 2026-05-01 huashu-design comparison audit + parallel i18n-coverage audit. Pure content + light agent wiring; no architectural change, no new pillar, no breaking consumer contract.
+
+#### New reference files (Wave A + B)
+
+- `reference/color-theory.md` (28-01) — color spaces (sRGB / HSL / OKLCH / LCH), 6 harmonies in OKLCH, simultaneous contrast, color-blindness palettes, color interpolation in animation (closes the sRGB muddy-mid-transition problem).
+- `reference/composition.md` (28-02) — rule of thirds, phi / sqrt(2) / sqrt(3) / sqrt(5) root rectangles, Fibonacci, focal-point construction, visual-weight calculus (size x contrast x isolation x complexity), optical-vs-mathematical centering, Z/F/Gutenberg eye-flow patterns.
+- `reference/proportion-systems.md` (28-03) — 4pt / 8pt / sqrt(2) baseline grids, baseline-grid lock, vertical rhythm, modular relationships across type + spacing + sizing + radius.
+- `reference/i18n.md` (28-04) — text expansion per locale, CSS logical properties, RTL mirroring + directional-icon flip catalog, bidi isolation, full `Intl.*` family (DateTimeFormat / NumberFormat / PluralRules / RelativeTimeFormat / ListFormat / Collator / Segmenter), ICU MessageFormat, Unicode hygiene, multi-script font stacks, WCAG i18n; spec source for design-verifier + explore probes.
+- `reference/contrast-advanced.md` (28-05) — APCA (WCAG 3 draft) Lc 75/60/45/30 thresholds, why 4.5:1 misranks thin/large/colored text (3 worked examples), dual-target pattern with WCAG 2.1 AA, Lc-to-WCAG conversion table. **Ships at v1.28.0 (D-02 — not deferred).**
+
+#### Consumer integration (Wave C — 28-06)
+
+- `agents/design-verifier.md` gains `### i18n probes` subsection with 2 probes: hardcoded-string scan (regex catalog matches react-intl / next-intl / i18next / vue-i18n patterns per D-10) + +40% text-overflow simulation (`scrollWidth > clientWidth` check per D-03). Findings tagged `i18n_readiness` (orthogonal lens, NOT a new pillar).
+- `skills/explore/SKILL.md` gains i18n-readiness probe under Step 2 — informational 3-state classification (`framework-managed` / `partial` / `none`) per D-04 + D-11. NO gate, NO blocking.
+- `reference/registry.json` gains 5 new entries (D-05) — round-trip schema enforced.
+- `reference/audit-scoring.md` gains 2 orthogonal lens-tags (D-07) — `composition_alignment` + `i18n_readiness`. NO new pillar, NO weight change.
+- 12 additive cross-link insertions across 10 existing reference files (D-06): `palette-catalog.md` Step 4 -> `color-theory.md`; `motion-interpolate.md` -> `color-theory.md`; `visual-hierarchy-layout.md` (Compositional Grids + Asymmetry) -> `composition.md`; `design-system-guidance.md` -> `proportion-systems.md`; `typography.md` (Type Scale Systems + Variable Fonts) -> `proportion-systems.md` + `i18n.md`; `rtl-cjk-cultural.md` (top-of-file) -> `i18n.md`; `form-patterns.md` -> `i18n.md`; `accessibility.md` (x2) -> `i18n.md` + `contrast-advanced.md`; `iconography.md` -> `composition.md`; `style-vocabulary.md` -> `proportion-systems.md`.
+
+#### Decisions locked
+
+- D-01 (rejection): No net-new audit pillar — orthogonal lens-tags only on existing pillars.
+- D-02: `contrast-advanced.md` ships at v1.28.0 (not deferred).
+- D-03: Verifier overflow probe uses `scrollWidth > clientWidth` after +40% text expansion (cheap synchronous DOM check, no headless-browser dependency).
+- D-04: Explore i18n probe is informational only — 3-state output (`framework-managed` / `partial` / `none`), no gate, no blocking.
+- D-05: 5 new `reference/registry.json` entries with phase=28.
+- D-06: All 12 cross-link insertions are additive (no removals, no rewordings of existing content).
+- D-07: 2 audit-scoring lens-tags (`composition_alignment` + `i18n_readiness`) — orthogonal to existing pillars, not new pillars.
+- D-08: 4-manifest lockstep at 1.28.0 — `package.json#version`, `.claude-plugin/plugin.json#version`, `.claude-plugin/marketplace.json#metadata.version`, `.claude-plugin/marketplace.json#plugins[0].version` all align. `OFF_CADENCE_VERSIONS.add('1.28.0')` added to `tests/semver-compare.test.cjs`.
+- D-09: Phase 20 baselines unchanged (no new agents/skills/hooks introduced in Phase 28).
+- D-10: Hardcoded-string scan covers react-intl / next-intl / i18next / vue-i18n call-site patterns; false-positive tightening is reflector carry-forward debt.
+- D-11: Explore probe is single-shot per run (no caching, no telemetry pinning).
+- D-12: ROADMAP scoped flip — 7 inline plan checkboxes (28-01..28-07) + 1 top-level overview entry. STRICTLY bounded to Phase 28; other phases' `[ ]` markers untouched.
+
+#### Tests added
+
+- `tests/phase-28-probes.test.cjs` — 21 tests (28-06): verifier i18n probes, explore i18n-readiness probe, 5 registry entries, cross-link integrity across 12 insertions, audit-scoring lens-tags.
+- `tests/phase-28-baseline.test.cjs` — 8 tests (28-07): 4-manifest alignment, baseline file presence, reference file presence, registry round-trip, cross-link integrity, verifier + explore probe markers, CHANGELOG block at top, OFF_CADENCE recognition. Version-agnostic (reads `package.json#version` dynamically — D-08 lesson).
+- `test-fixture/baselines/phase-28/` — 6 baseline text files: `reference-files-presence.txt`, `registry-diff.txt`, `cross-link-integrity.txt`, `verifier-probes-presence.txt`, `explore-probe-presence.txt`, `manifests-version.txt`.
+
+#### Out of scope (deferred or rejected)
+
+- 20 designer-school philosophies catalog (huashu-design license unresolved).
+- Brand asset acquisition protocol (5-10-2-8 curation rule — separate phase).
+- Color-management profiles (Display-P3 / Rec.2020 / BT.2100 — video/print only).
+- Generative color systems (Material You algorithm — already in `style-vocabulary.md`).
+- Net-new audit pillar (lens-tags instead, per D-07).
+- Translation-management workflows (Crowdin / Lokalise / Phrase — ops concern).
+- Locale-pack bundling / lazy-loading (production tuning concern).
+- Pseudolocalization tooling (+40% overflow at verifier layer covers same QA goal).
+- RTL typography subtleties beyond mirroring (Arabic kashida, vertical CJK — `rtl-cjk-cultural.md` already touches).
+
+#### Carry-forward debt
+
+- Verifier hardcoded-string scan false-positive rate (D-10) — reflector measures over first N runs; tightens regex per Phase 11 self-improvement loop.
+- APCA spec ratification — currently WCAG 3 draft; if it advances to candidate-recommendation, `contrast-advanced.md` becomes more authoritative.
+- ICU MessageFormat 2.0 status — currently Stage 3 / draft at TC39; if it lands, `i18n.md` ICU section may add 2.0 examples in a follow-up.
+- `Intl.Segmenter` browser-support drift — Safari shipped late; polyfill/fallback note may need adding to `i18n.md` Unicode Hygiene section.
+
+---
+
 ## [1.27.7] — 2026-05-18
 
 ### Added
