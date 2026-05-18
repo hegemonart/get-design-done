@@ -208,6 +208,14 @@ OFF_CADENCE_VERSIONS.add('1.28.0');
 //   - 1.28.5 → Phase 28.5 (skill-authoring-contract); off-cadence from 1.28.0 parent.
 OFF_CADENCE_VERSIONS.add('1.28.5');
 
+// Phase 28.6 — Skill Reference Co-Location (corrective follow-up to Phase 28.5)
+// (v1.28.6, 2026-05-18). Off-cadence decimal sub-phase from v1.28.0 parent —
+// sequence 1.28.0 -> 1.28.5 -> 1.28.6. Phase 28.6 corrects Phase 28.5's D-06
+// over-generalization by co-locating 20 skill-private procedure refs from
+// reference/ into skills/<owner>/ per mattpocock's per-skill folder pattern.
+//   - 1.28.6 → Phase 28.6 (skill-reference-co-location); off-cadence sub-phase from 1.28.5.
+OFF_CADENCE_VERSIONS.add('1.28.6');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];
