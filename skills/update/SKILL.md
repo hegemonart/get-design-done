@@ -3,6 +3,7 @@ name: gdd-update
 description: "Update get-design-done to the latest release. Preserves .design/config.json and ./.claude/skills/."
 argument-hint: "[--dry-run] [--version <tag>]"
 tools: Read, Write, Bash
+disable-model-invocation: true
 ---
 
 # gdd-update
