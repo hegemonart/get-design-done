@@ -200,6 +200,14 @@ const OFF_CADENCE_VERSIONS = new Set([
 // so the next mainline bump 1.27.7 -> 1.28.0 skips a single patch-step.
 OFF_CADENCE_VERSIONS.add('1.28.0');
 
+// Phase 28.5 — Skill Authoring Contract + Skill Rework + Project Artifacts
+// (v1.28.5, 2026-05-18). Off-cadence decimal sub-phase from v1.28.0 parent —
+// CONTEXT.md D-12 convention (skill-authoring contract + retroactive rework
+// land as a decimal patch on the foundational-references parent line, not
+// the next mainline bump).
+//   - 1.28.5 → Phase 28.5 (skill-authoring-contract); off-cadence from 1.28.0 parent.
+OFF_CADENCE_VERSIONS.add('1.28.5');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];
