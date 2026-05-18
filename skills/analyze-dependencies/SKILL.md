@@ -59,7 +59,7 @@ Maps decisions to skill/agent files that cite them.
 1. Read `.design/intel/decisions.json` (decision IDs D-01, D-02, …).
 2. Read `.design/intel/symbols.json` for heading anchors; `.design/intel/dependencies.json` for @-reference chains.
 3. For each decision, cross-reference which files cite the ID.
-4. Print per-decision block: `D-NN  <description>` then `      Referenced by: <file:line>, …` (or `(no explicit references found)`).
+4. Print per-decision block: `D-NN  <description>` then a 6-space-indented `Referenced by: <file:line>, …` line (or `(no explicit references found)`).
 5. Footer: `Total: N decisions tracked, M with file references`.
 
 Empty-state: `No decisions indexed. Run node scripts/build-intel.cjs after creating .design/DESIGN-CONTEXT.md.`
