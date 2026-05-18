@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: → v1.27.1)
-status: Phase 28 (Foundational References Tier 2) closed out — v1.28.0 shipped (2026-05-18). 4-manifest lockstep, CHANGELOG block, OFF_CADENCE add, 6 phase-28 baseline files, 9-test version-agnostic regression suite, scoped ROADMAP flip (7 inline + 1 overview). 5 new ref files (color-theory, composition, proportion-systems, i18n, contrast-advanced) + 2 verifier i18n probes + 1 explore i18n-readiness probe + 12 additive cross-link insertions + 2 orthogonal audit-scoring lens-tags. Phase 27 + v1.27.7 (gdd-mcp) shipped prior. Phase 31 (Figma Off-Context Extractor) in progress. Roadmap rebalanced 2026-05-16.
-last_updated: "2026-05-18T12:05:13.000Z"
+status: Phase 28.5 (Skill Authoring Contract + Skill Rework + Project Artifacts) closed out — v1.28.5 shipped (2026-05-18). 4-manifest lockstep + CHANGELOG block at top + OFF_CADENCE_VERSIONS.add('1.28.5') + NOTICE MIT attribution for mattpocock/skills (5 reference ports + zoom-out direct port + debug Phase 1 ordering). 24 new reference/registry.json entries (phase: 28.5). 5-file regression baseline at test-fixture/baselines/phase-28.5/. Scoped ROADMAP flip (12 inline plan checkboxes + 1 overview entry). 70 skills total (zoom-out added; all 100% clean / 0 warn / 0 block per validate-skill-length.cjs). 86 baseline-drift test failures resolved via SKILL+reference progressive-disclosure verification pattern + after.md regen (precedent 3454d68/39e402c). npm test 2247/2227-pass/0-fail/20-skipped. Phase 28 (Foundational References Tier 2 v1.28.0) shipped prior. Phase 27 + v1.27.7 (gdd-mcp). Phase 31 (Figma Off-Context Extractor) in progress.
+last_updated: "2026-05-18T13:25:00.000Z"
 progress:
-  total_phases: 6
-  completed_phases: 4
-  total_plans: 38
-  completed_plans: 35
-  percent: 92
+  total_phases: 7
+  completed_phases: 6
+  total_plans: 50
+  completed_plans: 50
+  percent: 100
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 ## Current Position
 
-**Released:** **v1.27.1** (latest npm + git tag, 2026-05-02 — Peer-CLI Delegation wiring patch).
+**Released:** **v1.28.5** (latest npm + git tag, 2026-05-18 — Skill Authoring Contract + Skill Rework + Project Artifacts).
 
 **In progress:**
 
@@ -32,7 +32,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 **Planned next** (post-2026-05-16 rebalance — see [ROADMAP.md Overview](ROADMAP.md#planned-v1275--v1490)):
 
-- **Near-term integration**: 27.5 (Bandit Prod), 27.6 (Perf Optimization — NEW), 28 (Tier-2 Refs), 28.5 (Skill Contract + Rework)
+- **Near-term integration**: ~~27.5 (Bandit Prod) ✓~~, ~~27.6 (Perf Optimization) ✓~~, ~~27.7 (GDD MCP) ✓~~, ~~28 (Tier-2 Refs) ✓~~, ~~28.5 (Skill Contract + Rework) ✓~~ — all shipped
 - **Reflection + feedback**: 29 (Cap-Gap Self-Author), 30 (Issue Reporter), 30.5 (Failure-Mode Catalogue — NEW)
 - **Active project**: 31 (Figma Extractor), 31.5 (SDK Reorg)
 - **Skill discipline**: 32 (Auto-Trigger), 33 (Behavior Tests), 33.5 (Runtime Security — NEW)
@@ -47,7 +47,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 **After all planned phases ship:** v1.49.0 (~22 minor releases beyond v1.27.1, ~280 plans total — roughly 1.5× existing codebase).
 
-## Phases shipped (33 through v1.27.1)
+## Phases shipped (38 through v1.28.5)
 
 | # | Phase | Version | Shipped |
 |---|-------|---------|---------|
@@ -88,6 +88,11 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 | 25 | Pipeline Hardening | v1.25.0 | 2026-04-29 |
 | 26 | Headless Model Resolver | v1.26.0 | 2026-04-29 |
 | 27 | Peer-CLI Delegation Layer | v1.27.0 (+ v1.27.1 patch) | 2026-04-30 / 2026-05-02 |
+| 27.5 | Bandit Production Integration (INSERTED) | v1.27.5 | 2026-05-16 |
+| 27.6 | Pipeline Performance + Token-Cost Optimization (INSERTED) | v1.27.6 | 2026-05-17 |
+| 27.7 | GDD MCP Server (INSERTED) | v1.27.7 | 2026-05-18 |
+| 28 | Foundational References Tier 2 — Color, Composition, Proportion, i18n | v1.28.0 | 2026-05-18 |
+| 28.5 | Skill Authoring Contract + Skill Rework + Project Artifacts (INSERTED) | v1.28.5 | 2026-05-18 |
 
 ## Open follow-ups
 
