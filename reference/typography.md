@@ -35,6 +35,8 @@ Choose a ratio and base size. Common ratios:
 
 Never create a scale ad-hoc. Pick one ratio, generate the scale, use only values in the scale.
 
+**See:** [`./proportion-systems.md`](./proportion-systems.md) §Modular Relationships for how the type scale ties to spacing / sizing / radius scales — when one ratio drives all four scales the whole UI gains a single rhythm rather than four independently-tuned progressions.
+
 ---
 
 ## Line Height
@@ -227,6 +229,8 @@ Always include a non-variable fallback of the same family in the font stack:
 ```css
 font-family: 'InterVariable', 'Inter', -apple-system, system-ui, sans-serif;
 ```
+
+**See:** [`./i18n.md`](./i18n.md) §Multi-Script Font Stacks for when a multi-script project should ship weighted-static fonts rather than a single variable font (some scripts ship as static-only families; mixing scripts in a single variable file is rarely viable).
 
 ---
 

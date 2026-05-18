@@ -16,6 +16,8 @@ This catalog gives two categories of agent a shared, unambiguous vocabulary for 
 
 Style names in this file are preserved verbatim from the UUPM source to maintain ecosystem legibility. Do not rename or abbreviate styles when writing context files or audit reports.
 
+**See:** [`./proportion-systems.md`](./proportion-systems.md) for the whole-UI proportion system (4pt / 8pt / √2 baseline grids, modular relationships across type / spacing / sizing / radius) that the rows below reference when they call out "8pt spacing grid", "12-column grid", "section-level spacing (120–200px vertical rhythm)", and similar grid-anchored signatures.
+
 ---
 
 ## Style Table

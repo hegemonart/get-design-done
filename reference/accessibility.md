@@ -25,6 +25,8 @@ Common pitfalls:
 
 Tools: Use browser DevTools > Accessibility tab, or pass hex values through contrast calculation.
 
+**See also:** [`./contrast-advanced.md`](./contrast-advanced.md) — APCA (WCAG 3 draft) for perceptual contrast when WCAG 2.1 4.5:1 misranks thin/large/colored text. Recommended dual-target pattern: enforce WCAG 2.1 AA as a floor + APCA Lc-thresholds (75 / 60 / 45 / 30) for perceptual accuracy.
+
 ### Touch Target Size
 
 | Platform | Minimum tap target |
@@ -74,6 +76,8 @@ Recommended focus ring: **3px solid**, `2px offset`, brand primary or `#2563eb`.
 - Form inputs have associated `<label for="id">` — not just placeholder text.
 - Images have descriptive `alt=""` for meaningful images; `alt=""` for decorative.
 - Icon-only buttons have `aria-label`: `<button aria-label="Close dialog">×</button>`.
+
+**See:** [`./i18n.md`](./i18n.md) §WCAG i18n for SC 3.1.1 (`<html lang>`) and SC 3.1.2 (`<span lang="…">` language-of-parts) patterns — screen readers select voice/pronunciation packs from these attributes; a missing or wrong `lang` value forces the user to hear French announced in an English accent.
 
 ### Color Must Not Be The Only Differentiator
 

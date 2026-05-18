@@ -195,6 +195,11 @@ const OFF_CADENCE_VERSIONS = new Set([
   '1.27.7',
 ]);
 
+// Phase 28 — Foundational References Tier 2 (v1.28.0, 2026-05-18).
+// Off-cadence because the prior shipped version is 1.27.7 (decimal sub-phase),
+// so the next mainline bump 1.27.7 -> 1.28.0 skips a single patch-step.
+OFF_CADENCE_VERSIONS.add('1.28.0');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];

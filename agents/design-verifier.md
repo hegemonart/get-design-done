@@ -161,6 +161,23 @@ Before → After
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 
+### i18n probes
+
+Two additive probes (Phase 28, D-03 — orthogonal `i18n_readiness` lens-tag, NOT a new pillar). Full spec: `./reference/i18n.md` §Verifier Integration Spec; severity rules: `./reference/audit-scoring.md` §Lens-Tags.
+
+**Probe 1 — Hardcoded-string scan.** Regex catalog (D-10 patterns):
+
+```txt
+react-intl:  <FormattedMessage\s+id="[^"]+"
+next-intl:   \bt\(\s*['"][a-zA-Z][\w.]*['"]
+i18next:     \bt\(\s*['"][a-zA-Z][\w.]*['"]\s*,\s*\{
+vue-i18n:    \$t\(\s*['"][a-zA-Z][\w.]*['"]
+```
+
+Allow-list seed (skip): `console\.(log|error|warn|info|debug)`, dev-only `/* */` comments, `data-testid=`, `className=`, `import … from` paths. Severity: `MINOR` per file; `MAJOR` if violating files > 10. Output: `i18n_readiness: <N> hardcoded strings in <M> files`.
+
+**Probe 2 — +40% text-overflow simulation.** Worst-case LTR expansion (RU/FI/PL family — `./reference/i18n.md` §Text Expansion). Per text node `T`: pad `T.textContent` to `length × 1.4`, measure `T.parentElement.scrollWidth > clientWidth`, restore original. Prefer Preview MCP screenshot-diff when available; fall back to in-process DOM measurement headless. Severity `MINOR` per finding; `MAJOR` if overflowing components > 10. Output: `i18n_readiness: <N> components overflow at +40% expansion`.
+
 ---
 
 ## Phase 2 — Must-Have Check
