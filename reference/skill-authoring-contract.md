@@ -101,21 +101,52 @@ disable-model-invocation: true
 
 References-one-level-deep is the rule (D-06):
 
-- **One level deep.** `SKILL.md` may cross-link into `reference/<topic>.md`. A reference may
+- **One level deep.** `SKILL.md` may cross-link into a reference. A reference may
   cross-link into another reference. `SKILL.md` does NOT instruct the agent to follow a
   reference's references — load the first level only.
-- **Centralized refs.** `reference/typography.md`, `reference/palette-catalog.md`,
-  `reference/audit-scoring.md` and friends are consumed by 15+ skills each. NEVER bundle
-  them per-skill. Per-skill folders are allowed ONLY for content that is truly
-  single-skill-private (rare; typically a fixture or schema only the owning skill reads).
 - **When to add `scripts/`.** Per mattpocock's three criteria, add a script only when the
   step is deterministic, repeated across runs, and the failure mode needs explicit error
   handling. Anything ad-hoc or once-off stays inline as agent prose.
 
-Concrete example: a skill that lists 10 framework matrices inline (~150 lines) extracts the
-matrices to `reference/<framework>-matrices.md` and replaces them with a one-sentence
-summary + cross-link. SKILL.md drops to ~80 lines, the matrices stay discoverable, no
-institutional knowledge is lost.
+### Reference placement classes
+
+Three placement classes by cross-domain consumer count (D-06, refreshed by Phase 28.6 D-04):
+
+- **1-consumer (skill-private procedure refs).** Live in `skills/<owner>/<topic>.md` next
+  to the SKILL.md they describe. Cross-link from SKILL.md as `./<topic>.md`. Matches
+  mattpocock's per-skill folder pattern. Examples: `skills/scan/scan-procedure.md`,
+  `skills/debug/debug-feedback-loops.md`.
+- **2-consumer (same-domain pair).** Live in the primary owner's skill folder. Secondary
+  consumer cross-links via `../<primary>/<topic>.md`. Examples:
+  `skills/cache-manager/cache-policy.md` (skills/warm-cache cross-links in);
+  `skills/peer-cli-add/peer-cli-protocol.md` (skills/peer-cli-customize + skills/peers
+  cross-link in).
+- **Multi-consumer (3+ cross-domain).** Live in `reference/<topic>.md`. Used by 3+ skills
+  across different domains. Examples: `reference/typography.md`,
+  `reference/palette-catalog.md`, `reference/audit-scoring.md` (each consumed by 15+
+  skills).
+
+### Migration policy
+
+When a reference grows from 1-consumer to 3+ cross-domain consumers, migrate from
+`skills/<owner>/` to `reference/` and update cross-links accordingly. When a centralized
+ref shrinks to 1–2 consumers (or its consumers turn out to be same-domain), migrate the
+other direction. Document the migration in the relevant phase's SUMMARY.md.
+
+### Phase 28.6 retrospective
+
+Phase 28.5 D-06 over-generalized by centralizing all extracted refs in `reference/`,
+including procedure refs read by exactly one skill. Phase 28.6 corrected this by migrating
+20 skill-private procedure refs back into their owning skill folders (D-01) and refreshing
+this section to endorse per-skill folders as the canonical placement for 1-consumer
+content (D-04). See
+`.planning/phases/28.6-skill-reference-co-location/CONTEXT.md` for the full discipline.
+
+Concrete example: a skill that lists 10 framework matrices inline (~150 lines) extracts
+the matrices to `reference/<framework>-matrices.md` (if 3+ skills will consume them) or
+`skills/<owner>/<framework>-matrices.md` (if only the owning skill reads them), then
+replaces the inline content with a one-sentence summary + cross-link. SKILL.md drops to
+~80 lines, the matrices stay discoverable, no institutional knowledge is lost.
 
 ## Validator usage
 
