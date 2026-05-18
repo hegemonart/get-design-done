@@ -53,15 +53,15 @@ Existing consumers reading any subset of the older fields keep working unchanged
 
 ## Path Selection Heuristic
 
-The router emits `path` (3-tier: `fast|quick|full`, legacy enum, stable for back-compat) AND `complexity_class` (4-tier: `S|M|L|XL`, Phase 25 / D-04 additive). Full mapping table, bucket-assignment signal list, `--dry-run` downgrade rule, and the S-class short-circuit semantics live in `./reference/router-rules.md#path-selection-heuristic`. The S-class short-circuit is load-bearing: when `complexity_class` would be `S`, the router does not run; the deterministic skip list lives in the `/gdd:*` SKILL.md entry, and the budget-enforcer hook treats "no payload + matching command name" as the S signal.
+The router emits `path` (3-tier: `fast|quick|full`, legacy enum, stable for back-compat) AND `complexity_class` (4-tier: `S|M|L|XL`, Phase 25 / D-04 additive). Full mapping table, bucket-assignment signal list, `--dry-run` downgrade rule, and the S-class short-circuit semantics live in `./router-rules.md#path-selection-heuristic`. The S-class short-circuit is load-bearing: when `complexity_class` would be `S`, the router does not run; the deterministic skip list lives in the `/gdd:*` SKILL.md entry, and the budget-enforcer hook treats "no payload + matching command name" as the S signal.
 
 ## Cost Estimation Algorithm
 
-Standard cost-estimation pseudocode (sum over planned spawn graph; per-agent `(in_tok / 1e6) * in_rate + (out_tok / 1e6) * out_rate` using `./reference/model-prices.md`) lives in `./reference/router-rules.md#cost-estimation-algorithm`.
+Standard cost-estimation pseudocode (sum over planned spawn graph; per-agent `(in_tok / 1e6) * in_rate + (out_tok / 1e6) * out_rate` using `./reference/model-prices.md`) lives in `./router-rules.md#cost-estimation-algorithm`.
 
 ## Runtime-aware model resolution
 
-Computation contract for `resolved_models`, implementation surfaces (`scripts/lib/runtime-detect.cjs` + `scripts/lib/tier-resolver.cjs`), per-agent emission rules (including the JSON-`null` contract), and the Claude-runtime back-compat assertion live in `./reference/router-rules.md#runtime-aware-model-resolution`. Top-line: `model_tier_overrides` keeps its `opus|sonnet|haiku` enum for back-compat; `resolved_models` runs the per-runtime translation additively on top.
+Computation contract for `resolved_models`, implementation surfaces (`scripts/lib/runtime-detect.cjs` + `scripts/lib/tier-resolver.cjs`), per-agent emission rules (including the JSON-`null` contract), and the Claude-runtime back-compat assertion live in `./router-rules.md#runtime-aware-model-resolution`. Top-line: `model_tier_overrides` keeps its `opus|sonnet|haiku` enum for back-compat; `resolved_models` runs the per-runtime translation additively on top.
 
 ## Cache-Hit Detection
 

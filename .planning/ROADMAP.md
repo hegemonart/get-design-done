@@ -88,6 +88,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] [Phase 27.7](#phase-277-gdd-mcp-server-inserted) — GDD MCP Server — **NEW (INSERTED 2026-05-17)** — v1.27.7 — 2026-05-18
 - [x] [Phase 28](#phase-28-foundational-references-tier-2--color-composition-proportion-i18n) — Foundational References Tier 2 — v1.28.0
 - [x] [Phase 28.5](#phase-285-skill-authoring-contract--skill-rework--project-artifacts-inserted) — Skill Authoring Contract + Skill Rework — INSERTED — v1.28.5
+- [x] [Phase 28.6](#phase-286-skill-reference-co-location-inserted--corrective-follow-up-to-phase-285) — Skill Reference Co-Location — INSERTED (Corrective Follow-Up to Phase 28.5) — v1.28.6
 - [ ] [Phase 29](#phase-29-capability-gap-telemetry--self-authoring-of-agentsskills) — Capability-Gap Telemetry + Self-Authoring — v1.29.0
 - [ ] [Phase 30](#phase-30-inbound-feedback-channel--issue-reporter) — Inbound Feedback Channel (Issue Reporter) — v1.30.0
 - [ ] [Phase 30.5](#phase-305-failure-mode-catalogue-inserted) — Failure-Mode Catalogue — **NEW (INSERTED 2026-05-16)** — v1.30.5
@@ -1711,6 +1712,35 @@ A fifth observation surfaces from `engineering/diagnose/SKILL.md`: **mattpocock'
 - ADR creation rate — should be RARE per the 3-criteria gate. If grilling sessions create ADRs more than ~1 per 5 sessions, the gate is too lax — surface the 3 criteria more aggressively in the skill prompt. Reflector tracks the ratio.
 - Skill-length validator false-positive rate — initial baseline may need tuning; some skills legitimately need 150–200 lines (multi-stage orchestrators with non-extractable workflow detail). Reflector measures false-block rate over the first N PRs and proposes threshold adjustment if signal exceeds threshold.
 - mattpocock/skills upstream changes — set up `/gdd:watch-authorities` (Phase 13.2) feed for the repo; if the contract evolves (e.g., Matt drops the 100-line cap or adds a new frontmatter field), `apply-reflections` proposes a contract update.
+
+### Phase 28.6: Skill Reference Co-Location (INSERTED — Corrective Follow-Up to Phase 28.5)
+
+**Goal**: Correct Phase 28.5 CONTEXT.md D-06's over-generalization. Phase 28.5 extracted 20 skill-private procedure refs into a central `reference/` folder, but each of those refs is consumed by exactly 1 skill (or in 2 borderline cases, 2 sibling skills). Per mattpocock/skills' actual structure at `https://github.com/mattpocock/skills/tree/main/skills`, skill-private procedure docs live next to the `SKILL.md` they describe. Phase 28.6 co-locates the 20 refs into per-skill folders (`reference/<topic>.md` -> `skills/<owner>/<topic>.md`), purges those 20 entries from the central `reference/registry.json`, and refreshes `reference/skill-authoring-contract.md` §D-06 to codify three placement classes (1-/2-/multi-consumer) — endorsing the per-skill folder pattern for skill-private (1-consumer) procedure refs. Pure corrective follow-up. No new features. No breaking changes. `git mv` preserves history. Phase 28.5's other deliverables — the contract spec, validator, CI gate, `zoom-out` skill, `debug` Phase 1 patch, `CONTEXT.md` + ADR project artifacts, `decision-injector` extension, 70/70 length compliance — are all PRESERVED.
+
+**Depends on**: Phase 28.5 (the location of the 20 refs being migrated; the contract being refreshed; the baseline being re-locked if drifted). Pure corrective follow-up.
+**Target version**: v1.28.6
+**Requirements**: COLOC-01 through COLOC-04 (one per plan; see [CONTEXT.md](phases/28.6-skill-reference-co-location/CONTEXT.md) for D-01..D-08 decision IDs)
+
+**Why this phase exists (research summary):**
+
+Phase 28.5 CONTEXT.md D-06 read: "Keep refs centralized in `reference/`. Per-skill folders allowed only for content that's truly single-skill-private (rare). Don't restructure to mattpocock's per-skill folder pattern." This was an over-generalization: refs like `typography.md` are legitimately shared by 15+ skills and belong in `reference/`, but the Phase 28.5 extraction produced ~20 procedure refs that are each consumed by exactly 1 skill (or in 2 borderline cases by exactly 2 sibling skills). User feedback 2026-05-18: "with 28.5 we did a good job. i didn't mean to shorten all skills. from mattpocock structure i thought that we will have in skill folder a skill.md (short one) and skill references. you moved all of those references to different folder?" — D-06 was wrong; corrected via Phase 28.6.
+
+**Scope:**
+
+- **Wave D — linear sequential (each plan depends on the prior):**
+  - [x] 28.6-01-PLAN.md — `git mv` 20 skill-private refs from `reference/<topic>.md` to `skills/<owner>/<topic>.md` per D-08 ownership table; update cross-links in 23 consuming `SKILL.md` files (`./../reference/<topic>.md` -> `./<topic>.md` for 1-consumer; `./../<primary>/<topic>.md` for 2-consumer secondaries). (COLOC-01)
+  - [x] 28.6-02-PLAN.md — `reference/registry.json`: remove 20 moved entries per D-03 (skill-private content discoverable via skill folder, not central registry). `reference/skill-authoring-contract.md` §D-06 refresh per D-04: codify 1-/2-/multi-consumer placement classes; reverse the Phase 28.5 "rare exception only" framing; add Phase 28.6 "Updated by" callout for audit trail. (COLOC-02)
+  - [x] 28.6-03-PLAN.md — Validator + baseline + test sweep verification. D-05 confirmation: `scripts/validate-skill-length.cjs` walkSkills globs `SKILL.md` only; co-located procedure refs invisible to validator. Baseline re-lock IF drifted (expected: no drift since SKILL.md content unchanged). Full `npm test` sweep — 0 failures. (COLOC-03)
+  - [x] 28.6-04-PLAN.md — Closeout. 4-manifest lockstep at v1.28.6 (`package.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `test-fixture/baselines/phase-28/manifests-version.txt`). `OFF_CADENCE_VERSIONS.add('1.28.6')` in `tests/semver-compare.test.cjs`. `CHANGELOG.md` v1.28.6 entry at top. Baseline at `test-fixture/baselines/phase-28.6/` (registry-diff, cross-link-integrity, manifests-version). ROADMAP add + scoped flip (this section + overview entry, 4 inline plan checkboxes pre-flipped). Phase 28.5 CONTEXT.md D-06 retrospective annotation per D-07 ("Corrected by Phase 28.6" — audit trail preserved). NOTICE unchanged (Phase 28.5 MIT attribution applies). `test-fixture/baselines/phase-20/skill-list.txt` unchanged (no skills added/removed). Version sequence appended: v1.28.0 -> v1.28.5 -> v1.28.6. (COLOC-04)
+
+**Explicitly out of scope** (discussed and rejected in CONTEXT.md):
+
+- Revert all of Phase 28.5 — the contract, validator, CI gate, `zoom-out`, debug Phase 1, `CONTEXT.md`/ADR work, decision-injector extension, 70/70 compliance are all PRESERVED. Only ref locations change.
+- Rename any skill — Phase 28.5 D-05 stays unchanged.
+- Restructure universal refs into per-skill folders — `typography.md`, `gestalt.md`, `palette-catalog.md`, etc. stay in `reference/`; they are 3+-consumer universal refs.
+- Move `shared-preamble.md` — used by all design-family skills; multi-consumer.
+- Change validator threshold — Phase 28.5 D-01 stays: warn >=100, block >=250.
+- Touch Phase 28.5's NOTICE MIT attribution — same content; file paths shift only.
 
 ### Phase 29: Capability-Gap Telemetry + Self-Authoring of Agents/Skills
 

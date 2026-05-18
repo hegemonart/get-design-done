@@ -9,7 +9,7 @@ user-invocable: true
 
 Standalone dark mode audit. Detects the project's dark mode architecture, runs architecture-specific checks across contrast, token completeness, anti-patterns, and meta properties, then writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`.
 
-For the full step-by-step methodology (architecture-detection greps, WCAG contrast formula, anti-pattern grep snippets, meta-property checks, screenshot capture, and `DARKMODE-AUDIT.md` template), see `../../reference/darkmode-audit-procedure.md`. For the perceptual-contrast layer (APCA / WCAG 3 draft) sitting on top of WCAG 2.1 ratios, see `../../reference/contrast-advanced.md`. For OKLCH-based dark token-pair generation, see `../../reference/color-theory.md` §OKLCH. For the cross-skill output discipline + connection-probe pattern, see `../../reference/shared-preamble.md#output-contract-reminders` and `../../reference/shared-preamble.md#connection-handshake-summary`.
+For the full step-by-step methodology (architecture-detection greps, WCAG contrast formula, anti-pattern grep snippets, meta-property checks, screenshot capture, and `DARKMODE-AUDIT.md` template), see `./darkmode-audit-procedure.md`. For the perceptual-contrast layer (APCA / WCAG 3 draft) sitting on top of WCAG 2.1 ratios, see `../../reference/contrast-advanced.md`. For OKLCH-based dark token-pair generation, see `../../reference/color-theory.md` §OKLCH. For the cross-skill output discipline + connection-probe pattern, see `../../reference/shared-preamble.md#output-contract-reminders` and `../../reference/shared-preamble.md#connection-handshake-summary`.
 
 ---
 
@@ -39,13 +39,13 @@ Probe `preview` connection per `../../reference/shared-preamble.md#connection-ha
 
 ## Workflow
 
-1. **Architecture Detection (DARK-02)** — run three greps (CSS custom props / Tailwind `dark:` / JS class toggle), classify primary architecture or `Hybrid` or `None`. If `None`, abort. Detail: `../../reference/darkmode-audit-procedure.md#step-1-architecture-detection-dark-02`.
-2. **Contrast Audit (DARK-03)** — extract dark-context token pairs for the detected architecture, compute WCAG 2.1 ratios, flag failures at 4.5:1 (body) / 3:1 (large text + UI boundaries). Cross-check with APCA from `../../reference/contrast-advanced.md` for thin / large / colored text. Detail: `../../reference/darkmode-audit-procedure.md#step-2-contrast-audit-dark-03`.
-3. **Token Override Completeness (DARK-04)** — every light-mode color token must have a dark-mode override. Flag missing overrides → P1. Detail: `../../reference/darkmode-audit-procedure.md#step-3-token-override-completeness-dark-04`.
-4. **Dark-Specific Anti-Patterns (DARK-05)** — Images/SVGs without dark variant (P2), pure-black backgrounds in dark context = BAN-05 (P1), missing `@media (forced-colors)` (P2). Detail: `../../reference/darkmode-audit-procedure.md#step-4-dark-specific-anti-patterns-dark-05`.
-5. **Meta Property Check (DARK-06)** — `color-scheme` property + `prefers-color-scheme` query. Each absent → P2. Detail: `../../reference/darkmode-audit-procedure.md#step-5-meta-property-check-dark-06`.
-6. **Visual Rendering (preview: available only)** — capture light/dark screenshot pair to `.design/screenshots/darkmode/{light,dark}.png`. Detail: `../../reference/darkmode-audit-procedure.md#step-5b-dark-mode-rendering-screenshots-when-preview-available`.
-7. **Write `.design/DARKMODE-AUDIT.md`** — group flagged issues by priority (P0 → P1 → P2 → P3). Full template at `../../reference/darkmode-audit-procedure.md#step-6-darkmode-auditmd-template`.
+1. **Architecture Detection (DARK-02)** — run three greps (CSS custom props / Tailwind `dark:` / JS class toggle), classify primary architecture or `Hybrid` or `None`. If `None`, abort. Detail: `./darkmode-audit-procedure.md#step-1-architecture-detection-dark-02`.
+2. **Contrast Audit (DARK-03)** — extract dark-context token pairs for the detected architecture, compute WCAG 2.1 ratios, flag failures at 4.5:1 (body) / 3:1 (large text + UI boundaries). Cross-check with APCA from `../../reference/contrast-advanced.md` for thin / large / colored text. Detail: `./darkmode-audit-procedure.md#step-2-contrast-audit-dark-03`.
+3. **Token Override Completeness (DARK-04)** — every light-mode color token must have a dark-mode override. Flag missing overrides → P1. Detail: `./darkmode-audit-procedure.md#step-3-token-override-completeness-dark-04`.
+4. **Dark-Specific Anti-Patterns (DARK-05)** — Images/SVGs without dark variant (P2), pure-black backgrounds in dark context = BAN-05 (P1), missing `@media (forced-colors)` (P2). Detail: `./darkmode-audit-procedure.md#step-4-dark-specific-anti-patterns-dark-05`.
+5. **Meta Property Check (DARK-06)** — `color-scheme` property + `prefers-color-scheme` query. Each absent → P2. Detail: `./darkmode-audit-procedure.md#step-5-meta-property-check-dark-06`.
+6. **Visual Rendering (preview: available only)** — capture light/dark screenshot pair to `.design/screenshots/darkmode/{light,dark}.png`. Detail: `./darkmode-audit-procedure.md#step-5b-dark-mode-rendering-screenshots-when-preview-available`.
+7. **Write `.design/DARKMODE-AUDIT.md`** — group flagged issues by priority (P0 → P1 → P2 → P3). Full template at `./darkmode-audit-procedure.md#step-6-darkmode-auditmd-template`.
 
 ---
 

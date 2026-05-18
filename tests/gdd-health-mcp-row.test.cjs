@@ -23,7 +23,8 @@ const SKILL_PATH = path.join(REPO_ROOT, 'skills', 'health', 'SKILL.md');
 // live in the reference file.
 const HEALTH_MCP_REF_PATH = path.join(
   REPO_ROOT,
-  'reference',
+  'skills',
+  'health',
   'health-mcp-detection.md',
 );
 

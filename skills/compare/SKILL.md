@@ -9,7 +9,7 @@ user-invocable: true
 
 Standalone delta command. Computes the difference between the scan baseline (`DESIGN.md`) and the verification result (`DESIGN-VERIFICATION.md`), and flags design drift for any regression not covered by an explicit task in `DESIGN-PLAN.md`. Writes one artifact: `.design/COMPARE-REPORT.md`.
 
-For the full step-by-step methodology (score parsing, set arithmetic for anti-patterns, drift-coverage map, screenshot-delta probe, and `COMPARE-REPORT.md` template), see `../../reference/compare-rubric.md`. For the cross-skill output discipline (artifact prefix, completion marker, MUST-NOT-write list, connection-probe pattern), see `../../reference/shared-preamble.md#output-contract-reminders` and `../../reference/shared-preamble.md#connection-handshake-summary`. For the underlying 0–10 category-scoring rubric the delta is computed against, see `../../reference/audit-scoring.md`.
+For the full step-by-step methodology (score parsing, set arithmetic for anti-patterns, drift-coverage map, screenshot-delta probe, and `COMPARE-REPORT.md` template), see `./compare-rubric.md`. For the cross-skill output discipline (artifact prefix, completion marker, MUST-NOT-write list, connection-probe pattern), see `../../reference/shared-preamble.md#output-contract-reminders` and `../../reference/shared-preamble.md#connection-handshake-summary`. For the underlying 0–10 category-scoring rubric the delta is computed against, see `../../reference/audit-scoring.md`.
 
 ---
 
@@ -45,13 +45,13 @@ Probe `preview` connection per `../../reference/shared-preamble.md#connection-ha
 
 ## Workflow
 
-1. **Parse Category Scores** — extract baseline + result score tables, normalize names, flag unmatched. Detail: `../../reference/compare-rubric.md#step-1--parse-category-scores`.
-2. **Compute Score Delta** — `delta = result - baseline`, classify (`improvement`/`no_change`/`regression`). Detail: `../../reference/compare-rubric.md#step-2--compute-score-delta-comp-03`.
-3. **Anti-Pattern Delta** — set arithmetic on baseline vs result anti-pattern sets (resolved / new / unchanged). Detail: `../../reference/compare-rubric.md#step-3--anti-pattern-delta`.
-4. **Must-Have Pass/Fail Change** — read `<must_haves>` from `DESIGN-CONTEXT.md`, status from `DESIGN-VERIFICATION.md`. Detail: `../../reference/compare-rubric.md#step-4--must-have-passfail-change`.
-5. **Design Drift Detection (COMP-04)** — build coverage map from `DESIGN-PLAN.md` `Type:` fields; for each `regression` not in coverage_map → emit `DRIFT: [category] ...`. Detail: `../../reference/compare-rubric.md#step-5--design-drift-detection-comp-04`.
-6. **Screenshot Delta (preview: available only)** — capture per-route screenshots to `.design/screenshots/{before,after}/<route>.png`. Detail: `../../reference/compare-rubric.md#step-5b--screenshot-delta-when-preview-available`.
-7. **Write `.design/COMPARE-REPORT.md`** — full template at `../../reference/compare-rubric.md#step-6--compare-reportmd-template`.
+1. **Parse Category Scores** — extract baseline + result score tables, normalize names, flag unmatched. Detail: `./compare-rubric.md#step-1--parse-category-scores`.
+2. **Compute Score Delta** — `delta = result - baseline`, classify (`improvement`/`no_change`/`regression`). Detail: `./compare-rubric.md#step-2--compute-score-delta-comp-03`.
+3. **Anti-Pattern Delta** — set arithmetic on baseline vs result anti-pattern sets (resolved / new / unchanged). Detail: `./compare-rubric.md#step-3--anti-pattern-delta`.
+4. **Must-Have Pass/Fail Change** — read `<must_haves>` from `DESIGN-CONTEXT.md`, status from `DESIGN-VERIFICATION.md`. Detail: `./compare-rubric.md#step-4--must-have-passfail-change`.
+5. **Design Drift Detection (COMP-04)** — build coverage map from `DESIGN-PLAN.md` `Type:` fields; for each `regression` not in coverage_map → emit `DRIFT: [category] ...`. Detail: `./compare-rubric.md#step-5--design-drift-detection-comp-04`.
+6. **Screenshot Delta (preview: available only)** — capture per-route screenshots to `.design/screenshots/{before,after}/<route>.png`. Detail: `./compare-rubric.md#step-5b--screenshot-delta-when-preview-available`.
+7. **Write `.design/COMPARE-REPORT.md`** — full template at `./compare-rubric.md#step-6--compare-reportmd-template`.
 
 ---
 

@@ -102,7 +102,8 @@ function readSkill() {
  */
 const PROCEDURE_PATH = path.join(
   REPO_ROOT,
-  'reference',
+  'skills',
+  'design',
   'design-procedure.md',
 );
 

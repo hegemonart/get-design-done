@@ -56,7 +56,7 @@ Print the markdown summary described in the Invocation Contract.
 
 ## Concrete Command Example
 
-Full + filtered command-output examples live in `./reference/cache-policy.md#concrete-warm-cache-command-examples-layer-a` so this skill stays close to its step-by-step flow rather than its sample output.
+Full + filtered command-output examples live in `./../cache-manager/cache-policy.md#concrete-warm-cache-command-examples-layer-a` so this skill stays close to its step-by-step flow rather than its sample output.
 
 ## Integration Points
 
@@ -66,7 +66,7 @@ Full + filtered command-output examples live in `./reference/cache-policy.md#con
 
 ## Cost Model
 
-Full per-ping math, total-cost arithmetic for a 14-agent warm, and payback calculation versus a downstream Opus spawn live in `./reference/cache-policy.md#cost-model-layer-a`. Top-line: a full warm is ~$0.001 and pays back ~500× on the first repeated planner spawn.
+Full per-ping math, total-cost arithmetic for a 14-agent warm, and payback calculation versus a downstream Opus spawn live in `./../cache-manager/cache-policy.md#cost-model-layer-a`. Top-line: a full warm is ~$0.001 and pays back ~500× on the first repeated planner spawn.
 
 ## Failure Modes
 

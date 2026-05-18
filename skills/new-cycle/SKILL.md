@@ -7,7 +7,7 @@ tools: Read, Write, AskUserQuestion
 
 # /gdd:new-cycle
 
-The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pipeline run > Wave > Task**. Each cycle has a goal, tracks its own decisions, and can span many pipeline runs. See `./reference/milestone-completeness-rubric.md` §"Cycle level" for what counts as cycle completion (used by `/gdd:complete-cycle` to close the cycle).
+The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pipeline run > Wave > Task**. Each cycle has a goal, tracks its own decisions, and can span many pipeline runs. See `./milestone-completeness-rubric.md` §"Cycle level" for what counts as cycle completion (used by `/gdd:complete-cycle` to close the cycle).
 
 ## Steps
 

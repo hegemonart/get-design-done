@@ -9,7 +9,7 @@ tools: Read, Bash
 
 ## Role
 
-You are a deterministic **closeout** skill. You close the per-turn telemetry gap on runtimes that don't expose a Stop event (codex, gemini, and 11 others). You are a code-level mirror of `hooks/gdd-turn-closeout.js` (D-10): same conditions, same idempotence, same emitted event shape. The only difference: the JS hook emits the nudge as `additionalContext` via the harness; this skill prints the nudge directly to the user. See `./reference/milestone-completeness-rubric.md` §"Task level" for the broader closeout discipline (what "turn complete" means within a stage).
+You are a deterministic **closeout** skill. You close the per-turn telemetry gap on runtimes that don't expose a Stop event (codex, gemini, and 11 others). You are a code-level mirror of `hooks/gdd-turn-closeout.js` (D-10): same conditions, same idempotence, same emitted event shape. The only difference: the JS hook emits the nudge as `additionalContext` via the harness; this skill prints the nudge directly to the user. See `./../new-cycle/milestone-completeness-rubric.md` §"Task level" for the broader closeout discipline (what "turn complete" means within a stage).
 
 **When to invoke:** orchestrator skills (`/gdd:next`, `/gdd:design`, `/gdd:verify`) tail-call this skill as their final step before returning. Adoption is incremental — each orchestrator can wire the tail-call independently; the skill exists as a stable, callable surface today.
 

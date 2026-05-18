@@ -55,7 +55,7 @@ Health: 5 / 6 checks passing.
 
 ## Check MCP registration (gdd-mcp)
 
-After the health table, inspect whether `gdd-mcp` (Phase 27.7+) is registered with any installed harness and render a one-line status row. Dismissable via `.design/config.json#mcp_nudge=false`. Non-blocking: failure paths render `MCP server: unknown` rather than crash. Full detection procedure (dismissal check, detection via `scripts/lib/install/mcp-register.cjs`, row rendering for claude/codex/both/neither, fallback) lives in `./reference/health-mcp-detection.md`.
+After the health table, inspect whether `gdd-mcp` (Phase 27.7+) is registered with any installed harness and render a one-line status row. Dismissable via `.design/config.json#mcp_nudge=false`. Non-blocking: failure paths render `MCP server: unknown` rather than crash. Full detection procedure (dismissal check, detection via `scripts/lib/install/mcp-register.cjs`, row rendering for claude/codex/both/neither, fallback) lives in `./health-mcp-detection.md`.
 
 ## Update notice (safe-window surface)
 
@@ -74,7 +74,7 @@ After the health table, surface the Phase 28.5 skill-authoring contract drift si
 - `Skill-length: <total> total | <clean> clean | <warnings> warn (>=100) | <blockers> block (>=250)`
 - If blockers > 0: list each blocker as a row `- <name> (<lines> lines)`. Else: print `All skills within contract.`
 
-Thresholds: warn >=100, block >=250 (D-01). Strict description-format off by default (D-02). See `./reference/health-skill-length-report.md` for the JSON shape and threshold rationale.
+Thresholds: warn >=100, block >=250 (D-01). Strict description-format off by default (D-02). See `./health-skill-length-report.md` for the JSON shape and threshold rationale.
 
 ## Do Not
 

@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: → v1.27.1)
-status: Phase 28.5 (Skill Authoring Contract + Skill Rework + Project Artifacts) closed out — v1.28.5 shipped (2026-05-18). 4-manifest lockstep + CHANGELOG block at top + OFF_CADENCE_VERSIONS.add('1.28.5') + NOTICE MIT attribution for mattpocock/skills (5 reference ports + zoom-out direct port + debug Phase 1 ordering). 24 new reference/registry.json entries (phase: 28.5). 5-file regression baseline at test-fixture/baselines/phase-28.5/. Scoped ROADMAP flip (12 inline plan checkboxes + 1 overview entry). 70 skills total (zoom-out added; all 100% clean / 0 warn / 0 block per validate-skill-length.cjs). 86 baseline-drift test failures resolved via SKILL+reference progressive-disclosure verification pattern + after.md regen (precedent 3454d68/39e402c). npm test 2247/2227-pass/0-fail/20-skipped. Phase 28 (Foundational References Tier 2 v1.28.0) shipped prior. Phase 27 + v1.27.7 (gdd-mcp). Phase 31 (Figma Off-Context Extractor) in progress.
-last_updated: "2026-05-18T13:25:00.000Z"
+status: "Phase 28.6 (Skill Reference Co-Location — Corrective Follow-Up to Phase 28.5) closed out — v1.28.6 shipped (2026-05-18). 4-manifest lockstep at v1.28.6 + CHANGELOG `## [1.28.6]` block at top + OFF_CADENCE_VERSIONS.add('1.28.6') + Phase 28.5 CONTEXT.md D-06 retrospective annotation (D-07 — 'Corrected by Phase 28.6'). 20 skill-private procedure refs co-located from reference/ -> skills/<owner>/<topic>.md per mattpocock per-skill folder pattern (1-/2-consumer placement classes codified in contract §D-06). 20 registry entries purged (131 entries remain vs 151 pre-Phase-28.6); universal refs (typography.md, gestalt.md, etc.) untouched. 3-file regression baseline at test-fixture/baselines/phase-28.6/ (registry-diff 131 lines, cross-link-integrity 146 lines [0 STALE / 0 MISSING], manifests-version '1.28.6'). tests/phase-28.6-baseline.test.cjs adds 8 version-agnostic tests (full RegExp escape per CodeQL). ROADMAP entry CREATED for Phase 28.6 (wasn't in original roadmap; INSERTED between 28.5 and 29) + scoped flip (4 inline plan checkboxes + 1 overview entry). Rule 3 closeout-propagation: phase-27-7/manifests-version.txt 1.28.5 -> 1.28.6 alongside phase-28 baseline. NOTICE unchanged (per scope — same MIT attribution; only file paths shifted). phase-20/skill-list.txt unchanged (70 skills total — no skill add/remove). npm test 2237/2257 pass / 0 fail / 20 skipped. Phase 28.5 (Skill Authoring Contract + Skill Rework + Project Artifacts) shipped prior at v1.28.5. Phase 31 (Figma Off-Context Extractor) in progress."
+last_updated: "2026-05-18T15:33:00.000Z"
 progress:
-  total_phases: 7
-  completed_phases: 6
-  total_plans: 50
-  completed_plans: 50
+  total_phases: 8
+  completed_phases: 7
+  total_plans: 46
+  completed_plans: 46
   percent: 100
 ---
 
@@ -24,7 +24,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 ## Current Position
 
-**Released:** **v1.28.5** (latest npm + git tag, 2026-05-18 — Skill Authoring Contract + Skill Rework + Project Artifacts).
+**Released:** **v1.28.6** (latest npm + git tag, 2026-05-18 — Skill Reference Co-Location, corrective follow-up to Phase 28.5).
 
 **In progress:**
 
@@ -32,7 +32,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 **Planned next** (post-2026-05-16 rebalance — see [ROADMAP.md Overview](ROADMAP.md#planned-v1275--v1490)):
 
-- **Near-term integration**: ~~27.5 (Bandit Prod) ✓~~, ~~27.6 (Perf Optimization) ✓~~, ~~27.7 (GDD MCP) ✓~~, ~~28 (Tier-2 Refs) ✓~~, ~~28.5 (Skill Contract + Rework) ✓~~ — all shipped
+- **Near-term integration**: ~~27.5 (Bandit Prod) ✓~~, ~~27.6 (Perf Optimization) ✓~~, ~~27.7 (GDD MCP) ✓~~, ~~28 (Tier-2 Refs) ✓~~, ~~28.5 (Skill Contract + Rework) ✓~~, ~~28.6 (Skill Reference Co-Location, corrective) ✓~~ — all shipped
 - **Reflection + feedback**: 29 (Cap-Gap Self-Author), 30 (Issue Reporter), 30.5 (Failure-Mode Catalogue — NEW)
 - **Active project**: 31 (Figma Extractor), 31.5 (SDK Reorg)
 - **Skill discipline**: 32 (Auto-Trigger), 33 (Behavior Tests), 33.5 (Runtime Security — NEW)
@@ -47,7 +47,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 **After all planned phases ship:** v1.49.0 (~22 minor releases beyond v1.27.1, ~280 plans total — roughly 1.5× existing codebase).
 
-## Phases shipped (38 through v1.28.5)
+## Phases shipped (39 through v1.28.6)
 
 | # | Phase | Version | Shipped |
 |---|-------|---------|---------|
@@ -93,6 +93,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 | 27.7 | GDD MCP Server (INSERTED) | v1.27.7 | 2026-05-18 |
 | 28 | Foundational References Tier 2 — Color, Composition, Proportion, i18n | v1.28.0 | 2026-05-18 |
 | 28.5 | Skill Authoring Contract + Skill Rework + Project Artifacts (INSERTED) | v1.28.5 | 2026-05-18 |
+| 28.6 | Skill Reference Co-Location (INSERTED — Corrective Follow-Up to Phase 28.5) | v1.28.6 | 2026-05-18 |
 
 ## Open follow-ups
 

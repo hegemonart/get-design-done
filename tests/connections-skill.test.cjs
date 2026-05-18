@@ -93,7 +93,7 @@ test('connections-skill: documents four-option setup prompt', () => {
   // the verbatim option strings live in the reference file. Assert
   // against the combined SKILL + reference surface.
   const skillBody = fs.readFileSync(SKILL_PATH, 'utf8');
-  const refPath = path.join(REPO_ROOT, 'reference', 'connections-onboarding.md');
+  const refPath = path.join(REPO_ROOT, 'skills', 'connections', 'connections-onboarding.md');
   const refBody = fs.existsSync(refPath) ? fs.readFileSync(refPath, 'utf8') : '';
   const surface = skillBody + '\n\n' + refBody;
   // All four options must appear somewhere in the setup screen spec.

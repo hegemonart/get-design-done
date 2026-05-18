@@ -32,10 +32,11 @@ const ALLOWED_DEPRECATION_REFS = [
   'reference/parallelism-rules.md',
   // Phase 10.1 tier reference: documents the historical pattern-mapper tier mapping.
   'reference/model-tiers.md',
-  // Phase 28.5-04 extraction: skills/plan/SKILL.md procedure detail
-  // (including the design-pattern-mapper Task() spawn) lives here per
-  // the <=100-line authoring contract. Transitional alongside skills/plan.
-  'reference/plan-procedure.md',
+  // Phase 28.5-04 extraction + Phase 28.6 co-location: skills/plan/SKILL.md
+  // procedure detail (including the design-pattern-mapper Task() spawn)
+  // lives here per the <=100-line authoring contract. Transitional
+  // alongside skills/plan. Co-located into skills/plan/ in Phase 28.6-01.
+  'skills/plan/plan-procedure.md',
   // The deprecations registry itself.
   'reference/DEPRECATIONS.md',
 ];

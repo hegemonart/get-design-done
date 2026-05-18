@@ -1,0 +1,145 @@
+# Phase 28.6 cross-link integrity baseline
+# Format: <file> -> <link> -> <resolved-path> : <OK|MISSING|STALE>
+
+## Section 1 — Migrated refs at destination (20 expected, all OK)
+skills/apply-reflections/apply-reflections-procedure.md : OK
+skills/cache-manager/cache-policy.md : OK
+skills/compare/compare-rubric.md : OK
+skills/connections/connections-onboarding.md : OK
+skills/darkmode/darkmode-audit-procedure.md : OK
+skills/debug/debug-feedback-loops.md : OK
+skills/design/design-procedure.md : OK
+skills/discover/discover-procedure.md : OK
+skills/explore/explore-procedure.md : OK
+skills/health/health-mcp-detection.md : OK
+skills/health/health-skill-length-report.md : OK
+skills/new-cycle/milestone-completeness-rubric.md : OK
+skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/plan/plan-procedure.md : OK
+skills/router/router-rules.md : OK
+skills/scan/scan-procedure.md : OK
+skills/start/start-procedure.md : OK
+skills/style/style-doc-procedure.md : OK
+skills/quality-gate/threat-modeling.md : OK
+skills/verify/verify-procedure.md : OK
+
+## Section 2 — Cross-link resolution from skills/**/*.md
+skills/apply-reflections/SKILL.md -> ./apply-reflections-procedure.md -> skills/apply-reflections/apply-reflections-procedure.md : OK
+skills/cache-manager/SKILL.md -> ./cache-policy.md -> skills/cache-manager/cache-policy.md : OK
+skills/cache-manager/SKILL.md -> ./cache-policy.md -> skills/cache-manager/cache-policy.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/compare/SKILL.md -> ./compare-rubric.md -> skills/compare/compare-rubric.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/connections/SKILL.md -> ./connections-onboarding.md -> skills/connections/connections-onboarding.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/darkmode/SKILL.md -> ./darkmode-audit-procedure.md -> skills/darkmode/darkmode-audit-procedure.md : OK
+skills/debug/SKILL.md -> ./debug-feedback-loops.md -> skills/debug/debug-feedback-loops.md : OK
+skills/debug/SKILL.md -> ./debug-feedback-loops.md -> skills/debug/debug-feedback-loops.md : OK
+skills/debug/SKILL.md -> ./debug-feedback-loops.md -> skills/debug/debug-feedback-loops.md : OK
+skills/design/SKILL.md -> ./design-procedure.md -> skills/design/design-procedure.md : OK
+skills/design/SKILL.md -> ./design-procedure.md -> skills/design/design-procedure.md : OK
+skills/design/SKILL.md -> ./design-procedure.md -> skills/design/design-procedure.md : OK
+skills/design/SKILL.md -> ./design-procedure.md -> skills/design/design-procedure.md : OK
+skills/design/SKILL.md -> ./design-procedure.md -> skills/design/design-procedure.md : OK
+skills/design/SKILL.md -> ./design-procedure.md -> skills/design/design-procedure.md : OK
+skills/discover/SKILL.md -> ./discover-procedure.md -> skills/discover/discover-procedure.md : OK
+skills/discover/SKILL.md -> ./discover-procedure.md -> skills/discover/discover-procedure.md : OK
+skills/discover/SKILL.md -> ./discover-procedure.md -> skills/discover/discover-procedure.md : OK
+skills/discover/SKILL.md -> ./discover-procedure.md -> skills/discover/discover-procedure.md : OK
+skills/discover/SKILL.md -> ./discover-procedure.md -> skills/discover/discover-procedure.md : OK
+skills/discover/SKILL.md -> ./discover-procedure.md -> skills/discover/discover-procedure.md : OK
+skills/discover/SKILL.md -> ./discover-procedure.md -> skills/discover/discover-procedure.md : OK
+skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-procedure.md : OK
+skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-procedure.md : OK
+skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-procedure.md : OK
+skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-procedure.md : OK
+skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-procedure.md : OK
+skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-procedure.md : OK
+skills/health/SKILL.md -> ./health-mcp-detection.md -> skills/health/health-mcp-detection.md : OK
+skills/health/SKILL.md -> ./health-skill-length-report.md -> skills/health/health-skill-length-report.md : OK
+skills/new-cycle/SKILL.md -> ./milestone-completeness-rubric.md -> skills/new-cycle/milestone-completeness-rubric.md : OK
+skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-customize/SKILL.md -> ./../peer-cli-add/peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-customize/SKILL.md -> ./../peer-cli-add/peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-customize/SKILL.md -> ./../peer-cli-add/peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-customize/SKILL.md -> ./../peer-cli-add/peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peer-cli-customize/SKILL.md -> ./../peer-cli-add/peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peers/SKILL.md -> ./../peer-cli-add/peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/peers/SKILL.md -> ./../peer-cli-add/peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/plan/SKILL.md -> ./plan-procedure.md -> skills/plan/plan-procedure.md : OK
+skills/quality-gate/SKILL.md -> ./threat-modeling.md -> skills/quality-gate/threat-modeling.md : OK
+skills/router/SKILL.md -> ./router-rules.md -> skills/router/router-rules.md : OK
+skills/router/SKILL.md -> ./router-rules.md -> skills/router/router-rules.md : OK
+skills/router/SKILL.md -> ./router-rules.md -> skills/router/router-rules.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/scan/SKILL.md -> ./scan-procedure.md -> skills/scan/scan-procedure.md : OK
+skills/start/SKILL.md -> ./start-procedure.md -> skills/start/start-procedure.md : OK
+skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
+skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
+skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
+skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
+skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
+skills/turn-closeout/SKILL.md -> ./../new-cycle/milestone-completeness-rubric.md -> skills/new-cycle/milestone-completeness-rubric.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
+skills/warm-cache/SKILL.md -> ./../cache-manager/cache-policy.md -> skills/cache-manager/cache-policy.md : OK
+skills/warm-cache/SKILL.md -> ./../cache-manager/cache-policy.md -> skills/cache-manager/cache-policy.md : OK
+
+## Section 3 — Stale reference/ links to moved files (expected 0)
+# (none — clean)

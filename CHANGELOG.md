@@ -4,6 +4,62 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.28.6] — 2026-05-18
+
+### Phase 28.6 — Skill Reference Co-Location (Corrective Follow-Up to Phase 28.5)
+
+Corrects Phase 28.5's CONTEXT.md D-06 over-generalization. Phase 28.5 extracted 20 skill-private procedure refs into a central `reference/` folder, but each of those refs is consumed by exactly 1 (or in 2 borderline cases, 2 sibling) skills. Per mattpocock/skills' actual structure at `https://github.com/mattpocock/skills/tree/main/skills`, skill-private procedure docs live next to the `SKILL.md` they describe. Phase 28.6 co-locates the 20 refs into per-skill folders and refreshes the contract's §D-06 to endorse the per-skill folder pattern for 1-/2-consumer content. No new features. No breaking changes. `git mv` preserves history on every file. Phase 28.5's contract spec, validator, CI gate, `zoom-out`, debug Phase 1 patch, CONTEXT.md + ADR project artifacts, decision-injector extension, and 70/70 length compliance are all PRESERVED; only the location of skill-private refs changes.
+
+#### Migrated refs (20 — `reference/<topic>.md` -> `skills/<owner>/<topic>.md`)
+
+- `apply-reflections-procedure.md` -> `skills/apply-reflections/`
+- `cache-policy.md` -> `skills/cache-manager/` (primary; `warm-cache` secondary via `./../cache-manager/cache-policy.md`)
+- `compare-rubric.md` -> `skills/compare/`
+- `connections-onboarding.md` -> `skills/connections/`
+- `darkmode-audit-procedure.md` -> `skills/darkmode/`
+- `debug-feedback-loops.md` -> `skills/debug/`
+- `design-procedure.md` -> `skills/design/`
+- `discover-procedure.md` -> `skills/discover/`
+- `explore-procedure.md` -> `skills/explore/`
+- `health-mcp-detection.md` -> `skills/health/`
+- `health-skill-length-report.md` -> `skills/health/`
+- `milestone-completeness-rubric.md` -> `skills/new-cycle/` (primary; `turn-closeout` secondary)
+- `peer-cli-protocol.md` -> `skills/peer-cli-add/` (primary; `peer-cli-customize` + `peers` secondary)
+- `plan-procedure.md` -> `skills/plan/`
+- `router-rules.md` -> `skills/router/`
+- `scan-procedure.md` -> `skills/scan/`
+- `start-procedure.md` -> `skills/start/`
+- `style-doc-procedure.md` -> `skills/style/`
+- `threat-modeling.md` -> `skills/quality-gate/`
+- `verify-procedure.md` -> `skills/verify/`
+
+#### Contract refresh
+
+- `reference/skill-authoring-contract.md` §D-06 refreshed: per-skill folder pattern explicitly endorsed for skill-private content. Three placement classes codified — 1-consumer in `skills/<owner>/<topic>.md`; 2-consumer in primary owner's folder with `./../<primary>/<topic>.md` secondary cross-link; multi-consumer (3+ skills across different domains) in `reference/<topic>.md`. The Phase 28.5 "rare exception only" framing is reversed.
+
+#### Registry purge
+
+- `reference/registry.json`: 20 entries removed (the migrated procedure refs are no longer tracked centrally; they're discoverable via the skill folder itself, per mattpocock's pattern). Universal refs (consumed by 3+ skills) remain in the registry.
+
+#### Phase 28.5 retrospective annotation
+
+- `.planning/phases/28.5-skill-authoring-contract/CONTEXT.md` D-06 annotated with a "Corrected by Phase 28.6" pointer for audit-trail preservation. Phase 28.5 decisions stay visible but flagged as superseded.
+
+#### Plans
+
+- 28.6-01 — `git mv` 20 refs + cross-link updates across 23 SKILL.md consumers (`./../reference/<topic>.md` -> `./<topic>.md` or `./../<primary>/<topic>.md`). (COLOC-01)
+- 28.6-02 — `reference/registry.json` 20-entry purge (D-03) + `reference/skill-authoring-contract.md` §D-06 refresh (D-04). (COLOC-02)
+- 28.6-03 — Validator + baseline + full `npm test` sweep (all green; D-05 confirmation that `scripts/validate-skill-length.cjs` globs `SKILL.md` only; no validator edit). (COLOC-03)
+- 28.6-04 — Closeout (4-manifest lockstep at v1.28.6, `OFF_CADENCE_VERSIONS.add('1.28.6')`, CHANGELOG, ROADMAP add + scoped flip, baseline at `test-fixture/baselines/phase-28.6/`, Phase 28.5 CONTEXT.md retrospective annotation). (COLOC-04)
+
+#### Non-changes
+
+- NOTICE unchanged — Phase 28.5's mattpocock/skills MIT attribution still applies (same content; file paths shifted only).
+- `test-fixture/baselines/phase-20/skill-list.txt` unchanged — no skills added or removed.
+- `scripts/validate-skill-length.cjs` unchanged — D-05 verified the validator globs `SKILL.md` only and is unaffected by co-located procedure refs.
+
+---
+
 ## [1.28.5] — 2026-05-18
 
 ### Phase 28.5 — Skill Authoring Contract + Skill Rework + Project Artifacts

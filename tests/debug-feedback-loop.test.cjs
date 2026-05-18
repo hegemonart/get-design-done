@@ -19,7 +19,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const REF = path.join(ROOT, 'reference', 'debug-feedback-loops.md');
+const REF = path.join(ROOT, 'skills', 'debug', 'debug-feedback-loops.md');
 const SKILL = path.join(ROOT, 'skills', 'debug', 'SKILL.md');
 
 function readLines(p) {

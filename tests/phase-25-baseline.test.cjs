@@ -120,7 +120,7 @@ test('phase-25 baseline: router SKILL.md emits complexity_class with all four bu
     path.join(REPO_ROOT, 'skills', 'router', 'SKILL.md'),
     'utf8',
   );
-  const refPath = path.join(REPO_ROOT, 'reference', 'router-rules.md');
+  const refPath = path.join(REPO_ROOT, 'skills', 'router', 'router-rules.md');
   const ref = fs.existsSync(refPath) ? fs.readFileSync(refPath, 'utf8') : '';
   const surface = skill + '\n\n' + ref;
   assert.match(skill, /complexity_class/, 'router SKILL must document complexity_class inline');
@@ -165,7 +165,7 @@ test('phase-25 baseline: verify SKILL.md documents the Step 2.5 quality-gate ent
     path.join(REPO_ROOT, 'skills', 'verify', 'SKILL.md'),
     'utf8',
   );
-  const refPath = path.join(REPO_ROOT, 'reference', 'verify-procedure.md');
+  const refPath = path.join(REPO_ROOT, 'skills', 'verify', 'verify-procedure.md');
   const ref = fs.existsSync(refPath) ? fs.readFileSync(refPath, 'utf8') : '';
   const surface = skill + '\n\n' + ref;
   assert.match(surface, /Step 2\.5/, 'verify SKILL + reference must document the Step 2.5 quality-gate gate');
