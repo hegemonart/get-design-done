@@ -234,3 +234,17 @@ Check for (see `reference/checklists.md` Micro-Polish Check gate):
 - No `transition: all` (BAN-12)
 - No `will-change: all` (BAN-13)
 - `prefers-reduced-motion` respected
+
+---
+
+## Lens-Tags (Orthogonal)
+
+Tags auditors attach to findings under existing pillars to record cross-cutting dimensions without changing the pillar structure or weights. Same orthogonal pattern as Phase 19.6 `emotion_levels` and `authoring_principles`. Adding a lens-tag does NOT change pillar weights, scoring math, or audit output format — it is a label on an existing finding.
+
+### `composition_alignment`
+
+Attach to findings under the Visual Hierarchy pillar that relate to compositional fundamentals (rule of thirds, golden ratio, root rectangles, focal-point construction, visual-weight calculus, optical-vs-mathematical centering, eye-flow patterns). See [`./composition.md`](./composition.md) for the rubric. Does NOT change the pillar weight or score; it is an orthogonal tag on the existing finding.
+
+### `i18n_readiness`
+
+Attach to findings under the Accessibility pillar (for WCAG 3.1.1 / 3.1.2 violations) or under the Anti-Pattern Compliance pillar (for hardcoded-string / overflow-at-+40% defects). Emitted by the `agents/design-verifier.md` §i18n probes section (Phase 28-06). See [`./i18n.md`](./i18n.md) §WCAG i18n + §Verifier Integration Spec. Does NOT change pillar weights or scores.
