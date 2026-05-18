@@ -65,35 +65,45 @@ describe('28-06: verifier i18n probes (D-03)', () => {
 });
 
 describe('28-06: explore i18n-readiness probe (D-04)', () => {
+  // Phase 28.5-04 (Bucket 1 pipeline-stage rework) moved the verbatim
+  // i18n-readiness probe detail (3 readiness states, 6-library matrix,
+  // native-Intl.* regex literal, informational-only disclaimer) from
+  // skills/explore/SKILL.md to reference/explore-procedure.md per the
+  // <=100-line authoring contract. The SKILL keeps the probe heading
+  // + cross-link summary; the verbatim probe content lives in the
+  // reference file. Assertions read SKILL + linked reference together.
   const explore = read('skills/explore/SKILL.md');
+  const procedurePath = path.join(REPO_ROOT, 'reference', 'explore-procedure.md');
+  const procedure = fs.existsSync(procedurePath) ? fs.readFileSync(procedurePath, 'utf8') : '';
+  const surface = explore + '\n\n' + procedure;
 
   test('28-06: explore contains i18n-readiness probe heading', () => {
-    assert.match(explore, /i18n readiness probe|i18n-readiness probe/, 'i18n-readiness probe heading missing');
+    assert.match(surface, /i18n readiness probe|i18n-readiness probe/, 'i18n-readiness probe heading missing from SKILL + reference');
   });
 
   test('28-06: explore contains all 3 D-11 readiness states (framework-managed, partial, none)', () => {
-    assert.match(explore, /framework-managed/, 'framework-managed state missing');
-    assert.match(explore, /\bpartial\b/, 'partial state missing');
+    assert.match(surface, /framework-managed/, 'framework-managed state missing from SKILL + reference');
+    assert.match(surface, /\bpartial\b/, 'partial state missing from SKILL + reference');
     // 'none' as a readiness state appears in the "framework-managed | partial | none" output line
-    assert.match(explore, /\| none\b|: none\b|partial \| none/, 'none state missing');
+    assert.match(surface, /\| none\b|: none\b|partial \| none/, 'none state missing from SKILL + reference');
   });
 
   test('28-06: explore contains all 6 D-11 library matrix names', () => {
     for (const lib of ['react-intl', 'next-intl', 'i18next', 'vue-i18n', 'formatjs', 'lingui']) {
-      assert.match(explore, new RegExp(lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `library "${lib}" missing from matrix`);
+      assert.match(surface, new RegExp(lib.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `library "${lib}" missing from SKILL + reference matrix`);
     }
   });
 
   test('28-06: explore contains D-11 native-Intl.* regex literal', () => {
     assert.match(
-      explore,
+      surface,
       /DateTimeFormat\|NumberFormat\|PluralRules\|RelativeTimeFormat\|ListFormat\|Collator\|Segmenter/,
-      'native Intl.* regex literal missing'
+      'native Intl.* regex literal missing from SKILL + reference'
     );
   });
 
   test('28-06: explore i18n probe is informational only (no gate / no blocking)', () => {
-    assert.match(explore, /informational only|NO gate|no gate/i, 'informational-only disclaimer missing');
+    assert.match(surface, /informational only|NO gate|no gate/i, 'informational-only disclaimer missing from SKILL + reference');
   });
 });
 

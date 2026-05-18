@@ -67,3 +67,4 @@ update
 verify
 warm-cache
 watch-authorities
+zoom-out

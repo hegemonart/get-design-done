@@ -3,6 +3,7 @@ name: gdd-recall
 description: "Search cross-cycle memory: decisions, learnings, experience archives. Returns ranked matches."
 argument-hint: "<query> [--reindex]"
 tools: Read, Write, Bash
+disable-model-invocation: true
 ---
 
 @reference/retrieval-contract.md

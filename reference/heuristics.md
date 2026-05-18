@@ -269,3 +269,87 @@ For each NNG heuristic (H-01 through H-10), rate 0–4:
 - 75–89: Good, minor issues
 - 60–74: Acceptable, improvement needed
 - <60: Significant UX problems, redesign required
+
+---
+
+## Dependency-cycle detection
+
+Algorithm consumed by `skills/analyze-dependencies/SKILL.md` Analysis 4. Detects cycles
+in the `@`-reference graph (File A → File B → File A) by DFS with path-tracking.
+
+**Input:** adjacency map `{from: [to, ...]}` built from `.design/intel/graph.json#edges`.
+
+**Algorithm:**
+
+```text
+visited = {}; path = []; cycles = []
+function dfs(node):
+  if node in path:
+    cycle_start = path.index(node)
+    cycles.append(path[cycle_start:] + [node])
+    return
+  if node in visited: return
+  visited.add(node); path.append(node)
+  for neighbor in adjacency[node]: dfs(neighbor)
+  path.pop()
+```
+
+**Bias notes:** the DFS visits each node at most once per traversal, so duplicate cycles
+across multiple entry points are deduped by the `visited` guard. The `path.index(node)`
+slice captures only the cycle suffix; nodes before the entry point are not part of the
+cycle. Pre-existing acyclic chains stay invisible — only back-edges surface.
+
+---
+
+## Version-cadence
+
+Reference for `skills/check-update/SKILL.md` and `skills/complete-cycle/SKILL.md` when
+comparing versions across releases.
+
+**Delta classification** (consumer of `.design/update-cache.json#delta`):
+
+| Delta | Meaning | When |
+|-------|---------|------|
+| `major` | Breaking change | `current.major < latest.major` |
+| `minor` | New features | Major same; `current.minor < latest.minor` |
+| `patch` | Bug fixes only | Major + minor same; `current.patch < latest.patch` |
+| `off-cadence` | Insertion-style version (`.5`, `.6`, `.7`) | Listed in `OFF_CADENCE_VERSIONS` in `tests/semver-compare.test.cjs` |
+| `none` | Same version | All segments equal |
+
+**Off-cadence handling:** versions like `v1.14.5`, `v1.27.5`, `v1.28.5` slot between regular
+minor bumps. They register via `OFF_CADENCE_VERSIONS.add('<version>')` in
+`tests/semver-compare.test.cjs`. The semver-compare test treats them as if they had a
+canonical predecessor (`v1.28.5` after `v1.28.0`, not `v1.28.4`).
+
+**Preview-suffix trap:** model IDs with `-preview` (`gpt-5-preview` vs `gpt-5`) drift — today's
+preview is tomorrow's GA. Tooling MUST store the parent name in `provider_model_id` and treat
+the suffix as decorative. See `./peer-cli-protocol.md` for the peer-CLI-side context.
+
+---
+
+## Optimization rules
+
+Reference catalog for `skills/optimize/SKILL.md`. Four deterministic rules; rule-based
+analysis applied in order. Each rule inspects per-agent aggregates from
+`.design/agent-metrics.json` and emits zero or more rows to the recommendations table.
+
+**R1 — Low cache hit rate.**
+- *Condition:* `total_spawns >= --min-spawns` AND `cache_hit_rate < 0.20`.
+- *Emit:* `"Consider batching tasks for agent {agent} — cache hit rate is {rate*100}%. Investigate cache-aligned ordering (see reference/shared-preamble.md) and whether input paths can be normalized."`
+- *Proposed action:* Batch similar tasks; confirm shared-preamble import ordering.
+
+**R2 — Expensive and rarely lazy-skipped.**
+- *Condition:* `total_cost_usd > 0.50` AND `lazy_skip_rate < 0.10`.
+- *Emit:* `"Agent {agent} is expensive (${cost}) and rarely skipped ({rate*100}% lazy-skip). Consider adding a lazy gate heuristic at agents/{agent}-gate.md (see plan 10.1-04 pattern)."`
+- *Proposed action:* Add lazy-gate agent.
+
+**R3 — Tier override churn.**
+- *Condition:* Multiple telemetry rows show recorded `tier` differing from frontmatter `default-tier` (e.g., frontmatter `opus` but measured rows consistently `haiku` from budget.json override or soft-threshold downgrade).
+- *Emit:* `"Tier override churn detected for {agent}: frontmatter says {frontmatter-tier} but measured tier is {measured-tier} in {N} of last {M} rows. Consider updating frontmatter default-tier or removing the budget.json override."`
+- *Proposed action:* Update frontmatter default-tier OR prune budget.json `tier_overrides` entry.
+
+**R4 — Typical duration drift.**
+- *Condition:* Measured `typical_duration_seconds` (computed as avg wall-clock between paired spawn/complete rows; fall back to frontmatter when pairing unavailable) differs from frontmatter `typical-duration-seconds` by more than 50%.
+- *Emit:* `"Typical duration for {agent} has drifted: frontmatter {old}s vs measured {new}s ({delta_pct}% drift). Update frontmatter typical-duration-seconds: {new}."`
+- *Proposed action:* Edit `agents/{agent}.md` frontmatter.
+- *Note:* v1 only computes wall-clock duration when telemetry ledger carries both spawn AND complete rows with matching correlation IDs. If unavailable, R4 flags "insufficient data" rather than emitting a false proposal. Phase 11 reflector can add a PostToolUse writer.

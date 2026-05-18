@@ -3,6 +3,7 @@ name: gdd-plant-seed
 description: "Forward-looking design idea with a trigger condition. Seeds surface automatically when trigger is met. Writes to .design/SEEDS.md."
 argument-hint: "[--trigger <condition>] [text]"
 tools: Read, Write, AskUserQuestion
+disable-model-invocation: true
 ---
 
 # /gdd:plant-seed

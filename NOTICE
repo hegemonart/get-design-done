@@ -43,10 +43,72 @@ Attribution is provided here per Apache 2.0 §4.
        skill, including the verification ladder, model-ID `-preview`-suffix
        trap, and Windows quirk handling.
 
+──────────────────────────────────────────────────────────────────────────────
+Phase 28.5 — Skill Authoring Contract + Rework + Project Artifacts (v1.28.5, 2026-05-18)
+──────────────────────────────────────────────────────────────────────────────
+
+The skill-authoring contract, project-artifact format files, the
+debug-feedback-loops reference, and the new zoom-out micro-skill port
+content from:
+
+  mattpocock/skills (https://github.com/mattpocock/skills)
+  License: MIT
+  Adapted with permission.
+
+The following gdd files contain content adapted from mattpocock/skills:
+
+  reference/skill-authoring-contract.md
+    └─ Adapts the SKILL.md <=100-line cap, description-format contract
+       (lax-mode default per Phase 33 A/B pending), frontmatter required
+       fields, and progressive-disclosure-one-level-deep rules from
+       mattpocock's productivity/write-a-skill/SKILL.md.
+
+  reference/context-md-format.md
+    └─ Adapts mattpocock's productivity/grill-with-docs/CONTEXT-FORMAT.md
+       (DDD-style ubiquitous-language glossary schema, inline-write
+       trigger, multi-context CONTEXT-MAP.md pattern). GDD additions:
+       optional first-seen + aliases on term entries.
+
+  reference/adr-format.md
+    └─ Adapts mattpocock's productivity/grill-with-docs/ADR-FORMAT.md
+       (3-criteria offer gate: hard-to-reverse AND surprising-without-
+       context AND real-tradeoff; 4-state status lifecycle). GDD
+       additions: optional cycle-id + phase-id cross-refs back to
+       STATE.md.
+
+  reference/architecture-vocabulary.md
+    └─ Ports Ousterhout's *A Philosophy of Software Design* glossary via
+       mattpocock's improve-codebase-architecture/LANGUAGE.md (8 core
+       terms — Module / Interface / Implementation / Depth / Seam /
+       Adapter / Leverage / Locality — plus 3 principles: deletion test,
+       interface-is-test-surface, two-adapters-rule).
+
+  reference/debug-feedback-loops.md
+    └─ Adapts mattpocock's engineering/diagnose Phase 1 — feedback-loop
+       discipline, 10 construction paths in priority order (failing test
+       -> curl -> CLI fixture -> headless browser -> trace replay ->
+       throwaway harness -> fuzz -> bisect harness -> differential loop
+       -> HITL bash), iterate-on-loop sub-discipline, non-determinism
+       reproduction-rate branch.
+
+  skills/zoom-out/SKILL.md
+    └─ Direct port of mattpocock's engineering/zoom-out (~10 lines body,
+       disable-model-invocation: true, zoom-out-and-map-the-area
+       instruction). User-invoked-only shortcut.
+
+  skills/debug/SKILL.md (Phase 1 ordering)
+    └─ Adopts the feedback-loop-discipline-first ordering — build the
+       deterministic, fast, agent-runnable signal before hypothesizing.
+       (Skill body itself is GDD original; the Phase 1 ordering +
+       cross-link to reference/debug-feedback-loops.md is adapted.)
+
 ────────────────────────────────────────────────────────────────────────
 
 Note on the broader codebase: get-design-done as a whole is licensed under
 the MIT License (see LICENSE). The Apache 2.0 attribution above applies
-specifically to the listed files, which contain re-derived shapes from
-the cited Apache 2.0 source. The MIT and Apache 2.0 licenses are
-compatible — see https://www.apache.org/legal/resolved.html#category-a.
+specifically to the cc-multi-cli-derived files listed under the Phase 27
+block. The MIT attribution under Phase 28.5 covers content adapted from
+mattpocock/skills (MIT) — the MIT-to-MIT re-licensing is straightforward
+and the attribution above provides the required source citation. The MIT
+and Apache 2.0 licenses are compatible — see
+https://www.apache.org/legal/resolved.html#category-a.

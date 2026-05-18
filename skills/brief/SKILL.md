@@ -1,6 +1,6 @@
 ---
 name: gdd-brief
-description: "Design intake — captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md (Stage 1 of 5)"
+description: "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before /gdd:explore."
 argument-hint: "[--re-brief to redo intake on existing project]"
 tools: Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get
 ---
@@ -71,6 +71,17 @@ With `.design/STATE.md` seeded from the template:
 3. Set handoff status: call `mcp__gdd_state__set_status` with `status: "brief_complete"`.
 
 Do NOT call `mcp__gdd_state__transition_stage` from brief — explore calls it on entry, keeping the transition atomic with the stage that owns the new state.
+
+## Step 6 — Inline glossary (CONTEXT.md) + ADR pointer
+
+When a fuzzy phrase is resolved or a new domain concept is named during the briefing
+interview: write to `./CONTEXT.md` IMMEDIATELY per `./../../reference/context-md-format.md`
+(H2 heading + body; lazy-create on first term; no batching). Glossary entries compound
+across cycles — token savings + naming consistency.
+
+Project-shaping decisions surfaced in briefing can be promoted to an ADR — see
+`./../../reference/adr-format.md` for the 3-criteria gate (hard-to-reverse AND
+surprising-without-context AND real-tradeoff). Routine choices stay in STATE.md.
 
 ## After Writing
 

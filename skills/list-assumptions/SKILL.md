@@ -3,6 +3,7 @@ name: gdd-list-assumptions
 description: "Surfaces hidden design assumptions baked into the codebase before planning — pattern-based detection plus user-surfaced items."
 argument-hint: "[--area typography|color|layout|motion|a11y]"
 tools: Read, Grep, Glob
+disable-model-invocation: true
 ---
 
 # /gdd:list-assumptions

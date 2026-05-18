@@ -1,6 +1,6 @@
 ---
 name: get-design-done:style
-description: "Generate a component handoff doc (.design/DESIGN-STYLE-[ComponentName].md) from existing pipeline artifacts or source files. Two modes: post-pipeline (uses DESIGN-SUMMARY.md) and pre-pipeline fallback (uses DESIGN.md + source). Invoke with a ComponentName argument, or with no argument to list available components."
+description: "Generate a component handoff doc at `.design/DESIGN-STYLE-<ComponentName>.md` by dispatching the `design-doc-writer` agent in one of two modes: post-pipeline (uses `DESIGN-SUMMARY.md`) or pre-pipeline fallback (uses `DESIGN.md` + source). Use when the user wants a single-component spec covering tokens, states, and AI-slop detection. Invoke with a ComponentName, or with no argument to list available components."
 argument-hint: "[ComponentName]"
 user-invocable: true
 ---
@@ -8,6 +8,8 @@ user-invocable: true
 # get-design-done:style — Component Handoff Doc Generator
 
 Generates a per-component style spec at `.design/DESIGN-STYLE-[ComponentName].md`. This is a **standalone command**, not a pipeline stage.
+
+For the full mode-detection logic, source-resolution fallback chain (10 paths), agent-spawn payload, and STYL-05 section spec, see `../../reference/style-doc-procedure.md`. For the cross-skill output discipline (artifact prefix, completion marker, MUST-NOT-write list), see `../../reference/shared-preamble.md#output-contract-reminders`. For the raw-hex audit signal used in Token Semantic Health Score, see `../../reference/shared-preamble.md#token-first-reasoning`.
 
 Output artifact naming: `.design/DESIGN-STYLE-[ComponentName].md` — Title-cased component name, one file per invocation.
 
@@ -27,134 +29,24 @@ This separation is a pre-roadmap decision recorded in `.planning/STATE.md`: util
 
 ---
 
-## Argument Handling
+## Workflow
 
-**If `$ARGUMENTS` contains a ComponentName** → proceed to Mode Detection with that name.
-
-**If `$ARGUMENTS` is empty** → do not generate a doc. Instead:
-
-1. List available component files by globbing:
-   - `src/components/*.tsx`
-   - `src/components/*.jsx`
-   - `src/**/*.vue`
-   - `src/**/*.svelte`
-   - `components/*.tsx`
-   - `components/*.jsx`
-2. Also list task names from `.design/tasks/*.md` (if directory exists).
-3. Display the list to the user and prompt: "Specify a ComponentName to generate a style spec. Example: `/get-design-done style Button`"
-4. Exit without generating any file.
-
----
-
-## Mode Detection
-
-Before spawning the agent, detect which mode to use:
-
-```
-If .design/DESIGN-SUMMARY.md exists:
-  mode = post-pipeline   (STYL-03)
-  pipeline_complete = true
-
-Elif .design/DESIGN.md exists:
-  mode = pre-pipeline    (STYL-04)
-  pipeline_complete = false
-
-Else:
-  Abort: "No .design/ artifacts found. Run /get-design-done scan first to initialize."
-```
-
-The mode controls which files are supplied to the agent in `<required_reading>`.
-
----
-
-## Component Source Resolution
-
-Search for a source file matching the provided ComponentName (case-insensitive):
-
-1. `src/components/[ComponentName].tsx`
-2. `src/components/[ComponentName].jsx`
-3. `src/components/[ComponentName].vue`
-4. `src/components/[ComponentName].svelte`
-5. `src/**/[ComponentName]/index.tsx`
-6. `src/**/[ComponentName]/index.jsx`
-7. `components/[ComponentName].tsx`
-8. `components/[ComponentName].jsx`
-9. `components/[ComponentName].vue`
-10. `components/[ComponentName].svelte`
-
-**If multiple matches found:** Present the list to the user and prompt them to specify the exact path. Do not proceed until a single file is selected.
-
-**If zero matches found:** Abort with: "Component [ComponentName] not found in expected paths. Verify the name matches a file in src/components/ or components/."
-
----
-
-## Agent Spawn
-
-Once mode and source path are resolved, spawn the `design-doc-writer` agent:
-
-```
-Task("design-doc-writer", """
-<required_reading>
-[If pipeline_complete=true:]
-@.design/STATE.md
-@.design/DESIGN-SUMMARY.md
-@.design/DESIGN-CONTEXT.md
-@<component_source_path>
-[Else (pipeline_complete=false):]
-@.design/DESIGN.md
-@<component_source_path>
-@reference/anti-patterns.md
-@reference/audit-scoring.md
-</required_reading>
-
-Generate a handoff spec for component <ComponentName>.
-
-Context:
-  component_name: <ComponentName>
-  component_source_path: <resolved absolute path>
-  pipeline_complete: <true|false>
-  output_path: .design/DESIGN-STYLE-<ComponentName>.md
-
-Produce the doc per STYL-05 sections:
-  - Spacing Tokens (used by component)
-  - Color Tokens (used by component)
-  - Typography Scale (used by component)
-  - Component States (default, hover, focus, active, disabled, etc.)
-  - Token Semantic Health Score (raw-hex-ratio formula)
-  - AI-Slop Detection (using reference/anti-patterns.md BAN/SLOP patterns)
-  [If pipeline_complete=true:]
-  - Decisions Applied (D-XX from DESIGN-SUMMARY.md that mention this component)
-
-Emit ## DOC COMPLETE when the output file is written.
-""")
-```
-
-After the agent emits `## DOC COMPLETE`, confirm the file exists at `output_path` and report success to the user.
-
----
-
-## Output Location
-
-Output is written by the agent to:
-
-```
-.design/DESIGN-STYLE-[ComponentName].md
-```
-
-This artifact is **outside the pipeline namespace**. The `DESIGN-STYLE-` prefix is distinct from all pipeline-owned artifacts (`DESIGN.md`, `DESIGN-CONTEXT.md`, `DESIGN-PLAN.md`, `DESIGN-SUMMARY.md`, `DESIGN-VERIFICATION.md`). There is no naming conflict.
-
-The `.design/` directory is gitignored (developer tooling only — not shipped with the plugin).
+1. **Argument check** — if `$ARGUMENTS` is empty, enter list mode (see `../../reference/style-doc-procedure.md#component-source-resolution`); display available components from `src/components/` + `.design/tasks/`, then exit.
+2. **Mode detect** — `DESIGN-SUMMARY.md` exists → post-pipeline; else `DESIGN.md` exists → pre-pipeline; else abort with a "run /get-design-done scan first" message. Full decision tree at `../../reference/style-doc-procedure.md#mode-detection`.
+3. **Source resolve** — search the 10-path fallback chain for a file matching the ComponentName. On zero matches: abort. On multiple matches: prompt the user to disambiguate.
+4. **Agent spawn** — dispatch `design-doc-writer` with the mode-specific `<required_reading>` block and the STYL-05 section list. The full Task payload + STYL-05 spec live in `../../reference/style-doc-procedure.md#agent-spawn-payload`.
+5. **Confirm + report** — after the agent emits `## DOC COMPLETE`, verify the output path exists and report success.
 
 ---
 
 ## Constraints
 
-This command MUST NOT:
+This command MUST NOT (per `../../reference/shared-preamble.md#output-contract-reminders`):
 
-- MUST NOT write to `DESIGN.md`, `DESIGN-SUMMARY.md`, `DESIGN-VERIFICATION.md`, `DESIGN-CONTEXT.md`, or `.design/STATE.md`
-- MUST NOT invoke the pipeline router (this command is a leaf invocation, not a pipeline stage)
-- MUST NOT require Figma or Refero MCPs — v3 uses only local source files and `.design/` artifacts (MCP enrichment is reserved for a future version)
-- MUST NOT produce more than one output file per invocation — no batch mode in v3
+- Write to `DESIGN.md`, `DESIGN-SUMMARY.md`, `DESIGN-VERIFICATION.md`, `DESIGN-CONTEXT.md`, or `.design/STATE.md`
+- Invoke the pipeline router (this command is a leaf invocation, not a pipeline stage)
+- Require Figma or Refero MCPs — v3 uses only local source files and `.design/` artifacts (MCP enrichment is reserved for a future version)
+- Produce more than one output file per invocation — no batch mode in v3
 
 ---
 
@@ -166,12 +58,7 @@ This command MUST NOT:
 /get-design-done style Button
 ```
 
-- Resolves component: `src/components/Button.tsx`
-- Detects mode: DESIGN-SUMMARY.md exists → post-pipeline
-- Spawns `design-doc-writer` with `pipeline_complete: true`
-- Output: `.design/DESIGN-STYLE-Button.md`
-
----
+Resolves `src/components/Button.tsx`, detects post-pipeline mode (DESIGN-SUMMARY.md exists), spawns `design-doc-writer` with `pipeline_complete: true`, writes `.design/DESIGN-STYLE-Button.md`.
 
 **Example 2: No argument (list mode)**
 
@@ -179,15 +66,6 @@ This command MUST NOT:
 /get-design-done style
 ```
 
-- Globs component files from `src/components/`
-- Displays list to user:
-  ```
-  Available components:
-    Button
-    CardHeader
-    Input
-    Modal
-    Toast
-  Specify: /get-design-done style [ComponentName]
-  ```
-- Exits without generating any file.
+Globs component files and prompts the user to specify a ComponentName. Exits without generating any file. See `../../reference/style-doc-procedure.md#component-source-resolution` for the full glob path list.
+
+## STYLE COMPLETE

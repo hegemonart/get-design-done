@@ -3,6 +3,7 @@ name: gdd-undo
 description: "Safe design change revert. Uses git log to find design commits, checks dependencies, reverts safely."
 argument-hint: "[<commit SHA>]"
 tools: Read, Write, Bash, AskUserQuestion
+disable-model-invocation: true
 ---
 
 # /gdd:undo

@@ -1,6 +1,6 @@
 ---
 name: gdd-spike
-description: "Timeboxed feasibility experiment. Answers 'can this work?' questions. Creates .design/spikes/<slug>/ with hypothesis, timebox, scratch code, findings."
+description: "Timeboxed feasibility experiment that creates .design/spikes/<slug>/ with HYPOTHESIS.md, success/failure criteria, scratch/ subdirectory, and a default 60-minute timebox. Use when answering 'can this work?' before betting design or implementation effort on a risky approach."
 argument-hint: "[hypothesis] [--timebox <minutes>]"
 tools: Read, Write, Bash, AskUserQuestion
 ---

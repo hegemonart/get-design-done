@@ -3,6 +3,7 @@ name: gdd-todo
 description: "Design backlog — add/list/pick design tasks. Writes to .design/TODO.md."
 argument-hint: "<add|list|pick> [text]"
 tools: Read, Write, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have
+disable-model-invocation: true
 ---
 
 # /gdd:todo

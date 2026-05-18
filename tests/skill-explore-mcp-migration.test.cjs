@@ -143,19 +143,26 @@ test('skill-explore-mcp-migration: mapper/synthesizer prose preserved (DESIGN-CO
 });
 
 test('skill-explore-mcp-migration: line count within ±15% of pre-migration', () => {
+  // Phase 28.5 closeout (Plan 28.5-12) re-anchored the comparison from
+  // BEFORE_FIXTURE (pre-Plan-20-08) to AFTER_FIXTURE (post-Plan-20-08,
+  // post-Phase-28.5) because Plan 28.5-04 (Bucket 1 pipeline-stage
+  // rework) intentionally trimmed skills/explore/SKILL.md to the
+  // <=100-line authoring contract by extracting procedure detail to
+  // reference/explore-procedure.md. Drift is now measured against the
+  // regenerated post-migration baseline.
   assert.ok(
-    fs.existsSync(BEFORE_FIXTURE),
-    `pre-migration baseline must exist at ${BEFORE_FIXTURE}`
+    fs.existsSync(AFTER_FIXTURE),
+    `post-migration baseline must exist at ${AFTER_FIXTURE}`
   );
-  const before = fs.readFileSync(BEFORE_FIXTURE, 'utf8');
-  const after = readBody();
-  const beforeLines = countLinesOf(before);
-  const afterLines = countLinesOf(after);
-  const low = Math.floor(beforeLines * 0.85);
-  const high = Math.ceil(beforeLines * 1.15);
+  const baseline = fs.readFileSync(AFTER_FIXTURE, 'utf8');
+  const live = readBody();
+  const baselineLines = countLinesOf(baseline);
+  const liveLines = countLinesOf(live);
+  const low = Math.floor(baselineLines * 0.85);
+  const high = Math.ceil(baselineLines * 1.15);
   assert.ok(
-    afterLines >= low && afterLines <= high,
-    `line count drift: before=${beforeLines}, after=${afterLines}, allowed ${low}..${high}`
+    liveLines >= low && liveLines <= high,
+    `line count drift: after-baseline=${baselineLines}, live=${liveLines}, allowed ${low}..${high}`
   );
 });
 

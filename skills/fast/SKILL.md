@@ -3,6 +3,7 @@ name: gdd-fast
 description: "Trivial inline design task. No subagents, no planning documents, no pipeline stages. Just do the thing described."
 argument-hint: "<task description>"
 tools: Read, Write, Edit, Bash, Grep, Glob
+disable-model-invocation: true
 ---
 
 # /gdd:fast

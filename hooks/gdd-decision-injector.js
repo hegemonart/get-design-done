@@ -280,6 +280,128 @@ function buildPrototypingBlock(stateFile, basename, relPath) {
   return lines.join('\n');
 }
 
+/**
+ * Phase 28.5 plan 08 (D-04) — additive CONTEXT.md / ADR context.
+ *
+ * `CONTEXT.md` is a project-scoped ubiquitous-language glossary (schema:
+ * reference/context-md-format.md). Each entry is an `## Term` heading + body
+ * paragraph; optional `**Aliases:** [...]` line enables term-merging. The hook
+ * surfaces entries whose name or aliases match the opened file's tokens.
+ *
+ * ADRs live at `docs/adr/NNNN-<slug>.md` (schema: reference/adr-format.md). The
+ * hook surfaces matching titles as one-line cross-references.
+ *
+ * All file reads are defensive: missing or malformed files yield [] silently so
+ * the hook NEVER crashes (T-28.5-08-01 mitigation). Output is bounded by
+ * PROTOTYPING_TOP_N to prevent DoS (T-28.5-08-03).
+ */
+function readContextMd(repoRoot) {
+  const ctxPath = path.join(repoRoot, 'CONTEXT.md');
+  if (!fs.existsSync(ctxPath)) return [];
+  let content;
+  try { content = fs.readFileSync(ctxPath, 'utf8'); } catch { return []; }
+  const entries = [];
+  // Split on `## ` only when it is the start of a line. The first segment is
+  // preamble (everything before the first ## heading) — discard it.
+  const sections = content.split(/^## /m).slice(1);
+  for (const sec of sections) {
+    const lines = sec.split(/\r?\n/);
+    const term = (lines[0] || '').trim();
+    if (!term) continue;
+    const body = lines.slice(1).join('\n');
+    let aliases = [];
+    const aliasMatch = body.match(/\*\*Aliases:\*\*\s*\[([^\]]+)\]/);
+    if (aliasMatch) {
+      aliases = aliasMatch[1]
+        .split(',')
+        .map((s) => s.trim().replace(/^["']|["']$/g, ''))
+        .filter(Boolean);
+    }
+    entries.push({ term, body, aliases });
+  }
+  return entries;
+}
+
+function readAdrs(repoRoot) {
+  const adrDir = path.join(repoRoot, 'docs', 'adr');
+  if (!fs.existsSync(adrDir)) return [];
+  let files;
+  try { files = fs.readdirSync(adrDir); } catch { return []; }
+  const entries = [];
+  for (const f of files) {
+    if (!/^\d{4}-.*\.md$/.test(f)) continue;
+    let content;
+    try { content = fs.readFileSync(path.join(adrDir, f), 'utf8'); } catch { continue; }
+    // Title from frontmatter `title:` line, else first H1, else filename.
+    const titleMatch = content.match(/^title:\s*(.+)$/m) || content.match(/^# (.+)$/m);
+    const title = titleMatch
+      ? titleMatch[1].trim().replace(/^["']|["']$/g, '')
+      : f.replace(/\.md$/, '');
+    entries.push({ path: `docs/adr/${f}`, title, body: content.slice(0, 500) });
+  }
+  return entries;
+}
+
+function matchContextEntries(entries, tokens) {
+  if (!entries.length || !tokens.length) return [];
+  const lcTokens = tokens.map((t) => String(t).toLowerCase()).filter(Boolean);
+  const out = [];
+  for (const e of entries) {
+    const candidates = [e.term, ...e.aliases].map((s) => String(s).toLowerCase());
+    const hit = candidates.some((cand) =>
+      lcTokens.some((tok) => cand.includes(tok) || tok.includes(cand))
+    );
+    if (hit) out.push(e);
+  }
+  return out;
+}
+
+function matchAdrEntries(entries, tokens) {
+  if (!entries.length || !tokens.length) return [];
+  const lcTokens = tokens.map((t) => String(t).toLowerCase()).filter(Boolean);
+  return entries.filter((a) => {
+    const t = a.title.toLowerCase();
+    return lcTokens.some((tok) => t.includes(tok));
+  });
+}
+
+function buildGlossaryBlock(matched) {
+  if (!matched.length) return null;
+  const lines = [];
+  lines.push('');
+  lines.push('### Project glossary (CONTEXT.md)');
+  for (const e of matched.slice(0, PROTOTYPING_TOP_N)) {
+    const snippet = e.body
+      .split(/\r?\n/)
+      .filter((l) => l.trim() && !l.startsWith('**'))
+      .slice(0, 2)
+      .join(' ')
+      .trim();
+    const trimmed = snippet.length > 200 ? snippet.slice(0, 197) + '…' : snippet;
+    lines.push(`> - **${e.term}** — ${trimmed}`);
+  }
+  if (matched.length > PROTOTYPING_TOP_N) {
+    lines.push(`> … (${matched.length - PROTOTYPING_TOP_N} more glossary entr${matched.length - PROTOTYPING_TOP_N === 1 ? 'y' : 'ies'})`);
+  }
+  lines.push('');
+  return lines.join('\n');
+}
+
+function buildAdrBlock(matched) {
+  if (!matched.length) return null;
+  const lines = [];
+  lines.push('');
+  lines.push('### Architecture Decision Records (ADRs)');
+  for (const a of matched.slice(0, PROTOTYPING_TOP_N)) {
+    lines.push(`> - [${a.title}](${a.path})`);
+  }
+  if (matched.length > PROTOTYPING_TOP_N) {
+    lines.push(`> … (${matched.length - PROTOTYPING_TOP_N} more ADR${matched.length - PROTOTYPING_TOP_N === 1 ? '' : 's'})`);
+  }
+  lines.push('');
+  return lines.join('\n');
+}
+
 function buildRecallBlock(matches, basename, backendLabel) {
   if (!matches.length) return null;
   const uniq = [];
@@ -380,15 +502,39 @@ async function main() {
   const stateFile = sources.find((p) => p.endsWith(path.sep + 'STATE.md') || p.endsWith('/STATE.md'));
   const protoBlock = buildPrototypingBlock(stateFile, basename, relPath);
 
-  if (!block && !protoBlock) {
+  // Phase 28.5 plan 08 (D-04): additive CONTEXT.md + ADR context. Tokens used
+  // for matching are derived from the opened file's basename + relPath, split
+  // on kebab/snake/path separators and filtered down to substantive tokens.
+  // The match is intentionally loose (substring both ways) so an alias like
+  // "heuristics" surfaces when opening reference/heuristics.md.
+  const matchTokens = Array.from(new Set([
+    basename.replace(/\.md$/i, ''),
+    ...basename.replace(/\.md$/i, '').split(/[-_./\\]/),
+    ...relPath.split(/[-_./\\]/),
+  ].filter((t) => t && t.length > 2)));
+
+  let glossaryBlock = null;
+  let adrBlock = null;
+  try {
+    const ctxEntries = readContextMd(cwd);
+    const matchedCtx = matchContextEntries(ctxEntries, matchTokens);
+    glossaryBlock = buildGlossaryBlock(matchedCtx);
+  } catch { /* defensive: never crash on CONTEXT.md issues */ }
+  try {
+    const adrEntries = readAdrs(cwd);
+    const matchedAdrs = matchAdrEntries(adrEntries, matchTokens);
+    adrBlock = buildAdrBlock(matchedAdrs);
+  } catch { /* defensive: never crash on ADR issues */ }
+
+  if (!block && !protoBlock && !glossaryBlock && !adrBlock) {
     try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'no-hits', { backend: backendLabel }); } catch { /* swallow */ }
     process.stdout.write(JSON.stringify({ continue: true }));
     return;
   }
 
-  const additionalContext = [block, protoBlock].filter(Boolean).join('\n');
+  const additionalContext = [block, protoBlock, glossaryBlock, adrBlock].filter(Boolean).join('\n');
 
-  try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'inject', { backend: backendLabel, hit_count: hits.length, prototyping: !!protoBlock }); } catch { /* swallow */ }
+  try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'inject', { backend: backendLabel, hit_count: hits.length, prototyping: !!protoBlock, glossary: !!glossaryBlock, adr: !!adrBlock }); } catch { /* swallow */ }
   process.stdout.write(JSON.stringify({
     continue: true,
     hookSpecificOutput: { hookEventName: 'PreToolUse', additionalContext },

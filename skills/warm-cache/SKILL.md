@@ -4,6 +4,7 @@ description: "Pre-warms Anthropic's 5-min prompt cache across all agents that im
 user-invocable: true
 argument-hint: "[--agents <comma-list>]"
 tools: Read, Bash, Grep
+disable-model-invocation: true
 ---
 
 # warm-cache
@@ -55,37 +56,7 @@ Print the markdown summary described in the Invocation Contract.
 
 ## Concrete Command Example
 
-```
-$ /gdd:warm-cache
-
-Warming Anthropic prompt cache for 14 agents (5 min TTL)...
-[1/14] design-verifier ... ok (0.3s)
-[2/14] design-planner ... ok (0.3s)
-[3/14] design-integration-checker ... ok (0.3s)
-...
-[14/14] design-reflector ... ok (0.3s)
-
-## Warm-cache complete
-- Agents warmed: 14
-- Skipped (no shared preamble import): 3  (agents/README.md not an agent; 2 agents not yet migrated to shared preamble)
-- Duration: 4.2s
-- Next 5 min: repeated spawns of these agents pay cached_input_per_1m rate
-```
-
-Filtered example:
-
-```
-$ /gdd:warm-cache --agents design-verifier,design-planner
-
-Warming Anthropic prompt cache for 2 agents (filtered from 14)...
-[1/2] design-verifier ... ok (0.3s)
-[2/2] design-planner ... ok (0.3s)
-
-## Warm-cache complete
-- Agents warmed: 2
-- Filtered out by --agents: 12
-- Duration: 0.7s
-```
+Full + filtered command-output examples live in `./reference/cache-policy.md#concrete-warm-cache-command-examples-layer-a` so this skill stays close to its step-by-step flow rather than its sample output.
 
 ## Integration Points
 
@@ -95,10 +66,7 @@ Warming Anthropic prompt cache for 2 agents (filtered from 14)...
 
 ## Cost Model
 
-- Each no-op Haiku ping: ~50 input tokens (shared preamble + "No-op warm: acknowledge..." system+user) + ~5 output tokens ("ok").
-- At Haiku rates (reference/model-prices.md): `(50 / 1e6) * 1.00 + (5 / 1e6) * 5.00 = $0.00005 + $0.000025 = $0.000075` per agent.
-- 14 agents × $0.000075 = **$0.00105** total for a full warm-cache invocation.
-- Payback: a single subsequent Opus spawn with 40k cached input tokens saves `(40000/1e6) * (15.00 - 1.50) = $0.54`. Warm-cache pays for itself ~500× over on the first repeated planner spawn.
+Full per-ping math, total-cost arithmetic for a 14-agent warm, and payback calculation versus a downstream Opus spawn live in `./reference/cache-policy.md#cost-model-layer-a`. Top-line: a full warm is ~$0.001 and pays back ~500× on the first repeated planner spawn.
 
 ## Failure Modes
 

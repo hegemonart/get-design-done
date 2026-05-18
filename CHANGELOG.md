@@ -4,6 +4,84 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.28.5] — 2026-05-18
+
+### Phase 28.5 — Skill Authoring Contract + Skill Rework + Project Artifacts
+
+Adopts the mattpocock/skills (MIT) authoring contract and applies it retroactively across the entire shipped skill set. Closes the authoring-discipline gap surfaced by the 2026-05-02 comparison audit. 12 plans across 4 waves; off-cadence decimal patch from v1.28.0 parent (CONTEXT.md D-12 convention).
+
+#### New reference files
+
+- `reference/skill-authoring-contract.md` (28.5-01) — 100-line `SKILL.md` cap (warn >=100, block >=250 in CI), 1024-char description cap, required `<what>. Use when <triggers>.` form, frontmatter required fields, progressive-disclosure one-level-deep rule, when to add `scripts/`, per-skill domain-specific files allowed only when content is single-skill-private.
+- `reference/context-md-format.md` (28.5-02) — DDD-style ubiquitous-language glossary schema with optional `first-seen` + `aliases` GDD additions; CONTEXT-MAP.md multi-context pattern; inline-write-on-resolution trigger.
+- `reference/adr-format.md` (28.5-02) — 3-criteria offer gate (hard-to-reverse AND surprising-without-context AND real-tradeoff), 4-state status lifecycle, optional `cycle-id` + `phase-id` cross-refs back to STATE.md (GDD addition).
+- `reference/architecture-vocabulary.md` (28.5-03) — Ousterhout's 8 core terms (Module / Interface / Implementation / Depth / Seam / Adapter / Leverage / Locality) + 3 principles (deletion test, interface-is-test-surface, two-adapters-rule).
+- `reference/scan-procedure.md`, `verify-procedure.md`, `design-procedure.md`, `plan-procedure.md`, `explore-procedure.md`, `discover-procedure.md` (28.5-04) — 6 procedure references extracted from pipeline-stage skills as progressive-disclosure satellites.
+- `reference/shared-preamble.md` (28.5-05, extended), `style-doc-procedure.md`, `compare-rubric.md`, `darkmode-audit-procedure.md`, `connections-onboarding.md` (28.5-05) — 4 new + 1 extended (Bucket 2 design-family rework).
+- `reference/health-mcp-detection.md`, `apply-reflections-procedure.md`, `cache-policy.md`, `router-rules.md`, `start-procedure.md` (28.5-06) — 5 references extracted from Bucket 3 orchestrator + utility skills.
+- `reference/debug-feedback-loops.md` (28.5-07 scaffold + 28.5-09 fill) — 10 construction paths in priority order, iterate-on-loop sub-discipline, non-determinism reproduction-rate branch.
+- `reference/threat-modeling.md`, `milestone-completeness-rubric.md`, `peer-cli-protocol.md` (28.5-07) — 3 additional Bucket 4 extraction targets (analysis + audit skills).
+- `reference/health-skill-length-report.md` (28.5-11) — health-skill subsection contract documenting validator JSON shape + threshold rationale.
+
+#### Skill rework
+
+- Bucket 1 (28.5-04) — 11 pipeline-stage skills (`brief`, `discuss`, `plan`, `design`, `verify`, `explore`, `discover`, `scan`, `sketch`, `spike`, `new-cycle`, `complete-cycle`) reworked to <=100 lines.
+- Bucket 2 (28.5-05) — 7 design-family skills (`audit`, `style`, `darkmode`, `compare`, `design`, `figma-write`, `connections`, `benchmark`) cross-link cleanup + description standardization.
+- Bucket 3 (28.5-06) — 34 orchestrator + utility skills (`help`, `stats`, `note`, `add-backlog`, `todo`, `progress`, `health`, `update`, `undo`, `fast`, `quick`, `next`, `do`, `resume`, `pause`, etc.) `disable-model-invocation: true` whitelist applied; targeted trims on the offenders.
+- Bucket 4 (28.5-07) — 17 analysis + audit skills (`scan`, `map`, `analyze-dependencies`, `sketch-wrap-up`, `spike-wrap-up`, `skill-manifest`, `debug`, `peers`, `peer-cli-add`, `peer-cli-customize`, `quality-gate`, `turn-closeout`, `start`, `check-update`, `optimize`, etc.) extraction-then-link pattern; new refs created where content qualified as proper reference material.
+- All 70 skills under 100 lines post-rework (`scripts/validate-skill-length.cjs --quiet --json` summary: 70 total / 70 clean / 0 warn / 0 block).
+
+#### Skill patches + new skill
+
+- `discuss` + `brief` skill patches (28.5-08) — inline `CONTEXT.md` glossary maintenance (no batching) + ADR-offer 3-criteria gate at session end.
+- `hooks/gdd-decision-injector.js` extended (28.5-08) — reads `CONTEXT.md` + `docs/adr/*` additively alongside STATE.md cycle-scoped decisions.
+- `debug` skill Phase 1 patch (28.5-09) — explicit feedback-loop gate before any hypothesizing; cross-link to `reference/debug-feedback-loops.md` one level deep.
+- New `/gdd:zoom-out` micro-skill (28.5-10) at `skills/zoom-out/SKILL.md` — ~10 lines body, frontmatter `disable-model-invocation: true`. Direct port from mattpocock/skills (MIT). Total shipped skills: 69 -> 70.
+
+#### CI gate + health reporting (28.5-11)
+
+- `.github/workflows/ci.yml` lint job invokes `node scripts/validate-skill-length.cjs --quiet --json`. Block-level errors (>=250 lines, missing required frontmatter, description out of 1024-char range, unauthorized `disable-model-invocation: true`) fail the build. Warn-level findings (>=100 lines) are advisory.
+- `skills/health/SKILL.md` gains a "Skill-length report" subsection rendering validator summary post-health-table.
+- Regression baseline at `test-fixture/baselines/phase-28.5/` snapshots current line-count distribution + validator summary + 4-manifest version + cross-link integrity + registry diff.
+- `tests/phase-28.5-baseline.test.cjs` (9 assertions) locks the baseline; future PRs cannot regress without regenerating the fixture.
+
+#### Closeout (28.5-12)
+
+- 4-manifest lockstep at v1.28.5: `package.json`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version), `test-fixture/baselines/phase-28/manifests-version.txt` (Phase 28 baseline propagates forward per closeout discipline).
+- `tests/semver-compare.test.cjs`: `OFF_CADENCE_VERSIONS.add('1.28.5')`.
+- `NOTICE` extended with Phase 28.5 MIT attribution block for mattpocock/skills (covers 5 reference ports + zoom-out direct port + debug Phase 1 ordering).
+- `reference/registry.json` += 24 new Phase 28.5 entries; `reference/registry.schema.json` aligned to `"phase": { "type": "number" }` (precedent already established by phase 19.6 / 27.5 / 27.6 / 27.7 entries).
+- `test-fixture/baselines/phase-20/skill-list.txt` += `zoom-out` (now 70 skills).
+- `.planning/ROADMAP.md` Phase 28.5 plan checkboxes (28.5-01..28.5-12) flipped to `[x]`; top-level overview entry flipped.
+
+### Decisions locked
+
+- D-01: SKILL.md hard cap = 100 lines (warn), 250 lines (block). Strict description-format off by default — validator regex stays open until Phase 33's A/B evidence lands.
+- D-02: Description format follows `<what>. Use when <triggers>.` shape (lax-mode default; Phase 33 A/B will tighten or relax).
+- D-03: NOTICE MIT attribution covers 5 reference ports + zoom-out direct port + debug Phase 1 ordering.
+- D-04: `reference/debug-feedback-loops.md` ships as a proper reference, not inline in the debug SKILL — per progressive-disclosure rule.
+- D-05: `gdd-zoom-out` skill ships with `disable-model-invocation: true` (user-invoked-only shortcut).
+- D-06: CI gate is two-tier — warn-level advisory, block-level fails the build.
+- D-07: `hooks/gdd-decision-injector.js` reads CONTEXT.md + `docs/adr/*` additively alongside STATE.md (no replacement, no precedence change).
+- D-08: ADR-offer fires only when ALL three criteria hold (hard-to-reverse AND surprising-without-context AND real-tradeoff). Routine decisions are explicitly skipped.
+- D-09: 28 skills marked `disable-model-invocation: true` (27 from Bucket 3 + new zoom-out).
+- D-10: Health-MCP detection procedure extracted to `reference/health-mcp-detection.md`; SKILL links one level deep.
+- D-11: `gdd-health` SKILL gains skill-length report subsection — validator JSON shape documented in `reference/health-skill-length-report.md`.
+- D-12: 4-manifest lockstep at v1.28.5; off-cadence decimal patch from v1.28.0 parent. `OFF_CADENCE_VERSIONS.add('1.28.5')` per Phase 27.5/27.6/27.7 closeout discipline.
+
+### Out of scope (deferred or rejected)
+
+- Description-format regex tightening — deferred until Phase 33 A/B evidence on `<what>` clause shortcut behavior lands at `.design/research/description-format-ab.md`.
+- Generating SKILL.md from a frontmatter-only spec (DSL) — keeps SKILL.md authorable by humans; reject machine-only generation per first-class-prose principle.
+- Auto-fixer for over-limit skills — validator is read-only; manual rework preserves authorial intent.
+- Cross-skill description deduplication — accept some triggering overlap; D-02 form is a soft cap, not a uniqueness invariant.
+
+### Attribution
+
+See `NOTICE` Phase 28.5 block for the mattpocock/skills (MIT) attribution covering ported content. License remains MIT (compatible with mattpocock's MIT) — see `LICENSE`.
+
+---
+
 ## [1.28.0] — 2026-05-18
 
 ### Phase 28 — Foundational References Tier 2 — Color, Composition, Proportion, i18n

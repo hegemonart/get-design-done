@@ -26,9 +26,38 @@ const BEFORE_PATH = path.join(
   'phase-20',
   'plan-before.md'
 );
+const AFTER_PATH = path.join(
+  REPO_ROOT,
+  'test-fixture',
+  'baselines',
+  'phase-20',
+  'plan-after.md'
+);
+// Phase 28.5-04 extracted plan-procedure detail to
+// reference/plan-procedure.md per the <=100-line authoring contract.
+const PROCEDURE_PATH = path.join(
+  REPO_ROOT,
+  'reference',
+  'plan-procedure.md'
+);
 
 function readSkill() {
   return fs.readFileSync(SKILL_PATH, 'utf8');
+}
+
+/**
+ * Phase 28.5 closeout (Plan 28.5-12): the Bucket 1 pipeline-stage rework
+ * (Plan 28.5-04) moved most plan-procedure detail to
+ * reference/plan-procedure.md. Content-preservation assertions
+ * (parallelism-decision comment, update_progress count) now read SKILL +
+ * linked reference together as the canonical surface.
+ */
+function readSkillSurface() {
+  const skill = fs.readFileSync(SKILL_PATH, 'utf8');
+  const procedure = fs.existsSync(PROCEDURE_PATH)
+    ? fs.readFileSync(PROCEDURE_PATH, 'utf8')
+    : '';
+  return skill + '\n\n' + procedure;
 }
 
 function readFrontmatter(body) {
@@ -101,14 +130,18 @@ test('plan-migration: add_must_have appears (per-M-XX sequential calls)', () => 
 });
 
 test('plan-migration: parallelism-decision workaround comment is present', () => {
-  const body = readSkill();
+  // Phase 28.5-04 moved this load-bearing comment to
+  // reference/plan-procedure.md per <=100-line authoring contract.
+  // Read SKILL + linked reference together so the comment's presence
+  // is preserved across the extraction.
+  const body = readSkillSurface();
   // Per Plan 20-09, parallelism decision is carried via update_progress status
   // string until a dedicated tool ships. The comment is load-bearing — it
   // documents the deliberate workaround so future readers do not file a bug.
   assert.match(
     body,
     /status string of an update_progress/,
-    'parallelism-decision documentation comment must reference the update_progress status-string carrier'
+    'parallelism-decision documentation comment must reference the update_progress status-string carrier (SKILL + reference/plan-procedure.md surface)'
   );
 });
 
@@ -127,23 +160,30 @@ test('plan-migration: no direct Edit/Write phrasings against STATE.md', () => {
 });
 
 test('plan-migration: line count within ±15% of pre-migration baseline', () => {
-  const before = fs.readFileSync(BEFORE_PATH, 'utf8').split('\n').length;
-  const after = fs.readFileSync(SKILL_PATH, 'utf8').split('\n').length;
-  const min = Math.floor(before * 0.85);
-  const max = Math.ceil(before * 1.15);
+  // Phase 28.5 closeout: re-anchored to AFTER_PATH because Plan 28.5-04
+  // intentionally trimmed skills/plan/SKILL.md to the <=100-line authoring
+  // contract by extracting procedure detail to reference/plan-procedure.md.
+  const baseline = fs.readFileSync(AFTER_PATH, 'utf8').split('\n').length;
+  const live = fs.readFileSync(SKILL_PATH, 'utf8').split('\n').length;
+  const min = Math.floor(baseline * 0.85);
+  const max = Math.ceil(baseline * 1.15);
   assert.ok(
-    after >= min && after <= max,
-    `line count drift: before=${before}, after=${after}, allowed [${min}, ${max}]`
+    live >= min && live <= max,
+    `line count drift: after-baseline=${baseline}, live=${live}, allowed [${min}, ${max}]`
   );
 });
 
 test('plan-migration: update_progress is invoked (progress ticks + parallelism)', () => {
-  const body = readSkill();
+  // Phase 28.5-04 moved most update_progress invocations to
+  // reference/plan-procedure.md per <=100-line authoring contract.
+  // Read SKILL + linked reference together to verify the contract is
+  // preserved across the extraction.
+  const body = readSkillSurface();
   const matches = body.match(/mcp__gdd_state__update_progress/g) || [];
   // At least: parallelism status + three task_progress ticks (1/3, 1/3 after map, 2/3, 3/3)
   assert.ok(
     matches.length >= 4,
-    `expected ≥4 update_progress calls, got ${matches.length}`
+    `expected ≥4 update_progress calls in SKILL + reference/plan-procedure.md, got ${matches.length}`
   );
 });
 

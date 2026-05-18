@@ -2,6 +2,7 @@
 name: gdd-next
 description: "Routes to the next pipeline stage based on current STATE.md position"
 tools: Read, Write, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list
+disable-model-invocation: true
 ---
 
 # Get Design Done — Next

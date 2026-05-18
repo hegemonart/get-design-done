@@ -3,6 +3,7 @@ name: gdd-pr-branch
 description: "Create a clean PR branch by filtering out .design/ and .planning/ commits. Code-review-ready branch for the design implementation work."
 argument-hint: "[<base-branch>]"
 tools: Read, Write, Bash
+disable-model-invocation: true
 ---
 
 # /gdd:pr-branch

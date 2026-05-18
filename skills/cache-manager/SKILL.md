@@ -3,6 +3,7 @@ name: gdd-cache-manager
 description: "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.js before every Agent spawn."
 user-invocable: false
 tools: Read, Bash, Write
+disable-model-invocation: true
 ---
 
 # gdd-cache-manager
@@ -37,60 +38,7 @@ You are the deterministic cache-key computer and cache-manifest writer for the o
 
 ## Deterministic Input-Hash Algorithm
 
-The canonical reference implementation (the single source of truth; `hooks/budget-enforcer.js` will import the same primitive via a shared helper in Plan 10.1-05 when telemetry lands):
-
-```js
-// Deterministic cache-key primitive (reference implementation)
-// hash = SHA-256(
-//   agent_path + "\n" +
-//   sorted(input_file_paths).join("\n") + "\n" +
-//   sorted(input_file_paths)
-//     .map(p => sha256(readFileSync(p, "utf8")))
-//     .join("\n")
-// )
-const crypto = require('crypto');
-const fs = require('fs');
-
-function sha256Hex(s) {
-  return crypto.createHash('sha256').update(s, 'utf8').digest('hex');
-}
-
-function computeInputHash(agentPath, inputFilePaths) {
-  const sortedPaths = [...inputFilePaths].sort();
-  const contentHashes = sortedPaths.map(p => {
-    try { return sha256Hex(fs.readFileSync(p, 'utf8')); }
-    catch { return 'MISSING'; }
-  });
-  const canonical = [
-    agentPath,
-    sortedPaths.join('\n'),
-    contentHashes.join('\n')
-  ].join('\n');
-  return sha256Hex(canonical);
-}
-```
-
-Notes for maintainers:
-
-- **Sorted-unique paths** — ordering must be stable; caller is expected to de-duplicate. If the same path appears twice the hash still matches as long as caller pre-dedupes before invoking.
-- **Missing file** — the string `MISSING` is used in place of the content hash so a missing dependency doesn't silently collide with an empty file (empty file's SHA-256 is `e3b0c44...`). Missing-file hashes naturally miss on the next read because the real file has a different content hash.
-- **Agent-path** — agents changing their own body (role, tools, output contract) invalidate all their cache entries automatically because the agent file's content is not hashed; but the `agent_path` string is concatenated. Upgrading agents between versions naturally busts the cache only when the path changes. Plan 10.1-04 (shared preamble extraction) is expected to slightly adjust agent bodies — consumers should treat the first post-10.1 run as a full cache miss, which is the intended behavior.
-
-## Manifest Shape
-
-See `reference/config-schema.md` §.design/cache-manifest.json Schema (Phase 10.1) for the authoritative schema. Keyed object, flat SHA-256 hex keys. Example:
-
-```json
-{
-  "a3f1e...": {
-    "agent": "design-verifier",
-    "result": "<base64-or-path>",
-    "written_at": "2026-04-18T12:00:00Z",
-    "ttl_seconds": 3600,
-    "expires_at": "2026-04-18T13:00:00Z"
-  }
-}
-```
+The canonical reference implementation (single source of truth; `hooks/budget-enforcer.js` imports the same primitive via a shared helper) lives in `./reference/cache-policy.md#deterministic-input-hash-algorithm-layer-b` — it documents the JS implementation, the maintainer notes (sorted-unique paths, MISSING-file sentinel, agent-path bust behavior), the manifest shape, and TTL semantics in one place. Conform to the algorithm exactly so the hook and any orchestrator agree byte-for-byte.
 
 ## Integration Points
 
@@ -115,6 +63,4 @@ Per D-09:
 
 ## TTL Semantics
 
-- Default `ttl_seconds` = `.design/budget.json.cache_ttl_seconds` = 3600s (1 hour) per D-10.
-- `expires_at` is computed at write time and stored; readers do not recompute.
-- Lazy cleanup: stale entries are not actively deleted on read (overhead for no benefit in normal operation). A separate reaper is optional and out of v1 scope.
+Default `ttl_seconds` = `.design/budget.json.cache_ttl_seconds` = 3600s (1 hour) per D-10. `expires_at` is computed at write time and stored; readers do not recompute. Stale entries are lazily cleaned on read (no eager reaper in v1). Full TTL discussion: `./reference/cache-policy.md#ttl-semantics-layer-b`.

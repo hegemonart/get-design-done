@@ -45,7 +45,7 @@
             ]
           },
           "tier": { "enum": ["L0", "L1", "L2"] },
-          "phase": { "type": "integer", "description": "Phase that introduced this entry" },
+          "phase": { "type": "number", "description": "Phase that introduced this entry. Numbers are allowed (e.g., 19.6, 27.5, 27.6, 27.7, 28.5) — decimal phases are valid per the long-standing precedent established by Phases 19.6 / 27.5 / 27.6 / 27.7 / 28.5." },
           "description": { "type": "string" },
           "registered_at": { "type": "string", "format": "date-time" }
         },

@@ -3,6 +3,7 @@ name: gdd-note
 description: "Zero-friction idea capture during any stage. Appends to .design/NOTES.md. Subcommands: add, list, promote."
 argument-hint: "<add|list|promote> [text|line-number]"
 tools: Read, Write
+disable-model-invocation: true
 ---
 
 # /gdd:note

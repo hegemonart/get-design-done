@@ -111,13 +111,21 @@ test('phase-25 baseline: decision-injector hook references <prototyping>', () =>
 // --- Sub-feature 2: S/M/L/XL complexity (Plan 25-02) -------------------
 
 test('phase-25 baseline: router SKILL.md emits complexity_class with all four buckets', () => {
+  // Phase 28.5-06 (Bucket 3 orchestrator rework) moved the S/M/L/XL
+  // heuristic table to reference/router-rules.md per the <=100-line
+  // SKILL.md authoring contract. The SKILL keeps the complexity_class
+  // declaration + cross-link summary; the verbatim bucket table lives
+  // in the reference file. Assert against the combined surface.
   const skill = fs.readFileSync(
     path.join(REPO_ROOT, 'skills', 'router', 'SKILL.md'),
     'utf8',
   );
-  assert.match(skill, /complexity_class/, 'router must document complexity_class');
+  const refPath = path.join(REPO_ROOT, 'reference', 'router-rules.md');
+  const ref = fs.existsSync(refPath) ? fs.readFileSync(refPath, 'utf8') : '';
+  const surface = skill + '\n\n' + ref;
+  assert.match(skill, /complexity_class/, 'router SKILL must document complexity_class inline');
   for (const bucket of ['`S`', '`M`', '`L`', '`XL`']) {
-    assert.ok(skill.includes(bucket), `router heuristic table must reference ${bucket}`);
+    assert.ok(surface.includes(bucket), `router heuristic table (SKILL + reference/router-rules.md) must reference ${bucket}`);
   }
 });
 
@@ -148,20 +156,28 @@ test('phase-25 baseline: verify SKILL.md documents the Step 2.5 quality-gate ent
   // on-fail acceptance is therefore asserted at the SKILL.md content
   // level — same pattern as phase-24-baseline asserting on install.cjs
   // content. See Plan 25-09 commit message for the choice rationale.
+  //
+  // Phase 28.5-04 (Bucket 1 pipeline-stage rework) moved the verbatim
+  // Step 2.5 + quality_gate + refusal prose to
+  // reference/verify-procedure.md per the <=100-line authoring contract.
+  // Assert against the combined SKILL + reference surface.
   const skill = fs.readFileSync(
     path.join(REPO_ROOT, 'skills', 'verify', 'SKILL.md'),
     'utf8',
   );
-  assert.match(skill, /Step 2\.5/, 'verify SKILL must document the Step 2.5 quality-gate gate');
+  const refPath = path.join(REPO_ROOT, 'reference', 'verify-procedure.md');
+  const ref = fs.existsSync(refPath) ? fs.readFileSync(refPath, 'utf8') : '';
+  const surface = skill + '\n\n' + ref;
+  assert.match(surface, /Step 2\.5/, 'verify SKILL + reference must document the Step 2.5 quality-gate gate');
   assert.match(
-    skill,
+    surface,
     /quality_gate/,
-    'verify SKILL must reference state.quality_gate at the entry gate',
+    'verify SKILL + reference must reference state.quality_gate at the entry gate',
   );
   assert.match(
-    skill,
+    surface,
     /(refuse|refuses|refuse to advance)/i,
-    'verify SKILL must document refusal on quality_gate.status === "fail"',
+    'verify SKILL + reference must document refusal on quality_gate.status === "fail"',
   );
 });
 

@@ -9,24 +9,18 @@ tools: Read, Bash
 
 ## Role
 
-You are a deterministic discovery skill. You do not spawn agents and do not delegate to peers. You read `scripts/lib/install/runtimes.cjs`, `scripts/lib/peer-cli/registry.cjs`, `.design/config.json`, and (optionally) `.design/telemetry/posterior.json` (the canonical path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), then emit a single Markdown table summarizing peer-CLI status.
+You are a deterministic discovery skill. You do not spawn agents and do not delegate to peers. You read `scripts/lib/install/runtimes.cjs`, `scripts/lib/peer-cli/registry.cjs`, `.design/config.json`, and (optionally) `.design/telemetry/posterior.json` (canonical path declared by `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), then emit a single Markdown table summarizing peer-CLI status. Protocol-level handshake details live in `./reference/peer-cli-protocol.md`.
 
 ## Invocation Contract
 
 - **Input**: none. The skill takes no arguments.
-- **Output**: a Markdown capability-matrix table to stdout. No JSON wrapper. The table is the entire output.
+- **Output**: a Markdown capability-matrix table to stdout. The table is the entire output.
 
 ## Procedure
 
-### 1. Load runtime matrix
+### 1. Load runtime + capability matrix
 
-Read `scripts/lib/install/runtimes.cjs` and extract the 14 runtime entries. The 5 peer-capable entries (`codex`, `gemini`, `cursor`, `copilot`, `qwen`) carry a `peerBinary?` field (added in Plan 27-11). Collect their IDs and binary paths.
-
-### 2. Load capability matrix
-
-Read `scripts/lib/peer-cli/registry.cjs`. The exported `describeCapabilities()` returns the per-peer claimed-roles map. The capability matrix is the source of truth for which roles each peer can take.
-
-Use the canonical declared matrix:
+Read `scripts/lib/install/runtimes.cjs` (14 entries; 5 carry `peerBinary`) and `scripts/lib/peer-cli/registry.cjs#describeCapabilities()`. The canonical declared matrix:
 
 | Peer    | Roles claimed            | Protocol |
 |---------|--------------------------|----------|
@@ -36,41 +30,28 @@ Use the canonical declared matrix:
 | copilot | review, research         | ACP      |
 | qwen    | write                    | ACP      |
 
-### 3. Detect installation
+### 2. Detect installation
 
-For each peer, run `which <peerBinary>` (POSIX) or `where <peerBinary>` (Windows). If exit 0 → installed. If exit non-zero → not installed.
+For each peer, run `which <peerBinary>` (POSIX) or `where <peerBinary>` (Windows). Exit 0 → installed; non-zero → not installed.
 
-### 4. Read allowlist
+### 3. Read allowlist
 
-Read `.design/config.json`. The path is `peer_cli.enabled_peers` — an array of peer-IDs. Default: `[]` (empty, opt-in required). If the file or path is missing, treat as empty.
+Read `.design/config.json#peer_cli.enabled_peers` (array of peer-IDs). Default `[]` (opt-in required). Missing file or path = empty.
 
-### 5. (Optional) Read posterior reward-delta
+### 4. (Optional) Read posterior reward-delta
 
-Phase 27.5 (v1.27.5) wired the bandit posterior into production. Once 27.5-02 (budget-enforcer consultation) + 27.5-03 (session-runner outcome recording) have fired across enough spawns, the posterior at `.design/telemetry/posterior.json` (the canonical path declared by `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`) carries per-`(agent, bin, delegate, tier)` arms with measured reward.
+Once Phase 27.5 has fired across enough spawns, `.design/telemetry/posterior.json` carries per-`(agent, bin, delegate, tier)` arms with measured reward. For each peer-id:
 
-For each peer-id in {gemini, codex, cursor, copilot, qwen}:
+1. Filter `arms` array: `peerArms` where `delegate === <peer-id>`; `localArms` where `delegate === 'none'` OR `delegate === undefined` (Phase 23.5 legacy slice treated as local-call).
+2. Require `peerArms` and `localArms` both non-empty. Else `(no data yet)`.
+3. Compute pooled means: `mean = sum(alpha) / (sum(alpha) + sum(beta))` over each slice.
+4. `delta_pct = (peerMean - localMean) / localMean`.
+5. Require `sum(arm.count)` ≥ 3 in each slice. Else `(no data yet)`.
+6. Render: `+X% reward` (delta > 0.01), `-X% reward` (delta < -0.01), or `~equal` (`abs(delta) < 0.01`), where `X = round(abs(delta_pct) * 100)`.
 
-1. Read `.design/telemetry/posterior.json`. If missing or malformed → render "(no data yet)".
-2. Filter the `arms` array into `peerArms` where `delegate === <peer-id>` and `localArms` where `delegate === 'none'` OR `delegate === undefined` (the Phase 23.5 legacy slice is treated as the local-call slice).
-3. If `peerArms` is empty OR `localArms` is empty → "(no data yet)".
-4. Compute pooled posterior means:
-   - `peerMean = sum(arm.alpha across peerArms) / (sum(arm.alpha across peerArms) + sum(arm.beta across peerArms))`
-   - `localMean = sum(arm.alpha across localArms) / (sum(arm.alpha across localArms) + sum(arm.beta across localArms))`
-5. Compute `delta_pct = (peerMean - localMean) / localMean`.
-6. Require minimum sample evidence: `sum(arm.count)` for `peerArms` AND for `localArms` must each be `>= 3`. Else "(no data yet)".
-7. Render delta as:
-   - `+X% reward` when `delta_pct > 0.01`
-   - `-X% reward` when `delta_pct < -0.01`
-   - `~equal` when `abs(delta_pct) < 0.01`
-   Where X = `Math.round(abs(delta_pct) * 100)`.
+Reward is the Phase 23.5 lexicographic (correctness first, cost tiebreaker — see `scripts/lib/bandit-router.cjs` `computeReward()`). Cost-only deltas live in `cost-arbitrage.cjs` (Phase 26-06).
 
-The reward signal is the Phase 23.5 two-stage lexicographic (correctness first, cost as tiebreaker — see `scripts/lib/bandit-router.cjs` `computeReward()`). Cost-only deltas live in `scripts/lib/cost-arbitrage.cjs` (Phase 26-06) and are surfaced via the design-reflector.
-
-If the posterior file does not exist (e.g., fresh install with no spawns yet, or `adaptive_mode` is `static`/`hedge`), surface "(no data yet)" for every peer.
-
-### 6. Render the table
-
-Emit the table in this exact shape:
+### 5. Render the table
 
 ```
 ## Peer-CLI Capability Matrix
@@ -85,36 +66,31 @@ Emit the table in this exact shape:
 
 > Tip: Enable peers via `.design/config.json#peer_cli.enabled_peers`.
 > See `reference/peer-cli-capabilities.md` for the full capability matrix.
-> See `skills/peer-cli-customize/SKILL.md` to rewire role→peer mappings per agent.
+> See `skills/peer-cli-customize/SKILL.md` to rewire role->peer mappings per agent.
 ```
 
-Rules for the third column ("Posterior delta vs local"):
-- If `Installed = ✗` → `(not installed)`.
-- Else if `Allowlisted = ✗` → `(opt-in disabled)`.
-- Else if `.design/telemetry/posterior.json` is missing → `(no data yet)`.
-- Else if either peer-side or local-side has fewer than 3 pulls → `(no data yet)`.
-- Else compute the reward-delta per Step 5 and render `+X% reward`, `-X% reward`, or `~equal`.
+**Third-column rules** (top-down precedence):
 
-### 7. Done
+- `Installed = ✗` → `(not installed)`.
+- `Allowlisted = ✗` → `(opt-in disabled)`.
+- Posterior missing → `(no data yet)`.
+- < 3 pulls per side → `(no data yet)`.
+- Else compute the reward-delta per Step 4.
 
-The table IS the output. No follow-up prose. Users can act on the data:
-- See "(opt-in disabled)" → enable in `.design/config.json`.
-- See "(not installed)" → install the peer CLI.
-- See concrete deltas → trust the bandit's recommendation, or override per-agent via `skills/peer-cli-customize`.
+### 6. Done
+
+The table IS the output. No follow-up prose. Users act on it: `(opt-in disabled)` → enable in `.design/config.json`; `(not installed)` → install the peer CLI; concrete deltas → trust the bandit or override per-agent via `skills/peer-cli-customize`.
 
 ## Cross-references
 
-- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) — capability matrix data source.
-- `scripts/lib/install/runtimes.cjs` (Plan 27-11) — `peerBinary` field per runtime.
-- `reference/peer-cli-capabilities.md` (Plan 27-05) — full capability matrix doc.
-- `skills/peer-cli-customize/SKILL.md` (Plan 27-10) — rewire role→peer mappings.
-- `skills/peer-cli-add/SKILL.md` (Plan 27-10) — add a brand-new peer.
-- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-10 — decision lineage.
+- `./reference/peer-cli-protocol.md` — ACP/ASP handshake + adapter scaffold (procedure ref shared with peer-cli-add/customize).
+- `./reference/peer-cli-capabilities.md` (Plan 27-05) — full capability matrix doc.
+- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05), `scripts/lib/install/runtimes.cjs` (Plan 27-11), `skills/peer-cli-customize/SKILL.md`, `skills/peer-cli-add/SKILL.md`, `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-10.
 
 ## Record
 
-After execution, append one JSONL line to `.design/skill-records.jsonl`:
+Append one JSONL line to `.design/skill-records.jsonl`:
 
 ```json
-{"skill": "gdd-peers", "ts": "<ISO timestamp>", "peers_detected": ["codex", "gemini"], "peers_allowlisted": ["codex"], "had_posterior": false}
+{"skill": "gdd-peers", "ts": "<ISO timestamp>", "peers_detected": ["codex"], "peers_allowlisted": ["codex"], "had_posterior": false}
 ```

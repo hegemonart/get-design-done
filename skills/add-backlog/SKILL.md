@@ -3,6 +3,7 @@ name: gdd-add-backlog
 description: "Park a design idea for a future cycle. Writes to .design/backlog/BACKLOG.md."
 argument-hint: "[text]"
 tools: Read, Write, AskUserQuestion
+disable-model-invocation: true
 ---
 
 # /gdd:add-backlog

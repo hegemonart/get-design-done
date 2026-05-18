@@ -1,267 +1,80 @@
 ---
 name: plan
-description: "Stage 3 of 5 — reads DESIGN-CONTEXT.md, spawns design-phase-researcher (optional) + design-planner + design-plan-checker, writes DESIGN-PLAN.md. Thin orchestrator."
+description: "Stage 3 of 5 orchestrator that reads DESIGN-CONTEXT.md, runs optional research (phase-researcher / pattern-mapper / assumptions-analyzer / synthesizer), spawns design-planner + design-plan-checker, and writes DESIGN-PLAN.md. Use when DESIGN-CONTEXT.md is locked and you need a wave-ordered execution plan."
 argument-hint: "[--auto] [--parallel]"
 user-invocable: true
-tools: Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint
+tools: Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections
 ---
 
 # Get Design Done — Plan
 
-**Stage 3 of 5** in the get-design-done pipeline. Thin orchestrator. All planning intelligence lives in agents/design-planner.md.
+**Stage 3 of 5** in the get-design-done pipeline. Thin orchestrator. All planning intelligence lives in `agents/design-planner.md`.
 
-## Stage entry
-
-1. `mcp__gdd_state__transition_stage` with `to: "plan"`.
-   - Gate failure surfaces `error.context.blockers` to the user; do not advance.
-2. `mcp__gdd_state__get` → snapshot `state`. Use this snapshot for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>` in the current stage; do not re-read STATE.md directly.
-
-Abort with a clear error only if the user is trying to plan without DESIGN-CONTEXT.md — that is the true prerequisite, not STATE.md.
-
-## Flag Parsing
-
-Parse $ARGUMENTS:
-- `--auto` → auto_mode=true (skip approvals, skip optional research)
-- `--parallel` → parallel_mode=true (planner fills Touches:/Parallel: fields)
-
-## Parallelism Decision (before any multi-agent spawn)
-
-- Read `.design/config.json` `parallelism` (or defaults from `reference/config-schema.md`).
-- Apply rules from `reference/parallelism-rules.md`.
-- Plan's pipeline is inherently sequential (researcher → pattern-mapper → planner → checker). Expected verdict: **serial** (rule 1).
-
-<!-- Parallelism decision is currently carried as the status string of an update_progress call. A dedicated tool may be added in a follow-on plan; until then, the status string is the canonical carrier. -->
-
-After the parallelism decision is made:
-- Call `mcp__gdd_state__update_progress` with `task_progress: "<current>/<total>"` and `status: "plan_parallelism_decided: batch_size=<N>, reason=<short-reason>"`.
-
-## Probe Chromatic connection
-
-Run at stage entry, after reading STATE.md:
-
-Step C1 — CLI presence:
-  Bash: command -v chromatic 2>/dev/null || npx chromatic --version 2>/dev/null
-  → found → proceed to Step C2
-  → not found → chromatic: not_configured (skip all Chromatic steps)
-
-Step C2 — Token check:
-  Bash: test -n "${CHROMATIC_PROJECT_TOKEN}"
-  → true → chromatic: available
-  → false → chromatic: unavailable
-
-Also check: if storybook: not_configured → chromatic effectively unavailable (emit note, do not run).
-
-Write chromatic status to STATE.md `<connections>` via `mcp__gdd_state__probe_connections` — pass the single-entry probe result (`[{ name: "chromatic", status: "<verdict>" }]`). Do not edit `<connections>` directly.
-
-## Chromatic Change-Risk Scoping (when chromatic: available)
-
-Before writing DESIGN-PLAN.md, if chromatic: available:
-1. Identify token/component files to be changed (from DESIGN-CONTEXT.md scope)
-2. Run: Bash: npx chromatic --project-token $CHROMATIC_PROJECT_TOKEN --trace-changed=expanded --dry-run 2>&1
-3. Parse output — count story files that depend on changed source files
-4. Pass story count to design-planner.md (see design-planner.md Chromatic Change-Risk section)
-If unavailable: design-planner proceeds without story-count annotation.
-
-## Step 1 — Optional Research (skip if auto_mode)
-
-Complexity heuristic: if DESIGN-CONTEXT.md `<domain>` spans 3+ scopes OR `<decisions>` count > 6 → spawn design-phase-researcher. Otherwise skip.
-
-If spawning:
-
-```
-Task("design-phase-researcher", """
-<required_reading>
-@.design/STATE.md
-@.design/DESIGN-CONTEXT.md
-</required_reading>
-
-You are the design-phase-researcher agent. Identify the project type from DESIGN-CONTEXT.md
-and research relevant design patterns, pitfalls, and stack-specific conventions.
-
-Output file: .design/DESIGN-RESEARCH.md
-Target: ~100 lines, ~2 min budget.
-
-Emit `## RESEARCH COMPLETE` when done.
-""")
-```
-
-Wait for `## RESEARCH COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
-
-## Step 1.5 — Pattern Mapping (mandatory, brownfield protection)
-
-```
-Task("design-pattern-mapper", """
-<required_reading>
-@.design/STATE.md
-@.design/DESIGN-CONTEXT.md
-@reference/audit-scoring.md
-</required_reading>
-
-You are design-pattern-mapper. Grep the codebase for existing design patterns
-(color tokens, spacing scale, typography conventions, component styling) and
-write .design/DESIGN-PATTERNS.md. Classify by design concern — NOT by code
-architecture (no controllers, services, middleware vocabulary).
-
-Output file: .design/DESIGN-PATTERNS.md
-Emit `## MAPPING COMPLETE` when done.
-""")
-```
-
-Wait for `## MAPPING COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
-
-## Step 1.6 — Assumptions Analysis (optional, same flag as research)
-
-If assumptions analysis enabled (skip if auto_mode):
-
-```
-Task("design-assumptions-analyzer", """
-<required_reading>
-@.design/STATE.md
-@.design/DESIGN-CONTEXT.md
-@.design/DESIGN-PATTERNS.md
-</required_reading>
-
-You are design-assumptions-analyzer. Surface hidden design assumptions with
-confidence levels and evidence citations.
-
-Emit `## ANALYSIS COMPLETE` when done.
-""")
-```
-
-Wait for `## ANALYSIS COMPLETE`.
-
-## Step 1.7 — Synthesize pre-plan research inputs (Plan 10.1-04, D-13/D-15)
-
-If 2+ of the pre-plan research agents ran (`design-phase-researcher` Step 1, `design-pattern-mapper` Step 1.5, `design-assumptions-analyzer` Step 1.6), invoke synthesize to merge their outputs into a single compact brief. If only one ran, skip this step.
-
-    Skill("synthesize", {
-      outputs: [
-        (if Step 1 ran)   "=== from design-phase-researcher ===\n" + <read .design/DESIGN-RESEARCH.md>,
-        (if Step 1.5 ran) "=== from design-pattern-mapper ===\n"   + <read .design/DESIGN-PATTERNS.md>,
-        (if Step 1.6 ran) "=== from design-assumptions-analyzer ===\n" + <read .design/DESIGN-ASSUMPTIONS.md>
-      ],
-      directive: "Merge into a single compact pre-plan brief. Preserve per-source section headers so the planner can trace provenance. Consolidate duplicate recommendations with source tags. Target ~150 lines.",
-      output_shape: "markdown"
-    })
-
-Wait for `## SYNTHESIS COMPLETE`. Write to `.design/DESIGN-PREPLAN-BRIEF.md` (overwrite if present). Add `@.design/DESIGN-PREPLAN-BRIEF.md` to the planner's `<required_reading>` in Step 2 — individual files remain on disk for drill-down.
-
-**Parallel synthesizer note (future):** if a future plan variant spawns N parallel phase-researchers (e.g., one per project-type family), wire synthesize the same way as `skills/map/` Step 3.5.
-
-## Research-synthesis persistence (decisions + must-haves)
-
-When the synthesizer (design-phase-researcher / design-pattern-mapper / design-assumptions-analyzer) produces D-XX decisions and M-XX must-haves, persist each one through MCP instead of editing STATE.md directly.
-
-For each D-XX decision the synthesizer produces:
-- Call `mcp__gdd_state__add_decision` with `{ id: "D-XX", text: "...", status: "locked"|"tentative" }`.
-
-For each M-XX must-have the synthesizer produces:
-- Call `mcp__gdd_state__add_must_have` with `{ id: "M-XX", text: "...", status: "pending" }`.
-
-Issue these sequentially. Each call is event-emitting and lockfile-safe. Parallel issuance would serialize on the STATE.md lockfile with no throughput gain.
-
-## Step 2 — Plan
-
-```
-Task("design-planner", """
-<required_reading>
-@.design/STATE.md
-@.design/DESIGN-CONTEXT.md
-@reference/audit-scoring.md
-@.design/DESIGN-PATTERNS.md
-[@.design/DESIGN-RESEARCH.md — only include if research step ran]
-[@.design/DESIGN-ASSUMPTIONS.md — only include if assumptions analysis ran]
-[@.design/DESIGN-PREPLAN-BRIEF.md — include if Step 1.7 synthesize ran; planner prefers this compact brief over the individual files above]
-[@.design/sketches/*/WINNER.md — include all completed sketch winners if present]
-[@.design/spikes/*/FINDINGS.md — include all completed spike findings if present]
-[@./.claude/skills/design-*-conventions.md — include all project-local design conventions if present]
-[@~/.claude/gdd/global-skills/*.md — include all global skills if directory exists; global conventions inform but do not override project-local D-XX decisions]
-</required_reading>
-
-You are the design-planner agent. Read DESIGN-CONTEXT.md and produce .design/DESIGN-PLAN.md
-with wave-ordered tasks, acceptance criteria, and (if parallel mode) Touches:/Parallel: fields.
-
-Context:
-- Pipeline stage: plan
-- auto_mode: <true|false>
-- parallel_mode: <true|false>
-
-Output file: .design/DESIGN-PLAN.md
-Format: per agents/design-planner.md Output Format section.
-
-Emit `## PLANNING COMPLETE` when done.
-""")
-```
-
-Wait for `## PLANNING COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "2/3"` and a short `status` summary.
-
-## Step 3 — Check
-
-```
-Task("design-plan-checker", """
-<required_reading>
-@.design/STATE.md
-@.design/DESIGN-PLAN.md
-@.design/DESIGN-CONTEXT.md
-</required_reading>
-
-You are the design-plan-checker agent. Validate DESIGN-PLAN.md will achieve DESIGN-CONTEXT.md
-brief goals across 5 dimensions: requirement coverage, task completeness, wave ordering,
-must-have derivation, auto mode compliance.
-
-Context:
-- auto_mode: <true|false>
-
-Output: structured result as response text (no file). Start with `## PLAN CHECK RESULT: PASS`
-or `## PLAN CHECK RESULT: ISSUES FOUND`.
-
-Emit `## PLAN CHECK COMPLETE` when done.
-""")
-```
-
-Wait for `## PLAN CHECK COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "3/3"` and a short `status` summary.
-
-If `## PLAN CHECK RESULT: ISSUES FOUND` and any BLOCKER issues:
-- Present issues to user and offer: (a) revise plan now — re-spawn design-planner with issue list, (b) accept and proceed, (c) abort.
-- If auto_mode: auto-accept WARNING issues, abort on BLOCKER issues.
-
-## Stage exit
-
-1. Call `mcp__gdd_state__set_status` with `status: "plan_complete"`.
-2. Call `mcp__gdd_state__checkpoint` to stamp `last_checkpoint` and finalize the plan stage.
-
-The next stage (design) calls `mcp__gdd_state__transition_stage` on entry — this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline established by brief→explore and explore→plan.
-
-## After Completion
-
-Print user-facing summary:
-- Plan tasks: N waves, M total tasks
-- Files: .design/DESIGN-PLAN.md (and .design/DESIGN-RESEARCH.md if research ran)
-- Next: `/get-design-done:design` to execute the plan
-
-## PLAN COMPLETE
+Full procedure detail: `../../reference/plan-procedure.md`.
 
 ---
 
-## Exploration artifacts & project-local conventions
+## Stage entry
 
-When building the planner spawn prompt, also glob for:
-- `.design/sketches/*/WINNER.md` — winning sketch rationale (informs directional tasks)
-- `.design/spikes/*/FINDINGS.md` — spike verdicts (inform task feasibility)
-- `./.claude/skills/design-*-conventions.md` — project-local design conventions
+1. `mcp__gdd_state__transition_stage` with `to: "plan"`. Gate failure surfaces `error.context.blockers`; do not advance.
+2. `mcp__gdd_state__get` -> snapshot `state` for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>`. Do not re-read STATE.md directly.
+3. Abort only if `.design/DESIGN-CONTEXT.md` is missing — that is the true prerequisite, not STATE.md.
 
-Include each matching file in `<files_to_read>` / `<required_reading>` so the planner sees them when creating tasks. Spike findings from `.design/spikes/` inform task feasibility; sketch winners inform directional choice; project-local conventions override defaults.
+---
 
-## --research mode (removed)
+## Flags + parallelism
 
-V2-04 deferred the `--research` flag. Rationale: complexity of an additional
-agent spawn + Context7 integration outweighs the benefit of discover-stage
-auto-detect for most projects. Use /discover's Auto Mode for research-assisted
-discovery instead.
+- `--auto` -> `auto_mode=true` (skip approvals, skip optional research).
+- `--parallel` -> `parallel_mode=true` (planner fills `Touches:`/`Parallel:` fields).
+- **Parallelism decision**: read `.design/config.json` + `reference/parallelism-rules.md`. Plan pipeline is inherently sequential (researcher -> pattern-mapper -> planner -> checker) so the expected verdict is **serial** (rule 1). Record via `mcp__gdd_state__update_progress` with `status: "plan_parallelism_decided: batch_size=<N>, reason=<short-reason>"`.
 
-The optional research step that already exists (Step 1, triggered by complexity
-heuristic: 3+ domain scopes OR 6+ decisions) covers the core use case without
-a separate CLI flag.
+## Probe Chromatic connection
 
-If --research is reintroduced in a future version, define its scope in
-ROADMAP.md V2+ and update this section.
+Probe `chromatic` (CLI presence + `CHROMATIC_PROJECT_TOKEN` check; auto-`unavailable` if `storybook: not_configured`), then write status via `mcp__gdd_state__probe_connections` (single-entry array, never edit `<connections>` directly). Detail: `../../reference/plan-procedure.md` §Probe Chromatic connection.
+
+When `chromatic: available`, run change-risk scoping before writing DESIGN-PLAN.md: identify token/component files in scope from DESIGN-CONTEXT.md, run `npx chromatic --trace-changed=expanded --dry-run`, count story files that depend on changed source files, and pass the story count to the design-planner spawn prompt. Detail: `../../reference/plan-procedure.md` §Chromatic Change-Risk Scoping.
+
+---
+
+## Step 1 — Optional Research (skip if `auto_mode`)
+
+Complexity heuristic: DESIGN-CONTEXT.md `<domain>` spans 3+ scopes OR `<decisions>` count > 6 -> spawn `design-phase-researcher` -> `.design/DESIGN-RESEARCH.md` (~100 lines, ~2 min). Wait for `## RESEARCH COMPLETE`, then `update_progress` `task_progress: "1/3"`. Full prompt: `../../reference/plan-procedure.md` §Step 1.
+
+## Step 1.5 — Pattern Mapping (mandatory, brownfield protection)
+
+Spawn `design-pattern-mapper` -> `.design/DESIGN-PATTERNS.md` (classify by design concern, not by code architecture — no controllers/services/middleware vocabulary). Wait for `## MAPPING COMPLETE`. Full prompt: `../../reference/plan-procedure.md` §Step 1.5.
+
+## Step 1.6 — Assumptions Analysis (skip if `auto_mode`)
+
+If assumptions analysis is enabled: spawn `design-assumptions-analyzer` -> surfaces hidden design assumptions with confidence + evidence. Wait for `## ANALYSIS COMPLETE`. Full prompt: `../../reference/plan-procedure.md` §Step 1.6.
+
+## Step 1.7 — Synthesize pre-plan inputs (Plan 10.1-04, D-13/D-15)
+
+If 2+ pre-plan agents ran (Step 1, 1.5, 1.6), invoke `Skill("synthesize", { outputs, directive, output_shape: "markdown" })` to merge their outputs into `.design/DESIGN-PREPLAN-BRIEF.md` (~150 lines, per-source headers preserved). Add the brief to the planner's `<required_reading>` in Step 2. If only one agent ran, skip. Full call signature + parallel-synthesizer note: `../../reference/plan-procedure.md` §Step 1.7.
+
+**Research-synthesis persistence:** for each D-XX the synthesizer produces, `mcp__gdd_state__add_decision`; for each M-XX, `mcp__gdd_state__add_must_have`. Issue sequentially (lockfile-bound). Detail: `../../reference/plan-procedure.md` §Research-synthesis persistence.
+
+---
+
+## Step 2 — Plan
+
+Spawn `design-planner` with `<required_reading>` covering STATE.md, DESIGN-CONTEXT.md, DESIGN-PATTERNS.md, plus (conditionally) DESIGN-RESEARCH.md, DESIGN-ASSUMPTIONS.md, DESIGN-PREPLAN-BRIEF.md (preferred when 1.7 ran), all `.design/sketches/*/WINNER.md`, all `.design/spikes/*/FINDINGS.md`, and all `./.claude/skills/design-*-conventions.md` + `~/.claude/gdd/global-skills/*.md` (project-local D-XX overrides globals). Wait for `## PLANNING COMPLETE`, then `update_progress` `task_progress: "2/3"`. Full prompt + conditional include syntax: `../../reference/plan-procedure.md` §Step 2.
+
+## Step 3 — Check
+
+Spawn `design-plan-checker` to validate DESIGN-PLAN.md against DESIGN-CONTEXT.md across 5 dimensions: requirement coverage, task completeness, wave ordering, must-have derivation, auto-mode compliance. Wait for `## PLAN CHECK COMPLETE`, then `update_progress` `task_progress: "3/3"`. On `## PLAN CHECK RESULT: ISSUES FOUND` + BLOCKER: offer revise/accept/abort (`auto_mode`: auto-accept WARN, abort on BLOCKER). Full prompt + branching: `../../reference/plan-procedure.md` §Step 3.
+
+---
+
+## Stage exit
+
+1. `mcp__gdd_state__set_status` -> `"plan_complete"`.
+2. `mcp__gdd_state__checkpoint` — stamps `last_checkpoint` and finalizes the plan stage.
+
+The next stage (design) calls `mcp__gdd_state__transition_stage` on entry — this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline.
+
+## After Completion
+
+Print: plan tasks (N waves, M total tasks), files written (`.design/DESIGN-PLAN.md`, plus `.design/DESIGN-RESEARCH.md` if research ran), next step `/get-design-done:design`.
+
+## PLAN COMPLETE

@@ -3,19 +3,14 @@ name: start
 description: "First-Run Proof Path — one command that scans your UI code and returns one concrete first fix. Leaf command, no STATE.md writes, no pipeline entry. Writes .design/START-REPORT.md and exits."
 argument-hint: "[--budget <fast|balanced|thorough>] [--skip-interview] [--dismiss-nudge]"
 tools: Read, Grep, Glob, Bash, Write, Task
+disable-model-invocation: true
 ---
 
 # Get Design Done — /gdd:start
 
 **Role:** the canonical 0→1 proof path. A new user runs `/gdd:start`, answers five short questions, and receives `.design/START-REPORT.md` with three concrete findings in the user's own code, one `best_first_proof` selected by a deterministic rubric, and a single next command to run.
 
-**Non-goals** (do not do any of these):
-
-- Do NOT write or mutate `.design/STATE.md`.
-- Do NOT enter the pipeline state machine.
-- Do NOT modify source code.
-- Do NOT auto-install MCPs or run `/gdd:connections`.
-- Do NOT capture before/after screenshots — that belongs to the full pipeline.
+**Non-goals:** do NOT write/mutate `.design/STATE.md`, enter the pipeline state machine, modify source code, auto-install MCPs or run `/gdd:connections`, or capture before/after screenshots (that belongs to the full pipeline).
 
 ---
 
@@ -44,114 +39,20 @@ tools: Read, Grep, Glob, Bash, Write, Task
 
 ---
 
-## Step 0 — Dismiss-only shortcut
+## Workflow
 
-If invoked with `--dismiss-nudge`:
+Six steps, all documented in `./reference/start-procedure.md`. Companion file `./reference/start-interview.md` holds the 5-question copy + defaults + validation.
 
-1. `touch ~/.claude/gdd-nudge-dismissed` (Windows: equivalent). Ignore errors silently.
-2. Print exactly: `Nudge dismissed. Delete ~/.claude/gdd-nudge-dismissed to re-enable.`
-3. Exit with `## START COMPLETE` marker.
+| Step | What it does | Where to look |
+|------|--------------|---------------|
+| 0 | Dismiss-only shortcut (if `--dismiss-nudge`) | `start-procedure.md#step-0-dismiss-only-shortcut` |
+| 1 | Detect UI root via `scripts/lib/detect-ui-root.cjs` (early-exit on backend-only or `kind: null`) | `start-procedure.md#step-1-detect-ui-root` |
+| 2 | Run 5-question interview (or use `--skip-interview` defaults); write `.design/.start-context.json` (NOT STATE.md) | `start-procedure.md#step-2-run-the-5-question-interview` + `start-interview.md` |
+| 3 | Invoke `scripts/lib/start-findings-engine.cjs` → up to 3 findings (`F1`..`F3`) + `bestFirstProofId` | `start-procedure.md#step-3-scan-findings` |
+| 4 | Spawn `design-start-writer` Task → emit `.design/START-REPORT.md` (7 H2 sections + JSON block, no STATE.md write) | `start-procedure.md#step-4-spawn-the-writer` |
+| 5 | Print one-line handoff with suggested command (fallback: `/gdd:brief` if `bestFirstProofId` is null); emit `## START COMPLETE` | `start-procedure.md#step-5-print-the-handoff` |
 
-Do not proceed to any other step.
-
----
-
-## Step 1 — Detect UI root
-
-Run the detector:
-
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/lib/detect-ui-root.cjs" "$(pwd)"
-```
-
-Capture the JSON output. Branches:
-
-- `kind: "backend-only"` → print the frontend-only diagnostic below, write nothing, exit with `## START COMPLETE`. The diagnostic copy is:
-  > `/gdd:start` is for frontend codebases. This repo looks backend-only (detected `<framework>`). The plugin can still help with design references and component libraries imported by your clients — but there is no UI surface here to scan. Exiting without creating `.design/`.
-- `kind: null` (no package.json, no UI dir) → print a short "Nothing recognizable here — point me at a frontend repo and try again." and exit.
-- Any other `kind` → proceed with `detected.path` as the scan root.
-
----
-
-## Step 2 — Run the 5-question interview
-
-Read `reference/start-interview.md` for the exact question copy, defaults, and validation rules.
-
-If `--skip-interview`, skip this step and use the defaults documented in that file.
-
-Otherwise, ask the five questions in order using `AskUserQuestion`:
-
-1. Pain point (text, required, single-line cap 120 chars)
-2. Target area confirmation (detected path)
-3. Budget / latency preference (enum: fast / balanced / thorough)
-4. Framework + design-system confirmation (from detection)
-5. Figma / canvas workflow (enum: figma / canvas / neither / skip)
-
-Any early exit at Q1 → abort with a one-line pointer to `/gdd:scan`.
-
-Store the answers + detection result in `.design/.start-context.json`:
-
-```json
-{
-  "schema_version": "1.0",
-  "detected": { "kind": "...", "path": "...", "framework": "...", "design_system": "...", "confidence": 0.85 },
-  "interview": { "pain": "...", "target_area": "...", "budget": "balanced", "framework_confirmed": true, "design_system_confirmed": true, "figma_workflow": "skip" },
-  "generated_at": "<ISO-8601>"
-}
-```
-
-`.design/` is created here for the first time. `.design/STATE.md` is NOT written.
-
----
-
-## Step 3 — Scan findings
-
-Run the findings engine:
-
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/lib/start-findings-engine.cjs" \
-  --root "<detected.path>" \
-  --budget "<budget>" \
-  --pain "<pain_point>"
-```
-
-Capture the JSON. The output carries at most three findings, each with stable IDs `F1`..`F3`, plus `bestFirstProofId` (may be null).
-
-Append the engine output to `.design/.start-context.json` under a `scan` key.
-
----
-
-## Step 4 — Spawn the writer
-
-Dispatch `Task` with:
-
-- `subagent_type: design-start-writer`
-- `description: "Write .design/START-REPORT.md"`
-- `prompt:` a short instruction pointing the agent at `.design/.start-context.json` and asking it to emit the report per its Output contract. Include a reminder that it must produce exactly 7 H2 sections plus the JSON block, and must not write `STATE.md`.
-
-Wait for the agent to complete. The agent writes `.design/START-REPORT.md`.
-
----
-
-## Step 5 — Print the handoff
-
-Read the final line of `.design/START-REPORT.md` to capture the suggested command.
-
-Print exactly (one line, no emoji):
-
-```
-Report written to .design/START-REPORT.md. Next: run <suggested_command> to see the first proof.
-```
-
-If `bestFirstProofId` was null, the suggested command is `/gdd:brief` (the default fallback).
-
-Emit `## START COMPLETE` and exit.
-
----
-
-## Failure handling
-
-Every error path exits with `## START COMPLETE` and a one-line pointer. Do not half-write files: if the writer agent fails, keep `.design/.start-context.json` and tell the user they can rerun. Do not delete `.design/` unless it was empty before the run.
+Failure handling: every error path exits with `## START COMPLETE` plus a one-line pointer. Do not half-write files — if the writer fails, keep `.design/.start-context.json` and tell the user they can rerun. Do not delete `.design/` unless it was empty before the run.
 
 ---
 

@@ -50,13 +50,7 @@ Recommend next stage via the same logic as `/gdd:next` (route by which artifacts
 
 ### First-run connection nudge
 
-After the pipeline state block, check the `<connections>` field from the `mcp__gdd_state__get` snapshot. If every entry is `not_configured` AND `.design/config.json > connections_onboarding` is absent (user has never run the wizard), append once:
-
-```
-Tip: run /gdd:connections to see what integrations can plug in (Figma, Storybook, Chromatic, etc.).
-```
-
-Suppress the nudge on subsequent invocations in the same session (track via a transient marker file `.design/.connections-nudge-shown` written at first emit, deleted on next session start by no mechanism — so effectively once per session).
+After the pipeline state block, if every `<connections>` entry from the snapshot is `not_configured` AND `.design/config.json > connections_onboarding` is absent, append once per session (transient marker `.design/.connections-nudge-shown`): `Tip: run /gdd:connections to see what integrations can plug in (Figma, Storybook, Chromatic, etc.).`
 
 ## Step 3 — Forensic audit (only if `--forensic`)
 

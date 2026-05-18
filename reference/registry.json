@@ -1,7 +1,7 @@
 {
   "$schema": "./schemas/registry.schema.json",
   "version": 1,
-  "generated_at": "2026-04-24T00:00:00.000Z",
+  "generated_at": "2026-05-18T12:47:59.666Z",
   "entries": [
     {
       "name": "codex-tools",
@@ -811,6 +811,174 @@
       "path": "reference/visual-hierarchy-layout.md",
       "type": "heuristic",
       "description": "Z-order, whitespace, grids, F/Z patterns, 24 landing archetypes"
+    },
+    {
+      "name": "adr-format",
+      "path": "reference/adr-format.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "ADR (Architecture Decision Record) format — adapted from mattpocock/skills (MIT). 3-criteria offer gate (hard-to-reverse AND surprising-without-context AND real-tradeoff), 4-state status lifecycle. GDD addition: optional cycle-id + phase-id cross-refs to STATE.md."
+    },
+    {
+      "name": "apply-reflections-procedure",
+      "path": "reference/apply-reflections-procedure.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — apply-reflections procedure extracted from skills/apply-reflections per progressive-disclosure rule. Read by skills/apply-reflections/SKILL.md."
+    },
+    {
+      "name": "architecture-vocabulary",
+      "path": "reference/architecture-vocabulary.md",
+      "type": "principles",
+      "phase": 28.5,
+      "description": "Ousterhout glossary (A Philosophy of Software Design) ported via mattpocock/skills LANGUAGE.md (MIT). 8 core terms (Module / Interface / Implementation / Depth / Seam / Adapter / Leverage / Locality) + 3 principles (deletion test, interface-is-test-surface, two-adapters-rule)."
+    },
+    {
+      "name": "cache-policy",
+      "path": "reference/cache-policy.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — cache-policy reference extracted from skills/cache-manager + skills/warm-cache per progressive-disclosure rule (Bucket 3 orchestrator + utility rework)."
+    },
+    {
+      "name": "compare-rubric",
+      "path": "reference/compare-rubric.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — compare-rubric extracted from skills/compare per progressive-disclosure rule. Read by skills/compare/SKILL.md (Bucket 2 design-family rework)."
+    },
+    {
+      "name": "connections-onboarding",
+      "path": "reference/connections-onboarding.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — connections-onboarding procedure extracted from skills/connections per progressive-disclosure rule (Bucket 2 design-family rework). Four-option setup prompt + onboarding flow."
+    },
+    {
+      "name": "context-md-format",
+      "path": "reference/context-md-format.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "CONTEXT.md format — adapted from mattpocock/skills (MIT) CONTEXT-FORMAT.md. DDD-style ubiquitous-language glossary schema, inline-write trigger, multi-context CONTEXT-MAP.md pattern. GDD additions: optional first-seen + aliases on term entries."
+    },
+    {
+      "name": "darkmode-audit-procedure",
+      "path": "reference/darkmode-audit-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — darkmode audit procedure extracted from skills/darkmode per progressive-disclosure rule (Bucket 2 design-family rework)."
+    },
+    {
+      "name": "debug-feedback-loops",
+      "path": "reference/debug-feedback-loops.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Debug feedback-loop discipline — adapted from mattpocock/skills (MIT) engineering/diagnose Phase 1. 10 construction paths in priority order (failing test -> curl -> CLI fixture -> headless browser -> trace replay -> throwaway harness -> fuzz -> bisect harness -> differential loop -> HITL bash), iterate-on-loop sub-discipline, non-determinism reproduction-rate branch."
+    },
+    {
+      "name": "design-procedure",
+      "path": "reference/design-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — design-stage procedure extracted from skills/design per progressive-disclosure rule (Bucket 1 pipeline-stage rework)."
+    },
+    {
+      "name": "discover-procedure",
+      "path": "reference/discover-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — discover-stage procedure extracted from skills/discover per progressive-disclosure rule (Bucket 1 pipeline-stage rework)."
+    },
+    {
+      "name": "explore-procedure",
+      "path": "reference/explore-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — explore-stage procedure extracted from skills/explore per progressive-disclosure rule (Bucket 1 pipeline-stage rework)."
+    },
+    {
+      "name": "health-mcp-detection",
+      "path": "reference/health-mcp-detection.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — health-MCP detection procedure extracted from skills/health per progressive-disclosure rule (D-10). Documents dismissal check, detection via scripts/lib/install/mcp-register.cjs, row rendering for claude/codex/both/neither, fallback for missing mcp-register.cjs."
+    },
+    {
+      "name": "health-skill-length-report",
+      "path": "reference/health-skill-length-report.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — health-skill-length-report contract documenting validate-skill-length.cjs JSON shape + threshold rationale. Read by skills/health/SKILL.md to render the skill-length report subsection."
+    },
+    {
+      "name": "milestone-completeness-rubric",
+      "path": "reference/milestone-completeness-rubric.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — milestone-completeness rubric extracted from skills/turn-closeout per progressive-disclosure rule (Bucket 4 analysis + audit rework). Turn-closeout / new-cycle completeness criteria."
+    },
+    {
+      "name": "peer-cli-protocol",
+      "path": "reference/peer-cli-protocol.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — peer-CLI protocol scaffold extracted from skills/peer-cli-add + skills/peer-cli-customize per progressive-disclosure rule (Bucket 4 analysis + audit rework). ACP + ASP adapter scaffolding patterns, verification ladder, Windows quirk handling."
+    },
+    {
+      "name": "plan-procedure",
+      "path": "reference/plan-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — plan-stage procedure extracted from skills/plan per progressive-disclosure rule (Bucket 1 pipeline-stage rework)."
+    },
+    {
+      "name": "router-rules",
+      "path": "reference/router-rules.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — router-rules reference extracted from skills/router per progressive-disclosure rule (Bucket 3 orchestrator + utility rework). S/M/L/XL bucket assignments + path-selection heuristic."
+    },
+    {
+      "name": "scan-procedure",
+      "path": "reference/scan-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — scan-stage procedure extracted from skills/scan per progressive-disclosure rule (Bucket 1 pipeline-stage rework)."
+    },
+    {
+      "name": "skill-authoring-contract",
+      "path": "reference/skill-authoring-contract.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 skill-authoring contract — adapted from mattpocock/skills (MIT). SKILL.md <=100-line cap (warn >=100, block >=250 in CI), 1024-char description cap, <what>. Use when <triggers>. form (lax-mode default per Phase 33 A/B pending), frontmatter required fields, progressive-disclosure one-level-deep rule. Validator at scripts/validate-skill-length.cjs."
+    },
+    {
+      "name": "start-procedure",
+      "path": "reference/start-procedure.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — start-procedure reference extracted from skills/start per progressive-disclosure rule (Bucket 4 analysis + audit rework)."
+    },
+    {
+      "name": "style-doc-procedure",
+      "path": "reference/style-doc-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — style-doc procedure extracted from skills/style per progressive-disclosure rule (Bucket 2 design-family rework)."
+    },
+    {
+      "name": "threat-modeling",
+      "path": "reference/threat-modeling.md",
+      "type": "heuristic",
+      "phase": 28.5,
+      "description": "Phase 28.5 — STRIDE threat-modeling patterns extracted from skills/quality-gate + audit-side scanning per progressive-disclosure rule (Bucket 4 analysis + audit rework). Audit-side threat-model invariants."
+    },
+    {
+      "name": "verify-procedure",
+      "path": "reference/verify-procedure.md",
+      "type": "meta-rules",
+      "phase": 28.5,
+      "description": "Phase 28.5 — verify-stage procedure extracted from skills/verify per progressive-disclosure rule (Bucket 1 pipeline-stage rework)."
     }
   ]
 }
