@@ -1,0 +1,40 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-05-18T00:00:00.000Z",
+  "phase": "27.7",
+  "scenarios": {
+    "registered_with_both": {
+      "claude_present": true,
+      "codex_present": true,
+      "registered_claude": true,
+      "registered_codex": true,
+      "mcp_nudge": true,
+      "expected_row": "MCP server: gdd-mcp registered (claude, codex)"
+    },
+    "not_registered": {
+      "claude_present": true,
+      "codex_present": true,
+      "registered_claude": false,
+      "registered_codex": false,
+      "mcp_nudge": true,
+      "expected_row": "MCP server: gdd-mcp NOT registered — run `gdd install --register-mcp`"
+    },
+    "dismissed": {
+      "claude_present": true,
+      "codex_present": true,
+      "registered_claude": false,
+      "registered_codex": false,
+      "mcp_nudge": false,
+      "expected_row": null
+    },
+    "unknown": {
+      "claude_present": false,
+      "codex_present": false,
+      "registered_claude": false,
+      "registered_codex": false,
+      "mcp_nudge": true,
+      "expected_row": "MCP server: gdd-mcp — no compatible harness CLI on PATH (claude, codex)"
+    }
+  },
+  "notes": "4 SKILL-row scenarios from scripts/lib/install/mcp-register.cjs + skills/health/SKILL.md check-mcp-registration step. Used by Phase 27.7 baseline tests and by future regression detection if doctor output shape changes. Dismissable nudge surfaces as expected_row: null when .design/config.json#mcp_nudge === false (D-07)."
+}

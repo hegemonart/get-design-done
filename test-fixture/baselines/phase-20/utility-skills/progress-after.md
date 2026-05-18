@@ -2,7 +2,7 @@
 name: gdd-progress
 description: "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit."
 argument-hint: "[--forensic]"
-tools: Read, Bash, Grep, Glob, mcp__gdd_state__get
+tools: Read, Bash, Grep, Glob, mcp__gdd_state__get, mcp__gdd_status, mcp__gdd_phase_current
 ---
 
 @reference/retrieval-contract.md
@@ -13,12 +13,27 @@ tools: Read, Bash, Grep, Glob, mcp__gdd_state__get
 
 ## Step 1 — Read state
 
-Call `mcp__gdd_state__get` → parsed state object. Extract:
-- `stage`, `cycle`, `last_checkpoint`
-- `task_progress`, `status` (from `<position>`)
-- `decisions.length`, open todos from `.design/TODO.md` (count unchecked `- [ ]` — this file is outside the MCP catalog, so `Read` is still used)
+Two paths — MCP preferred when available, file-read fallback otherwise.
 
-If `mcp__gdd_state__get` returns a "STATE.md missing" error, print: "No pipeline state. Run `/gdd:brief` first." and stop.
+### MCP path (preferred)
+
+When the harness exposes `mcp__gdd_status` (Phase 27.7+, registered via `npx @hegemonart/get-design-done --register-mcp`):
+
+1. Call `mcp__gdd_status` (no args). Returns `{phase, branch, last_decisions, last_completed_plans, blocker_count}` in one call.
+2. If you need `stage` / `task_progress` for the output line, call `mcp__gdd_phase_current` (no args). Returns `{phase, stage, task_progress, status}`.
+3. Skip to Step 2.
+
+This path loads the full priming context in 1–2 MCP calls (~3s, ~32k tokens — Storybloq benchmark).
+
+### File-read path (fallback)
+
+When MCP tools are not available, fall back to the legacy flow:
+
+1. Call `mcp__gdd_state__get` if exposed (Phase 20 STATE.md mutator MCP) → parsed state object. Otherwise, `Read .design/STATE.md` and parse the frontmatter + `<position>`, `<decisions>`, `<plans>` sections.
+2. Extract: `stage`, `cycle`, `last_checkpoint`, `task_progress`, `status`, `decisions.length`, open todos from `.design/TODO.md` (count unchecked `- [ ]` — outside the MCP catalog, so `Read` is still used).
+3. If STATE.md is missing, print: "No pipeline state. Run `/gdd:brief` first." and stop.
+
+This path loads the same context in 5–10 file reads (~100s, ~46.5k tokens — file-reading baseline).
 
 ## Step 2 — Default output
 

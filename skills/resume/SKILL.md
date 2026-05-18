@@ -2,7 +2,7 @@
 name: gdd-resume
 description: "Restore session context from a numbered checkpoint. Lists available checkpoints when no argument given."
 argument-hint: "[<N>]"
-tools: Read, Write, Bash, Glob, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint
+tools: Read, Write, Bash, Glob, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list, mcp__gdd_decisions_list
 ---
 
 @reference/retrieval-contract.md
@@ -11,6 +11,31 @@ tools: Read, Write, Bash, Glob, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_s
 # /gdd:resume
 
 Inverse of `/gdd:pause`. Reads a checkpoint file, prints a clear "you were here" summary, and routes to the next command.
+
+## Step 0 — Prime cycle context
+
+Two paths — MCP preferred when available, file-read fallback otherwise. This runs BEFORE checkpoint restoration so the "you were here" summary has full cycle context (phase, plans, decisions).
+
+### MCP path (preferred)
+
+When `mcp__gdd_status` is exposed (Phase 27.7+, registered via `npx @hegemonart/get-design-done --register-mcp`):
+
+1. Call `mcp__gdd_status` (no args) → `{phase, branch, last_decisions, last_completed_plans, blocker_count}`. One call replaces reading STATE.md + parsing frontmatter + extracting decisions.
+2. Call `mcp__gdd_cycle_recap` (no args) → diff vs last cycle snapshot. Critical for session-restoration context: what changed since you paused?
+3. Call `mcp__gdd_decisions_list` (no args) → full D-XX list with rationale. Use for the "decisions you made" line in the resume summary.
+4. (Optional) Call `mcp__gdd_plans_list` (no args) → current phase plans + status, to identify next incomplete plan.
+
+Three to four MCP calls = full resume priming (~5s, ~32k tokens — Storybloq benchmark). Proceed to Step 1.
+
+### File-read path (fallback)
+
+When MCP tools are not available:
+
+1. `Read .design/STATE.md` and parse the frontmatter + `<position>`, `<decisions>`, `<plans>` sections. Extract `cycle`, `branch`, `last N decisions`, `completed plans`.
+2. Also `Read .design/CYCLES.md` (if present) to see prior cycle state for the recap.
+3. Proceed to Step 1.
+
+This path loads the same context in 3–5 file reads (~60s, ~46.5k tokens — file-reading baseline).
 
 ## Steps
 

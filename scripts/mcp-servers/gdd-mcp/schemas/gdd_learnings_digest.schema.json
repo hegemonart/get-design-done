@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "gdd_learnings_digest",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cycles": { "type": "integer", "minimum": 1, "maximum": 50 }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["digest", "cycles_included"],
+      "properties": {
+        "digest": { "type": "string", "maxLength": 5120 },
+        "cycles_included": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

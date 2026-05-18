@@ -261,14 +261,22 @@ for (const spec of SKILLS) {
       });
     }
 
-    test('line count within ±20% of pre-migration baseline', () => {
-      const before = fs.readFileSync(beforePath, 'utf8').split('\n').length;
-      const after = readSkill(skillPath).split('\n').length;
-      const delta = Math.abs(after - before) / before;
+    test('line count within ±20% of post-migration baseline (after.md)', () => {
+      // Phase 27.7 closeout (Plan 27.7-07) changed the comparison anchor
+      // from `before.md` (pre-Plan-20-12) to `after.md` (post-Plan-20-12,
+      // post-Phase-27.7) because Plans 27.7-04 + 27.7-05 intentionally
+      // added MCP-registration steps and MCP-path/File-read-path forks to
+      // the health, progress, and resume SKILLs. Drift is now measured
+      // against the regenerated post-migration baseline; if the SKILL
+      // changes intentionally again, regen the `after.md` fixture per
+      // the byte-for-byte test's guidance.
+      const afterBaseline = fs.readFileSync(afterPath, 'utf8').split('\n').length;
+      const live = readSkill(skillPath).split('\n').length;
+      const delta = Math.abs(live - afterBaseline) / afterBaseline;
       assert.ok(
         delta <= LINE_COUNT_TOLERANCE,
         `line count drift ${(delta * 100).toFixed(1)}% exceeds ±${(LINE_COUNT_TOLERANCE * 100).toFixed(0)}% ` +
-          `(before=${before}, after=${after})`,
+          `(after-baseline=${afterBaseline}, live=${live})`,
       );
     });
 

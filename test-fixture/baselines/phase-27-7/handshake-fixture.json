@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-05-18T00:00:00.000Z",
+  "phase": "27.7",
+  "initialize_response": {
+    "name": "gdd-mcp",
+    "version": "1.27.7",
+    "capabilities": {
+      "tools": {}
+    }
+  },
+  "tools_list_response_count": 12,
+  "transport": "stdio",
+  "experimental_strip_types": true,
+  "notes": "Canonical MCP initialize response shape for gdd-mcp at Phase 27.7. Server name + version (read from package.json#version) + capabilities advertisement. tools/list response is verified separately to advertise 12 read-only tools. Transport is stdio-only (D-05); experimental-strip-types is required because server.ts is TypeScript imported directly via Node 22 strip-types."
+}

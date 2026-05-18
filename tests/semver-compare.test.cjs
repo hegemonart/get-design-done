@@ -179,6 +179,20 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     Off-cadence because v1.27 line is the parent mainline; 27.6 is the
   //     optimization-decimal phase per CONTEXT.md D-12.
   '1.27.6',
+  //   - 1.27.7 → Phase 27.7 GDD MCP Server. 7 plans (27.7-01..27.7-07):
+  //     gdd-mcp server scaffold + 12 read-only tools (gdd_status,
+  //     gdd_cycle_recap, gdd_decisions_list, gdd_events_tail, gdd_health,
+  //     gdd_intel_get, gdd_learnings_digest, gdd_phase_current,
+  //     gdd_phases_list, gdd_plans_list, gdd_reflections_latest,
+  //     gdd_telemetry_query); mcp-tools-lint (4 invariants: forbid-fs-path,
+  //     max-loc 30, no-write-names, tool-count-cap 12); installer
+  //     --register-mcp + skills/health MCP row; skills/{progress,resume,next}
+  //     MCP-path + File-read-path fork; README + priming-benchmark
+  //     (-31.18% token reduction synthetic floor); closeout (4 manifests +
+  //     CHANGELOG + baselines + headless E2E + ROADMAP scoped flip).
+  //     Off-cadence because v1.27 line is the parent mainline; 27.7 is the
+  //     MCP-server-decimal phase per CONTEXT.md D-12.
+  '1.27.7',
 ]);
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

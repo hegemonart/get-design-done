@@ -1,0 +1,381 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/mcp-gdd-tools.schema.json",
+  "title": "McpGddTools",
+  "description": "Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under scripts/mcp-servers/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).",
+  "type": "object",
+  "properties": {
+    "tools": {
+      "type": "object",
+      "description": "Per-tool input/output schemas keyed by tool name. Exactly 12 entries (D-03 hard cap).",
+      "additionalProperties": false,
+      "properties": {
+        "gdd_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "output": {
+              "type": "object",
+              "required": ["phase", "branch", "last_decisions", "last_completed_plans", "blocker_count"],
+              "properties": {
+                "phase": { "type": ["string", "null"] },
+                "branch": { "type": ["string", "null"] },
+                "last_decisions": { "type": "array", "items": { "type": "object" } },
+                "last_completed_plans": { "type": "array", "items": { "type": "object" } },
+                "blocker_count": { "type": "integer", "minimum": 0 }
+              }
+            }
+          }
+        },
+        "gdd_phase_current": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "output": {
+              "type": "object",
+              "required": ["phase", "stage", "task_progress", "status"],
+              "properties": {
+                "phase": { "type": ["string", "null"] },
+                "stage": { "type": ["string", "null"] },
+                "task_progress": { "type": ["string", "null"] },
+                "status": { "type": ["string", "null"] }
+              }
+            }
+          }
+        },
+        "gdd_phases_list": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "output": {
+              "type": "object",
+              "required": ["phases"],
+              "properties": {
+                "phases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["number", "name", "version", "checkbox_status"],
+                    "properties": {
+                      "number": { "type": "string" },
+                      "name": { "type": "string" },
+                      "version": { "type": "string" },
+                      "checkbox_status": { "type": "string", "enum": ["shipped", "planned", "unknown"] }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gdd_plans_list": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "phase": { "type": "string" }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["phase", "plans"],
+              "properties": {
+                "phase": { "type": ["string", "null"] },
+                "plans": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["id", "name", "status"],
+                    "properties": {
+                      "id": { "type": "string" },
+                      "name": { "type": "string" },
+                      "status": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gdd_decisions_list": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "status": { "type": "string", "enum": ["locked", "tentative"] }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["decisions"],
+              "properties": {
+                "decisions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["id", "text", "status"],
+                    "properties": {
+                      "id": { "type": "string" },
+                      "text": { "type": "string" },
+                      "status": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gdd_intel_get": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["slice_id"],
+              "properties": {
+                "slice_id": { "type": "string", "minLength": 1 },
+                "shape": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["slice_id", "data"],
+              "properties": {
+                "slice_id": { "type": "string" },
+                "data": { "type": "object" }
+              }
+            }
+          }
+        },
+        "gdd_telemetry_query": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "type": { "type": "string" },
+                "since": { "type": "string", "format": "date-time" },
+                "limit": { "type": "integer", "minimum": 1, "maximum": 10000 }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["events"],
+              "properties": {
+                "events": { "type": "array", "items": { "type": "object" } }
+              }
+            }
+          }
+        },
+        "gdd_cycle_recap": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "since_snapshot": { "type": "string" }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["since", "diff"],
+              "properties": {
+                "since": { "type": ["string", "null"] },
+                "diff": {
+                  "type": "object",
+                  "required": ["state_sections", "decisions_delta", "completed_plans_delta"],
+                  "properties": {
+                    "state_sections": { "type": "array", "items": { "type": "string" } },
+                    "decisions_delta": { "type": "integer" },
+                    "completed_plans_delta": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gdd_reflections_latest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "output": {
+              "type": "object",
+              "required": ["cycle", "path", "content_excerpt"],
+              "properties": {
+                "cycle": { "type": ["string", "null"] },
+                "path": { "type": ["string", "null"] },
+                "content_excerpt": { "type": "string", "maxLength": 4096 }
+              }
+            }
+          }
+        },
+        "gdd_learnings_digest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "cycles": { "type": "integer", "minimum": 1, "maximum": 50 }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["digest", "cycles_included"],
+              "properties": {
+                "digest": { "type": "string", "maxLength": 5120 },
+                "cycles_included": { "type": "integer", "minimum": 0 }
+              }
+            }
+          }
+        },
+        "gdd_events_tail": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "type": { "type": "string" },
+                "limit": { "type": "integer", "minimum": 1, "maximum": 10000 }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["events"],
+              "properties": {
+                "events": { "type": "array", "items": { "type": "object" } }
+              }
+            }
+          }
+        },
+        "gdd_health": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {}
+            },
+            "output": {
+              "type": "object",
+              "required": ["checks"],
+              "properties": {
+                "checks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "status", "detail"],
+                    "properties": {
+                      "name": { "type": "string" },
+                      "status": { "type": "string", "enum": ["ok", "warn", "fail"] },
+                      "detail": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ToolSchemaEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input", "output"],
+      "properties": {
+        "input": {
+          "type": "object",
+          "description": "JSON Schema fragment describing the tool's input parameters."
+        },
+        "output": {
+          "type": "object",
+          "description": "JSON Schema fragment describing the tool's response envelope.",
+          "required": ["type"],
+          "properties": {
+            "type": { "type": "string", "enum": ["object"] }
+          }
+        }
+      }
+    },
+    "ToolError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "kind"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": ["validation", "state_conflict", "operation_failed", "unknown"]
+        },
+        "mcp_code": {
+          "type": "string",
+          "description": "Optional MCP-specific code (e.g. 'directory_not_found') projected by errorResponse() when an underlying NotFoundError carries a `code` property."
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "ToolResponseEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": { "type": "object" },
+        "error": { "$ref": "#/definitions/ToolError" }
+      }
+    }
+  }
+}

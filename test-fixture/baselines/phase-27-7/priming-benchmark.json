@@ -1,0 +1,33 @@
+{
+  "schema_version": "1",
+  "generated_at": "2026-05-18T00:00:00.000Z",
+  "fixture_project": "synthetic-gdd-mid-cycle",
+  "notes": "Synthetic baseline modeled on Storybloq v1.2.0 measured numbers (CONTEXT.md). Replace with measured GDD numbers after 5-10 real cycles per research-tail. D-09: informational, not CI hard-block. Math: tokens_pct = (32000 - 46500) / 46500 * 100 = -31.18. wall_speedup_x = 101000 / 3000 = 33.6667.",
+  "mcp_path": {
+    "calls": [
+      { "tool": "gdd_status", "tokens": 12000, "wall_ms": 1100 },
+      { "tool": "gdd_phase_current", "tokens": 8000, "wall_ms": 900 },
+      { "tool": "gdd_plans_list", "tokens": 12000, "wall_ms": 1000 }
+    ],
+    "total_tokens": 32000,
+    "wall_ms": 3000
+  },
+  "file_read_path": {
+    "reads": [
+      { "file": ".design/STATE.md", "tokens": 15000, "wall_ms": 18000 },
+      { "file": ".planning/ROADMAP.md", "tokens": 12000, "wall_ms": 22000 },
+      { "file": ".planning/STATE.md", "tokens": 8500, "wall_ms": 14000 },
+      { "file": ".design/telemetry/events.jsonl (tail)", "tokens": 4000, "wall_ms": 9000 },
+      { "file": ".design/reflections/<latest>.md", "tokens": 3500, "wall_ms": 12000 },
+      { "file": ".design/intel/<active-slice>.json", "tokens": 3500, "wall_ms": 26000 }
+    ],
+    "total_tokens": 46500,
+    "wall_ms": 101000
+  },
+  "reduction": {
+    "tokens_pct": -31.18,
+    "wall_speedup_x": 33.67,
+    "absolute_tokens_saved": 14500,
+    "absolute_ms_saved": 98000
+  }
+}

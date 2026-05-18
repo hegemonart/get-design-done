@@ -1,0 +1,5 @@
+gdd-events
+gdd-mcp
+gdd-sdk
+gdd-state-mcp
+get-design-done
