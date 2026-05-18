@@ -298,3 +298,29 @@ function dfs(node):
 across multiple entry points are deduped by the `visited` guard. The `path.index(node)`
 slice captures only the cycle suffix; nodes before the entry point are not part of the
 cycle. Pre-existing acyclic chains stay invisible — only back-edges surface.
+
+---
+
+## Version-cadence
+
+Reference for `skills/check-update/SKILL.md` and `skills/complete-cycle/SKILL.md` when
+comparing versions across releases.
+
+**Delta classification** (consumer of `.design/update-cache.json#delta`):
+
+| Delta | Meaning | When |
+|-------|---------|------|
+| `major` | Breaking change | `current.major < latest.major` |
+| `minor` | New features | Major same; `current.minor < latest.minor` |
+| `patch` | Bug fixes only | Major + minor same; `current.patch < latest.patch` |
+| `off-cadence` | Insertion-style version (`.5`, `.6`, `.7`) | Listed in `OFF_CADENCE_VERSIONS` in `tests/semver-compare.test.cjs` |
+| `none` | Same version | All segments equal |
+
+**Off-cadence handling:** versions like `v1.14.5`, `v1.27.5`, `v1.28.5` slot between regular
+minor bumps. They register via `OFF_CADENCE_VERSIONS.add('<version>')` in
+`tests/semver-compare.test.cjs`. The semver-compare test treats them as if they had a
+canonical predecessor (`v1.28.5` after `v1.28.0`, not `v1.28.4`).
+
+**Preview-suffix trap:** model IDs with `-preview` (`gpt-5-preview` vs `gpt-5`) drift — today's
+preview is tomorrow's GA. Tooling MUST store the parent name in `provider_model_id` and treat
+the suffix as decorative. See `./peer-cli-protocol.md` for the peer-CLI-side context.
