@@ -86,7 +86,16 @@ test('connections-skill: documents three-value status schema', () => {
 });
 
 test('connections-skill: documents four-option setup prompt', () => {
-  const body = fs.readFileSync(SKILL_PATH, 'utf8');
+  // Phase 28.5-05 (Bucket 2 design-family rework) moved the verbatim
+  // 4-option setup-prompt menu to reference/connections-onboarding.md
+  // per the <=100-line SKILL.md authoring contract. The SKILL keeps the
+  // (run now / copy-paste / skip / never ask) summary + cross-link;
+  // the verbatim option strings live in the reference file. Assert
+  // against the combined SKILL + reference surface.
+  const skillBody = fs.readFileSync(SKILL_PATH, 'utf8');
+  const refPath = path.join(REPO_ROOT, 'reference', 'connections-onboarding.md');
+  const refBody = fs.existsSync(refPath) ? fs.readFileSync(refPath, 'utf8') : '';
+  const surface = skillBody + '\n\n' + refBody;
   // All four options must appear somewhere in the setup screen spec.
   const options = [
     /Run install command/i,
@@ -95,7 +104,7 @@ test('connections-skill: documents four-option setup prompt', () => {
     /Never ask again/i,
   ];
   for (const opt of options) {
-    assert.match(body, opt, `SKILL.md should contain option matching ${opt}`);
+    assert.match(surface, opt, `SKILL + reference/connections-onboarding.md should contain option matching ${opt}`);
   }
 });
 
