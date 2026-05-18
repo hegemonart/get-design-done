@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: → v1.27.1)
-status: Phase 28.5 (Skill Authoring Contract + Skill Rework + Project Artifacts) closed out — v1.28.5 shipped (2026-05-18). 4-manifest lockstep + CHANGELOG block at top + OFF_CADENCE_VERSIONS.add('1.28.5') + NOTICE MIT attribution for mattpocock/skills (5 reference ports + zoom-out direct port + debug Phase 1 ordering). 24 new reference/registry.json entries (phase: 28.5). 5-file regression baseline at test-fixture/baselines/phase-28.5/. Scoped ROADMAP flip (12 inline plan checkboxes + 1 overview entry). 70 skills total (zoom-out added; all 100% clean / 0 warn / 0 block per validate-skill-length.cjs). 86 baseline-drift test failures resolved via SKILL+reference progressive-disclosure verification pattern + after.md regen (precedent 3454d68/39e402c). npm test 2247/2227-pass/0-fail/20-skipped. Phase 28 (Foundational References Tier 2 v1.28.0) shipped prior. Phase 27 + v1.27.7 (gdd-mcp). Phase 31 (Figma Off-Context Extractor) in progress.
-last_updated: "2026-05-18T13:25:00.000Z"
+status: "Phase 28.5 (Skill Authoring Contract + Skill Rework + Project Artifacts) closed out — v1.28.5 shipped (2026-05-18). 4-manifest lockstep + CHANGELOG block at top + OFF_CADENCE_VERSIONS.add('1.28.5') + NOTICE MIT attribution for mattpocock/skills (5 reference ports + zoom-out direct port + debug Phase 1 ordering). 24 new reference/registry.json entries (phase: 28.5). 5-file regression baseline at test-fixture/baselines/phase-28.5/. Scoped ROADMAP flip (12 inline plan checkboxes + 1 overview entry). 70 skills total (zoom-out added; all 100% clean / 0 warn / 0 block per validate-skill-length.cjs). 86 baseline-drift test failures resolved via SKILL+reference progressive-disclosure verification pattern + after.md regen (precedent 3454d68/39e402c). npm test 2247/2227-pass/0-fail/20-skipped. Phase 28 (Foundational References Tier 2 v1.28.0) shipped prior. Phase 27 + v1.27.7 (gdd-mcp). Phase 31 (Figma Off-Context Extractor) in progress."
+last_updated: "2026-05-18T15:02:26.665Z"
 progress:
   total_phases: 7
-  completed_phases: 6
-  total_plans: 50
-  completed_plans: 50
-  percent: 100
+  completed_phases: 5
+  total_plans: 42
+  completed_plans: 40
+  percent: 95
 ---
 
 # Project State
