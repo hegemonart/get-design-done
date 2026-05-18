@@ -4,6 +4,55 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.27.7] — 2026-05-18
+
+### Added
+
+- **Phase 27.7 — GDD MCP Server** (7 plans). Ships `gdd-mcp`, a read-only Model Context Protocol server that exposes STATE.md sections, phases, decisions, plans, telemetry, intel slices, and the latest reflection as 12 typed MCP tools backed by the same `scripts/lib/*` modules the CLI uses. Sub-3-second priming target on a synthetic project (Storybloq §4.6 pattern transplant). Off-cadence v1.27.7 (CHANGELOG-only; mainline cadence resumes at v1.28.0).
+  - `scripts/mcp-servers/gdd-mcp/server.ts` (Plan 27.7-01) — MCP server scaffold using `@modelcontextprotocol/sdk` low-level Server + StdioServerTransport. Project-root discovery walks from `process.cwd()` looking for `.design/` OR `.planning/` OR `.claude-plugin/plugin.json`. `bin/gdd-mcp` shim added to `package.json` (alphabetized: gdd-events → gdd-mcp → gdd-sdk → gdd-state-mcp). Tests on handshake + walk-up + missing-marker behavior. (MCP-01)
+  - `scripts/mcp-servers/gdd-mcp/tools/` + `reference/schemas/mcp-gdd-tools.schema.json` (Plan 27.7-02) — 12 read-only tools: `gdd_status`, `gdd_cycle_recap`, `gdd_decisions_list`, `gdd_events_tail`, `gdd_health`, `gdd_intel_get`, `gdd_learnings_digest`, `gdd_phase_current`, `gdd_phases_list`, `gdd_plans_list`, `gdd_reflections_latest`, `gdd_telemetry_query`. Each tool ≤ 30 LOC (D-06), with per-tool Draft-07 JSON Schema, plus 5 helper libs (state-reader, intel-slicer, telemetry-grouper, reflection-loader, paths-resolver) and a `directory_not_found` typed projection. Tests on input schema + output shape + thin-wrapper assertion. (MCP-02)
+  - `scripts/lib/mcp-tools-lint/index.cjs` (Plan 27.7-03) — Static lint enforcing 4 invariants: forbid-fs-path (D-06: no direct `fs.*`/`path.*` in tool files), max-loc (≤ 30 LOC per tool), no-write-names (D-04: hard-blocks `_(create|update|delete|append|clear|write|set)` patterns), tool-count-cap (D-03: ≤ 12 files). Tests on each rule + exemptions for `index.ts`/`shared.ts`. (MCP-03)
+  - `scripts/lib/install/mcp-register.cjs` + `scripts/install.cjs --register-mcp` extension (Plan 27.7-04) — Idempotent registration with `claude mcp add` + `codex mcp add` (D-07 opt-in; absent-CLI fallback). `skills/health/SKILL.md` gains a `check-mcp-registration` step with 4 SKILL-row outputs (registered_with_both, not_registered, dismissed, unknown). Tests on idempotent re-run + absent-CLI paths + `--` arg-injection guard. (MCP-04)
+  - `skills/progress/SKILL.md` + `skills/resume/SKILL.md` + `skills/next/SKILL.md` adopted MCP-path + File-read-path fork (Plan 27.7-05). Each skill prefers `gdd-mcp` tools when registered, falls back to direct file reads when not. Structural-compliance tests via the Phase 28.5 validator. (MCP-05)
+  - `scripts/mcp-servers/gdd-mcp/README.md` (≤ 120 lines, Plan 27.7-06) + `test-fixture/baselines/phase-27-7/priming-benchmark.json` capturing −31.18% token reduction on a synthetic project (Storybloq's −30% floor met). Tests on README structure + benchmark fixture shape + token-reduction ≥ 30%. (MCP-06)
+  - `test-fixture/baselines/phase-27-7/` regression snapshots (Plan 27.7-07): `tool-registry.json` (12 tools, zero write-tools), `handshake-fixture.json` (canonical initialize response shape), `install-doctor-fixture.json` (4 SKILL-row scenarios), `manifests-version.txt` (pinned at 1.27.7). 4-manifest lockstep bump to v1.27.7. CHANGELOG entry. `OFF_CADENCE_VERSIONS.add('1.27.7')`. `reference/registry.json` gains `mcp-gdd-tools-schema` entry. `plugin.json` keywords gain `mcp-server`, `context-loading`, `cross-session`. ROADMAP scoped flip (7 plan checkboxes + 1 top-level overview entry). New `tests/phase-27-7-baseline.test.cjs` (>= 6 version-agnostic baseline tests) + new `tests/gdd-mcp-headless-e2e.test.cjs` (5 E2E tests: pack -> install -> spawn -> MCP initialize handshake -> tools/list returns 12; skip-on-Windows path documented for npm pack symlink false-negatives — Blocker #2 acceptance per ROADMAP SC #11). (MCP-07)
+
+### Decisions locked
+
+- D-01: MCP server is read-mostly (read-only in v1; mutations stay in slash-skills + lockfile-safe writers — re-examine at Phase 30/41).
+- D-02: Tool count capped at 12 — `TOOL_COUNT > 12` throws at module load. Adding a 13th tool requires re-scoping in a new plan.
+- D-03: 12-tool cap is the hard ceiling baselined in `test-fixture/baselines/phase-27-7/tool-registry.json`.
+- D-04: No write-verb tool names — `mcp-tools-lint` blocks `_(create|update|delete|append|clear|write|set)(_|$)` patterns. Baseline asserts `write_tools.length === 0`.
+- D-05: stdio-only transport — no port allocation, no HTTP surface. Project-root discovery walks up from `process.cwd()` (`.design/` OR `.planning/` OR `.claude-plugin/plugin.json` marker).
+- D-06: Each tool file ≤ 30 non-blank-non-comment LOC. Tools must be thin wrappers — no direct `node:fs`/`node:path` imports (enforced by `mcp-tools-lint`). All filesystem I/O routes through `scripts/lib/*` helpers.
+- D-07: Installer `--register-mcp` is opt-in (default off). Absent-CLI fallback emits a non-blocking notice. Dismissable nudge via `.design/config.json#mcp_nudge: false`.
+- D-08: Skill-side adoption is forked — MCP path (preferred) + File-read path (fallback). Both produce identical output shape. Skills do not hard-depend on MCP registration.
+- D-09: Server name `gdd-mcp` (matches package bin); version read from `package.json#version` (single source of truth — D-12 lockstep maintains alignment).
+- D-10: `bin/gdd-mcp` block in `package.json` alphabetized at scaffold time (Plan 27.7-01). Manifest bump preserves the alphabetization.
+- D-11: New schema `reference/schemas/mcp-gdd-tools.schema.json` registered in `reference/registry.json` as `mcp-gdd-tools-schema`.
+- D-12: 4-manifest lockstep — `package.json#version`, `.claude-plugin/plugin.json#version`, `.claude-plugin/marketplace.json#metadata.version`, `.claude-plugin/marketplace.json#plugins[0].version` all ship together at v1.27.7. `OFF_CADENCE_VERSIONS.add('1.27.7')` added to `tests/semver-compare.test.cjs`.
+
+### Tests added
+
+~69 new tests across 10 test files: 5 server scaffold (Plan 27.7-01), 27 tool + helper (Plan 27.7-02), 4 lint (Plan 27.7-03), 6 install + 4 SKILL row (Plan 27.7-04), 3 skill adoption (Plan 27.7-05), 5 README + benchmark (Plan 27.7-06), 8 baseline + 5 headless E2E (Plan 27.7-07).
+
+### Out of scope (deferred or rejected)
+
+- Write tools in v1 — `gdd_decision_append`, `gdd_blocker_clear`, `gdd_plan_complete` etc. Mutation belongs to slash-skills + lockfile-safe writers (Phase 20 surface), not callable-by-any-client MCP tools. Re-examine at Phase 30 (issue reporter) or Phase 41 (team mode).
+- Tool sprawl past 12 — Storybloq grew to 43 tools because read + write + autonomous + review-lens orchestration share the surface. GDD's autonomous surface is `/gdd:do`, review is `agents/*`. Re-examine when measured token-cost data justifies an additional tool.
+- Live (streaming) MCP resources — Phase 48 (`/gdd:live`) handles long-lived browser sessions via `channel/`-style subprocess registry; MCP stays request/response in v1.
+- Multi-project federation — one server, one project root. Two GDD projects in two terminals = two MCP servers. Federation is a Phase 41 (team mode) question.
+
+### Benchmark
+
+`test-fixture/baselines/phase-27-7/priming-benchmark.json` — synthetic-fixture priming run shows −31.18% token reduction (3 MCP calls vs equivalent file-reading path), with a 34× wall-clock speedup vs file-reading. Floor target was −30% (Storybloq's measured number); GDD exceeds the floor. Real-cycle calibration follows in a patch after 1-2 production cycles.
+
+### Headless E2E (ROADMAP SC #11)
+
+`tests/gdd-mcp-headless-e2e.test.cjs` — `npm pack` produces tarball -> `npm install <tarball>` into mkdtempSync prefix -> spawn `gdd-mcp` via the installed bin -> MCP initialize handshake asserts `serverInfo.name === 'gdd-mcp'` + `serverInfo.version === package.json#version` -> follow-up `tools/list` asserts `result.tools.length === 12`. Cleanup at end. Marked `skip: process.platform === 'win32'` for npm pack symlink false-negatives (Blocker #2 acceptance); POSIX CI runs all 5 E2E tests.
+
+---
+
 ## [1.27.6] — 2026-05-18
 
 ### Added

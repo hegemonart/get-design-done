@@ -456,6 +456,13 @@
       "description": "Default MCP per-task budget (calls + consecutive-timeout thresholds)"
     },
     {
+      "name": "mcp-gdd-tools-schema",
+      "path": "reference/schemas/mcp-gdd-tools.schema.json",
+      "type": "schema",
+      "phase": 27.7,
+      "description": "Phase 27.7 — Draft-07 input/output schemas for the 12 read-only tools in scripts/mcp-servers/gdd-mcp/ (gdd-mcp MCP server)"
+    },
+    {
       "name": "meta-rules",
       "path": "reference/meta-rules.md",
       "type": "meta-rules",
