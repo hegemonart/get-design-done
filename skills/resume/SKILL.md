@@ -3,6 +3,7 @@ name: gdd-resume
 description: "Restore session context from a numbered checkpoint. Lists available checkpoints when no argument given."
 argument-hint: "[<N>]"
 tools: Read, Write, Bash, Glob, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list, mcp__gdd_decisions_list
+disable-model-invocation: true
 ---
 
 @reference/retrieval-contract.md

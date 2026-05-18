@@ -3,6 +3,7 @@ name: gdd-pause
 description: "Write a numbered checkpoint so work can resume in a new session without re-running completed stages."
 argument-hint: "[context note]"
 tools: Read, Write, Bash, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint
+disable-model-invocation: true
 ---
 
 @reference/retrieval-contract.md
