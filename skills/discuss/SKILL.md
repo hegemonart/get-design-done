@@ -47,7 +47,23 @@ Emit `## DISCUSS COMPLETE` when done.
 
 Use only the modes the user actually passed. Missing flags → `<mode>normal</mode>`.
 
-## Step 4 — Report
+## Step 4 — Inline glossary maintenance (CONTEXT.md)
+
+When a fuzzy phrase is resolved into a sharper term, or a new domain concept is named
+during the interview: write to `./CONTEXT.md` IMMEDIATELY (do NOT batch). Use the schema
+in `./../../reference/context-md-format.md` — H2 heading per term, body paragraph,
+optional `**Aliases:**` line for term-merging. Multi-context repos use `CONTEXT-MAP.md`
+plus per-area `<area>/CONTEXT.md`. CONTEXT.md is lazy-created on the first term write.
+
+## Step 5 — Session wrap: ADR-offer scan
+
+For each decision recorded this session, check ALL three criteria from
+`./../../reference/adr-format.md`: (a) **hard-to-reverse**, (b) **surprising-without-context**,
+(c) **real-tradeoff**. If ALL three hold, offer to author `docs/adr/NNNN-<slug>.md`. If
+ANY criterion fails, the decision stays in STATE.md `<decisions>`. Routine choices are
+NEVER auto-promoted.
+
+## Step 6 — Report
 
 Wait for `## DISCUSS COMPLETE`. Re-read STATE.md. Count new D-XX entries since Step 1. Print:
 
