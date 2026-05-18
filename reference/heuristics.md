@@ -324,3 +324,32 @@ canonical predecessor (`v1.28.5` after `v1.28.0`, not `v1.28.4`).
 **Preview-suffix trap:** model IDs with `-preview` (`gpt-5-preview` vs `gpt-5`) drift — today's
 preview is tomorrow's GA. Tooling MUST store the parent name in `provider_model_id` and treat
 the suffix as decorative. See `./peer-cli-protocol.md` for the peer-CLI-side context.
+
+---
+
+## Optimization rules
+
+Reference catalog for `skills/optimize/SKILL.md`. Four deterministic rules; rule-based
+analysis applied in order. Each rule inspects per-agent aggregates from
+`.design/agent-metrics.json` and emits zero or more rows to the recommendations table.
+
+**R1 — Low cache hit rate.**
+- *Condition:* `total_spawns >= --min-spawns` AND `cache_hit_rate < 0.20`.
+- *Emit:* `"Consider batching tasks for agent {agent} — cache hit rate is {rate*100}%. Investigate cache-aligned ordering (see reference/shared-preamble.md) and whether input paths can be normalized."`
+- *Proposed action:* Batch similar tasks; confirm shared-preamble import ordering.
+
+**R2 — Expensive and rarely lazy-skipped.**
+- *Condition:* `total_cost_usd > 0.50` AND `lazy_skip_rate < 0.10`.
+- *Emit:* `"Agent {agent} is expensive (${cost}) and rarely skipped ({rate*100}% lazy-skip). Consider adding a lazy gate heuristic at agents/{agent}-gate.md (see plan 10.1-04 pattern)."`
+- *Proposed action:* Add lazy-gate agent.
+
+**R3 — Tier override churn.**
+- *Condition:* Multiple telemetry rows show recorded `tier` differing from frontmatter `default-tier` (e.g., frontmatter `opus` but measured rows consistently `haiku` from budget.json override or soft-threshold downgrade).
+- *Emit:* `"Tier override churn detected for {agent}: frontmatter says {frontmatter-tier} but measured tier is {measured-tier} in {N} of last {M} rows. Consider updating frontmatter default-tier or removing the budget.json override."`
+- *Proposed action:* Update frontmatter default-tier OR prune budget.json `tier_overrides` entry.
+
+**R4 — Typical duration drift.**
+- *Condition:* Measured `typical_duration_seconds` (computed as avg wall-clock between paired spawn/complete rows; fall back to frontmatter when pairing unavailable) differs from frontmatter `typical-duration-seconds` by more than 50%.
+- *Emit:* `"Typical duration for {agent} has drifted: frontmatter {old}s vs measured {new}s ({delta_pct}% drift). Update frontmatter typical-duration-seconds: {new}."`
+- *Proposed action:* Edit `agents/{agent}.md` frontmatter.
+- *Note:* v1 only computes wall-clock duration when telemetry ledger carries both spawn AND complete rows with matching correlation IDs. If unavailable, R4 flags "insufficient data" rather than emitting a false proposal. Phase 11 reflector can add a PostToolUse writer.
