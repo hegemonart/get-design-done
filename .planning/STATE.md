@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: milestone
-status: Phase 27 + v1.27.1 wiring patch shipped. Phase 31 (Figma Off-Context Extractor) in progress. Roadmap rebalanced 2026-05-16 — 7 new decimal phases inserted (27.6, 30.5, 33.5, 36.5, 39.5, 40.5, 41.5), 5 phases split into sub-phases (34→34.1/2/3, 36→36.1/2/3, 37→37.1/2/3, 38→38.1/2, 40→40.1/2), Phase 35 renumbered → 49 (consumes 42 + 44).
-stopped_at: v1.27.1 (2026-05-02). See ROADMAP.md Phase Details for full phase list (1 → 49).
-last_updated: "2026-05-16T11:00:00.000Z"
-last_activity: 2026-05-16
+status: Phase 28 (Foundational References Tier 2) closed out — v1.28.0 shipped (2026-05-18). 4-manifest lockstep, CHANGELOG block, OFF_CADENCE add, 6 phase-28 baseline files, 9-test version-agnostic regression suite, scoped ROADMAP flip (7 inline + 1 overview). 5 new ref files (color-theory, composition, proportion-systems, i18n, contrast-advanced) + 2 verifier i18n probes + 1 explore i18n-readiness probe + 12 additive cross-link insertions + 2 orthogonal audit-scoring lens-tags. Phase 27 + v1.27.7 (gdd-mcp) shipped prior. Phase 31 (Figma Off-Context Extractor) in progress. Roadmap rebalanced 2026-05-16.
+stopped_at: v1.28.0 (2026-05-18 — Phase 28 closeout). See ROADMAP.md Phase Details for full phase list (1 → 49).
+last_updated: "2026-05-18T06:39:00.000Z"
+last_activity: 2026-05-18
 progress:
   total_phases: 60
   completed_phases: 33
