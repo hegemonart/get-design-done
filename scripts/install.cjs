@@ -62,6 +62,8 @@ function helpText() {
     '  --dry-run       Print the diff without writing',
     '  --config-dir D  Override the config directory',
     '  --no-peer-prompt  Suppress the post-install peer-CLI detection nudge',
+    '  --register-mcp     Register gdd-mcp with detected harnesses (Claude Code, Codex). Opt-in.',
+    '  --no-register-mcp  Skip MCP registration (default behavior; included for symmetry).',
     '  --help, -h      Show this message',
     '',
     'Environment overrides (per-runtime):',
@@ -212,6 +214,46 @@ async function main() {
       // the install — the plugin is fully functional without peer-CLI.
       process.stderr.write(
         `\n[peer-cli] post-install nudge skipped: ${e && e.message ? e.message : e}\n`,
+      );
+    }
+  }
+
+  // Phase 27.7 / Plan 27.7-04 — opt-in MCP registration (D-07).
+  // Fires only on real install (not uninstall, not dry-run) when the user
+  // passes --register-mcp explicitly. Default OFF; --no-register-mcp is a
+  // no-op today (reserved for symmetry / when default flips). Idempotent
+  // + graceful absent-CLI fallback handled inside registerMcp.
+  if (!uninstall && !dryRun && flags.has('--register-mcp')) {
+    try {
+      const { registerMcp } = require('./lib/install/mcp-register.cjs');
+      for (const harness of ['claude', 'codex']) {
+        try {
+          const result = registerMcp({ harness });
+          if (!result.detected) {
+            process.stderr.write('[install] ' + result.notice + '\n');
+          } else if (result.idempotent_skip) {
+            process.stdout.write(
+              '[install] gdd-mcp already registered with ' + harness + ' — skipping.\n',
+            );
+          } else if (result.applied) {
+            process.stdout.write(
+              '[install] gdd-mcp registered with ' + harness + '.\n',
+            );
+          } else {
+            process.stderr.write(
+              '[install] gdd-mcp registration with ' + harness + ' failed: exit ' + result.exit_code + '\n',
+            );
+          }
+        } catch (err) {
+          process.stderr.write(
+            '[install] gdd-mcp registration error (' + harness + '): ' + (err && err.message ? err.message : err) + '\n',
+          );
+        }
+      }
+    } catch (e) {
+      // mcp-register lib not present (forward-compat) — silent skip.
+      process.stderr.write(
+        '[install] mcp-register lib unavailable: ' + (e && e.message ? e.message : e) + '\n',
       );
     }
   }
