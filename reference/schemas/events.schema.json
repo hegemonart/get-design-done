@@ -10,7 +10,7 @@
     "type": {
       "type": "string",
       "minLength": 1,
-      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error."
+      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap."
     },
     "timestamp": {
       "type": "string",
@@ -34,7 +34,7 @@
     },
     "payload": {
       "type": "object",
-      "description": "Event-type-specific payload. Opaque at the envelope level."
+      "description": "Event-type-specific payload. Opaque at the envelope level. When type === 'capability_gap', the payload is narrowed by the conditional schema in allOf[0] to the 7-field CapabilityGapPayload (Phase 29 D-02)."
     },
     "_meta": {
       "type": "object",
@@ -51,5 +51,99 @@
       "type": "boolean",
       "description": "Writer-set flag indicating the payload exceeded maxLineBytes and has been replaced by a placeholder."
     }
-  }
+  },
+  "definitions": {
+    "TrajectoryRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trajectory_path", "byte_start", "byte_end", "content_hash"],
+      "properties": {
+        "trajectory_path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Repo-relative or absolute path to the trajectory-JSONL file containing the referenced evidence slice."
+        },
+        "byte_start": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Inclusive byte offset into the trajectory file marking the start of the evidence slice."
+        },
+        "byte_end": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Exclusive byte offset into the trajectory file marking the end of the evidence slice."
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "description": "Hash-pinned content fingerprint (Phase 29 D-07). Detects retroactive chain mutation."
+        }
+      },
+      "description": "Pointer to a slice of a trajectory-JSONL file (Phase 29 D-07). Hash-pinned so consumers can detect chain mutation. Used inside CapabilityGapPayload.evidence_refs to keep payloads small while preserving audit-traceability — pointers, NOT duplicated trajectory content."
+    },
+    "CapabilityGapPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "parent_event_id",
+        "source",
+        "context_hash",
+        "intent_summary",
+        "suggested_kind",
+        "evidence_refs"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "UUIDv4 identifying this capability_gap event. Stable across emit + read cycles."
+        },
+        "parent_event_id": {
+          "type": ["string", "null"],
+          "description": "UUIDv4 of the parent chain event when the gap was surfaced inside a larger trajectory; null when this is a root emit (e.g. /gdd:fast bail-out)."
+        },
+        "source": {
+          "type": "string",
+          "enum": ["fast", "router", "reflector_pattern"],
+          "description": "Which surface detected the gap. fast = /gdd:fast no-skill-match path; router = gdd-router unmatched-intent path; reflector_pattern = reflector pattern-detection pass (Plan 29-02)."
+        },
+        "context_hash": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable hash of the intent/context that surfaced the gap. Used by 29-03 aggregation to cluster recurring gaps with the same hash."
+        },
+        "intent_summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "Short human-readable description of the failed lookup. Capped at 256 chars per D-02 — keeps payload small + auditable."
+        },
+        "suggested_kind": {
+          "type": "string",
+          "enum": ["agent", "skill"],
+          "description": "Drafter hint for 29-04 incubator-author. fast emits 'skill' (narrow primitive); router emits 'agent' (multi-step workflow); reflector_pattern may emit either."
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/TrajectoryRef" },
+          "description": "Pointers to trajectory-JSONL slices that evidence the gap (D-07). Hash-pinned to detect chain mutation. Empty array allowed for low-evidence emits (e.g. /gdd:fast which has no trajectory)."
+        }
+      },
+      "description": "Phase 29 D-02 capability_gap payload — exactly 7 fields, additionalProperties: false. Validated when the envelope's type === 'capability_gap' via the allOf[0] conditional."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "type": { "const": "capability_gap" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/definitions/CapabilityGapPayload" }
+        }
+      }
+    }
+  ]
 }
