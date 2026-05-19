@@ -12,6 +12,7 @@ error-classifier.cjs
 event-chain.cjs
 glob-match.cjs
 hedge-ensemble.cjs
+incubator-author.cjs
 iteration-budget.cjs
 jittered-backoff.cjs
 lockfile.cjs
