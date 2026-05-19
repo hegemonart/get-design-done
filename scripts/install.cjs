@@ -141,56 +141,42 @@ function summariseResults(results) {
 // Phase 28.8 — Tier-2 distribution-channel doctor.
 //
 // Read-only status reporter for distribution channels (Cursor Marketplace,
-// Codex Plugins, etc.). This is the central dispatch — additional channel
-// reporters plug in here as sibling section calls (Plan 28-8-C2 will add
-// a Codex section; Plan 28-8-X2 will refactor into a `doctor-tier2.cjs`
-// aggregator if a third Tier-2 channel lands).
+// Codex Plugins, agentskills.io lint pass). Phase 28.8-X2 D-13/D-16: the
+// three channels are aggregated via `scripts/lib/install/doctor-tier2.cjs`
+// which composes B2's `reportCursorMarketplace`, C2's `checkCodexPlugin`,
+// and A1's `lintSummary` into a single "## Tier-2 Distribution Channels"
+// section with a one-line summary + per-channel subsections.
 //
-// Each section call is a thin wrapper: lazy-require the channel reporter,
-// invoke its pure `report*()` function with `{projectRoot}`, then render
-// via its co-located formatter. Sections are independent — failure in
-// one section logs locally and does not fail the doctor exit.
+// Phase 28.8-X2: B2's and C2's individual doctor sections used to be
+// rendered as standalone blocks here. With X2 the aggregator now owns
+// the entire Tier-2 section — the B2/C2 modules remain callable internals
+// (the aggregator consumes their pure `report*()` functions), but the
+// individual formatters are no longer invoked directly from install.cjs.
+// Rationale: a single section with a unified summary line is what the
+// maintainer wants (Plan 28-8-X2 §<objective>). The aggregator handles
+// throw safety internally (Cursor's malformed-state-file throw becomes
+// a `not-configured` subsection rather than killing the doctor).
 function runDoctor() {
   const projectRoot = process.cwd();
-  const sections = [];
-
-  // --- Cursor Marketplace section (Plan 28-8-B2) ---
   try {
     const {
-      reportCursorMarketplace,
-      formatCursorMarketplaceReport,
-    } = require('./lib/install/doctor-cursor-marketplace.cjs');
-    const report = reportCursorMarketplace({ projectRoot });
-    sections.push(formatCursorMarketplaceReport(report));
+      readTier2Status,
+      formatTier2Section,
+    } = require('./lib/install/doctor-tier2.cjs');
+    const status = readTier2Status({ sourceRoot: projectRoot });
+    process.stdout.write(formatTier2Section(status) + '\n');
   } catch (err) {
-    // Surface the error inline (don't crash the doctor) so the maintainer
-    // sees parse failures / unknown statuses without losing other sections.
-    sections.push(
-      '=== Cursor Marketplace status ===\n  ERROR: '
+    // The aggregator is throw-resistant (channel errors surface as
+    // `not-configured` with detail). A top-level throw here implies the
+    // aggregator module itself failed to load — surface inline so the
+    // maintainer sees the breakage without losing the whole CLI exit.
+    process.stdout.write(
+      '## Tier-2 Distribution Channels\n\n'
+        + '  ERROR: '
         + (err && err.message ? err.message : String(err))
+        + '\n'
     );
   }
-
-  // --- Codex Plugin section (Plan 28-8-C2) ---
-  try {
-    const {
-      checkCodexPlugin,
-      renderCodexPluginSection,
-    } = require('./lib/install/doctor-codex-plugin.cjs');
-    const report = checkCodexPlugin(projectRoot);
-    sections.push(renderCodexPluginSection(report).replace(/\n$/, ''));
-  } catch (err) {
-    sections.push(
-      'Codex Plugin status\n  ERROR: '
-        + (err && err.message ? err.message : String(err))
-    );
-  }
-
-  // --- Future sections plug in here:
-  //   Tier-2 aggregator (Plan 28-8-X2)   — section-module: doctor-tier2.cjs
-  // Each follows the same try/lazy-require/format pattern above.
-
-  process.stdout.write(sections.join('\n\n') + '\n');
 }
 
 async function main() {

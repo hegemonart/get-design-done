@@ -384,9 +384,15 @@ test('cursor-marketplace-doctor: read-only — no files created/modified by repo
 // CLI smoke test — invoke install.cjs --doctor in a tmpdir
 // ---------------------------------------------------------------------------
 
-test('cursor-marketplace-doctor: CLI --doctor exits 0 + prints Cursor Marketplace status header', () => {
+test('cursor-marketplace-doctor: CLI --doctor exits 0 + prints Cursor Marketplace subsection', () => {
   // Compute the absolute path to install.cjs from THIS test file's location
   // (do NOT rely on the tmpdir's cwd).
+  // Phase 28.8-X2: install.cjs --doctor now renders a single aggregated
+  // Tier-2 section via scripts/lib/install/doctor-tier2.cjs that wraps
+  // B2's reportCursorMarketplace as the Cursor Marketplace subsection
+  // (### header) rather than B2's standalone `=== Cursor Marketplace
+  // status ===` block. The underlying B2 reporter is unchanged; only
+  // the CLI rendering shape moved.
   const installCjs = path.resolve(__dirname, '..', 'scripts', 'install.cjs');
   const root = setupTmpProject({
     stateFixture: 'state-approved-published.json',
@@ -398,15 +404,22 @@ test('cursor-marketplace-doctor: CLI --doctor exits 0 + prints Cursor Marketplac
       cwd: root,
       encoding: 'utf8',
     });
-    assert.match(stdout, /=== Cursor Marketplace status ===/);
+    assert.match(stdout, /## Tier-2 Distribution Channels/);
+    assert.match(stdout, /### Cursor Marketplace/);
     assert.match(stdout, /approved-published/);
-    assert.match(stdout, /Schema validity:\s+valid/);
+    assert.match(stdout, /tier-2 status:/);
   } finally {
     rmRf(root);
   }
 });
 
-test('cursor-marketplace-doctor: CLI --doctor in clean tmpdir → not-submitted state', () => {
+test('cursor-marketplace-doctor: CLI --doctor in clean tmpdir → not-configured state in aggregator', () => {
+  // Phase 28.8-X2: when no .cursor-plugin/plugin.json is present, the
+  // aggregator surfaces the cursor channel as `not-configured` (X2
+  // interface contract) — distinct from B2's standalone `not-submitted`
+  // default. The B2 module itself still emits `not-submitted`; the
+  // aggregator normalizes manifest-absent into `not-configured` so the
+  // summary line's "ready" count is computed consistently across channels.
   const installCjs = path.resolve(__dirname, '..', 'scripts', 'install.cjs');
   const root = setupTmpProject({ packageVersion: '1.28.8' });
   try {
@@ -414,9 +427,9 @@ test('cursor-marketplace-doctor: CLI --doctor in clean tmpdir → not-submitted 
       cwd: root,
       encoding: 'utf8',
     });
-    assert.match(stdout, /=== Cursor Marketplace status ===/);
-    assert.match(stdout, /not-submitted/);
-    assert.match(stdout, /Manifest:\s+absent/);
+    assert.match(stdout, /## Tier-2 Distribution Channels/);
+    assert.match(stdout, /### Cursor Marketplace/);
+    assert.match(stdout, /not-configured/);
   } finally {
     rmRf(root);
   }

@@ -282,7 +282,14 @@ test('codex-plugin-doctor: tmpdir-rooted run accepts arbitrary projectRoot (D-10
 // CLI smoke test — install.cjs --doctor renders both sections
 // ---------------------------------------------------------------------------
 
-test('codex-plugin-doctor: install.cjs --doctor exits 0 + emits "Codex Plugin status" section', () => {
+test('codex-plugin-doctor: install.cjs --doctor exits 0 + emits Codex Plugin subsection', () => {
+  // Phase 28.8-X2: install.cjs --doctor now renders a single aggregated
+  // Tier-2 section via scripts/lib/install/doctor-tier2.cjs. C2's
+  // checkCodexPlugin reader is unchanged — it's wrapped by the aggregator
+  // and surfaces as the "### Codex Plugin" subsection. The verdict
+  // (`ready-to-install` / `manifest-only-not-ready`) is preserved verbatim.
+  // The Cursor Marketplace subsection co-renders alongside Codex in the
+  // same Tier-2 section — must not regress.
   const installCjs = path.resolve(__dirname, '..', 'scripts', 'install.cjs');
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'codex-doctor-cli-'));
   try {
@@ -291,11 +298,12 @@ test('codex-plugin-doctor: install.cjs --doctor exits 0 + emits "Codex Plugin st
       cwd: tmpRoot,
       encoding: 'utf8',
     });
-    assert.match(stdout, /Codex Plugin status/);
-    assert.match(stdout, /verdict: ready-to-install/);
-    assert.match(stdout, /install path \(computed, not verified\):/);
-    // B2's Cursor section is also present — must not regress.
-    assert.match(stdout, /=== Cursor Marketplace status ===/);
+    assert.match(stdout, /## Tier-2 Distribution Channels/);
+    assert.match(stdout, /### Codex Plugin/);
+    assert.match(stdout, /ready-to-install/);
+    assert.match(stdout, /codex plugin marketplace add hegemonart\/get-design-done/);
+    // Cursor Marketplace subsection co-renders alongside — must not regress.
+    assert.match(stdout, /### Cursor Marketplace/);
   } finally {
     rmRf(tmpRoot);
   }
