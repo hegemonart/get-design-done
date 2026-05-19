@@ -1,5 +1,5 @@
 ---
-name: get-design-done:graphify
+name: gdd-graphify
 description: Manage the Graphify knowledge graph for the current project. Build, query, status, diff. When available, design-planner and design-integration-checker use the graph for pre-search consultation.
 ---
 

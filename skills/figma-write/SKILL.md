@@ -1,5 +1,5 @@
 ---
-name: get-design-done:figma-write
+name: gdd-figma-write
 description: "Write design decisions from `.design/DESIGN-CONTEXT.md` back into the active Figma file by dispatching the `design-figma-writer` agent in one of three modes (annotate / tokenize / mappings). Use when the user has completed a design pipeline cycle and wants the decisions (layer comments, variable bindings, or Code Connect mappings) reflected in Figma. Operates proposal→confirm with `--dry-run` and `--confirm-shared` flags."
 ---
 
