@@ -33,6 +33,14 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
    ```
    Use the resolved slug where `<slug>` appears.
 
+3.5. **Optional: capability-gap pre-scan** (Phase 29 Plan 02; runs only if `.design/config.json.reflector.capability_gap_scan_enabled !== false`):
+   See @skills/reflect/procedures/capability-gap-scan.md for the full procedure.
+   The `design-reflector` agent runs the scan automatically as part of its reflection pass; this step lets users dry-run it independently with:
+   ```
+   node scripts/lib/reflector/capability-gap-scan.cjs --dry-run
+   ```
+   The scan emits `capability_gap` events (`source: "reflector_pattern"`) for recurring patterns lacking a dedicated executable owner; Plan 29-03 aggregates these for `/gdd:apply-reflections`.
+
 4. **Spawn design-reflector**:
    ```
    Task("design-reflector", """
@@ -74,3 +82,4 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
 - Do not auto-apply any proposal.
 - Do not modify agent files, reference files, or budget.json.
 - Do not run the full audit pipeline — this is a standalone reflection run.
+- Do not bypass the threshold knob. The default `reflector.capability_gap_threshold: 3` exists to suppress noise; do NOT lower it below 1.

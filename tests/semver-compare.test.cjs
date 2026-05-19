@@ -233,6 +233,21 @@ OFF_CADENCE_VERSIONS.add('1.28.7');
 //   - 1.28.8 → Phase 28.8 (tier-2-distribution-channels); off-cadence sub-phase from 1.28.7.
 OFF_CADENCE_VERSIONS.add('1.28.8');
 
+// Phase 29 — Capability-Gap Telemetry + Self-Authoring of Agents/Skills
+// (v1.29.0, 2026-05-19). First on-cadence MINOR after the 1.28.x decimal
+// sub-phase sequence — registered here for OFF_CADENCE_VERSIONS membership
+// because the EXPECTED_SEQUENCE check (1.0.0..1.0.7) is the original 1.0.x
+// patch-cadence test, and every post-1.0.x version (including mainline
+// MINORs like 1.14.0/1.20.0/1.25.0/1.28.0) is registered via this Set as
+// "not in the strict 1.0.x exact-patch-bump sequence but accepted." Plan
+// 29-07 D-10 framing distinguished on-cadence MINOR vs decimal sub-phase
+// at the CHANGELOG level (no special CHANGELOG slot needed) but the
+// semver-test Set is a separate concern — accepts the version as a
+// recognized release.
+//   - 1.29.0 → Phase 29 (capability-gap-self-authoring); on-cadence MINOR
+//     after the 1.28.0 -> 1.28.5 -> 1.28.6 -> 1.28.7 -> 1.28.8 decimal arc.
+OFF_CADENCE_VERSIONS.add('1.29.0');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];

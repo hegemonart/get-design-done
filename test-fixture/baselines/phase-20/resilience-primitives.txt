@@ -12,6 +12,7 @@ error-classifier.cjs
 event-chain.cjs
 glob-match.cjs
 hedge-ensemble.cjs
+incubator-author.cjs
 iteration-budget.cjs
 jittered-backoff.cjs
 lockfile.cjs
@@ -23,6 +24,8 @@ rate-guard.cjs
 redact.cjs
 reference-registry.cjs
 reference-resolver.cjs
+reflections-cycle-writer.cjs
+reflector-capability-gap-aggregator.cjs
 relevance-counter.cjs
 runtime-detect.cjs
 spring.cjs

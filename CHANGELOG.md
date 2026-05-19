@@ -4,6 +4,47 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.29.0] - 2026-05-19
+
+### Phase 29 — Capability-Gap Telemetry + Self-Authoring of Agents/Skills
+
+First on-cadence minor version after the 1.28.x decimal sub-phase sequence (1.28.0 through 1.28.8). Extends Phase 11's reflector-driven self-improvement loop from authoring reference content to authoring executable artifacts (agents and skills) when capability-gaps recur. Two structural ceilings close here: the artifact-type ceiling (reflector now drafts agents/skills, not just `reference/*.md`) and the signal-source ceiling (capability-lookup failures are now first-class telemetry). Strictly proposal-only — `/gdd:apply-reflections` remains the single human gate. 6-manifest lockstep at 1.29.0 (extends Phase 28.8's 4-manifest lockstep with the 2 Tier-2 manifests `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json` bumped in lockstep). 7 plans across Wave A telemetry (29-01..29-03) / Wave B authoring (29-04..29-06) / Wave C closeout (29-07).
+
+### Added
+
+- **Capability-gap telemetry + self-authoring of agents/skills.** Two-stage rollout per Phase 29 D-01:
+  - **Stage 0 — telemetry only (ships immediately).**
+    - New typed `capability_gap` event added to the Phase 22 event-chain schema (`reference/schemas/events.schema.json`). 7 fields exactly per D-02 (no PII): `event_id`, `parent_event_id`, `source` (enum: `fast`/`router`/`reflector_pattern`), `context_hash`, `intent_summary`, `suggested_kind` (enum: `agent`/`skill`), `evidence_refs[]` (hash-pinned trajectory-JSONL pointers per D-07, not duplicated content).
+    - Emitters integrated at three lookup-fail points (29-01): `skills/fast/SKILL.md` no-skill-match path emits `source: "fast"`; `skills/router/SKILL.md` unmatched-intent path emits `source: "router"`. Per D-08, MCP-probe connection failures do NOT emit `capability_gap` — those remain Phase 22's connection-status surface.
+    - Reflector pattern-detection pass (29-02) at `scripts/lib/reflector/capability-gap-scan.cjs` scans `.design/intel/` + Phase 23.5 posterior + recent trajectories for `Touches:` clusters recurring without dedicated agent owners and emits `capability_gap` events with `source: "reflector_pattern"`.
+    - Reflector aggregation extension (29-03) at `scripts/lib/reflector-capability-gap-aggregator.cjs` reads all `capability_gap` events, clusters by `context_hash`, and writes a `## Capability gaps observed` section to `.design/reflections/<cycle-slug>.md`. `gdd-events --type capability_gap` filter exposed via the existing CLI.
+    - `reference/capability-gap-stage-gate.md` — Stage-0 → Stage-1 gate spec. K=3 stable clusters across M=10 cycles per D-03, cluster-stability defined as Phase 23.5 posterior `stddev(Beta(α, β)) < 0.05`. Both K and M overridable in the gate doc.
+  - **Stage 1 — incubator authoring (data-gated, user-opt-in per D-01).**
+    - `scripts/lib/incubator-author.cjs` (29-04) reads gap clusters above the stability threshold + posterior, then drafts `SKILL.md` or `agents/<slug>.md` at `.design/reflections/incubator/<slug>/` with Phase 28.5-compliant frontmatter (`name`, `description` in `<what>. Use when <triggers>.` form, `tools`, `default-tier`, optional `reasoning-class`, `parallel-safe`, `reads-only`). Origin section with `capability_gap` event refs. Computed usage frequency. Suggested integration point. `delegate_to: null` defensive default per D-12 (forward-compat with Phase 27).
+    - `/gdd:apply-reflections` extension (29-05) at `skills/apply-reflections/SKILL.md` and `scripts/lib/incubator-proposals.cjs` surfaces incubator drafts as a new (5th) proposal class alongside frontmatter/reference/budget/discussant. Each proposal renders a diff vs the nearest existing artifact (by name + tools + description embedding per D-09). Four actions per proposal: `accept` (promotes to `agents/`/`skills/` + registers via the Phase 14.5 `reference/registry.json`), `reject`, `defer`, `edit` ($EDITOR). Scope-guard validator at `scripts/validate-incubator-scope.cjs` (D-05) blocks promotion outside `agents/`+`skills/`.
+  - **Bandit fairness gate (29-06)** — `scripts/lib/bandit-router.cjs` accepts a new `prior_class: "promoted_incubator"` parameter. Promoted arms enter the Phase 23.5 posterior with a conservative `Beta(2, 8)` prior (assume worse-than-average) instead of an optimistic uniform. Per D-04: this IS the staging mechanism — single-step promotion gate via `/gdd:apply-reflections accept`, no two-step staging/ratify split.
+  - **Incubator TTL (29-06)** — drafts not promoted/refreshed within P=30 days (per D-06) auto-archive via `scripts/gsd-cleanup-incubator.cjs` to `.design/reflections/incubator/archive/<slug>/`. Refresh = new `capability_gap` event matching an existing slug's `context_hash` resets the timer.
+
+### Changed
+
+- Reflector now emits `capability_gap` events alongside the existing learnings / telemetry / agent-metrics signals. No change to existing reflection proposal classes — additive only.
+- `/gdd:apply-reflections` now surfaces 5 proposal classes (was 4: frontmatter / reference / budget / discussant; now adds Incubator agents+skills).
+- `scripts/lib/bandit-router.cjs` accepts a new `prior_class` parameter (default `null` = existing uniform-prior behavior; `"promoted_incubator"` = `Beta(2, 8)` conservative prior).
+
+### Documentation
+
+- `reference/capability-gap-stage-gate.md` — Stage-0 → Stage-1 gate spec (K=3 / M=10 defaults, `stddev(Beta(α, β)) < 0.05` stability threshold, user opt-in flow).
+- `README.md` + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) updated with the capability-gap telemetry + self-authoring section: Stage 0 ships immediately (telemetry-only, no authoring); Stage 1 authoring is opt-in via `/gdd:apply-reflections` once K=3 stable clusters across M=10 cycles surface.
+
+### Preserved (no behavior change)
+
+- **Phase 11 success-criterion-8 discipline.** The reflector authors nothing that auto-ships. `/gdd:apply-reflections` remains the single human gate (extended to include the new Incubator proposal class, not bypassed).
+- **Phase 28.7 file-drop install paths UNCHANGED.** `scripts/lib/install/converters/cursor.cjs` and `scripts/lib/install/converters/codex.cjs` remain backward-compatible per the Phase 28.8 D-05 invariant.
+- **Phase 28.8 Tier-2 channels (.cursor-plugin/plugin.json + .codex-plugin/plugin.json)** version-bumped in lockstep, but their schemas / keys / structure are UNCHANGED.
+- **Scope guard (D-05).** Self-authoring is limited to `agents/` and `skills/` only. No runtimes / transports / connections / hooks / scripts / CI workflow authoring. `scripts/validate-incubator-scope.cjs` enforces this at promotion time.
+
+---
+
 ## [1.28.8] - 2026-05-19
 
 ### Phase 28.8 — Tier-2 Distribution Channels

@@ -839,6 +839,13 @@
       "type": "meta-rules",
       "phase": 28.5,
       "description": "Phase 28.5 skill-authoring contract — adapted from mattpocock/skills (MIT). SKILL.md <=100-line cap (warn >=100, block >=250 in CI), 1024-char description cap, <what>. Use when <triggers>. form (lax-mode default per Phase 33 A/B pending), frontmatter required fields, progressive-disclosure one-level-deep rule. Validator at scripts/validate-skill-length.cjs."
+    },
+    {
+      "name": "capability-gap-stage-gate",
+      "path": "reference/capability-gap-stage-gate.md",
+      "type": "meta-rules",
+      "phase": 29,
+      "description": "Phase 29 Stage-0 → Stage-1 capability-gap gate specification. Defaults K=3 stable clusters across M=10 cycles with closed-form posterior stddev(Beta(α,β)) < 0.05 (Laplace prior matches Phase 23.5). D-01 lock: gate emits a one-time user-facing prompt on crossing — NEVER an auto-stage-flip. Overridable via .design/config.json capability_gap_gate.{K,M,stddev_threshold}. Test fixtures at tests/reflector-capability-gap-aggregation.test.cjs."
     }
   ]
 }

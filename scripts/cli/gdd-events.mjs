@@ -50,6 +50,7 @@ function usage() {
       '  gdd-events cat [--path=<p>]',
       '  gdd-events list-types',
       '  gdd-events serve [--port=<n>] [--token=<t>] [--tail=<file>]',
+      '  gdd-events --type <typename> [--path=<p>]   (Plan 29-03 ergonomic alias for `grep type=<typename>`)',
       '',
       'Filter language (grep): type=<s>  payload.<dotted.path>=<s>  !type=<s>',
       '',
@@ -59,11 +60,22 @@ function usage() {
 
 function parseArgs(args) {
   const out = { _: [], flags: {} };
-  for (const a of args) {
+  // Flags that take a value via the space-separated form `--flag <value>`.
+  // Without this set, `--type capability_gap` would be parsed as
+  // { flags: { type: true } } and the value would land in positional args.
+  const VALUE_FLAGS = new Set(['type', 'path', 'port', 'token', 'tail']);
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
     if (a.startsWith('--')) {
       const eq = a.indexOf('=');
       if (eq === -1) {
-        out.flags[a.slice(2)] = true;
+        const name = a.slice(2);
+        if (VALUE_FLAGS.has(name) && i + 1 < args.length && !args[i + 1].startsWith('--')) {
+          out.flags[name] = args[i + 1];
+          i += 1;
+        } else {
+          out.flags[name] = true;
+        }
       } else {
         out.flags[a.slice(2, eq)] = a.slice(eq + 1);
       }
@@ -242,6 +254,27 @@ async function cmdServe(parsed) {
 
 async function main() {
   const parsed = parseArgs(argv.slice(2));
+
+  // Plan 29-03: `--type <typename>` (and `--type=<typename>`) is an ergonomic
+  // alias for `grep type=<typename>`. Desugar BEFORE shifting the subcommand
+  // so the flag can be used without a subcommand prefix:
+  //   gdd-events --type capability_gap --path=…
+  // Equivalent to:
+  //   gdd-events grep type=capability_gap --path=…
+  if (typeof parsed.flags.type === 'string' && parsed.flags.type.length > 0) {
+    const typeValue = parsed.flags.type;
+    delete parsed.flags.type;
+    // Inject the filter term and force the grep code path. Preserve any
+    // additional positional terms the user already supplied.
+    parsed._ = [`type=${typeValue}`, ...parsed._];
+    try {
+      return await cmdGrep(parsed);
+    } catch (err) {
+      stderr.write(`gdd-events: ${err && err.message ? err.message : String(err)}\n`);
+      return 1;
+    }
+  }
+
   const sub = parsed._.shift();
   try {
     switch (sub) {

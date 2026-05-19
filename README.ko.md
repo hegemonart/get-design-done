@@ -211,6 +211,16 @@ claude plugin install get-design-done@get-design-done
 
 자세한 내용은 [README.md](README.md)(영어, 정본)을 참조하세요.
 
+### Capability-Gap 텔레메트리 + 자가 저작 (v1.29.0+)
+
+리플렉터 루프는 이제 "capability 조회 실패" 신호를 일급 텔레메트리로 추적하며, 충분히 반복되는 갭이 드러나면 새로운 agent 또는 skill을 리뷰용 제안으로 작성할 수 있습니다.
+
+**스테이지 0 — 텔레메트리(즉시 출시).** 세 가지 조회 실패 지점이 타입화된 `capability_gap` 이벤트를 발행합니다: `skills/fast` 스킬 미일치 경로, `gdd-router` 미일치 인텐트 경로, 리플렉터 패턴 감지 패스. `gdd-events --type capability_gap`으로 확인하세요.
+
+**스테이지 1 — 자가 저작(데이터가 게이트를 통과하면 옵트인).** K=3개의 안정 클러스터가 M=10 사이클에 걸쳐 나타나면, `/gdd:apply-reflections`가 스테이지 1 활성화 여부를 한 번 묻습니다. 그러면 리플렉터는 Phase 28.5 준수 frontmatter를 가진 인큐베이터 아티팩트를 `.design/reflections/incubator/<slug>/`에 초안 작성합니다. 4가지 액션: `accept` / `reject` / `defer` / `edit`. 엄격히 proposal-only — `/gdd:apply-reflections`가 유일한 인간 게이트입니다 (Phase 11 SC-8).
+
+스코프 가드: 저작은 `agents/` 와 `skills/`에 한정되며 — 런타임 / 트랜스포트 / 훅은 대상이 아닙니다. 자세한 내용은 [README.md](README.md)(영어, 정본)을 참조하세요.
+
 
 ## 작동 방식
 
