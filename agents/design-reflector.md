@@ -35,6 +35,18 @@ Read flow:
 
 Legacy grep-based parsing of skill outputs is preserved as a fallback for skills that haven't yet migrated to emit `reflection.proposal` events (Phase 22 scope). If no `reflection.proposal` events are present in the stream, run the legacy harvest across `.design/learnings/*.md` and `.design/intel/` exactly as before — both paths produce the same Proposals section format.
 
+## Capability-gap pattern scan (Phase 29 Plan 02)
+
+During the reflection pass, also run the capability-gap pattern scan to detect recurring patterns lacking a dedicated executable owner. The scan emits `capability_gap` events with `source: "reflector_pattern"` for Plan 29-03 to aggregate.
+
+```
+node -e "console.log(JSON.stringify(require('./scripts/lib/reflector/capability-gap-scan.cjs').runCapabilityGapScan(), null, 2))"
+```
+
+The scan reads three signal sources: `.design/intel/*.md` `Touches:` clusters, `.design/telemetry/posterior.json` high-usage arms with no specialized agent, and recent `.design/gep/events.jsonl` decision sequences. MCP-probe failures (`outcome === 'connection-error'`, `agent === 'mcp-probe'`, or `mcp_probe: true`) do NOT trigger gap events (CONTEXT D-08). See @skills/reflect/procedures/capability-gap-scan.md for the full contract.
+
+Cite the returned `emittedEventIds` in the run summary under a `## Capability gaps emitted` heading. The threshold knob is `reflector.capability_gap_threshold` in `.design/config.json` (default `N=3`, integer ≥ 1).
+
 ## Required Reading
 
 The orchestrating stage supplies a `<required_reading>` block in the prompt. Read every listed file before acting — this is mandatory.
@@ -51,6 +63,8 @@ Minimum expected inputs (skip gracefully if absent, note what's missing):
 ## Output
 
 Write `.design/reflections/<cycle-slug>.md`. If `--dry-run` is set in the spawning prompt, print proposals to stdout only — do not write the file.
+
+If the capability-gap pattern scan emitted any events during this run, include a `## Capability gaps emitted` heading listing each `event_id` with the source signal kind (`intel` | `posterior` | `trajectory`) and the `suggested_kind` (`agent` | `skill`) per event. Plan 29-03 reads these events from `.design/gep/events.jsonl` to cluster recurring `capability_gap` events for `/gdd:apply-reflections`.
 
 Terminate with `## REFLECTION COMPLETE`.
 
