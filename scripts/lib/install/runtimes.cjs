@@ -142,6 +142,27 @@ const RUNTIMES = Object.freeze([
     configDirFallback: '.cline',
     kind: 'multi-artifact',
   },
+  // Phase 28.8 (Plan B1) — Tier-2 distribution channel. 15th entry, kind
+  // 'cursor-marketplace'. Separate from the existing `id: 'cursor'` entry
+  // (kind: 'multi-artifact') which remains the Tier-1 file-drop install
+  // target. Per CONTEXT D-05 (additive), the two coexist — file-drop users
+  // and marketplace consumers are independent flows.
+  //
+  // build-distribution-bundles.cjs (Plan 28-8-X1) and install.cjs --doctor
+  // (Plan 28-8-B2) consult this entry. The regular install flow skips it
+  // because `configDir` is null — detect-runtimes never matches it on disk.
+  //
+  // No `configDirEnv` / `configDirFallback` because Tier-2 channels are
+  // out-of-band distribution bundles, not per-user runtime install dirs.
+  // runtime-artifact-layout.cjs is NOT extended for this kind — Tier-2
+  // bypasses the artifact-layout pipeline entirely.
+  {
+    id: 'cursor-marketplace',
+    displayName: 'Cursor Marketplace',
+    configDir: null,
+    configDirFallback: null,
+    kind: 'cursor-marketplace',
+  },
 ]);
 
 const BY_ID = new Map(RUNTIMES.map((r) => [r.id, r]));
