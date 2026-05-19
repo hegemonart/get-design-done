@@ -1,0 +1,4 @@
+{"type":"capability_gap","timestamp":"2026-05-19T22:00:00.000Z","sessionId":"s1","payload":{"source":"fast","context_hash":"aaaaaaaaaaaaaaaa"}}
+{"type":"state.transition","timestamp":"2026-05-19T22:00:01.000Z","sessionId":"s2","payload":{}}
+{"type":"capability_gap","timestamp":"2026-05-19T22:00:02.000Z","sessionId":"s3","payload":{"source":"router","context_hash":"bbbbbbbbbbbbbbbb"}}
+{"type":"hook.fired","timestamp":"2026-05-19T22:00:03.000Z","sessionId":"s4","payload":{}}
