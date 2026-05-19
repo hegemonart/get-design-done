@@ -1,0 +1,4 @@
+scripts/lint-agentskills-spec.cjs
+scripts/lib/install/converters/cursor-marketplace.cjs
+scripts/lib/install/converters/codex-plugin.cjs
+scripts/build-distribution-bundles.cjs
