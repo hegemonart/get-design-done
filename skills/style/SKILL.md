@@ -5,7 +5,7 @@ argument-hint: "[ComponentName]"
 user-invocable: true
 ---
 
-# get-design-done:style — Component Handoff Doc Generator
+# gdd-style — Component Handoff Doc Generator
 
 Generates a per-component style spec at `.design/DESIGN-STYLE-[ComponentName].md`. This is a **standalone command**, not a pipeline stage.
 

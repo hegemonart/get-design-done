@@ -5,7 +5,7 @@ argument-hint: ""
 user-invocable: true
 ---
 
-# get-design-done:compare — Baseline vs Result Delta
+# gdd-compare — Baseline vs Result Delta
 
 Standalone delta command. Computes the difference between the scan baseline (`DESIGN.md`) and the verification result (`DESIGN-VERIFICATION.md`), and flags design drift for any regression not covered by an explicit task in `DESIGN-PLAN.md`. Writes one artifact: `.design/COMPARE-REPORT.md`.
 

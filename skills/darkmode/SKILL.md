@@ -5,7 +5,7 @@ argument-hint: ""
 user-invocable: true
 ---
 
-# get-design-done:darkmode — Dark Mode Audit
+# gdd-darkmode — Dark Mode Audit
 
 Standalone dark mode audit. Detects the project's dark mode architecture, runs architecture-specific checks across contrast, token completeness, anti-patterns, and meta properties, then writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`.
 

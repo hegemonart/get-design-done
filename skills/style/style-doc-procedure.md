@@ -15,7 +15,7 @@ the cross-skill output discipline.
 
 # Style Doc Procedure
 
-Detailed procedure for the `get-design-done:style` standalone command — companion to
+Detailed procedure for the `gdd-style` standalone command — companion to
 `../skills/style/SKILL.md`. Read this file when executing the agent-spawn step (Step 4 in the
 skill) or when wiring the source-resolution fallback chain. The SKILL.md keeps the load-bearing
 mode detection + decision tree; this file holds the deep methodology.
