@@ -1,11 +1,11 @@
 ---
-name: get-design-done:compare
+name: gdd-compare
 description: "Compute the delta between the `DESIGN.md` baseline (from scan) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`."
 argument-hint: ""
 user-invocable: true
 ---
 
-# get-design-done:compare — Baseline vs Result Delta
+# gdd-compare — Baseline vs Result Delta
 
 Standalone delta command. Computes the difference between the scan baseline (`DESIGN.md`) and the verification result (`DESIGN-VERIFICATION.md`), and flags design drift for any regression not covered by an explicit task in `DESIGN-PLAN.md`. Writes one artifact: `.design/COMPARE-REPORT.md`.
 

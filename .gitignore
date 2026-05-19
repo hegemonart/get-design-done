@@ -33,3 +33,13 @@ REVIEW.md
 .claude/memory/
 .claude/settings.local.json
 .claude/worktrees/
+
+# Phase 28.8 D-16: maintainer-local Cursor Marketplace publish state.
+# Tracks application status across submit → review → publish cycle.
+# Never committed; ground truth for `scripts/install.cjs --doctor`.
+.cursor-plugin/marketplace-state.json
+
+# Phase 28.8 (Plan 28-8-X1): Tier-2 distribution bundle output —
+# built from skills/ via scripts/build-distribution-bundles.cjs.
+# Not committed: it's a deterministic build artifact, rebuilt on demand.
+dist/

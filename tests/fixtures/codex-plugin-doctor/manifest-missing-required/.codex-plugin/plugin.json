@@ -1,0 +1,9 @@
+{
+  "name": "get-design-done",
+  "description": "Agent-orchestrated 5-stage design pipeline.",
+  "skills": "./skills/",
+  "author": {
+    "name": "hegemonart"
+  },
+  "license": "MIT"
+}

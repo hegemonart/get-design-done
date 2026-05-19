@@ -15,6 +15,18 @@
 //
 // Modifiers: --global (default) | --local; --uninstall; --dry-run;
 //   --config-dir <path>; --help / -h.
+//
+// Read-only modes: --doctor (Phase 28.8 — Tier-2 distribution-channel
+//   status; no install side effects). Future Tier-2 channels (Codex
+//   plugin via Plan 28-8-C2; aggregated Tier-2 status via Plan 28-8-X2)
+//   plug additional sections into the same flag dispatch — see
+//   `runDoctor()` below for the section-module pattern.
+//
+// Read-only modes: --doctor (Phase 28.8 — Tier-2 distribution-channel
+//   status; no install side effects). Future Tier-2 channels (Codex
+//   plugin via Plan 28-8-C2; aggregated Tier-2 status via Plan 28-8-X2)
+//   plug additional sections into the same flag dispatch — see
+//   `runDoctor()` below for the section-module pattern.
 
 const path = require('node:path');
 
@@ -64,6 +76,7 @@ function helpText() {
     '  --no-peer-prompt  Suppress the post-install peer-CLI detection nudge',
     '  --register-mcp     Register gdd-mcp with detected harnesses (Claude Code, Codex). Opt-in.',
     '  --no-register-mcp  Skip MCP registration (default behavior; included for symmetry).',
+    '  --doctor        Print Tier-2 distribution-channel status (read-only; no install)',
     '  --help, -h      Show this message',
     '',
     'Environment overrides (per-runtime):',
@@ -125,11 +138,59 @@ function summariseResults(results) {
   return lines.join('\n');
 }
 
+// Phase 28.8 — Tier-2 distribution-channel doctor.
+//
+// Read-only status reporter for distribution channels (Cursor Marketplace,
+// Codex Plugins, agentskills.io lint pass). Phase 28.8-X2 D-13/D-16: the
+// three channels are aggregated via `scripts/lib/install/doctor-tier2.cjs`
+// which composes B2's `reportCursorMarketplace`, C2's `checkCodexPlugin`,
+// and A1's `lintSummary` into a single "## Tier-2 Distribution Channels"
+// section with a one-line summary + per-channel subsections.
+//
+// Phase 28.8-X2: B2's and C2's individual doctor sections used to be
+// rendered as standalone blocks here. With X2 the aggregator now owns
+// the entire Tier-2 section — the B2/C2 modules remain callable internals
+// (the aggregator consumes their pure `report*()` functions), but the
+// individual formatters are no longer invoked directly from install.cjs.
+// Rationale: a single section with a unified summary line is what the
+// maintainer wants (Plan 28-8-X2 §<objective>). The aggregator handles
+// throw safety internally (Cursor's malformed-state-file throw becomes
+// a `not-configured` subsection rather than killing the doctor).
+function runDoctor() {
+  const projectRoot = process.cwd();
+  try {
+    const {
+      readTier2Status,
+      formatTier2Section,
+    } = require('./lib/install/doctor-tier2.cjs');
+    const status = readTier2Status({ sourceRoot: projectRoot });
+    process.stdout.write(formatTier2Section(status) + '\n');
+  } catch (err) {
+    // The aggregator is throw-resistant (channel errors surface as
+    // `not-configured` with detail). A top-level throw here implies the
+    // aggregator module itself failed to load — surface inline so the
+    // maintainer sees the breakage without losing the whole CLI exit.
+    process.stdout.write(
+      '## Tier-2 Distribution Channels\n\n'
+        + '  ERROR: '
+        + (err && err.message ? err.message : String(err))
+        + '\n'
+    );
+  }
+}
+
 async function main() {
   const { flags, configDir } = parseArgs(process.argv);
 
   if (flags.has('--help') || flags.has('-h')) {
     process.stdout.write(helpText());
+    process.exit(0);
+  }
+
+  // Phase 28.8 D-16 + B2 — read-only Tier-2 doctor. Early dispatch BEFORE
+  // any runtime selection so doctor never performs install side effects.
+  if (flags.has('--doctor')) {
+    runDoctor();
     process.exit(0);
   }
 

@@ -196,6 +196,20 @@ claude plugin install get-design-done@get-design-done
 
 </details>
 
+### Tier-2 Distribution Channels (v1.28.8+)
+
+除了上述 Phase 28.7 文件释放安装路径（默认且继续工作）之外，v1.28.8 新增三个 Tier-2 分发渠道：
+
+- **agentskills.io 跨运行时可移植性。** 我们的 `skills/` 符合 [agentskills.io](https://agentskills.io) 规范。声明兼容 agentskills.io 的运行时（Codex、Kilo、Augment、Hermes、Qwen）可以通过此渠道直接使用我们的技能。
+- **Cursor Marketplace.** 通过 Cursor 市场 UI 安装；发布等待 Cursor 团队审核批准 — 详见 `docs/cursor-marketplace-field-test.md`。
+- **Codex Plugin.** 通过 Codex 的 GitHub URL 插件添加进行安装:
+
+  ```bash
+  codex plugin marketplace add hegemonart/get-design-done
+  ```
+
+完整细节请见 [README.md](README.md)（英文，权威版本）。
+
 
 ## 工作流程
 

@@ -14,7 +14,7 @@ and the `COMPARE-REPORT.md` template the skill writes.
 
 # Compare Rubric — Baseline vs Result Delta Methodology
 
-Detailed methodology for the `get-design-done:compare` standalone command — companion to
+Detailed methodology for the `gdd-compare` standalone command — companion to
 `../skills/compare/SKILL.md`. Read this file when executing a specific compare step (score
 delta math, anti-pattern set arithmetic, drift coverage map, report layout). The SKILL.md
 keeps the load-bearing pre-flight checks + step routing; this file holds the deep methodology.

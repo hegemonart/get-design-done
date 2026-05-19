@@ -59,7 +59,14 @@ test('detect() returns null when env-var is set to empty string', () => {
 });
 
 // One sub-test per runtime — locks the env-var ↔ id contract for all 14.
+// Phase 28.8 (Plans B1, C1): Tier-2 distribution-channel entries
+// (`cursor-marketplace`, `codex-plugin`) have no `configDirEnv` — they
+// are out-of-band bundles, not per-user runtime install targets. Skip
+// the parametrized loop for them (they would all collide on the
+// `process.env[undefined]` string key) — runtime-detect intentionally
+// never matches them since their env-var is undefined.
 for (const r of RUNTIMES) {
+  if (typeof r.configDirEnv !== 'string') continue;
   test(`detect() returns '${r.id}' when ${r.configDirEnv} is set`, () => {
     withCleanEnv(() => {
       process.env[r.configDirEnv] = `/tmp/fake/${r.id}`;

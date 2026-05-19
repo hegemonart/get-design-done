@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: → v1.27.1)
-status: "Phase 28.7 (Multi-Runtime Install — Pragmatic Port from gsd-build) closed out — v1.28.7 shipped (2026-05-19). 4-manifest lockstep at v1.28.7 + CHANGELOG `## [1.28.7]` block at top + OFF_CADENCE_VERSIONS.add('1.28.7'). 10 plans across Wave A foundations (runtime-homes + runtime-artifact-layout + runtime-slash) + Wave B converters (13 per-runtime converters + shared.cjs in scripts/lib/install/converters/) + Wave C wire-up + 14-runtime simulation suite + closeout. Replaces Phase 24 `kind: 'agents-md'` placeholder with proper native install per runtime (skills/, command/, agents/, or .clinerules rule-block aggregation). Architecture ported from gsd-build/get-shit-done (MIT, D-02 port-not-byte-copy); NOTICE extended. Cline embeds rule-blocks in .clinerules (D-09); Codex uses `$gdd-<name>` shell-var slash form. Phase 21 cross-harness tool-name maps reused. 4-file regression baseline at test-fixture/baselines/phase-28.7/ (manifests-version '1.28.7', converter-inventory 14 .cjs files with hermes.cjs absence guard, registry-diff 'no registry changes', cross-link-integrity PASS). tests/phase-28.7-baseline.test.cjs adds 16 version-agnostic tests (full RegExp escape per CodeQL js/incomplete-sanitization). ROADMAP entry CREATED for Phase 28.7 (INSERTED between 28.6 and 29) + scoped flip (10 inline plan checkboxes + 1 overview entry). Forward-propagation: phase-28.6/manifests-version.txt 1.28.6 -> 1.28.7 and phase-28/manifests-version.txt 1.28.6 -> 1.28.7. phase-20/skill-list.txt UNCHANGED (no skill add/remove). README clarified all 14 runtimes receive native artifact layout (no Experimental tier per D-04). Phase 28.6 (Skill Reference Co-Location) shipped prior at v1.28.6. Phase 31 (Figma Off-Context Extractor) in progress."
-last_updated: "2026-05-19T14:10:00.000Z"
+status: "Phase 28.8 (Tier-2 Distribution Channels) closed out — v1.28.8 shipped (2026-05-19). 4-manifest lockstep at v1.28.8 (package.json + .claude-plugin/plugin.json + .claude-plugin/marketplace.json metadata.version + plugins[0].version) plus 2 Tier-2 manifests at v1.28.8 (.cursor-plugin/plugin.json + .codex-plugin/plugin.json). CHANGELOG `## [1.28.8] - 2026-05-19` block at top + OFF_CADENCE_VERSIONS.add('1.28.8'). 12 plans across Wave A research (agentskills-io / cursor-marketplace / codex-plugins deep-reads) + Wave B converters + manifests + doctors (A1 lint script + 5 skill renames + 13 cross-refs, A2 5 compat reports, B1 cursor-marketplace manifest+converter+kind, B2 cursor doctor + field-test playbook, C1 codex-plugin manifest+converter+kind reusing .claude-plugin/marketplace.json per D-14, C2 codex doctor + field-test playbook) + Wave C bundler + doctor aggregation (X1 build-distribution-bundles.cjs single-source-of-truth per D-06, X2 doctor-tier2 aggregator + --summary mode) + Wave D closeout. Tier-2 channels additive per D-05 — Phase 28.7 file-drop install (cursor.cjs, codex.cjs) UNCHANGED. agentskills.io adopted as lint-only per D-13 (Phase 28.5 contract already matches 2 required spec fields). Cursor Marketplace publisher-application gated per D-04 + D-16; Codex install-by-URL works today per D-03. 5-file regression baseline at test-fixture/baselines/phase-28.8/ (manifests-version 1.28.8, converter-inventory 4 new Wave A/B/C scripts, tier-2-channels 2 new kinds, registry-diff 'no registry changes', cross-link-integrity PASS). tests/phase-28.8-baseline.test.cjs adds 16 version-agnostic tests with full RegExp escape per CodeQL. ROADMAP entry CREATED for Phase 28.8 (INSERTED between 28.7 and 29) + scoped flip (12 inline plan checkboxes + 1 overview entry = 13 [x] markers). Forward-propagation: phase-28.7/manifests-version.txt 1.28.7 -> 1.28.8, phase-28.6 1.28.7 -> 1.28.8, phase-28.5 1.28.5 -> 1.28.8, phase-28 1.28.7 -> 1.28.8. README.md + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) updated with Tier-2 install paths. Maintainer next steps: submit Cursor publisher application + run `codex plugin marketplace add hegemonart/get-design-done` post-merge. Phase 28.7 (Multi-Runtime Install) shipped prior at v1.28.7. Phase 31 (Figma Off-Context Extractor) in progress."
+last_updated: "2026-05-19T18:00:00.000Z"
 progress:
-  total_phases: 9
-  completed_phases: 7
-  total_plans: 62
-  completed_plans: 62
+  total_phases: 10
+  completed_phases: 8
+  total_plans: 74
+  completed_plans: 74
   percent: 100
 ---
 
@@ -24,15 +24,21 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 ## Current Position
 
-**Released:** **v1.28.7** (latest npm + git tag, 2026-05-19 — Multi-Runtime Install, pragmatic port from gsd-build).
+**Released:** **v1.28.8** (latest npm + git tag, 2026-05-19 — Tier-2 Distribution Channels: agentskills.io + Cursor Marketplace + Codex Plugin).
 
 **In progress:**
 
 - Phase 31 — Figma Off-Context Extractor + Variables Sync Plugin (target v1.31.0). See [.planning/phases/31-figma-extractor-sync/PLAN.md](phases/31-figma-extractor-sync/PLAN.md).
 
+**Maintainer ship-out follow-ups (Phase 28.8 v1.28.8 post-merge):**
+
+- Submit Cursor publisher application at `cursor.com/marketplace/publish` per D-04 + D-16 (revised D-09). Awaits Cursor team review approval (no published SLA).
+- Run `codex plugin marketplace add hegemonart/get-design-done` against the live repo URL per D-03 + D-14 — install-by-URL works today, no marketplace review.
+- After merge, verify both via `node scripts/install.cjs --doctor` Tier-2 section reflects live status.
+
 **Planned next** (post-2026-05-16 rebalance — see [ROADMAP.md Overview](ROADMAP.md#planned-v1275--v1490)):
 
-- **Near-term integration**: ~~27.5 (Bandit Prod) ✓~~, ~~27.6 (Perf Optimization) ✓~~, ~~27.7 (GDD MCP) ✓~~, ~~28 (Tier-2 Refs) ✓~~, ~~28.5 (Skill Contract + Rework) ✓~~, ~~28.6 (Skill Reference Co-Location, corrective) ✓~~, ~~28.7 (Multi-Runtime Install, pragmatic port from gsd-build) ✓~~ — all shipped
+- **Near-term integration**: ~~27.5 (Bandit Prod) ✓~~, ~~27.6 (Perf Optimization) ✓~~, ~~27.7 (GDD MCP) ✓~~, ~~28 (Tier-2 Refs) ✓~~, ~~28.5 (Skill Contract + Rework) ✓~~, ~~28.6 (Skill Reference Co-Location, corrective) ✓~~, ~~28.7 (Multi-Runtime Install, pragmatic port from gsd-build) ✓~~, ~~28.8 (Tier-2 Distribution Channels) ✓~~ — all shipped
 - **Reflection + feedback**: 29 (Cap-Gap Self-Author), 30 (Issue Reporter), 30.5 (Failure-Mode Catalogue — NEW)
 - **Active project**: 31 (Figma Extractor), 31.5 (SDK Reorg)
 - **Skill discipline**: 32 (Auto-Trigger), 33 (Behavior Tests), 33.5 (Runtime Security — NEW)
@@ -47,7 +53,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 
 **After all planned phases ship:** v1.49.0 (~22 minor releases beyond v1.27.1, ~280 plans total — roughly 1.5× existing codebase).
 
-## Phases shipped (40 through v1.28.7)
+## Phases shipped (41 through v1.28.8)
 
 | # | Phase | Version | Shipped |
 |---|-------|---------|---------|
@@ -95,6 +101,7 @@ See: [.planning/PROJECT.md](PROJECT.md) (updated 2026-04-17)
 | 28.5 | Skill Authoring Contract + Skill Rework + Project Artifacts (INSERTED) | v1.28.5 | 2026-05-18 |
 | 28.6 | Skill Reference Co-Location (INSERTED — Corrective Follow-Up to Phase 28.5) | v1.28.6 | 2026-05-18 |
 | 28.7 | Multi-Runtime Install (INSERTED — Pragmatic Port from gsd-build) | v1.28.7 | 2026-05-19 |
+| 28.8 | Tier-2 Distribution Channels (INSERTED — agentskills.io + Cursor Marketplace + Codex Plugin) | v1.28.8 | 2026-05-19 |
 
 ## Open follow-ups
 

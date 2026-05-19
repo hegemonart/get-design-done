@@ -1,11 +1,11 @@
 ---
-name: get-design-done:style
+name: gdd-style
 description: "Generate a component handoff doc at `.design/DESIGN-STYLE-<ComponentName>.md` by dispatching the `design-doc-writer` agent in one of two modes: post-pipeline (uses `DESIGN-SUMMARY.md`) or pre-pipeline fallback (uses `DESIGN.md` + source). Use when the user wants a single-component spec covering tokens, states, and AI-slop detection. Invoke with a ComponentName, or with no argument to list available components."
 argument-hint: "[ComponentName]"
 user-invocable: true
 ---
 
-# get-design-done:style — Component Handoff Doc Generator
+# gdd-style — Component Handoff Doc Generator
 
 Generates a per-component style spec at `.design/DESIGN-STYLE-[ComponentName].md`. This is a **standalone command**, not a pipeline stage.
 

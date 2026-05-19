@@ -31,11 +31,11 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `map` | `get-design-done:gdd-map` | Parallel codebase mapping — spawns 5 mappers → `.design/map/*.md` + `.design/DESIGN-MAP.md` |
 | `next` | `get-design-done:gdd-next` | Route to the next pipeline stage based on STATE.md |
 | `help` | `get-design-done:gdd-help` | List all commands with one-line descriptions |
-| `style [ComponentName]` | `get-design-done:style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
-| `darkmode` | `get-design-done:darkmode` | Audit dark mode architecture + contrast + anti-patterns → .design/DARKMODE-AUDIT.md |
-| `compare` | `get-design-done:compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md → .design/COMPARE-REPORT.md |
-| `figma-write <mode>` | `get-design-done:figma-write` | Write design decisions to Figma (annotate/tokenize/mappings) |
-| `graphify <subcommand>` | `get-design-done:graphify` | Manage Graphify knowledge graph (build/query/status/diff) |
+| `style [ComponentName]` | `get-design-done:gdd-style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
+| `darkmode` | `get-design-done:gdd-darkmode` | Audit dark mode architecture + contrast + anti-patterns → .design/DARKMODE-AUDIT.md |
+| `compare` | `get-design-done:gdd-compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md → .design/COMPARE-REPORT.md |
+| `figma-write <mode>` | `get-design-done:gdd-figma-write` | Write design decisions to Figma (annotate/tokenize/mappings) |
+| `graphify <subcommand>` | `get-design-done:gdd-graphify` | Manage Graphify knowledge graph (build/query/status/diff) |
 | `discuss [topic] [--all] [--spec] [--cycle <name>]` | `get-design-done:gdd-discuss` | Adaptive design interview — spawns design-discussant; appends D-XX decisions to STATE.md |
 | `list-assumptions [--area]` | `get-design-done:gdd-list-assumptions` | Surface implicit design assumptions baked into the codebase |
 | **Audit & Session** | | |
@@ -186,11 +186,11 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 /gdd:map       → Skill("get-design-done:gdd-map")       # parallel codebase mapping
 /gdd:next      → Skill("get-design-done:gdd-next")
 /gdd:help      → Skill("get-design-done:gdd-help")
-/gdd:style     → Skill("get-design-done:style")
-/gdd:darkmode     → Skill("get-design-done:darkmode")
-/gdd:compare      → Skill("get-design-done:compare")
-/gdd:figma-write  → Skill("get-design-done:figma-write")
-/gdd:graphify     → Skill("get-design-done:graphify")
+/gdd:style     → Skill("get-design-done:gdd-style")
+/gdd:darkmode     → Skill("get-design-done:gdd-darkmode")
+/gdd:compare      → Skill("get-design-done:gdd-compare")
+/gdd:figma-write  → Skill("get-design-done:gdd-figma-write")
+/gdd:graphify     → Skill("get-design-done:gdd-graphify")
 /gdd:discuss          → Skill("get-design-done:gdd-discuss")
 /gdd:list-assumptions → Skill("get-design-done:gdd-list-assumptions")
 /gdd:progress         → Skill("get-design-done:gdd-progress")

@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.28.7",
+  "version": "1.28.8",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -38,11 +38,13 @@
     "provenance": true
   },
   "scripts": {
+    "build:bundles": "node scripts/build-distribution-bundles.cjs",
     "test": "node --test --experimental-strip-types \"tests/**/*.test.cjs\" \"tests/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "codegen:schemas": "node --experimental-strip-types scripts/codegen-schema-types.ts",
     "lint:md": "npx --yes markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.planning\" \"#.claude\" \"#test-fixture/baselines\"",
     "lint:links": "npx --yes lychee --no-progress --accept 200,206,403,429 \"**/*.md\" || true",
+    "lint:agentskills": "node scripts/lint-agentskills-spec.cjs",
     "validate:schemas": "node --experimental-strip-types scripts/validate-schemas.ts",
     "validate:frontmatter": "node --experimental-strip-types scripts/validate-frontmatter.ts agents/",
     "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
