@@ -51,7 +51,7 @@ WebSearch(query="codex tool surface")
 
 ## Cross-references
 
-See the [companion](/gdd-debug) for failure-mode recovery. The
+See the [companion](https://github.com/hegemonart/get-design-done/tree/main/skills/debug) for failure-mode recovery. The
 `/gdd-progress` skill reports state. Legacy colon shapes like `gdd:audit`
 are accepted but normalized.
 
