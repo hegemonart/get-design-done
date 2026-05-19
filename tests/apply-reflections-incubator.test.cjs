@@ -446,14 +446,15 @@ test('29-05 T2: applyEdit invokes editor (mocked) and returns edited draft', () 
   const fx = makeDraftSandbox({ slug: 'edit-me' });
   try {
     const [draft] = m.discoverIncubatorDrafts({ incubatorDir: fx.incubatorDir });
-    // Mock editor: a node script that appends text to the file passed as arg
+    // Mock editor: a node script that appends text to the file passed as arg.
+    // Use editorCmd (array form) so paths-with-spaces (Windows execPath) are
+    // tokenized correctly without shell quoting.
     const editorScript = path.join(fx.sandbox, 'mock-editor.cjs');
     fs.writeFileSync(
       editorScript,
       `'use strict';\nconst fs = require('fs');\nconst f = process.argv[2];\nconst current = fs.readFileSync(f, 'utf8');\nfs.writeFileSync(f, current + '\\n# edited\\n');\nprocess.exit(0);\n`
     );
-    const editorEnv = `${process.execPath} ${editorScript}`;
-    const result = m.applyEdit(draft, { editorEnv });
+    const result = m.applyEdit(draft, { editorCmd: [process.execPath, editorScript] });
     assert.ok(result, 'editResult should not be null');
     // The draft file should now contain the edit
     const updated = fs.readFileSync(fx.draftPath, 'utf8');
@@ -470,8 +471,7 @@ test('29-05 T2: applyEdit returns unchanged on editor abort (non-zero exit)', ()
     const [draft] = m.discoverIncubatorDrafts({ incubatorDir: fx.incubatorDir });
     const editorScript = path.join(fx.sandbox, 'mock-aborter.cjs');
     fs.writeFileSync(editorScript, `'use strict';\nprocess.exit(1);\n`);
-    const editorEnv = `${process.execPath} ${editorScript}`;
-    const result = m.applyEdit(draft, { editorEnv });
+    const result = m.applyEdit(draft, { editorCmd: [process.execPath, editorScript] });
     assert.equal(result.edited, false);
     assert.match(result.reason, /abort|editor/i);
   } finally {
