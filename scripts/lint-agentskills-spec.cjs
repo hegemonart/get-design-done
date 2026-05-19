@@ -27,6 +27,9 @@
  *   node scripts/lint-agentskills-spec.cjs               # default: lint ./skills
  *   node scripts/lint-agentskills-spec.cjs <dir>         # lint <dir>/<name>/SKILL.md
  *   node scripts/lint-agentskills-spec.cjs --json        # emit JSON instead of table
+ *   node scripts/lint-agentskills-spec.cjs --summary     # one-line PASS/WARN/FAIL counts
+ *   node scripts/lint-agentskills-spec.cjs --summary --json
+ *                                                        # JSON {pass,warn,fail} counts
  *
  * Exit codes:
  *   0 — no FAIL rows (WARN rows do NOT fail the run)
@@ -35,12 +38,21 @@
  *
  * Empty / missing skills directory:
  *   Prints `Lint: no skills found at <dir> — nothing to lint.` and exits 0.
+ *   Under `--summary`, prints `PASS=0 WARN=0 FAIL=0` (or `{"pass":0,"warn":0,"fail":0}`
+ *   with `--summary --json`) and exits 0 — empty dirs never fail the run.
  *
- * Exports (for tests):
+ * Exports (for tests + Plan 28-8-X2 in-process consumption):
  *   lint(skillsDir, opts?) → { rows, summary, emptyDir }
+ *   lintSummary({sourceRoot}) → { pass, warn, fail }     // Plan 28-8-X2 doctor seam
  *   main(argv) → number (exit code; pure — does NOT call process.exit)
  *   parseFrontmatter(content) → { frontmatter, body, hasFrontmatter }
  *   lintSkill(skillDir, skillName) → Array<{status, skill, rule, detail}>
+ *
+ * Plan 28-8-X2 wiring:
+ *   `lintSummary` is consumed in-process by `scripts/lib/install/doctor-tier2.cjs`
+ *   (Tier-2 doctor aggregator). It returns `{pass, warn, fail}` counts only — no
+ *   table, no JSON, no IO beyond fs.readFileSync of SKILL.md files. The doctor wraps
+ *   it as the agentskills.io channel state per D-13 (lint-only adoption).
  */
 
 const fs = require('fs');
@@ -294,6 +306,36 @@ function lint(skillsDir, opts) {
 }
 
 /**
+ * Plan 28-8-X2 seam — return only the PASS/WARN/FAIL counts as a flat object.
+ *
+ * Consumed in-process by `scripts/lib/install/doctor-tier2.cjs` (Tier-2 doctor
+ * aggregator). Wraps `lint()` and projects its `summary` onto a 3-field shape
+ * matching the X2 interface contract: `{ pass, warn, fail }`. Empty dirs
+ * yield `{ pass: 0, warn: 0, fail: 0 }`. The `total` field is dropped — callers
+ * compute it from `pass + warn + fail` if needed, matching D-13 lint-only contract.
+ *
+ * Pure: no IO beyond what `lint()` already does. Never calls process.exit.
+ *
+ * @param {{ sourceRoot?: string }} [opts]  Optional. `sourceRoot` is the directory
+ *                                          containing `skills/` (NOT the skills/
+ *                                          directory itself — matches Phase 28.7
+ *                                          `findInstallSourceRoot()` return contract).
+ *                                          Defaults to `process.cwd()` when omitted.
+ * @returns {{ pass: number, warn: number, fail: number }}
+ */
+function lintSummary(opts) {
+  const _opts = opts || {};
+  const sourceRoot = _opts.sourceRoot || process.cwd();
+  const skillsDir = path.join(sourceRoot, 'skills');
+  const result = lint(skillsDir);
+  return {
+    pass: result.summary.pass,
+    warn: result.summary.warn,
+    fail: result.summary.fail,
+  };
+}
+
+/**
  * Format the row set as an aligned plain-text table.
  *
  * Columns: STATUS  SKILL  RULE  DETAIL
@@ -328,15 +370,25 @@ function main(argv) {
   try {
     let skillsDir = './skills';
     let jsonMode = false;
+    let summaryMode = false;
     for (const arg of argv) {
       if (arg === '--json') {
         jsonMode = true;
+      } else if (arg === '--summary') {
+        summaryMode = true;
       } else if (arg === '--help' || arg === '-h') {
         process.stdout.write(
           'lint-agentskills-spec.cjs — agentskills.io spec lint over skills/<name>/SKILL.md\n' +
             '\n' +
             'Usage:\n' +
             '  node scripts/lint-agentskills-spec.cjs [<dir>] [--json]\n' +
+            '  node scripts/lint-agentskills-spec.cjs [<dir>] --summary [--json]\n' +
+            '\n' +
+            'Modes:\n' +
+            '  default      Aligned table of all rows + final summary line\n' +
+            '  --json       JSON {rows, summary} object\n' +
+            '  --summary    One-line `PASS=N WARN=N FAIL=N`\n' +
+            '  --summary --json  JSON {pass, warn, fail} (Plan 28-8-X2 seam)\n' +
             '\n' +
             'Exit codes:\n' +
             '  0  no FAIL rows (WARN rows do NOT fail the run)\n' +
@@ -353,6 +405,21 @@ function main(argv) {
     }
 
     const result = lint(skillsDir);
+
+    // Plan 28-8-X2 — --summary mode short-circuits the table renderer for
+    // doctor-tier2 callers. Empty dir is treated as 0-everything (exits 0)
+    // matching the default-mode "no skills found" exit-0 contract.
+    if (summaryMode) {
+      const pass = result.summary.pass || 0;
+      const warn = result.summary.warn || 0;
+      const fail = result.summary.fail || 0;
+      if (jsonMode) {
+        process.stdout.write(JSON.stringify({ pass, warn, fail }) + '\n');
+      } else {
+        process.stdout.write(`PASS=${pass} WARN=${warn} FAIL=${fail}\n`);
+      }
+      return fail > 0 ? 1 : 0;
+    }
 
     if (result.emptyDir) {
       process.stdout.write(
@@ -387,4 +454,4 @@ if (require.main === module) {
   process.exit(main(process.argv.slice(2)));
 }
 
-module.exports = { lint, main, parseFrontmatter, lintSkill };
+module.exports = { lint, lintSummary, main, parseFrontmatter, lintSkill };
