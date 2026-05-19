@@ -167,6 +167,13 @@ async function main() {
     } else if (location === 'local') {
       opts.configDir = resolveLocalConfigDir(runtime);
     }
+    // Phase 28.7 D-07 — pass scope through to the installer. The new
+    // `multi-artifact` kind branches on `local` vs `global` in
+    // `runtime-artifact-layout.cjs` (claude local writes commands/+agents/;
+    // claude global writes skills/), so the installer needs to know the
+    // user's chosen scope, not just the resolved configDir. Default is
+    // `global` per D-07.
+    opts.scope = location;
     const result = uninstall
       ? uninstallRuntime(id, opts)
       : installRuntime(id, opts);

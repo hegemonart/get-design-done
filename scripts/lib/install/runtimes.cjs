@@ -7,15 +7,21 @@
 // (Phase 24 D-02). Two `kind`s exist:
 //
 //   - `claude-marketplace` — register a marketplace entry + flip
-//     `enabledPlugins[<name>@<marketplace>]` in settings.json. Today only
-//     Claude Code uses this.
+//     `enabledPlugins[<plugin>@<marketplace>]` in settings.json. Claude
+//     Code only.
 //
-//   - `agents-md` — drop a runtime-specific instructions file (AGENTS.md /
-//     GEMINI.md) into the runtime's config directory. Most modern AI coding
-//     CLIs follow this convention.
+//   - `multi-artifact` — per Phase 28.7: install one or more artifact kinds
+//     (skills, commands, agents) using runtime-artifact-layout.cjs +
+//     per-runtime converters at scripts/lib/install/converters/<runtime>.cjs.
+//     Replaces the broken Phase 24 `agents-md` placeholder which dropped a
+//     single AGENTS.md file per runtime (Phase 28.7 D-02 + D-08). The actual
+//     install logic now lives in installer.cjs → runtime-artifact-layout.cjs;
+//     `files:` is intentionally absent on these entries because destination
+//     paths are computed by the artifact-layout resolver.
 //
 // Adding a new runtime: append to RUNTIMES below, append the same id to the
-// alphabetised baseline at test-fixture/baselines/phase-24/runtimes.txt.
+// alphabetised baseline at test-fixture/baselines/phase-24/runtimes.txt,
+// and add a matching branch in runtime-artifact-layout.cjs (Phase 28.7).
 
 const REPO = 'hegemonart/get-design-done';
 const MARKETPLACE_NAME = 'get-design-done';
@@ -40,16 +46,14 @@ const RUNTIMES = Object.freeze([
     displayName: 'OpenCode',
     configDirEnv: 'OPENCODE_CONFIG_DIR',
     configDirFallback: '.config/opencode',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
   {
     id: 'gemini',
     displayName: 'Gemini CLI',
     configDirEnv: 'GEMINI_CONFIG_DIR',
     configDirFallback: '.gemini',
-    kind: 'agents-md',
-    files: ['GEMINI.md'],
+    kind: 'multi-artifact',
     // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
     peerBinary: process.platform === 'win32' ? 'gemini.cmd' : 'gemini',
   },
@@ -58,16 +62,14 @@ const RUNTIMES = Object.freeze([
     displayName: 'Kilo Code',
     configDirEnv: 'KILO_CONFIG_DIR',
     configDirFallback: '.kilo',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
   {
     id: 'codex',
     displayName: 'OpenAI Codex CLI',
     configDirEnv: 'CODEX_HOME',
     configDirFallback: '.codex',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
     // Phase 27 (Plan 27-11): peer-CLI delegation binary, ASP protocol.
     peerBinary: process.platform === 'win32' ? 'codex.cmd' : 'codex',
   },
@@ -76,8 +78,7 @@ const RUNTIMES = Object.freeze([
     displayName: 'GitHub Copilot CLI',
     configDirEnv: 'COPILOT_CONFIG_DIR',
     configDirFallback: '.copilot',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
     // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
     peerBinary: process.platform === 'win32' ? 'copilot.cmd' : 'copilot',
   },
@@ -86,8 +87,7 @@ const RUNTIMES = Object.freeze([
     displayName: 'Cursor',
     configDirEnv: 'CURSOR_CONFIG_DIR',
     configDirFallback: '.cursor',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
     // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
     peerBinary: process.platform === 'win32' ? 'cursor-agent.cmd' : 'cursor-agent',
   },
@@ -96,40 +96,35 @@ const RUNTIMES = Object.freeze([
     displayName: 'Windsurf',
     configDirEnv: 'WINDSURF_CONFIG_DIR',
     configDirFallback: '.windsurf',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
   {
     id: 'antigravity',
     displayName: 'Antigravity',
     configDirEnv: 'ANTIGRAVITY_CONFIG_DIR',
     configDirFallback: '.antigravity',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
   {
     id: 'augment',
     displayName: 'Augment',
     configDirEnv: 'AUGMENT_CONFIG_DIR',
     configDirFallback: '.augment',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
   {
     id: 'trae',
     displayName: 'Trae',
     configDirEnv: 'TRAE_CONFIG_DIR',
     configDirFallback: '.trae',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
   {
     id: 'qwen',
     displayName: 'Qwen Code',
     configDirEnv: 'QWEN_CONFIG_DIR',
     configDirFallback: '.qwen',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
     // Phase 27 (Plan 27-11): peer-CLI delegation binary, ACP protocol.
     peerBinary: process.platform === 'win32' ? 'qwen.cmd' : 'qwen',
   },
@@ -138,16 +133,14 @@ const RUNTIMES = Object.freeze([
     displayName: 'CodeBuddy',
     configDirEnv: 'CODEBUDDY_CONFIG_DIR',
     configDirFallback: '.codebuddy',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
   {
     id: 'cline',
     displayName: 'Cline',
     configDirEnv: 'CLINE_CONFIG_DIR',
     configDirFallback: '.cline',
-    kind: 'agents-md',
-    files: ['AGENTS.md'],
+    kind: 'multi-artifact',
   },
 ]);
 

@@ -132,10 +132,16 @@ test('install (claude): writes models.json next to settings.json with full schem
 });
 
 // ---------------------------------------------------------------------------
-// install — agents-md runtime: models.json sits next to AGENTS.md
+// install — multi-artifact runtime: models.json sits in the same configDir
 // ---------------------------------------------------------------------------
+//
+// Phase 28.7 (Plan 28.7-08) — the placeholder AGENTS.md / GEMINI.md drop
+// was replaced with the multi-artifact pipeline. models.json still lives
+// directly in the runtime's config dir (Phase 26 D-06 invariant preserved);
+// the per-skill files now live under skills/, command/, or commands/gdd/
+// per runtime-artifact-layout.cjs.
 
-test('install (codex): writes models.json next to AGENTS.md', () => {
+test('install (codex): writes models.json into configDir alongside skills/ tree (Phase 28.7-08)', () => {
   _resetRuntimeModelsCache();
   const tmp = mktmp();
   try {
@@ -151,14 +157,17 @@ test('install (codex): writes models.json next to AGENTS.md', () => {
     assert.equal(data.runtime, 'codex');
     assert.equal(typeof data.tier_to_model.opus, 'string');
 
-    // AGENTS.md was also written (sanity).
-    assert.equal(fs.existsSync(path.join(tmp, 'AGENTS.md')), true);
+    // codex is `multi-artifact` + skills-kind → at least one
+    // <configDir>/skills/<name>/SKILL.md was also written.
+    assert.equal(fs.existsSync(path.join(tmp, 'skills')), true);
+    const skillDirs = fs.readdirSync(path.join(tmp, 'skills'));
+    assert.ok(skillDirs.length > 0, 'codex must produce at least one SKILL.md');
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 });
 
-test('install (gemini): writes models.json next to GEMINI.md', () => {
+test('install (gemini): writes models.json into configDir alongside commands/gdd/ tree (Phase 28.7-08)', () => {
   _resetRuntimeModelsCache();
   const tmp = mktmp();
   try {
@@ -171,7 +180,10 @@ test('install (gemini): writes models.json next to GEMINI.md', () => {
     assert.equal(result.modelsJson.action, 'created');
     const data = readJson(modelsPath);
     assert.equal(data.runtime, 'gemini');
-    assert.equal(fs.existsSync(path.join(tmp, 'GEMINI.md')), true);
+    // gemini multi-artifact → <configDir>/commands/gdd/<name>.md
+    assert.equal(fs.existsSync(path.join(tmp, 'commands', 'gdd')), true);
+    const cmdFiles = fs.readdirSync(path.join(tmp, 'commands', 'gdd'));
+    assert.ok(cmdFiles.length > 0, 'gemini must produce at least one command file');
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }

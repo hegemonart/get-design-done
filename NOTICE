@@ -102,13 +102,62 @@ The following gdd files contain content adapted from mattpocock/skills:
        (Skill body itself is GDD original; the Phase 1 ordering +
        cross-link to reference/debug-feedback-loops.md is adapted.)
 
+──────────────────────────────────────────────────────────────────────────────
+Phase 28.7 — Multi-Runtime Install Architecture (v1.28.7, 2026-05-19)
+──────────────────────────────────────────────────────────────────────────────
+
+The multi-runtime install pipeline shipped in v1.28.7 — the runtime-homes /
+runtime-artifact-layout / runtime-slash trio plus the per-runtime content
+converters — is a re-implementation of the architecture from:
+
+  gsd-build/get-shit-done (https://github.com/gsd-build/get-shit-done)
+  License: MIT
+
+The following gdd modules are an architectural port from gsd-build's MIT-
+licensed install machinery. We re-implemented in GDD's existing module
+conventions rather than byte-copying source, per Phase 28.7 D-02, to keep
+the GDD codebase free of upstream version drift and the bundled
+`bin/install.js` monolith:
+
+  scripts/lib/install/runtime-homes.cjs
+    └─ Per-runtime config-dir resolver (env-var + XDG + special-case nests).
+       Same shape as gsd-build's `bin/lib/runtime-homes.cjs`.
+
+  scripts/lib/install/runtime-artifact-layout.cjs
+    └─ Per-(runtime, scope) layout table mapping to kinds[]. Same shape as
+       gsd-build's `bin/lib/runtime-artifact-layout.cjs`. Adapted to GDD's
+       14-runtime set (gsd-build's Hermes is omitted per D-03 + D-10).
+
+  scripts/lib/install/runtime-slash.cjs
+    └─ Per-runtime slash-command surface emitter. Adapted from gsd-build's
+       `bin/lib/runtime-slash.cjs`. Codex uses `$gdd-<name>` shell-var form;
+       other runtimes use `/gdd-<name>`.
+
+  scripts/lib/install/converters/{antigravity,augment,cline,codebuddy,codex,
+                                  copilot,cursor,gemini,kilo,opencode,qwen,
+                                  shared,trae,windsurf}.cjs
+    └─ Per-runtime content converters. Each translates a Claude SKILL.md
+       source into the runtime's expected shape (path rewrite, tool-name
+       rewrite via Phase 21 cross-harness maps, frontmatter pass-through).
+       gsd-build implements these as `convertClaudeCommandTo<Runtime>Skill`
+       functions inside a bundled `bin/install.js`; we factor them into
+       per-runtime `.cjs` files for independent testability.
+
+Per-file headers in the ported modules carry the same attribution. This
+NOTICE block is the rollup citation.
+
+The upstream gsd-build project remains the authoritative reference for the
+install-pipeline architecture; bug reports specific to the architecture's
+shape should also be filed there.
+
 ────────────────────────────────────────────────────────────────────────
 
 Note on the broader codebase: get-design-done as a whole is licensed under
 the MIT License (see LICENSE). The Apache 2.0 attribution above applies
 specifically to the cc-multi-cli-derived files listed under the Phase 27
-block. The MIT attribution under Phase 28.5 covers content adapted from
-mattpocock/skills (MIT) — the MIT-to-MIT re-licensing is straightforward
-and the attribution above provides the required source citation. The MIT
-and Apache 2.0 licenses are compatible — see
+block. The MIT attributions under Phase 28.5 and Phase 28.7 cover content
+adapted from mattpocock/skills (MIT) and gsd-build/get-shit-done (MIT)
+respectively — the MIT-to-MIT re-licensing is straightforward and the
+attributions above provide the required source citation. The MIT and
+Apache 2.0 licenses are compatible — see
 https://www.apache.org/legal/resolved.html#category-a.

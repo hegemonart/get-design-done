@@ -89,6 +89,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] [Phase 28](#phase-28-foundational-references-tier-2--color-composition-proportion-i18n) — Foundational References Tier 2 — v1.28.0
 - [x] [Phase 28.5](#phase-285-skill-authoring-contract--skill-rework--project-artifacts-inserted) — Skill Authoring Contract + Skill Rework — INSERTED — v1.28.5
 - [x] [Phase 28.6](#phase-286-skill-reference-co-location-inserted--corrective-follow-up-to-phase-285) — Skill Reference Co-Location — INSERTED (Corrective Follow-Up to Phase 28.5) — v1.28.6
+- [x] [Phase 28.7](#phase-287-multi-runtime-install-inserted--pragmatic-port-from-gsd-build) — Multi-Runtime Install — INSERTED (Pragmatic Port from gsd-build) — v1.28.7
 - [ ] [Phase 29](#phase-29-capability-gap-telemetry--self-authoring-of-agentsskills) — Capability-Gap Telemetry + Self-Authoring — v1.29.0
 - [ ] [Phase 30](#phase-30-inbound-feedback-channel--issue-reporter) — Inbound Feedback Channel (Issue Reporter) — v1.30.0
 - [ ] [Phase 30.5](#phase-305-failure-mode-catalogue-inserted) — Failure-Mode Catalogue — **NEW (INSERTED 2026-05-16)** — v1.30.5
@@ -1741,6 +1742,47 @@ Phase 28.5 CONTEXT.md D-06 read: "Keep refs centralized in `reference/`. Per-ski
 - Move `shared-preamble.md` — used by all design-family skills; multi-consumer.
 - Change validator threshold — Phase 28.5 D-01 stays: warn >=100, block >=250.
 - Touch Phase 28.5's NOTICE MIT attribution — same content; file paths shift only.
+
+### Phase 28.7: Multi-Runtime Install (INSERTED — Pragmatic Port from gsd-build)
+
+**Goal**: Make plugin install actually work for all 14 claimed runtimes by porting `gsd-build/get-shit-done`'s proven multi-runtime install pattern. Phase 24's `kind: 'agents-md'` placeholder dropped a single bare `AGENTS.md` into each non-Claude runtime's config dir — but the runtimes never discovered it (Kilo, Cursor, OpenCode, Codex etc. expect their NATIVE artifact shape: `skills/<name>/SKILL.md`, `command/<name>.md`, `.clinerules` rule-blocks). Phase 28.7 replaces the placeholder with proper per-runtime install via a trio of pure-config modules (`runtime-homes`, `runtime-artifact-layout`, `runtime-slash`) + 13 per-runtime content converters + 1 shared-utility module. Architecture ported from gsd-build (MIT, see `NOTICE`); per D-02 we port the architecture rather than byte-copying the upstream `bin/install.js` monolith. Re-interpretation of the original ROADMAP entry per user direction 2026-05-18 (CONTEXT.md D-01): skip field-test verification reports, trust gsd-build's upstream proving of the pattern.
+
+**Depends on**: Phase 24 (`scripts/lib/install/{runtimes,installer,config-dir,merge}.cjs` infrastructure + 14-runtime list invariant + `--config-dir <path>` test pattern), Phase 21 (`reference/codex-tools.md` + `reference/gemini-tools.md` cross-harness tool-name maps — converters import as data). Soft-coupled to Phase 26 (per-runtime tier→model mapping — orthogonal), Phase 27.7 (`scripts/install.cjs --register-mcp` doctor mode — orthogonal). Pragmatic port; no field-test gate.
+**Target version**: v1.28.7
+**Requirements**: INSTALL-01 through INSTALL-10 (one per plan; see [CONTEXT.md](phases/28.7-verified-install-for-claimed-runtimes/CONTEXT.md) for D-01..D-13 decision IDs)
+
+**Why this phase exists (research summary):**
+
+A 2026-05-18 audit surfaced that the README claims 14 runtimes work but only Claude actually receives a usable install. The placeholder `kind: 'agents-md'` ships a flat `AGENTS.md` to non-Claude runtimes, but runtimes like Kilo, Cursor, OpenCode, Codex don't discover bare `AGENTS.md` — they expect native shapes. User direction 2026-05-18: "the task is that the plugin installs normally. look at how gsd-build/get-shit-done does it. they use the same agent integrations. you can reuse their solution **ignoring field-test**." gsd-build runs this stack in production; the architecture is field-tested upstream. Porting it gives GDD a working installer for all 14 claimed runtimes without burning maintainer time on per-runtime verification reports.
+
+**Scope:**
+
+- **Wave A — parallel-safe (3 plans, disjoint new files in `scripts/lib/install/`):**
+  - [x] 28.7-01-PLAN.md — `scripts/lib/install/runtime-homes.cjs` — per-runtime config-dir resolver for all 14 GDD runtimes. Env-var override + XDG paths + special-case nests (Antigravity under `~/.gemini/antigravity`, Windsurf under `~/.codeium/windsurf`). Pure function. Port from gsd-build with branding adjustments. (INSTALL-01)
+  - [x] 28.7-02-PLAN.md — `scripts/lib/install/runtime-artifact-layout.cjs` — per-(runtime, scope) layout table mapping to `kinds[] = [{kind, destSubpath, prefix}]`. Adapted to GDD's 14-runtime set (gsd-build's Hermes omitted per D-03 + D-10). Cline → `kinds: []` (rules-based per D-09). (INSTALL-02)
+  - [x] 28.7-03-PLAN.md — `scripts/lib/install/runtime-slash.cjs` — per-runtime slash-command surface emitter. Codex uses `$gdd-<name>` shell-var form; other runtimes use `/gdd-<name>`. Forward-compat seam. (INSTALL-03)
+- **Wave B — parallel-safe (4 plans, disjoint converter-file batches in `scripts/lib/install/converters/`):**
+  - [x] 28.7-04-PLAN.md — Wave 1 converters: `cursor`, `codex`, `copilot`, `antigravity` + `shared.cjs` utilities (frontmatter pass-through, tool-name rewrite via Phase 21 maps, brand pass-through). Tests on golden fixtures. (INSTALL-04)
+  - [x] 28.7-05-PLAN.md — Wave 2 converters: `windsurf`, `augment`, `trae`, `qwen`. Same pattern as Wave 1. (INSTALL-05)
+  - [x] 28.7-06-PLAN.md — Wave 3 converters: `codebuddy`, `cline`. Cline writes to `.clinerules` per D-09 (no skills/ dir). Hermes-absent guard. (INSTALL-06)
+  - [x] 28.7-07-PLAN.md — Wave 4 converters: `opencode`, `kilo`, `gemini`. Opencode + kilo use `command/<name>` (slash-command dir, XDG); gemini commands-only into `commands/gsd/`. (INSTALL-07)
+- **Wave C — sequential (3 plans, wire then test then closeout):**
+  - [x] 28.7-08-PLAN.md — Wire new resolver + layout + converters into `scripts/lib/install/installer.cjs`. Replaces broken `agents-md` placeholder with multi-artifact dispatcher. Backward-compat retained for `--global` / `--local` / `--dry-run` / `--config-dir`. Scope propagation per D-07. (INSTALL-08)
+  - [x] 28.7-09-PLAN.md — Per-runtime install simulation suite at `tests/install-per-runtime.test.cjs`. 14 simulation tests + 11 cross-runtime invariants. Each test creates a tmp config dir via `mkdtempSync`, invokes installer with `--config-dir <tmp>` + `--<runtime>`, asserts files land at expected paths with correct converter output. macOS symlink discipline via `os.tmpdir()` + `fs.realpathSync` (Phase 27.6 lesson). (INSTALL-09)
+  - [x] 28.7-10-PLAN.md — Closeout. 4-manifest lockstep at v1.28.7 (`package.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `test-fixture/baselines/phase-28.6/manifests-version.txt` forward-propagation + `test-fixture/baselines/phase-28/manifests-version.txt` forward-propagation). `OFF_CADENCE_VERSIONS.add('1.28.7')` in `tests/semver-compare.test.cjs`. `CHANGELOG.md` v1.28.7 entry at top citing all 10 plans + key surfaces + gsd-build attribution. README install section confirmed claims all 14 runtimes; no Experimental tier per D-04. `NOTICE` extension with Phase 28.7 gsd-build MIT attribution (D-02). Baseline at `test-fixture/baselines/phase-28.7/` (manifests-version, converter-inventory, registry-diff, cross-link-integrity). `tests/phase-28.7-baseline.test.cjs` regression lock with full RegExp escape per CodeQL. ROADMAP add + scoped flip (this section + overview entry, 10 inline plan checkboxes pre-flipped). `phase-20/skill-list.txt` UNCHANGED. Version sequence appended: v1.28.0 → v1.28.5 → v1.28.6 → v1.28.7. (INSTALL-10)
+
+**Explicitly out of scope** (discussed and rejected in CONTEXT.md):
+
+- Field-test verification reports at `.planning/research/install-verification/<runtime>.md` per ROADMAP spec — user explicitly waived (D-01).
+- `--experimental` runtime tier + README "Experimental: [list]" block — D-04 discards the two-tier framing.
+- `hermes` runtime addition — D-03 + D-10 preserve the Phase 24 D-02 14-runtime list invariant.
+- agentskills.io spec adoption — Phase 28.8 territory (already in ROADMAP).
+- Cursor Marketplace integration — Phase 28.8 territory.
+- Codex Plugin distribution (vs `AGENTS.md`) — Phase 28.8 territory.
+- Bundled `bin/install.js` 469kb monolith — D-08 keeps the modular `.cjs` approach.
+- Doctor-mode per-runtime verified-status reporting — Phase 27.7-04 already partially shipped MCP doctor; extending to install verification is a follow-up.
+- CI lint gate asserting README claim-set ↔ verified-set match — D-04 obviates this.
+- Translated READMEs (`README.de.md`, `README.fr.md`, …) — best-effort follow-up if user demand surfaces; English README authoritative this phase.
 
 ### Phase 29: Capability-Gap Telemetry + Self-Authoring of Agents/Skills
 

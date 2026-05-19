@@ -24,8 +24,14 @@ test('runtimes: each entry has the required keys', () => {
     assert.equal(typeof r.displayName, 'string', `${r.id}: displayName missing`);
     assert.equal(typeof r.configDirEnv, 'string', `${r.id}: configDirEnv missing`);
     assert.equal(typeof r.configDirFallback, 'string', `${r.id}: configDirFallback missing`);
-    assert.ok(['claude-marketplace', 'agents-md'].includes(r.kind), `${r.id}: bad kind`);
-    assert.ok(Array.isArray(r.files), `${r.id}: files must be array`);
+    // Phase 28.7 (Plan 28.7-08) — `agents-md` placeholder replaced with
+    // `multi-artifact`. The 13 non-claude runtimes no longer carry a
+    // `files: [...]` array (destination paths are computed by
+    // runtime-artifact-layout.cjs). Only claude still has `files: []`.
+    assert.ok(['claude-marketplace', 'multi-artifact'].includes(r.kind), `${r.id}: bad kind`);
+    if (r.kind === 'claude-marketplace') {
+      assert.ok(Array.isArray(r.files), `${r.id}: claude must keep files array`);
+    }
   }
 });
 
@@ -47,18 +53,25 @@ test('runtimes: claude entry uses claude-marketplace kind', () => {
   });
 });
 
-test('runtimes: gemini drops GEMINI.md', () => {
+test('runtimes: gemini uses multi-artifact kind (Phase 28.7-08)', () => {
+  // Phase 28.7 (Plan 28.7-08) — gemini was historically the only runtime
+  // that dropped `GEMINI.md` (vs the shared `AGENTS.md`). With the new
+  // multi-artifact layout, gemini installs into `commands/gdd/` via
+  // converters/gemini.cjs — see runtime-artifact-layout.cjs#gemini.
   const gemini = getRuntime('gemini');
-  assert.equal(gemini.kind, 'agents-md');
-  assert.deepEqual(gemini.files, ['GEMINI.md']);
+  assert.equal(gemini.kind, 'multi-artifact');
+  // `files: [...]` is intentionally absent on multi-artifact entries.
 });
 
-test('runtimes: agents-md runtimes drop AGENTS.md', () => {
-  const ids = ['opencode', 'kilo', 'codex', 'copilot', 'cursor', 'windsurf', 'antigravity', 'augment', 'trae', 'qwen', 'codebuddy', 'cline'];
+test('runtimes: 13 non-claude runtimes use multi-artifact kind (Phase 28.7-08)', () => {
+  // Phase 28.7 (Plan 28.7-08) — the broken Phase 24 `agents-md` placeholder
+  // (which dropped a single AGENTS.md/GEMINI.md per runtime) was replaced
+  // with `multi-artifact`. Destination paths now come from
+  // runtime-artifact-layout.cjs.
+  const ids = ['opencode', 'kilo', 'codex', 'copilot', 'cursor', 'windsurf', 'antigravity', 'augment', 'trae', 'qwen', 'codebuddy', 'cline', 'gemini'];
   for (const id of ids) {
     const r = getRuntime(id);
-    assert.equal(r.kind, 'agents-md', `${id}: should be agents-md`);
-    assert.deepEqual(r.files, ['AGENTS.md'], `${id}: should drop AGENTS.md`);
+    assert.equal(r.kind, 'multi-artifact', `${id}: should be multi-artifact`);
   }
 });
 
