@@ -197,6 +197,20 @@ claude plugin install get-design-done@get-design-done
 
 </details>
 
+### Tier-2 Distribution Channels (v1.28.8+)
+
+위의 Phase 28.7 파일 드롭 설치 경로(기본값, 계속 작동)에 더해, v1.28.8은 세 가지 새로운 Tier-2 배포 채널을 추가합니다:
+
+- **agentskills.io 크로스 런타임 호환성.** 우리 `skills/`는 [agentskills.io](https://agentskills.io) 사양을 준수합니다. agentskills.io 호환성을 표방하는 런타임(Codex, Kilo, Augment, Hermes, Qwen)이 이 채널을 통해 직접 스킬을 소비할 수 있습니다.
+- **Cursor Marketplace.** Cursor 마켓플레이스 UI를 통한 설치; Cursor 팀 리뷰 승인 대기 중 — `docs/cursor-marketplace-field-test.md` 참조.
+- **Codex Plugin.** Codex의 GitHub URL 플러그인 추가를 통한 설치:
+
+  ```bash
+  codex plugin marketplace add hegemonart/get-design-done
+  ```
+
+자세한 내용은 [README.md](README.md)(영어, 정본)을 참조하세요.
+
 
 ## 작동 방식
 

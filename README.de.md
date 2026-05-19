@@ -197,6 +197,20 @@ claude plugin install get-design-done@get-design-done
 
 </details>
 
+### Tier-2 Distribution Channels (v1.28.8+)
+
+Zusätzlich zu den Phase-28.7-Datei-Installationspfaden oben (Standard, weiterhin funktionsfähig) fügt v1.28.8 drei neue Tier-2-Vertriebskanäle hinzu:
+
+- **agentskills.io Plattform-übergreifende Portabilität.** Unsere `skills/` sind spec-konform nach dem [agentskills.io](https://agentskills.io) Standard. Runtimes, die agentskills.io-Kompatibilität beanspruchen (Codex, Kilo, Augment, Hermes, Qwen), können unsere Skills direkt konsumieren.
+- **Cursor Marketplace.** Installation via Cursor Marketplace-UI; Veröffentlichung steht aus, abhängig von der Cursor-Team-Prüfung — siehe `docs/cursor-marketplace-field-test.md`.
+- **Codex Plugin.** Installation via Codex GitHub-URL Plugin-Add:
+
+  ```bash
+  codex plugin marketplace add hegemonart/get-design-done
+  ```
+
+Vollständige Details siehe [README.md](README.md) (Englisch, autoritativ).
+
 
 ## Wie es funktioniert
 

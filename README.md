@@ -225,6 +225,22 @@ This is what the npx installer does for you — `npx` just collapses two command
 
 </details>
 
+### Tier-2 Distribution Channels (v1.28.8+)
+
+Beyond the Phase 28.7 file-drop install paths above (which remain the default and continue to work exactly as before), v1.28.8 adds three Tier-2 distribution channels for discovery-driven install:
+
+- **agentskills.io cross-runtime portability.** Our `skills/` are spec-compliant per the [agentskills.io](https://agentskills.io) standard (lint-only path per Phase 28.8 D-13; Phase 28.5 frontmatter contract already matches the 2 required spec fields `name` + `description`; current lint score 38 PASS / 32 WARN / 0 FAIL). Runtimes that claim agentskills.io compatibility (Codex, Kilo, Augment, Hermes, Qwen) can consume our skills directly via that channel — see `.planning/research/agentskills-io-compat/<runtime>.md` for per-runtime verification reports.
+- **Cursor Marketplace.** Install via Cursor's marketplace UI. Publisher application submitted to Cursor post-merge; live link pending Cursor team review approval (no published SLA) — see `docs/cursor-marketplace-field-test.md` for current status. Manifest at `.cursor-plugin/plugin.json`.
+- **Codex Plugin.** Install via Codex's GitHub-URL plugin add:
+
+  ```bash
+  codex plugin marketplace add hegemonart/get-design-done
+  ```
+
+  Works today against any GitHub URL with `.codex-plugin/plugin.json`. Per Phase 28.8 D-14: catalog discovery reuses `.claude-plugin/marketplace.json` — no separate Codex catalog file required.
+
+Tier-1 file-drop paths above and Tier-2 channels here are **additive opt-in** — both work independently per Phase 28.8 D-05 backward-compat discipline.
+
 
 ## How It Works
 
