@@ -210,6 +210,16 @@ claude plugin install get-design-done@get-design-done
 
 完整细节请见 [README.md](README.md)（英文，权威版本）。
 
+### Capability-Gap 遥测 + 自动撰写（v1.29.0+）
+
+反射器循环现在将"能力查找失败"信号作为一类遥测来跟踪，一旦出现足够多的循环性缺口，可以将新的 agent 或 skill 作为提案草稿提交给你审查。
+
+**Stage 0 — 遥测（立即发布）。** 三个查找失败点现在发出类型化的 `capability_gap` 事件：`skills/fast` 无 skill 匹配路径、`gdd-router` 未匹配意图路径、反射器模式检测 pass。使用 `gdd-events --type capability_gap` 查看。
+
+**Stage 1 — 自动撰写（数据越过阈值后选择性启用）。** 当 K=3 个稳定集群在 M=10 个反思周期中出现时，`/gdd:apply-reflections` 会一次性提示你启用 Stage 1。反射器随后在 `.design/reflections/incubator/<slug>/` 起草符合 Phase 28.5 标准 frontmatter 的孵化器 artifact。四个动作：`accept` / `reject` / `defer` / `edit`。严格 proposal-only — `/gdd:apply-reflections` 仍是唯一的人类闸门 (Phase 11 SC-8)。
+
+作用域守卫：撰写仅限 `agents/` 和 `skills/` — 永不涉及 runtimes / transports / hooks。完整细节请见 [README.md](README.md)（英文，权威版本）。
+
 
 ## 工作流程
 

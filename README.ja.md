@@ -211,6 +211,16 @@ claude plugin install get-design-done@get-design-done
 
 詳細は [README.md](README.md)（英語、正本）を参照してください。
 
+### Capability-Gap テレメトリ + 自己オーサリング (v1.29.0+)
+
+リフレクター・ループは「ケイパビリティ・ルックアップ失敗」シグナルをファーストクラスのテレメトリとして追跡するようになりました。十分な繰り返し発生するギャップが浮上したら、レビュー対象として新しい agent / skill を提案として下書きできます。
+
+**ステージ 0 — テレメトリ（即時リリース）。** 3 つのルックアップ失敗ポイントが型付き `capability_gap` イベントを発行します: `skills/fast` のスキル不一致パス、`gdd-router` の未解決インテント・パス、リフレクターのパターン検出パス。表示は `gdd-events --type capability_gap`。
+
+**ステージ 1 — 自己オーサリング（データがゲートを越えたらオプトイン）。** K=3 個の安定したクラスタが M=10 サイクルで現れると、`/gdd:apply-reflections` がステージ 1 を有効化するかを一度だけ尋ねます。リフレクターは Phase 28.5 準拠の frontmatter を持つインキュベーター・アーティファクトを `.design/reflections/incubator/<slug>/` に下書きします。4 つのアクション: `accept` / `reject` / `defer` / `edit`。厳密に proposal-only — `/gdd:apply-reflections` が唯一の人間ゲートです (Phase 11 SC-8)。
+
+スコープ・ガード: オーサリングは `agents/` と `skills/` に限定され、ランタイム / トランスポート / フックは対象外です。詳細は [README.md](README.md)（英語、正本）を参照してください。
+
 
 ## 仕組み
 

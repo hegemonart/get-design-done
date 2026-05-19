@@ -211,6 +211,16 @@ Oltre ai percorsi di installazione file-drop della Fase 28.7 sopra (predefiniti,
 
 Per i dettagli completi, vedere [README.md](README.md) (inglese, autorevole).
 
+### Telemetria Capability-Gap + Self-Authoring (v1.29.0+)
+
+Il loop riflettore ora traccia i segnali "capability lookup fallito" come telemetria di prima classe e — una volta che emergono abbastanza lacune ricorrenti — può abbozzare nuovi agent o skill come proposte da revisionare.
+
+**Stadio 0 — telemetria (rilasciato immediatamente).** Tre punti di lookup-fail emettono eventi tipizzati `capability_gap`: percorsi `skills/fast` senza match, percorsi `gdd-router` con intent non risolto, e il pattern-detection pass del riflettore. Visualizza con `gdd-events --type capability_gap`.
+
+**Stadio 1 — self-authoring (opt-in una volta superata la soglia).** Quando K=3 cluster stabili emergono su M=10 cicli di riflessione, `/gdd:apply-reflections` ti chiede una sola volta di abilitare lo Stadio 1. Il riflettore abbozza quindi artefatti incubatore in `.design/reflections/incubator/<slug>/` con frontmatter conforme Phase 28.5. Quattro azioni: `accept` / `reject` / `defer` / `edit`. Strettamente proposal-only — `/gdd:apply-reflections` rimane l'unico gate umano (Phase 11 SC-8).
+
+Scope-guard: l'authoring è limitato ad `agents/` e `skills/` — mai runtimes / transports / hooks. Per i dettagli completi, vedere [README.md](README.md) (inglese, autorevole).
+
 
 ## Come funziona
 

@@ -211,6 +211,16 @@ Zusätzlich zu den Phase-28.7-Datei-Installationspfaden oben (Standard, weiterhi
 
 Vollständige Details siehe [README.md](README.md) (Englisch, autoritativ).
 
+### Capability-Gap-Telemetrie + Self-Authoring (v1.29.0+)
+
+Die Reflector-Schleife verfolgt "Capability-Lookup fehlgeschlagen"-Signale jetzt als erstklassige Telemetrie und kann — sobald genügend wiederkehrende Lücken auftauchen — neue Agents oder Skills als Vorschläge zur Überprüfung entwerfen.
+
+**Stufe 0 — Telemetrie (sofort verfügbar).** Drei Lookup-Fail-Punkte emittieren typisierte `capability_gap`-Events: `skills/fast` No-Skill-Match-Pfade, `gdd-router` Unmatched-Intent-Pfade und die Pattern-Detection-Pass des Reflectors. Anzeigen mit `gdd-events --type capability_gap`.
+
+**Stufe 1 — Self-Authoring (Opt-in, sobald Daten das Gate überschreiten).** Wenn K=3 stabile Cluster über M=10 Reflexions-Zyklen auftauchen, fordert `/gdd:apply-reflections` Sie einmalig auf, Stufe 1 zu aktivieren. Der Reflector entwirft dann Inkubator-Artefakte unter `.design/reflections/incubator/<slug>/` mit Phase-28.5-konformen Frontmatter. Vier Aktionen: `accept` / `reject` / `defer` / `edit`. Strict proposal-only — `/gdd:apply-reflections` bleibt der einzige menschliche Gate (Phase 11 SC-8).
+
+Scope-Guard: Authoring beschränkt sich auf `agents/` und `skills/` — niemals Runtimes / Transports / Hooks. Vollständige Details siehe [README.md](README.md) (Englisch, autoritativ).
+
 
 ## Wie es funktioniert
 
