@@ -117,8 +117,16 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     );
   });
 
-  test('27.7-07: ROADMAP Phase 27.7 plan checkboxes all flipped to [x] (whitespace-tolerant)', () => {
-    const md = fs.readFileSync(path.join(REPO_ROOT, '.planning', 'ROADMAP.md'), 'utf8');
+  // .planning/ROADMAP.md is local-only dev material (see PR #65). When the
+  // file is absent (CI runs against a clean clone), skip the ROADMAP-shape
+  // checkbox assertions — they remain useful as a pre-merge gate locally.
+  test('27.7-07: ROADMAP Phase 27.7 plan checkboxes all flipped to [x] (whitespace-tolerant)', (t) => {
+    const roadmapPath = path.join(REPO_ROOT, '.planning', 'ROADMAP.md');
+    if (!fs.existsSync(roadmapPath)) {
+      t.skip('.planning/ROADMAP.md not tracked — local-only dev artifact');
+      return;
+    }
+    const md = fs.readFileSync(roadmapPath, 'utf8');
     // Warning #10 — regex allows leading whitespace (ROADMAP uses 2-space indented bullets).
     const re = /^[ \t]*- \[x\] 27-7-0[1-7]-PLAN\.md/gm;
     const matches = md.match(re) || [];
@@ -129,8 +137,13 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     );
   });
 
-  test('27.7-07: ROADMAP top-level overview Phase 27.7 entry flipped to [x] (scoped)', () => {
-    const md = fs.readFileSync(path.join(REPO_ROOT, '.planning', 'ROADMAP.md'), 'utf8');
+  test('27.7-07: ROADMAP top-level overview Phase 27.7 entry flipped to [x] (scoped)', (t) => {
+    const roadmapPath = path.join(REPO_ROOT, '.planning', 'ROADMAP.md');
+    if (!fs.existsSync(roadmapPath)) {
+      t.skip('.planning/ROADMAP.md not tracked — local-only dev artifact');
+      return;
+    }
+    const md = fs.readFileSync(roadmapPath, 'utf8');
     // Warning #11 — only the overview line is flipped; other phases must not be touched.
     assert.match(
       md,
