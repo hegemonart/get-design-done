@@ -1,10 +1,10 @@
 ---
 name: apply-reflections-procedure
 type: heuristic
-version: 1.1.0
+version: 1.2.0
 phase: 28.5
 tags: [apply-reflections, proposal, frontmatter, reference, budget, question, global-skill, incubator]
-last_updated: 2026-05-19
+last_updated: 2026-05-20
 ---
 
 # Apply-Reflections — Per-Type Procedure
@@ -105,3 +105,32 @@ Use `scripts/lib/apply-reflections/incubator-proposals.cjs` for all actions.
 3. **Only on explicit `y`**, call `recordOptIn({ statePath, confirmedBy })`. The function is idempotent — a second call detects the existing record and returns `{ alreadyRecorded: true }`. Never call it on any other input.
 
 **Why this is gated.** The `[INCUBATOR]` proposal class can write executable surface (agents + skills) into the plugin runtime. Both Phase 29 D-01 (no auto-flip) and D-05 (scope guard) exist because that surface has integration-test and security implications that exceed reflector autonomy. `validateScope` keeps the file landing zone confined to `agents/<slug>.md` or `skills/<slug>/SKILL.md`. The Stage-1 gate keeps the *whether* of opting in to incubator authoring under explicit user control even after the data threshold says we have enough signal.
+
+**Bandit-fairness gate on `accept` (Phase 29 Plan 06 / CONTEXT D-04).**
+
+When the `accept` action promotes an incubator draft, the bandit-router arms for the freshly-promoted agent/skill MUST be bootstrapped with `prior_class: 'promoted_incubator'`. This invokes a conservative `Beta(2, 8)` bootstrap prior (posterior mean 0.2) instead of the optimistic Phase 23.5 informed prior — the bandit-fairness gate IS the staging mechanism (D-04: no separate two-step ratify split). The conservative prior suppresses preferential selection until ~8-10 successful pulls accumulate.
+
+Call shape (whether eagerly invoked on promotion or via first-pull lazy bootstrap):
+
+```javascript
+const bandit = require('./scripts/lib/bandit-router.cjs');
+// Per arm bootstrapped for the freshly-promoted agent:
+bandit.update({
+  agent: '<promoted-slug>',
+  bin: '<touches-bin>',
+  tier: '<chosen-tier>',
+  reward: <bernoulli>,
+  prior_class: 'promoted_incubator',  // Phase 29 Plan 06 / D-04 — Beta(2,8) staging
+});
+// Or for the delegate-aware case (Plan 27-07):
+bandit.updateWithDelegate({
+  agent: '<promoted-slug>',
+  bin: '<touches-bin>',
+  tier: '<chosen-tier>',
+  delegate: '<peer-cli-or-none>',
+  reward: <bernoulli>,
+  prior_class: 'promoted_incubator',
+});
+```
+
+Omitting `prior_class` reverts to Phase 23.5 informed-prior bootstrap (non-breaking). The reward math is unchanged — `prior_class` only affects bootstrap.
