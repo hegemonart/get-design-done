@@ -66,8 +66,23 @@ Apply-reflections complete
 ─────────────────────────────────────────
 ```
 
+## [INCUBATOR]
+
+Incubator drafts authored by `scripts/lib/incubator-author.cjs` (Phase 29-04) appear as a distinct proposal class. For each draft under `.design/reflections/incubator/<slug>/`, use `scripts/lib/apply-reflections/incubator-proposals.cjs`:
+
+1. `discoverIncubatorDrafts()` → list pending drafts.
+2. `renderProposal(draft)` → show full body + diff + origin signals.
+3. User chooses **accept** | **reject** | **defer** | **edit**.
+4. **accept** — scope-guard runs FIRST (`validateScope` from `scripts/validate-incubator-scope.cjs`); `applyAccept` then promotes draft → `agents/<slug>.md` or `skills/<slug>/SKILL.md` and appends a registry entry. Single-step per D-04.
+5. **reject** — `applyReject` removes the incubator subdir.
+6. **defer** — no-op; draft re-surfaces next run.
+7. **edit** — `applyEdit` opens `$EDITOR`; re-prompt user on close.
+
+**Stage-1 gate.** At session start, call `checkStage1Gate()`. If `thresholdMet && !optInRecorded`, display the opt-in prompt once. NEVER auto-flip per D-01 — recording opt-in requires explicit user confirmation via `recordOptIn()`. Full procedure: `./apply-reflections-procedure.md` §[INCUBATOR].
+
 ## Do Not
 
 - Do not apply any proposal without the user explicitly choosing `a` or `e`.
-- Do not modify source code files (`.ts`, `.tsx`, `.css`, `.js`) — only agent files, reference files, budget.json, discussant questions, and global skills.
+- Do not modify source code files (`.ts`, `.tsx`, `.css`, `.js`) — only agent files, reference files, budget.json, discussant questions, global skills, and incubator drafts.
 - Do not re-run the reflector — this skill only applies existing proposals.
+- Do not bypass the scope guard or auto-flip Stage-1 — both are non-negotiable per D-05 / D-01.

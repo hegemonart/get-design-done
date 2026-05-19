@@ -1,10 +1,10 @@
 ---
 name: apply-reflections-procedure
 type: heuristic
-version: 1.0.0
+version: 1.1.0
 phase: 28.5
-tags: [apply-reflections, proposal, frontmatter, reference, budget, question, global-skill]
-last_updated: 2026-05-18
+tags: [apply-reflections, proposal, frontmatter, reference, budget, question, global-skill, incubator]
+last_updated: 2026-05-19
 ---
 
 # Apply-Reflections — Per-Type Procedure
@@ -66,3 +66,42 @@ the proposal's bracketed type tag.
 
 5. Print: "Global skill written to ~/.claude/gdd/global-skills/<name>.md — auto-loads in all future gdd sessions"
 6. Append `**Applied**: <date>` to proposal in reflections file
+
+### [INCUBATOR]
+
+Incubator drafts come from `scripts/lib/incubator-author.cjs` (Phase 29-04). They live at
+`.design/reflections/incubator/<slug>/` and contain `manifest.json` + `DRAFT.md` + (optional) `ORIGIN.md`.
+
+Use `scripts/lib/apply-reflections/incubator-proposals.cjs` for all actions.
+
+**Discovery + render** (once per cycle):
+
+1. Call `discoverIncubatorDrafts()` → `Array<Draft>`. Skip malformed entries silently (already warned on stderr by the helper).
+2. For each draft: call `renderProposal(draft)` and print the returned markdown block. The user sees a header (slug + kind), a diff vs the nearest existing artifact (or "net-new"), an Origin section listing capability-gap signals, and the full draft body.
+3. Prompt: `(a) accept   (r) reject   (d) defer   (e) edit   (q) quit`.
+
+**Per-action behavior:**
+
+1. **accept** — call `applyAccept(draft, { registryPath, repoRoot })`.
+   - The helper calls `validateScope(draft.target_path)` from `scripts/validate-incubator-scope.cjs` **before** any write. Out-of-scope paths throw and the registry stays untouched. This is the non-bypassable scope guard (D-05).
+   - On success: target artifact written, `reference/registry.json` appended with `{ slug, path, added, origin: 'incubator' }`, incubator subdir removed last (T-29.05-04 — partial-failure leaves draft retryable).
+   - Print: "Accepted — promoted to <target_path>; registered."
+   - Append `**Applied**: <date>` to the proposal block.
+
+2. **reject** — call `applyReject(draft)`. Only the incubator subdir is removed; registry is untouched. Append `**Reviewed: rejected**` to the reflections file.
+
+3. **defer** — no-op. Print "Deferred — draft re-surfaces next run." Append `**Reviewed: deferred**`.
+
+4. **edit** — call `applyEdit(draft)` (uses `$EDITOR` or the `editorCmd` array option). On clean exit, the helper reloads the draft and the caller re-runs `renderProposal` + the prompt. On non-zero exit, the original draft is preserved unchanged.
+
+**Stage-1 gate (D-01 — no auto-flip):**
+
+1. At the start of the cycle, call `checkStage1Gate({ gateSpecPath, statePath, registryPath })`. The call is **read-only** — never mutates state. The returned `{ thresholdMet, summary, optInRecorded }` is informational.
+2. If `thresholdMet && !optInRecorded`, surface a one-time prompt:
+   ```
+   Stage-1 capability-gap authoring threshold met: <summary>
+   Enable incubator-draft promotion?  (y/N)
+   ```
+3. **Only on explicit `y`**, call `recordOptIn({ statePath, confirmedBy })`. The function is idempotent — a second call detects the existing record and returns `{ alreadyRecorded: true }`. Never call it on any other input.
+
+**Why this is gated.** The `[INCUBATOR]` proposal class can write executable surface (agents + skills) into the plugin runtime. Both Phase 29 D-01 (no auto-flip) and D-05 (scope guard) exist because that surface has integration-test and security implications that exceed reflector autonomy. `validateScope` keeps the file landing zone confined to `agents/<slug>.md` or `skills/<slug>/SKILL.md`. The Stage-1 gate keeps the *whether* of opting in to incubator authoring under explicit user control even after the data threshold says we have enough signal.
