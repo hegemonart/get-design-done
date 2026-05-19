@@ -15,6 +15,18 @@
 //
 // Modifiers: --global (default) | --local; --uninstall; --dry-run;
 //   --config-dir <path>; --help / -h.
+//
+// Read-only modes: --doctor (Phase 28.8 — Tier-2 distribution-channel
+//   status; no install side effects). Future Tier-2 channels (Codex
+//   plugin via Plan 28-8-C2; aggregated Tier-2 status via Plan 28-8-X2)
+//   plug additional sections into the same flag dispatch — see
+//   `runDoctor()` below for the section-module pattern.
+//
+// Read-only modes: --doctor (Phase 28.8 — Tier-2 distribution-channel
+//   status; no install side effects). Future Tier-2 channels (Codex
+//   plugin via Plan 28-8-C2; aggregated Tier-2 status via Plan 28-8-X2)
+//   plug additional sections into the same flag dispatch — see
+//   `runDoctor()` below for the section-module pattern.
 
 const path = require('node:path');
 
@@ -64,6 +76,7 @@ function helpText() {
     '  --no-peer-prompt  Suppress the post-install peer-CLI detection nudge',
     '  --register-mcp     Register gdd-mcp with detected harnesses (Claude Code, Codex). Opt-in.',
     '  --no-register-mcp  Skip MCP registration (default behavior; included for symmetry).',
+    '  --doctor        Print Tier-2 distribution-channel status (read-only; no install)',
     '  --help, -h      Show this message',
     '',
     'Environment overrides (per-runtime):',
@@ -125,11 +138,59 @@ function summariseResults(results) {
   return lines.join('\n');
 }
 
+// Phase 28.8 — Tier-2 distribution-channel doctor.
+//
+// Read-only status reporter for distribution channels (Cursor Marketplace,
+// Codex Plugins, etc.). This is the central dispatch — additional channel
+// reporters plug in here as sibling section calls (Plan 28-8-C2 will add
+// a Codex section; Plan 28-8-X2 will refactor into a `doctor-tier2.cjs`
+// aggregator if a third Tier-2 channel lands).
+//
+// Each section call is a thin wrapper: lazy-require the channel reporter,
+// invoke its pure `report*()` function with `{projectRoot}`, then render
+// via its co-located formatter. Sections are independent — failure in
+// one section logs locally and does not fail the doctor exit.
+function runDoctor() {
+  const projectRoot = process.cwd();
+  const sections = [];
+
+  // --- Cursor Marketplace section (Plan 28-8-B2) ---
+  try {
+    const {
+      reportCursorMarketplace,
+      formatCursorMarketplaceReport,
+    } = require('./lib/install/doctor-cursor-marketplace.cjs');
+    const report = reportCursorMarketplace({ projectRoot });
+    sections.push(formatCursorMarketplaceReport(report));
+  } catch (err) {
+    // Surface the error inline (don't crash the doctor) so the maintainer
+    // sees parse failures / unknown statuses without losing other sections.
+    sections.push(
+      '=== Cursor Marketplace status ===\n  ERROR: '
+        + (err && err.message ? err.message : String(err))
+    );
+  }
+
+  // --- Future sections plug in here:
+  //   Codex Plugin (Plan 28-8-C2)        — section-module: doctor-codex-plugin.cjs
+  //   Tier-2 aggregator (Plan 28-8-X2)   — section-module: doctor-tier2.cjs
+  // Each follows the same try/lazy-require/format pattern above.
+
+  process.stdout.write(sections.join('\n\n') + '\n');
+}
+
 async function main() {
   const { flags, configDir } = parseArgs(process.argv);
 
   if (flags.has('--help') || flags.has('-h')) {
     process.stdout.write(helpText());
+    process.exit(0);
+  }
+
+  // Phase 28.8 D-16 + B2 — read-only Tier-2 doctor. Early dispatch BEFORE
+  // any runtime selection so doctor never performs install side effects.
+  if (flags.has('--doctor')) {
+    runDoctor();
     process.exit(0);
   }
 
