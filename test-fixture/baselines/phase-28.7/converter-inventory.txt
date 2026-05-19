@@ -1,0 +1,14 @@
+antigravity.cjs
+augment.cjs
+cline.cjs
+codebuddy.cjs
+codex.cjs
+copilot.cjs
+cursor.cjs
+gemini.cjs
+kilo.cjs
+opencode.cjs
+qwen.cjs
+shared.cjs
+trae.cjs
+windsurf.cjs

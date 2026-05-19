@@ -1,0 +1,8 @@
+# Phase 28.7 cross-link integrity baseline
+# Format: <file> -> <link> -> <resolved-path> : <OK|MISSING|STALE>
+#
+# Phase 28.7 ships install-pipeline infrastructure (Wave A foundations +
+# Wave B converters + Wave C wire-up/test/closeout) — no skill content
+# moves, no cross-link rewires. Carry-forward verification.
+
+PASS
