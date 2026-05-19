@@ -134,28 +134,17 @@ test('lint-agentskills-spec: live ./skills tree D-13 regression guard', (t) => {
     return;
   }
   const { exit, stdout, stderr } = runLint(LIVE_SKILLS_DIR, '--json');
-  // Phase 28.8 Plan 28-8-A1 discovered drift: 5 skills (compare/darkmode/figma-write/
-  // graphify/style) carry legacy `name: get-design-done:<slug>` frontmatter that
-  // violates the agentskills.io spec slug regex `^[a-z0-9]+(-[a-z0-9]+)*$` (R2) and
-  // the parent-dir match rule (R3). Per user directive at plan-spawn ("stop and
-  // report — don't auto-fix the skill content"), the script faithfully surfaces the
-  // FAILs and Plan 28-8-A1 ships the lint regardless. Drift remediation is queued
-  // for a follow-up plan.
-  //
-  // This regression-guard test is therefore SKIPPED by default. Set the env var
-  // LINT_AGENTSKILLS_REQUIRE_LIVE_CLEAN=1 to enforce — the assertion is preserved
-  // verbatim so re-enabling is one env flip away once the 5 skills are renamed.
-  if (process.env.LINT_AGENTSKILLS_REQUIRE_LIVE_CLEAN === '1') {
-    assert.equal(
-      exit,
-      0,
-      `live skills/ tree must lint clean per D-13. stdout=${stdout.slice(0, 500)} stderr=${stderr.slice(0, 500)}`
-    );
-  } else {
-    t.skip(
-      'live-tree regression guard SKIPPED pending 5-skill rename follow-up; set LINT_AGENTSKILLS_REQUIRE_LIVE_CLEAN=1 to enforce'
-    );
-  }
+  // Phase 28.8 Plan 28-8-A1+ remediation: the 5 colon-namespaced skills
+  // (compare/darkmode/figma-write/graphify/style) were renamed to gdd-<slug>
+  // form to comply with the agentskills.io slug regex `^[a-z0-9]+(-[a-z0-9]+)*$`.
+  // The live skills/ tree must now lint clean — this is an unconditional D-13
+  // regression guard. WARN rows (W2 description-length advisory) do not affect
+  // the exit code per scripts/lint-agentskills-spec.cjs contract.
+  assert.equal(
+    exit,
+    0,
+    `live skills/ tree must lint clean per D-13. stdout=${stdout.slice(0, 500)} stderr=${stderr.slice(0, 500)}`
+  );
 });
 
 test('lint-agentskills-spec: exit 2 on internal error (non-directory path arg)', () => {
