@@ -163,6 +163,33 @@ const RUNTIMES = Object.freeze([
     configDirFallback: null,
     kind: 'cursor-marketplace',
   },
+  // Phase 28.8 (Plan 28-8-C1) — Tier-2 distribution channel. 16th entry,
+  // kind 'codex-plugin'. Separate from the existing `id: 'codex'` entry
+  // (kind: 'multi-artifact') which remains the Tier-1 file-drop AGENTS.md
+  // install target (Phase 28.7). Per CONTEXT D-05 (additive), the two
+  // coexist — file-drop users and marketplace consumers are independent
+  // flows. Installed via `codex plugin marketplace add hegemonart/get-design-done`
+  // per .planning/research/codex-plugins-2026-05-19.md § Distribution Mechanism.
+  //
+  // build-distribution-bundles.cjs (Plan 28-8-X1) and install.cjs --doctor
+  // (Plan 28-8-C2) consult this entry. The regular install flow skips it
+  // because `configDir` is null — detect-runtimes never matches it on disk.
+  //
+  // No `configDirEnv` / `configDirFallback` because Tier-2 channels are
+  // out-of-band distribution bundles, not per-user runtime install dirs.
+  // runtime-artifact-layout.cjs is NOT extended for this kind — Tier-2
+  // bypasses the artifact-layout pipeline entirely (consumed by
+  // build-distribution-bundles.cjs, not the multi-artifact installer).
+  //
+  // D-14: Codex reuses our existing `.claude-plugin/marketplace.json` via
+  // documented legacy-compat catalog path — no separate Codex catalog file.
+  {
+    id: 'codex-plugin',
+    displayName: 'Codex Plugin',
+    configDir: null,
+    configDirFallback: null,
+    kind: 'codex-plugin',
+  },
 ]);
 
 const BY_ID = new Map(RUNTIMES.map((r) => [r.id, r]));
