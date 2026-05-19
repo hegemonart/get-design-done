@@ -171,8 +171,22 @@ function runDoctor() {
     );
   }
 
+  // --- Codex Plugin section (Plan 28-8-C2) ---
+  try {
+    const {
+      checkCodexPlugin,
+      renderCodexPluginSection,
+    } = require('./lib/install/doctor-codex-plugin.cjs');
+    const report = checkCodexPlugin(projectRoot);
+    sections.push(renderCodexPluginSection(report).replace(/\n$/, ''));
+  } catch (err) {
+    sections.push(
+      'Codex Plugin status\n  ERROR: '
+        + (err && err.message ? err.message : String(err))
+    );
+  }
+
   // --- Future sections plug in here:
-  //   Codex Plugin (Plan 28-8-C2)        — section-module: doctor-codex-plugin.cjs
   //   Tier-2 aggregator (Plan 28-8-X2)   — section-module: doctor-tier2.cjs
   // Each follows the same try/lazy-require/format pattern above.
 
