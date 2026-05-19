@@ -636,10 +636,16 @@ test('29-05 T3: procedure.md cites validateScope by name', () => {
   assert.match(src, /validateScope/);
 });
 
-test('29-05 T3: procedure.md tags include incubator + version bumped to 1.1.0', () => {
+test('29-05 T3: procedure.md tags include incubator + version bumped to >= 1.1.0', () => {
   const src = fs.readFileSync(PROCEDURE_PATH, 'utf8');
   assert.match(src, /tags:.*incubator/);
-  assert.match(src, /version:\s*1\.1\.0/);
+  // 29-05 introduced 1.1.0; subsequent plans (e.g. 29-06's bandit-fairness
+  // gate wiring) may bump further. Accept any 1.x version >= 1.1.0.
+  const m = src.match(/version:\s*(\d+)\.(\d+)\.(\d+)/);
+  assert.ok(m, 'version field present');
+  const [, maj, min] = m;
+  assert.equal(maj, '1', `major version should be 1, got ${maj}`);
+  assert.ok(Number(min) >= 1, `minor version should be >= 1, got ${min}`);
 });
 
 test('29-05 T3: procedure.md retains all 5 prior proposal-class sections (no regression)', () => {
