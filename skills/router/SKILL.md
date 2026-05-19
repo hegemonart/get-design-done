@@ -75,6 +75,47 @@ Every `/gdd:*` SKILL.md's first substantive step is: spawn the router via `Task`
 
 If `.design/budget.json` is missing, assume defaults from `reference/config-schema.md` per D-12. If `reference/model-prices.md` is missing, emit `estimated_cost_usd: null` and log a warning — do not block.
 
+## Emitting capability_gap on unmatched intent
+
+If the router cannot resolve `intent-string` to a known agent (no agent's `description` field matches, no `default-tier` rule applies, and the fallback path-selection table returns nothing meaningful), emit ONE `capability_gap` event before returning the conservative-fallback JSON output to the caller. This feeds Phase 29 Stage-0 telemetry — the reflector pattern-detection pass (Plan 29-02) and aggregation (Plan 29-03) read these events from the chain file (`.design/gep/events.jsonl`) to surface recurring router-unmatched intents as candidate agents in `/gdd:apply-reflections`.
+
+Synchronous emitter (same shape as fast, with `source: "router"`):
+
+```bash
+node -e '
+const { appendChainEvent } = require("./scripts/lib/event-chain.cjs");
+const { createHash, randomUUID } = require("node:crypto");
+const intent = process.env.GDD_INTENT || "";
+const payload = {
+  event_id: randomUUID(),
+  parent_event_id: null,
+  source: "router",
+  context_hash: createHash("sha256").update(intent).digest("hex"),
+  intent_summary: intent.slice(0, 256),
+  suggested_kind: "agent",
+  evidence_refs: [],
+};
+appendChainEvent({
+  agent: "router",
+  outcome: "capability_gap",
+  payload,
+  type: "capability_gap",
+  timestamp: new Date().toISOString(),
+  sessionId: process.env.GDD_SESSION_ID || "router-cli",
+});
+'
+```
+
+Notes:
+- `suggested_kind` is `"agent"` because router unmatched intents typically describe multi-step workflows (the unit the router resolves).
+- Router-unmatched is NOT the same as MCP-probe failure (per D-08). If gdd-router returns a fallback because a peer-CLI connection is down, do NOT emit capability_gap — that's a Phase 22 connection-status concern.
+- The emitter is the LAST step before returning the fallback JSON. Router output is unchanged (back-compat per the existing `## Output schema versioning` table); the event is a SIDE EFFECT, not a payload addition.
+- Router output JSON contract is UNCHANGED — back-compat preserved per the `## Output schema versioning` table above.
+- The 7-field payload flows through `appendChainEvent`'s opaque-extras pattern verbatim; the chain row carries `type`, `timestamp`, `sessionId`, `payload` as opaque extras and is projected back to the events-schema envelope by Plan 29-03 aggregation.
+
+MCP-probe failures (connection down, transport-layer errors) do NOT emit `capability_gap` — those are Phase 22 connection-status concerns (D-08).
+
 ## Non-Goals
 
 The router does not: (a) make a model call, (b) write files, (c) enforce budget caps (that's the hook's job), (d) learn from history (Phase 11 reflector territory per D-07).
+The router does not author capability-gap CLUSTERS — Stage-0 emit is single-event-per-failure. Aggregation across events is Plan 29-03's reflector pass.
