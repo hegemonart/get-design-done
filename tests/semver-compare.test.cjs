@@ -224,6 +224,15 @@ OFF_CADENCE_VERSIONS.add('1.28.6');
 //   - 1.28.7 → Phase 28.7 (verified-install-for-claimed-runtimes); off-cadence sub-phase from 1.28.6.
 OFF_CADENCE_VERSIONS.add('1.28.7');
 
+// Phase 28.8 — Tier-2 Distribution Channels
+// (v1.28.8, 2026-05-19). Off-cadence decimal sub-phase from v1.28.7 parent —
+// sequence 1.28.0 -> 1.28.5 -> 1.28.6 -> 1.28.7 -> 1.28.8. Phase 28.8 adds
+// Tier-2 distribution channels: agentskills.io spec lint (Workstream A,
+// lint-only per D-13), Cursor Marketplace plugin manifest + doctor (Workstream
+// B), Codex Plugin manifest + doctor + GitHub-URL install (Workstream C).
+//   - 1.28.8 → Phase 28.8 (tier-2-distribution-channels); off-cadence sub-phase from 1.28.7.
+OFF_CADENCE_VERSIONS.add('1.28.8');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];
