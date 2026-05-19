@@ -38,6 +38,7 @@
     "provenance": true
   },
   "scripts": {
+    "build:bundles": "node scripts/build-distribution-bundles.cjs",
     "test": "node --test --experimental-strip-types \"tests/**/*.test.cjs\" \"tests/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "codegen:schemas": "node --experimental-strip-types scripts/codegen-schema-types.ts",
