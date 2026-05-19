@@ -4,6 +4,52 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.28.7] — 2026-05-19
+
+### Phase 28.7 — Multi-Runtime Install (Pragmatic Port from gsd-build)
+
+Replaces the Phase 24 `kind: 'agents-md'` placeholder (which dropped a single bare `AGENTS.md` into each non-Claude runtime's config dir — content the runtimes did not actually consume) with proper native install for all 14 claimed runtimes. Architecture ported from `gsd-build/get-shit-done` (MIT) — see `NOTICE` for the rollup attribution. Per Phase 28.7 D-02 we port the architecture rather than byte-copying the upstream `bin/install.js` monolith. Off-cadence decimal sub-phase from v1.28.0 parent — sequence 1.28.0 → 1.28.5 → 1.28.6 → 1.28.7. Re-interpretation of the original ROADMAP Phase 28.7 (verification-gated) per user direction 2026-05-18: skip field-test reports, trust gsd-build's upstream proving of the pattern. 10 plans across Waves A (foundations) / B (converters) / C (wire-up + test + closeout).
+
+#### New install infrastructure (Wave A)
+
+- `scripts/lib/install/runtime-homes.cjs` (28.7-01) — pure per-runtime config-dir resolver for all 14 runtimes. Handles env-var overrides (`CLAUDE_CONFIG_DIR`, `XDG_CONFIG_HOME`, etc.), XDG paths, and special-case nests (Antigravity under `~/.gemini/antigravity`, Windsurf under `~/.codeium/windsurf`). Pure function — no I/O.
+- `scripts/lib/install/runtime-artifact-layout.cjs` (28.7-02) — per-(runtime, scope) layout table mapping each combination to its `kinds[] = [{kind, destSubpath, prefix}]` shape. Claude global → `skills/<name>/`; Claude local → `commands/gsd/` + `agents/`; cursor/codex/copilot/antigravity/windsurf/augment/trae/qwen/codebuddy → `skills/<name>/`; opencode + kilo → `command/<name>` (slash-command dir, not skills); gemini → `commands/gsd/` (commands-only); cline → `kinds: []` (rules-based — embeds in `.clinerules` per D-09).
+- `scripts/lib/install/runtime-slash.cjs` (28.7-03) — per-runtime slash-command surface emitter. Codex uses `$gdd-<name>` shell-var form; all others use `/gdd-<name>`. Reserves a forward-compat seam for downstream slash-aware install behaviors.
+
+#### Per-runtime content converters (Wave B)
+
+- 13 per-runtime converters at `scripts/lib/install/converters/<runtime>.cjs` (28.7-04 through 28.7-07), plus `shared.cjs` (frontmatter pass-through, tool-name rewrite, brand pass-through utilities). Each runtime converter exports `convert(content, skillName, ctx) → { path, content }`. Cross-references the Phase 21 cross-harness tool-name maps (`reference/codex-tools.md`, `reference/gemini-tools.md`) — tool name rewrites only happen for runtimes whose native tool names differ from Claude's defaults.
+  - Wave 1 (28.7-04) — `cursor`, `codex`, `copilot`, `antigravity`.
+  - Wave 2 (28.7-05) — `windsurf`, `augment`, `trae`, `qwen`.
+  - Wave 3 (28.7-06) — `codebuddy`, `cline`. **Cline** (D-09) writes rule-block aggregation to `.clinerules` rather than a skills directory.
+  - Wave 4 (28.7-07) — `opencode`, `kilo`, `gemini`. Opencode + kilo use `command/<name>` (slash-command dir); gemini ships commands-only into `commands/gsd/`.
+- **Hermes is OUT of scope** (D-03 + D-10) — Phase 24 D-02 runtime-list invariant preserved. The Phase 28.6 baseline tests' "no hermes.cjs" guard is mirrored in the new Phase 28.7 baseline test.
+
+#### Installer wire-up (Wave C.1)
+
+- `scripts/lib/install/installer.cjs` (28.7-08) — replaces the broken `kind: 'agents-md'` placeholder with a proper multi-artifact dispatcher. Reads the layout table, invokes the appropriate per-runtime converter for each kind, lands files at the resolved destination per `runtime-homes.cjs`. Backward-compat retained for the existing invocation surface (`--claude`, `--opencode`, …, `--cline`, `--dry-run`, `--global`, `--local`, `--config-dir`). Scope propagation through to converter `ctx` per D-07.
+
+#### Per-runtime simulation suite (Wave C.2)
+
+- `tests/install-per-runtime.test.cjs` (28.7-09) — 14 simulation tests + 11 cross-runtime invariants. Each test creates a temp config dir via `mkdtempSync`, invokes the installer with `--config-dir <tmp> --<runtime>`, and asserts files land at the expected paths with content matching the converter output. macOS symlink discipline applied (`os.tmpdir()` + `fs.realpathSync` for path comparison) per Phase 27.6 lesson.
+
+#### Fixed
+
+- 13 non-Claude runtimes now actually receive their plugin payload. Before Phase 28.7: bare `AGENTS.md` drop with no runtime-side discovery. After: native artifact layout matching what each runtime expects (skills dir / command dir / agents dir / rule-block embedding).
+
+#### Closeout (Wave C.3)
+
+- 4-manifest lockstep at v1.28.7 (`package.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `test-fixture/baselines/phase-28/manifests-version.txt` forward-propagation).
+- `OFF_CADENCE_VERSIONS.add('1.28.7')` in `tests/semver-compare.test.cjs`.
+- README install section confirmed claims all 14 runtimes; no Experimental tier (D-04). Translated READMEs deferred (English authoritative for this phase).
+- `NOTICE` extended with Phase 28.7 gsd-build/get-shit-done (MIT) architectural-port attribution (D-02). Phase 27 (cc-multi-cli, Apache 2.0) + Phase 28.5 (mattpocock/skills, MIT) attributions unchanged.
+- Baseline at `test-fixture/baselines/phase-28.7/` (manifests-version, converter-inventory, registry-diff) + `phase-28.6/manifests-version.txt` and `phase-28/manifests-version.txt` forward-propagated to 1.28.7.
+- `phase-20/skill-list.txt` UNCHANGED (no skill add/remove this phase).
+- ROADMAP add + scoped flip (this section + overview entry, 10 inline plan checkboxes pre-flipped).
+- Phase 28.7 ports gsd-build's architecture rather than gating on field-test reports — re-interpretation of the original ROADMAP entry per user direction 2026-05-18 (CONTEXT.md D-01).
+
+---
+
 ## [1.28.6] — 2026-05-18
 
 ### Phase 28.6 — Skill Reference Co-Location (Corrective Follow-Up to Phase 28.5)

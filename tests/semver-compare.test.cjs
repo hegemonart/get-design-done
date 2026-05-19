@@ -216,6 +216,14 @@ OFF_CADENCE_VERSIONS.add('1.28.5');
 //   - 1.28.6 → Phase 28.6 (skill-reference-co-location); off-cadence sub-phase from 1.28.5.
 OFF_CADENCE_VERSIONS.add('1.28.6');
 
+// Phase 28.7 — Multi-Runtime Install (Pragmatic Port from gsd-build)
+// (v1.28.7, 2026-05-19). Off-cadence decimal sub-phase from v1.28.0 parent —
+// sequence 1.28.0 -> 1.28.5 -> 1.28.6 -> 1.28.7. Phase 28.7 ports gsd-build's
+// multi-runtime install architecture into GDD; all 14 claimed runtimes now
+// receive their native artifact shape (no longer dropped as bare AGENTS.md).
+//   - 1.28.7 → Phase 28.7 (verified-install-for-claimed-runtimes); off-cadence sub-phase from 1.28.6.
+OFF_CADENCE_VERSIONS.add('1.28.7');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];
