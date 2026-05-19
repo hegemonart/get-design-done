@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: → v1.27.1)
 status: "Phase 28.6 (Skill Reference Co-Location — Corrective Follow-Up to Phase 28.5) closed out — v1.28.6 shipped (2026-05-18). 4-manifest lockstep at v1.28.6 + CHANGELOG `## [1.28.6]` block at top + OFF_CADENCE_VERSIONS.add('1.28.6') + Phase 28.5 CONTEXT.md D-06 retrospective annotation (D-07 — 'Corrected by Phase 28.6'). 20 skill-private procedure refs co-located from reference/ -> skills/<owner>/<topic>.md per mattpocock per-skill folder pattern (1-/2-consumer placement classes codified in contract §D-06). 20 registry entries purged (131 entries remain vs 151 pre-Phase-28.6); universal refs (typography.md, gestalt.md, etc.) untouched. 3-file regression baseline at test-fixture/baselines/phase-28.6/ (registry-diff 131 lines, cross-link-integrity 146 lines [0 STALE / 0 MISSING], manifests-version '1.28.6'). tests/phase-28.6-baseline.test.cjs adds 8 version-agnostic tests (full RegExp escape per CodeQL). ROADMAP entry CREATED for Phase 28.6 (wasn't in original roadmap; INSERTED between 28.5 and 29) + scoped flip (4 inline plan checkboxes + 1 overview entry). Rule 3 closeout-propagation: phase-27-7/manifests-version.txt 1.28.5 -> 1.28.6 alongside phase-28 baseline. NOTICE unchanged (per scope — same MIT attribution; only file paths shifted). phase-20/skill-list.txt unchanged (70 skills total — no skill add/remove). npm test 2237/2257 pass / 0 fail / 20 skipped. Phase 28.5 (Skill Authoring Contract + Skill Rework + Project Artifacts) shipped prior at v1.28.5. Phase 31 (Figma Off-Context Extractor) in progress."
-last_updated: "2026-05-18T15:33:00.000Z"
+last_updated: "2026-05-19T12:48:38.314Z"
 progress:
   total_phases: 8
-  completed_phases: 7
-  total_plans: 46
-  completed_plans: 46
-  percent: 100
+  completed_phases: 6
+  total_plans: 52
+  completed_plans: 48
+  percent: 92
 ---
 
 # Project State
