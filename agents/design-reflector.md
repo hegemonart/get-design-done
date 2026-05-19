@@ -217,6 +217,42 @@ Render each `bandit_arbitrage` entry into the Proposals section as a `[FRONTMATT
 
 ---
 
+### 9. Capability gaps observed (Phase 29 — D-01 / D-03)
+
+**Why this exists:** Plans 29-01 and 29-02 emit `capability_gap` events to `.design/gep/events.jsonl` whenever `/gdd:fast`, `gdd-router`, or the reflector pattern-detection pass identifies a lookup-fail with no dedicated owner. This section surfaces those events as clusters in the cycle markdown and evaluates the Stage-0 → Stage-1 gate per `reference/capability-gap-stage-gate.md`.
+
+**Data sources:**
+
+- `.design/gep/events.jsonl` — the Phase 22 causal event chain. Rows where `type === 'capability_gap'` (or `outcome === 'capability_gap'`) are aggregated by `payload.context_hash`.
+- `.design/config.json` (optional) — `capability_gap_gate.{K, M, stddev_threshold}` overrides. Defaults: `K=3`, `M=10`, `stddev_threshold=0.05` per D-03.
+
+**The mechanism:**
+
+1. Invoke `scripts/lib/reflections-cycle-writer.cjs` via Bash with `--chain=.design/gep/events.jsonl` and (when available) `--history=<path>` pointing at an array of prior cycle cluster lists.
+2. The shim calls `aggregateCapabilityGaps()` from `scripts/lib/reflector-capability-gap-aggregator.cjs` which clusters events by `context_hash`, caps each cluster's example evidence at 3, and orders by size desc.
+3. The shim calls `renderGapsSection(clusters)` which returns the `## Capability gaps observed` markdown block. The block is empty (no header emitted) when there are no clusters in this cycle — the cycle markdown is unchanged.
+4. When `--history` is supplied AND at least M cycles have been observed, the shim also calls `evaluateStageGate(history, config)`. If the gate is crossed AND `.design/config.json` does NOT already carry `capability_gap_gate.user_prompted_at`, a one-time prompt block is appended (verbatim text in `reference/capability-gap-stage-gate.md` § 5).
+
+**Bash invocation (executor follows verbatim):**
+
+```bash
+node scripts/lib/reflections-cycle-writer.cjs \
+  --chain=.design/gep/events.jsonl \
+  --config=.design/config.json
+```
+
+Append stdout to the cycle markdown body (after Section 8 / before the Proposals header). If `--history=<path>` is wired by a future cycle-aggregator, add the flag. For Stage 0 (this phase), per-cycle cluster aggregation alone is the deliverable — gate evaluation surfaces additively when history is present.
+
+**Important discipline (D-01 lock):**
+
+- This section NEVER auto-flips `capability_gap_gate.stage` or any other runtime state. The output is markdown only; the user opts in via Plan 29-05's apply-reflections extension.
+- The shim is read-only with respect to `.design/config.json`. The only state-mutating writer is the user-driven opt-in path (deferred to 29-05).
+- `evidence_refs[]` content is rendered as-is in the markdown table examples column — per the plan's threat model T-29.03-04, evidence refs are trusted-content (file:line or event-id strings from the 29-01 schema).
+
+**Helper:** `scripts/lib/reflector-capability-gap-aggregator.cjs` exports `aggregateCapabilityGaps`, `renderGapsSection`, `evaluateStageGate`. The shim wraps these for invocation from the agent prompt; tests in `tests/reflector-capability-gap-aggregation.test.cjs` cover the helper directly with synthetic fixtures (D-11).
+
+---
+
 ## Proposals
 
 After all sections, write a **Proposals** section. Number proposals sequentially. Every proposal must include evidence — no vague observations.

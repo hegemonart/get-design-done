@@ -9,6 +9,7 @@ audit-scoring: reference/audit-scoring.md
 authority-feeds: reference/authority-feeds.md
 bandit-integration: reference/bandit-integration.md
 brand-voice: reference/brand-voice.md
+capability-gap-stage-gate: reference/capability-gap-stage-gate.md
 checklists: reference/checklists.md
 codex-tools: reference/codex-tools.md
 color-theory: reference/color-theory.md
