@@ -90,6 +90,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] [Phase 28.5](#phase-285-skill-authoring-contract--skill-rework--project-artifacts-inserted) — Skill Authoring Contract + Skill Rework — INSERTED — v1.28.5
 - [x] [Phase 28.6](#phase-286-skill-reference-co-location-inserted--corrective-follow-up-to-phase-285) — Skill Reference Co-Location — INSERTED (Corrective Follow-Up to Phase 28.5) — v1.28.6
 - [x] [Phase 28.7](#phase-287-multi-runtime-install-inserted--pragmatic-port-from-gsd-build) — Multi-Runtime Install — INSERTED (Pragmatic Port from gsd-build) — v1.28.7
+- [x] [Phase 28.8](#phase-288-tier-2-distribution-channels-inserted) — Tier-2 Distribution Channels — INSERTED (agentskills.io + Cursor Marketplace + Codex Plugin) — v1.28.8
 - [ ] [Phase 29](#phase-29-capability-gap-telemetry--self-authoring-of-agentsskills) — Capability-Gap Telemetry + Self-Authoring — v1.29.0
 - [ ] [Phase 30](#phase-30-inbound-feedback-channel--issue-reporter) — Inbound Feedback Channel (Issue Reporter) — v1.30.0
 - [ ] [Phase 30.5](#phase-305-failure-mode-catalogue-inserted) — Failure-Mode Catalogue — **NEW (INSERTED 2026-05-16)** — v1.30.5
@@ -1783,6 +1784,47 @@ A 2026-05-18 audit surfaced that the README claims 14 runtimes work but only Cla
 - Doctor-mode per-runtime verified-status reporting — Phase 27.7-04 already partially shipped MCP doctor; extending to install verification is a follow-up.
 - CI lint gate asserting README claim-set ↔ verified-set match — D-04 obviates this.
 - Translated READMEs (`README.de.md`, `README.fr.md`, …) — best-effort follow-up if user demand surfaces; English README authoritative this phase.
+
+### Phase 28.8: Tier-2 Distribution Channels (INSERTED)
+
+**Goal**: Extend distribution reach beyond Claude Code marketplace (Tier 1) and Phase 28.7 file-drop installs to three structured Tier-2 channels: (A) agentskills.io standard compliance, (B) Cursor Marketplace plugin distribution, (C) Codex Plugin distribution. Tier-1 file-drop install (Phase 28.7) and Tier-2 channels (28.8) coexist — Tier-2 is opt-in discovery-install surface. All 12 plans ship together at v1.28.8 per D-08 ship-together discipline. Cursor field-test gated on Cursor team review approval (D-04 + D-16); Codex install-by-URL works today (D-03); agentskills.io adopted as lint-only path (D-13) — our Phase 28.5 frontmatter contract already matches the 2 required spec fields.
+
+**Depends on**: Phase 28.7 (file-drop install infrastructure — Tier-2 channels are additive per D-05), Phase 28.5 (skill-authoring contract — agentskills.io spec compliance follows from this). Soft-coupled to Phase 24 (multi-runtime installer), Phase 21 (cross-harness tool-name maps).
+**Target version**: v1.28.8
+**Requirements**: DISTRIBUTION-28.8 (see [CONTEXT.md](phases/28.8-tier-2-distribution-channels/CONTEXT.md) for D-01..D-16 decision IDs)
+
+**Why this phase exists (research summary):**
+
+Phase 28.7 (just shipped at v1.28.7) gave us proper file-drop install for all 14 runtimes — users who clone or `npm install -g` get working skills/agents/commands per runtime. That covers **directed-install** users. Tier-2 channels cover **discovery-install** users — people who browse Cursor Marketplace UI or Codex's `/plugins` directory. Three triggering observations: (a) 38 tools claim agentskills.io compat — compliance check is cheap given our Phase 28.5 mattpocock-shaped contract already matches; (b) Cursor Marketplace launched Feb 2026, maintainer has access via publisher application; (c) Codex Plugins ship by GitHub URL today via `codex plugin marketplace add owner/repo`. gsd-build does NOT yet ship to Tier-2 channels — differentiation territory.
+
+**Scope:**
+
+- **Wave A — research (3 plans, parallel-safe):**
+  - [x] 28-8-01-PLAN.md — `.planning/research/agentskills-io-2026-05-19.md` — agentskills.io spec deep-read + claimed-compat verification per runtime + schema mapping + adoption recommendation. Records D-13 (lint-only outcome).
+  - [x] 28-8-02-PLAN.md — `.planning/research/cursor-marketplace-2026-05-19.md` — Cursor Marketplace re-verify (launch date, manifest format, publisher application process). Records D-15 (`.cursor-plugin/plugin.json` format) + D-16 (multi-step field-test).
+  - [x] 28-8-03-PLAN.md — `.planning/research/codex-plugins-2026-05-19.md` — Codex Plugins re-verify (developers.openai.com/codex/plugins/build current spec, GitHub-URL install confirmation). Records D-14 (catalog reuse via `.claude-plugin/marketplace.json`).
+- **Wave B — converters + manifests + doctors (6 plans, A/B/C chains mutually parallel-safe):**
+  - [x] 28-8-A1-PLAN.md — `scripts/lint-agentskills-spec.cjs` lint check + 5 skill renames + 13 cross-reference rewrites aligning `skills/` with the agentskills.io schema. Per D-13 lint-only path.
+  - [x] 28-8-A2-PLAN.md — Cross-runtime agentskills.io compat verification reports at `.planning/research/agentskills-io-compat/<runtime>.md` for Codex, Kilo, Augment, Hermes, Qwen.
+  - [x] 28-8-B1-PLAN.md — `scripts/lib/install/converters/cursor-marketplace.cjs` + `.cursor-plugin/plugin.json` + new `kind: 'cursor-marketplace'` in `runtimes.cjs`. Tests on manifest schema + simulated install.
+  - [x] 28-8-B2-PLAN.md — Cursor Marketplace doctor integration. `scripts/install.cjs --doctor` reports publisher-application status: `not-submitted` / `submitted-pending` / `approved-published` / `rejected` per D-16. Field-test playbook at `docs/cursor-marketplace-field-test.md`.
+  - [x] 28-8-C1-PLAN.md — `scripts/lib/install/converters/codex-plugin.cjs` + `.codex-plugin/plugin.json` + new `kind: 'codex-plugin'` in `runtimes.cjs`. Catalog reuses `.claude-plugin/marketplace.json` per D-14. Tests on manifest schema + simulated install.
+  - [x] 28-8-C2-PLAN.md — Codex Plugin doctor integration + field-test playbook at `docs/codex-plugin-field-test.md`. `codex plugin marketplace add hegemonart/get-design-done` works today against any GitHub URL per D-03.
+- **Wave C — bundler + doctor aggregation (2 plans, sequential after Wave B):**
+  - [x] 28-8-X1-PLAN.md — `scripts/build-distribution-bundles.cjs` shared-source / per-channel bundle builder. Produces `dist/cursor-marketplace/`, `dist/codex-plugin/`, `dist/agentskills-io/` from one `skills/` tree per D-06 single source of truth.
+  - [x] 28-8-X2-PLAN.md — `scripts/doctor-tier2.cjs` aggregator + `scripts/install.cjs --doctor` Tier-2 section consolidation. Single aggregated tier-2 status block surfacing Wave A lint + Wave B Cursor + Wave C Codex statuses.
+- **Wave D — closeout (1 plan, sequential after Wave C):**
+  - [x] 28-8-Z1-PLAN.md — Closeout. 4-manifest lockstep at v1.28.8 (package.json + .claude-plugin/plugin.json + .claude-plugin/marketplace.json metadata.version + plugins[0].version; plus 2 Tier-2 manifests .cursor-plugin/plugin.json + .codex-plugin/plugin.json). `OFF_CADENCE_VERSIONS.add('1.28.8')` in tests/semver-compare.test.cjs. CHANGELOG `## [1.28.8] - 2026-05-19` block. 5 new phase-28.8 baselines + 4 prior-phase manifests-version.txt forward-props (28.7, 28.6, 28.5, 28). README.md + 6 translated READMEs updated with Tier-2 install paths. tests/phase-28.8-baseline.test.cjs (16 version-agnostic tests with full RegExp escape per CodeQL). ROADMAP add + scoped flip (this section + overview entry).
+
+**Explicitly out of scope** (discussed and rejected in CONTEXT.md):
+
+- Cline MCP Marketplace / Kilo Marketplace / Trae Custom Agents / CodeBuddy SkillHub / Hermes Skills Hub distribution — defer to Phase 28.10+.
+- Auto-publish on `npm publish` — Phase 28.11+ concern.
+- Cross-marketplace analytics / install-count tracking — own phase.
+- Pricing / paid plugins — all GDD distribution is free/MIT regardless of channel.
+- Backward-compat removal of Phase 28.7 file-drop install (D-05 — additive only).
+- Marketplace metadata polish (screenshots, demo videos) — follow-up if traction warrants.
+- Live marketplace API calls in CI — tmpdir simulation only per D-10.
 
 ### Phase 29: Capability-Gap Telemetry + Self-Authoring of Agents/Skills
 
