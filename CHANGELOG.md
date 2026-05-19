@@ -4,6 +4,41 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.28.8] - 2026-05-19
+
+### Phase 28.8 — Tier-2 Distribution Channels
+
+Three new structured distribution channels alongside the Phase 28.7 file-drop install paths. v1.28.8 ships manifest code + bundle generators + doctor mode integration for all three channels; live publish + live install field-tests run post-merge as maintainer steps (D-09 revised, D-16). Off-cadence decimal sub-phase from v1.28.7 parent — sequence 1.28.0 → 1.28.5 → 1.28.6 → 1.28.7 → 1.28.8. 12 plans across Wave A (research + lint check) / Wave B (manifests + converters + doctors) / Wave C (bundle builder + Tier-2 doctor aggregation) / Wave D (closeout).
+
+### Added
+
+- **Tier-2 distribution channels** — three new structured channels alongside the Phase 28.7 file-drop install paths:
+  - **agentskills.io compliance lint** (`scripts/lint-agentskills-spec.cjs`, Workstream A). The open SKILL.md spec adopted by ~38 tools is now enforced against `skills/` on every change. Per D-13 the recommendation was lint-only (our Phase 28.5 frontmatter contract already matches the 2 required spec fields `name` + `description`). 38 PASS / 32 WARN / 0 FAIL across the current `skills/` tree.
+  - **Cursor Marketplace** — `.cursor-plugin/plugin.json` manifest at repo root + `scripts/lib/install/converters/cursor-marketplace.cjs` bundle generator. New `kind: 'cursor-marketplace'` in `scripts/lib/install/runtimes.cjs`. Doctor reports application status: `not-submitted` / `submitted-pending` / `approved-published` / `rejected` (B2). Per D-04 + D-16: publisher application gated by Cursor team review — maintainer submits post-merge.
+  - **Codex Plugin** — `.codex-plugin/plugin.json` manifest at repo root + `scripts/lib/install/converters/codex-plugin.cjs` bundle generator. New `kind: 'codex-plugin'` in `runtimes.cjs`. Install today via `codex plugin marketplace add hegemonart/get-design-done` against any GitHub URL (D-03). Per D-14: catalog discovery reuses the existing `.claude-plugin/marketplace.json` — no separate Codex catalog file authored.
+- `scripts/build-distribution-bundles.cjs` — shared source / per-channel bundle builder (X1). Produces `dist/cursor-marketplace/`, `dist/codex-plugin/`, `dist/agentskills-io/` from one `skills/` tree (D-06 single source of truth).
+- `scripts/doctor-tier2.cjs` — Tier-2 status aggregator surfaced via `scripts/install.cjs --doctor` (X2).
+- Cross-runtime agentskills.io compat verification reports under `.planning/research/agentskills-io-compat/<runtime>.md` (A2) — 5 runtime reports (Codex, Kilo, Augment, Hermes, Qwen).
+- `docs/cursor-marketplace-field-test.md` + `docs/codex-plugin-field-test.md` — maintainer-facing field-test playbooks (post-merge live publish + install verification per D-09 revised).
+- Wave A research deep-reads at `.planning/research/`: `agentskills-io-2026-05-19.md`, `cursor-marketplace-2026-05-19.md`, `codex-plugins-2026-05-19.md`.
+
+### Changed
+
+- `scripts/install.cjs --doctor` now includes a **Tier-2 Distribution Channels** section aggregating: agentskills.io lint pass/fail (Workstream A), Cursor Marketplace publisher-application status (B2), Codex Plugin manifest + install verification (C2). Single consolidated tier-2 status block per X2.
+- `scripts/lint-agentskills-spec.cjs` gained a `--summary` mode for CI integration.
+- 5 skill renames + 13 cross-reference rewrites across the `skills/` tree per A1+ / A1++ alignment with the agentskills.io schema.
+
+### Documentation
+
+- `docs/cursor-marketplace-field-test.md`, `docs/codex-plugin-field-test.md` — added.
+- `README.md` + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) updated with Tier-2 install paths per adopted channel (agentskills.io cross-runtime portability note, Cursor Marketplace pending-application note, Codex `codex plugin marketplace add hegemonart/get-design-done`).
+
+### Backward compatibility
+
+- Per D-05: Phase 28.7 file-drop install (`scripts/lib/install/converters/cursor.cjs`, `scripts/lib/install/converters/codex.cjs`) is UNCHANGED. Tier-2 channels are additive opt-in surfaces — existing install paths continue to work exactly as in v1.28.7.
+
+---
+
 ## [1.28.7] — 2026-05-19
 
 ### Phase 28.7 — Multi-Runtime Install (Pragmatic Port from gsd-build)
