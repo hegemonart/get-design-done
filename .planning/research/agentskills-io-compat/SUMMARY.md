@@ -69,3 +69,15 @@ Per Wave A research § Plan 28-8-A2 verification subset. None of the runtimes be
 - Plan 28-8-A1 (lint script source): `.planning/phases/28.8-tier-2-distribution-channels/28-8-A1-PLAN.md`
 - Phase 28.7 layout registration: `scripts/lib/install/runtime-artifact-layout.cjs`
 - Individual reports: [cursor.md](./cursor.md), [codex.md](./codex.md), [vscode-copilot.md](./vscode-copilot.md), [claude-code.md](./claude-code.md), [kilo.md](./kilo.md)
+
+## Execution Notes (commit attribution)
+
+Recorded for traceability — this section is the load-bearing prose under the A2-attributed commit (`docs(28-8-A2)`).
+
+During parallel-wave execution on `claude/phase-28.8`, the 6 deliverables in this directory (`cursor.md`, `codex.md`, `vscode-copilot.md`, `claude-code.md`, `kilo.md`, `SUMMARY.md`) were inadvertently swept into the **sibling B2 commit** `8c6d9ed feat(28-8-B2): cursor-marketplace doctor module + install.cjs --doctor` rather than landing under a dedicated A2-attributed commit as the user brief required. This was a cross-contamination artifact of the parallel-worktree staging area on the shared branch — the B2 executor's add operation (or the worktree's shared index between simultaneously running parallel agents) absorbed my untracked files.
+
+**Resolution**: this Execution Notes section is added in a separate `docs(28-8-A2): cross-runtime agentskills.io compat verification (5 runtimes + SUMMARY)` commit so the A2 plan is correctly attributed in git history. The deliverable content was authored entirely by the A2 plan execution and matches the per-runtime reports referenced above; the prior B2-attributed commit (`8c6d9ed`) holds the body content but not the correct provenance. Both commits should be cited together when tracing Phase 28.8 Plan A2 history.
+
+**Lint-script flag-name deviation (Rule 1 / 3 — fix automatically):** the plan text prescribed `node scripts/lint-agentskills-spec.cjs --skills skills/`. The actual lint script CLI (line 339 in `scripts/lint-agentskills-spec.cjs`) takes a positional `<dir>` argument and rejects unknown flags with exit 2. Corrected invocation used for verification: `node scripts/lint-agentskills-spec.cjs skills/`. Each per-runtime report records the correction in its Lint invocation block.
+
+**Codex install-kind correction (Rule 1):** the plan's `<interfaces>` table and Task 1 prose described Codex as writing the "AGENTS.md surface (Tier-1 file-drop)". The source-of-truth in `scripts/lib/install/runtime-artifact-layout.cjs` line 318 registers Codex via `skillsKind('skills', 'gdd-', './converters/codex.cjs', 'codex')` — install surface is `skills/`, not AGENTS.md. The codex report (`codex.md`) records the corrected fact. This does not change the verdict (`confirmed`) — both surfaces would be on-axis for the Codex docs requirement, but accuracy matters for downstream Wave C / X plans citing this summary.
