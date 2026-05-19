@@ -423,9 +423,15 @@ test('codex-plugin: Phase 28.7 codex.cjs is unchanged from HEAD (D-05)', (t) => 
     t.skip('git show HEAD: unavailable (initial-commit scenario)');
     return;
   }
+  // Normalize line endings before comparison: on Windows, git checkout
+  // converts LF→CRLF on disk via core.autocrlf, but `git show HEAD:` emits
+  // raw blob bytes (LF). The D-05 invariant is semantic ("no content
+  // change") not byte-level — line-ending normalization is OS-level, not
+  // content drift. Strip \r from both sides to compare semantic content.
+  const normalize = (s) => s.replace(/\r\n/g, '\n');
   assert.equal(
-    current,
-    head,
+    normalize(current),
+    normalize(head),
     'D-05 violation: scripts/lib/install/converters/codex.cjs must be byte-identical to HEAD (Phase 28.7 file-drop converter untouched per CONTEXT D-05 additive)'
   );
 });
