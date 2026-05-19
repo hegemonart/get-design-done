@@ -88,9 +88,35 @@ function buildAgentsFileContent(runtime, payloadHeader) {
   return lines.join('\n');
 }
 
+// Phase 28.7 (Plan 28.7-08) — Extended fingerprint detection.
+//
+// In Phase 24, plugin-owned AGENTS.md / GEMINI.md files were marked with the
+// `<!-- get-design-done plugin instructions -->` HTML comment (PLUGIN_FINGERPRINT
+// above). Phase 28.7 introduces TWO more fingerprint shapes for the new
+// multi-artifact installer:
+//
+//   - `gdd: auto-generated from Claude SKILL.md` — emitted by every per-runtime
+//     SKILL converter (cursor.cjs, codex.cjs, etc.) via shared.ensureAdapterHeader.
+//     This applies to every SKILL.md / command file written into a runtime's
+//     skills/ or command/ directory.
+//
+//   - `# get-design-done rules` — emitted as the heading of the .clinerules
+//     file by converters/cline.cjs#buildClinerulesFile. Cline is rules-based
+//     and does not have a per-skill directory layout (Phase 28.7 D-09).
+//
+// All three shapes count as "plugin-owned" for the foreign-file protection
+// + idempotent-re-install discipline that the installer enforces (Phase 24
+// D-04 carry-forward). Anything else is treated as user-authored and left
+// alone (skipped-foreign action).
+const GDD_ADAPTER_FINGERPRINT = 'gdd: auto-generated from Claude SKILL.md';
+const CLINERULES_HEADER_FINGERPRINT = '# get-design-done rules';
+
 function isPluginOwned(content) {
   if (!content || typeof content !== 'string') return false;
-  return content.includes(PLUGIN_FINGERPRINT);
+  if (content.includes(PLUGIN_FINGERPRINT)) return true;
+  if (content.includes(GDD_ADAPTER_FINGERPRINT)) return true;
+  if (content.includes(CLINERULES_HEADER_FINGERPRINT)) return true;
+  return false;
 }
 
 module.exports = {
@@ -100,4 +126,8 @@ module.exports = {
   buildAgentsFileContent,
   isPluginOwned,
   PLUGIN_FINGERPRINT,
+  // Phase 28.7 (Plan 28.7-08) — additional fingerprint shapes for the
+  // multi-artifact installer (per-runtime converters + cline rules file).
+  GDD_ADAPTER_FINGERPRINT,
+  CLINERULES_HEADER_FINGERPRINT,
 };
