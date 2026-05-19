@@ -318,8 +318,9 @@ function applyEdit(draft, options) {
     // Two invocation modes:
     //   options.editorCmd: [exec, ...args]  -- no shell, fully tokenized
     //   options.editorEnv: shell command line (default: $EDITOR or 'vi')
-    // The array form avoids shell quoting headaches for Windows paths that
-    // contain spaces (e.g. "C:\\Program Files\\nodejs\\node.exe") in tests.
+    // The array form avoids shell quoting headaches for Windows editor paths
+    // that contain spaces (e.g. node.exe installed under a Program-Files
+    // location) in tests.
     let r;
     if (Array.isArray(o.editorCmd) && o.editorCmd.length) {
       const [cmd, ...args] = o.editorCmd;
