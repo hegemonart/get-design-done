@@ -43,6 +43,7 @@
     "codegen:schemas": "node --experimental-strip-types scripts/codegen-schema-types.ts",
     "lint:md": "npx --yes markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.planning\" \"#.claude\" \"#test-fixture/baselines\"",
     "lint:links": "npx --yes lychee --no-progress --accept 200,206,403,429 \"**/*.md\" || true",
+    "lint:agentskills": "node scripts/lint-agentskills-spec.cjs",
     "validate:schemas": "node --experimental-strip-types scripts/validate-schemas.ts",
     "validate:frontmatter": "node --experimental-strip-types scripts/validate-frontmatter.ts agents/",
     "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
