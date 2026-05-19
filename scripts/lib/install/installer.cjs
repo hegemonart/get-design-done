@@ -89,7 +89,19 @@ function installRuntime(runtimeId, opts) {
 
   let result;
   if (runtime.kind === 'claude-marketplace') {
-    result = installClaudeMarketplace(runtime, configDir, dryRun);
+    // Phase 28.7 Plan 28.7-09 (Rule 1 fix) — claude is the only runtime
+    // whose `local` scope routes through the multi-artifact dispatcher
+    // rather than the marketplace settings.json branch. The
+    // `runtime-artifact-layout.cjs#claude` case explicitly handles
+    // `scope === 'local'` with `commandsKind('commands/gdd', ...)` +
+    // `agentsKind('agents', ...)`, and the installer must honor that
+    // routing or `--local` silently writes the wrong file (settings.json
+    // instead of commands/gdd/*.md + agents/*.md).
+    if (scope === 'local') {
+      result = installMultiArtifact(runtime, configDir, dryRun, { scope });
+    } else {
+      result = installClaudeMarketplace(runtime, configDir, dryRun);
+    }
   } else if (runtime.kind === 'multi-artifact') {
     result = installMultiArtifact(runtime, configDir, dryRun, { scope });
   } else {
@@ -111,7 +123,13 @@ function uninstallRuntime(runtimeId, opts) {
 
   let result;
   if (runtime.kind === 'claude-marketplace') {
-    result = uninstallClaudeMarketplace(runtime, configDir, dryRun);
+    // Symmetric with installRuntime — claude `local` was installed via
+    // multi-artifact, so it must be uninstalled via multi-artifact too.
+    if (scope === 'local') {
+      result = uninstallMultiArtifact(runtime, configDir, dryRun, { scope });
+    } else {
+      result = uninstallClaudeMarketplace(runtime, configDir, dryRun);
+    }
   } else if (runtime.kind === 'multi-artifact') {
     result = uninstallMultiArtifact(runtime, configDir, dryRun, { scope });
   } else {
