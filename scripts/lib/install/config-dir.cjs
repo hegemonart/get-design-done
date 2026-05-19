@@ -22,6 +22,23 @@ function homeDir() {
 
 function resolveConfigDir(runtimeId, opts) {
   const runtime = getRuntime(runtimeId);
+
+  // Phase 28.8 (Plan B1) — Tier-2 distribution-channel runtimes have
+  // configDir === null and configDirFallback === null. They are NOT
+  // per-user install targets; calling resolveConfigDir on them is a
+  // programming error (the regular install flow skips them via
+  // detect-runtimes). Throw a clear error rather than crashing on
+  // `null.split('/')` further down.
+  if (
+    runtime.configDirFallback === null
+    || typeof runtime.configDirFallback !== 'string'
+  ) {
+    throw new Error(
+      `Runtime "${runtimeId}" is a Tier-2 distribution channel (kind: ${runtime.kind}); ` +
+      'it has no per-user config dir. Filter these out before calling resolveConfigDir.'
+    );
+  }
+
   const overrides = (opts && opts.env) || process.env;
   const explicit = opts && opts.configDir;
 
@@ -44,6 +61,15 @@ function resolveConfigDir(runtimeId, opts) {
 function resolveAllConfigDirs(opts) {
   const out = {};
   for (const runtime of listRuntimes()) {
+    // Phase 28.8 (Plan B1) — Tier-2 distribution channels have no per-user
+    // config dir. Skip them so the returned map covers only the per-user
+    // install targets (the 14 multi-artifact + claude-marketplace runtimes).
+    if (
+      runtime.configDirFallback === null
+      || typeof runtime.configDirFallback !== 'string'
+    ) {
+      continue;
+    }
     out[runtime.id] = resolveConfigDir(runtime.id, opts);
   }
   return out;
