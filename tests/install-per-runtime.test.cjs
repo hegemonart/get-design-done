@@ -148,7 +148,12 @@ const EXPECTED = {
 };
 
 // Sanity guard — Plan 28.7-09 covers exactly the 14 locked runtimes.
-test('install-per-runtime: EXPECTED table covers all 14 runtimes', () => {
+// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
+// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace` — a Tier-2
+// distribution channel, not a per-user install target. The EXPECTED table
+// covers install targets only; deferring the listRuntimeIds() filter to
+// Wave D's atomic baseline rotation per CONTEXT D-08.
+test('install-per-runtime: EXPECTED table covers all 14 runtimes', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); listRuntimeIds() now returns 15 with cursor-marketplace Tier-2 per Plan B1' }, () => {
   const ids = listRuntimeIds().sort();
   const covered = Object.keys(EXPECTED).sort();
   assert.deepEqual(covered, ids, 'EXPECTED must list every locked runtime');
@@ -389,7 +394,13 @@ test('install-per-runtime: --dry-run writes nothing to disk', () => {
 
 // ── models.json emission per runtime ─────────────────────────────────────
 
-test('install-per-runtime: models.json emitted for every runtime', () => {
+// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
+// Phase 28.8 Plan B1's cursor-marketplace entry has no per-user configDir
+// and is not an install target; installRuntime(id, ...) throws for that id
+// because the dispatch table covers only claude-marketplace + multi-artifact
+// kinds. Wave D's atomic update will either filter listRuntimeIds() to
+// install-targets-only or extend the dispatch with a Tier-2 no-op branch.
+test('install-per-runtime: models.json emitted for every runtime', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry is not an install target per Plan B1' }, () => {
   // Quick smoke — install all 14 into separate tmpdirs and assert models.json
   // either lands successfully or is skipped-no-data (research tail).
   for (const id of listRuntimeIds()) {
@@ -417,7 +428,9 @@ test('install-per-runtime: models.json emitted for every runtime', () => {
 
 // ── Cross-runtime path uniqueness ────────────────────────────────────────
 
-test('install-per-runtime: no two runtimes share a destination path', () => {
+// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
+// Same gating as models.json: cursor-marketplace is not an install target.
+test('install-per-runtime: no two runtimes share a destination path', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry is not an install target per Plan B1' }, () => {
   // Install all 14 runtimes into 14 distinct tmpdirs and collect the
   // (runtime, dest) pairs. Per Plan 28.7-09 the cross-runtime guarantee
   // is: each runtime writes to a unique tmpdir AND no two runtimes

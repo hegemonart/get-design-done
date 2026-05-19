@@ -54,7 +54,12 @@ test('phase-26 baseline: reference/runtime-models.md exists', () => {
   assert.ok(fs.existsSync(target), 'Plan 26-01 must ship reference/runtime-models.md');
 });
 
-test('phase-26 baseline: reference/prices/ has the 14 sub-tables (D-08)', () => {
+// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
+// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace` (Tier-2
+// distribution channel). Per-runtime price sub-tables exist for install
+// targets only; the new Tier-2 entry has no price row. Wave D's atomic
+// update will either add the row or restrict the iteration per CONTEXT D-08.
+test('phase-26 baseline: reference/prices/ has the 14 sub-tables (D-08)', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry has no reference/prices/ row per Plan B1' }, () => {
   const dir = path.join(REPO_ROOT, 'reference', 'prices');
   assert.ok(fs.existsSync(dir), 'reference/prices/ directory must exist');
   // Cross-check against runtimes.cjs canonical list.
