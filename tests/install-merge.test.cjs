@@ -71,15 +71,27 @@ function tmpDir() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-install-test-'));
 }
 
-test('installer: agents-md runtime — created → unchanged → removed', () => {
+test('installer: multi-artifact runtime — created → unchanged → removed (Phase 28.7-08)', () => {
   const dir = tmpDir();
   try {
-    // First install: creates the file.
+    // Phase 28.7 (Plan 28.7-08) — opencode now installs via the
+    // multi-artifact pipeline. Each source skill produces one file in
+    // <configDir>/command/<gdd-skillName>.md per
+    // runtime-artifact-layout.cjs#opencode. Top-level result.path now
+    // reports the configDir; per-file detail is in result.results[].
     const r1 = installRuntime('opencode', { configDir: dir });
     assert.equal(r1.action, 'created');
-    assert.ok(fs.existsSync(r1.path));
-    const content = fs.readFileSync(r1.path, 'utf8');
-    assert.ok(content.includes(PLUGIN_FINGERPRINT));
+    assert.equal(r1.path, dir);
+    assert.ok(Array.isArray(r1.results) && r1.results.length > 0);
+    // Spot-check the first staged file carries the converter fingerprint.
+    const firstFile = r1.results[0];
+    assert.equal(firstFile.action, 'created');
+    assert.ok(fs.existsSync(firstFile.path));
+    const content = fs.readFileSync(firstFile.path, 'utf8');
+    assert.ok(
+      content.includes('gdd: auto-generated from Claude SKILL.md'),
+      'multi-artifact files must carry the gdd adapter fingerprint',
+    );
 
     // Second install: idempotent.
     const r2 = installRuntime('opencode', { configDir: dir });
@@ -88,30 +100,52 @@ test('installer: agents-md runtime — created → unchanged → removed', () =>
     // Uninstall removes it.
     const r3 = uninstallRuntime('opencode', { configDir: dir });
     assert.equal(r3.action, 'removed');
-    assert.equal(fs.existsSync(r3.path), false);
+    assert.equal(fs.existsSync(firstFile.path), false);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
-test('installer: gemini drops GEMINI.md (not AGENTS.md)', () => {
+test('installer: gemini installs into commands/gdd/ (Phase 28.7-08)', () => {
   const dir = tmpDir();
   try {
+    // Phase 28.7 (Plan 28.7-08) — gemini is no longer the special-cased
+    // `GEMINI.md` runtime. It now installs via the multi-artifact pipeline
+    // into <configDir>/commands/gdd/<gdd-skillName>.md per
+    // runtime-artifact-layout.cjs#gemini.
     const r = installRuntime('gemini', { configDir: dir });
     assert.equal(r.action, 'created');
-    assert.equal(path.basename(r.path), 'GEMINI.md');
+    assert.equal(r.path, dir);
+    assert.ok(r.results && r.results.length > 0);
+    // First staged file should be under commands/gdd/.
+    const first = r.results[0];
+    assert.ok(
+      first.path.includes(path.join('commands', 'gdd')),
+      `expected commands/gdd/ path, got ${first.path}`,
+    );
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
-test('installer: dry-run does not write', () => {
+test('installer: dry-run does not write (Phase 28.7-08)', () => {
   const dir = tmpDir();
   try {
     const r = installRuntime('opencode', { configDir: dir, dryRun: true });
     assert.equal(r.dryRun, true);
     assert.equal(r.action, 'created');
-    assert.equal(fs.existsSync(r.path), false);
+    // Multi-artifact: no command/ subdirectory should be created either.
+    assert.equal(
+      fs.existsSync(path.join(dir, 'command')),
+      false,
+      'dry-run must not create command/ dir',
+    );
+    // Per-file results still surface the planned action without writes.
+    assert.ok(r.results && r.results.length > 0);
+    for (const f of r.results) {
+      assert.equal(f.action, 'created');
+      assert.equal(fs.existsSync(f.path), false, `dry-run leaked file at ${f.path}`);
+    }
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
@@ -138,29 +172,45 @@ test('installer: claude-marketplace — created → unchanged → removed', () =
   }
 });
 
-test('installer: agents-md refuses to clobber foreign AGENTS.md', () => {
+test('installer: multi-artifact refuses to clobber a foreign command file (Phase 28.7-08)', () => {
   const dir = tmpDir();
   try {
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'AGENTS.md'), '# My own AGENTS.md\n');
+    // Phase 28.7 (Plan 28.7-08) — opencode now writes per-skill command
+    // files into <configDir>/command/<gdd-skillName>.md. Foreign-file
+    // protection now applies at the per-file level (writeFingerprinted).
+    // Seed one of the expected destinations with a user-authored file.
+    fs.mkdirSync(path.join(dir, 'command'), { recursive: true });
+    const foreignPath = path.join(dir, 'command', 'gdd-help.md');
+    fs.writeFileSync(foreignPath, '# My own gdd-help.md (user-authored)\n');
+
     const r = installRuntime('opencode', { configDir: dir });
+    // Aggregate action is skipped-foreign whenever ANY per-file write
+    // refused (priority order in aggregateAction).
     assert.equal(r.action, 'skipped-foreign');
     assert.ok(r.reason);
     // Original content preserved.
-    assert.equal(fs.readFileSync(path.join(dir, 'AGENTS.md'), 'utf8'), '# My own AGENTS.md\n');
+    assert.equal(
+      fs.readFileSync(foreignPath, 'utf8'),
+      '# My own gdd-help.md (user-authored)\n',
+    );
+    // The skipped entry surfaces in per-file results.
+    const skipped = r.results.find((x) => x.action === 'skipped-foreign');
+    assert.ok(skipped, 'must have at least one skipped-foreign entry');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
-test('installer: agents-md uninstall refuses to remove foreign AGENTS.md', () => {
+test('installer: multi-artifact uninstall refuses to remove foreign command file (Phase 28.7-08)', () => {
   const dir = tmpDir();
   try {
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'AGENTS.md'), '# My own AGENTS.md\n');
+    fs.mkdirSync(path.join(dir, 'command'), { recursive: true });
+    const foreignPath = path.join(dir, 'command', 'gdd-help.md');
+    fs.writeFileSync(foreignPath, '# My own gdd-help.md (user-authored)\n');
+
     const r = uninstallRuntime('opencode', { configDir: dir });
     assert.equal(r.action, 'skipped-foreign');
-    assert.ok(fs.existsSync(path.join(dir, 'AGENTS.md')));
+    assert.ok(fs.existsSync(foreignPath));
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
