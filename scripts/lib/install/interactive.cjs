@@ -40,16 +40,40 @@ function isCancel(p, value) {
   return typeof p.isCancel === 'function' ? p.isCancel(value) : false;
 }
 
+// Build a one-line picker hint per runtime kind. Multi-artifact entries
+// intentionally lack a `files` field (see runtimes.cjs header) — destinations
+// are computed by runtime-artifact-layout.cjs from the runtime's configDir.
+function hintForRuntime(r) {
+  if (r.kind === 'claude-marketplace') return 'marketplace registration';
+  if (r.kind === 'multi-artifact') {
+    return r.configDirFallback
+      ? `installs into ~/${r.configDirFallback}`
+      : 'installs skills/commands/agents';
+  }
+  // Future-proof fallback for any new kind: prefer files[0] when present,
+  // then configDirFallback, then a neutral label. Never crash on missing
+  // optional fields.
+  if (Array.isArray(r.files) && r.files.length > 0) return `drops ${r.files[0]}`;
+  if (r.configDirFallback) return `installs into ~/${r.configDirFallback}`;
+  return r.kind || 'install target';
+}
+
 async function runInteractiveInstall() {
   const p = loadClack();
 
   p.intro('get-design-done — multi-runtime installer');
 
-  const runtimes = listRuntimes();
+  // Tier-2 distribution channels (cursor-marketplace, codex-plugin) carry
+  // `configDir: null` per Phase 28.8 — they're out-of-band bundles, not
+  // per-user install targets. The interactive picker should hide them; the
+  // regular install pipeline already skips them because configDir is null.
+  const runtimes = listRuntimes().filter(
+    (r) => r.configDir !== null && r.configDirFallback != null,
+  );
   const options = runtimes.map((r) => ({
     value: r.id,
     label: r.displayName,
-    hint: r.kind === 'claude-marketplace' ? 'marketplace registration' : `drops ${r.files[0] || 'AGENTS.md'}`,
+    hint: hintForRuntime(r),
   }));
 
   const picked = await p.multiselect({
@@ -139,4 +163,5 @@ async function runInteractiveUninstall(opts) {
 module.exports = {
   runInteractiveInstall,
   runInteractiveUninstall,
+  hintForRuntime,
 };
