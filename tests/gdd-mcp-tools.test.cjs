@@ -437,7 +437,8 @@ test('27.7-02: gdd_health — returns 4 checks with valid statuses', async () =>
     const mod = await loadTool('gdd_health');
     const res = await mod.handle({});
     assert.equal(res.success, true);
-    assert.equal(res.data.checks.length, 4);
+    // Plan 30-06 added 5th check (issue_reporter); was 4 in Plan 27.7-02.
+    assert.equal(res.data.checks.length, 5);
     for (const c of res.data.checks) {
       assert.ok(['ok', 'warn', 'fail'].includes(c.status));
     }
