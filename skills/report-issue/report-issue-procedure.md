@@ -94,7 +94,7 @@ Body is written to a tmp file to avoid arg-length and shell-escaping. URL parsed
 | Runtime destination | `submitViaGh` always passes `--repo hegemonart/get-design-done` | H1 |
 | Dedup destination | `dedup.cjs` accepts `destination` only as a parameter — no env/config lookup (D-02) | `issue-reporter-dedup.test.cjs` test 11 |
 | Dedup body shape | `buildMeTooBody` returns EXACTLY 3 lines (`Last error:` / `Runtime:` / `Plugin version:`) — no stack/path/env/cmd (D-06) | tests 5 + 6 (verbatim + negative-presence) |
-| Dedup network | `dedup.cjs` imports only `child_process`; no `https`/`fetch`/`axios`/`node-fetch` (D-05) | 30-07 static-grep gate |
+| Dedup network | `dedup.cjs` imports only `child_process`; no outbound URL literals, no global fetch primitive, no third-party HTTP client libraries (D-05) | 30-07 static-grep gate |
 | Dedup test hermeticity | No live `gh` calls in CI; injected spawn spy + traced `child_process.spawnSync` counter assert 0 real invocations (D-13) | `issue-reporter-dedup.test.cjs` test 10 |
 | Dedup pseudonymization | `me-too` body uses the ALREADY-pseudonymized `errorContext.lastErrorLine` from 30-02's pipeline; dedup.cjs does NOT re-derive raw stderr (D-01) | dedup test "commentMeToo passes pseudonymized lastErrorLine through to gh body" |
 
@@ -110,7 +110,7 @@ Body is written to a tmp file to avoid arg-length and shell-escaping. URL parsed
 
 - **Plan 30-05** *(landed)* — `scripts/lib/issue-reporter/dedup.cjs` wires `options.dedupCheck` to `gh issue list --search "fingerprint:<hash>"`. The skill drives the `+1` / `me-too` / `new` UI by passing a `dedupCheck` callback that wraps `searchByFingerprint` + `react` + `commentMeToo`. The hook in `runReportFlow` now runs BEFORE consent (per D-06).
 - **Plan 30-06** *(landed)* — `scripts/lib/issue-reporter/kill-switch.cjs` adds the D-08 dual-surface disable check (`GDD_DISABLE_ISSUE_REPORTER=1` env OR `.design/config.json: { "issue_reporter": false }` config). `runReportFlow` calls `isDisabled()` as **Step 0**, BEFORE triage and any draft writing — when disabled, returns `{ submitted:false, reason:'disabled', surface:'env'|'config', message }`. `scripts/lib/issue-reporter/gh-absent-fallback.cjs` adds the D-10 clipboard+URL path (pbcopy / wl-copy → xclip / clip.exe) — invoked after consent when `detectGh()` returns false. `scripts/lib/gsd-health-mirror/index.cjs` mirrors the disable surface as a 5th health check; output is exactly one of: `issue reporter: enabled` / `issue reporter: disabled by env (GDD_DISABLE_ISSUE_REPORTER=1)` / `issue reporter: disabled by config (.design/config.json: issue_reporter=false)`. Tests at `tests/issue-reporter-fallback.test.cjs` (15 cases). Env wins precedence when both flags are set (matches gsd-health display).
-- **Plan 30-07** ships the network-isolation CI gate. Plans 30-04 and 30-05 already meet the invariant (no `https`/`fetch`/`axios`/`node-fetch`/`node:https` in their files); the gate locks it in.
+- **Plan 30-07** ships the network-isolation CI gate. Plans 30-04 and 30-05 already meet the invariant (no outbound URL literals, no global fetch primitive, no third-party HTTP client libraries — see `tests/issue-reporter-network-isolation.test.cjs` for the enforced forbidden-token list); the gate locks it in.
 
 ## References
 

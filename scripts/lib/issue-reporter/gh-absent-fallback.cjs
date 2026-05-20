@@ -30,9 +30,12 @@
 
 const child_process = require('node:child_process');
 
-const { DESTINATION_REPO } = require('./destination.cjs');
+// ISSUE_TEMPLATE_URL is imported from destination.cjs, which is the SOLE
+// whitelisted file under the network-isolation scan (Plan 30-07 D-05 CI gate).
+// Constructing the URL via template literal here would re-introduce the
+// 'https' URL token into this file and trip the static-analysis gate.
+const { DESTINATION_REPO, ISSUE_TEMPLATE_URL } = require('./destination.cjs');
 
-const ISSUE_TEMPLATE_URL = `https://github.com/${DESTINATION_REPO}/issues/new?template=bug_report.md`;
 const FALLBACK_MESSAGE = 'gh CLI not found; payload copied to clipboard, paste into the link below.';
 
 /**

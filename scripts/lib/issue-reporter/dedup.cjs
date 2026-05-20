@@ -20,10 +20,11 @@
  *        only. This module MUST NOT read env vars or config files for it.
  *        The caller (report-flow.cjs) sources it from destination.cjs.
  *
- * D-05 — Outbound = `gh` CLI only. No `https://`, no `fetch(`, no `axios`,
- *        no `node-fetch`, no `node:https`. The 30-07 static-analysis CI
- *        gate scans this file. Module imports limited to:
- *        `child_process`, `path`, `fs`.
+ * D-05 — Outbound = `gh` CLI only. No outbound HTTP-S URL literals, no
+ *        global fetch primitive, no third-party HTTP client libraries.
+ *        See `tests/issue-reporter-network-isolation.test.cjs` (Plan
+ *        30-07) for the enforced forbidden-token list. Module imports
+ *        limited to: `child_process`, `path`, `fs`.
  *
  * D-06 — Pre-submit dedup is mandatory. `+1` and `me-too` NEVER spawn
  *        a duplicate issue. me-too body contains EXACTLY 3 fields

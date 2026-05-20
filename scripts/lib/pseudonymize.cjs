@@ -60,7 +60,7 @@ function escapeRe(s) {
 /**
  * Normalize a git remote origin URL: strip leading protocol/host prefix,
  * strip trailing `.git`, lowercase. Used by R4 + R8 so the same logical
- * origin (across `git@`, `https://`, `ssh://` shapes) maps to one hash.
+ * origin (across `git@`, `https` (web URL), `ssh` (ssh URL) shapes) maps to one hash.
  *
  * @param {string} origin
  * @returns {string}

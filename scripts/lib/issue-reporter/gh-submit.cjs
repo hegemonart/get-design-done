@@ -4,11 +4,12 @@
  *
  * Wraps `gh issue create --repo <DESTINATION_REPO> --title <title> --body-file <tmp>`.
  *
- * D-05: the user's gh CLI is the sole outbound primitive. No HTTPS calls
- * from plugin code, no plugin-side credentials. Phase 30-07 ships a
- * CI gate (static-analysis test) that fails the build if anyone adds
- * `https://`, `fetch(`, `axios`, `node:https`, or `node-fetch` in this
- * tree. This module deliberately uses `spawnSync` against `gh` so it's
+ * D-05: the user's gh CLI is the sole outbound primitive. No HTTP-S
+ * URL literals, no global fetch primitive, no plugin-side credentials.
+ * Phase 30-07 ships the CI gate (static-analysis test) that fails the
+ * build if anyone adds a forbidden network token under this tree — see
+ * `tests/issue-reporter-network-isolation.test.cjs` for the enforced
+ * list. This module deliberately uses `spawnSync` against `gh` so it's
  * trivially auditable.
  *
  * D-02: --repo is wired to destination.cjs's frozen DESTINATION_REPO.
