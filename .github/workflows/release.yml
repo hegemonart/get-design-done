@@ -96,7 +96,7 @@ jobs:
             echo "GDDEOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Create tag
+      - name: Create tag (idempotent — skip if already exists)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -105,11 +105,34 @@ jobs:
           TAG="v${VERSION}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # Create and push the tag pointing at the merge commit on main.
-          git tag -a "$TAG" -m "Release $TAG"
-          git push origin "$TAG"
+          # Backfill path: if a prior failed run already created the tag
+          # remotely (e.g. release stopped at smoke-test or npm publish
+          # before publishing to the registry), skip re-creation. Downstream
+          # jobs (smoke-test, npm publish) operate on the existing tag.
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists on origin — skipping creation (backfill path)."
+          else
+            # Create and push the tag pointing at the merge commit on main.
+            git tag -a "$TAG" -m "Release $TAG"
+            git push origin "$TAG"
+          fi
+
+      - name: Check if GitHub Release already exists
+        id: release_check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.detect-version.outputs.version }}"
+          if gh release view "v${VERSION}" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release v${VERSION} already exists — skipping creation (backfill path)."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create GitHub Release
+        if: steps.release_check.outputs.exists != 'true'
         uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ needs.detect-version.outputs.version }}
