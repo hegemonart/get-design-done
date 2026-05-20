@@ -173,9 +173,13 @@ jobs:
         run: node scripts/verify-version-sync.cjs
 
       - name: Publish to npm (with provenance)
+        # Auth: npm Trusted Publishing via OIDC, configured at
+        # https://www.npmjs.com/package/@hegemonart/get-design-done/access (2026-05-20).
+        # The `id-token: write` permission at the workflow level (line 23) is what
+        # signs the OIDC token; no long-lived NPM_TOKEN secret is required.
+        # Background: npm rotated all granular tokens after the "Mini Shai-Hulud"
+        # supply-chain incident (2026-05-19), invalidating our prior NPM_TOKEN.
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   marketplace-publish:
     name: "Marketplace publish (placeholder)"
