@@ -711,6 +711,19 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 
 ---
 
+## 反馈通道(v1.30.0 起)
+
+GDD 现在通过 `/gdd:report-issue` 斜杠命令提供基于明确同意的 GitHub 问题报告器。
+
+- **它做什么。** 引导你报告问题或能力空缺,并在提交前预览有效负载。本地优先、基于同意、无自动模式。
+- **是假名化,不是匿名化。** 直接标识符(用户名、主机名、绝对路径、Git 身份、环境变量值、邮箱、IP 地址)会被替换为稳定的假名 —— 但内部关联得以保留,以便维护者进行调试。副信道数据(写作风格、代码模式、仓库指纹)仍可能用于再识别。你会在提交前看到完整的有效负载,并对每个问题明确同意。
+- **关停开关。** 设置 `GDD_DISABLE_ISSUE_REPORTER=1`(环境变量)或在 `.design/config.json` 中添加 `{ "issue_reporter": false }`,即可在任何网络调用前停止提交。
+- **`gh` 缺失时的回退。** 如果未安装 GitHub CLI,有效负载会写入磁盘 `.design/issue-drafts/`,问题模板 URL 会复制到剪贴板。
+
+完整细节请参见英文 [`README.md`](README.md),规则目录(R1..R8)参见 [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md),已知失败模式参见 [`reference/known-failure-modes.md`](reference/known-failure-modes.md)。
+
+---
+
 ## 许可证
 
 MIT 协议。详见 [LICENSE](LICENSE)。

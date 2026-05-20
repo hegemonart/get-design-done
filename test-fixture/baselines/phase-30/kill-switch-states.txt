@@ -1,0 +1,14 @@
+# Phase 30 baseline — kill-switch state matrix
+# Source: scripts/lib/issue-reporter/kill-switch.cjs (Plan 30-06, D-08)
+# Either env or config disables. Env wins precedence in getDisableReason().
+
+# State                                                          Outcome    Reason
+env=GDD_DISABLE_ISSUE_REPORTER=1 ; config={"issue_reporter":true}   BLOCKED    env
+env=unset                        ; config={"issue_reporter":false}  BLOCKED    config
+env=GDD_DISABLE_ISSUE_REPORTER=1 ; config={"issue_reporter":false}  BLOCKED    env
+env=unset                        ; config={"issue_reporter":true}   ALLOWED    -
+
+# Notes:
+# - getDisableReason() returns 'env' when both env+config disable.
+# - `gsd-health` mirrors the disable line at-a-glance.
+# - No network call is initiated when state is BLOCKED.

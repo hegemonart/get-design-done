@@ -1,0 +1,18 @@
+{
+  "_comment": "Phase 30 baseline — dedup match fixture. Source: scripts/lib/issue-reporter/dedup.cjs (Plan 30-05). Sample `gh issue list --json number,title,url --search ...` output + expected match outcome from searchByFingerprint().",
+  "_inputs_ref": "See gh-issue-list-match.json / gh-issue-list-no-match.json / gh-issue-list-multi-match.json siblings for raw inputs.",
+  "input": [
+    {
+      "number": 142,
+      "title": "Fast-lookup crash on Figma token sync (recurring)",
+      "url": "https://github.com/hegemonart/get-design-done/issues/142"
+    }
+  ],
+  "query": "fingerprint:sha8-of-error",
+  "expected": {
+    "matched": true,
+    "issueNumber": 142,
+    "title": "Fast-lookup crash on Figma token sync (recurring)",
+    "url": "https://github.com/hegemonart/get-design-done/issues/142"
+  }
+}

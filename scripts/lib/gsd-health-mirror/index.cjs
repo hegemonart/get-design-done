@@ -8,14 +8,25 @@
 // Surface:
 //   async getHealthChecks(rootDir) → { checks: HealthCheck[] }
 //
-// The 4 checks (in stable order) are:
+// The 5 checks (in stable order) are:
 //   1. claude_md            — CLAUDE.md presence
 //   2. planning_dir         — .planning/ presence
 //   3. design_dir           — .design/ presence
 //   4. package_json         — package.json present AND parseable
+//   5. issue_reporter       — kill-switch state (Plan 30-06 / D-08)
+//
+// Check 5 was added in Plan 30-06 — surfaces the report-issue kill-switch
+// (env or config disable) so users can verify why the command is
+// unavailable. The status line is one of three exact strings:
+//   - "issue reporter: enabled"
+//   - "issue reporter: disabled by env (GDD_DISABLE_ISSUE_REPORTER=1)"
+//   - "issue reporter: disabled by config (.design/config.json: issue_reporter=false)"
+// When both env and config trigger, env wins (matches D-08 display contract).
 
 const fs = require('node:fs');
 const path = require('node:path');
+
+const { getDisableReason } = require('../issue-reporter/kill-switch.cjs');
 
 function fileExists(p) {
   try {
@@ -97,6 +108,31 @@ async function getHealthChecks(rootDir) {
         });
       }
     }
+  }
+
+  // 5. issue_reporter — kill-switch state (Plan 30-06, D-08)
+  {
+    let reason = null;
+    try {
+      reason = getDisableReason({ cwd: rootDir, env: process.env });
+    } catch {
+      // Defensive: kill-switch must never throw, but if it ever does we
+      // treat the reporter as enabled rather than crash the health probe.
+      reason = null;
+    }
+    let detail;
+    if (reason === 'env') {
+      detail = 'issue reporter: disabled by env (GDD_DISABLE_ISSUE_REPORTER=1)';
+    } else if (reason === 'config') {
+      detail = 'issue reporter: disabled by config (.design/config.json: issue_reporter=false)';
+    } else {
+      detail = 'issue reporter: enabled';
+    }
+    checks.push({
+      name: 'issue_reporter',
+      status: 'ok',
+      detail,
+    });
   }
 
   return { checks };

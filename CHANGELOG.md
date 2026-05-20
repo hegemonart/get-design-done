@@ -4,6 +4,46 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.30.0] - 2026-05-20
+
+### Phase 30 — Consent-First GitHub Issue Reporter
+
+Opt-in user feedback channel that pseudonymizes payloads before submission (NOT anonymization — see disclosure below). Local-first, consent-gated, no auto-mode. Destination repo is hardcoded. 8 plans across Wave A primitives (30-01..30-03) / Wave B integration (30-04..30-06) / Wave C closeout (30-07..30-08). 6-manifest lockstep at 1.30.0 (D-12 ship-together on-cadence minor from 1.29.0).
+
+### Added
+
+- **Consent-First GitHub Issue Reporter.** Phase 30 ships these surfaces:
+  - **`/gdd:report-issue` skill** (`skills/report-issue/SKILL.md`, from 30-04) — Phase 28.5 compliant (≤100 lines). Walks the user through a consented submission: kill-switch check → triage against known failure modes → dedup against existing issues → assemble pseudonymized payload → draft to disk + open `$EDITOR` → consent prompt → submit via `gh` CLI.
+  - **`scripts/lib/pseudonymize.cjs`** (from 30-01) — 8 pseudonymization rules (R1..R8) covering git identity, absolute paths (Linux/macOS/Windows shapes), hostname, repo origin, env-var values, emails in logs, IPv4/IPv6 addresses, and stable per-user pseudonyms. Pure module: no `fs`, no `child_process`, no env mutation, no network.
+  - **`scripts/lib/issue-reporter/payload-assembly.cjs`** (from 30-02) — composes the final issue payload (title, body, fingerprint, bilingual disclaimer) from pseudonymized inputs. Two-layer scrub: Phase 22 `redact.cjs` then Phase 30 `pseudonymize.cjs` (order non-negotiable). Pure module: returns a string, no I/O.
+  - **`scripts/lib/issue-reporter/destination.cjs`** (from 30-04) — hardcoded `https://github.com/hegemonart/get-design-done` constant. SOLE FILE under the issue-reporter tree allowed to contain the destination URL literal. Frozen export.
+  - **Triage matcher** (`scripts/lib/issue-reporter/triage-matcher.cjs`, from 30-03) — pattern-matches the user's error against `reference/known-failure-modes.md`. On match: surfaces the remedy and stops; user can override with `--force-report`.
+  - **Dedup matcher** (`scripts/lib/issue-reporter/dedup.cjs`, from 30-05) — queries `gh issue list` against the destination repo and surfaces existing-issue matches before submission. Match outcomes: no-match → proceed; single-match → react with +1 + offer "me too" comment; multi-match → user picks. Wired into the report-flow BEFORE the consent prompt.
+  - **Kill-switch** (`scripts/lib/issue-reporter/kill-switch.cjs`, from 30-06) — env-var override (`GDD_DISABLE_ISSUE_REPORTER=1`) OR config-file override (`.design/config.json` with `{ "issue_reporter": false }`). Either disables the reporter; env wins when both set. Halts submission before any network call. `gsd-health` mirrors the same disable line.
+  - **`gh`-absent fallback** (`scripts/lib/issue-reporter/gh-absent-fallback.cjs`, from 30-06) — when GitHub CLI isn't installed, the assembled payload is written to disk under `.design/issue-drafts/` and the issue-template URL is copied to the platform-appropriate clipboard (xclip / pbcopy / clip).
+  - **Privacy-diff renderer** (`scripts/lib/issue-reporter/privacy-diff.cjs`, from 30-07) — renders the before/after pseudonymization diff at consent time and via `/gdd:update --show-privacy-diff`.
+  - **Network-isolation CI gate** (`tests/issue-reporter-network-isolation.test.cjs`, from 30-07) — static-analysis test asserts no `https://` / `fetch(` / `XMLHttpRequest` references exist anywhere under `scripts/lib/issue-reporter/` or `scripts/lib/pseudonymize.cjs` except the single destination URL constant in `destination.cjs`. Whitelisted via explicit allowlist.
+  - **`reference/pseudonymization-rules.md`** + **`reference/known-failure-modes.md`** (from 30-01 / 30-03) — registered in `registry.json`. User-facing docs explaining the 8-rule pseudonymization catalog and the known failure modes / anti-patterns the reporter detects.
+
+### Changed
+
+- Phase 30 does not change existing surfaces beyond adding the new skill + helpers; no breaking changes.
+
+### Documentation
+
+- `reference/pseudonymization-rules.md` + `reference/known-failure-modes.md` — added + registered in `reference/registry.json` (2 new entries).
+- `README.md` + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) updated with a "Feedback Channel (v1.30.0+)" section disclosing the `/gdd:report-issue` command and the pseudonymization-NOT-anonymization stance.
+- `NOTICE` — Phase 30 section noting the consent-first reporter discipline (added in 30-07).
+
+### Privacy & Safety
+
+- **Pseudonymization, not anonymization.** Payloads obscure direct identifiers (username, hostname, absolute paths, git identity, env-var values, emails, IPs) but preserve internal correlation so maintainers can debug. Side-channel data (writing style, code patterns, repo fingerprints) may still re-identify. Users see a full payload preview before submission and explicitly consent per-issue.
+- **Kill-switch.** Env-var (`GDD_DISABLE_ISSUE_REPORTER=1`) or config-file (`.design/config.json` `{ "issue_reporter": false }`) overrides halt submission before any network call. `gsd-health` surfaces the disable line.
+- **Hardcoded destination.** The issue-reporter cannot be redirected at runtime; the destination URL is a frozen module constant in `scripts/lib/issue-reporter/destination.cjs`. No env-var, config, or flag override.
+- **Network isolation.** Issue-reporter modules contain NO `https://` (or equivalent) calls beyond the single destination URL constant — verified by Phase 30 baseline static-analysis check (Plan 30-07).
+
+---
+
 ## [1.29.0] - 2026-05-19
 
 ### Phase 29 — Capability-Gap Telemetry + Self-Authoring of Agents/Skills

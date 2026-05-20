@@ -1,7 +1,7 @@
 {
   "$schema": "./schemas/registry.schema.json",
   "version": 1,
-  "generated_at": "2026-05-18T12:47:59.666Z",
+  "generated_at": "2026-05-20T09:53:00.000Z",
   "entries": [
     {
       "name": "codex-tools",
@@ -51,6 +51,13 @@
       "type": "meta-rules",
       "phase": 27,
       "description": "Phase 27 ACP + ASP protocol cheat sheet for peer-CLI delegation — line-delimited JSON-RPC framing, initialize/prompt/threadStart/turn lifecycle, per-peer ACP entry points, error-path resolution semantics"
+    },
+    {
+      "name": "pseudonymization-rules",
+      "path": "reference/pseudonymization-rules.md",
+      "type": "meta-rules",
+      "phase": 30,
+      "description": "Phase 30 pseudonymization rule catalog (R1..R8) — replaces git identity, paths, hostname, repo origin, env-var values, email, IPs; defines stable per-user pseudonym derivation. Consumed by /gdd:update --show-privacy-diff at 30-07."
     },
     {
       "name": "DEPRECATIONS",
@@ -846,6 +853,13 @@
       "type": "meta-rules",
       "phase": 29,
       "description": "Phase 29 Stage-0 → Stage-1 capability-gap gate specification. Defaults K=3 stable clusters across M=10 cycles with closed-form posterior stddev(Beta(α,β)) < 0.05 (Laplace prior matches Phase 23.5). D-01 lock: gate emits a one-time user-facing prompt on crossing — NEVER an auto-stage-flip. Overridable via .design/config.json capability_gap_gate.{K,M,stddev_threshold}. Test fixtures at tests/reflector-capability-gap-aggregation.test.cjs."
+    },
+    {
+      "name": "known-failure-modes",
+      "path": "reference/known-failure-modes.md",
+      "type": "meta-rules",
+      "phase": 30,
+      "description": "Phase 30 triage gate catalogue — locally-fixable failure modes (id/pattern/diagnosis/remedy/severity, with optional propose_report whitelist flag per D-11) consulted by scripts/lib/issue-reporter/triage-matcher.cjs before the report-issue consent prompt (D-07/D-11)."
     }
   ]
 }

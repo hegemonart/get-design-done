@@ -690,6 +690,19 @@ Rimuove tutti i comandi, agenti, hook e impostazioni GDD preservando le altre co
 
 ---
 
+## Canale di feedback (da v1.30.0)
+
+GDD ora include un reporter di issue GitHub basato sul consenso esplicito tramite il comando slash `/gdd:report-issue`.
+
+- **Cosa fa.** Ti guida nella segnalazione di un problema o una lacuna funzionale, con un'anteprima del payload prima dell'invio. Local-first, basato sul consenso, senza modalità automatica.
+- **Pseudonimizzazione, NON anonimizzazione.** Gli identificatori diretti (nome utente, hostname, percorsi assoluti, identità Git, valori delle variabili d'ambiente, e-mail, indirizzi IP) vengono sostituiti con pseudonimi stabili — ma la correlazione interna è preservata affinché i maintainer possano fare debugging. I canali laterali (stile di scrittura, pattern di codice, fingerprint del repository) possono ancora re-identificare. Vedi il payload completo prima dell'invio e dai il consenso per ogni issue.
+- **Interruttore di emergenza.** Imposta `GDD_DISABLE_ISSUE_REPORTER=1` (env) o aggiungi `{ "issue_reporter": false }` a `.design/config.json` per fermare l'invio prima di qualsiasi chiamata di rete.
+- **Fallback in assenza di `gh`.** Se la CLI di GitHub non è installata, il payload viene scritto su disco in `.design/issue-drafts/` e l'URL del template di issue viene copiata negli appunti.
+
+Vedi [`README.md`](README.md) in inglese per i dettagli completi, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) per il catalogo delle regole (R1..R8) e [`reference/known-failure-modes.md`](reference/known-failure-modes.md) per i modi di fallimento noti.
+
+---
+
 ## Licenza
 
 Licenza MIT. Vedi [LICENSE](LICENSE) per i dettagli.

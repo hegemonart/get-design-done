@@ -1,0 +1,7 @@
+# Phase 30 baseline — registry-diff vs Phase 29
+# Source: reference/registry.json (Plan 30-01 / 30-03 / 30-07 entries)
+# Compared against test-fixture/baselines/phase-29/registry-diff.txt
+
+# New registry entries vs Phase 29:
++reference/pseudonymization-rules.md
++reference/known-failure-modes.md

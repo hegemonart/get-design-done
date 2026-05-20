@@ -43,3 +43,10 @@ REVIEW.md
 # built from skills/ via scripts/build-distribution-bundles.cjs.
 # Not committed: it's a deterministic build artifact, rebuilt on demand.
 dist/
+
+# Phase 30 (Plan 30-04): /gdd:report-issue payload drafts.
+# Already covered by `.design/` above, but called out explicitly so
+# the Phase 30 D-04 invariant (drafts persist on disk locally, never
+# enter the repo) is visible at the .gitignore layer. Drafts can
+# contain pseudonymized stack traces — privacy-private state.
+.design/issue-drafts/
