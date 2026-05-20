@@ -219,6 +219,34 @@ function matchKnownFailure(errorContext) {
   return { matched: false };
 }
 
+/**
+ * List the modes flagged `propose_report: true` in the catalogue.
+ *
+ * Used by Plan 30-04's cli-flag-report.cjs to derive the D-11
+ * `--report` whitelist: a command only grows the `--report` flag if
+ * at least one propose_report=true mode in the catalogue could plausibly
+ * apply to it. The matcher itself does NOT act on this flag — it's
+ * advisory metadata consumed by the report-flow orchestrator.
+ *
+ * @returns {Array<{modeId: string, propose_report: true, severity: string}>}
+ */
+function listProposeReportModes() {
+  let entries;
+  try {
+    entries = loadEntries();
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(entries)) return [];
+  return entries
+    .filter((e) => e && e.propose_report === true)
+    .map((e) => ({
+      modeId: e.id,
+      propose_report: true,
+      severity: e.severity,
+    }));
+}
+
 /** Test helper — override the catalogue path. */
 function __setCataloguePath(absPath) {
   _cataloguePathOverride = absPath;
@@ -232,6 +260,7 @@ function __resetCache() {
 
 module.exports = {
   matchKnownFailure,
+  listProposeReportModes,
   // Underscore-prefixed test injection helpers; not part of the public API.
   __setCataloguePath,
   __resetCache,
