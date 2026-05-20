@@ -9,8 +9,9 @@ The report flow is the only outbound path the plugin offers. Every byte leaving 
 1. has been redacted for secrets (Phase 22 `redact.cjs`),
 2. has been pseudonymized for identity (Plan 30-01 `pseudonymize.cjs`),
 3. has been written to disk where the user can read it,
-4. has been read back from disk after the user closed the editor, and
-5. has cleared an explicit per-issue `y/N` prompt.
+4. has cleared a pre-submit dedup check against the destination repo (Plan 30-05) — `+1` and `me-too` on a matching existing issue NEVER spawn a duplicate (D-06),
+5. has been read back from disk after the user closed the editor, and
+6. has cleared an explicit per-issue `y/N` prompt.
 
 No environment variable, command-line flag, or build configuration bypasses any of these steps. Two test layers enforce this:
 
@@ -31,23 +32,38 @@ No environment variable, command-line flag, or build configuration bypasses any 
 
 `writeDraft({title, body, fingerprint})` writes to `.design/issue-drafts/<YYYYMMDDTHHMMSSZ>-<fp8>.md`. The file has a small HTML-comment header (timestamp, destination, full fingerprint) so a future maintainer with a corrupted-looking draft can reconstruct provenance. The file is NOT deleted on decline — the user keeps their work.
 
-### Step 4 — Edit (optional)
+### Step 4 — Pre-submit dedup (D-06)
+
+`scripts/lib/issue-reporter/dedup.cjs` exports `searchByFingerprint(fingerprint, {destination})` which spawns `gh issue list --search "fingerprint:<hash>" --json number,title,url --repo <destination>` (read-only). Resolves `{matches: [...], degraded?, reason?}` — NEVER throws on gh failure.
+
+Routing:
+
+- `matches.length === 0` (no existing issue) **or** `degraded === true` (search unavailable; surface a one-line warning) → fall through to Step 5 with the prepared draft.
+- `matches.length >= 1` → render the dedup UI listing each `{number, title, url}` with three actions per match:
+
+  - **`+1`** → `react(n, {destination})` spawns `gh api -X POST /repos/<destination>/issues/<n>/reactions -f content=+1`. Resolves `{ok:true}`; exits the report flow on success ("reaction recorded on #<n>"). **NO new issue is created** (D-06).
+  - **`me-too`** → `commentMeToo(n, {destination, errorContext, runtime, pluginVersion})` spawns `gh issue comment <n> --repo <destination> --body <body>`. The body contains EXACTLY three fields (`Last error:`, `Runtime:`, `Plugin version:`) — nothing more (negative-presence tested). `errorContext.lastErrorLine` is the ALREADY-pseudonymized last error line from 30-02's payload pipeline (D-01); dedup.cjs does NOT re-derive raw stderr. Exits the report flow on success ("comment added to #<n>"). **NO new issue is created** (D-06).
+  - **`new`** → fall through to Step 5 with the prepared draft despite the match (user explicitly opted to force a new issue).
+
+`+1` and `me-too` failures (auth/network/rate) propagate as rejected promises with annotated `.reason` so the caller can offer retry/cancel — they do NOT silently fall back to creating a new issue (that would defeat dedup intent).
+
+Wiring: `runReportFlow` calls `options.dedupCheck({fingerprint, title})` BEFORE the consent prompt (`report-flow.cjs` STEP 4). The skill drives the `+1`/`me-too`/`new` UI by passing a `dedupCheck` callback that wraps `searchByFingerprint` + the `react`/`commentMeToo` calls. Returning truthy `existing` from the callback short-circuits `runReportFlow` to `{submitted:false, reason:'duplicate'}`. Returning falsy continues to Step 5.
+
+### Step 5 — Edit (optional)
 
 If `$EDITOR` is set, `promptConsent` spawns it on the draft path and blocks until exit. Otherwise the user opens it manually. `EDITOR` is a POSIX convention (git, crontab, gh all use it); the static-grep test only forbids env-var reads matching `/REPORT|ISSUE|AUTO_REPORT/i`.
 
-### Step 5 — Consent prompt (D-03)
+### Step 6 — Consent prompt (D-03)
 
-The single submission gate. Three preconditions must hold:
+The single submission gate for the new-issue path. Three preconditions must hold:
 
 1. `process.stdin.isTTY === true`.
 2. No env var matches `/REPORT|ISSUE|AUTO_REPORT/i` with a truthy value (`rejectBypassEnv` throws otherwise, naming the offender).
 3. The draft file exists and is readable.
 
-The function prints a summary (destination, draft path, title, first 10 body lines), asks `Submit this issue to hegemonart/get-design-done? [y/N]` via `readline`, treats anything other than `y`/`yes` (case-insensitive, trimmed) as decline, and **re-reads the draft from disk** so user edits in Step 4 are picked up.
+The function prints a summary (destination, draft path, title, first 10 body lines), asks `Submit this issue to hegemonart/get-design-done? [y/N]` via `readline`, treats anything other than `y`/`yes` (case-insensitive, trimmed) as decline, and **re-reads the draft from disk** so user edits in Step 5 are picked up.
 
-### Step 6 — Dedup hook (deferred to 30-05)
-
-`options.dedupCheck({fingerprint, title})` in `runReportFlow`. If it returns truthy `existing`, the orchestrator returns `{submitted: false, reason: 'duplicate', existing}` without calling `submitFn`. Plan 30-05 will wire `gh issue list --search "fingerprint:<hash>"`.
+(The `+1` / `me-too` paths from Step 4 do NOT pass through this consent prompt — selecting either action in the dedup UI IS the explicit consent for that minimal interaction. The new-issue path always passes through this prompt.)
 
 ### Step 7 — Submit via `gh` (D-05 + D-02)
 
@@ -76,6 +92,11 @@ Body is written to a tmp file to avoid arg-length and shell-escaping. URL parsed
 | Runtime consent | Only `y`/`yes` accepted | C1..C3, U3 |
 | Runtime re-read | `promptConsent` re-reads draft before returning final body | E1, E2 |
 | Runtime destination | `submitViaGh` always passes `--repo hegemonart/get-design-done` | H1 |
+| Dedup destination | `dedup.cjs` accepts `destination` only as a parameter — no env/config lookup (D-02) | `issue-reporter-dedup.test.cjs` test 11 |
+| Dedup body shape | `buildMeTooBody` returns EXACTLY 3 lines (`Last error:` / `Runtime:` / `Plugin version:`) — no stack/path/env/cmd (D-06) | tests 5 + 6 (verbatim + negative-presence) |
+| Dedup network | `dedup.cjs` imports only `child_process`; no `https`/`fetch`/`axios`/`node-fetch` (D-05) | 30-07 static-grep gate |
+| Dedup test hermeticity | No live `gh` calls in CI; injected spawn spy + traced `child_process.spawnSync` counter assert 0 real invocations (D-13) | `issue-reporter-dedup.test.cjs` test 10 |
+| Dedup pseudonymization | `me-too` body uses the ALREADY-pseudonymized `errorContext.lastErrorLine` from 30-02's pipeline; dedup.cjs does NOT re-derive raw stderr (D-01) | dedup test "commentMeToo passes pseudonymized lastErrorLine through to gh body" |
 
 ## Troubleshooting
 
@@ -87,9 +108,9 @@ Body is written to a tmp file to avoid arg-length and shell-escaping. URL parsed
 
 ## Forward-looking hooks
 
-- **Plan 30-05** wires `options.dedupCheck` to `gh issue list --search "fingerprint:<hash>"`. The hook is already present in `runReportFlow`; no further changes to that file will be needed.
+- **Plan 30-05** *(landed)* — `scripts/lib/issue-reporter/dedup.cjs` wires `options.dedupCheck` to `gh issue list --search "fingerprint:<hash>"`. The skill drives the `+1` / `me-too` / `new` UI by passing a `dedupCheck` callback that wraps `searchByFingerprint` + `react` + `commentMeToo`. The hook in `runReportFlow` now runs BEFORE consent (per D-06).
 - **Plan 30-06** adds `gh`-absent fallback (clipboard + URL) and the `GDD_DISABLE_ISSUE_REPORTER=1` kill-switch. The kill-switch is a disable signal (skip the whole flow), not a bypass.
-- **Plan 30-07** ships the network-isolation CI gate. Plan 30-04 already meets the invariant; the gate locks it in.
+- **Plan 30-07** ships the network-isolation CI gate. Plans 30-04 and 30-05 already meet the invariant (no `https`/`fetch`/`axios`/`node-fetch`/`node:https` in their files); the gate locks it in.
 
 ## References
 
