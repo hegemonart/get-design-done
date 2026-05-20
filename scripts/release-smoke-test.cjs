@@ -50,6 +50,27 @@ if (!fs.existsSync(FIXTURE_SRC)) {
 const tmpDir = path.join(os.tmpdir(), `gdd-smoke-${Date.now()}`);
 fs.mkdirSync(tmpDir, { recursive: true });
 
+// Snapshot REPO_ROOT/.design/ contents BEFORE the smoke test runs. This lets
+// the post-test pollution assertion (below) detect actual pollution (new
+// files created during the run) rather than tripping on legitimately-tracked
+// `.design/` files that exist in a fresh checkout — e.g.
+// `.design/config.example.json` shipped by Plan 29-02 for discoverability.
+function snapshotDesignDir() {
+  const designDir = path.join(REPO_ROOT, '.design');
+  if (!fs.existsSync(designDir)) return '<absent>';
+  const entries = [];
+  function walk(d) {
+    for (const ent of fs.readdirSync(d, { withFileTypes: true })) {
+      const full = path.join(d, ent.name);
+      if (ent.isDirectory()) walk(full);
+      else entries.push(path.relative(designDir, full).replace(/\\/g, '/'));
+    }
+  }
+  walk(designDir);
+  return entries.sort().join('\n');
+}
+const designSnapshotBefore = snapshotDesignDir();
+
 function copyRecursive(src, dst) {
   fs.mkdirSync(dst, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
@@ -161,8 +182,18 @@ if (missing.length) {
 console.log(`smoke-test: ${diffs.length} diffs, ${missing.length} baseline artifacts not in fresh run`);
 
 // Ensure .design/ was not created in the real repo root.
-if (fs.existsSync(path.join(REPO_ROOT, '.design'))) {
-  console.error('ERROR: .design/ polluted repo root — smoke test must use temp dir only');
+// Pollution check: only fail if NEW files appeared in REPO_ROOT/.design/ during
+// the smoke test. Tracked files (like `.design/config.example.json` shipped by
+// Plan 29-02) are present in the fresh checkout and are NOT pollution. We
+// compare the directory snapshot taken before the test (top of file) against
+// the post-test snapshot.
+const designSnapshotAfter = snapshotDesignDir();
+if (designSnapshotBefore !== designSnapshotAfter) {
+  console.error('ERROR: .design/ contents changed during smoke test — pipeline wrote to REPO_ROOT instead of temp dir');
+  console.error('Before:');
+  for (const line of designSnapshotBefore.split('\n')) console.error(`  ${line}`);
+  console.error('After:');
+  for (const line of designSnapshotAfter.split('\n')) console.error(`  ${line}`);
   process.exit(1);
 }
 
