@@ -248,6 +248,16 @@ OFF_CADENCE_VERSIONS.add('1.28.8');
 //     after the 1.28.0 -> 1.28.5 -> 1.28.6 -> 1.28.7 -> 1.28.8 decimal arc.
 OFF_CADENCE_VERSIONS.add('1.29.0');
 
+// Phase 30 — Consent-First GitHub Issue Reporter
+// (v1.30.0, 2026-05-20). On-cadence minor from v1.29.0 — sequence 1.29.0 -> 1.30.0.
+// Even though 1.30.0 is on-cadence (not a decimal off-cadence), the existing
+// suite contract requires registering every post-1.0.x release in OFF_CADENCE_VERSIONS
+// to keep semver-ordering tests green (Phase 29 precedent — see Phase 29 retrospective).
+// Phase 30 adds the Consent-First GitHub Issue Reporter — `/gdd:report-issue` skill +
+// pseudonymization helpers + payload assembly + dedup matching + kill-switch.
+//   - 1.30.0 → Phase 30 (issue-reporter); on-cadence minor from 1.29.0.
+OFF_CADENCE_VERSIONS.add('1.30.0');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];
