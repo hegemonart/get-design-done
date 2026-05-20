@@ -192,6 +192,21 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Upgrade npm to a version that supports OIDC trusted publishing
+        # actions/setup-node@v6 + node 22 ships npm 10.x, which signs --provenance
+        # but does NOT know how to authenticate to the registry via OIDC trusted
+        # publisher (a newer protocol). Without auth, npm publish falls back to
+        # NPM_TOKEN, finds none, and the registry returns
+        #   404 Not Found - PUT https://registry.npmjs.org/<scope>%2f<pkg>
+        # which is npm's misleading "unauthenticated PUT" error.
+        # Trusted publisher auth landed in npm 11.5.1 (July 2025); pin >= that.
+        run: npm install -g npm@latest
+
+      - name: Print npm/node versions (debug)
+        run: |
+          node --version
+          npm --version
+
       - name: Verify version sync across manifests
         run: node scripts/verify-version-sync.cjs
 
@@ -200,6 +215,7 @@ jobs:
         # https://www.npmjs.com/package/@hegemonart/get-design-done/access (2026-05-20).
         # The `id-token: write` permission at the workflow level (line 23) is what
         # signs the OIDC token; no long-lived NPM_TOKEN secret is required.
+        # Requires npm >= 11.5.1 on the runner — see prior upgrade step.
         # Background: npm rotated all granular tokens after the "Mini Shai-Hulud"
         # supply-chain incident (2026-05-19), invalidating our prior NPM_TOKEN.
         run: npm publish --provenance --access public
