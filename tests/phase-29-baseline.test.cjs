@@ -113,18 +113,18 @@ test('29-07 baseline: .codex-plugin/plugin.json version matches VERSION (D-10 Ti
 // ---------------------------------------------------------------------------
 // CHANGELOG top entry (Test 7).
 
-test('29-07 baseline: CHANGELOG.md top entry is ## [VERSION] - 2026-05-19', () => {
+test('29-07 baseline: CHANGELOG.md has ## [1.29.0] - 2026-05-19 historical entry', () => {
+  // Phase 30 lesson: this baseline pins to the v1.29.0 historical entry
+  // (literal version + date), NOT to the current top entry. After v1.30.0
+  // ship, the top of CHANGELOG is `## [1.30.0] - 2026-05-20` and the
+  // v1.29.0 entry is the second-from-top block. The Phase 29 baseline's
+  // job is to lock down that v1.29.0 historical entry shape, not to track
+  // the current release date (which is the Phase 30+ baseline's job).
   const chg = readText(CHANGELOG_PATH);
   // Full RegExp escape per CodeQL js/incomplete-sanitization.
-  const pattern = new RegExp(
-    '##\\s+\\[' + escapeRegExp(VERSION) + '\\]\\s+-\\s+2026-05-19'
-  );
+  const pattern = /##\s+\[1\.29\.0\]\s+-\s+2026-05-19/;
   assert.match(chg, pattern,
-    `CHANGELOG.md missing or malformed ## [${VERSION}] - 2026-05-19 entry`);
-  // Confirm entry sits within the first ~80 lines (top-of-file insertion).
-  const top80 = chg.split('\n').slice(0, 80).join('\n');
-  assert.match(top80, pattern,
-    `CHANGELOG.md [${VERSION}] entry not at top of file`);
+    'CHANGELOG.md missing ## [1.29.0] - 2026-05-19 historical entry');
 });
 
 // ---------------------------------------------------------------------------

@@ -108,11 +108,16 @@ describe('Phase 28.8-Z1: CHANGELOG + OFF_CADENCE registration', () => {
     assert.match(semver, re, `semver-compare.test.cjs missing OFF_CADENCE_VERSIONS.add('${VERSION}')`);
   });
 
-  test('28.8-Z1: CHANGELOG.md has ## [VERSION] - 2026-05-19 block at top (within first 8 lines)', () => {
-    const head8 = read('CHANGELOG.md').split(/\r?\n/).slice(0, 8).join('\n');
-    // CHANGELOG format: ## [<version>] - YYYY-MM-DD (hyphen separator per plan spec).
-    const re = new RegExp(`^## \\[${escapeRegExp(VERSION)}\\]\\s+-\\s+2026-05-19`, 'm');
-    assert.match(head8, re, `CHANGELOG head 8 lines missing ## [${VERSION}] - 2026-05-19 block`);
+  test('28.8-Z1: CHANGELOG.md has ## [1.28.8] - 2026-05-19 historical block', () => {
+    // Phase 30 lesson: this baseline pins to the v1.28.8 historical entry
+    // (literal version + date), NOT to the current top-of-file. After v1.30.0
+    // ship, the v1.28.8 block is no longer at the top — the test was
+    // originally written for a snapshot moment when v1.28.8 was the head.
+    // Rewriting to a literal historical assertion keeps it green across
+    // future bumps without losing the lockdown intent.
+    const chg = read('CHANGELOG.md');
+    const re = /^## \[1\.28\.8\]\s+-\s+2026-05-19/m;
+    assert.match(chg, re, 'CHANGELOG missing ## [1.28.8] - 2026-05-19 historical block');
   });
 });
 
