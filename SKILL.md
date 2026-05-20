@@ -58,6 +58,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | **Debug & Workflow** | | |
 | `debug [<symptom>]` | `get-design-done:gdd-debug` | Symptom-driven design investigation; persistent state in `.design/DEBUG.md` |
 | `do <natural language>` | `get-design-done:gdd-do` | Natural-language router — parses intent, confirms, dispatches |
+| `report-issue [<cmd>] [--force-report]` | `get-design-done:report-issue` | Consent-gated GitHub issue reporter — triage, pseudonymize, draft to disk, submit via `gh` (no auto-mode; hardcoded destination) |
 | **Ship & Safety** | | |
 | `ship [--title <t>] [--draft]` | `get-design-done:gdd-ship` | Post-verify PR flow — clean branch + `gh pr create` |
 | `pr-branch [<base>]` | `get-design-done:gdd-pr-branch` | Strip `.design/` and `.planning/` commits for clean code-review branch |
@@ -231,6 +232,7 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 # --- Debug & Workflow ---
 /gdd:debug           → Skill("get-design-done:gdd-debug")
 /gdd:do              → Skill("get-design-done:gdd-do")
+/gdd:report-issue    → Skill("get-design-done:report-issue")
 # --- Ship & Safety ---
 /gdd:ship            → Skill("get-design-done:gdd-ship")
 /gdd:pr-branch       → Skill("get-design-done:gdd-pr-branch")
