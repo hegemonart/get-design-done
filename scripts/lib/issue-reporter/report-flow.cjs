@@ -39,6 +39,8 @@ const { matchKnownFailure } = require('./triage-matcher.cjs');
 const { writeDraft } = require('./draft-writer.cjs');
 const { promptConsent } = require('./consent-prompt.cjs');
 const { submitViaGh } = require('./gh-submit.cjs');
+const { isDisabled, getDisableReason } = require('./kill-switch.cjs');
+const { detectGh, runFallback } = require('./gh-absent-fallback.cjs');
 
 /**
  * Derive a short, human-readable issue title from the error context.
@@ -100,6 +102,27 @@ async function runReportFlow(args) {
   const writeFn = options.writeDraftFn || writeDraft;
   const promptFn = options.promptFn || promptConsent;
   const submitFn = options.submitFn || submitViaGh;
+  const isDisabledFn = options.isDisabledFn || isDisabled;
+  const getDisableReasonFn = options.getDisableReasonFn || getDisableReason;
+  const detectGhFn = options.detectGhFn || detectGh;
+  const runFallbackFn = options.runFallbackFn || runFallback;
+
+  // STEP 0 — Kill-switch gate (D-08). Either env or config disable makes
+  // /gdd:report-issue unavailable. Checked BEFORE any other logic so no
+  // draft is written, no triage runs, no payload is assembled.
+  // Precedence (when both surfaces trigger): env wins for display.
+  if (isDisabledFn({ cwd: options.rootDir, env: options.env })) {
+    const reason = getDisableReasonFn({ cwd: options.rootDir, env: options.env });
+    const reasonMsg = reason === 'env'
+      ? 'env (GDD_DISABLE_ISSUE_REPORTER=1)'
+      : '.design/config.json (issue_reporter=false)';
+    return {
+      submitted: false,
+      reason: 'disabled',
+      surface: reason, // 'env' | 'config'
+      message: `/gdd:report-issue is disabled by ${reasonMsg}. Run \`gsd-health\` to see the active disable surface.`,
+    };
+  }
 
   // STEP 1 — Triage gate (D-07). If matched and not forcing, surface the
   // suggestion and exit before any draft writing.
@@ -199,6 +222,25 @@ async function runReportFlow(args) {
     return {
       submitted: false,
       reason: 'declined',
+      draftPath,
+      fingerprint,
+    };
+  }
+
+  // STEP 5b — gh-absent fallback (D-10). If the user consented but `gh`
+  // is not available on PATH, copy the (potentially-edited) payload to
+  // the clipboard and print the issue-template URL with an explicit
+  // "gh CLI not found..." message. The user can then paste manually.
+  // The draft is still preserved on disk for audit / re-submit later.
+  if (!detectGhFn()) {
+    const fallback = await runFallbackFn(consent.finalBody, {
+      stdout: options.stdout,
+    });
+    return {
+      submitted: false,
+      reason: 'gh-absent',
+      copied: fallback.copied,
+      url: fallback.url,
       draftPath,
       fingerprint,
     };
