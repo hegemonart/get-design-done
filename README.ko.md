@@ -690,6 +690,19 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 
 ---
 
+## 피드백 채널 (v1.30.0+)
+
+GDD에는 이제 `/gdd:report-issue` 슬래시 명령어를 통한 동의 기반 GitHub 이슈 리포터가 포함되어 있습니다.
+
+- **무엇을 하나요.** 이슈 또는 기능 부족을 보고하도록 안내하며, 제출 전에 페이로드를 미리 봅니다. 로컬 우선, 동의 기반, 자동 모드 없음.
+- **익명화가 아닌 가명화입니다.** 직접 식별자(사용자 이름, 호스트 이름, 절대 경로, Git ID, 환경 변수 값, 이메일, IP 주소)는 안정적인 가명으로 대체되지만, 메인테이너가 디버깅할 수 있도록 내부 상관관계는 유지됩니다. 사이드 채널 데이터(글쓰기 스타일, 코드 패턴, 저장소 지문)는 여전히 재식별될 수 있습니다. 제출 전에 전체 페이로드를 보고 이슈별로 명시적으로 동의합니다.
+- **킬 스위치.** 네트워크 호출 전에 제출을 중단하려면 `GDD_DISABLE_ISSUE_REPORTER=1`(환경) 또는 `.design/config.json`에 `{ "issue_reporter": false }`를 추가하세요.
+- **`gh` 부재 시 폴백.** GitHub CLI가 설치되어 있지 않으면 페이로드가 `.design/issue-drafts/`에 디스크에 기록되고 이슈 템플릿 URL이 클립보드에 복사됩니다.
+
+전체 세부 사항은 영어 [`README.md`](README.md)를, 규칙 카탈로그(R1..R8)는 [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md)를, 알려진 실패 모드는 [`reference/known-failure-modes.md`](reference/known-failure-modes.md)를 참조하세요.
+
+---
+
 ## 라이선스
 
 MIT 라이선스. 자세한 내용은 [LICENSE](LICENSE) 참조.

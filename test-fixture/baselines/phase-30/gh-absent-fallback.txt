@@ -1,0 +1,20 @@
+# Phase 30 baseline — gh-absent fallback behavior
+# Source: scripts/lib/issue-reporter/gh-absent-fallback.cjs (Plan 30-06, D-10)
+# When `gh` CLI is not installed, drop the payload to disk + copy the
+# issue-template URL to clipboard via platform-specific commands.
+
+# Platform-specific clipboard command:
+linux:   xclip -selection clipboard
+macos:   pbcopy
+windows: clip
+
+# Draft-on-disk path:
+draft-on-disk-path: <repo-root>/.design/issue-drafts/<ISO-timestamp>-<slug>.md
+
+# Clipboard content (issue-template URL, hardcoded in destination.cjs):
+clipboard-url: https://github.com/hegemonart/get-design-done/issues/new?template=bug_report.md
+
+# User-facing output:
+# - prints the draft path
+# - prints "URL copied to clipboard"
+# - prints "Open <clipboard-url> in your browser to file the issue"

@@ -757,6 +757,20 @@ This removes all GDD commands, agents, hooks, and settings while preserving othe
 
 ---
 
+## Feedback Channel (v1.30.0+)
+
+GDD now ships a consent-first GitHub issue reporter via the `/gdd:report-issue` slash command.
+
+- **What it does.** Walks you through reporting an issue or a capability gap, with a payload preview before submission. Local-first, consent-gated, no auto-mode. Triages against `reference/known-failure-modes.md` first — many failures resolve without filing.
+- **Pseudonymization, NOT anonymization.** Direct identifiers (your username, hostname, absolute paths, git identity, env-var values, emails, IPs) are replaced with stable pseudonyms — but internal correlation is preserved so maintainers can debug. Side-channel data (writing style, code patterns, repo fingerprints) may still re-identify. You see the full payload before submission and explicitly consent per-issue.
+- **Kill-switch.** Set `GDD_DISABLE_ISSUE_REPORTER=1` (env) or add `{ "issue_reporter": false }` to `.design/config.json` to halt submission before any network call. `gsd-health` surfaces the disable line.
+- **Hardcoded destination.** The reporter cannot be redirected at runtime; the destination repo is a frozen constant in `scripts/lib/issue-reporter/destination.cjs`.
+- **`gh`-absent fallback.** If the GitHub CLI isn't installed, the payload is written to `.design/issue-drafts/` and the issue-template URL is copied to your clipboard (xclip / pbcopy / clip).
+
+See [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) for the R1..R8 rule catalog and [`reference/known-failure-modes.md`](reference/known-failure-modes.md) for known anti-patterns the reporter detects.
+
+---
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.

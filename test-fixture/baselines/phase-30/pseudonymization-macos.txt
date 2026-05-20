@@ -1,0 +1,6 @@
+# Phase 30 baseline — pseudonymization macOS path shape
+# Source: scripts/lib/pseudonymize.cjs#replacePaths (Plan 30-01, R2 rule)
+# Identity: { name: 'bob', email: 'b@e.com', username: 'bob' }
+
+INPUT: /Users/bob/Documents/work/repo/file.ts
+EXPECT: <home>/Documents/work/repo/file.ts

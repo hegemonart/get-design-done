@@ -690,6 +690,19 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 
 ---
 
+## フィードバックチャンネル(v1.30.0+)
+
+GDD は、`/gdd:report-issue` スラッシュコマンドによる同意ベースの GitHub Issue リポーターを搭載しました。
+
+- **何をするか。** 問題や機能不足の報告をガイドし、送信前にペイロードのプレビューを表示します。ローカルファースト、同意ベース、自動モードなし。
+- **疑似匿名化であり、匿名化ではありません。** 直接識別子(ユーザー名、ホスト名、絶対パス、Git アイデンティティ、環境変数の値、メールアドレス、IP アドレス)は安定した疑似識別子に置き換えられますが、メンテナーがデバッグできるよう内部相関は保持されます。サイドチャネルデータ(文体、コードパターン、リポジトリのフィンガープリント)による再識別の可能性は残ります。送信前に完全なペイロードを確認し、Issue ごとに明示的に同意します。
+- **キルスイッチ。** ネットワーク呼び出しの前に送信を停止するには、`GDD_DISABLE_ISSUE_REPORTER=1`(環境変数)または `.design/config.json` に `{ "issue_reporter": false }` を設定します。
+- **`gh` 不在時のフォールバック。** GitHub CLI がインストールされていない場合、ペイロードは `.design/issue-drafts/` のディスクに書き込まれ、Issue テンプレート URL がクリップボードにコピーされます。
+
+詳細は英語版の [`README.md`](README.md)、ルールカタログ(R1..R8)は [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md)、既知の失敗モードは [`reference/known-failure-modes.md`](reference/known-failure-modes.md) を参照してください。
+
+---
+
 ## ライセンス
 
 MIT ライセンス。詳細は [LICENSE](LICENSE) を参照。

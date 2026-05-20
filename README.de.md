@@ -690,6 +690,19 @@ Entfernt alle GDD-Befehle, Agenten, Hooks und Einstellungen, ohne deine anderen 
 
 ---
 
+## Feedback-Kanal (ab v1.30.0)
+
+GDD enthält jetzt einen einwilligungsbasierten GitHub-Issue-Reporter über den Slash-Befehl `/gdd:report-issue`.
+
+- **Was er tut.** Führt Sie durch das Melden eines Fehlers oder einer Funktionslücke, mit Vorschau der Nutzlast vor dem Absenden. Lokal-first, einwilligungsbasiert, kein Auto-Modus.
+- **Pseudonymisierung, KEINE Anonymisierung.** Direkte Identifikatoren (Benutzername, Hostname, absolute Pfade, Git-Identität, Umgebungsvariablen-Werte, E-Mails, IP-Adressen) werden durch stabile Pseudonyme ersetzt — aber die interne Korrelation bleibt erhalten, damit Maintainer debuggen können. Seitenkanäle (Schreibstil, Code-Muster, Repo-Fingerabdrücke) können weiterhin re-identifizieren. Sie sehen die vollständige Nutzlast vor dem Absenden und stimmen pro Issue ausdrücklich zu.
+- **Notausschalter.** Setzen Sie `GDD_DISABLE_ISSUE_REPORTER=1` (Umgebung) oder fügen Sie `{ "issue_reporter": false }` in `.design/config.json` hinzu, um die Übermittlung vor jedem Netzwerkaufruf zu stoppen.
+- **`gh`-Fallback.** Falls die GitHub-CLI nicht installiert ist, wird die Nutzlast auf die Festplatte unter `.design/issue-drafts/` geschrieben und die Issue-Template-URL in die Zwischenablage kopiert.
+
+Siehe die englische [`README.md`](README.md) für die vollständigen Details, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) für den Regelkatalog (R1..R8) und [`reference/known-failure-modes.md`](reference/known-failure-modes.md) für bekannte Fehlermodi.
+
+---
+
 ## Lizenz
 
 MIT-Lizenz. Siehe [LICENSE](LICENSE) für Details.
