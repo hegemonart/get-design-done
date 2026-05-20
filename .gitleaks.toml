@@ -21,6 +21,19 @@ paths = [
   # to flag them in source — but the redact module is what consumes
   # them at runtime, not the leaked-credential surface.
   '''tests/redact\.test\.cjs''',
+  # reference/pseudonymization-rules.md is Phase 30's human-readable
+  # documentation of the pseudonymizer's behavior. It includes
+  # before/after examples that look like secrets to gitleaks (e.g.
+  # `GITHUB_TOKEN=ghp_abc...`) because the document's PURPOSE is to
+  # show what the module recognizes + scrubs. The examples are
+  # deliberately illustrative, not real credentials.
+  '''reference/pseudonymization-rules\.md''',
+  # tests/pseudonymize.test.cjs + tests/issue-reporter-payload.test.cjs
+  # exercise the same surface with realistic example tokens for the
+  # negative-presence assertions (Phase 30 D-04 redact-before-pseudo
+  # order test uses an Anthropic-shaped key as the adversarial input).
+  '''tests/pseudonymize\.test\.cjs''',
+  '''tests/issue-reporter-payload\.test\.cjs''',
 ]
 regexes = [
   # Placeholder tokens used in reference docs and examples
