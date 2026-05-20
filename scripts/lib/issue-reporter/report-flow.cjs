@@ -14,13 +14,16 @@
  *     → .design/issue-drafts/<timestamp>-<fp8>.md persisted before any
  *       consent prompt is shown. File survives decline.
  *
+ *   pre-submit dedup hook (D-06; wired in 30-05)
+ *     → options.dedupCheck({ fingerprint, title }) is the wiring point.
+ *       Runs BEFORE the consent prompt: a matching existing issue can
+ *       short-circuit to {submitted:false, reason:'duplicate'} so the
+ *       `+1` / `me-too` actions NEVER spawn a duplicate (D-06).
+ *
  *   prompt consent (D-03)
  *     → editor (if $EDITOR), re-read from disk, y/N. The ONLY submission
- *       gate. Bypass attempts (env var, --yes flag, non-TTY) throw.
- *
- *   dedup hook (30-05, deferred)
- *     → options.dedupCheck({ fingerprint, title }) is the wiring point.
- *       This plan does not implement dedup; it just leaves the hook.
+ *       gate for the new-issue path. Bypass attempts (env var, --yes flag,
+ *       non-TTY) throw.
  *
  *   submit via gh CLI (D-05)
  *     → gh issue create --repo hegemonart/get-design-done ...
@@ -155,7 +158,35 @@ async function runReportFlow(args) {
     now: options.now,
   });
 
-  // STEP 4 — Consent prompt (D-03). re-reads draft → returns final {title, body}.
+  // STEP 4 — Pre-submit dedup hook (D-06; wired in 30-05). Runs BEFORE the
+  // consent prompt so a matching existing issue can short-circuit the new-
+  // issue path entirely. The caller (skills/report-issue/SKILL.md) drives
+  // the `+1` / `me-too` / `new` UI by passing a dedupCheck callback that:
+  //   • calls dedup.searchByFingerprint(fingerprint, {destination}) read-only;
+  //   • if matches exist, prompts the user to pick an action;
+  //   • on `+1` or `me-too`, calls dedup.react(...) or commentMeToo(...) and
+  //     returns truthy `existing` so runReportFlow short-circuits with
+  //     {submitted:false, reason:'duplicate'} — NEVER spawning a duplicate;
+  //   • on `new`, returns falsy so we fall through to the consent prompt.
+  // No-op for callers that omit dedupCheck.
+  if (typeof options.dedupCheck === 'function') {
+    const initialTitle = deriveTitle(errorContext);
+    const dup = await options.dedupCheck({
+      fingerprint,
+      title: initialTitle,
+    });
+    if (dup) {
+      return {
+        submitted: false,
+        reason: 'duplicate',
+        existing: dup,
+        draftPath,
+        fingerprint,
+      };
+    }
+  }
+
+  // STEP 5 — Consent prompt (D-03). re-reads draft → returns final {title, body}.
   const consent = await promptFn({
     draftPath,
     openEditor: options.openEditor,
@@ -171,23 +202,6 @@ async function runReportFlow(args) {
       draftPath,
       fingerprint,
     };
-  }
-
-  // STEP 5 — Optional dedup hook (deferred to 30-05). Single injection point.
-  if (typeof options.dedupCheck === 'function') {
-    const dup = await options.dedupCheck({
-      fingerprint,
-      title: consent.finalTitle,
-    });
-    if (dup) {
-      return {
-        submitted: false,
-        reason: 'duplicate',
-        existing: dup,
-        draftPath,
-        fingerprint,
-      };
-    }
   }
 
   // STEP 6 — Submit via gh CLI to the hardcoded repo (D-02 + D-05).
