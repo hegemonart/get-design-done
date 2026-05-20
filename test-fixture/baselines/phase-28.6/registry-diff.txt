@@ -117,6 +117,7 @@ priority-matrix: reference/priority-matrix.md
 project-skills-guide: reference/project-skills-guide.md
 proportion-systems: reference/proportion-systems.md
 protected-paths.default: reference/protected-paths.default.json
+pseudonymization-rules: reference/pseudonymization-rules.md
 retrieval-contract: reference/retrieval-contract.md
 review-format: reference/review-format.md
 rtl-cjk-cultural: reference/rtl-cjk-cultural.md
