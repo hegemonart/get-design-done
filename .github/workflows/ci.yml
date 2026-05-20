@@ -118,12 +118,22 @@ jobs:
         run: |
           set -e
           # D-11: flag /Users/, /home/<user>/, and C:\ in shipped content dirs.
-          # Exit nonzero on any match. DEPRECATIONS.md excluded (documents examples).
+          # Exit nonzero on any match.
+          # Exclusions (whitelist):
+          #   - DEPRECATIONS.md — documents examples
+          #   - scripts/lib/pseudonymize.cjs — Phase 30: matches these paths by
+          #     design (the module's PURPOSE is to recognize + redact them)
+          #   - reference/pseudonymization-rules.md — Phase 30: documents the
+          #     same patterns for human review (--show-privacy-diff payload)
           MATCHES=$(grep -rnE '/Users/|/home/[a-z]+/|C:\\\\' \
             scripts/ reference/ agents/ skills/ \
             --include='*.sh' --include='*.cjs' --include='*.js' --include='*.md' \
             --exclude-dir='baselines' \
-            2>/dev/null | grep -v 'DEPRECATIONS.md' || true)
+            2>/dev/null \
+            | grep -v 'DEPRECATIONS.md' \
+            | grep -v 'scripts/lib/pseudonymize.cjs' \
+            | grep -v 'reference/pseudonymization-rules.md' \
+            || true)
           if [ -n "$MATCHES" ]; then
             echo "Hardcoded absolute paths detected:"
             echo "$MATCHES"
