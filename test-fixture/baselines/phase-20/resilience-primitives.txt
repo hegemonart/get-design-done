@@ -19,6 +19,7 @@ lockfile.cjs
 mmr-rerank.cjs
 parse-contract.cjs
 probe-optional.cjs
+pseudonymize.cjs
 quality-gate-detect.cjs
 rate-guard.cjs
 redact.cjs

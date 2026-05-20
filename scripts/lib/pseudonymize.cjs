@@ -297,11 +297,27 @@ function replaceEmails(str) {
 function replaceIPs(str) {
   if (typeof str !== 'string') return str;
   // IPv4: (?<![v@\d.]) blocks semver/email/dotted-context preceding; (?!\.) blocks following.
-  const ipv4Re = /(?<![v@\d.])\b((?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]))\.(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\b(?!\.)/g;
-  let out = str.replace(ipv4Re, '<ipv4:$1.0>');
-  // IPv6: ≥5 segments avoids false-positive on time strings (12:34:56).
-  const ipv6Re = /\b([0-9a-f]{1,4}(?::[0-9a-f]{1,4}){4,7})\b/gi;
-  out = out.replace(ipv6Re, (m) => `<ipv6:${m.split(':').slice(0, -1).join(':')}::>`);
+  const ipv4Re = /(?<![v@\d.])\b((?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]))\.((?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]))\b(?!\.)/g;
+  let out = str.replace(ipv4Re, (match, first3 /*, last*/) => {
+    // Suppress trailing-zero semver shapes (`X.0.0.0`) — these are almost
+    // never real public IPv4 and almost always major-version strings. Real
+    // public IPs (`8.8.8.8`, `1.1.1.1`, etc.) still get scrubbed.
+    const octets = match.split('.');
+    if (octets[1] === '0' && octets[2] === '0' && octets[3] === '0') return match;
+    return `<ipv4:${first3}.0>`;
+  });
+  // IPv6: ≥5 colons avoids false-positive on time strings (12:34:56). Allow
+  // double-colon (::) for zero-compression — the captured segment may contain
+  // empty parts. Drop the LAST non-empty segment and append `::`.
+  const ipv6Re = /\b([0-9a-f]{1,4}(?:::?[0-9a-f]{1,4}){4,7})\b/gi;
+  out = out.replace(ipv6Re, (m) => {
+    const segs = m.split(':');
+    // Walk back to the last non-empty segment; drop it; append '::'.
+    let lastIdx = segs.length - 1;
+    while (lastIdx > 0 && segs[lastIdx] === '') lastIdx--;
+    const prefix = segs.slice(0, lastIdx).join(':');
+    return `<ipv6:${prefix}::>`;
+  });
   return out;
 }
 
