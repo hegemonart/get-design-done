@@ -186,21 +186,28 @@ jobs:
         with:
           ref: v${{ needs.detect-version.outputs.version }}
 
-      - name: Setup Node.js 22
+      - name: Setup Node.js 24
+        # Node 24 ships npm 11.x natively, which supports OIDC trusted
+        # publishing without an upgrade step. Switching here from Node 22:
+        #
+        # PRIOR APPROACH (broken on 2026-05-21): use Node 22 + `npm install
+        # -g npm@latest`. The runner's bundled npm 10.x on Node 22.22.2 had
+        # a corrupted @npmcli/arborist dep tree (missing `promise-retry`),
+        # so the `npm install` command itself crashed before it could even
+        # download npm@latest:
+        #   npm error code MODULE_NOT_FOUND
+        #   npm error Cannot find module 'promise-retry'
+        #   npm error - /opt/hostedtoolcache/node/22.22.2/x64/lib/node_modules/
+        #              npm/node_modules/@npmcli/arborist/lib/arborist/rebuild.js
+        # Reproducible across two runs (initial v1.30.5 push + dispatch retry).
+        #
+        # Node 24 sidesteps the broken cache entirely by shipping a fresh
+        # npm 11.x as part of its install. No upgrade step required, so no
+        # surface area for the bundled tool cache to corrupt.
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Upgrade npm to a version that supports OIDC trusted publishing
-        # actions/setup-node@v6 + node 22 ships npm 10.x, which signs --provenance
-        # but does NOT know how to authenticate to the registry via OIDC trusted
-        # publisher (a newer protocol). Without auth, npm publish falls back to
-        # NPM_TOKEN, finds none, and the registry returns
-        #   404 Not Found - PUT https://registry.npmjs.org/<scope>%2f<pkg>
-        # which is npm's misleading "unauthenticated PUT" error.
-        # Trusted publisher auth landed in npm 11.5.1 (July 2025); pin >= that.
-        run: npm install -g npm@latest
 
       - name: Print npm/node versions (debug)
         run: |
