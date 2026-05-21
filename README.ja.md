@@ -701,6 +701,8 @@ GDD は、`/gdd:report-issue` スラッシュコマンドによる同意ベー�
 
 詳細は英語版の [`README.md`](README.md)、ルールカタログ(R1..R8)は [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md)、既知の失敗モードは [`reference/known-failure-modes.md`](reference/known-failure-modes.md) を参照してください。
 
+**v1.30.5 アップデート** — カタログは22エントリに拡張(v1.30.0は10件)、新しい決定論的ファジーマッチャー(`scripts/lib/failure-mode-matcher.cjs`)が信頼度スコア付きの上位N候補を返します。Reflector + authority-watcher は `/gdd:apply-reflections`(6番目の提案クラス)経由で新エントリを提案できます — 厳密に提案のみ、すべてのエントリはユーザーレビューを通過します。
+
 ---
 
 ## ライセンス

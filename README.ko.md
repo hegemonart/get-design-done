@@ -701,6 +701,8 @@ GDD에는 이제 `/gdd:report-issue` 슬래시 명령어를 통한 동의 기반
 
 전체 세부 사항은 영어 [`README.md`](README.md)를, 규칙 카탈로그(R1..R8)는 [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md)를, 알려진 실패 모드는 [`reference/known-failure-modes.md`](reference/known-failure-modes.md)를 참조하세요.
 
+**v1.30.5 업데이트** — 카탈로그가 22개 항목(v1.30.0에서는 10개)으로 확장되었고, 새로운 결정론적 퍼지 매처(`scripts/lib/failure-mode-matcher.cjs`)가 신뢰도 점수와 함께 top-N 후보를 반환합니다. Reflector + authority-watcher는 `/gdd:apply-reflections`(6번째 제안 클래스)를 통해 새 항목을 제안할 수 있습니다 — 엄격하게 제안 전용이며 모든 항목은 사용자 검토를 거칩니다.
+
 ---
 
 ## 라이선스

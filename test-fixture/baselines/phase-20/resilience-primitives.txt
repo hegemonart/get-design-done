@@ -28,6 +28,7 @@ reference-registry.cjs
 reference-resolver.cjs
 reflections-cycle-writer.cjs
 reflector-capability-gap-aggregator.cjs
+reflector-kfm-proposer.cjs
 relevance-counter.cjs
 runtime-detect.cjs
 spring.cjs

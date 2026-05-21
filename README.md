@@ -769,6 +769,8 @@ GDD now ships a consent-first GitHub issue reporter via the `/gdd:report-issue` 
 
 See [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) for the R1..R8 rule catalog and [`reference/known-failure-modes.md`](reference/known-failure-modes.md) for known anti-patterns the reporter detects.
 
+**v1.30.5 update** — the catalogue now ships 22 entries (was 10 in v1.30.0), and a new deterministic fuzzy matcher (`scripts/lib/failure-mode-matcher.cjs`, top-N + threshold + confidence) returns ranked candidates for ambiguous symptoms. The reflector + authority-watcher can propose new entries via `/gdd:apply-reflections` (6th proposal class) — strictly proposal-only, every entry passes through user review.
+
 ---
 
 ## License

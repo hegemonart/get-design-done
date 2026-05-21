@@ -722,6 +722,8 @@ GDD 现在通过 `/gdd:report-issue` 斜杠命令提供基于明确同意的 Git
 
 完整细节请参见英文 [`README.md`](README.md),规则目录(R1..R8)参见 [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md),已知失败模式参见 [`reference/known-failure-modes.md`](reference/known-failure-modes.md)。
 
+**v1.30.5 更新** — 目录现包含 22 个条目(v1.30.0 为 10 个),新的确定性模糊匹配器(`scripts/lib/failure-mode-matcher.cjs`)返回带置信度评分的 top-N 候选。Reflector + authority-watcher 可通过 `/gdd:apply-reflections`(第 6 个提议类)提议新条目 — 严格仅提议,每个条目都需经过用户审查。
+
 ---
 
 ## 许可证

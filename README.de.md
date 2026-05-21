@@ -701,6 +701,8 @@ GDD enthält jetzt einen einwilligungsbasierten GitHub-Issue-Reporter über den 
 
 Siehe die englische [`README.md`](README.md) für die vollständigen Details, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) für den Regelkatalog (R1..R8) und [`reference/known-failure-modes.md`](reference/known-failure-modes.md) für bekannte Fehlermodi.
 
+**v1.30.5-Update** — der Katalog umfasst jetzt 22 Einträge (vorher 10 in v1.30.0) und ein neues deterministisches Fuzzy-Matching-Modul (`scripts/lib/failure-mode-matcher.cjs`) liefert Top-N-Kandidaten mit Konfidenzwerten. Reflector + Authority-Watcher können neue Einträge über `/gdd:apply-reflections` vorschlagen (6. Vorschlagsklasse) — strikt nur Vorschläge, jeder Eintrag durchläuft die Nutzerprüfung.
+
 ---
 
 ## Lizenz
