@@ -692,8 +692,18 @@ test('29-05 T3: procedure.md tags include incubator + version bumped to >= 1.1.0
 });
 
 test('29-05 T3: procedure.md retains all 5 prior proposal-class sections (no regression)', () => {
+  // Plain substring check — each tag is a literal hardcoded enum like
+  // '[FRONTMATTER]', so we just need to verify the heading exists in the
+  // file. Closes Code Scanning #24 + #25 (js/incomplete-sanitization):
+  // the prior implementation built a regex by escaping `[` and `]` via
+  // single-occurrence .replace() calls, which CodeQL flagged even
+  // though each input had exactly one of each. Using includes() avoids
+  // the regex entirely and is more obviously correct.
   const src = fs.readFileSync(PROCEDURE_PATH, 'utf8');
   for (const tag of ['[FRONTMATTER]', '[REFERENCE]', '[BUDGET]', '[QUESTION]', '[GLOBAL-SKILL]']) {
-    assert.match(src, new RegExp(`### \\${tag.replace('[', '\\[').replace(']', '\\]')}`.replace(/\\\\/g, '\\')), `regression: missing ${tag} section`);
+    assert.ok(
+      src.includes(`### ${tag}`),
+      `regression: missing ${tag} section`,
+    );
   }
 });

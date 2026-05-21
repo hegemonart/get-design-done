@@ -166,9 +166,9 @@ async function withProjectRoot(root, fn) {
 // Invariant tests
 // ---------------------------------------------------------------------------
 
-test('27.7-02: TOOL_COUNT === 12', async () => {
-  const idx = await loadTool('index'.replace('index', 'index'));
-});
+// (The stub `27.7-02: TOOL_COUNT === 12` test was deleted — it was a
+// no-op left over from refactoring with no assertions. The real check
+// lives in the next test which asserts m.TOOL_COUNT === 12 explicitly.)
 
 test('27.7-02: tools/index exports TOOL_COUNT === 12', async () => {
   const file = path.join(TOOLS_DIR, 'index.ts');
