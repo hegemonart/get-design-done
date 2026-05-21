@@ -281,33 +281,56 @@ test('determinism: two calls produce byte-identical JSON output', () => {
 
 // -------------------------------------------------------------------
 // 13. D-04 — Phase 30 `triage-matcher.cjs` byte-identical to HEAD
+//
+// Two layers of guard, both required:
+//   (a) `git diff HEAD -- <file>` is empty — the canonical "file is
+//       unchanged in the repository" check. This is line-ending-agnostic
+//       (git normalises via .gitattributes / core.autocrlf), making it
+//       the right oracle on cross-platform checkouts.
+//   (b) Semantic content equality (LF-normalised) between the worktree
+//       copy and `git show HEAD:<file>`. Defends against the case where
+//       the file is staged + reverted but a diff would still be empty.
 // -------------------------------------------------------------------
 test('D-04 guard: triage-matcher.cjs is byte-identical to HEAD', () => {
   const repoRoot = path.resolve(__dirname, '..');
   const fileRel = 'scripts/lib/issue-reporter/triage-matcher.cjs';
   const filePath = path.join(repoRoot, fileRel);
-  const onDisk = fs.readFileSync(filePath);
+
+  // Layer (a) — repository diff oracle.
+  let diff;
+  try {
+    diff = execSync(`git diff HEAD -- "${fileRel}"`, {
+      cwd: repoRoot,
+      maxBuffer: 8 * 1024 * 1024,
+      encoding: 'utf8',
+    });
+  } catch (e) {
+    assert.fail(`git diff HEAD failed for ${fileRel}: ${e && e.message}`);
+  }
+  assert.equal(
+    diff.trim(),
+    '',
+    `triage-matcher.cjs has uncommitted changes — D-04 violated:\n${diff}`
+  );
+
+  // Layer (b) — semantic content match (LF-normalised so CRLF
+  // checkouts on Windows don't false-positive).
+  const onDisk = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
   let atHead;
   try {
-    // -p prints the raw bytes; binary-safe.
     atHead = execSync(`git show HEAD:${fileRel}`, {
       cwd: repoRoot,
       maxBuffer: 8 * 1024 * 1024,
-    });
+      encoding: 'utf8',
+    }).replace(/\r\n/g, '\n');
   } catch (e) {
     assert.fail(
       `unable to read HEAD:${fileRel} via git show — ${e && e.message}`
     );
   }
   assert.equal(
-    onDisk.length,
-    atHead.length,
-    `triage-matcher.cjs size drifted: disk=${onDisk.length}B HEAD=${atHead.length}B`
-  );
-  // Compare byte-for-byte; Buffer.compare returns 0 on equality.
-  assert.equal(
-    Buffer.compare(onDisk, atHead),
-    0,
-    'triage-matcher.cjs bytes drifted from HEAD — D-04 violated'
+    onDisk,
+    atHead,
+    'triage-matcher.cjs content drifted from HEAD — D-04 violated'
   );
 });
