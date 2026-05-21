@@ -272,3 +272,250 @@ fix: '1) Check free space with `df -h` (Linux/macOS) or `Get-PSDrive` (PowerShel
 related_phases: [22, 24, 29]
 first_observed_cycle: 'pre-30.5'
 ```
+
+### KFM-011 — `validate-skill-length` pre-commit hook fails
+
+The local pre-commit hook `scripts/validate-skill-length.cjs` rejects
+SKILL.md files exceeding the agentskills.io length budget. A commit is
+blocked until the offending skill is trimmed or the `--fix` autoformatter
+is run.
+
+```yaml
+id: KFM-011
+pattern: '(validate-skill-length|skill.*exceeds.*(line|character)|SKILL\.md.*(too long|over.*budget))'
+diagnosis: 'A SKILL.md file exceeds the agentskills.io length budget; the validate-skill-length pre-commit hook is blocking the commit.'
+remedy: 'Run `node scripts/validate-skill-length.cjs --fix` to auto-trim, then re-stage and commit.'
+severity: low
+propose_report: true
+symptom: 'A `git commit` aborts with `validate-skill-length` warnings: one or more `SKILL.md` files exceed the per-skill line or character budget. The commit never lands.'
+root_cause: 'The pre-commit hook enforces the agentskills.io length contract (Phase 28.5). When a recent edit pushes a skill over budget, the hook fails fast to keep skills shippable.'
+fix: '1) Inspect the hook output — it names each offending file and its measured size. 2) Run `node scripts/validate-skill-length.cjs --fix` to autoformat any auto-trimmable bloat. 3) If the file still exceeds budget, manually shorten descriptions or move detail into a `reference/` sidecar. 4) `git add` the trimmed file and re-run `git commit`. This is on the propose_report whitelist because recurring trips often indicate the budget itself needs reconsideration.'
+related_phases: [28.5, 28.6]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-012 — `npm ci` lockfile drift
+
+`npm ci` enforces strict parity between `package.json` and
+`package-lock.json`. A manual edit to one without the other surfaces as
+an `EUSAGE` error with the lockfile path called out.
+
+```yaml
+id: KFM-012
+pattern: '(npm error code EUSAGE|can only install (packages )?with an existing package-lock\.json|npm ci.*lockfile)'
+diagnosis: 'package-lock.json is out of sync with package.json; npm ci refuses to install when the lockfile is missing or drifted.'
+remedy: 'Run `npm install` once locally to regenerate the lockfile, commit the updated package-lock.json, then re-run `npm ci`.'
+severity: medium
+propose_report: false
+symptom: 'CI or a clean install fails with `npm error code EUSAGE` and a message about `npm ci` only working with an existing, up-to-date `package-lock.json`.'
+root_cause: 'A manual edit to `package.json` (e.g. bumping a version) without a follow-up `npm install` leaves the lockfile drifted. `npm ci` rejects drift to keep installs reproducible.'
+fix: '1) Pull the latest main if needed. 2) Run `npm install` (NOT `npm ci`) to regenerate the lockfile from `package.json`. 3) Inspect the diff with `git diff package-lock.json` — should match the package.json change. 4) Stage and commit the updated lockfile. 5) Re-run `npm ci`.'
+related_phases: [25]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-013 — lychee transient SSL failure on whitelisted hosts
+
+The link-check job (lychee) reports intermittent TLS errors on a small
+set of well-known authority hosts (`heydonworks.com`,
+`ryanmulligan.dev`, `adamwathan.me`). These are usually transient and
+clear on re-run; persistent failures warrant an allowlist entry.
+
+```yaml
+id: KFM-013
+pattern: '(lychee.*\[ERROR\].*(heydonworks\.com|ryanmulligan\.dev|adamwathan\.me)|SSL.*handshake.*(heydonworks|ryanmulligan|adamwathan))'
+diagnosis: 'lychee link-check hit a transient TLS/SSL failure on one of the whitelisted authority hosts; likely a flaky CDN handshake rather than a real broken link.'
+remedy: 'Rerun the link-check job; if 3 consecutive runs fail, add the host to lychee allowlist in .lycheeignore or workflow config.'
+severity: low
+propose_report: false
+symptom: 'The `link-check` workflow fails with `lychee [ERROR]` lines naming `heydonworks.com`, `ryanmulligan.dev`, or `adamwathan.me`, often with a TLS handshake or `SSL` error in the message.'
+root_cause: 'These hosts sit behind CDNs that occasionally renegotiate TLS sessions mid-flight from CI runners. lychee surfaces the failure as a hard error even when the URL is reachable on retry.'
+fix: '1) Open the failed Actions run and re-run only failed jobs. 2) If the same host fails three times in a row, edit `.lycheeignore` (or the equivalent allowlist in the workflow) and add the URL or hostname. 3) Re-run the workflow.'
+related_phases: [13.2, 18]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-014 — `gh pr merge` fast-forward warning (cosmetic)
+
+GitHub's CLI surfaces a "Not possible to fast-forward" warning after a
+successful server-side merge in some workflow combinations. The merge
+already landed; the warning is purely cosmetic.
+
+```yaml
+id: KFM-014
+pattern: '(Not possible to fast-forward, do you want to continue|gh pr merge.*warning.*fast-forward)'
+diagnosis: 'gh pr merge surfaced a fast-forward warning, but the server-side merge already succeeded; the local branch is just lagging.'
+remedy: 'Verify the PR is merged on GitHub (gh pr view --json state); the warning is cosmetic and can be ignored. Pull main to sync your local branch.'
+severity: low
+propose_report: false
+symptom: 'After `gh pr merge`, the CLI prints `Not possible to fast-forward, do you want to continue?` even though the PR shows as merged on github.com. The user is unsure whether the merge happened.'
+root_cause: 'The local main branch has diverged from origin/main between the start of `gh pr merge` and its post-merge sync step. The server-side merge succeeded; the local refs just need a `git pull` to catch up.'
+fix: '1) Confirm the merge with `gh pr view <number> --json state,mergedAt`. 2) If `state` is `MERGED`, the warning is cosmetic. 3) Run `git checkout main && git pull origin main` to sync local refs. 4) Continue with the next workflow step.'
+related_phases: [25]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-015 — CodeQL `js/incomplete-sanitization` false positive
+
+CodeQL flags `js/incomplete-sanitization` on regex-based input that
+operates on an enum-constrained value. The alert is a false positive in
+that narrow case but cannot be silenced without an inline justification.
+
+```yaml
+id: KFM-015
+pattern: '(js/incomplete-sanitization|CodeQL.*incomplete[- ]sanitization)'
+diagnosis: 'CodeQL flagged js/incomplete-sanitization on input that is already constrained to an enum/whitelist; common false-positive class.'
+remedy: 'Add a CodeQL justification comment (`// codeql[js/incomplete-sanitization]`) explaining the enum constraint, then dismiss the alert with reason "false positive — input is enum-constrained".'
+severity: low
+propose_report: false
+symptom: 'A CodeQL scan reports `js/incomplete-sanitization` on a line that sanitises user-supplied input which is already constrained to a small enum (e.g. `low|medium|high`).'
+root_cause: 'CodeQL''s data-flow analysis cannot prove that an upstream check restricts the input to an enum, so it conservatively flags the regex-based normaliser as incomplete sanitization.'
+fix: '1) Confirm via code inspection that the input is genuinely enum-constrained upstream (e.g. validated by a `SEVERITIES.has(x)` check). 2) Add an inline justification comment immediately above the flagged line: `// codeql[js/incomplete-sanitization] — input is enum-constrained by SEVERITIES.has() at line N`. 3) Open the alert in GitHub Security tab and dismiss with reason "False positive". 4) Push the justification comment so future scans also surface it.'
+related_phases: [25, 27.5]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-016 — `gitleaks` false positive on documentation examples
+
+`gitleaks` flags literal example tokens (`ghp_…`, `sk-ant-…`) in
+`reference/*.md` documentation. These are educational examples, not real
+credentials, but the scanner cannot tell them apart.
+
+```yaml
+id: KFM-016
+pattern: '(gitleaks.*finding.*reference/|gitleaks.*(ghp_|sk-ant-).*reference)'
+diagnosis: 'gitleaks flagged a documentation example as a real secret; the path under reference/ contains an illustrative token literal, not a live credential.'
+remedy: 'Either add the file path to .gitleaks.toml allowlist OR rewrite the example to use a clearly-fake placeholder like `EXAMPLE_TOKEN_REDACTED`.'
+severity: low
+propose_report: false
+symptom: 'A `gitleaks` scan in CI fails with a finding pointing at a `reference/*.md` file containing a string that pattern-matches a token shape (e.g. `ghp_…` for a GitHub PAT or `sk-ant-…` for an Anthropic key).'
+root_cause: 'gitleaks rules are pattern-based and cannot distinguish an example literal in documentation from a real leaked credential. Docs that include token shapes for teaching purposes trip the scanner.'
+fix: '1) Confirm via `git log -p <file>` that the token is example-only and was never live. 2) Edit `.gitleaks.toml` and add the file path under `[allowlist] paths`. OR rewrite the example to use an obviously-fake placeholder like `ghp_EXAMPLE_REDACTED`. 3) Push the change and re-run the scan. 4) If the leak was real, follow secret-rotation playbook instead.'
+related_phases: [25]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-017 — `release.yml` version mismatch with `plugin.json`
+
+The Phase 25 release safeguard rejects a `workflow_dispatch` invocation
+whose input version doesn't match the version declared in `plugin.json`.
+This is the manifest-lockstep guard catching a forgotten bump.
+
+```yaml
+id: KFM-017
+pattern: '(release\.yml.*version (mismatch|does not match)|workflow_dispatch.*plugin\.json.*version)'
+diagnosis: 'release.yml refused the workflow_dispatch because input version disagrees with plugin.json; the lockstep version guard is intentionally blocking.'
+remedy: 'Either correct the dispatch input to match plugin.json, or bump plugin.json (and the other 5 manifests) to the target version and re-dispatch.'
+severity: medium
+propose_report: false
+symptom: 'A manual `workflow_dispatch` of `release.yml` fails immediately with an error about input version not matching `plugin.json`. The release does not proceed.'
+root_cause: 'Phase 25 added a manifest-lockstep guard to `release.yml`: the dispatch input version MUST match `plugin.json` exactly. The guard catches the case where someone tries to release a version without first bumping all 6 manifests.'
+fix: '1) Read the current `plugin.json` version. 2) If the dispatch input was a typo, re-dispatch with the correct version. 3) If you genuinely intended a new version, run the 6-manifest lockstep bump first: `plugin.json`, `package.json`, `package-lock.json`, `README.md`, `CHANGELOG.md`, the SDK version constant. 4) Commit the bumps, then re-dispatch `release.yml`.'
+related_phases: [25]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-018 — `npm publish` 404 after `NPM_TOKEN` rotation
+
+`npm publish` returns `404 Not Found` from the registry when the
+`NPM_TOKEN` secret has been rotated upstream but the GitHub repo secret
+still holds the old value. (Common after npm''s May 2026 Mini
+Shai-Hulud forced rotation.)
+
+```yaml
+id: KFM-018
+pattern: '(npm error 404|Not Found - PUT https://registry\.npmjs\.org/|npm publish.*401.*registry\.npmjs)'
+diagnosis: 'npm publish failed with 404/401 against the registry; the most common cause in 2026 is a rotated NPM_TOKEN that the repo secret has not caught up to.'
+remedy: 'Regenerate token at npmjs.com, update NPM_TOKEN repo secret in GitHub Settings, retry the release workflow.'
+severity: medium
+propose_report: false
+symptom: 'A release run''s `npm publish` step fails with `npm error 404 Not Found - PUT https://registry.npmjs.org/<package>` or a 401 on the same URL. No version is published.'
+root_cause: 'Either the `NPM_TOKEN` secret in the GitHub repo settings was rotated upstream (npmjs.com revoked the old token, common during the May 2026 Mini Shai-Hulud incident), or the token never had publish scope for the package.'
+fix: '1) Log into npmjs.com → Access Tokens. 2) Generate a new Automation token with publish scope for the package. 3) In GitHub: Settings → Secrets → update `NPM_TOKEN` with the new value. 4) Re-dispatch the release workflow. 5) If the failure persists, verify the package name in `package.json` matches what npm expects and that 2FA settings allow automation tokens.'
+related_phases: [25]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-019 — macOS symlinked tmpdir comparison failure
+
+Tests that compare a tmpdir-derived path against an expected absolute
+path fail on macOS because `/var/folders/...` is a symlink to
+`/private/var/folders/...`. The string comparison sees mismatched
+prefixes; `fs.realpathSync` resolves them.
+
+```yaml
+id: KFM-019
+pattern: '(/var/folders/.*\/private/var/folders|AssertionError.*expected.*\/private\/var|tmpdir.*symlink.*realpath)'
+diagnosis: 'macOS tmpdir is a symlink (/var/folders/ -> /private/var/folders/); a string equality test against tmpdir path fails because one side is resolved and the other isn''t.'
+remedy: 'Wrap tmpdir reads in fs.realpathSync before comparing; or normalize both sides to realpath at assertion time.'
+severity: low
+propose_report: true
+symptom: 'A unit test that uses `os.tmpdir()` fails on macOS with an assertion showing `/private/var/folders/...` on one side and `/var/folders/...` on the other. Same test passes on Linux.'
+root_cause: 'macOS''s `/var/folders` is a symlink to `/private/var/folders`. `os.tmpdir()` returns the unresolved form, but some Node APIs (especially after a `process.chdir` into the tmpdir) return the resolved form. String equality fails on the prefix.'
+fix: '1) In test setup, wrap the tmpdir path: `const TMP = fs.realpathSync(os.tmpdir())`. 2) Use `TMP` consistently throughout the test. 3) For any assertion that receives a path from a Node API after `chdir`, also pass it through `fs.realpathSync`. 4) Re-run the test. propose_report:true because this is recurring developer-experience friction that warrants a tracked tooling issue.'
+related_phases: [12, 14.6]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-020 — Windows CRLF vs LF byte-comparison mismatch
+
+Tests that byte-compare file contents fail on Windows because
+`git show HEAD:<file>` returns LF line endings while
+`fs.readFileSync` after checkout returns CRLF (when `core.autocrlf` is
+`true`). Normalisation or `.gitattributes` resolves it.
+
+```yaml
+id: KFM-020
+pattern: '(core\.autocrlf|CRLF.*(mismatch|conversion)|AssertionError.*(CRLF|line endings|eol)|git.*autocrlf.*true)'
+diagnosis: 'Windows checkout converted LF to CRLF; byte-comparison between `git show HEAD:` (LF) and the working tree (CRLF) fails.'
+remedy: 'Either set .gitattributes `* text=auto eol=lf` for the affected files, or normalize both sides with `.replace(/\\r\\n/g,"\\n")` before comparison.'
+severity: medium
+propose_report: true
+symptom: 'A test that byte-compares file contents passes on Linux/macOS but fails on Windows with an `AssertionError` showing `\\r\\n` on one side and `\\n` on the other.'
+root_cause: 'Windows git has `core.autocrlf=true` by default; on checkout, LF in the repo is converted to CRLF in the working tree. `git show HEAD:<file>` returns the LF-form, but `fs.readFileSync` after a normal checkout returns CRLF. Byte equality fails.'
+fix: '1) Decide whether the file should be EOL-normalised: if yes, add `<glob> text=auto eol=lf` to `.gitattributes`, run `git add --renormalize .`, commit. 2) Or normalise both sides at compare time: `expected.replace(/\\r\\n/g,"\\n") === actual.replace(/\\r\\n/g,"\\n")`. 3) For test-fixture binary-ish files, also consider `<glob> -text` to disable EOL handling entirely. 4) Re-run the Windows test. propose_report:true because Windows-specific test failures are easy to miss in Linux-only CI.'
+related_phases: [12, 14.6, 24]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-021 — Skill name contains colon (agentskills.io slug regex)
+
+Skills named with a colon (e.g. `get-design-done:foo`) fail the
+agentskills.io spec validator. The spec reserves colons for namespace
+delimiters at the registry level; on-disk skill folders must use
+hyphens.
+
+```yaml
+id: KFM-021
+pattern: '(agentskills\.io.*(slug|name).*invalid|skill name.*contains colon|SKILL.*invalid.*slug)'
+diagnosis: 'Skill folder name contains a colon, which the agentskills.io spec reserves for registry-level namespacing; on-disk skill slugs must be hyphen-separated.'
+remedy: 'Rename the skill folder to use a hyphen (e.g. `get-design-done:foo` -> `get-design-done-foo`) and update any cross-references.'
+severity: medium
+propose_report: false
+symptom: 'A skill-validation step (or the publishing flow) rejects a skill folder with an error like `skill name "get-design-done:foo" is not a valid agentskills.io slug` or `slug must match /^[a-z0-9][a-z0-9-]*$/`.'
+root_cause: 'The agentskills.io spec slug regex `/^[a-z0-9][a-z0-9-]*$/` excludes colons; colons are reserved at the registry level for namespacing. On-disk skill folders must use hyphens only.'
+fix: '1) Rename the folder: `git mv skills/get-design-done:foo skills/get-design-done-foo`. 2) Update any cross-references in `plugin.json`, `README.md`, and other skills'' frontmatter `requires:` arrays. 3) Search-and-replace the old slug with the new one across `reference/` and `commands/`. 4) Re-run the validation.'
+related_phases: [28.5, 28.6]
+first_observed_cycle: 'cycle-2026-05'
+```
+
+### KFM-022 — Dependabot alert on transitive optional peer not in resolved tree
+
+Dependabot opens an alert for a vulnerable transitive dependency that is
+declared as an optional or peer dep upstream and is NOT actually
+installed (`npm ls <dep>` shows nothing). The alert is dismissible with
+"not vulnerable — not in resolved tree".
+
+```yaml
+id: KFM-022
+pattern: '(Dependabot.*alert.*(transitive|optional|peer)|npm ls.*empty.*Dependabot)'
+diagnosis: 'Dependabot opened an alert on a transitive optional/peer dependency that is not actually present in the resolved npm tree; the alert is real for some users but not for this install.'
+remedy: 'Dismiss alert with reason "not vulnerable — transitive optional peer, not in resolved tree"; verify with `npm ls <dep>` (empty output confirms).'
+severity: low
+propose_report: false
+symptom: 'A new Dependabot alert names a deeply-nested dependency the project does not directly use. Running `npm ls <dep>` from the project root returns empty output (no path to the package).'
+root_cause: 'Dependabot reads `package-lock.json` and flags any package whose version matches a known CVE. Optional/peer transitive deps that npm did NOT install (because the host platform or peer mismatch ruled them out) still appear in the lockfile metadata, so Dependabot flags them even though they''re absent from the resolved tree.'
+fix: '1) Verify absence: `npm ls <dep>` from the project root — empty output confirms the package is not installed. 2) Open the alert in GitHub Security tab → Dismiss → reason "Not vulnerable" with note "transitive optional peer; npm ls returns empty; not in resolved tree". 3) Optionally pin or update the parent dependency in a follow-up to remove the lockfile reference entirely. 4) Re-run any scan that depends on Dependabot state.'
+related_phases: [25, 27.5]
+first_observed_cycle: 'cycle-2026-05'
+```
