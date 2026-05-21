@@ -57,9 +57,16 @@ function warn(msg) {
 }
 
 function quoteArg(s) {
-  // Cross-platform quote: wrap in double quotes and escape embedded ones.
-  // Sufficient for tmpdir paths (no real shell metachars expected).
-  return `"${String(s).replace(/"/g, '\\"')}"`;
+  // Cross-platform quote: wrap in double quotes and escape embedded
+  // backslashes FIRST (so the escapes themselves don't become escaped
+  // separators), then escape embedded double quotes. Closes Code
+  // Scanning #23 (js/incomplete-sanitization). Order matters: if we
+  // escape quotes before backslashes, the inserted `\"` would then have
+  // its `\` doubled by the backslash pass, producing `\\\"` instead of
+  // the intended `\"`.
+  // Sufficient for tmpdir paths (no real shell metachars expected),
+  // but now safe for paths containing backslash-quote sequences too.
+  return `"${String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 }
 
 // ---  discoverIncubatorDrafts  ---
