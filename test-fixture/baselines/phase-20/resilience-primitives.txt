@@ -10,6 +10,7 @@ detect-ui-root.cjs
 easings.cjs
 error-classifier.cjs
 event-chain.cjs
+failure-mode-matcher.cjs
 glob-match.cjs
 hedge-ensemble.cjs
 incubator-author.cjs
