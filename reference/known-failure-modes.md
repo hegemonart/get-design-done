@@ -46,7 +46,7 @@ behaviour for the original 6 fields.
   Step-by-step user-runnable remedy. The original `remedy` field stays
   as the short matcher-consumed one-liner; `fix` is the fuller version
   with prerequisites and verification steps. The two MAY differ. Required.
-  *Example:* `'1) Run `npm install` once locally. 2) Stage the updated package-lock.json. 3) Commit and re-run `npm ci`.'`
+  *Example:* `1) Run npm install once locally. 2) Stage the updated package-lock.json. 3) Commit and re-run npm ci.`
 - `related_phases` — number[] (YAML flow style: `[12, 24]`). Phase numbers
   this mode touches. Empty array `[]` is allowed when the mode is
   cross-cutting and not tied to a specific phase. Required.
