@@ -131,6 +131,56 @@
         }
       },
       "description": "Phase 29 D-02 capability_gap payload — exactly 7 fields, additionalProperties: false. Validated when the envelope's type === 'capability_gap' via the allOf[0] conditional."
+    },
+    "KfmCandidatePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "source",
+        "article_url",
+        "article_title",
+        "suggested_symptom",
+        "suggested_pattern_hint",
+        "raw_excerpt"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable identifier for this kfm-candidate event. Used by Plan 30.5-03 reflector to de-dupe re-emissions of the same authority-watcher article hit."
+        },
+        "source": {
+          "type": "string",
+          "const": "authority_watcher",
+          "description": "Phase 30.5-03 D-06 — the kfm-candidate event class is emitted EXCLUSIVELY by the authority-watcher pipeline. No other producer is authorised."
+        },
+        "article_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Permalink to the source article. Logged into the incubator draft body so the user can audit provenance."
+        },
+        "article_title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Article title verbatim — feeds the symptom-derivation heuristic + the draft origin header."
+        },
+        "suggested_symptom": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Reflector-consumed symptom string. Derived from the article H1/H2 + title; capped to a single line."
+        },
+        "suggested_pattern_hint": {
+          "type": "string",
+          "description": "Best-effort regex fragment proposed by the watcher heuristic. Empty string when the watcher cannot infer a pattern; the user fills `pattern` via the apply-reflections edit action."
+        },
+        "raw_excerpt": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Up-to-500-char excerpt of the article body. Truncated with an ellipsis if longer. Hard cap is enforced by the schema; the watcher truncates before emission."
+        }
+      },
+      "description": "Phase 30.5-03 D-06 kfm-candidate payload — 7 fields, additionalProperties: false. Validated when the envelope's type === 'kfm-candidate' via the allOf[1] conditional."
     }
   },
   "allOf": [
@@ -142,6 +192,17 @@
       "then": {
         "properties": {
           "payload": { "$ref": "#/definitions/CapabilityGapPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "kfm-candidate" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/definitions/KfmCandidatePayload" }
         }
       }
     }
