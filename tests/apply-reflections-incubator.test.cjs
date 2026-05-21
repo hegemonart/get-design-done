@@ -479,6 +479,49 @@ test('29-05 T2: applyEdit returns unchanged on editor abort (non-zero exit)', ()
   }
 });
 
+// ---- quoteArg backslash escape (closes Code Scanning #23) ----
+
+test('29-05 T2+: quoteArg escapes backslashes before quotes (Code Scanning #23)', () => {
+  // quoteArg is not exported, so we extract the function body from
+  // source and eval it locally. Asserts both source-shape (backslash
+  // replace chained BEFORE quote replace) AND behavioral correctness
+  // (round-trippable double-quote-wrapped strings for paths containing
+  // backslashes + quotes).
+  const src = fs.readFileSync(HELPER_MODULE, 'utf8');
+  const fnMatch = src.match(/function quoteArg\(s\)\s*\{[\s\S]*?\n\}/);
+  assert.ok(fnMatch, 'quoteArg function must be defined in incubator-proposals.cjs');
+
+  // Order check: backslash escape must happen BEFORE quote escape.
+  const orderMatch = fnMatch[0].match(/\.replace\(\/\\\\\/g[^)]*\)\s*\.replace\(\/"\/g/);
+  assert.ok(
+    orderMatch,
+    `quoteArg must escape backslashes BEFORE quotes (got: ${fnMatch[0]})`
+  );
+
+  // Behavioral test via local eval of the same function body.
+  // eslint-disable-next-line no-new-func
+  const quoteArg = new Function(`${fnMatch[0]}; return quoteArg;`)();
+
+  // Plain string -> wrapped in quotes
+  assert.equal(quoteArg('foo'), '"foo"');
+
+  // Embedded quote -> escaped
+  assert.equal(quoteArg('a"b'), '"a\\"b"');
+
+  // Embedded backslash -> doubled (new behavior, was unhandled before)
+  assert.equal(quoteArg('a\\b'), '"a\\\\b"');
+
+  // Adversarial: backslash-quote sequence — backslash must be doubled
+  // FIRST, then quote escaped. Output is unambiguously parseable.
+  assert.equal(quoteArg('a\\"b'), '"a\\\\\\"b"');
+
+  // Windows-style path (the original motivating case)
+  assert.equal(
+    quoteArg('C:\\Users\\hegemon\\node.exe'),
+    '"C:\\\\Users\\\\hegemon\\\\node.exe"'
+  );
+});
+
 // ---- checkStage1Gate (read-only, D-01) ----
 
 function makeGateSandbox({ acceptedCount = 0, optInRecorded = false } = {}) {
