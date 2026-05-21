@@ -184,12 +184,53 @@ N entries surfaced across M feeds. K skipped.
   ```
 - Entry line format is exact: `- **[Title](url)** — feed: <feed-title> — *<rationale>*`. Em-dash (`—`), italicized rationale, no trailing period unless the rationale itself ends one.
 
+## Step 7.5 — Emit `kfm-candidate` events (Phase 30.5-03 D-06)
+
+After classifying the new entries (Step 5) but BEFORE writing the snapshot (Step 6), evaluate every NEW entry against the failure-mode-article whitelist. The whitelist patterns (case-insensitive) are:
+
+- `/common errors/i`
+- `/failure modes/i`
+- `/troubleshooting/i`
+- `/known issues/i`
+- `/pitfalls/i`
+
+For each entry whose `title` matches ANY pattern, emit a single `kfm-candidate` event to the events stream (`.design/telemetry/events.jsonl`) via `scripts/lib/event-stream/writer.ts` (or the Bash equivalent — `printf '%s\n' "<json>" >> .design/telemetry/events.jsonl`).
+
+Event payload shape — validates against `reference/schemas/events.schema.json` definitions `KfmCandidatePayload` (allOf[1] branch). Required 7 fields:
+
+```json
+{
+  "type": "kfm-candidate",
+  "timestamp": "<ISO-8601>",
+  "sessionId": "authority-watcher",
+  "payload": {
+    "event_id": "kfm-cand-<feed-id>-<entry-id>-<unix-ms>",
+    "source": "authority_watcher",
+    "article_url": "<entry.permalink or entry.link>",
+    "article_title": "<entry.title verbatim>",
+    "suggested_symptom": "<entry.title sliced to 180 chars>",
+    "suggested_pattern_hint": "<best-effort up to 3 ALL-CAPS error tokens joined by |, or empty>",
+    "raw_excerpt": "<entry.summary truncated to 500 chars with … suffix>"
+  }
+}
+```
+
+**Excerpt cap.** `raw_excerpt` MUST be ≤500 chars (the schema rejects longer). Truncate with a single-char ellipsis when the source summary exceeds 500.
+
+**One event per matched entry.** Do NOT emit duplicates within a single run; if `event_id` is already present in the stream from a prior run, the writer's dedup logic handles it (Plan 22 event-chain).
+
+**No catalogue writes.** This step ONLY emits events. The Phase 30.5-03 reflector consumes them into `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md` drafts; the user reviews via `/gdd:apply-reflections` and accepts/rejects per Plan 30.5-03 Task 1. Authority-watcher NEVER writes to `reference/known-failure-modes.md` directly (D-06 + Phase 11 SC-8).
+
+Programmatic helper available at `scripts/lib/authority-watcher/index.cjs` — `classifyArticles(articles) → events`. Callers in test harnesses use the helper directly; the agent emits events via the Bash equivalent.
+
 ## Step 8 — Output
 
 Emit a single-line summary to stdout:
 
-- **Normal mode:** `Surfaced N entries across M feeds. K skipped. See .design/authority-report.md.`
+- **Normal mode:** `Surfaced N entries across M feeds. K skipped. <X kfm-candidate events emitted.> See .design/authority-report.md.`
 - **First-run / refresh mode:** `Seeded snapshot for N feeds — next run will surface new entries.`
+
+When `X > 0`, the suffix `X kfm-candidate events emitted` is appended; when `X == 0`, omit the suffix entirely.
 
 ## Do Not
 

@@ -701,6 +701,8 @@ GDD ora include un reporter di issue GitHub basato sul consenso esplicito tramit
 
 Vedi [`README.md`](README.md) in inglese per i dettagli completi, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) per il catalogo delle regole (R1..R8) e [`reference/known-failure-modes.md`](reference/known-failure-modes.md) per i modi di fallimento noti.
 
+**Aggiornamento v1.30.5** — il catalogo ora contiene 22 voci (10 in v1.30.0) e un nuovo matcher fuzzy deterministico (`scripts/lib/failure-mode-matcher.cjs`) restituisce candidati top-N con punteggio di confidenza. Reflector + authority-watcher possono proporre nuove voci tramite `/gdd:apply-reflections` (6a classe di proposta) — strettamente solo proposta, ogni voce passa attraverso la revisione utente.
+
 ---
 
 ## Licenza

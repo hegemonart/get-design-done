@@ -701,6 +701,8 @@ GDD inclut désormais un rapporteur de problèmes GitHub avec consentement expli
 
 Voir [`README.md`](README.md) en anglais pour les détails complets, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) pour le catalogue de règles (R1..R8) et [`reference/known-failure-modes.md`](reference/known-failure-modes.md) pour les modes d'échec connus.
 
+**Mise à jour v1.30.5** — le catalogue compte maintenant 22 entrées (10 dans v1.30.0) et un nouveau matcher flou déterministe (`scripts/lib/failure-mode-matcher.cjs`) renvoie des candidats top-N avec score de confiance. Le réflecteur + authority-watcher peuvent proposer de nouvelles entrées via `/gdd:apply-reflections` (6e classe de proposition) — strictement propositionnel, chaque entrée passe par la revue utilisateur.
+
 ---
 
 ## Licence

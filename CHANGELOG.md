@@ -4,6 +4,41 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.30.5] - 2026-05-21
+
+### Phase 30.5 — Failure-Mode Catalogue
+
+Decimal sub-phase building on Phase 30's `/gdd:report-issue` triage gate. Expands the known-failure-modes catalogue, adds a deterministic fuzzy matcher, and wires reflector + authority-watcher proposal flows into a 6th `/gdd:apply-reflections` proposal class. 3 plans ship together at v1.30.5 (D-11 ship-together): catalogue expansion (Wave A), fuzzy matcher (Wave A), reflector/authority-watcher wiring + closeout (Wave B).
+
+### Added
+
+- **Failure-mode catalogue expansion** (`reference/known-failure-modes.md`, Plan 30.5-01). Catalogue grows from 10 → 22 entries (KFM-001..KFM-022) — covers EACCES, gh-missing, Node mismatch, npm-ci lockfile drift, webpack chunk collisions, esbuild config errors, vite HMR, TS6133 unused locals, and 14 more long-tail failure modes harvested from closed PRs + reflections cycles + public Node/npm/git failure-mode references. Each entry carries the schema-v2 11-field shape (`id`, `pattern`, `diagnosis`, `remedy`, `severity`, `propose_report`, `symptom`, `root_cause`, `fix`, `related_phases`, `first_observed_cycle`); Phase 30's `triage-matcher.cjs` reads only the original 6 fields (D-02 backward-compat).
+- **Fuzzy failure-mode matcher** (`scripts/lib/failure-mode-matcher.cjs`, Plan 30.5-02). New `match(errorContext, { topN, threshold, cataloguePath })` API returns top-N candidates ranked by cosine similarity over a stop-word-filtered bag-of-words across `symptom + root_cause + un-regexed pattern`. Default `topN=3`, `threshold=0.4`, dominance-collapse delta `0.15`. Pure CommonJS, zero npm dependencies, deterministic (no `Math.random` / `Date.now` / I/O outside catalogue read). Phase 30's exact-match `triage-matcher.cjs` is untouched (D-04 byte-identity guard).
+- **Reflector KFM proposer** (`scripts/lib/reflector-kfm-proposer.cjs`, Plan 30.5-03 D-05). When a Phase 29 `capability_gap` cluster recurs ≥3× with no matching catalogue entry (per `failure-mode-matcher.match()`), the proposer drops a pre-filled draft at `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md`. The draft carries all 11 schema-v2 fields; `pattern` + `fix` are `TODO:` placeholders the user fills via the apply-reflections edit action.
+- **Authority-watcher `kfm-candidate` event class** (`reference/schemas/events.schema.json` + `scripts/lib/authority-watcher/index.cjs`, Plan 30.5-03 D-06). New additive `allOf[1]` branch on the events schema; new 7-field `KfmCandidatePayload` definition. When the authority-watcher pipeline encounters an article whose title matches `/common errors|failure modes|troubleshooting|known issues|pitfalls/i`, it emits a `kfm-candidate` event that the reflector consumes into the SAME incubator draft surface as `capability_gap` clusters (one unified user-review path).
+- **`/gdd:apply-reflections` KFM-CANDIDATE proposal class** (`skills/apply-reflections/SKILL.md` + `apply-reflections-procedure.md`, Plan 30.5-03). 6th proposal class after frontmatter / reference / budget / question / global-skill / incubator-skill. User actions: **accept** (promote draft → `reference/known-failure-modes.md` with next `KFM-NNN`, register in `reference/registry.json` with `origin: 'incubator-kfm'`), **reject** (remove incubator subdir), **defer** (stamp `deferred_until`), **edit** (return path for `$EDITOR`).
+- **Phase 30.5 regression baseline** (`tests/phase-30.5-baseline.test.cjs` + `test-fixture/baselines/phase-30.5/`, Plan 30.5-03). 16 version-agnostic tests covering 6-manifest lockstep, catalogue entry count ≥20, matcher API exports, schema event branch, OFF_CADENCE_VERSIONS membership, fuzzy-matcher accuracy snapshot, registry diff, cross-link integrity, and CHANGELOG top entry.
+
+### Changed
+
+- **Reflector capability-gap aggregator** (`scripts/lib/reflector-capability-gap-aggregator.cjs`) — adds lazy-loaded `proposeKfmDraftsForClusters(clusters, options)` export that invokes the KFM proposer as an additional pass after Phase 29 aggregation. Phase 29's existing 5 proposal classes are untouched (additive).
+- **Authority-watcher agent prompt** (`agents/design-authority-watcher.md`) — gains a new `Step 7.5 — Emit kfm-candidate events` section documenting the whitelist patterns + payload shape. Phase 13.2's existing fetch/diff/classify/write loop is unchanged.
+- **OFF_CADENCE_VERSIONS** (`tests/semver-compare.test.cjs`) — registers `'1.30.5'` per Phase 29/30 precedent.
+
+### Documentation
+
+- `CHANGELOG.md` — this entry (v1.30.5).
+- `README.md` + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) — single-paragraph mention of v1.30.5's catalogue expansion + fuzzy matcher.
+- `reference/known-failure-modes.md` — schema-v2 header documenting the 11-field shape (Plan 30.5-01).
+
+### Privacy & Safety
+
+- **No auto-promotion.** The reflector KFM proposer is strictly proposal-only (Phase 11 SC-8). Drafts live in `.design/reflections/incubator/` until the user accepts them via `/gdd:apply-reflections`. The canonical catalogue feeds Phase 30's pre-consent triage gate, so a bad entry could mute legitimate issue reports — the user-review gate is non-negotiable (D-05).
+- **`kfm-candidate` events are local-only.** No new network surfaces. The authority-watcher's existing whitelist (`reference/authority-feeds.md`) is the sole ingress for `kfm-candidate` events; nothing the reflector emits travels off-machine.
+- **`raw_excerpt` cap.** Authority-derived excerpts are truncated to 500 chars before draft write (schema-enforced).
+
+---
+
 ## [1.30.0] - 2026-05-20
 
 ### Phase 30 — Consent-First GitHub Issue Reporter

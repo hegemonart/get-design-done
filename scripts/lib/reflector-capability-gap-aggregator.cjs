@@ -310,10 +310,42 @@ function evaluateStageGate(history, config) {
   return { crossed, stable_cluster_ids, cycles_observed };
 }
 
+// ---------------------------------------------------------------------------
+// Plan 30.5-03 — Reflector KFM proposer wiring.
+//
+// After aggregation, downstream callers may pass the cluster list into the
+// KFM proposer (`scripts/lib/reflector-kfm-proposer.cjs`). The proposer
+// only emits a draft when a cluster has size ≥3 AND no existing catalogue
+// entry matches (D-05). The original 5 Phase 29 proposal classes are
+// untouched — this is an additive 6th pass.
+//
+// We deliberately load the proposer lazily inside `proposeKfmDraftsForClusters`
+// so this aggregator module remains importable in environments that don't
+// have the failure-mode catalogue checked in (e.g. minimal CI shards).
+// ---------------------------------------------------------------------------
+
+function proposeKfmDraftsForClusters(clusters, options) {
+  if (!Array.isArray(clusters) || clusters.length === 0) {
+    return { drafted: [], skipped: [] };
+  }
+  // require lazily — see comment above.
+  // eslint-disable-next-line global-require
+  const proposer = require('./reflector-kfm-proposer.cjs');
+  const drafted = [];
+  const skipped = [];
+  for (const c of clusters) {
+    const result = proposer.proposeKfmDraft(c, options);
+    if (result.action === 'drafted') drafted.push(result);
+    else skipped.push({ cluster_id: c && c.id, ...result });
+  }
+  return { drafted, skipped };
+}
+
 module.exports = {
   aggregateCapabilityGaps,
   renderGapsSection,
   evaluateStageGate,
+  proposeKfmDraftsForClusters,
   // Exported for testing / introspection only:
   _betaStddev: betaStddev,
   _DEFAULT_GATE_CONFIG: DEFAULT_GATE_CONFIG,

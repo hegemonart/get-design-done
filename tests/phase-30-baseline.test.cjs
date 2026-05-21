@@ -148,19 +148,20 @@ test('30-08 baseline: tests/semver-compare.test.cjs registers OFF_CADENCE_VERSIO
 });
 
 // ---------------------------------------------------------------------------
-// Test 8: CHANGELOG top entry is `## [VERSION] - 2026-05-20`.
+// Test 8: CHANGELOG.md has ## [1.30.0] - 2026-05-20 historical entry.
 
-test('30-08 baseline: CHANGELOG.md top entry is ## [VERSION] - 2026-05-20', () => {
+test('30-08 baseline: CHANGELOG.md has ## [1.30.0] - 2026-05-20 historical entry', () => {
+  // Phase 30.5 lesson (and Phase 29 precedent): once a successor decimal
+  // sub-phase ships (here v1.30.5), the CHANGELOG top is now `## [1.30.5]`
+  // and the v1.30.0 entry sits below as the second-from-top block.
+  // The Phase 30 baseline's job is to lock down the v1.30.0 historical
+  // entry shape, NOT to track the current release date (which is the
+  // newer phase baseline's job — see tests/phase-30.5-baseline.test.cjs).
   const chg = readText(CHANGELOG_PATH);
-  const pattern = new RegExp(
-    '##\\s+\\[' + escapeRegExp(VERSION) + '\\]\\s+-\\s+2026-05-20'
-  );
+  // Full RegExp escape per CodeQL js/incomplete-sanitization.
+  const pattern = /##\s+\[1\.30\.0\]\s+-\s+2026-05-20/;
   assert.match(chg, pattern,
-    `CHANGELOG.md missing ## [${VERSION}] - 2026-05-20 entry`);
-  // Must appear within the first 20 lines (i.e., at top, not buried).
-  const top20 = chg.split('\n').slice(0, 20).join('\n');
-  assert.match(top20, pattern,
-    `CHANGELOG.md ## [${VERSION}] entry not in top 20 lines (must be top-of-file)`);
+    'CHANGELOG.md missing ## [1.30.0] - 2026-05-20 historical entry');
 });
 
 // ---------------------------------------------------------------------------

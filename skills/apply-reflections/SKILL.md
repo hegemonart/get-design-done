@@ -80,6 +80,10 @@ Incubator drafts authored by `scripts/lib/incubator-author.cjs` (Phase 29-04) ap
 
 **Stage-1 gate.** At session start, call `checkStage1Gate()`. If `thresholdMet && !optInRecorded`, display the opt-in prompt once. NEVER auto-flip per D-01 — recording opt-in requires explicit user confirmation via `recordOptIn()`. Full procedure: `./apply-reflections-procedure.md` §[INCUBATOR].
 
+## [KFM-CANDIDATE]
+
+KFM-catalogue proposals authored by `scripts/lib/reflector-kfm-proposer.cjs` (Phase 30.5-03 D-05) appear as a 6th proposal class. Drafts at `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md`; pre-filled 11-field schema with `TODO:` placeholders for `pattern` + `fix`. Two upstream signals share the surface (D-06): `capability_gap` clusters (≥3, no existing match) + `kfm-candidate` events (whitelist-matched articles, 1-shot). User chooses **accept** | **reject** | **defer** | **edit**. `applyAccept` appends to `reference/known-failure-modes.md` + `reference/registry.json` (`origin: incubator-kfm`); `applyReject` removes the incubator subdir; `applyDefer` stamps `deferred_until`; `applyEdit` returns the draft path for `$EDITOR`. Full procedure: `./apply-reflections-procedure.md` §[KFM-CANDIDATE].
+
 ## Do Not
 
 - Do not apply any proposal without the user explicitly choosing `a` or `e`.
