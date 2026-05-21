@@ -80,6 +80,24 @@ Incubator drafts authored by `scripts/lib/incubator-author.cjs` (Phase 29-04) ap
 
 **Stage-1 gate.** At session start, call `checkStage1Gate()`. If `thresholdMet && !optInRecorded`, display the opt-in prompt once. NEVER auto-flip per D-01 — recording opt-in requires explicit user confirmation via `recordOptIn()`. Full procedure: `./apply-reflections-procedure.md` §[INCUBATOR].
 
+## [KFM-CANDIDATE]
+
+Known-failure-mode catalogue proposals authored by `scripts/lib/reflector-kfm-proposer.cjs` (Phase 30.5-03 D-05) appear as a distinct 6th proposal class. Drafts live at `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md` and contain a single fenced ```yaml block pre-filled with the 11 Phase 30.5 schema-v2 fields; `pattern` and `fix` carry `TODO:` placeholders because the reflector cannot infer them.
+
+Two upstream signals land in the same draft surface (D-06 — one unified review path):
+- **`capability_gap` clusters** (Phase 29-03 aggregator) — a cluster of ≥3 events with identical context_hash and no matching existing catalogue entry (per `failure-mode-matcher.match()`) triggers a draft.
+- **`kfm-candidate` events** (Phase 30.5-03 Task 2 authority-watcher) — a single event from a whitelist-matched article triggers a draft, bypassing the ≥3 gate (a curated authority signal is treated as 1-shot).
+
+For each draft, use `scripts/lib/reflector-kfm-proposer.cjs`:
+
+1. User chooses **accept** | **reject** | **defer** | **edit**.
+2. **accept** — `applyAccept(draftPath, { repoRoot })` re-stamps the proposed id with the next available `KFM-NNN`, appends a new `### KFM-NNN — <symptom>` section into `reference/known-failure-modes.md` with the yaml block intact, appends a `reference/registry.json` row carrying `origin: 'incubator-kfm'`, and removes the incubator subdir LAST. Round-trip safe per Phase 14.5.
+3. **reject** — `applyReject(draftPath)` removes the incubator subdir. Catalogue + registry untouched.
+4. **defer** — `applyDefer(draftPath, { deferredUntil })` stamps `deferred_until: <ISO date>` into the draft body; the draft re-surfaces next run.
+5. **edit** — `applyEdit(draftPath)` returns the draft path so the caller can open `$EDITOR`; the user fills the `TODO:` placeholders (`pattern` regex + step-by-step `fix`) and re-runs the prompt on close.
+
+**Why two-gate (proposer + accept).** Phase 30.5 D-05 keeps the reflector strictly proposal-only — nothing the proposer authors lands in the canonical catalogue until the user explicitly accepts. The catalogue feeds Phase 30's `triage-matcher.cjs` BEFORE the consent prompt, so a bad entry could mute legitimate issue reports; the user-review gate is non-negotiable. Full procedure: `./apply-reflections-procedure.md` §[KFM-CANDIDATE].
+
 ## Do Not
 
 - Do not apply any proposal without the user explicitly choosing `a` or `e`.

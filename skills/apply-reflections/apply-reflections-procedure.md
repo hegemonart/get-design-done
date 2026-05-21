@@ -1,10 +1,10 @@
 ---
 name: apply-reflections-procedure
 type: heuristic
-version: 1.2.0
-phase: 28.5
-tags: [apply-reflections, proposal, frontmatter, reference, budget, question, global-skill, incubator]
-last_updated: 2026-05-20
+version: 1.3.0
+phase: 30.5
+tags: [apply-reflections, proposal, frontmatter, reference, budget, question, global-skill, incubator, kfm-candidate]
+last_updated: 2026-05-21
 ---
 
 # Apply-Reflections — Per-Type Procedure
@@ -134,3 +134,37 @@ bandit.updateWithDelegate({
 ```
 
 Omitting `prior_class` reverts to Phase 23.5 informed-prior bootstrap (non-breaking). The reward math is unchanged — `prior_class` only affects bootstrap.
+
+### [KFM-CANDIDATE]
+
+Known-failure-mode catalogue proposals come from `scripts/lib/reflector-kfm-proposer.cjs` (Phase 30.5-03 D-05). They live at `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md` and contain a single fenced ```yaml block pre-filled with the Phase 30.5 schema-v2 11-field shape (`id` + `pattern` + `diagnosis` + `remedy` + `severity` + `propose_report` + `symptom` + `root_cause` + `fix` + `related_phases` + `first_observed_cycle`). Two of those — `pattern` and `fix` — are `TODO:` placeholders the reflector cannot infer; the user fills them via the **edit** action before accepting.
+
+Two upstream signals share this draft surface (D-06):
+- `capability_gap` clusters of size ≥3 with no existing-entry match (Phase 29-03 aggregator + `failure-mode-matcher.match()`).
+- `kfm-candidate` events from the Phase 30.5-03 Task 2 authority-watcher whitelist (D-06 — single events bypass the ≥3 gate).
+
+Use `scripts/lib/reflector-kfm-proposer.cjs` for all actions:
+
+**Discovery + render** (once per cycle):
+
+1. Glob `.design/reflections/incubator/kfm-*/CATALOGUE-ENTRY.md` → list pending KFM drafts.
+2. For each draft: read the body, show the origin header (source, parent event ids OR article url) + the proposed yaml block.
+3. Prompt: `(a) accept   (r) reject   (d) defer   (e) edit   (q) quit`.
+
+**Per-action behavior:**
+
+1. **accept** — call `applyAccept(draftPath, { repoRoot })`.
+   - The helper re-stamps the proposed `id` with the next available `KFM-NNN` from the catalogue (avoids collisions when multiple drafts promote in the same run).
+   - Appends a `### KFM-NNN — <symptom heading>` section into `reference/known-failure-modes.md` with the yaml block intact.
+   - Appends a `reference/registry.json` entry: `{ name: 'known-failure-modes/kfm-NNN', path: 'reference/known-failure-modes.md', type: 'failure-mode', phase: 30.5, origin: 'incubator-kfm', added: '<ISO date>' }`.
+   - Removes the incubator subdir LAST (partial-failure leaves the draft retryable).
+   - Print: "Accepted — promoted to KFM-NNN in reference/known-failure-modes.md."
+   - Append `**Applied**: <date>` to the proposal entry (when surfaced from a reflections file).
+
+2. **reject** — call `applyReject(draftPath)`. Only the incubator subdir is removed; catalogue + registry untouched. Print: "Rejected — draft removed."
+
+3. **defer** — call `applyDefer(draftPath, { deferredUntil })` where `deferredUntil` is an ISO date (default: today + 30d). The helper stamps `deferred_until: <ISO>` into the draft body. Print: "Deferred — draft re-surfaces next run."
+
+4. **edit** — call `applyEdit(draftPath)` which returns the draft path. The caller opens `$EDITOR` on the path; on clean exit, re-discover the draft and re-prompt. Typical edits: replace `pattern: 'TODO: ...'` with a conservative regex, replace `fix: 'TODO: ...'` with a step-by-step user-runnable remedy, set `severity` if `medium` default is wrong.
+
+**Why this is gated.** `reference/known-failure-modes.md` feeds Phase 30's `triage-matcher.cjs` BEFORE the consent prompt — a bad entry could mute legitimate issue reports. The user-review gate is non-negotiable (D-05). The proposer is strictly proposal-only; the canonical catalogue only changes via the accept action.
