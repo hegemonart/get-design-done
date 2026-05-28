@@ -27,7 +27,7 @@ agents/design-research-synthesizer.md
 agents/design-update-checker.md
 agents/design-verifier-gate.md
 agents/design-verifier.md
-agents/gdd-graphify-sync.md
+agents/gdd-graph-refresh.md
 agents/gdd-intel-updater.md
 agents/gdd-learnings-extractor.md
 agents/motion-mapper.md

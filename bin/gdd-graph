@@ -183,7 +183,7 @@ async function dispatch(subcommand, parsed) {
 /**
  * Parse the upsert payload from argv. Supports two shapes:
  *  - `--json '<json-string>'` (preferred — single source of truth for batch
- *    callers in agents/gdd-graphify-sync.md and skills/graphify)
+ *    callers in agents/gdd-graph-refresh.md and skills/graphify)
  *  - flat flags `--id ... --type ... --label ... --from ... --to ... --kind ...
  *    --weight N --source ... --attrs '<json>'` (convenience for shell users
  *    + matches the upstream gsd-tools.cjs graphify flag surface verbatim
