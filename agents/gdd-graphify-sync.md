@@ -16,7 +16,7 @@ writes:
 
 # gdd-graphify-sync
 
-**Role:** Bridge between the flat intel store and the Graphify semantic knowledge graph. Reads `graph.json` from the intel store and upserts nodes/edges into Graphify using the `gsd-tools.cjs graphify` CLI.
+**Role:** Bridge between the flat intel store and the Graphify semantic knowledge graph. Reads `graph.json` from the intel store and upserts nodes/edges into Graphify using the native `bin/gdd-graph` CLI.
 
 ## When to invoke
 
@@ -37,7 +37,7 @@ If missing: print "Intel store graph.json not found — run node scripts/build-i
 ### Step 2 — Check Graphify availability
 
 ```bash
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify status 2>/dev/null | head -5
+node bin/gdd-graph status 2>/dev/null | head -5
 ```
 
 If Graphify is unavailable or returns an error: print "Graphify unavailable — skipping sync. Intel store remains the primary lookup source." and stop gracefully (exit 0, do not fail).
@@ -51,7 +51,7 @@ Read `.design/intel/graph.json`. Extract `nodes` and `edges` arrays.
 For each node in `nodes`:
 
 ```bash
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify upsert-node \
+node bin/gdd-graph upsert-node \
   --id "<node.id>" \
   --type "<node.type>" \
   --label "<node.name>" \
@@ -65,7 +65,7 @@ Batch in groups of 20 to avoid CLI argument limits. Report total nodes upserted.
 For each edge in `edges`:
 
 ```bash
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify upsert-edge \
+node bin/gdd-graph upsert-edge \
   --from "<edge.from>" \
   --to "<edge.to>" \
   --kind "<edge.kind>" \
@@ -77,7 +77,7 @@ Batch in groups of 20. Report total edges upserted.
 ### Step 6 — Verify sync
 
 ```bash
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify status
+node bin/gdd-graph status
 ```
 
 Print the status response. Report node/edge counts in Graphify vs intel store.

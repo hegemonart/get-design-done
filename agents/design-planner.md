@@ -71,7 +71,7 @@ Each task maps to a domain with specific reference files. These types are the on
 Before scoping any task that involves a design token change (color, spacing, typography, motion):
 
 ```
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify query "<token-name>" --budget 1500
+node bin/gdd-graph query "<token-name>" --budget 1500
 ```
 
 The query returns all components that reference this token. Annotate the planned task with:
