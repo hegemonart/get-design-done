@@ -9,4 +9,6 @@ export { statusGraph } from './status.mjs';
 export { diffGraph } from './diff.mjs';
 export { compileValidator, SCHEMA_VERSION, SCHEMA } from './schema.mjs';
 export { atomicWriteJson } from './atomic-write.mjs';
-// query / upsertNode / upsertEdge added by 30.6-03.
+export { queryGraph } from './query.mjs';                  // 30.6-03 Task 1
+export { estimateTokens } from './token-estimate.mjs';     // 30.6-03 Task 1
+// upsertNode / upsertEdge added by 30.6-03 Task 2.
