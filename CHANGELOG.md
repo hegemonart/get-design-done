@@ -4,6 +4,74 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.30.6] - 2026-05-28
+
+### Phase 30.6 — Graphify Self-Ownership
+
+Removes the **last runtime touchpoint** between get-design-done and the user's `~/.claude/get-shit-done/` install. 8 callsites in `agents/`, `skills/`, and `connections/` previously dispatched `node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify *` at runtime; they now dispatch native `bin/gdd-graph`. After v1.30.6, a user who has never installed GSD (or who only installs the failed upstream and not the redux fork) can still run the full GDD pipeline including everything that touches the knowledge graph. 9 plans across 3 waves: Wave A (research + spec), Wave B (`bin/gdd-graph` core + extensions + decoupling acceptance test, 56 tests), Wave C (migration + rename + cleanup + closeout).
+
+### Motivation — rug-pull resilience
+
+The `gsd-build/get-shit-done` rug-pull in May 2026 (TÂCHES drained $GSD Solana token + deleted accounts) was downstream-survivable for us — we have zero npm dependency on GSD packages, the community fork `open-gsd/get-shit-done-redux` is MIT-bit-perfect, and Phase 28.7's install-pipeline port is standalone in our tree. The remaining touchpoint was graphify runtime dispatch. Phase 30.6 closes it. After v1.30.6, our runtime is independent of upstream's release cadence and any future subcommand / schema drift.
+
+### Added
+
+- **`bin/gdd-graph`** native Node CLI with 6 subcommands: `build`, `query`, `status`, `diff`, `upsert-node`, `upsert-edge`. Output at `.design/graph/graph.json` (D-02), Ajv-validated against `scripts/lib/graph/schema.json` schema 1.0 (D-03), atomic-write seam per D-05 (tmp + rename in same dir; no `proper-lockfile`).
+- **Token-budget heuristic** for `gdd-graph query --budget N` per D-04: `Math.ceil(JSON.stringify(payload).length / 4)`; override via `GDD_GRAPH_TOKEN_FACTOR` env for tests.
+- **5-scenario decoupling test** at `tests/graph-decoupled.test.cjs` (19 tests) — renames `~/.claude/get-shit-done/` to `.bak` for test duration, exercises all 6 subcommands across 5 fixture scenarios (empty / single-node / dense / with-cycles / malformed-intel). Single most important acceptance gate of the phase.
+- **`tests/phase-30.6-baseline.test.cjs`** + 5 baseline files at `test-fixture/baselines/phase-30.6/` (manifests-version, decoupling-callsite-count, gdd-graph-subcommand-inventory, graph-schema-shape, no-gsd-runtime-touch).
+- **D-01 through D-10** locked decisions + 5 sub-decisions (D-03.a/b/c, D-04.a, D-09.a) documented in `.planning/phases/30.6-graphify-self-ownership/`.
+
+### Changed
+
+- **8 callsite files** migrated from `gsd-tools.cjs graphify *` dispatch to native `bin/gdd-graph`:
+  - `agents/gdd-graphify-sync.md` (renamed to `gdd-graph-refresh.md`)
+  - `agents/design-integration-checker.md`
+  - `agents/design-planner.md`
+  - `skills/graphify/SKILL.md`
+  - `skills/scan/scan-procedure.md`
+  - `skills/connections/connections-onboarding.md`
+  - `connections/connections.md`
+  - `connections/graphify.md` (rewritten for native CLI, no external graphifyy)
+- **`agents/gdd-graphify-sync.md`** renamed to **`agents/gdd-graph-refresh.md`** (D-08 one-way rename, no alias) — protocol simplified now that we own both ends of the intel→graph translation (single schema; no translation step).
+- **`scripts/lib/gsd-health-mirror/`** renamed to **`scripts/lib/health-mirror/`** (D-10 cosmetic, atomic with single import-site update at `scripts/mcp-servers/gdd-mcp/tools/gdd_health.ts`). The module is pure local-file inspection; the "mirror" refers to our own `skills/health/SKILL.md` surface, never upstream.
+- **`.design/graph/`** replaces upstream's `.planning/graphs/` location (per D-02 — aligns with the rest of GDD's `.design/` artifact convention).
+- **`connections/graphify.md`** rewritten for native CLI (no external `graphifyy` dependency).
+- **`reference/start-interview.md`** updated to reference `/gdd:discuss` (our equivalent) instead of `/gsd-discuss-phase`.
+- **`README.md`** at the `gsd-build/get-shit-done (MIT — see NOTICE)` citation gains the redux-pointer parenthetical "(now archived; community continuation at `open-gsd/get-shit-done-redux`)". Citation preserved verbatim — only annotated for reader clarity.
+- **Graphify enable/disable state** (D-09) lives in `.design/config.json` at `{ "graphify": { "enabled": bool } }`. Read directly by `gdd-graph` via fs; no `config-set` / `config-get` CLI subcommand.
+
+### Removed
+
+- **Runtime dispatch into `~/.claude/get-shit-done/`** — 8 callsites no longer invoke `gsd-tools.cjs graphify *`.
+- **`.planning/get-shit-done-main/`** (10MB pre-rug-pull vendored snapshot) — used during Phase 28.7's architectural port; port shipped, snapshot dead weight.
+- Intel→graphify translation layer (dead code post-migration; intel slices are now the canonical input to `bin/gdd-graph build` with no intermediate translation step).
+
+### Backward compatibility
+
+- Phase 27 / Phase 28.5 / Phase 28.7 `NOTICE` attribution subsections **preserved verbatim** per D-06. Those describe historical MIT/Apache ports (peer-CLI delegation protocol shapes from cc-multi-cli; skill-authoring contract from mattpocock/skills; install-pipeline architecture from gsd-build/get-shit-done) — they remain in our tree under the original MIT/Apache terms. Phase 30.6 removes a **runtime touchpoint**, not a **historical port**.
+- `.design/intel/` schema unchanged — Phase 10's knowledge layer keeps its current ownership; we only consume from it differently.
+- 4-manifest + 2 Tier-2 manifest lockstep at v1.30.6 (`package.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`).
+
+### Decisions (D-01 through D-10)
+
+- **D-01**: Native CLI binary name = `gdd-graph` (not `gdd-graphify`). Shorter; doesn't semantically shadow the user's `/gsd:graphify-*` redux commands.
+- **D-02**: Canonical graph file at `.design/graph/graph.json` (not upstream's `.planning/graphs/graph.json`). Aligns with the rest of GDD's `.design/` artifact convention.
+- **D-03**: Schema validated by Ajv against `scripts/lib/graph/schema.json` on every write; schema version pinned to `1.0` at ship; future migrations bump explicitly.
+- **D-04**: Token-budget heuristic = `Math.ceil(JSON.stringify(payload).length / 4)`; `GDD_GRAPH_TOKEN_FACTOR` env override for tests.
+- **D-05**: Atomic-write seam = `fs.writeFile(tmpPath); fs.rename(tmpPath, finalPath)` in same directory. No `proper-lockfile`. Single-writer assumption (revisit if Phase 41 Team Collaboration forces multi-writer).
+- **D-06**: `NOTICE` retains Phase 27 / Phase 28.5 / Phase 28.7 architectural attributions verbatim. We're removing a runtime touchpoint, not voiding a historical port.
+- **D-07**: Phase 30.6 ships off-cadence as a decimal from v1.30.5 parent (same shape v1.30.5 used coming off v1.30.0). NO 1.31.x bump.
+- **D-08**: Agent rename `gdd-graphify-sync` → `gdd-graph-refresh` is one-way (no alias). Internal name; no external callers from outside the plugin.
+- **D-09**: Graphify enable/disable state lives in `.design/config.json` at `{ "graphify": { "enabled": bool } }`. Read directly by `gdd-graph` via `JSON.parse(fs.readFileSync(...))` with sensible default (`enabled: false`). No `config-set` / `config-get` CLI subcommand — simpler than the upstream config-tool pattern.
+- **D-10**: `scripts/lib/gsd-health-mirror/` rename is one-way (no alias). Only one import site (`scripts/mcp-servers/gdd-mcp/tools/gdd_health.ts`) which is updated atomically with the rename.
+
+### Attribution preservation
+
+Phase 27 / Phase 28.5 / Phase 28.7 attribution subsections in `NOTICE` are preserved verbatim per D-06. The architectural ports they describe are historical MIT-licensed code transplants; this release removes a runtime touchpoint, **NOT** a historical port. The `gsd-build/get-shit-done (MIT — see NOTICE)` citation in `README.md` is preserved verbatim; only the redux-pointer parenthetical was added.
+
+---
+
 ## [1.28.8] - 2026-05-19
 
 ### Phase 28.8 — Tier-2 Distribution Channels
