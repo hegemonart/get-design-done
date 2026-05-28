@@ -8,7 +8,7 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ### Phase 30.6 — Graphify Self-Ownership
 
-Removes the **last runtime touchpoint** between get-design-done and the user's `~/.claude/get-shit-done/` install. 8 callsites in `agents/`, `skills/`, and `connections/` previously dispatched `node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify *` at runtime; they now dispatch native `bin/gdd-graph`. After v1.30.6, a user who has never installed GSD (or who only installs the failed upstream and not the redux fork) can still run the full GDD pipeline including everything that touches the knowledge graph. 9 plans across 3 waves: Wave A (research + spec), Wave B (`bin/gdd-graph` core + extensions + decoupling acceptance test, 56 tests), Wave C (migration + rename + cleanup + closeout).
+Removes the **last runtime touchpoint** between get-design-done and the user's `~/.claude/get-shit-done/` install. 8 callsites in `agents/`, `skills/`, and `connections/` previously dispatched the upstream `gsd-tools` graphify subcommands at runtime; they now dispatch native `bin/gdd-graph`. After v1.30.6, a user who has never installed GSD (or who only installs the failed upstream and not the redux fork) can still run the full GDD pipeline including everything that touches the knowledge graph. 9 plans across 3 waves: Wave A (research + spec), Wave B (`bin/gdd-graph` core + extensions + decoupling acceptance test, 56 tests), Wave C (migration + rename + cleanup + closeout).
 
 ### Motivation — rug-pull resilience
 

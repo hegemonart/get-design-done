@@ -1,0 +1,6 @@
+build
+diff
+query
+status
+upsert-edge
+upsert-node
