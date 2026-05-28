@@ -185,15 +185,16 @@ Note: First Chromatic run has no baseline — all stories become new snapshots. 
 **Graphify probe (execute at agent entry, before using graph):**
 
 ```
-Step G1 — Config check:
-  node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify status
-  → Error or { enabled: false }  → graphify: not_configured
-  → { enabled: true }            → proceed to Step G2
+Step G1 — Config check (per D-09 direct read, no CLI subcommand):
+  Bash: node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
+  → false → graphify: not_configured
+  → true  → proceed to Step G2
 
-Step G2 — Graph file check:
-  Check if graphify-out/graph.json exists in project root
-  → Absent    → graphify: unavailable  (graph not built yet)
-  → Present   → graphify: available
+Step G2 — Graph file check (native CLI):
+  Bash: node bin/gdd-graph status --format json
+  → { configured: true, exists: true }  → graphify: available
+  → { configured: true, exists: false } → graphify: unavailable  (graph not built yet)
+  → { configured: false, exists: ... }  → graphify: not_configured  (mirrors G1)
 
 Write graphify status to STATE.md <connections>.
 ```

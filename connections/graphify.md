@@ -1,46 +1,43 @@
 # Graphify — Connection Specification
 
-This file is the connection specification for Graphify within the get-design-done pipeline. Graphify builds a queryable knowledge graph over the codebase — mapping component↔token↔decision relationships via Tree-sitter static analysis and LLM semantic extraction. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for **Graphify** within the get-design-done pipeline. Graphify builds a queryable knowledge graph over the codebase and design intel — mapping component↔token↔decision relationships from `.design/intel/` slices. See `connections/connections.md` for the full connection index and capability matrix.
+
+> **Native, no external dependency.** Phase 30.6 (v1.30.6) replaced the previous runtime dispatch to `~/.claude/get-shit-done/bin/gsd-tools.cjs graphify *` with a native CLI shipped in this repo at `bin/gdd-graph`. No Python, no separate install — just Node ≥22.
 
 ---
 
 ## Setup
 
 **Prerequisites:**
-- Python 3.9+ available on PATH
-- GSD framework with `graphify.enabled = true` in `.planning/config.json`
+- Node ≥22 (per `package.json` engines)
+- get-design-done installed (provides `bin/gdd-graph`)
 
-**Install:**
-```
-pip install graphifyy
-graphify install        # installs skill files into ~/.claude/skills/graphify/
+**Enable in project config** (per D-09 — direct file edit, no CLI subcommand):
+
+Edit `.design/config.json` and set:
+```json
+{
+  "graphify": {
+    "enabled": true
+  }
+}
 ```
 
-**Enable in GSD config:**
-```
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config-set graphify.enabled true
-```
+If `.design/config.json` does not exist, create it. Missing file = disabled.
 
 **Build the graph (initial):**
 ```
-graphify .              # run in project root; produces graphify-out/graph.json
-# or via GSD tools:
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify build
+node bin/gdd-graph build
 ```
-
-**Recommended: auto-rebuild after commits:**
-```
-graphify hook install
-```
+Produces `.design/graph/graph.json` (Ajv-validated against `scripts/lib/graph/schema.json`).
 
 **Verification:**
-After building, run:
 ```
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify status
+node bin/gdd-graph status --format json
 ```
-Expect: `{ enabled: true, graph_path: "...", node_count: N, edge_count: N, stale: false }`
+Expect: `{ configured: true, exists: true, node_count: N, edge_count: M, built_at: "<iso>", schema_version: "1.0" }`.
 
-**Note:** Graphify is an optional external dependency. It requires Python and takes 1-5 minutes to build on a large codebase. Do NOT add to plugin bootstrap — users opt in manually.
+**Note:** Graphify is optional. It is a pre-search oracle for planner and verifier agents, never a hard requirement. All stages MUST degrade gracefully when graphify is `unavailable` or `not_configured`.
 
 ---
 
@@ -50,7 +47,7 @@ Expect: `{ enabled: true, graph_path: "...", node_count: N, edge_count: N, stale
 
 | Node type | Source | ID pattern |
 |-----------|--------|-----------|
-| component | `.stories.tsx` / `src/components/*.tsx` | `component:<name>` |
+| component | `.stories.tsx` / `src/components/*.tsx` (via intel slices) | `component:<name>` |
 | token:color | CSS custom properties / Figma variables | `token:color/<name>` |
 | token:spacing | CSS custom properties | `token:spacing/<name>` |
 | token:typography | CSS custom properties | `token:typography/<name>` |
@@ -65,7 +62,7 @@ Expect: `{ enabled: true, graph_path: "...", node_count: N, edge_count: N, stale
 
 ### Edge Types
 
-| Edge | From | To | Meaning |
+| Edge kind | From | To | Meaning |
 |------|------|-----|---------|
 | `uses` | component | token | Component references this token |
 | `renders` | page | component | Page renders this component |
@@ -74,22 +71,32 @@ Expect: `{ enabled: true, graph_path: "...", node_count: N, edge_count: N, stale
 | `maps-to` | figma-variable | token | Figma variable corresponds to CSS token |
 | `detected-at` | anti-pattern | component | Anti-pattern found in this component |
 
-### graph.json structure
+### graph.json structure (schema v1.0)
 
 ```json
 {
+  "schema_version": "1.0",
+  "built_at": "2026-05-28T12:00:00.000Z",
   "nodes": [
-    { "id": "component:Button", "label": "Button", "type": "component",
-      "description": "Primary interactive element", "source": "src/components/Button.tsx" }
+    {
+      "id": "component:Button",
+      "type": "component",
+      "label": "Button",
+      "attrs": { "source": "src/components/Button.tsx" }
+    }
   ],
   "edges": [
-    { "source": "component:Button", "target": "token:color/primary/500",
-      "label": "uses", "confidence": "EXTRACTED", "confidence_score": 0.95 }
+    {
+      "from": "component:Button",
+      "to": "token:color/primary/500",
+      "kind": "uses",
+      "weight": 0.95
+    }
   ]
 }
 ```
 
-Edge confidence tiers: EXTRACTED (found in source), INFERRED (semantic inference), AMBIGUOUS (flagged for review).
+Edges use the `{from, to, kind, weight?}` shape (per D-03.b — matches intel-store schema verbatim, no translation layer). The optional `weight: number` replaces the upstream three-tier confidence enum (per D-03.c).
 
 ---
 
@@ -110,18 +117,19 @@ Unlike MCP connections, Graphify has no ToolSearch check. The probe is file-exis
 
 **Graphify probe sequence (execute at agent entry, before using graph):**
 
-Step G1 — Config check:
+Step G1 — Config check (per D-09 — direct read, no CLI subcommand):
 ```
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify status
-→ Error or { enabled: false }  → graphify: not_configured  (skip all graph steps)
-→ { enabled: true }            → proceed to Step G2
+node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
+→ false → graphify: not_configured  (skip all graph steps)
+→ true  → proceed to Step G2
 ```
 
-Step G2 — Graph file check:
+Step G2 — Graph status check (native CLI):
 ```
-Check if graphify-out/graph.json exists in project root
-→ Absent                       → graphify: unavailable  (graph not built yet)
-→ Present                      → graphify: available
+node bin/gdd-graph status --format json
+→ { configured: true, exists: true }  → graphify: available
+→ { configured: true, exists: false } → graphify: unavailable  (graph not built yet)
+→ { configured: false, ... }          → graphify: not_configured  (mirrors G1; defensive)
 ```
 
 Write graphify status to `.design/STATE.md` `<connections>`.
@@ -138,8 +146,8 @@ This is the canonical pre-search pattern for agents. Copy inline — SKILL.md an
 
 Step 1: Query graph for decision node and its neighbors
 ```
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify query "decision:D-<nn>" --budget 1500
-→ Returns: connected components + tokens as JSON
+node bin/gdd-graph query "decision:D-<nn>" --budget 1500
+→ Returns: ranked match list — connected components + tokens as JSON
 → Use returned component IDs as grep seed list (reduces false-negative "not found")
 ```
 
@@ -150,15 +158,15 @@ Step 2: Grep each returned component for the decision pattern
 
 Step 1: Query graph for token node and its neighbors
 ```
-node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify query "<token-name>" --budget 1500
-→ Returns: all components that reference this token
+node bin/gdd-graph query "<token-name>" --budget 1500
+→ Returns: all components that reference this token (ranked by D-04.a score)
 → Annotate planned task with "N components affected" before scoping
 ```
 
 Step 2: Include component list in the task description
 (then continue standard planning behavior)
 
-**Budget note:** Use `--budget 1500` for pre-search queries. High confidence_score edges (>= 0.8) are more reliable; AMBIGUOUS edges are hints only.
+**Budget note:** Use `--budget 1500` for pre-search queries. Higher-weight edges (`weight >= 0.8`) are more reliable; lower-weight edges are hints only.
 
 ---
 
@@ -177,21 +185,24 @@ The graph is a performance optimization and accuracy enhancer. It is never a har
 ## Anti-Patterns
 
 - **Do NOT use graphify to replace grep.** The graph is a seed list, not a complete index. Always grep after querying the graph.
-- **Do NOT embed graph.json contents in agent context.** Query specific nodes via gsd-tools; never read graph.json directly.
+- **Do NOT embed `graph.json` contents in agent context.** Query specific nodes via `bin/gdd-graph query`; never read `graph.json` directly.
 - **Do NOT query the graph during scan or design stages.** The graph is read-only and only useful when decisions already exist (plan, verify).
-- **Do NOT block on graph build time.** If `graphify build` takes >30 seconds mid-session, log "graphify build deferred — run /gdd:graphify build manually" and continue without graph.
-- **Do NOT assume graph covers .design/ artifacts.** Graphify analyzes source code (src/, components/). DESIGN-CONTEXT.md and DESIGN-PLAN.md are not graph nodes unless explicitly indexed.
+- **Do NOT block on graph build time.** If `gdd-graph build` takes >30 seconds mid-session, log "graphify build deferred — run /gdd:graphify build manually" and continue without graph.
+- **Do NOT assume graph covers `.design/` artifacts.** The build walks `.design/intel/` slices and project source; arbitrary planning docs are not graph nodes unless explicitly indexed.
 
 ---
 
 ## /gdd:graphify Commands
 
-| Subcommand | GSD tools call | Purpose |
+| Subcommand | Native CLI call | Purpose |
 |------------|----------------|---------|
-| `build` | `gsd-tools graphify build` | Build or rebuild the knowledge graph |
-| `query <term>` | `gsd-tools graphify query "<term>" --budget 2000` | Query the graph for a node and its neighbors |
-| `status` | `gsd-tools graphify status` | Check graph age, node count, enabled status |
-| `diff` | `gsd-tools graphify diff` | Show topology changes since last build |
+| `build` | `node bin/gdd-graph build` | Build or rebuild the knowledge graph |
+| `query <term>` | `node bin/gdd-graph query "<term>" --budget 2000` | Query the graph for a node and its neighbors |
+| `status` | `node bin/gdd-graph status` | Check graph age, node count, enabled status |
+| `diff` | `node bin/gdd-graph diff` | Show topology changes since last build |
+| `upsert-node` | `node bin/gdd-graph upsert-node --id X --type T --label L` | Programmatic single-node insert (used by gdd-graph-refresh agent) |
+| `upsert-edge` | `node bin/gdd-graph upsert-edge --from A --to B --kind R` | Programmatic single-edge insert (used by gdd-graph-refresh agent) |
 
-If `graphify.enabled = false` in `.planning/config.json`, the skill prompts:
-"Graphify is not enabled. Enable with: gsd-tools config-set graphify.enabled true — then run /gdd:graphify build."
+If `graphify.enabled` is `false` (or `.design/config.json` is missing), the `bin/gdd-graph` subcommands graceful-degrade — `status` returns `{ configured: false, exists: false }`, other subcommands no-op with exit 0 and a one-line stderr notice.
+
+To enable: edit `.design/config.json` and set `graphify.enabled: true`, then `node bin/gdd-graph build`.
