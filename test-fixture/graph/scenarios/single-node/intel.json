@@ -1,0 +1,7 @@
+{
+  "generated": "2026-05-28T00:00:00.000Z",
+  "nodes": [
+    { "id": "component:Button", "type": "component", "name": "Button" }
+  ],
+  "edges": []
+}

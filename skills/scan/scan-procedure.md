@@ -136,14 +136,15 @@ Write: chromatic: <status> to STATE.md <connections>
 
 ```
 Step G1 — Config check:
-  Bash: node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify status
-  -> Error or { enabled: false } -> graphify: not_configured
-  -> { enabled: true }           -> proceed to Step G2
+  Bash: node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
+  -> false -> graphify: not_configured
+  -> true  -> proceed to Step G2
 
-Step G2 — Graph file check:
-  Bash: test -f graphify-out/graph.json
-  -> Present -> graphify: available
-  -> Absent  -> graphify: unavailable
+Step G2 — Graph file check (status JSON):
+  Bash: node bin/gdd-graph status --format json
+  -> { configured: true, exists: true, ... }  -> graphify: available
+  -> { configured: false, exists: false } or  -> graphify: unavailable
+     { exists: false }
 
 Write: graphify: <status> to STATE.md <connections>
 ```

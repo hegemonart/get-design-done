@@ -1,0 +1,20 @@
+{
+  "generated": "2026-05-28T00:00:00.000Z",
+  "nodes": [
+    { "id": "component:Button",            "type": "component",   "name": "Button" },
+    { "id": "component:Card",              "type": "component",   "name": "Card" },
+    { "id": "component:Modal",             "type": "component",   "name": "Modal" },
+    { "id": "token:color/primary/500",     "type": "token-color", "name": "primary-500", "hex": "#3b82f6" },
+    { "id": "token:spacing/4",             "type": "token-space", "name": "spacing-4" }
+  ],
+  "edges": [
+    { "from": "component:Button", "to": "token:color/primary/500", "kind": "uses" },
+    { "from": "component:Button", "to": "token:spacing/4",         "kind": "uses" },
+    { "from": "component:Card",   "to": "token:spacing/4",         "kind": "uses" },
+    { "from": "component:Card",   "to": "token:color/primary/500", "kind": "uses" },
+    { "from": "component:Modal",  "to": "component:Button",        "kind": "renders" },
+    { "from": "component:Modal",  "to": "component:Card",          "kind": "renders" },
+    { "from": "component:Modal",  "to": "token:spacing/4",         "kind": "uses" },
+    { "from": "component:Modal",  "to": "token:color/primary/500", "kind": "uses" }
+  ]
+}

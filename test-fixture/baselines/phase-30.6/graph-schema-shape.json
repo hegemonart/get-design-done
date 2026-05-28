@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0",
+  "topLevelKeys": ["schemaVersion", "metadata", "nodes", "edges"],
+  "metadataRequiredKeys": ["generatedAt", "nodeCount", "edgeCount"],
+  "metadataOptionalKeys": ["intelSource", "builderVersion"],
+  "nodeRequiredKeys": ["id", "type"],
+  "nodeOptionalKeys": ["label", "attrs", "source"],
+  "edgeRequiredKeys": ["from", "to", "kind"],
+  "edgeOptionalKeys": ["weight", "attrs", "source"]
+}

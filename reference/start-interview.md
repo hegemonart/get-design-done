@@ -2,7 +2,7 @@
 
 **Purpose:** collect the minimum signal needed to steer the findings engine without slowing first-run completion past 30 seconds of interview wall-clock. Autodetectable dimensions collapse to a one-key confirmation; genuinely non-derivable dimensions are asked explicitly.
 
-**Hard constraint:** v1.14.7 ships this fixed question set. Do not branch, re-order, or insert new questions without an explicit `/gsd-discuss-phase` override captured in a future DISCUSSION.md.
+**Hard constraint:** v1.14.7 ships this fixed question set. Do not branch, re-order, or insert new questions without an explicit `/gdd:discuss` override captured in a future DISCUSSION.md.
 
 ---
 

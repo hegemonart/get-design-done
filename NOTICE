@@ -173,6 +173,44 @@ reporter, hardcoded destination, no plugin-side credentials, gh-CLI-only
 outbound) is original to get-design-done. The architectural rationale lives
 in .planning/phases/30-issue-reporter/CONTEXT.md.
 
+──────────────────────────────────────────────────────────────────────────────
+Phase 30.6 — Graphify Self-Ownership (v1.30.6, 2026-05-28)
+──────────────────────────────────────────────────────────────────────────────
+
+Version 1.30.6 removes the last runtime touchpoint between get-design-done
+and the user's `~/.claude/get-shit-done/` install. Eight callsites
+previously dispatched `node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs"
+graphify *` at runtime; they now dispatch a native `bin/gdd-graph` CLI
+owned end-to-end in this repository.
+
+No historical MIT/Apache attributions in this NOTICE are removed or
+modified by this change. The Phase 27 / Phase 28.5 / Phase 28.7
+attribution subsections above are preserved verbatim per Phase 30.6 D-06.
+Those describe historical architectural ports:
+
+  - Phase 27 — peer-CLI delegation protocol shapes adapted from
+    cc-multi-cli-plugin (Apache 2.0).
+  - Phase 28.5 — skill-authoring contract + project-artifact formats +
+    debug feedback-loop reference + zoom-out micro-skill, ported from
+    mattpocock/skills (MIT).
+  - Phase 28.7 — multi-runtime install pipeline architecture, ported
+    from gsd-build/get-shit-done (MIT).
+
+Phase 30.6 removes a runtime touchpoint, NOT a historical port. The
+architectural ports listed above remain in our tree under their original
+MIT/Apache terms.
+
+For context: the upstream `gsd-build/get-shit-done` project has since been
+archived (TÂCHES rug-pull, May 2026). The community continuation lives at
+`open-gsd/get-shit-done-redux` and is bit-perfect with the pre-rug tree.
+The Phase 28.7 attribution above remains pointed at the original upstream
+URL because that is the source of the architectural port; the redux fork
+is referenced in `README.md` for users seeking a current download.
+
+See `.planning/phases/30.6-graphify-self-ownership/` for full phase
+documentation including the 10 architectural decisions (D-01 through D-10)
+and the migration of the 8 dispatching callsites to native `bin/gdd-graph`.
+
 ────────────────────────────────────────────────────────────────────────
 
 Note on the broader codebase: get-design-done as a whole is licensed under

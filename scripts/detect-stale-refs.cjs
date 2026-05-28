@@ -19,6 +19,12 @@ const DEPRECATIONS_PATH = path.join(REPO_ROOT, 'reference/DEPRECATIONS.md');
 // would over-fire. Cover those cases via targeted review rather than grep.
 const PATTERNS = [
   { name: '/design: namespace (replaced by /gdd:)', regex: /\/design:[a-z-]+/g },
+  // Phase 30.6: runtime dispatch to upstream gsd-tools.cjs is now disallowed.
+  // Native CLI lives at bin/gdd-graph (graph ops) and is invoked as `node bin/gdd-graph <sub>`.
+  // The pattern is precise — only the explicit bash dispatch is flagged. Prose mentions
+  // of "gsd-tools" or "get-shit-done" in attribution contexts (NOTICE, CHANGELOG, README)
+  // are NOT matched because they don't include the leading `node "$HOME/.claude/...` token.
+  { name: 'gsd-tools.cjs runtime dispatch (use bin/gdd-graph instead)', regex: /node\s+["']?\$HOME\/\.claude\/get-shit-done\/bin\/gsd-tools\.cjs/g },
 ];
 
 const EXCLUDE_DIRS = new Set([

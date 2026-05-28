@@ -1,0 +1,261 @@
+#!/usr/bin/env node
+// bin/gdd-graph — Plan 30.6-02 Task 3
+//
+// Native CLI replacing every `gsd-tools.cjs graphify *` dispatch in our
+// tree. This bin is a thin CJS dispatcher that dynamic-imports the ESM
+// handler modules (package.json has no "type":"module", so the no-ext
+// bin file is resolved as CJS by Node — we bridge with `await import()`).
+//
+// Subcommands shipped in 30.6-02:
+//   build         — read .design/intel/graph.json, write .design/graph/graph.json
+//   status        — report graph file state (configured/exists/counts/stale)
+//   diff <a> <b>  — emit added/removed/changed nodes + edges
+//
+// Subcommands shipped in 30.6-03 (this plan):
+//   query <term> [--budget N]   — search graph, return ranked matches +
+//                                 1-hop neighbors, budget-truncated per D-04
+//   upsert-node --json '<json>' — create/update a node by id (idempotent)
+//   upsert-edge --json '<json>' — create/update an edge by (from,to,kind);
+//                                 fails if either endpoint node is absent
+
+'use strict';
+
+const path = require('node:path');
+
+const SUBCOMMANDS = new Set([
+  'build', 'status', 'diff', 'query', 'upsert-node', 'upsert-edge',
+]);
+
+function printUsage(stream) {
+  stream.write([
+    'Usage: gdd-graph <subcommand> [options]',
+    '',
+    'Subcommands:',
+    '  build  [--intel <path>] [--out <path>] [--now <iso>]',
+    '         Build .design/graph/graph.json from .design/intel/graph.json.',
+    '  status [--graph <path>] [--intel <path>] [--format json|text]',
+    '         Report graph store state (configured/exists/counts/stale).',
+    '  diff   <from> <to> [--format json|text]',
+    '         Diff two graph.json files; emit added/removed/changed nodes+edges.',
+    '  query  <term> [--budget N] [--graph <path>]',
+    '         Search graph; return ranked matches + 1-hop neighbors,',
+    '         budget-truncated per D-04 (chars/4 heuristic, default 8000).',
+    '  upsert-node {--json \'<obj>\' | --id <id> --type <type> [--label <l>] [--source <s>] [--attrs <json>]}',
+    '         Idempotent node upsert by id; bootstraps graph file if absent.',
+    '  upsert-edge {--json \'<obj>\' | --from <id> --to <id> --kind <kind> [--weight N] [--source <s>] [--attrs <json>]}',
+    '         Idempotent edge upsert by (from,to,kind); requires both endpoint',
+    '         nodes to exist — emits GDD_GRAPH_MISSING_ENDPOINT otherwise.',
+    '',
+    'Env:',
+    '  GDD_GRAPH_DEBUG=1            include stack traces in error JSON',
+    '  GDD_GRAPH_TOKEN_FACTOR <int>  override chars-per-token divisor (D-04)',
+    '',
+    'Exit codes:',
+    '  0 success / 1 failure (structured-error JSON on stderr)',
+    '',
+  ].join('\n'));
+}
+
+function parseArgs(rest) {
+  // Minimal hand-rolled parser. Positional args land in `_`; flags with
+  // `--name value` (and `--name=value`) land in `opts`.
+  const opts = {};
+  const positional = [];
+  for (let i = 0; i < rest.length; i++) {
+    const arg = rest[i];
+    if (arg === '--' ) { positional.push(...rest.slice(i + 1)); break; }
+    if (arg.startsWith('--')) {
+      const eq = arg.indexOf('=');
+      if (eq !== -1) {
+        opts[arg.slice(2, eq)] = arg.slice(eq + 1);
+      } else {
+        const next = rest[i + 1];
+        if (next === undefined || next.startsWith('--')) {
+          opts[arg.slice(2)] = true;
+        } else {
+          opts[arg.slice(2)] = next;
+          i++;
+        }
+      }
+    } else {
+      positional.push(arg);
+    }
+  }
+  return { _: positional, opts };
+}
+
+function emitError(subcommand, err, exitCode = 1) {
+  const payload = {
+    ok: false,
+    subcommand,
+    message: err && err.message ? err.message : String(err),
+  };
+  if (err && err.code) payload.code = err.code;
+  if (err && err.schemaErrors) payload.schemaErrors = err.schemaErrors;
+  if (err && err.missingEndpoints) payload.missingEndpoints = err.missingEndpoints;
+  if (process.env.GDD_GRAPH_DEBUG && err && err.stack) payload.stack = err.stack;
+  process.stderr.write(JSON.stringify(payload) + '\n');
+  process.exit(exitCode);
+}
+
+async function dispatch(subcommand, parsed) {
+  const lib = await import(
+    // Resolve via relative require root — bin/ is sibling of scripts/.
+    'file://' + path.resolve(__dirname, '..', 'scripts', 'lib', 'graph', 'index.mjs').replace(/\\/g, '/')
+  );
+
+  if (subcommand === 'build') {
+    const r = lib.buildGraph({
+      intelPath: parsed.opts.intel,
+      outPath: parsed.opts.out,
+      now: parsed.opts.now,
+    });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'status') {
+    const r = lib.statusGraph({
+      graphPath: parsed.opts.graph,
+      intelPath: parsed.opts.intel,
+    });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'diff') {
+    const [fromPath, toPath] = parsed._;
+    if (!fromPath || !toPath) {
+      const err = new Error('diff requires two positional args: <from> <to>');
+      err.code = 'DIFF_ARGS_MISSING';
+      throw err;
+    }
+    const r = lib.diffGraph({ fromPath, toPath });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'query') {
+    const [term] = parsed._;
+    if (!term) {
+      const err = new Error('query requires a positional argument: <term>');
+      err.code = 'QUERY_TERM_MISSING';
+      throw err;
+    }
+    const budget = parsed.opts.budget !== undefined
+      ? Number.parseInt(parsed.opts.budget, 10)
+      : undefined;
+    if (parsed.opts.budget !== undefined && !Number.isFinite(budget)) {
+      const err = new Error(`query --budget must be an integer (got: ${parsed.opts.budget})`);
+      err.code = 'QUERY_BUDGET_INVALID';
+      throw err;
+    }
+    const r = lib.queryGraph({
+      graphPath: parsed.opts.graph,
+      query: term,
+      budget,
+    });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'upsert-node') {
+    const node = parseUpsertInput(parsed, 'upsert-node');
+    const r = lib.upsertNode({
+      graphPath: parsed.opts.graph,
+      node,
+    });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'upsert-edge') {
+    const edge = parseUpsertInput(parsed, 'upsert-edge');
+    const r = lib.upsertEdge({
+      graphPath: parsed.opts.graph,
+      edge,
+    });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+}
+
+/**
+ * Parse the upsert payload from argv. Supports two shapes:
+ *  - `--json '<json-string>'` (preferred — single source of truth for batch
+ *    callers in agents/gdd-graph-refresh.md and skills/graphify)
+ *  - flat flags `--id ... --type ... --label ... --from ... --to ... --kind ...
+ *    --weight N --source ... --attrs '<json>'` (convenience for shell users
+ *    + matches the upstream gsd-tools.cjs graphify flag surface verbatim
+ *    per RESEARCH.md §8-callsite inventory)
+ *
+ * Conflict: `--json` wins when both are provided.
+ */
+function parseUpsertInput(parsed, subcommand) {
+  if (parsed.opts.json !== undefined) {
+    try {
+      const obj = JSON.parse(parsed.opts.json);
+      if (!obj || typeof obj !== 'object') {
+        throw new Error(`${subcommand} --json must decode to an object`);
+      }
+      return obj;
+    } catch (e) {
+      const err = new Error(`${subcommand} --json parse failed: ${e.message}`);
+      err.code = 'UPSERT_JSON_PARSE_FAILED';
+      throw err;
+    }
+  }
+  // Flat-flag mode — assemble from individual --field flags.
+  const obj = {};
+  for (const key of ['id', 'type', 'label', 'from', 'to', 'kind', 'source']) {
+    if (parsed.opts[key] !== undefined && parsed.opts[key] !== true) {
+      obj[key] = parsed.opts[key];
+    }
+  }
+  if (parsed.opts.weight !== undefined) {
+    const w = Number.parseFloat(parsed.opts.weight);
+    if (!Number.isFinite(w)) {
+      const err = new Error(`${subcommand} --weight must be a number (got: ${parsed.opts.weight})`);
+      err.code = 'UPSERT_WEIGHT_INVALID';
+      throw err;
+    }
+    obj.weight = w;
+  }
+  if (parsed.opts.attrs !== undefined) {
+    try {
+      obj.attrs = JSON.parse(parsed.opts.attrs);
+    } catch (e) {
+      const err = new Error(`${subcommand} --attrs parse failed: ${e.message}`);
+      err.code = 'UPSERT_ATTRS_PARSE_FAILED';
+      throw err;
+    }
+  }
+  return obj;
+}
+
+(async () => {
+  const argv = process.argv.slice(2);
+  if (argv.length === 0 || argv[0] === '-h' || argv[0] === '--help') {
+    printUsage(process.stderr);
+    process.exit(argv.length === 0 ? 1 : 0);
+  }
+  const subcommand = argv[0];
+  if (!SUBCOMMANDS.has(subcommand)) {
+    process.stderr.write(JSON.stringify({
+      ok: false,
+      message: `unknown subcommand: ${subcommand}`,
+    }) + '\n');
+    process.exit(1);
+  }
+  const parsed = parseArgs(argv.slice(1));
+  try {
+    await dispatch(subcommand, parsed);
+    process.exit(0);
+  } catch (err) {
+    emitError(subcommand, err, 1);
+  }
+})().catch((err) => {
+  // Last-resort guard. dispatch() already routes via emitError; this only
+  // fires for bugs in argv parsing or the dispatch glue itself.
+  emitError('<bootstrap>', err, 1);
+});

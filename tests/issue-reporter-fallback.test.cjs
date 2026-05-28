@@ -1,6 +1,6 @@
 'use strict';
 // tests/issue-reporter-fallback.test.cjs
-// Plan 30-06 — gh-absent fallback + kill-switch + gsd-health-mirror tests.
+// Plan 30-06 — gh-absent fallback + kill-switch + health-mirror tests.
 //
 // Covers 15 cases (floor: 12):
 //
@@ -37,7 +37,7 @@ const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const ISSUE_REPORTER_DIR = path.join(REPO_ROOT, 'scripts', 'lib', 'issue-reporter');
-const HEALTH_MIRROR = path.join(REPO_ROOT, 'scripts', 'lib', 'gsd-health-mirror', 'index.cjs');
+const HEALTH_MIRROR = path.join(REPO_ROOT, 'scripts', 'lib', 'health-mirror', 'index.cjs');
 
 const {
   detectGh,
@@ -397,11 +397,11 @@ test('30-06 case 12: malformed .design/config.json → does not throw, reporter 
 });
 
 // =========================================================================
-// gsd-health-mirror TESTS (Task 3) — exact-string assertions
+// health-mirror TESTS (Task 3) — exact-string assertions
 // =========================================================================
 
 /**
- * Run gsd-health-mirror with explicit cwd + env, return concatenated text
+ * Run health-mirror with explicit cwd + env, return concatenated text
  * of detail/status lines so we can do .includes() assertions on the new line.
  */
 async function runHealthFixture({ env = {}, cwd } = {}) {

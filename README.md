@@ -139,7 +139,7 @@ The installer prompts you to choose:
 1. **Runtime** — Claude Code, OpenCode, Gemini, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline, or all (interactive multi-select — pick multiple runtimes in a single session)
 2. **Location** — Global (all projects) or local (current project only)
 
-All 14 runtimes receive their native artifact layout (`skills/`, `command/`, `agents/`, or `.clinerules`) via per-runtime content converters — Claude SKILL.md sources are translated to each runtime's expected shape at install time (frontmatter pass-through, path rewrite, tool-name rewrite via the Phase 21 cross-harness maps). Architecture ported from `gsd-build/get-shit-done` (MIT — see `NOTICE`).
+All 14 runtimes receive their native artifact layout (`skills/`, `command/`, `agents/`, or `.clinerules`) via per-runtime content converters — Claude SKILL.md sources are translated to each runtime's expected shape at install time (frontmatter pass-through, path rewrite, tool-name rewrite via the Phase 21 cross-harness maps). Architecture ported from `gsd-build/get-shit-done` (MIT — see `NOTICE`; upstream is now archived following the May 2026 $GSD token rug-pull, community continuation lives at [`open-gsd/get-shit-done-redux`](https://github.com/open-gsd/get-shit-done-redux)).
 
 Verify with:
 

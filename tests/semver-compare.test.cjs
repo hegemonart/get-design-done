@@ -270,6 +270,20 @@ OFF_CADENCE_VERSIONS.add('1.30.0');
 //   - 1.30.5 → Phase 30.5 (failure-mode-catalogue); decimal sub-phase from 1.30.0.
 OFF_CADENCE_VERSIONS.add('1.30.5');
 
+// Phase 30.6 — Graphify Self-Ownership — Decouple from get-shit-done CLI
+// (v1.30.6, 2026-05-28). Removes the last runtime touchpoint between
+// get-design-done and the user's ~/.claude/get-shit-done/ install. Replaces
+// 8 callsites that dispatched `gsd-tools.cjs graphify *` with native
+// bin/gdd-graph (build/query/status/diff/upsert-node/upsert-edge). Drops the
+// intel→graphify translation layer (intel and graph now share {from,to,kind,
+// weight?} schema per D-03.b). Renames gdd-graphify-sync → gdd-graph-refresh
+// and gsd-health-mirror → health-mirror (cosmetic, D-10). Deletes 10MB
+// vendored upstream snapshot at .planning/get-shit-done-main/. Off-cadence
+// decimal from v1.30.5 parent — sequence 1.30.0 -> 1.30.5 -> 1.30.6.
+//   - 1.30.6 → Phase 30.6 (graphify-self-ownership); off-cadence sub-phase from 1.30.5.
+OFF_CADENCE_VERSIONS.add('1.30.6');
+
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];

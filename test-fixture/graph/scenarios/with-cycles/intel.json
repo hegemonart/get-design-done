@@ -1,0 +1,17 @@
+{
+  "generated": "2026-05-28T00:00:00.000Z",
+  "nodes": [
+    { "id": "node:A", "type": "concept", "name": "A" },
+    { "id": "node:B", "type": "concept", "name": "B" },
+    { "id": "node:C", "type": "concept", "name": "C" },
+    { "id": "node:isolated-1", "type": "concept", "name": "isolated-1" },
+    { "id": "node:isolated-2", "type": "concept", "name": "isolated-2" }
+  ],
+  "edges": [
+    { "from": "node:A", "to": "node:B", "kind": "links_to" },
+    { "from": "node:B", "to": "node:A", "kind": "links_to" },
+    { "from": "node:B", "to": "node:C", "kind": "links_to" },
+    { "from": "node:C", "to": "node:A", "kind": "links_to" },
+    { "from": "node:A", "to": "node:A", "kind": "self_loop" }
+  ]
+}

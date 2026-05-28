@@ -1,0 +1,9 @@
+{
+  "generated": "2026-05-28T00:00:00.000Z",
+  "nodes": [
+    { "type": "component", "name": "MissingId" }
+  ],
+  "edges": [
+    { "to": "component:Card", "kind": "renders" }
+  ]
+}

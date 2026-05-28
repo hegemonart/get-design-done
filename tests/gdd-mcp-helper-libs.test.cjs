@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 // Plan 27.7-02 — helper-lib tests for the 5 NEW scripts/lib/* modules:
 //   roadmap-reader, snapshot-reader, intel-store, reflections-reader,
-//   gsd-health-mirror.
+//   health-mirror (renamed from gsd-health-mirror in Phase 30.6-08).
 //
 // Every test name is prefixed with `27.7-02: ` for the test-tag count
 // check in the plan's acceptance criteria (>= 10 tagged).
@@ -237,12 +237,12 @@ test('27.7-02: reflections-reader.digestReflections truncates to <= 5 KB', () =>
 });
 
 // =========================================================================
-// gsd-health-mirror
+// health-mirror (renamed from gsd-health-mirror in Phase 30.6-08 per D-10)
 // =========================================================================
 
-test('27.7-02: gsd-health-mirror.getHealthChecks returns 4 checks', async () => {
-  const lib = require(path.join(LIB_DIR, 'gsd-health-mirror', 'index.cjs'));
-  const root = tmp('gsd-health-mirror');
+test('27.7-02: health-mirror.getHealthChecks returns 4 checks', async () => {
+  const lib = require(path.join(LIB_DIR, 'health-mirror', 'index.cjs'));
+  const root = tmp('health-mirror');
   // Create a minimal project surface
   fs.mkdirSync(path.join(root, '.planning'), { recursive: true });
   fs.mkdirSync(path.join(root, '.design'), { recursive: true });

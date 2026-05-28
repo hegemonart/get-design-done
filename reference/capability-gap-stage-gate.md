@@ -159,10 +159,13 @@ appends the following verbatim block to the cycle markdown:
 > opt in with the project-local command below. You can always opt out
 > later by deleting the timestamps from `.design/config.json` (§ 7).
 >
-> <!-- TODO: confirm opt-in command — likely
->      `node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" config set capability_gap_gate.opted_in_at "$(date -Iseconds)"`
->      or a project-local equivalent. Plan 29-05 (apply-reflections
->      extension) will land the canonical command. -->
+> <!-- Phase 30.6 (D-09) update: per the convention adopted across the
+>      knowledge layer in v1.30.6, project-local config flips are direct
+>      edits to .design/config.json — no CLI subcommand. The canonical
+>      opt-in is therefore: edit .design/config.json to add
+>      { "capability_gap_gate": { "opted_in_at": "<ISO date>" } }.
+>      Plan 29-05 (apply-reflections extension) surfaces this as a guided
+>      prompt rather than a CLI invocation. -->
 >
 > This prompt is emitted at most once per project. If you ignore it,
 > the gate continues to evaluate every cycle but does not re-prompt
