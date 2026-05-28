@@ -11,4 +11,4 @@ export { compileValidator, SCHEMA_VERSION, SCHEMA } from './schema.mjs';
 export { atomicWriteJson } from './atomic-write.mjs';
 export { queryGraph } from './query.mjs';                  // 30.6-03 Task 1
 export { estimateTokens } from './token-estimate.mjs';     // 30.6-03 Task 1
-// upsertNode / upsertEdge added by 30.6-03 Task 2.
+export { upsertNode, upsertEdge } from './upsert.mjs';     // 30.6-03 Task 2
