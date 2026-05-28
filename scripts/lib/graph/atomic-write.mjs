@@ -13,7 +13,7 @@ import {
   mkdirSync,
   existsSync,
 } from 'node:fs';
-import { dirname, basename, join } from 'node:path';
+import { dirname, basename, join, resolve } from 'node:path';
 
 /**
  * Atomically write a JSON payload to `target` using the tmp+rename pattern.
@@ -36,8 +36,12 @@ export function atomicWriteJson(target, payload) {
   );
 
   // Defense per D-05: assert tmp is in same dir as target (cross-device
-  // rename is NOT atomic on Windows).
-  if (dirname(tmp) !== parent) {
+  // rename is NOT atomic on Windows). Resolve both to normalize forward-
+  // vs back-slash separators on Windows so the comparison is path-shape-
+  // agnostic — string equality on dirname() outputs is fragile when the
+  // caller passes a POSIX-style path on Windows (`/tmp/foo`) and Node
+  // resolves it to a native-style temp dir (`C:\...\Temp\foo`).
+  if (resolve(dirname(tmp)) !== resolve(parent)) {
     throw new Error(
       `atomicWriteJson invariant: tmp not in same dir as target (tmp=${tmp}, target=${target})`,
     );

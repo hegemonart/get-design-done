@@ -1,0 +1,165 @@
+#!/usr/bin/env node
+// bin/gdd-graph — Plan 30.6-02 Task 3
+//
+// Native CLI replacing every `gsd-tools.cjs graphify *` dispatch in our
+// tree. This bin is a thin CJS dispatcher that dynamic-imports the ESM
+// handler modules (package.json has no "type":"module", so the no-ext
+// bin file is resolved as CJS by Node — we bridge with `await import()`).
+//
+// Subcommands shipped in this plan (30.6-02):
+//   build         — read .design/intel/graph.json, write .design/graph/graph.json
+//   status        — report graph file state (configured/exists/counts/stale)
+//   diff <a> <b>  — emit added/removed/changed nodes + edges
+//
+// Subcommands deferred to 30.6-03 (placeholders here exit 2):
+//   query, upsert-node, upsert-edge
+
+'use strict';
+
+const path = require('node:path');
+
+const SUBCOMMANDS = new Set([
+  'build', 'status', 'diff', 'query', 'upsert-node', 'upsert-edge',
+]);
+
+function printUsage(stream) {
+  stream.write([
+    'Usage: gdd-graph <subcommand> [options]',
+    '',
+    'Subcommands:',
+    '  build  [--intel <path>] [--out <path>] [--now <iso>]',
+    '         Build .design/graph/graph.json from .design/intel/graph.json.',
+    '  status [--graph <path>] [--intel <path>] [--format json|text]',
+    '         Report graph store state (configured/exists/counts/stale).',
+    '  diff   <from> <to> [--format json|text]',
+    '         Diff two graph.json files; emit added/removed/changed nodes+edges.',
+    '  query  <term> [--budget N] [--format json|text]',
+    '         (deferred to 30.6-03)',
+    '  upsert-node --id <id> --type <type> [--label <l>] [--source <s>] [--attrs <json>]',
+    '         (deferred to 30.6-03)',
+    '  upsert-edge --from <id> --to <id> --kind <kind> [--weight N] [--source <s>] [--attrs <json>]',
+    '         (deferred to 30.6-03)',
+    '',
+    'Env:',
+    '  GDD_GRAPH_DEBUG=1   include stack traces in error JSON',
+    '',
+    'Exit codes:',
+    '  0 success / 1 generic failure / 2 not-implemented (30.6-03 stub)',
+    '',
+  ].join('\n'));
+}
+
+function parseArgs(rest) {
+  // Minimal hand-rolled parser. Positional args land in `_`; flags with
+  // `--name value` (and `--name=value`) land in `opts`.
+  const opts = {};
+  const positional = [];
+  for (let i = 0; i < rest.length; i++) {
+    const arg = rest[i];
+    if (arg === '--' ) { positional.push(...rest.slice(i + 1)); break; }
+    if (arg.startsWith('--')) {
+      const eq = arg.indexOf('=');
+      if (eq !== -1) {
+        opts[arg.slice(2, eq)] = arg.slice(eq + 1);
+      } else {
+        const next = rest[i + 1];
+        if (next === undefined || next.startsWith('--')) {
+          opts[arg.slice(2)] = true;
+        } else {
+          opts[arg.slice(2)] = next;
+          i++;
+        }
+      }
+    } else {
+      positional.push(arg);
+    }
+  }
+  return { _: positional, opts };
+}
+
+function emitError(subcommand, err, exitCode = 1) {
+  const payload = {
+    ok: false,
+    subcommand,
+    message: err && err.message ? err.message : String(err),
+  };
+  if (err && err.code) payload.code = err.code;
+  if (err && err.schemaErrors) payload.schemaErrors = err.schemaErrors;
+  if (process.env.GDD_GRAPH_DEBUG && err && err.stack) payload.stack = err.stack;
+  process.stderr.write(JSON.stringify(payload) + '\n');
+  process.exit(exitCode);
+}
+
+async function dispatch(subcommand, parsed) {
+  const lib = await import(
+    // Resolve via relative require root — bin/ is sibling of scripts/.
+    'file://' + path.resolve(__dirname, '..', 'scripts', 'lib', 'graph', 'index.mjs').replace(/\\/g, '/')
+  );
+
+  if (subcommand === 'build') {
+    const r = lib.buildGraph({
+      intelPath: parsed.opts.intel,
+      outPath: parsed.opts.out,
+      now: parsed.opts.now,
+    });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'status') {
+    const r = lib.statusGraph({
+      graphPath: parsed.opts.graph,
+      intelPath: parsed.opts.intel,
+    });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'diff') {
+    const [fromPath, toPath] = parsed._;
+    if (!fromPath || !toPath) {
+      const err = new Error('diff requires two positional args: <from> <to>');
+      err.code = 'DIFF_ARGS_MISSING';
+      throw err;
+    }
+    const r = lib.diffGraph({ fromPath, toPath });
+    process.stdout.write(JSON.stringify(r) + '\n');
+    return;
+  }
+
+  if (subcommand === 'query' || subcommand === 'upsert-node' || subcommand === 'upsert-edge') {
+    process.stderr.write(JSON.stringify({
+      ok: false,
+      subcommand,
+      message: 'not yet implemented — see 30.6-03',
+    }) + '\n');
+    process.exit(2);
+  }
+}
+
+(async () => {
+  const argv = process.argv.slice(2);
+  if (argv.length === 0 || argv[0] === '-h' || argv[0] === '--help') {
+    printUsage(process.stderr);
+    process.exit(argv.length === 0 ? 1 : 0);
+  }
+  const subcommand = argv[0];
+  if (!SUBCOMMANDS.has(subcommand)) {
+    process.stderr.write(JSON.stringify({
+      ok: false,
+      message: `unknown subcommand: ${subcommand}`,
+    }) + '\n');
+    process.exit(1);
+  }
+  const parsed = parseArgs(argv.slice(1));
+  try {
+    await dispatch(subcommand, parsed);
+    process.exit(0);
+  } catch (err) {
+    emitError(subcommand, err, 1);
+  }
+})().catch((err) => {
+  // Last-resort guard. dispatch() already routes via emitError; this only
+  // fires for bugs in argv parsing or the dispatch glue itself.
+  emitError('<bootstrap>', err, 1);
+});
