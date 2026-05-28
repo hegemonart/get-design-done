@@ -1,0 +1,32 @@
+# Phase 30 baseline — payload-on-disk persistence shape
+# Source: scripts/lib/issue-reporter/payload-assembly.cjs#assemble (Plan 30-02)
+# + scripts/lib/issue-reporter/draft-writer.cjs (Plan 30-06)
+# Draft is written to .design/issue-drafts/<timestamp>-<slug>.md
+
+# Expected draft file structure (Markdown):
+
+## Title
+[gdd:<command-name>] <pseudonymized one-line summary>
+
+## Body
+<bilingual disclaimer EN+RU — pseudonymization-not-anonymization, kill-switch reminder>
+
+### Error context
+<pseudonymized stack/error block>
+
+### Command
+<command-name> <pseudonymized args>
+
+### Environment
+node: <version>
+platform: <os.platform()>
+gdd: <package.json version>
+fingerprint: <sha8 of normalized stack>
+
+### Capability gap (optional, only if event provided)
+<exactly the 7 Phase 29 D-02 fields>
+
+## Labels
+gdd, report-issue, <triage tag if matched>
+
+# Trailing newline keeps the file POSIX-friendly.

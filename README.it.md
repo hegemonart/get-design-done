@@ -211,6 +211,16 @@ Oltre ai percorsi di installazione file-drop della Fase 28.7 sopra (predefiniti,
 
 Per i dettagli completi, vedere [README.md](README.md) (inglese, autorevole).
 
+### Telemetria Capability-Gap + Self-Authoring (v1.29.0+)
+
+Il loop riflettore ora traccia i segnali "capability lookup fallito" come telemetria di prima classe e — una volta che emergono abbastanza lacune ricorrenti — può abbozzare nuovi agent o skill come proposte da revisionare.
+
+**Stadio 0 — telemetria (rilasciato immediatamente).** Tre punti di lookup-fail emettono eventi tipizzati `capability_gap`: percorsi `skills/fast` senza match, percorsi `gdd-router` con intent non risolto, e il pattern-detection pass del riflettore. Visualizza con `gdd-events --type capability_gap`.
+
+**Stadio 1 — self-authoring (opt-in una volta superata la soglia).** Quando K=3 cluster stabili emergono su M=10 cicli di riflessione, `/gdd:apply-reflections` ti chiede una sola volta di abilitare lo Stadio 1. Il riflettore abbozza quindi artefatti incubatore in `.design/reflections/incubator/<slug>/` con frontmatter conforme Phase 28.5. Quattro azioni: `accept` / `reject` / `defer` / `edit`. Strettamente proposal-only — `/gdd:apply-reflections` rimane l'unico gate umano (Phase 11 SC-8).
+
+Scope-guard: l'authoring è limitato ad `agents/` e `skills/` — mai runtimes / transports / hooks. Per i dettagli completi, vedere [README.md](README.md) (inglese, autorevole).
+
 
 ## Come funziona
 
@@ -677,6 +687,21 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 ```
 
 Rimuove tutti i comandi, agenti, hook e impostazioni GDD preservando le altre configurazioni.
+
+---
+
+## Canale di feedback (da v1.30.0)
+
+GDD ora include un reporter di issue GitHub basato sul consenso esplicito tramite il comando slash `/gdd:report-issue`.
+
+- **Cosa fa.** Ti guida nella segnalazione di un problema o una lacuna funzionale, con un'anteprima del payload prima dell'invio. Local-first, basato sul consenso, senza modalità automatica.
+- **Pseudonimizzazione, NON anonimizzazione.** Gli identificatori diretti (nome utente, hostname, percorsi assoluti, identità Git, valori delle variabili d'ambiente, e-mail, indirizzi IP) vengono sostituiti con pseudonimi stabili — ma la correlazione interna è preservata affinché i maintainer possano fare debugging. I canali laterali (stile di scrittura, pattern di codice, fingerprint del repository) possono ancora re-identificare. Vedi il payload completo prima dell'invio e dai il consenso per ogni issue.
+- **Interruttore di emergenza.** Imposta `GDD_DISABLE_ISSUE_REPORTER=1` (env) o aggiungi `{ "issue_reporter": false }` a `.design/config.json` per fermare l'invio prima di qualsiasi chiamata di rete.
+- **Fallback in assenza di `gh`.** Se la CLI di GitHub non è installata, il payload viene scritto su disco in `.design/issue-drafts/` e l'URL del template di issue viene copiata negli appunti.
+
+Vedi [`README.md`](README.md) in inglese per i dettagli completi, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) per il catalogo delle regole (R1..R8) e [`reference/known-failure-modes.md`](reference/known-failure-modes.md) per i modi di fallimento noti.
+
+**Aggiornamento v1.30.5** — il catalogo ora contiene 22 voci (10 in v1.30.0) e un nuovo matcher fuzzy deterministico (`scripts/lib/failure-mode-matcher.cjs`) restituisce candidati top-N con punteggio di confidenza. Reflector + authority-watcher possono proporre nuove voci tramite `/gdd:apply-reflections` (6a classe di proposta) — strettamente solo proposta, ogni voce passa attraverso la revisione utente.
 
 ---
 

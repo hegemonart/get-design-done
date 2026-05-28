@@ -211,6 +211,16 @@ En complément des chemins d'installation par dépôt de fichiers de la Phase 28
 
 Pour les détails complets, voir [README.md](README.md) (anglais, autoritatif).
 
+### Télémétrie Capability-Gap + Auto-Authoring (v1.29.0+)
+
+La boucle réflectrice suit désormais les signaux "lookup de capacité échoué" comme télémétrie de première classe et — une fois que suffisamment de lacunes récurrentes émergent — peut esquisser de nouveaux agents ou skills comme propositions à votre review.
+
+**Phase 0 — télémétrie (livrée immédiatement).** Trois points de lookup-fail émettent désormais des événements typés `capability_gap` : chemins `skills/fast` sans match, chemins `gdd-router` à intent non-matché, et le pattern-detection pass du reflector. Affichage via `gdd-events --type capability_gap`.
+
+**Phase 1 — auto-authoring (opt-in une fois les données franchissant le seuil).** Lorsque K=3 clusters stables émergent sur M=10 cycles de réflexion, `/gdd:apply-reflections` vous propose une seule fois d'activer la Phase 1. Le reflector esquisse alors des artefacts incubateur sous `.design/reflections/incubator/<slug>/` avec frontmatter conforme Phase 28.5. Quatre actions : `accept` / `reject` / `defer` / `edit`. Strictement proposition-only — `/gdd:apply-reflections` reste l'unique gate humain (Phase 11 SC-8).
+
+Scope-guard : l'authoring est limité à `agents/` et `skills/` — jamais runtimes / transports / hooks. Pour les détails complets, voir [README.md](README.md) (anglais, autoritatif).
+
 
 ## Comment ça marche
 
@@ -677,6 +687,21 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 ```
 
 Supprime toutes les commandes, agents, hooks et paramètres GDD tout en préservant vos autres configurations.
+
+---
+
+## Canal de retour (v1.30.0+)
+
+GDD inclut désormais un rapporteur de problèmes GitHub avec consentement explicite via la commande slash `/gdd:report-issue`.
+
+- **Ce qu'il fait.** Vous guide pour signaler un bug ou une lacune fonctionnelle, avec aperçu de la charge utile avant soumission. Local-first, basé sur le consentement, pas de mode automatique.
+- **Pseudonymisation, PAS d'anonymisation.** Les identifiants directs (nom d'utilisateur, nom d'hôte, chemins absolus, identité Git, valeurs des variables d'environnement, e-mails, adresses IP) sont remplacés par des pseudonymes stables — mais la corrélation interne est préservée pour que les mainteneurs puissent déboguer. Les canaux latéraux (style d'écriture, motifs de code, empreintes de dépôt) peuvent encore ré-identifier. Vous voyez la charge utile complète avant l'envoi et donnez votre consentement par problème.
+- **Interrupteur d'arrêt.** Définissez `GDD_DISABLE_ISSUE_REPORTER=1` (env) ou ajoutez `{ "issue_reporter": false }` à `.design/config.json` pour arrêter la soumission avant tout appel réseau.
+- **Repli si `gh` absent.** Si la CLI GitHub n'est pas installée, la charge utile est écrite sur disque dans `.design/issue-drafts/` et l'URL du modèle d'issue est copiée dans le presse-papiers.
+
+Voir [`README.md`](README.md) en anglais pour les détails complets, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) pour le catalogue de règles (R1..R8) et [`reference/known-failure-modes.md`](reference/known-failure-modes.md) pour les modes d'échec connus.
+
+**Mise à jour v1.30.5** — le catalogue compte maintenant 22 entrées (10 dans v1.30.0) et un nouveau matcher flou déterministe (`scripts/lib/failure-mode-matcher.cjs`) renvoie des candidats top-N avec score de confiance. Le réflecteur + authority-watcher peuvent proposer de nouvelles entrées via `/gdd:apply-reflections` (6e classe de proposition) — strictement propositionnel, chaque entrée passe par la revue utilisateur.
 
 ---
 

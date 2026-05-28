@@ -166,9 +166,9 @@ async function withProjectRoot(root, fn) {
 // Invariant tests
 // ---------------------------------------------------------------------------
 
-test('27.7-02: TOOL_COUNT === 12', async () => {
-  const idx = await loadTool('index'.replace('index', 'index'));
-});
+// (The stub `27.7-02: TOOL_COUNT === 12` test was deleted — it was a
+// no-op left over from refactoring with no assertions. The real check
+// lives in the next test which asserts m.TOOL_COUNT === 12 explicitly.)
 
 test('27.7-02: tools/index exports TOOL_COUNT === 12', async () => {
   const file = path.join(TOOLS_DIR, 'index.ts');
@@ -437,7 +437,8 @@ test('27.7-02: gdd_health — returns 4 checks with valid statuses', async () =>
     const mod = await loadTool('gdd_health');
     const res = await mod.handle({});
     assert.equal(res.success, true);
-    assert.equal(res.data.checks.length, 4);
+    // Plan 30-06 added 5th check (issue_reporter); was 4 in Plan 27.7-02.
+    assert.equal(res.data.checks.length, 5);
     for (const c of res.data.checks) {
       assert.ok(['ok', 'warn', 'fail'].includes(c.status));
     }

@@ -9,6 +9,7 @@ audit-scoring: reference/audit-scoring.md
 authority-feeds: reference/authority-feeds.md
 bandit-integration: reference/bandit-integration.md
 brand-voice: reference/brand-voice.md
+capability-gap-stage-gate: reference/capability-gap-stage-gate.md
 checklists: reference/checklists.md
 codex-tools: reference/codex-tools.md
 color-theory: reference/color-theory.md
@@ -76,6 +77,7 @@ image-optimization: reference/image-optimization.md
 information-architecture: reference/information-architecture.md
 insight-line.schema: reference/schemas/insight-line.schema.json
 intel-schema: reference/intel-schema.md
+known-failure-modes: reference/known-failure-modes.md
 mcp-budget.default: reference/mcp-budget.default.json
 mcp-gdd-tools-schema: reference/schemas/mcp-gdd-tools.schema.json
 meta-rules: reference/meta-rules.md
@@ -115,6 +117,7 @@ priority-matrix: reference/priority-matrix.md
 project-skills-guide: reference/project-skills-guide.md
 proportion-systems: reference/proportion-systems.md
 protected-paths.default: reference/protected-paths.default.json
+pseudonymization-rules: reference/pseudonymization-rules.md
 retrieval-contract: reference/retrieval-contract.md
 review-format: reference/review-format.md
 rtl-cjk-cultural: reference/rtl-cjk-cultural.md

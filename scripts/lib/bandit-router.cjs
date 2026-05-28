@@ -26,6 +26,18 @@
  *     neutral — the same TIER_PRIOR shape, on the assumption that we
  *     have no prior to favour any delegate over local; data drives.
  *
+ * Bootstrap discipline (Phase 29 Plan 06 / CONTEXT D-04):
+ *   - Default `prior_class` (omitted or 'default'): existing informed
+ *     TIER_PRIOR bootstrap (Phase 23.5) — byte-for-byte unchanged.
+ *   - `prior_class: 'promoted_incubator'`: Beta(2, 8) bootstrap for
+ *     arms registered when `/gdd:apply-reflections accept` promotes
+ *     an incubator draft. The conservative prior (posterior mean 0.2)
+ *     suppresses preferential selection until ~8-10 successful pulls
+ *     accumulate. The bandit-fairness gate IS the promotion staging
+ *     mechanism (D-04: no two-step staging/ratify split).
+ *   - The `prior_class` value is persisted on the arm so subsequent
+ *     reads + decay calculations preserve it (forward-compat).
+ *
  * Atomic .tmp + rename. Discounted Thompson via per-arm time-decay
  * factor `rho^days_since_last_use` applied at sample time, not stored.
  *
@@ -58,6 +70,14 @@ const TIER_PRIOR = Object.freeze({
 
 const PRIOR_STRENGTH = 10;
 const DEFAULT_TIERS = Object.freeze(['haiku', 'sonnet', 'opus']);
+
+// Phase 29 Plan 06 / CONTEXT D-04. Conservative prior for arms
+// bootstrapped via `/gdd:apply-reflections accept` (incubator → live
+// agent/skill). Beta(2, 8) — posterior mean 0.2 — suppresses
+// preferential selection until ~8-10 successful pulls accumulate.
+// The bandit-fairness gate IS the staging mechanism (D-04: no
+// two-step staging/ratify split).
+const PROMOTED_INCUBATOR_PRIOR = Object.freeze({ alpha: 2, beta: 8 });
 
 // Plan 27-07 / D-08. Delegate context dimension. 'none' = local Anthropic
 // call; the other 5 are peer-CLI delegations via ACP/ASP. Adding this as
@@ -158,7 +178,26 @@ function reset(opts = {}) {
   return { deleted: existed, path: p, reason: opts.reason };
 }
 
-function priorFor(tier, strength) {
+/**
+ * Compute the bootstrap prior for a freshly-created arm.
+ *
+ * @param {string} tier
+ * @param {number} strength
+ * @param {string} [prior_class] — 'default' (existing behaviour, omittable)
+ *   or 'promoted_incubator' (Beta(2,8) bootstrap per Phase 29 Plan 06 /
+ *   CONTEXT D-04). The promoted-incubator class is tier-independent —
+ *   the conservative suppression applies uniformly across haiku/sonnet/
+ *   opus until evidence accumulates.
+ * @returns {{alpha: number, beta: number}}
+ */
+function priorFor(tier, strength, prior_class) {
+  if (prior_class === 'promoted_incubator') {
+    return {
+      alpha: PROMOTED_INCUBATOR_PRIOR.alpha,
+      beta: PROMOTED_INCUBATOR_PRIOR.beta,
+    };
+  }
+  // Default-path (Phase 23.5) — byte-for-byte unchanged.
   const prior = TIER_PRIOR[tier];
   if (prior === undefined) {
     return { alpha: strength / 2, beta: strength / 2 };
@@ -207,11 +246,17 @@ function findArm(arms, agent, bin, tier, delegate) {
  * 23.5 prior — no migration needed because the legacy slice and the
  * 'none' slice are independent contexts) and for the 5 peer delegates
  * (each starts neutral with the same TIER_PRIOR shape; data drives).
+ *
+ * For Phase 29 Plan 06: when `prior_class === 'promoted_incubator'`, the
+ * bootstrap prior is Beta(2, 8) regardless of tier/delegate (CONTEXT D-04).
+ * The `prior_class` is persisted on the arm so re-reads + decay preserve it.
+ * If omitted or 'default', no `prior_class` field is added (clean
+ * round-trip with existing posterior files — non-breaking change).
  */
-function ensureArm(posterior, agent, bin, tier, strength, delegate) {
+function ensureArm(posterior, agent, bin, tier, strength, delegate, prior_class) {
   let arm = findArm(posterior.arms, agent, bin, tier, delegate);
   if (arm) return arm;
-  const { alpha, beta } = priorFor(tier, strength);
+  const { alpha, beta } = priorFor(tier, strength, prior_class);
   arm = {
     agent,
     bin,
@@ -223,6 +268,9 @@ function ensureArm(posterior, agent, bin, tier, strength, delegate) {
   };
   if (delegate !== undefined) {
     arm.delegate = delegate;
+  }
+  if (prior_class !== undefined && prior_class !== 'default') {
+    arm.prior_class = prior_class;
   }
   posterior.arms.push(arm);
   return arm;
@@ -312,7 +360,10 @@ function decayArm(arm, opts = {}) {
  * counters. Bandit pull does NOT update the success/fail counters —
  * that happens in `update()` once the outcome is known.
  *
- * @param {{agent: string, bin: string, tiers?: string[], baseDir?: string, posteriorPath?: string, decay?: number, strength?: number, now?: Date}} input
+ * @param {{agent: string, bin: string, tiers?: string[], baseDir?: string, posteriorPath?: string, decay?: number, strength?: number, now?: Date, prior_class?: string}} input
+ *   `prior_class` (optional, Phase 29 Plan 06 / D-04): 'promoted_incubator'
+ *   bootstraps fresh arms with Beta(2,8). Omitting it preserves Phase 23.5
+ *   informed-prior behaviour (non-breaking).
  * @returns {{tier: string, samples: Record<string, number>, posteriorPath: string}}
  */
 function pull(input) {
@@ -332,7 +383,7 @@ function pull(input) {
   let bestTier = tiers[0];
   let bestSample = -1;
   for (const tier of tiers) {
-    const arm = ensureArm(posterior, input.agent, input.bin, tier, strength);
+    const arm = ensureArm(posterior, input.agent, input.bin, tier, strength, undefined, input.prior_class);
     const decayed = decayArm(arm, { decay: input.decay, now, strength });
     const s = sampleBeta(decayed.alpha, decayed.beta);
     samples[tier] = s;
@@ -342,7 +393,7 @@ function pull(input) {
     }
   }
   // Bump counters on the chosen arm.
-  const chosen = ensureArm(posterior, input.agent, input.bin, bestTier, strength);
+  const chosen = ensureArm(posterior, input.agent, input.bin, bestTier, strength, undefined, input.prior_class);
   chosen.last_used = now.toISOString();
   chosen.count += 1;
   const written = savePosterior(posterior, input);
@@ -353,7 +404,11 @@ function pull(input) {
  * Update the posterior with a reward signal. Reward is applied as a
  * Bernoulli observation: success → α += reward, β += (1 - reward).
  *
- * @param {{agent: string, bin: string, tier: string, reward: number, baseDir?: string, posteriorPath?: string, strength?: number}} input
+ * @param {{agent: string, bin: string, tier: string, reward: number, baseDir?: string, posteriorPath?: string, strength?: number, prior_class?: string}} input
+ *   `prior_class` (optional, Phase 29 Plan 06 / D-04): 'promoted_incubator'
+ *   bootstraps fresh arms with Beta(2,8). Omitting preserves Phase 23.5
+ *   informed-prior behaviour (non-breaking). The reward math is unchanged
+ *   — `prior_class` only affects bootstrap, not the Bernoulli update.
  * @returns {{alpha: number, beta: number, posteriorPath: string}}
  */
 function update(input) {
@@ -369,7 +424,15 @@ function update(input) {
   // Reward must be in [0, 1].
   const r = Math.min(1, Math.max(0, input.reward));
   const posterior = loadPosterior(input);
-  const arm = ensureArm(posterior, input.agent, input.bin, input.tier, input.strength ?? PRIOR_STRENGTH);
+  const arm = ensureArm(
+    posterior,
+    input.agent,
+    input.bin,
+    input.tier,
+    input.strength ?? PRIOR_STRENGTH,
+    undefined,
+    input.prior_class,
+  );
   arm.alpha += r;
   arm.beta += 1 - r;
   const p = savePosterior(posterior, input);
@@ -401,7 +464,11 @@ function update(input) {
  *   decay?: number,
  *   strength?: number,
  *   now?: Date,
+ *   prior_class?: string,
  * }} input
+ *   `prior_class` (optional, Phase 29 Plan 06 / D-04): 'promoted_incubator'
+ *   bootstraps fresh arms with Beta(2,8). Omitting preserves Phase 23.5 +
+ *   Plan 27-07 behaviour (non-breaking).
  * @returns {{
  *   tier: string,
  *   delegate: string,
@@ -435,7 +502,15 @@ function pullWithDelegate(input) {
   for (const delegate of delegates) {
     samples[delegate] = {};
     for (const tier of tiers) {
-      const arm = ensureArm(posterior, input.agent, input.bin, tier, strength, delegate);
+      const arm = ensureArm(
+        posterior,
+        input.agent,
+        input.bin,
+        tier,
+        strength,
+        delegate,
+        input.prior_class,
+      );
       const decayed = decayArm(arm, { decay: input.decay, now, strength });
       const s = sampleBeta(decayed.alpha, decayed.beta);
       samples[delegate][tier] = s;
@@ -453,6 +528,7 @@ function pullWithDelegate(input) {
     bestTier,
     strength,
     bestDelegate,
+    input.prior_class,
   );
   chosen.last_used = now.toISOString();
   chosen.count += 1;
@@ -482,7 +558,12 @@ function pullWithDelegate(input) {
  *   baseDir?: string,
  *   posteriorPath?: string,
  *   strength?: number,
+ *   prior_class?: string,
  * }} input
+ *   `prior_class` (optional, Phase 29 Plan 06 / D-04): 'promoted_incubator'
+ *   bootstraps fresh arms with Beta(2,8). Omitting preserves Plan 27-07
+ *   behaviour (non-breaking). The reward math is unchanged — `prior_class`
+ *   only affects bootstrap, not the Bernoulli update.
  * @returns {{alpha: number, beta: number, posteriorPath: string}}
  */
 function updateWithDelegate(input) {
@@ -506,6 +587,7 @@ function updateWithDelegate(input) {
     input.tier,
     input.strength ?? PRIOR_STRENGTH,
     input.delegate,
+    input.prior_class,
   );
   arm.alpha += r;
   arm.beta += 1 - r;
@@ -569,6 +651,7 @@ module.exports = {
   DELEGATE_NONE,
   TIER_PRIOR,
   PRIOR_STRENGTH,
+  PROMOTED_INCUBATOR_PRIOR,
   TOUCHES_BINS,
   DEFAULT_POSTERIOR_PATH,
   SCHEMA_VERSION,

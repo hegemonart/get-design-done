@@ -211,6 +211,16 @@ Zusätzlich zu den Phase-28.7-Datei-Installationspfaden oben (Standard, weiterhi
 
 Vollständige Details siehe [README.md](README.md) (Englisch, autoritativ).
 
+### Capability-Gap-Telemetrie + Self-Authoring (v1.29.0+)
+
+Die Reflector-Schleife verfolgt "Capability-Lookup fehlgeschlagen"-Signale jetzt als erstklassige Telemetrie und kann — sobald genügend wiederkehrende Lücken auftauchen — neue Agents oder Skills als Vorschläge zur Überprüfung entwerfen.
+
+**Stufe 0 — Telemetrie (sofort verfügbar).** Drei Lookup-Fail-Punkte emittieren typisierte `capability_gap`-Events: `skills/fast` No-Skill-Match-Pfade, `gdd-router` Unmatched-Intent-Pfade und die Pattern-Detection-Pass des Reflectors. Anzeigen mit `gdd-events --type capability_gap`.
+
+**Stufe 1 — Self-Authoring (Opt-in, sobald Daten das Gate überschreiten).** Wenn K=3 stabile Cluster über M=10 Reflexions-Zyklen auftauchen, fordert `/gdd:apply-reflections` Sie einmalig auf, Stufe 1 zu aktivieren. Der Reflector entwirft dann Inkubator-Artefakte unter `.design/reflections/incubator/<slug>/` mit Phase-28.5-konformen Frontmatter. Vier Aktionen: `accept` / `reject` / `defer` / `edit`. Strict proposal-only — `/gdd:apply-reflections` bleibt der einzige menschliche Gate (Phase 11 SC-8).
+
+Scope-Guard: Authoring beschränkt sich auf `agents/` und `skills/` — niemals Runtimes / Transports / Hooks. Vollständige Details siehe [README.md](README.md) (Englisch, autoritativ).
+
 
 ## Wie es funktioniert
 
@@ -677,6 +687,21 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 ```
 
 Entfernt alle GDD-Befehle, Agenten, Hooks und Einstellungen, ohne deine anderen Konfigurationen zu beeinflussen.
+
+---
+
+## Feedback-Kanal (ab v1.30.0)
+
+GDD enthält jetzt einen einwilligungsbasierten GitHub-Issue-Reporter über den Slash-Befehl `/gdd:report-issue`.
+
+- **Was er tut.** Führt Sie durch das Melden eines Fehlers oder einer Funktionslücke, mit Vorschau der Nutzlast vor dem Absenden. Lokal-first, einwilligungsbasiert, kein Auto-Modus.
+- **Pseudonymisierung, KEINE Anonymisierung.** Direkte Identifikatoren (Benutzername, Hostname, absolute Pfade, Git-Identität, Umgebungsvariablen-Werte, E-Mails, IP-Adressen) werden durch stabile Pseudonyme ersetzt — aber die interne Korrelation bleibt erhalten, damit Maintainer debuggen können. Seitenkanäle (Schreibstil, Code-Muster, Repo-Fingerabdrücke) können weiterhin re-identifizieren. Sie sehen die vollständige Nutzlast vor dem Absenden und stimmen pro Issue ausdrücklich zu.
+- **Notausschalter.** Setzen Sie `GDD_DISABLE_ISSUE_REPORTER=1` (Umgebung) oder fügen Sie `{ "issue_reporter": false }` in `.design/config.json` hinzu, um die Übermittlung vor jedem Netzwerkaufruf zu stoppen.
+- **`gh`-Fallback.** Falls die GitHub-CLI nicht installiert ist, wird die Nutzlast auf die Festplatte unter `.design/issue-drafts/` geschrieben und die Issue-Template-URL in die Zwischenablage kopiert.
+
+Siehe die englische [`README.md`](README.md) für die vollständigen Details, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) für den Regelkatalog (R1..R8) und [`reference/known-failure-modes.md`](reference/known-failure-modes.md) für bekannte Fehlermodi.
+
+**v1.30.5-Update** — der Katalog umfasst jetzt 22 Einträge (vorher 10 in v1.30.0) und ein neues deterministisches Fuzzy-Matching-Modul (`scripts/lib/failure-mode-matcher.cjs`) liefert Top-N-Kandidaten mit Konfidenzwerten. Reflector + Authority-Watcher können neue Einträge über `/gdd:apply-reflections` vorschlagen (6. Vorschlagsklasse) — strikt nur Vorschläge, jeder Eintrag durchläuft die Nutzerprüfung.
 
 ---
 

@@ -108,14 +108,16 @@ describe('Phase 28.8-Z1: CHANGELOG + OFF_CADENCE registration', () => {
     assert.match(semver, re, `semver-compare.test.cjs missing OFF_CADENCE_VERSIONS.add('${VERSION}')`);
   });
 
-  test('28.8-Z1: CHANGELOG.md has current-version block at top (within first 50 lines)', () => {
-    // Forward-prop friendly: match the current package.json VERSION block at top
-    // with any ISO date. Phase 30.6 (2026-05-28) relaxed the hardcoded 2026-05-19
-    // date in this assertion to the 28.7-style "version block within head N lines"
-    // pattern, so each subsequent off-cadence ship doesn't need to revisit this.
-    const head50 = read('CHANGELOG.md').split(/\r?\n/).slice(0, 50).join('\n');
-    const re = new RegExp(`^## \\[${escapeRegExp(VERSION)}\\]\\s+-\\s+\\d{4}-\\d{2}-\\d{2}`, 'm');
-    assert.match(head50, re, `CHANGELOG head 50 lines missing ## [${VERSION}] - <ISO date> block`);
+  test('28.8-Z1: CHANGELOG.md has ## [1.28.8] - 2026-05-19 historical block', () => {
+    // Phase 30 lesson: this baseline pins to the v1.28.8 historical entry
+    // (literal version + date), NOT to the current top-of-file. After v1.30.0
+    // ship, the v1.28.8 block is no longer at the top — the test was
+    // originally written for a snapshot moment when v1.28.8 was the head.
+    // Rewriting to a literal historical assertion keeps it green across
+    // future bumps without losing the lockdown intent.
+    const chg = read('CHANGELOG.md');
+    const re = /^## \[1\.28\.8\]\s+-\s+2026-05-19/m;
+    assert.match(chg, re, 'CHANGELOG missing ## [1.28.8] - 2026-05-19 historical block');
   });
 });
 

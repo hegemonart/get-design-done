@@ -241,6 +241,20 @@ Beyond the Phase 28.7 file-drop install paths above (which remain the default an
 
 Tier-1 file-drop paths above and Tier-2 channels here are **additive opt-in** — both work independently per Phase 28.8 D-05 backward-compat discipline.
 
+### Capability-Gap Telemetry + Self-Authoring (v1.29.0+)
+
+The reflector loop now tracks "capability lookup failed" signals as first-class telemetry and — once enough recurring gaps surface — can draft new agents or skills as proposals for your review.
+
+**Stage 0 — telemetry (ships immediately).**
+Three lookup-fail points now emit typed `capability_gap` events: `skills/fast` no-skill-match paths, `gdd-router` unmatched-intent paths, and the reflector's pattern-detection pass (recurring `Touches:` clusters without a dedicated owner). The reflector aggregates per-cycle gap events into a `## Capability gaps observed` section in your reflection notes. View with `gdd-events --type capability_gap`. No authoring on Stage 0 — this just surfaces signal.
+
+**Stage 1 — self-authoring (opt-in once data crosses the gate).**
+When K=3 stable clusters surface across M=10 reflection cycles (defaults in `reference/capability-gap-stage-gate.md`), `/gdd:apply-reflections` prompts you once to enable Stage 1. With Stage 1 on, the reflector drafts incubator artifacts at `.design/reflections/incubator/<slug>/` — `SKILL.md` or `agents/<slug>.md` with full Phase 28.5-compliant frontmatter, originating events, computed usage frequency, and a suggested integration point. Drafts surface in `/gdd:apply-reflections` as a 5th proposal class with four actions: `accept` (promotes + registers), `reject`, `defer`, `edit`. Promoted arms enter the bandit with a conservative `Beta(2, 8)` prior so they don't get preferential selection until evidence accumulates. Drafts not promoted/refreshed within 30 days auto-archive.
+
+**Scope guard.** Authoring is limited to `agents/` and `skills/` only — never runtimes, transports, connections, hooks, or CI workflows. `scripts/validate-incubator-scope.cjs` blocks promotion attempts outside scope.
+
+**Discipline preserved.** Reflector authors nothing that auto-ships. `/gdd:apply-reflections` remains the single human gate (Phase 11 SC-8). Stage 1 never auto-flips — user opts in.
+
 
 ## How It Works
 
@@ -740,6 +754,22 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 ```
 
 This removes all GDD commands, agents, hooks, and settings while preserving other configurations.
+
+---
+
+## Feedback Channel (v1.30.0+)
+
+GDD now ships a consent-first GitHub issue reporter via the `/gdd:report-issue` slash command.
+
+- **What it does.** Walks you through reporting an issue or a capability gap, with a payload preview before submission. Local-first, consent-gated, no auto-mode. Triages against `reference/known-failure-modes.md` first — many failures resolve without filing.
+- **Pseudonymization, NOT anonymization.** Direct identifiers (your username, hostname, absolute paths, git identity, env-var values, emails, IPs) are replaced with stable pseudonyms — but internal correlation is preserved so maintainers can debug. Side-channel data (writing style, code patterns, repo fingerprints) may still re-identify. You see the full payload before submission and explicitly consent per-issue.
+- **Kill-switch.** Set `GDD_DISABLE_ISSUE_REPORTER=1` (env) or add `{ "issue_reporter": false }` to `.design/config.json` to halt submission before any network call. `gsd-health` surfaces the disable line.
+- **Hardcoded destination.** The reporter cannot be redirected at runtime; the destination repo is a frozen constant in `scripts/lib/issue-reporter/destination.cjs`.
+- **`gh`-absent fallback.** If the GitHub CLI isn't installed, the payload is written to `.design/issue-drafts/` and the issue-template URL is copied to your clipboard (xclip / pbcopy / clip).
+
+See [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) for the R1..R8 rule catalog and [`reference/known-failure-modes.md`](reference/known-failure-modes.md) for known anti-patterns the reporter detects.
+
+**v1.30.5 update** — the catalogue now ships 22 entries (was 10 in v1.30.0), and a new deterministic fuzzy matcher (`scripts/lib/failure-mode-matcher.cjs`, top-N + threshold + confidence) returns ranked candidates for ambiguous symptoms. The reflector + authority-watcher can propose new entries via `/gdd:apply-reflections` (6th proposal class) — strictly proposal-only, every entry passes through user review.
 
 ---
 

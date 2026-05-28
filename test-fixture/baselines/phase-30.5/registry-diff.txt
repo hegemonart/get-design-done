@@ -1,0 +1,16 @@
+# Phase 30.5 baseline — registry-diff vs Phase 30
+# Source: reference/registry.json (post-Phase-30.5-03 close state)
+# Compared against test-fixture/baselines/phase-30/registry-diff.txt
+#
+# New registry entries vs Phase 30: NONE
+#
+# Phase 30.5 ships additive code surfaces (failure-mode-matcher.cjs,
+# reflector-kfm-proposer.cjs, authority-watcher/index.cjs) but does NOT
+# add any new `reference/*` documents that warrant registry entries.
+# The catalogue at `reference/known-failure-modes.md` (registered by
+# Phase 30) gains additional `KFM-NNN` entries in-place — same registry
+# row, larger content body.
+#
+# Future `kfm-candidate` accept actions WILL append new registry entries
+# with `origin: 'incubator-kfm'` (Plan 30.5-03 Task 1 step 5), but those
+# are user-driven runtime additions, not part of the v1.30.5 baseline.

@@ -1,0 +1,20 @@
+# Phase 30.5 baseline — fuzzy-matcher accuracy snapshot
+# Source: scripts/lib/failure-mode-matcher.cjs (Plan 30.5-02)
+# Catalogue: tests/fixtures/failure-mode-matcher/catalogue-full.md
+# Threshold 0.4 (D-07); topN 3 (D-08).
+
+# fixture_id | expected_modeId | top1_modeId | top1_confidence | hit
+# -----------+-----------------+-------------+-----------------+----
+fx-01 | FIX-101 | FIX-101 | 0.522 | YES
+fx-02 | FIX-102 | FIX-102 | 0.227 | YES
+fx-03 | FIX-103 | FIX-103 | 0.311 | YES
+fx-04 | FIX-104 | FIX-104 | 0.446 | YES
+fx-05 | FIX-105 | FIX-105 | 0.408 | YES
+fx-06 | FIX-101 | FIX-101 | 0.400 | YES
+fx-07 | FIX-102 | FIX-102 | 0.529 | YES
+fx-08 | FIX-103 | FIX-103 | 0.441 | YES
+fx-09 | FIX-104 | FIX-104 | 0.629 | YES
+fx-10 | FIX-105 | FIX-105 | 0.408 | YES
+
+# top-1 hit rate: 10/10 (100%)
+# min acceptable: 7/10 (70%) — below this, the fuzzy matcher needs catalogue tuning

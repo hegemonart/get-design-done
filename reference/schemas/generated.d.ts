@@ -102,9 +102,11 @@ export type ConfigSchema = DesignConfigJson;
 /**
  * One line of .design/telemetry/events.jsonl — the append-only telemetry stream produced by Plan 20-06. Each event is a single JSON object followed by a newline. See .planning/phases/20-gdd-sdk-foundation/20-06-PLAN.md.
  */
-export interface Event {
+export type Event = {
+  [k: string]: unknown;
+} & {
   /**
-   * Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error.
+   * Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap.
    */
   type: string;
   /**
@@ -124,7 +126,7 @@ export interface Event {
    */
   cycle?: string;
   /**
-   * Event-type-specific payload. Opaque at the envelope level.
+   * Event-type-specific payload. Opaque at the envelope level. When type === 'capability_gap', the payload is narrowed by the conditional schema in allOf[0] to the 7-field CapabilityGapPayload (Phase 29 D-02).
    */
   payload: {};
   /**
@@ -139,7 +141,7 @@ export interface Event {
    * Writer-set flag indicating the payload exceeded maxLineBytes and has been replaced by a placeholder.
    */
   _truncated?: boolean;
-}
+};
 
 export type EventsSchema = Event;
 
@@ -168,6 +170,39 @@ export interface HookGroup {
 }
 
 export type HooksSchema = ClaudeHooksJson;
+
+// ---- insight-line.schema.json ----
+/**
+ * One JSONL line appended by an agent to .design/intel/insights.jsonl at run-end.
+ */
+export interface AgentInsightLine {
+  /**
+   * ISO 8601 timestamp of the agent run completion.
+   */
+  ts: string;
+  /**
+   * Agent name matching the frontmatter 'name' field (e.g. 'design-planner').
+   */
+  agent: string;
+  /**
+   * Active cycle ID from STATE.md (e.g. 'cycle-1'). Empty string if not in a cycle.
+   */
+  cycle: string;
+  /**
+   * Pipeline stage from STATE.md (e.g. 'plan', 'design', 'verify').
+   */
+  stage: string;
+  /**
+   * One declarative sentence: what this agent produced or learned this run.
+   */
+  one_line_insight: string;
+  /**
+   * Relative paths of files written during this run. Empty array for read-only agents.
+   */
+  artifacts_written: string[];
+}
+
+export type InsightLineSchema = AgentInsightLine;
 
 // ---- intel.schema.json ----
 /**
@@ -333,6 +368,22 @@ export interface ClaudeMarketplaceJson {
 
 export type MarketplaceSchema = ClaudeMarketplaceJson;
 
+// ---- mcp-budget.schema.json ----
+/**
+ * Thresholds for the MCP circuit-breaker hook. Applies to use_figma / use_paper / use_pencil and any tracked_tools entry the user extends.
+ */
+export interface MCPBudget {
+  $schema?: string;
+  version: 1;
+  description?: string;
+  max_calls_per_task: number;
+  max_consecutive_timeouts: number;
+  reset_on_success?: boolean;
+  tracked_tools?: string[];
+}
+
+export type McpBudgetSchema = MCPBudget;
+
 // ---- mcp-gdd-state-tools.schema.json ----
 /**
  * Combined manifest of all 11 gdd-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under scripts/mcp-servers/gdd-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.
@@ -367,6 +418,144 @@ export interface ToolSchemaEntry {
 
 export type McpGddStateToolsSchema = McpGddStateTools;
 
+// ---- mcp-gdd-tools.schema.json ----
+/**
+ * Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under scripts/mcp-servers/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).
+ */
+export interface McpGddTools {
+  /**
+   * Per-tool input/output schemas keyed by tool name. Exactly 12 entries (D-03 hard cap).
+   */
+  tools?: {
+    gdd_status?: {
+      input: {};
+      output: {
+        phase: string | null;
+        branch: string | null;
+        last_decisions: {}[];
+        last_completed_plans: {}[];
+        blocker_count: number;
+      };
+    };
+    gdd_phase_current?: {
+      input: {};
+      output: {
+        phase: string | null;
+        stage: string | null;
+        task_progress: string | null;
+        status: string | null;
+      };
+    };
+    gdd_phases_list?: {
+      input: {};
+      output: {
+        phases: {
+          number: string;
+          name: string;
+          version: string;
+          checkbox_status: 'shipped' | 'planned' | 'unknown';
+        }[];
+      };
+    };
+    gdd_plans_list?: {
+      input: {
+        phase?: string;
+      };
+      output: {
+        phase: string | null;
+        plans: {
+          id: string;
+          name: string;
+          status: string;
+        }[];
+      };
+    };
+    gdd_decisions_list?: {
+      input: {
+        status?: 'locked' | 'tentative';
+      };
+      output: {
+        decisions: {
+          id: string;
+          text: string;
+          status: string;
+        }[];
+      };
+    };
+    gdd_intel_get?: {
+      input: {
+        slice_id: string;
+        shape?: string[];
+      };
+      output: {
+        slice_id: string;
+        data: {};
+      };
+    };
+    gdd_telemetry_query?: {
+      input: {
+        type?: string;
+        since?: string;
+        limit?: number;
+      };
+      output: {
+        events: {}[];
+      };
+    };
+    gdd_cycle_recap?: {
+      input: {
+        since_snapshot?: string;
+      };
+      output: {
+        since: string | null;
+        diff: {
+          state_sections: string[];
+          decisions_delta: number;
+          completed_plans_delta: number;
+        };
+      };
+    };
+    gdd_reflections_latest?: {
+      input: {};
+      output: {
+        cycle: string | null;
+        path: string | null;
+        content_excerpt: string;
+      };
+    };
+    gdd_learnings_digest?: {
+      input: {
+        cycles?: number;
+      };
+      output: {
+        digest: string;
+        cycles_included: number;
+      };
+    };
+    gdd_events_tail?: {
+      input: {
+        type?: string;
+        limit?: number;
+      };
+      output: {
+        events: {}[];
+      };
+    };
+    gdd_health?: {
+      input: {};
+      output: {
+        checks: {
+          name: string;
+          status: 'ok' | 'warn' | 'fail';
+          detail: string;
+        }[];
+      };
+    };
+  };
+}
+
+export type McpGddToolsSchema = McpGddTools;
+
 // ---- plugin.schema.json ----
 /**
  * Shape of .claude-plugin/plugin.json — the plugin manifest consumed by Claude Code.
@@ -392,6 +581,22 @@ export interface ClaudePluginJson {
 
 export type PluginSchema = ClaudePluginJson;
 
+// ---- protected-paths.schema.json ----
+/**
+ * Glob list describing paths the plugin refuses to Edit/Write or mutate via destructive Bash. User additions MERGE with this default list; users cannot reduce the default set.
+ */
+export interface ProtectedPaths {
+  $schema?: string;
+  version: 1;
+  description?: string;
+  /**
+   * @minItems 1
+   */
+  protected_paths: [string, ...string[]];
+}
+
+export type ProtectedPathsSchema = ProtectedPaths;
+
 // ---- rate-limits.schema.json ----
 /**
  * Shape of .design/rate-limits/<provider>.json produced by scripts/lib/rate-guard.cjs. One file per provider (anthropic, openai, figma, ...) — header ingestion overwrites atomically via tmp+rename under scripts/lib/lockfile.cjs protection. See .planning/phases/20-gdd-sdk-foundation/20-14-PLAN.md §Task 2.
@@ -416,4 +621,114 @@ export interface RateLimits {
 }
 
 export type RateLimitsSchema = RateLimits;
+
+// ---- runtime-models.schema.json ----
+/**
+ * Parsed shape of reference/runtime-models.md — the per-runtime tier→model adapter source-of-truth shipped in Phase 26 (D-01..D-03). Consumed by scripts/lib/install/parse-runtime-models.cjs at install time and scripts/lib/tier-resolver.cjs at runtime. Strict enums catch typos at install time, not at runtime. Schema versioned via $schema_version for forward-compat (D-03).
+ */
+export interface RuntimeModelsTierToModelMap {
+  /**
+   * Top-level schema version (D-03). Bump on breaking changes; downstream consumers must check before parsing.
+   */
+  $schema_version: 1;
+  /**
+   * @minItems 1
+   */
+  runtimes: [RuntimeEntry, ...RuntimeEntry[]];
+}
+export interface RuntimeEntry {
+  /**
+   * Runtime ID. MUST match one of the 14 runtime IDs exported from scripts/lib/install/runtimes.cjs (Phase 24 D-02 lock).
+   */
+  id:
+    | 'claude'
+    | 'codex'
+    | 'gemini'
+    | 'qwen'
+    | 'kilo'
+    | 'copilot'
+    | 'cursor'
+    | 'windsurf'
+    | 'antigravity'
+    | 'augment'
+    | 'trae'
+    | 'codebuddy'
+    | 'cline'
+    | 'opencode';
+  /**
+   * When true, the runtime exposes a single model that maps to all three tiers (D-02). Downstream consumers (router, budget-enforcer) may render a UI affordance noting tier-selection has no cost effect for this runtime.
+   */
+  single_tier?: boolean;
+  /**
+   * Map of canonical Anthropic tier names (D-03) to the runtime's concrete model identifier. All three keys are required even when single_tier=true (assign the same model three times).
+   */
+  tier_to_model: {
+    opus: ModelRow;
+    sonnet: ModelRow;
+    haiku: ModelRow;
+  };
+  /**
+   * Map of runtime-neutral reasoning-class names (D-10 alias) to the runtime's concrete model identifier. Equivalence with tier_to_model is enforced by Phase 26-08 frontmatter validator (high↔opus, medium↔sonnet, low↔haiku).
+   */
+  reasoning_class_to_model: {
+    high: ModelRow;
+    medium: ModelRow;
+    low: ModelRow;
+  };
+  /**
+   * Source citations for this runtime's tier map. At minimum one entry pointing at the runtime-author docs URL plus retrieval timestamp + last-validated cycle. Phase 13.2 authority-watcher uses this to flag drift.
+   *
+   * @minItems 1
+   */
+  provenance: [
+    {
+      /**
+       * URL of the runtime-author documentation that authoritatively names the tier→model mapping. Placeholder URLs prefixed with `<TODO: confirm at ...>` are acceptable for v1.26 ship and flag the row as researcher-fill-needed.
+       */
+      source_url: string;
+      /**
+       * ISO 8601 timestamp when the source URL was retrieved.
+       */
+      retrieved_at: string;
+      /**
+       * GDD cycle ID that last validated this row (e.g. '2026-04-29-v1.26').
+       */
+      last_validated_cycle: string;
+      /**
+       * Optional inline note (e.g. 'TODO: confirm at runtime-author docs', 'single-tier runtime — same model x3').
+       */
+      note?: string;
+    },
+    ...{
+      /**
+       * URL of the runtime-author documentation that authoritatively names the tier→model mapping. Placeholder URLs prefixed with `<TODO: confirm at ...>` are acceptable for v1.26 ship and flag the row as researcher-fill-needed.
+       */
+      source_url: string;
+      /**
+       * ISO 8601 timestamp when the source URL was retrieved.
+       */
+      retrieved_at: string;
+      /**
+       * GDD cycle ID that last validated this row (e.g. '2026-04-29-v1.26').
+       */
+      last_validated_cycle: string;
+      /**
+       * Optional inline note (e.g. 'TODO: confirm at runtime-author docs', 'single-tier runtime — same model x3').
+       */
+      note?: string;
+    }[],
+  ];
+}
+export interface ModelRow {
+  /**
+   * Public model name as documented by the runtime author.
+   */
+  model: string;
+  /**
+   * Optional internal/provider model ID for runtimes whose API identifiers differ from the public name (D-03).
+   */
+  provider_model_id?: string;
+}
+
+export type RuntimeModelsSchema = RuntimeModelsTierToModelMap;
 

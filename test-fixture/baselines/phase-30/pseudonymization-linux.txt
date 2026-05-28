@@ -1,0 +1,6 @@
+# Phase 30 baseline — pseudonymization Linux path shape
+# Source: scripts/lib/pseudonymize.cjs#replacePaths (Plan 30-01, R2 rule)
+# Identity: { name: 'alice', email: 'alice@example.com', username: 'alice' }
+
+INPUT: /home/alice/projects/myrepo/src/index.js
+EXPECT: <home>/projects/myrepo/src/index.js

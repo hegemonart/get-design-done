@@ -1,0 +1,6 @@
+# Phase 30 baseline — pseudonymization Windows path shape
+# Source: scripts/lib/pseudonymize.cjs#replacePaths (Plan 30-01, R2 rule)
+# Identity: { name: 'carol', email: 'c@e.com', username: 'carol' }
+
+INPUT: C:\Users\carol\OneDrive\repo\src\app.cjs
+EXPECT: <home>\OneDrive\repo\src\app.cjs

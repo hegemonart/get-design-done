@@ -151,6 +151,29 @@ install-pipeline architecture; bug reports specific to the architecture's
 shape should also be filed there.
 
 ──────────────────────────────────────────────────────────────────────────────
+Phase 30 — Privacy Layer (v1.30.0, 2026-05-20)
+──────────────────────────────────────────────────────────────────────────────
+
+scripts/lib/pseudonymize.cjs and scripts/lib/issue-reporter/payload-assembly.cjs
+were authored from scratch for Phase 30 (consent-first issue reporter). No
+third-party privacy or anonymization patterns were adapted into either file
+— verified by inspection of the file contents (no "adapted from" / "from
+<library>" / source-citation comments) and by git log on both files (commits
+ed478fe, e5fc79a, e86c648 — all original to this repo).
+
+The regex rules in pseudonymize.cjs target generic identity-correlatable
+fields (usernames, hostnames, filesystem paths, repo origin URLs, env-var
+values, email patterns, IP addresses). The patterns were derived from the
+canonical shapes of these surfaces as they appear in plugin runtime output;
+they were NOT sourced from any upstream anonymization or pseudonymization
+library.
+
+The Phase 30 — Inbound Feedback Channel design itself (consent-first issue
+reporter, hardcoded destination, no plugin-side credentials, gh-CLI-only
+outbound) is original to get-design-done. The architectural rationale lives
+in .planning/phases/30-issue-reporter/CONTEXT.md.
+
+──────────────────────────────────────────────────────────────────────────────
 Phase 30.6 — Graphify Self-Ownership (v1.30.6, 2026-05-28)
 ──────────────────────────────────────────────────────────────────────────────
 

@@ -1,0 +1,18 @@
+{
+  "commandName": "gsd:plan-phase",
+  "errorContext": {
+    "message": "TypeError: Cannot read properties of undefined (reading 'foo')",
+    "stack": "TypeError: Cannot read properties of undefined (reading 'foo')\n    at Object.<anonymous> (/home/alice/work/file.cjs:42:18)\n    at Module._compile (node:internal/modules/cjs/loader:1234:10)",
+    "runtime": "claude-code",
+    "pluginVersion": "1.30.0",
+    "nodeVersion": "v20.11.1",
+    "hostOsClass": "linux",
+    "identity": { "name": "alice", "email": "alice@example.com" },
+    "hostname": "devbox-01",
+    "repoOrigin": "git@github.com:example/private-repo.git",
+    "repoVisibility": "private-org",
+    "envSnapshot": {}
+  },
+  "trajectoryRef": ".planning/trajectories/example-trajectory.json",
+  "capabilityGapEvent": null
+}

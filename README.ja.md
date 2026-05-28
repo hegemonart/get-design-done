@@ -211,6 +211,16 @@ claude plugin install get-design-done@get-design-done
 
 詳細は [README.md](README.md)（英語、正本）を参照してください。
 
+### Capability-Gap テレメトリ + 自己オーサリング (v1.29.0+)
+
+リフレクター・ループは「ケイパビリティ・ルックアップ失敗」シグナルをファーストクラスのテレメトリとして追跡するようになりました。十分な繰り返し発生するギャップが浮上したら、レビュー対象として新しい agent / skill を提案として下書きできます。
+
+**ステージ 0 — テレメトリ（即時リリース）。** 3 つのルックアップ失敗ポイントが型付き `capability_gap` イベントを発行します: `skills/fast` のスキル不一致パス、`gdd-router` の未解決インテント・パス、リフレクターのパターン検出パス。表示は `gdd-events --type capability_gap`。
+
+**ステージ 1 — 自己オーサリング（データがゲートを越えたらオプトイン）。** K=3 個の安定したクラスタが M=10 サイクルで現れると、`/gdd:apply-reflections` がステージ 1 を有効化するかを一度だけ尋ねます。リフレクターは Phase 28.5 準拠の frontmatter を持つインキュベーター・アーティファクトを `.design/reflections/incubator/<slug>/` に下書きします。4 つのアクション: `accept` / `reject` / `defer` / `edit`。厳密に proposal-only — `/gdd:apply-reflections` が唯一の人間ゲートです (Phase 11 SC-8)。
+
+スコープ・ガード: オーサリングは `agents/` と `skills/` に限定され、ランタイム / トランスポート / フックは対象外です。詳細は [README.md](README.md)（英語、正本）を参照してください。
+
 
 ## 仕組み
 
@@ -677,6 +687,21 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 ```
 
 他の構成を保持しながらすべての GDD コマンド、エージェント、フック、設定を削除します。
+
+---
+
+## フィードバックチャンネル(v1.30.0+)
+
+GDD は、`/gdd:report-issue` スラッシュコマンドによる同意ベースの GitHub Issue リポーターを搭載しました。
+
+- **何をするか。** 問題や機能不足の報告をガイドし、送信前にペイロードのプレビューを表示します。ローカルファースト、同意ベース、自動モードなし。
+- **疑似匿名化であり、匿名化ではありません。** 直接識別子(ユーザー名、ホスト名、絶対パス、Git アイデンティティ、環境変数の値、メールアドレス、IP アドレス)は安定した疑似識別子に置き換えられますが、メンテナーがデバッグできるよう内部相関は保持されます。サイドチャネルデータ(文体、コードパターン、リポジトリのフィンガープリント)による再識別の可能性は残ります。送信前に完全なペイロードを確認し、Issue ごとに明示的に同意します。
+- **キルスイッチ。** ネットワーク呼び出しの前に送信を停止するには、`GDD_DISABLE_ISSUE_REPORTER=1`(環境変数)または `.design/config.json` に `{ "issue_reporter": false }` を設定します。
+- **`gh` 不在時のフォールバック。** GitHub CLI がインストールされていない場合、ペイロードは `.design/issue-drafts/` のディスクに書き込まれ、Issue テンプレート URL がクリップボードにコピーされます。
+
+詳細は英語版の [`README.md`](README.md)、ルールカタログ(R1..R8)は [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md)、既知の失敗モードは [`reference/known-failure-modes.md`](reference/known-failure-modes.md) を参照してください。
+
+**v1.30.5 アップデート** — カタログは22エントリに拡張(v1.30.0は10件)、新しい決定論的ファジーマッチャー(`scripts/lib/failure-mode-matcher.cjs`)が信頼度スコア付きの上位N候補を返します。Reflector + authority-watcher は `/gdd:apply-reflections`(6番目の提案クラス)経由で新エントリを提案できます — 厳密に提案のみ、すべてのエントリはユーザーレビューを通過します。
 
 ---
 

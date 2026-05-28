@@ -1,0 +1,26 @@
+# Phase 30 baseline — static-analysis network isolation
+# Source of truth: tests/issue-reporter-network-isolation.test.cjs (Plan 30-07)
+# Patterns scanned (per Plan 30-07): /https?:\/\//, /\bfetch\(/, /XMLHttpRequest/
+# Whitelist: scripts/lib/issue-reporter/destination.cjs (sole authorized
+# carrier of the destination URL literal — frozen module constant).
+
+# Scanned tree:
+#   scripts/lib/pseudonymize.cjs
+#   scripts/lib/issue-reporter/*.cjs
+
+# Per-file network-string counts:
+scripts/lib/pseudonymize.cjs                              : 0 network strings
+scripts/lib/issue-reporter/cli-flag-report.cjs            : 0 network strings
+scripts/lib/issue-reporter/consent-prompt.cjs             : 0 network strings
+scripts/lib/issue-reporter/dedup.cjs                      : 0 network strings (uses `gh` CLI, not direct HTTP)
+scripts/lib/issue-reporter/destination.cjs                : 2 network strings (WHITELISTED — DESTINATION_URL + ISSUE_TEMPLATE_URL constants)
+scripts/lib/issue-reporter/draft-writer.cjs               : 0 network strings
+scripts/lib/issue-reporter/gh-absent-fallback.cjs         : 0 network strings (delegates to clipboard)
+scripts/lib/issue-reporter/gh-submit.cjs                  : 0 network strings (uses `gh issue create` subprocess)
+scripts/lib/issue-reporter/kill-switch.cjs                : 0 network strings
+scripts/lib/issue-reporter/payload-assembly.cjs           : 0 network strings (destination URL comes from destination.cjs)
+scripts/lib/issue-reporter/privacy-diff.cjs               : 0 network strings
+scripts/lib/issue-reporter/report-flow.cjs                : 0 network strings
+scripts/lib/issue-reporter/triage-matcher.cjs             : 0 network strings
+
+RESULT: PASS

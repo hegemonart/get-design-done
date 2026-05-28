@@ -75,6 +75,11 @@ Every `/gdd:*` SKILL.md's first substantive step is: spawn the router via `Task`
 
 If `.design/budget.json` is missing, assume defaults from `reference/config-schema.md` per D-12. If `reference/model-prices.md` is missing, emit `estimated_cost_usd: null` and log a warning — do not block.
 
+## Emitting capability_gap on unmatched intent
+
+When the router cannot resolve `intent-string` to a known agent (no `description` match, no `default-tier` rule, no path-selection fallback), emit ONE `capability_gap` event with `source: "router"` before returning the conservative-fallback JSON. Feeds Phase 29 Stage-0 telemetry — see `./capability-gap-emitter.md` for the synchronous Node snippet, semantic notes (suggested_kind = `"agent"`, MCP-probe exclusion per D-08, back-compat invariant on router output), and the opaque-extras payload routing through `appendChainEvent`.
+
 ## Non-Goals
 
 The router does not: (a) make a model call, (b) write files, (c) enforce budget caps (that's the hook's job), (d) learn from history (Phase 11 reflector territory per D-07).
+The router does not author capability-gap CLUSTERS — Stage-0 emit is single-event-per-failure. Aggregation across events is Plan 29-03's reflector pass.

@@ -211,6 +211,16 @@ claude plugin install get-design-done@get-design-done
 
 자세한 내용은 [README.md](README.md)(영어, 정본)을 참조하세요.
 
+### Capability-Gap 텔레메트리 + 자가 저작 (v1.29.0+)
+
+리플렉터 루프는 이제 "capability 조회 실패" 신호를 일급 텔레메트리로 추적하며, 충분히 반복되는 갭이 드러나면 새로운 agent 또는 skill을 리뷰용 제안으로 작성할 수 있습니다.
+
+**스테이지 0 — 텔레메트리(즉시 출시).** 세 가지 조회 실패 지점이 타입화된 `capability_gap` 이벤트를 발행합니다: `skills/fast` 스킬 미일치 경로, `gdd-router` 미일치 인텐트 경로, 리플렉터 패턴 감지 패스. `gdd-events --type capability_gap`으로 확인하세요.
+
+**스테이지 1 — 자가 저작(데이터가 게이트를 통과하면 옵트인).** K=3개의 안정 클러스터가 M=10 사이클에 걸쳐 나타나면, `/gdd:apply-reflections`가 스테이지 1 활성화 여부를 한 번 묻습니다. 그러면 리플렉터는 Phase 28.5 준수 frontmatter를 가진 인큐베이터 아티팩트를 `.design/reflections/incubator/<slug>/`에 초안 작성합니다. 4가지 액션: `accept` / `reject` / `defer` / `edit`. 엄격히 proposal-only — `/gdd:apply-reflections`가 유일한 인간 게이트입니다 (Phase 11 SC-8).
+
+스코프 가드: 저작은 `agents/` 와 `skills/`에 한정되며 — 런타임 / 트랜스포트 / 훅은 대상이 아닙니다. 자세한 내용은 [README.md](README.md)(영어, 정본)을 참조하세요.
+
 
 ## 작동 방식
 
@@ -677,6 +687,21 @@ npx @hegemonart/get-design-done --claude --local --uninstall
 ```
 
 다른 구성을 보존하면서 모든 GDD 명령, 에이전트, 훅, 설정을 제거합니다.
+
+---
+
+## 피드백 채널 (v1.30.0+)
+
+GDD에는 이제 `/gdd:report-issue` 슬래시 명령어를 통한 동의 기반 GitHub 이슈 리포터가 포함되어 있습니다.
+
+- **무엇을 하나요.** 이슈 또는 기능 부족을 보고하도록 안내하며, 제출 전에 페이로드를 미리 봅니다. 로컬 우선, 동의 기반, 자동 모드 없음.
+- **익명화가 아닌 가명화입니다.** 직접 식별자(사용자 이름, 호스트 이름, 절대 경로, Git ID, 환경 변수 값, 이메일, IP 주소)는 안정적인 가명으로 대체되지만, 메인테이너가 디버깅할 수 있도록 내부 상관관계는 유지됩니다. 사이드 채널 데이터(글쓰기 스타일, 코드 패턴, 저장소 지문)는 여전히 재식별될 수 있습니다. 제출 전에 전체 페이로드를 보고 이슈별로 명시적으로 동의합니다.
+- **킬 스위치.** 네트워크 호출 전에 제출을 중단하려면 `GDD_DISABLE_ISSUE_REPORTER=1`(환경) 또는 `.design/config.json`에 `{ "issue_reporter": false }`를 추가하세요.
+- **`gh` 부재 시 폴백.** GitHub CLI가 설치되어 있지 않으면 페이로드가 `.design/issue-drafts/`에 디스크에 기록되고 이슈 템플릿 URL이 클립보드에 복사됩니다.
+
+전체 세부 사항은 영어 [`README.md`](README.md)를, 규칙 카탈로그(R1..R8)는 [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md)를, 알려진 실패 모드는 [`reference/known-failure-modes.md`](reference/known-failure-modes.md)를 참조하세요.
+
+**v1.30.5 업데이트** — 카탈로그가 22개 항목(v1.30.0에서는 10개)으로 확장되었고, 새로운 결정론적 퍼지 매처(`scripts/lib/failure-mode-matcher.cjs`)가 신뢰도 점수와 함께 top-N 후보를 반환합니다. Reflector + authority-watcher는 `/gdd:apply-reflections`(6번째 제안 클래스)를 통해 새 항목을 제안할 수 있습니다 — 엄격하게 제안 전용이며 모든 항목은 사용자 검토를 거칩니다.
 
 ---
 

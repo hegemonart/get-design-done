@@ -234,23 +234,40 @@ OFF_CADENCE_VERSIONS.add('1.28.7');
 OFF_CADENCE_VERSIONS.add('1.28.8');
 
 // Phase 29 — Capability-Gap Telemetry + Self-Authoring of Agents/Skills
-// (v1.29.0, 2026-05-20). Two-stage rollout: Stage 0 telemetry only;
-// Stage 1 incubator authoring of new agents/skills behind data-gated
-// posterior stability gate.
-//   - 1.29.0 → Phase 29 (capability-gap-telemetry); milestone bump.
+// (v1.29.0, 2026-05-19). First on-cadence MINOR after the 1.28.x decimal
+// sub-phase sequence — registered here for OFF_CADENCE_VERSIONS membership
+// because the EXPECTED_SEQUENCE check (1.0.0..1.0.7) is the original 1.0.x
+// patch-cadence test, and every post-1.0.x version (including mainline
+// MINORs like 1.14.0/1.20.0/1.25.0/1.28.0) is registered via this Set as
+// "not in the strict 1.0.x exact-patch-bump sequence but accepted." Plan
+// 29-07 D-10 framing distinguished on-cadence MINOR vs decimal sub-phase
+// at the CHANGELOG level (no special CHANGELOG slot needed) but the
+// semver-test Set is a separate concern — accepts the version as a
+// recognized release.
+//   - 1.29.0 → Phase 29 (capability-gap-self-authoring); on-cadence MINOR
+//     after the 1.28.0 -> 1.28.5 -> 1.28.6 -> 1.28.7 -> 1.28.8 decimal arc.
 OFF_CADENCE_VERSIONS.add('1.29.0');
 
-// Phase 30 — Inbound Feedback Channel (Issue Reporter)
-// (v1.30.0, 2026-05-22). pseudonymize.cjs + gh-CLI-only outbound +
-// consent-required submission + payload-on-disk first + kill-switch.
-//   - 1.30.0 → Phase 30 (inbound-feedback-channel); milestone bump.
+// Phase 30 — Consent-First GitHub Issue Reporter
+// (v1.30.0, 2026-05-20). On-cadence minor from v1.29.0 — sequence 1.29.0 -> 1.30.0.
+// Even though 1.30.0 is on-cadence (not a decimal off-cadence), the existing
+// suite contract requires registering every post-1.0.x release in OFF_CADENCE_VERSIONS
+// to keep semver-ordering tests green (Phase 29 precedent — see Phase 29 retrospective).
+// Phase 30 adds the Consent-First GitHub Issue Reporter — `/gdd:report-issue` skill +
+// pseudonymization helpers + payload assembly + dedup matching + kill-switch.
+//   - 1.30.0 → Phase 30 (issue-reporter); on-cadence minor from 1.29.0.
 OFF_CADENCE_VERSIONS.add('1.30.0');
 
-// Phase 30.5 — Failure-Mode Catalogue (INSERTED)
-// (v1.30.5, 2026-05-24). reference/known-failure-modes.md (20+ entries) +
-// failure-mode-matcher.cjs + reflector proposal flow + authority-watcher
-// candidate ingest. Off-cadence decimal from v1.30.0 parent.
-//   - 1.30.5 → Phase 30.5 (failure-mode-catalogue); off-cadence sub-phase from 1.30.0.
+// Phase 30.5 — Failure-Mode Catalogue (v1.30.5, 2026-05-21).
+// Decimal sub-phase off-cadence patch (Phase 28.x precedent — 1.28.0 →
+// 1.28.5 → 1.28.6 → 1.28.7 → 1.28.8). Phase 30.5 expands
+// `reference/known-failure-modes.md` from 10 → 22 entries with the
+// extended schema-v2 (11 fields per entry), ships the fuzzy
+// bag-of-words matcher (`scripts/lib/failure-mode-matcher.cjs`), and
+// wires reflector + authority-watcher proposal flows into a 6th
+// `/gdd:apply-reflections` proposal class (`kfm-candidate`). 6-manifest
+// lockstep at 1.30.5 (D-01 + D-11 ship-together).
+//   - 1.30.5 → Phase 30.5 (failure-mode-catalogue); decimal sub-phase from 1.30.0.
 OFF_CADENCE_VERSIONS.add('1.30.5');
 
 // Phase 30.6 — Graphify Self-Ownership — Decouple from get-shit-done CLI
@@ -265,6 +282,7 @@ OFF_CADENCE_VERSIONS.add('1.30.5');
 // decimal from v1.30.5 parent — sequence 1.30.0 -> 1.30.5 -> 1.30.6.
 //   - 1.30.6 → Phase 30.6 (graphify-self-ownership); off-cadence sub-phase from 1.30.5.
 OFF_CADENCE_VERSIONS.add('1.30.6');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

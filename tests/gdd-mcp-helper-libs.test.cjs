@@ -253,8 +253,9 @@ test('27.7-02: health-mirror.getHealthChecks returns 4 checks', async () => {
   );
   const result = await lib.getHealthChecks(root);
   assert.ok(Array.isArray(result.checks));
-  assert.equal(result.checks.length, 4);
-  // All four checks should have status 'ok' for a complete fixture
+  // Plan 30-06 added 5th check (issue_reporter); was 4 in Plan 27.7-02.
+  assert.equal(result.checks.length, 5);
+  // All five checks should have a valid status enum value for a complete fixture
   for (const c of result.checks) {
     assert.ok(['ok', 'warn', 'fail'].includes(c.status), 'invalid status: ' + c.status);
     assert.equal(typeof c.name, 'string');

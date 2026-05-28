@@ -72,6 +72,122 @@ Phase 27 / Phase 28.5 / Phase 28.7 attribution subsections in `NOTICE` are prese
 
 ---
 
+## [1.30.5] - 2026-05-21
+
+### Phase 30.5 — Failure-Mode Catalogue
+
+Decimal sub-phase building on Phase 30's `/gdd:report-issue` triage gate. Expands the known-failure-modes catalogue, adds a deterministic fuzzy matcher, and wires reflector + authority-watcher proposal flows into a 6th `/gdd:apply-reflections` proposal class. 3 plans ship together at v1.30.5 (D-11 ship-together): catalogue expansion (Wave A), fuzzy matcher (Wave A), reflector/authority-watcher wiring + closeout (Wave B).
+
+### Added
+
+- **Failure-mode catalogue expansion** (`reference/known-failure-modes.md`, Plan 30.5-01). Catalogue grows from 10 → 22 entries (KFM-001..KFM-022) — covers EACCES, gh-missing, Node mismatch, npm-ci lockfile drift, webpack chunk collisions, esbuild config errors, vite HMR, TS6133 unused locals, and 14 more long-tail failure modes harvested from closed PRs + reflections cycles + public Node/npm/git failure-mode references. Each entry carries the schema-v2 11-field shape (`id`, `pattern`, `diagnosis`, `remedy`, `severity`, `propose_report`, `symptom`, `root_cause`, `fix`, `related_phases`, `first_observed_cycle`); Phase 30's `triage-matcher.cjs` reads only the original 6 fields (D-02 backward-compat).
+- **Fuzzy failure-mode matcher** (`scripts/lib/failure-mode-matcher.cjs`, Plan 30.5-02). New `match(errorContext, { topN, threshold, cataloguePath })` API returns top-N candidates ranked by cosine similarity over a stop-word-filtered bag-of-words across `symptom + root_cause + un-regexed pattern`. Default `topN=3`, `threshold=0.4`, dominance-collapse delta `0.15`. Pure CommonJS, zero npm dependencies, deterministic (no `Math.random` / `Date.now` / I/O outside catalogue read). Phase 30's exact-match `triage-matcher.cjs` is untouched (D-04 byte-identity guard).
+- **Reflector KFM proposer** (`scripts/lib/reflector-kfm-proposer.cjs`, Plan 30.5-03 D-05). When a Phase 29 `capability_gap` cluster recurs ≥3× with no matching catalogue entry (per `failure-mode-matcher.match()`), the proposer drops a pre-filled draft at `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md`. The draft carries all 11 schema-v2 fields; `pattern` + `fix` are `TODO:` placeholders the user fills via the apply-reflections edit action.
+- **Authority-watcher `kfm-candidate` event class** (`reference/schemas/events.schema.json` + `scripts/lib/authority-watcher/index.cjs`, Plan 30.5-03 D-06). New additive `allOf[1]` branch on the events schema; new 7-field `KfmCandidatePayload` definition. When the authority-watcher pipeline encounters an article whose title matches `/common errors|failure modes|troubleshooting|known issues|pitfalls/i`, it emits a `kfm-candidate` event that the reflector consumes into the SAME incubator draft surface as `capability_gap` clusters (one unified user-review path).
+- **`/gdd:apply-reflections` KFM-CANDIDATE proposal class** (`skills/apply-reflections/SKILL.md` + `apply-reflections-procedure.md`, Plan 30.5-03). 6th proposal class after frontmatter / reference / budget / question / global-skill / incubator-skill. User actions: **accept** (promote draft → `reference/known-failure-modes.md` with next `KFM-NNN`, register in `reference/registry.json` with `origin: 'incubator-kfm'`), **reject** (remove incubator subdir), **defer** (stamp `deferred_until`), **edit** (return path for `$EDITOR`).
+- **Phase 30.5 regression baseline** (`tests/phase-30.5-baseline.test.cjs` + `test-fixture/baselines/phase-30.5/`, Plan 30.5-03). 16 version-agnostic tests covering 6-manifest lockstep, catalogue entry count ≥20, matcher API exports, schema event branch, OFF_CADENCE_VERSIONS membership, fuzzy-matcher accuracy snapshot, registry diff, cross-link integrity, and CHANGELOG top entry.
+
+### Changed
+
+- **Reflector capability-gap aggregator** (`scripts/lib/reflector-capability-gap-aggregator.cjs`) — adds lazy-loaded `proposeKfmDraftsForClusters(clusters, options)` export that invokes the KFM proposer as an additional pass after Phase 29 aggregation. Phase 29's existing 5 proposal classes are untouched (additive).
+- **Authority-watcher agent prompt** (`agents/design-authority-watcher.md`) — gains a new `Step 7.5 — Emit kfm-candidate events` section documenting the whitelist patterns + payload shape. Phase 13.2's existing fetch/diff/classify/write loop is unchanged.
+- **OFF_CADENCE_VERSIONS** (`tests/semver-compare.test.cjs`) — registers `'1.30.5'` per Phase 29/30 precedent.
+
+### Documentation
+
+- `CHANGELOG.md` — this entry (v1.30.5).
+- `README.md` + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) — single-paragraph mention of v1.30.5's catalogue expansion + fuzzy matcher.
+- `reference/known-failure-modes.md` — schema-v2 header documenting the 11-field shape (Plan 30.5-01).
+
+### Privacy & Safety
+
+- **No auto-promotion.** The reflector KFM proposer is strictly proposal-only (Phase 11 SC-8). Drafts live in `.design/reflections/incubator/` until the user accepts them via `/gdd:apply-reflections`. The canonical catalogue feeds Phase 30's pre-consent triage gate, so a bad entry could mute legitimate issue reports — the user-review gate is non-negotiable (D-05).
+- **`kfm-candidate` events are local-only.** No new network surfaces. The authority-watcher's existing whitelist (`reference/authority-feeds.md`) is the sole ingress for `kfm-candidate` events; nothing the reflector emits travels off-machine.
+- **`raw_excerpt` cap.** Authority-derived excerpts are truncated to 500 chars before draft write (schema-enforced).
+
+---
+
+## [1.30.0] - 2026-05-20
+
+### Phase 30 — Consent-First GitHub Issue Reporter
+
+Opt-in user feedback channel that pseudonymizes payloads before submission (NOT anonymization — see disclosure below). Local-first, consent-gated, no auto-mode. Destination repo is hardcoded. 8 plans across Wave A primitives (30-01..30-03) / Wave B integration (30-04..30-06) / Wave C closeout (30-07..30-08). 6-manifest lockstep at 1.30.0 (D-12 ship-together on-cadence minor from 1.29.0).
+
+### Added
+
+- **Consent-First GitHub Issue Reporter.** Phase 30 ships these surfaces:
+  - **`/gdd:report-issue` skill** (`skills/report-issue/SKILL.md`, from 30-04) — Phase 28.5 compliant (≤100 lines). Walks the user through a consented submission: kill-switch check → triage against known failure modes → dedup against existing issues → assemble pseudonymized payload → draft to disk + open `$EDITOR` → consent prompt → submit via `gh` CLI.
+  - **`scripts/lib/pseudonymize.cjs`** (from 30-01) — 8 pseudonymization rules (R1..R8) covering git identity, absolute paths (Linux/macOS/Windows shapes), hostname, repo origin, env-var values, emails in logs, IPv4/IPv6 addresses, and stable per-user pseudonyms. Pure module: no `fs`, no `child_process`, no env mutation, no network.
+  - **`scripts/lib/issue-reporter/payload-assembly.cjs`** (from 30-02) — composes the final issue payload (title, body, fingerprint, bilingual disclaimer) from pseudonymized inputs. Two-layer scrub: Phase 22 `redact.cjs` then Phase 30 `pseudonymize.cjs` (order non-negotiable). Pure module: returns a string, no I/O.
+  - **`scripts/lib/issue-reporter/destination.cjs`** (from 30-04) — hardcoded `https://github.com/hegemonart/get-design-done` constant. SOLE FILE under the issue-reporter tree allowed to contain the destination URL literal. Frozen export.
+  - **Triage matcher** (`scripts/lib/issue-reporter/triage-matcher.cjs`, from 30-03) — pattern-matches the user's error against `reference/known-failure-modes.md`. On match: surfaces the remedy and stops; user can override with `--force-report`.
+  - **Dedup matcher** (`scripts/lib/issue-reporter/dedup.cjs`, from 30-05) — queries `gh issue list` against the destination repo and surfaces existing-issue matches before submission. Match outcomes: no-match → proceed; single-match → react with +1 + offer "me too" comment; multi-match → user picks. Wired into the report-flow BEFORE the consent prompt.
+  - **Kill-switch** (`scripts/lib/issue-reporter/kill-switch.cjs`, from 30-06) — env-var override (`GDD_DISABLE_ISSUE_REPORTER=1`) OR config-file override (`.design/config.json` with `{ "issue_reporter": false }`). Either disables the reporter; env wins when both set. Halts submission before any network call. `gsd-health` mirrors the same disable line.
+  - **`gh`-absent fallback** (`scripts/lib/issue-reporter/gh-absent-fallback.cjs`, from 30-06) — when GitHub CLI isn't installed, the assembled payload is written to disk under `.design/issue-drafts/` and the issue-template URL is copied to the platform-appropriate clipboard (xclip / pbcopy / clip).
+  - **Privacy-diff renderer** (`scripts/lib/issue-reporter/privacy-diff.cjs`, from 30-07) — renders the before/after pseudonymization diff at consent time and via `/gdd:update --show-privacy-diff`.
+  - **Network-isolation CI gate** (`tests/issue-reporter-network-isolation.test.cjs`, from 30-07) — static-analysis test asserts no `https://` / `fetch(` / `XMLHttpRequest` references exist anywhere under `scripts/lib/issue-reporter/` or `scripts/lib/pseudonymize.cjs` except the single destination URL constant in `destination.cjs`. Whitelisted via explicit allowlist.
+  - **`reference/pseudonymization-rules.md`** + **`reference/known-failure-modes.md`** (from 30-01 / 30-03) — registered in `registry.json`. User-facing docs explaining the 8-rule pseudonymization catalog and the known failure modes / anti-patterns the reporter detects.
+
+### Changed
+
+- Phase 30 does not change existing surfaces beyond adding the new skill + helpers; no breaking changes.
+
+### Documentation
+
+- `reference/pseudonymization-rules.md` + `reference/known-failure-modes.md` — added + registered in `reference/registry.json` (2 new entries).
+- `README.md` + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) updated with a "Feedback Channel (v1.30.0+)" section disclosing the `/gdd:report-issue` command and the pseudonymization-NOT-anonymization stance.
+- `NOTICE` — Phase 30 section noting the consent-first reporter discipline (added in 30-07).
+
+### Privacy & Safety
+
+- **Pseudonymization, not anonymization.** Payloads obscure direct identifiers (username, hostname, absolute paths, git identity, env-var values, emails, IPs) but preserve internal correlation so maintainers can debug. Side-channel data (writing style, code patterns, repo fingerprints) may still re-identify. Users see a full payload preview before submission and explicitly consent per-issue.
+- **Kill-switch.** Env-var (`GDD_DISABLE_ISSUE_REPORTER=1`) or config-file (`.design/config.json` `{ "issue_reporter": false }`) overrides halt submission before any network call. `gsd-health` surfaces the disable line.
+- **Hardcoded destination.** The issue-reporter cannot be redirected at runtime; the destination URL is a frozen module constant in `scripts/lib/issue-reporter/destination.cjs`. No env-var, config, or flag override.
+- **Network isolation.** Issue-reporter modules contain NO `https://` (or equivalent) calls beyond the single destination URL constant — verified by Phase 30 baseline static-analysis check (Plan 30-07).
+
+---
+
+## [1.29.0] - 2026-05-19
+
+### Phase 29 — Capability-Gap Telemetry + Self-Authoring of Agents/Skills
+
+First on-cadence minor version after the 1.28.x decimal sub-phase sequence (1.28.0 through 1.28.8). Extends Phase 11's reflector-driven self-improvement loop from authoring reference content to authoring executable artifacts (agents and skills) when capability-gaps recur. Two structural ceilings close here: the artifact-type ceiling (reflector now drafts agents/skills, not just `reference/*.md`) and the signal-source ceiling (capability-lookup failures are now first-class telemetry). Strictly proposal-only — `/gdd:apply-reflections` remains the single human gate. 6-manifest lockstep at 1.29.0 (extends Phase 28.8's 4-manifest lockstep with the 2 Tier-2 manifests `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json` bumped in lockstep). 7 plans across Wave A telemetry (29-01..29-03) / Wave B authoring (29-04..29-06) / Wave C closeout (29-07).
+
+### Added
+
+- **Capability-gap telemetry + self-authoring of agents/skills.** Two-stage rollout per Phase 29 D-01:
+  - **Stage 0 — telemetry only (ships immediately).**
+    - New typed `capability_gap` event added to the Phase 22 event-chain schema (`reference/schemas/events.schema.json`). 7 fields exactly per D-02 (no PII): `event_id`, `parent_event_id`, `source` (enum: `fast`/`router`/`reflector_pattern`), `context_hash`, `intent_summary`, `suggested_kind` (enum: `agent`/`skill`), `evidence_refs[]` (hash-pinned trajectory-JSONL pointers per D-07, not duplicated content).
+    - Emitters integrated at three lookup-fail points (29-01): `skills/fast/SKILL.md` no-skill-match path emits `source: "fast"`; `skills/router/SKILL.md` unmatched-intent path emits `source: "router"`. Per D-08, MCP-probe connection failures do NOT emit `capability_gap` — those remain Phase 22's connection-status surface.
+    - Reflector pattern-detection pass (29-02) at `scripts/lib/reflector/capability-gap-scan.cjs` scans `.design/intel/` + Phase 23.5 posterior + recent trajectories for `Touches:` clusters recurring without dedicated agent owners and emits `capability_gap` events with `source: "reflector_pattern"`.
+    - Reflector aggregation extension (29-03) at `scripts/lib/reflector-capability-gap-aggregator.cjs` reads all `capability_gap` events, clusters by `context_hash`, and writes a `## Capability gaps observed` section to `.design/reflections/<cycle-slug>.md`. `gdd-events --type capability_gap` filter exposed via the existing CLI.
+    - `reference/capability-gap-stage-gate.md` — Stage-0 → Stage-1 gate spec. K=3 stable clusters across M=10 cycles per D-03, cluster-stability defined as Phase 23.5 posterior `stddev(Beta(α, β)) < 0.05`. Both K and M overridable in the gate doc.
+  - **Stage 1 — incubator authoring (data-gated, user-opt-in per D-01).**
+    - `scripts/lib/incubator-author.cjs` (29-04) reads gap clusters above the stability threshold + posterior, then drafts `SKILL.md` or `agents/<slug>.md` at `.design/reflections/incubator/<slug>/` with Phase 28.5-compliant frontmatter (`name`, `description` in `<what>. Use when <triggers>.` form, `tools`, `default-tier`, optional `reasoning-class`, `parallel-safe`, `reads-only`). Origin section with `capability_gap` event refs. Computed usage frequency. Suggested integration point. `delegate_to: null` defensive default per D-12 (forward-compat with Phase 27).
+    - `/gdd:apply-reflections` extension (29-05) at `skills/apply-reflections/SKILL.md` and `scripts/lib/incubator-proposals.cjs` surfaces incubator drafts as a new (5th) proposal class alongside frontmatter/reference/budget/discussant. Each proposal renders a diff vs the nearest existing artifact (by name + tools + description embedding per D-09). Four actions per proposal: `accept` (promotes to `agents/`/`skills/` + registers via the Phase 14.5 `reference/registry.json`), `reject`, `defer`, `edit` ($EDITOR). Scope-guard validator at `scripts/validate-incubator-scope.cjs` (D-05) blocks promotion outside `agents/`+`skills/`.
+  - **Bandit fairness gate (29-06)** — `scripts/lib/bandit-router.cjs` accepts a new `prior_class: "promoted_incubator"` parameter. Promoted arms enter the Phase 23.5 posterior with a conservative `Beta(2, 8)` prior (assume worse-than-average) instead of an optimistic uniform. Per D-04: this IS the staging mechanism — single-step promotion gate via `/gdd:apply-reflections accept`, no two-step staging/ratify split.
+  - **Incubator TTL (29-06)** — drafts not promoted/refreshed within P=30 days (per D-06) auto-archive via `scripts/gsd-cleanup-incubator.cjs` to `.design/reflections/incubator/archive/<slug>/`. Refresh = new `capability_gap` event matching an existing slug's `context_hash` resets the timer.
+
+### Changed
+
+- Reflector now emits `capability_gap` events alongside the existing learnings / telemetry / agent-metrics signals. No change to existing reflection proposal classes — additive only.
+- `/gdd:apply-reflections` now surfaces 5 proposal classes (was 4: frontmatter / reference / budget / discussant; now adds Incubator agents+skills).
+- `scripts/lib/bandit-router.cjs` accepts a new `prior_class` parameter (default `null` = existing uniform-prior behavior; `"promoted_incubator"` = `Beta(2, 8)` conservative prior).
+
+### Documentation
+
+- `reference/capability-gap-stage-gate.md` — Stage-0 → Stage-1 gate spec (K=3 / M=10 defaults, `stddev(Beta(α, β)) < 0.05` stability threshold, user opt-in flow).
+- `README.md` + 6 translated READMEs (de/fr/it/ja/ko/zh-CN) updated with the capability-gap telemetry + self-authoring section: Stage 0 ships immediately (telemetry-only, no authoring); Stage 1 authoring is opt-in via `/gdd:apply-reflections` once K=3 stable clusters across M=10 cycles surface.
+
+### Preserved (no behavior change)
+
+- **Phase 11 success-criterion-8 discipline.** The reflector authors nothing that auto-ships. `/gdd:apply-reflections` remains the single human gate (extended to include the new Incubator proposal class, not bypassed).
+- **Phase 28.7 file-drop install paths UNCHANGED.** `scripts/lib/install/converters/cursor.cjs` and `scripts/lib/install/converters/codex.cjs` remain backward-compatible per the Phase 28.8 D-05 invariant.
+- **Phase 28.8 Tier-2 channels (.cursor-plugin/plugin.json + .codex-plugin/plugin.json)** version-bumped in lockstep, but their schemas / keys / structure are UNCHANGED.
+- **Scope guard (D-05).** Self-authoring is limited to `agents/` and `skills/` only. No runtimes / transports / connections / hooks / scripts / CI workflow authoring. `scripts/validate-incubator-scope.cjs` enforces this at promotion time.
+
+---
+
 ## [1.28.8] - 2026-05-19
 
 ### Phase 28.8 — Tier-2 Distribution Channels
