@@ -233,6 +233,39 @@ OFF_CADENCE_VERSIONS.add('1.28.7');
 //   - 1.28.8 → Phase 28.8 (tier-2-distribution-channels); off-cadence sub-phase from 1.28.7.
 OFF_CADENCE_VERSIONS.add('1.28.8');
 
+// Phase 29 — Capability-Gap Telemetry + Self-Authoring of Agents/Skills
+// (v1.29.0, 2026-05-20). Two-stage rollout: Stage 0 telemetry only;
+// Stage 1 incubator authoring of new agents/skills behind data-gated
+// posterior stability gate.
+//   - 1.29.0 → Phase 29 (capability-gap-telemetry); milestone bump.
+OFF_CADENCE_VERSIONS.add('1.29.0');
+
+// Phase 30 — Inbound Feedback Channel (Issue Reporter)
+// (v1.30.0, 2026-05-22). pseudonymize.cjs + gh-CLI-only outbound +
+// consent-required submission + payload-on-disk first + kill-switch.
+//   - 1.30.0 → Phase 30 (inbound-feedback-channel); milestone bump.
+OFF_CADENCE_VERSIONS.add('1.30.0');
+
+// Phase 30.5 — Failure-Mode Catalogue (INSERTED)
+// (v1.30.5, 2026-05-24). reference/known-failure-modes.md (20+ entries) +
+// failure-mode-matcher.cjs + reflector proposal flow + authority-watcher
+// candidate ingest. Off-cadence decimal from v1.30.0 parent.
+//   - 1.30.5 → Phase 30.5 (failure-mode-catalogue); off-cadence sub-phase from 1.30.0.
+OFF_CADENCE_VERSIONS.add('1.30.5');
+
+// Phase 30.6 — Graphify Self-Ownership — Decouple from get-shit-done CLI
+// (v1.30.6, 2026-05-28). Removes the last runtime touchpoint between
+// get-design-done and the user's ~/.claude/get-shit-done/ install. Replaces
+// 8 callsites that dispatched `gsd-tools.cjs graphify *` with native
+// bin/gdd-graph (build/query/status/diff/upsert-node/upsert-edge). Drops the
+// intel→graphify translation layer (intel and graph now share {from,to,kind,
+// weight?} schema per D-03.b). Renames gdd-graphify-sync → gdd-graph-refresh
+// and gsd-health-mirror → health-mirror (cosmetic, D-10). Deletes 10MB
+// vendored upstream snapshot at .planning/get-shit-done-main/. Off-cadence
+// decimal from v1.30.5 parent — sequence 1.30.0 -> 1.30.5 -> 1.30.6.
+//   - 1.30.6 → Phase 30.6 (graphify-self-ownership); off-cadence sub-phase from 1.30.5.
+OFF_CADENCE_VERSIONS.add('1.30.6');
+
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
     const from = EXPECTED_SEQUENCE[i - 1];
