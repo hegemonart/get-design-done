@@ -1,5 +1,5 @@
 'use strict';
-// scripts/lib/gsd-health-mirror/index.cjs — Plan 27.7-02
+// scripts/lib/health-mirror/index.cjs — Plan 27.7-02 (renamed in Phase 30.6-08 per D-10)
 //
 // Pure read-only mirror of skills/health/SKILL.md's check surface.
 // NO subprocess spawn — just inspects 4 well-known files/dirs and
