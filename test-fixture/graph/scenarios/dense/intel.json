@@ -1,0 +1,39 @@
+{
+  "generated": "2026-05-28T00:00:00.000Z",
+  "nodes": [
+    { "id": "component:Button",            "type": "component",    "name": "Button" },
+    { "id": "component:Card",              "type": "component",    "name": "Card" },
+    { "id": "component:Modal",             "type": "component",    "name": "Modal" },
+    { "id": "component:Toolbar",           "type": "component",    "name": "Toolbar" },
+    { "id": "component:Dialog",            "type": "component",    "name": "Dialog" },
+    { "id": "token:color/primary/500",     "type": "token-color",  "name": "primary-500",   "hex": "#3b82f6" },
+    { "id": "token:color/danger/500",      "type": "token-color",  "name": "danger-500",    "hex": "#ef4444" },
+    { "id": "token:spacing/4",             "type": "token-space",  "name": "spacing-4" },
+    { "id": "token:spacing/8",             "type": "token-space",  "name": "spacing-8" },
+    { "id": "decision:D-03",               "type": "decision",     "name": "Schema 1.0 frozen" },
+    { "id": "concept:atomic-write",        "type": "concept",      "name": "atomic-write seam" },
+    { "id": "file:scripts/lib/graph/build.mjs", "type": "file",    "name": "build.mjs" }
+  ],
+  "edges": [
+    { "from": "component:Button",  "to": "token:color/primary/500",  "kind": "uses" },
+    { "from": "component:Button",  "to": "token:spacing/4",          "kind": "uses" },
+    { "from": "component:Card",    "to": "token:spacing/4",          "kind": "uses" },
+    { "from": "component:Card",    "to": "token:color/primary/500",  "kind": "uses" },
+    { "from": "component:Card",    "to": "token:spacing/8",          "kind": "uses" },
+    { "from": "component:Modal",   "to": "component:Button",         "kind": "renders" },
+    { "from": "component:Modal",   "to": "component:Card",           "kind": "renders" },
+    { "from": "component:Modal",   "to": "token:spacing/8",          "kind": "uses" },
+    { "from": "component:Toolbar", "to": "component:Button",         "kind": "renders" },
+    { "from": "component:Toolbar", "to": "token:spacing/4",          "kind": "uses" },
+    { "from": "component:Dialog",  "to": "component:Modal",          "kind": "extends" },
+    { "from": "component:Dialog",  "to": "token:color/danger/500",   "kind": "uses" },
+    { "from": "component:Dialog",  "to": "token:spacing/8",          "kind": "uses" },
+    { "from": "decision:D-03",     "to": "concept:atomic-write",     "kind": "references" },
+    { "from": "decision:D-03",     "to": "file:scripts/lib/graph/build.mjs", "kind": "affects" },
+    { "from": "concept:atomic-write", "to": "file:scripts/lib/graph/build.mjs", "kind": "implemented_by" },
+    { "from": "file:scripts/lib/graph/build.mjs", "to": "token:color/primary/500", "kind": "references" },
+    { "from": "component:Button",  "to": "decision:D-03",            "kind": "depends_on" },
+    { "from": "component:Card",    "to": "decision:D-03",            "kind": "depends_on" },
+    { "from": "component:Modal",   "to": "decision:D-03",            "kind": "depends_on" }
+  ]
+}
