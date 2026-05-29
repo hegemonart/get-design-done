@@ -1,0 +1,7 @@
+# Build output (produced by `npm run build` → tsc). Not committed; dev-install
+# instructions in README.md tell users to build code.js locally.
+code.js
+code.js.map
+
+# Dependencies
+node_modules/
