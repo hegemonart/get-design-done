@@ -8,12 +8,13 @@
 // Surface:
 //   async getHealthChecks(rootDir) → { checks: HealthCheck[] }
 //
-// The 5 checks (in stable order) are:
+// The 6 checks (in stable order) are:
 //   1. claude_md            — CLAUDE.md presence
 //   2. planning_dir         — .planning/ presence
 //   3. design_dir           — .design/ presence
 //   4. package_json         — package.json present AND parseable
 //   5. issue_reporter       — kill-switch state (Plan 30-06 / D-08)
+//   6. figma_extract        — extract readiness + Free-tier signal (Plan 31-09)
 //
 // Check 5 was added in Plan 30-06 — surfaces the report-issue kill-switch
 // (env or config disable) so users can verify why the command is
@@ -22,6 +23,17 @@
 //   - "issue reporter: disabled by env (GDD_DISABLE_ISSUE_REPORTER=1)"
 //   - "issue reporter: disabled by config (.design/config.json: issue_reporter=false)"
 // When both env and config trigger, env wins (matches D-08 display contract).
+//
+// Check 6 was added in Plan 31-09 — surfaces figma-extract readiness so a user
+// running /gdd:health immediately knows whether figma-extract is usable. The
+// detail line is one of three exact strings:
+//   - "figma extract: ready (token set)"
+//   - "figma extract: token missing"
+//   - "figma extract: plugin sync needed for variables (Free tier detected)"
+// D-10: only FIGMA_TOKEN *presence* is used — the token VALUE is never read,
+// logged, or placed in the detail. The Free-tier state is derived from a LOCAL
+// signal only (a prior pull's _meta.json recording a 403/skip on the Variables
+// endpoint) — never a live network call (health-mirror is pure read-only).
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -135,7 +147,82 @@ async function getHealthChecks(rootDir) {
     });
   }
 
+  // 6. figma_extract — extract readiness + Free-tier plugin-sync signal (Plan 31-09)
+  // Reports exactly one of three states. PURE read-only: presence-only token
+  // check (D-10 — value never read/logged/printed) + a LOCAL Free-tier marker
+  // (a prior pull's _meta.json recording a 403/skip on the Variables endpoint —
+  // see scripts/lib/figma-extract/pull.cjs). NEVER throws, NEVER networks.
+  {
+    // D-10: presence only. The token VALUE is never bound to a variable that
+    // could be interpolated into detail/logs — only the boolean is kept.
+    const tokenSet = !!(process.env.FIGMA_TOKEN || process.env.FIGMA_PERSONAL_ACCESS_TOKEN);
+
+    let detail;
+    let status;
+    if (!tokenSet) {
+      detail = 'figma extract: token missing';
+      status = 'warn';
+    } else if (figmaVariablesBlockedLocally(rootDir)) {
+      // Token present but a prior pull recorded a 403/skip on the Variables REST
+      // path → Free/non-Enterprise tier. Actionable (plugin sync), not a hard fail.
+      detail = 'figma extract: plugin sync needed for variables (Free tier detected)';
+      status = 'warn';
+    } else {
+      detail = 'figma extract: ready (token set)';
+      status = 'ok';
+    }
+    checks.push({ name: 'figma_extract', status, detail });
+  }
+
   return { checks };
+}
+
+/**
+ * Free-tier signal (LOCAL only — never a network call). The raw-pull stage
+ * (scripts/lib/figma-extract/pull.cjs) writes a _meta.json per file key under
+ * the gitignored cache dir; on a Variables 403 it records a totals[] entry
+ * `{ name: 'variables', skipped: true, reason: 'HTTP 403' }`. We scan the
+ * default cache root for any such marker. Defensive: malformed/absent markers
+ * default to NOT-free (→ 'ready') so the health probe never false-alarms and
+ * NEVER throws. NEVER reads the token; NEVER makes a request.
+ *
+ * @param {string} rootDir project root passed to getHealthChecks
+ * @returns {boolean} true iff a prior pull recorded a Variables 403/skip
+ */
+function figmaVariablesBlockedLocally(rootDir) {
+  try {
+    const rawRoot = path.join(rootDir, '.figma-extract-cache', 'raw');
+    let entries;
+    try {
+      entries = fs.readdirSync(rawRoot, { withFileTypes: true });
+    } catch {
+      return false; // no cache yet → default to ready
+    }
+    for (const ent of entries) {
+      if (!ent.isDirectory()) continue;
+      const metaPath = path.join(rawRoot, ent.name, '_meta.json');
+      let meta;
+      try {
+        meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+      } catch {
+        continue; // missing/garbage marker → ignore this dir, keep scanning
+      }
+      const totals = meta && Array.isArray(meta.totals) ? meta.totals : [];
+      const blocked = totals.some(
+        (t) =>
+          t &&
+          t.name === 'variables' &&
+          t.skipped === true &&
+          typeof t.reason === 'string' &&
+          /403/.test(t.reason)
+      );
+      if (blocked) return true;
+    }
+    return false;
+  } catch {
+    // Absolute safety net — the health probe must never crash on this check.
+    return false;
+  }
 }
 
 module.exports = { getHealthChecks };
