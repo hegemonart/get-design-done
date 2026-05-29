@@ -28,7 +28,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { execFileSync } = require('node:child_process');
 const { REPO_ROOT } = require('./helpers.ts');
 
 const Ajv = require('ajv');
@@ -147,36 +146,31 @@ function installFetch(impl) {
 // ── compile-then-import (the real shipped code) ───────────────────────────────
 test.before(() => {
   fs.rmSync(BUILD_DIR, { recursive: true, force: true });
-  // Run tsc by invoking its JS entrypoint with the CURRENT node (process
-  // .execPath) rather than the .bin shim. On Windows the shim is a .cmd batch
-  // file that execFileSync refuses to spawn (EINVAL); node + bin/tsc is robust
-  // cross-platform.
-  const tscJs = path.join(PLUGIN_DIR, 'node_modules', 'typescript', 'bin', 'tsc');
-  // Compile both files to CommonJS so node can require() them. --typeRoots +
-  // --types make the `figma`/`fetch` ambient globals resolve (clean emit).
-  execFileSync(
-    process.execPath,
-    [
-      tscJs,
-      path.join(SRC_DIR, 'payload-schema.ts'),
-      path.join(SRC_DIR, 'export-variables.ts'),
-      '--module',
-      'commonjs',
-      '--target',
-      'ES2017',
-      '--moduleResolution',
-      'node',
-      '--esModuleInterop',
-      '--skipLibCheck',
-      '--typeRoots',
-      path.join(PLUGIN_DIR, 'node_modules', '@figma'),
-      '--types',
-      'plugin-typings',
-      '--outDir',
-      BUILD_DIR,
-    ],
-    { cwd: PLUGIN_DIR, stdio: 'pipe' }
-  );
+  fs.mkdirSync(BUILD_DIR, { recursive: true });
+  // Transpile the two TS src files to CommonJS via the TypeScript compiler API
+  // (transpileModule = transpile-only, no type-checking, no type resolution).
+  // CRITICAL: resolve `typescript` from the REPO ROOT node_modules (a devDep),
+  // NOT figma-plugin/node_modules — the sub-package's deps are NOT installed by
+  // the root `npm ci` on CI, so a CLI tsc under figma-plugin/ is absent there.
+  // transpileModule needs zero @figma/plugin-typings: the `figma`/`fetch`
+  // ambient globals are referenced only inside function bodies and survive a
+  // type-free transpile cleanly. This makes the compile hermetic on CI.
+  const ts = require('typescript');
+  for (const name of ['payload-schema', 'export-variables']) {
+    const srcPath = path.join(SRC_DIR, `${name}.ts`);
+    const src = fs.readFileSync(srcPath, 'utf8');
+    const { outputText } = ts.transpileModule(src, {
+      fileName: srcPath,
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2017,
+        esModuleInterop: true,
+      },
+    });
+    // Both files land in BUILD_DIR so export-variables' `require('./payload-schema')`
+    // resolves to the sibling emitted module at runtime.
+    fs.writeFileSync(path.join(BUILD_DIR, `${name}.js`), outputText);
+  }
 
   payloadSchemaMod = require(path.join(BUILD_DIR, 'payload-schema.js'));
   // export-variables.js references the `figma`/`fetch` globals only INSIDE its
