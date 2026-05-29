@@ -1,0 +1,12 @@
+{
+  "name": "GDD Sync",
+  "id": "gdd-sync-figma-variables-export",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["http://localhost:5179", "http://127.0.0.1:5179"],
+    "reasoning": "GDD Sync POSTs locally-read Figma variables to an ephemeral GDD extract receiver bound to 127.0.0.1:5179 ONLY (Path C, decision D-06). The plugin has NO other network surface: no external host, no wildcard. This is the security boundary that prevents design-data exfiltration."
+  }
+}

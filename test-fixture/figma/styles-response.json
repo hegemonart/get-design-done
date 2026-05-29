@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "styles": [
+      {
+        "node_id": "100:1",
+        "style_type": "FILL",
+        "name": "Sample/Color/Primary",
+        "description": "Primary brand fill"
+      },
+      {
+        "node_id": "100:2",
+        "style_type": "TEXT",
+        "name": "Sample/Text/Body",
+        "description": "Body copy"
+      },
+      {
+        "node_id": "100:3",
+        "style_type": "EFFECT",
+        "name": "Sample/Shadow/Card",
+        "description": ""
+      }
+    ]
+  }
+}

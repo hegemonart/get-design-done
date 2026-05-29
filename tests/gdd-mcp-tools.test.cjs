@@ -438,7 +438,8 @@ test('27.7-02: gdd_health — returns 4 checks with valid statuses', async () =>
     const res = await mod.handle({});
     assert.equal(res.success, true);
     // Plan 30-06 added 5th check (issue_reporter); was 4 in Plan 27.7-02.
-    assert.equal(res.data.checks.length, 5);
+    // Plan 31-09 added 6th check (figma_extract) — figma-extract readiness.
+    assert.equal(res.data.checks.length, 6);
     for (const c of res.data.checks) {
       assert.ok(['ok', 'warn', 'fail'].includes(c.status));
     }

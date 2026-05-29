@@ -34,6 +34,17 @@ paths = [
   # order test uses an Anthropic-shaped key as the adversarial input).
   '''tests/pseudonymize\.test\.cjs''',
   '''tests/issue-reporter-payload\.test\.cjs''',
+  # Phase 31 (figma-extract) token-isolation tests. These three files flow
+  # synthetic `figd_`-shaped sentinels (figd_x, figd_SENTINEL_DO_NOT_LEAK_31_09,
+  # figd_SECRET_*) through pull/styles/health to assert the token is NEVER
+  # persisted or logged (D-10). The fake tokens existing in source IS the test;
+  # path-allowlisting them is the same pattern used for redact.test.cjs +
+  # pseudonymize.test.cjs above. (The regexes block below also covers the
+  # synthetic shapes, but the gitleaks pull_request range-scan applies path
+  # allowlists most reliably — this is the authoritative suppression.)
+  '''tests/figma-extract-pull\.test\.cjs''',
+  '''tests/figma-extract-styles\.test\.cjs''',
+  '''tests/figma-extract-health\.test\.cjs''',
 ]
 regexes = [
   # Placeholder tokens used in reference docs and examples
@@ -42,4 +53,12 @@ regexes = [
   '''ghp_example[A-Za-z0-9]*''',
   # Shields.io / badge URLs (never real secrets)
   '''https://img\.shields\.io/.*''',
+  # Phase 31 (figma-extract) — synthetic Figma-PAT sentinels used by the
+  # token-isolation tests (tests/figma-extract-{pull,styles,health}.test.cjs).
+  # Their whole PURPOSE is to flow a fake `figd_`-shaped token through pull/
+  # styles/health and assert it is NEVER written to disk or logged (D-10).
+  # Real Figma PATs are figd_ + a long base64-ish body; these synthetic forms
+  # are either `figd_x` or SCREAMING_SNAKE with SENTINEL/SECRET/DO_NOT_LEAK —
+  # shapes a genuine credential never takes.
+  '''figd_(x|[A-Za-z0-9_]*(SENTINEL|SECRET|DO_NOT_LEAK)[A-Za-z0-9_]*)''',
 ]

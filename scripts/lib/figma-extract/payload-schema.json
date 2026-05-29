@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done/figma-extract/payload-schema.json",
+  "title": "GDD Sync plugin variables payload (Path C contract — D-04, D-13)",
+  "description": "The JSON body the Figma plugin 'GDD Sync' (31-05) POSTs to the localhost receiver (31-06) at 127.0.0.1:5179/variables. Carries ALL local variables (D-13); filtering happens later in digest.cjs (31-02). The top-level `source` const is the marker digest.cjs keys on to route this file to Path C. This schema is the source of truth that figma-plugin/src/payload-schema.ts mirrors.",
+  "type": "object",
+  "required": ["source", "collections", "variables"],
+  "additionalProperties": true,
+  "properties": {
+    "source": {
+      "const": "gdd-plugin",
+      "description": "Path C marker. digest.cjs (31-02) routes a variables.json carrying this top-level field to the plugin path (NOT the Variables-API path)."
+    },
+    "fileKey": {
+      "type": "string",
+      "description": "Optional Figma file key the variables were read from (provenance only)."
+    },
+    "exportedAt": {
+      "type": "string",
+      "description": "Optional ISO-8601 timestamp of when the plugin exported the payload."
+    },
+    "collections": {
+      "type": "array",
+      "description": "Local variable collections. Each carries its modes so digest can label valuesByMode.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "modes"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "modes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["modeId", "name"],
+              "additionalProperties": true,
+              "properties": {
+                "modeId": { "type": "string" },
+                "name": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "variables": {
+      "type": "array",
+      "description": "ALL local variables (D-13 — published flag is NOT required; digest filters). Each value per mode is either a resolved primitive/color OR an alias reference.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "resolvedType", "collectionId", "valuesByMode"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "resolvedType": {
+            "type": "string",
+            "enum": ["COLOR", "FLOAT", "STRING", "BOOLEAN"]
+          },
+          "collectionId": { "type": "string" },
+          "valuesByMode": {
+            "type": "object",
+            "description": "Keyed by modeId. A value is a resolved primitive (number/string/boolean), a resolved color object {r,g,b,a?}, or an alias marker ({type:'VARIABLE_ALIAS', id} or {alias:<name>}).",
+            "additionalProperties": {
+              "oneOf": [
+                { "type": "number" },
+                { "type": "string" },
+                { "type": "boolean" },
+                {
+                  "type": "object",
+                  "description": "Resolved color (Figma 0..1 floats).",
+                  "required": ["r", "g", "b"],
+                  "additionalProperties": true,
+                  "properties": {
+                    "r": { "type": "number" },
+                    "g": { "type": "number" },
+                    "b": { "type": "number" },
+                    "a": { "type": "number" }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "Alias reference to another variable id.",
+                  "required": ["type", "id"],
+                  "additionalProperties": true,
+                  "properties": {
+                    "type": { "const": "VARIABLE_ALIAS" },
+                    "id": { "type": "string" }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "Alias reference by name.",
+                  "required": ["alias"],
+                  "additionalProperties": true,
+                  "properties": {
+                    "alias": { "type": "string" }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.30.6",
+  "version": "1.31.0",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -80,7 +80,10 @@
     "gemini",
     "mcp",
     "parallel-agents",
-    "agent-sdk"
+    "agent-sdk",
+    "figma",
+    "extractor",
+    "design-system-sync"
   ],
   "skills": [
     "SKILL.md"

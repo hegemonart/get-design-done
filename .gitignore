@@ -50,3 +50,16 @@ dist/
 # enter the repo) is visible at the .gitignore layer. Drafts can
 # contain pseudonymized stack traces — privacy-private state.
 .design/issue-drafts/
+
+# Phase 31 (Plan 31-01) D-09: raw Figma extract cache. The off-context
+# puller (scripts/lib/figma-extract/pull.cjs) writes raw REST responses
+# (can be 200+ MB per file) here; reproducible from pull.cjs, never
+# committed. Canonical raw-cache root for the whole figma-extract pipeline
+# — siblings (31-02 digest, 31-06 receiver, 31-09 health) use this path.
+# (digest/ artifacts may be committed; only raw/ is ignored — D-09.)
+.figma-extract-cache/
+# Phase 31 (Plan 31-10) D-09 clarifier: the COMMITTED figma fixtures and
+# baselines are NOT under .figma-extract-cache/, so they are NOT matched by
+# the rule above and remain tracked — the offline e2e + baseline tests need
+# test-fixture/figma/*.json and test-fixture/baselines/phase-31/*.txt in-repo.
+# (Listed here only as documentation; no ignore/un-ignore directive needed.)

@@ -1,0 +1,3 @@
+figma extract: ready (token set)
+figma extract: token missing
+figma extract: plugin sync needed for variables (Free tier detected)

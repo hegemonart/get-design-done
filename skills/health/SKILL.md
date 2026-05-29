@@ -53,6 +53,16 @@ Health: 5 / 6 checks passing.
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Figma-extract readiness (figma_extract)
+
+After the health table, the `gdd_health` MCP surface (`scripts/lib/health-mirror/index.cjs`) reports a `figma_extract` check so a user knows whether figma-extract is usable. The detail is one of three exact strings:
+
+- `figma extract: ready (token set)` — `FIGMA_TOKEN` (or `FIGMA_PERSONAL_ACCESS_TOKEN`) is present (status `ok`).
+- `figma extract: token missing` — no token env is set (status `warn`).
+- `figma extract: plugin sync needed for variables (Free tier detected)` — token present but a prior pull recorded a 403/skip on the Variables REST path, so run the plugin-sync step (status `warn`).
+
+Token PRESENCE only is detected (D-10) — the token value is never read, logged, or shown. The Free-tier signal is read from the local raw-pull cache only; no network call is made.
+
 ## Check MCP registration (gdd-mcp)
 
 After the health table, inspect whether `gdd-mcp` (Phase 27.7+) is registered with any installed harness and render a one-line status row. Dismissable via `.design/config.json#mcp_nudge=false`. Non-blocking: failure paths render `MCP server: unknown` rather than crash. Full detection procedure (dismissal check, detection via `scripts/lib/install/mcp-register.cjs`, row rendering for claude/codex/both/neither, fallback) lives in `./health-mcp-detection.md`.

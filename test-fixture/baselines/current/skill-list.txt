@@ -20,6 +20,7 @@ do
 explore
 extract-learnings
 fast
+figma-extract
 figma-write
 graphify
 health

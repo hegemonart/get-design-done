@@ -283,6 +283,21 @@ OFF_CADENCE_VERSIONS.add('1.30.5');
 //   - 1.30.6 → Phase 30.6 (graphify-self-ownership); off-cadence sub-phase from 1.30.5.
 OFF_CADENCE_VERSIONS.add('1.30.6');
 
+// Phase 31 — Figma Off-Context Extractor + Variables Sync Plugin
+// (v1.31.0, 2026-05-29). On-cadence MINOR from the v1.30.x decimal arc
+// (1.30.0 -> 1.30.5 -> 1.30.6 -> 1.31.0). Even though 1.31.0 is an on-cadence
+// minor (not a decimal off-cadence), the existing suite contract requires every
+// post-1.0.x release registered in OFF_CADENCE_VERSIONS to keep the
+// semver-ordering tests green — the EXPECTED_SEQUENCE check covers only the
+// original 1.0.x patch cadence, so mainline MINORs (1.14.0 / 1.20.0 / 1.25.0 /
+// 1.28.0 / 1.29.0 / 1.30.0) are all recognized via this Set (the 1.29.0 / 1.30.0
+// precedent comments above). Phase 31 ships the `gdd-figma-extract` off-context
+// extractor (pull + digest + styles-resolver) + the "GDD Sync" Figma plugin +
+// localhost receiver (Path C) + the figma_extract health check; 10 plans across
+// Waves A-D, closing the spike's (commit c3a9cf6) Variables-403 + 0-tokens gaps.
+//   - 1.31.0 → Phase 31 (figma-extractor-sync); on-cadence MINOR from 1.30.6.
+OFF_CADENCE_VERSIONS.add('1.31.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

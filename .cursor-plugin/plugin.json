@@ -1,7 +1,7 @@
 {
   "name": "get-design-done",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
-  "version": "1.30.6",
+  "version": "1.31.0",
   "author": {
     "name": "hegemonart"
   },
@@ -16,6 +16,8 @@
     "design-system",
     "accessibility",
     "figma",
-    "skill"
+    "skill",
+    "extractor",
+    "design-system-sync"
   ]
 }

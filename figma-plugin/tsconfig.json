@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "amd",
+    "moduleResolution": "node",
+    "lib": ["ES2017"],
+    "strict": true,
+    "outFile": "code.js",
+    "noEmitOnError": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"]
+  },
+  "include": ["code.ts", "src/**/*.ts"]
+}
