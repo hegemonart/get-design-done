@@ -5,3 +5,6 @@ code.js.map
 
 # Dependencies
 node_modules/
+
+# Test build output (compiled CJS the offline export test requires; Plan 31-05).
+.test-build/
