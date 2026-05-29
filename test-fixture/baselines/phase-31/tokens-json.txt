@@ -1,0 +1,7 @@
+# Phase 31 tokens.json baseline — Path-B-yields-tokens pin (fixes spike 0-tokens).
+# The offline e2e resolves 3 style tokens via Path B (two-step /styles + /nodes):
+# a FILL, a TEXT, and an EFFECT. The baseline test asserts the e2e tokens.json is
+# non-empty AND contains a FILL token (the spike-bug-fix evidence).
+count=3
+marker=FILL
+types=FILL,TEXT,EFFECT

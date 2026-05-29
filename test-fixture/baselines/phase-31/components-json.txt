@@ -1,0 +1,9 @@
+# Phase 31 components.json baseline — variant-rollup regression pin (D-02).
+# The offline e2e fixture (test-fixture/figma/files-response.json) has ONE
+# COMPONENT_SET (2 variant children: Size=sm, Size=md) + ONE singleton COMPONENT.
+# Rollup yields exactly 2 entries (NOT the naive-walk count of 4). The baseline
+# test asserts the e2e components.json has this count AND contains COMPONENT_SET.
+count=2
+sets=1
+singletons=1
+marker=COMPONENT_SET
