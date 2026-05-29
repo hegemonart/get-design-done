@@ -256,6 +256,27 @@ When K=3 stable clusters surface across M=10 reflection cycles (defaults in `ref
 **Discipline preserved.** Reflector authors nothing that auto-ships. `/gdd:apply-reflections` remains the single human gate (Phase 11 SC-8). Stage 1 never auto-flips — user opts in.
 
 
+### Figma off-context extraction (v1.31.0+)
+
+Pull an entire Figma design system into a compact, LLM-readable local digest — **without the raw JSON ever entering Claude's context**. One command extracts the file via the Figma REST API into a local raw cache; a separate digest stage reduces it to `DESIGN.md` + `tokens.json` + `components.json`.
+
+```bash
+# Stage 1 — raw pull (0 Claude tokens; writes a gitignored cache)
+node scripts/lib/figma-extract/pull.cjs <figma-file-url-or-key>
+# Stage 2 — digest (reads the cache, writes the compact spec)
+node scripts/lib/figma-extract/digest.cjs --raw <cache>/raw/<key> --out .design/figma
+```
+
+**The economics.** A spike measured **898× compression** (223 MB raw → 254 KB digest) with a ~15.7K-token `DESIGN.md`, capturing 127 component sets + 40 singletons (variants, props, defaults) in ~33s — at **0 Claude tokens and 0 Figma MCP calls during extraction**. This is the cost-sane alternative to the Figma MCP for whole-design-system work, which can run tens of minutes and 50–500K+ tokens for the same data. (The Figma MCP remains the right tool for spot questions on a single component.)
+
+- **Token-safe by construction.** `FIGMA_TOKEN` is read from the environment only and sent solely as a request header — never logged, never written to disk (a CI static-analysis test enforces this across the whole extract library). The digest never reads raw JSON into context.
+- **Works on any Figma plan.** The optional **"GDD Sync"** Figma plugin (`figma-plugin/`) fills the Variables-API-Enterprise gap: it reads `figma.variables` from inside Figma and POSTs them to an ephemeral, 127.0.0.1-only receiver — so Free-tier users get full token coverage too.
+- **Per-component slices.** `digest --component <name|glob>` renders a ~500-token slice of just the components you ask for, instead of the full digest.
+- **Health-aware.** `/gdd:health` reports a `figma_extract` readiness line (token set / token missing / Free-tier plugin-sync needed).
+
+See [`skills/figma-extract/SKILL.md`](skills/figma-extract/SKILL.md) and [`figma-plugin/README.md`](figma-plugin/README.md) for the full flow.
+
+
 ## How It Works
 
 > **New to an existing codebase?** Run `/gdd:map` first. It dispatches 5 specialist mappers in parallel (tokens, components, visual hierarchy, a11y, motion) and writes structured JSON to `.design/map/` — much higher signal than the grep-based fallback in Explore.

@@ -4,6 +4,67 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.31.0] - 2026-05-29
+
+### Phase 31 — Figma Off-Context Extractor + Variables Sync Plugin
+
+Ships `gdd-figma-extract` — pull a whole Figma design system into a compact, queryable local digest (`DESIGN.md` + `tokens.json` + `components.json`) **without the raw JSON ever entering Claude's context**. One command extracts the file via the Figma REST API to a local raw cache; a separate digest stage reduces it to an LLM-readable spec. Plus a thin **"GDD Sync"** Figma plugin that fills the Variables-API-Enterprise gap by reading `figma.variables` from inside Figma (works on any plan — including Free) and POSTing them to an ephemeral localhost receiver. 10 plans across 4 waves: Wave A (raw puller + digest + styles resolver + SKILL), Wave B (plugin scaffold + export + receiver), Wave C (`--component` slice + `figma_extract` health check), Wave D (closeout).
+
+### Motivation — the spike trail
+
+Spike 001 (commit `c3a9cf6`, `.planning/spikes/001-figma-offcontext-extractor/`) validated the economics: **898× compression** (223 MB raw → 254 KB digest), a 15.7K-token DESIGN.md (under the 20K target), 127 component sets + 40 singletons captured with variants/props/defaults, ~33s wall time, and crucially **0 Claude tokens + 0 Figma MCP calls during extraction**. This is the economic alternative to Figma MCP for whole-design-system workflows (Figma MCP remains correct for spot questions on individual components). The spike surfaced two gaps, both closed by this phase:
+
+1. **Variables API → 403 (Enterprise-only)** — closed by **Path C** (the GDD Sync plugin reads variables locally and POSTs to the receiver).
+2. **Legacy styles → 0 tokens** — closed by **Path B** (two-step `/styles` + `/nodes?ids=` lookup; published-style source nodes live in canvas frames, not the main document tree).
+
+### Added
+
+- **`gdd-figma-extract` off-context extractor** — the two-stage pipeline (D-01: extract → digest stay separated, re-digest without re-pulling):
+  - `scripts/lib/figma-extract/pull.cjs` — productionized Figma REST puller (retry/backoff, version-based cache invalidation with 1h TTL fallback per D-11, drops `geometry=paths` per D-03). Writes raw JSON to disk only; raw bodies never returned to a logging caller.
+  - `scripts/lib/figma-extract/digest.cjs` — reads the raw cache, walks the node tree with **variant rollup** (D-02 — naive walk inflates ~16×), assembles tokens via the 3-path chain, renders `DESIGN.md` + `tokens.json` + `components.json`.
+  - `scripts/lib/figma-extract/styles-resolver.cjs` — **Path B** two-step `/styles` + `/nodes?ids=` resolver (fixes the spike's 0-tokens bug).
+  - `scripts/lib/figma-extract/render-md.cjs` + `walk.cjs` — deterministic, byte-stable DESIGN.md renderer + the variant-rollup walker.
+- **Three-path token extraction (D-04)** with a fallback chain — Path A (Variables API, Enterprise; 403 skipped silently), Path B (`/styles` + `/nodes`), Path C (plugin sync). Resolution priority on collision: Variables > plugin sync > styles, with a `--prefer-styles` escape hatch.
+- **"GDD Sync" Figma plugin** (`figma-plugin/`, D-05) — TypeScript, single "Export to GDD" button. Reads ALL local variables (D-13 — digest filters later), resolves aliases + modes, and POSTs to the localhost receiver.
+- **Localhost receiver** (`scripts/lib/figma-extract/receiver.cjs`, D-06) — ephemeral, **127.0.0.1-only**, port hardcoded to 5179, schema-validated, refuses non-loopback remotes, exits on first valid receipt or timeout.
+- **`--component <name|glob>` digest slice** (D-08) — a ~500-token per-component slice instead of the full ~16K digest; strictly additive (omitting it reproduces the full digest unchanged).
+- **`figma_extract` health check** (Plan 31-09) — `/gdd:health` now reports one of three exact states: `figma extract: ready (token set)`, `figma extract: token missing`, or `figma extract: plugin sync needed for variables (Free tier detected)`. Presence-only token check (D-10); the Free-tier signal is read from the local raw-pull cache only (no network call).
+- **`skills/figma-extract/SKILL.md`** (`name: gdd-figma-extract`) — off-context orchestration that never instructs reading `raw/*.json` (D-12).
+- **`tests/phase-31-baseline.test.cjs`** + 6 baseline files at `test-fixture/baselines/phase-31/` (design-md, components-json, tokens-json, health-line, manifest-network-scope, token-isolation-static), **`tests/phase-31-end-to-end.test.cjs`** (offline pull+digest against fixtures), and **`tests/figma-extract-token-isolation.test.cjs`** (the D-10 static scanner + meta-tests).
+
+### Security & guarantees
+
+- **Off-context guarantee (D-12) — statically enforced.** The SKILL never instructs reading `raw/*.json`; the digest is a pure function of the raw cache. The raw pull consumes 0 Claude tokens.
+- **Token isolation (D-10) — statically enforced.** `FIGMA_TOKEN` (fallback `FIGMA_PERSONAL_ACCESS_TOKEN`) is read from the environment only and is sent ONLY as the `X-Figma-Token` request header — never logged, never written to disk. `tests/figma-extract-token-isolation.test.cjs` scans every file under `scripts/lib/figma-extract/` for any `writeFile`/`appendFile`/`console.*`/`logger.*`/`process.std*.write` call referencing the token and fails on a non-zero count (meta-tested to prove the scanner is not vacuous).
+- **Receiver network scope (D-06).** The plugin manifest's `allowedDomains` is exactly the localhost pair (`http://localhost:5179`, `http://127.0.0.1:5179`) — any widening trips the baseline test. No external host, no wildcard.
+
+### Deferred
+
+- **Live Figma validation (D-07).** The phase ships with hermetic offline tests (stubbed fetch against committed fixtures); a one-time end-to-end run against a real Figma file with a live token is a maintainer follow-up, not a v1.31.0 blocker. Plugin Community-directory submission is likewise deferred (dev-install path ships now).
+
+### Decisions (D-01 through D-13)
+
+- **D-01**: Two-stage pipeline (extract → digest) stays separated. Re-run digest without re-pulling.
+- **D-02**: Variant rollup default-on — skip COMPONENT children of a COMPONENT_SET; record variants as a field on the parent (naive walk inflates ~16×).
+- **D-03**: Drop the `geometry=paths` query param (~30% smaller raw; geometry is discarded in the digest).
+- **D-04**: Three-path token extraction with a fallback chain (Variables > plugin sync > styles; `--prefer-styles` escape).
+- **D-05**: "GDD Sync" plugin as a separate `figma-plugin/` package (TypeScript, single button).
+- **D-06**: Receiver is ephemeral + 127.0.0.1-only + hardcoded port 5179; refuses non-loopback; closes on receipt or timeout.
+- **D-07**: Plugin distribution is dev-build now, Community submission as a follow-up; live-Figma validation is a maintainer follow-up — neither blocks v1.31.0.
+- **D-08**: `--component <name|glob>` filter on digest for per-component slicing (~500 tokens vs ~16K).
+- **D-09**: Raw cache gitignored (`.figma-extract-cache/`), reproducible from `pull.cjs`; `digest/` artifacts may be committed.
+- **D-10**: Token never logged or persisted — `FIGMA_TOKEN` from env only; CI static-analysis test enforces it library-wide.
+- **D-11**: Cache invalidation is content-based via Figma's `version` field, with a 1h wall-clock TTL fallback.
+- **D-12**: Off-context guarantee enforced statically — the skill never instructs reading `raw/*.json`.
+- **D-13**: Plugin emits ALL local variables (not just published-collection ones); filtering happens at the digest stage.
+
+### Backward compatibility
+
+- 4-manifest + 2 Tier-2 manifest lockstep at v1.31.0 (`package.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`). Keywords `figma`, `extractor`, `design-system-sync` added across the manifest keyword arrays.
+- `NOTICE` preserved verbatim — Phase 31 productionizes our own spike (`c3a9cf6`) and uses Figma's official REST + plugin APIs plus `@figma/plugin-typings` (a normal npm devDependency, not a vendored code transplant). No third-party CODE was vendored, so no new attribution is owed.
+
+---
+
 ## [1.30.6] - 2026-05-28
 
 ### Phase 30.6 — Graphify Self-Ownership
