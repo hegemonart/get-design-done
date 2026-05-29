@@ -1,0 +1,90 @@
+{
+  "name": "Sample/Design System",
+  "version": "1234567890",
+  "lastModified": "2026-05-01T00:00:00Z",
+  "role": "viewer",
+  "editorType": "figma",
+  "document": {
+    "id": "0:0",
+    "name": "Document",
+    "type": "DOCUMENT",
+    "children": [
+      {
+        "id": "1:0",
+        "name": "Sample/Page",
+        "type": "CANVAS",
+        "children": [
+          {
+            "id": "10:1",
+            "name": "Sample/Button",
+            "type": "COMPONENT_SET",
+            "description": "Sample primary button used across the sample DS.",
+            "componentPropertyDefinitions": {
+              "Size": {
+                "type": "VARIANT",
+                "defaultValue": "md",
+                "variantOptions": ["sm", "md"]
+              },
+              "Disabled": {
+                "type": "BOOLEAN",
+                "defaultValue": false
+              }
+            },
+            "children": [
+              {
+                "id": "10:2",
+                "name": "Size=sm",
+                "type": "COMPONENT"
+              },
+              {
+                "id": "10:3",
+                "name": "Size=md",
+                "type": "COMPONENT"
+              }
+            ]
+          },
+          {
+            "id": "20:1",
+            "name": "Sample/Icon",
+            "type": "COMPONENT",
+            "description": "Standalone sample icon component."
+          },
+          {
+            "id": "30:1",
+            "name": "Sample/Page",
+            "type": "FRAME",
+            "children": [
+              {
+                "id": "30:2",
+                "name": "Sample/Primary Fill",
+                "type": "RECTANGLE",
+                "fills": [
+                  {
+                    "type": "SOLID",
+                    "opacity": 1,
+                    "color": { "r": 0.1, "g": 0.4, "b": 0.9, "a": 1 }
+                  }
+                ]
+              },
+              {
+                "id": "30:3",
+                "name": "Sample/Body Text",
+                "type": "TEXT",
+                "style": {
+                  "fontFamily": "Sample Sans",
+                  "fontWeight": 400,
+                  "fontSize": 16,
+                  "lineHeightPx": 24,
+                  "letterSpacing": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "components": {},
+  "componentSets": {},
+  "styles": {}
+}
