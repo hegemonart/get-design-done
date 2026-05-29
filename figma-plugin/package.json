@@ -1,0 +1,12 @@
+{
+  "name": "gdd-figma-sync-plugin",
+  "private": true,
+  "description": "GDD Sync — Figma plugin that reads local Figma variables and POSTs them to the GDD extract receiver on localhost:5179 (Path C for non-Enterprise token extraction).",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.109.0",
+    "typescript": "^5.7.2"
+  }
+}

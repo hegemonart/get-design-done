@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "module": "ES2017",
+    "moduleResolution": "node",
+    "lib": ["ES2017"],
+    "strict": true,
+    "outDir": ".",
+    "noEmitOnError": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./node_modules/@figma"],
+    "types": ["@figma/plugin-typings"]
+  },
+  "include": ["code.ts", "src/**/*.ts"]
+}
