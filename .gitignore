@@ -58,3 +58,8 @@ dist/
 # — siblings (31-02 digest, 31-06 receiver, 31-09 health) use this path.
 # (digest/ artifacts may be committed; only raw/ is ignored — D-09.)
 .figma-extract-cache/
+# Phase 31 (Plan 31-10) D-09 clarifier: the COMMITTED figma fixtures and
+# baselines are NOT under .figma-extract-cache/, so they are NOT matched by
+# the rule above and remain tracked — the offline e2e + baseline tests need
+# test-fixture/figma/*.json and test-fixture/baselines/phase-31/*.txt in-repo.
+# (Listed here only as documentation; no ignore/un-ignore directive needed.)
