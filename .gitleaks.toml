@@ -42,4 +42,12 @@ regexes = [
   '''ghp_example[A-Za-z0-9]*''',
   # Shields.io / badge URLs (never real secrets)
   '''https://img\.shields\.io/.*''',
+  # Phase 31 (figma-extract) — synthetic Figma-PAT sentinels used by the
+  # token-isolation tests (tests/figma-extract-{pull,styles,health}.test.cjs).
+  # Their whole PURPOSE is to flow a fake `figd_`-shaped token through pull/
+  # styles/health and assert it is NEVER written to disk or logged (D-10).
+  # Real Figma PATs are figd_ + a long base64-ish body; these synthetic forms
+  # are either `figd_x` or SCREAMING_SNAKE with SENTINEL/SECRET/DO_NOT_LEAK —
+  # shapes a genuine credential never takes.
+  '''figd_(x|[A-Za-z0-9_]*(SENTINEL|SECRET|DO_NOT_LEAK)[A-Za-z0-9_]*)''',
 ]

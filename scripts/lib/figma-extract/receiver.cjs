@@ -49,8 +49,14 @@ const MAX_BODY_BYTES = 50 * 1024 * 1024;
 
 // ── validator (Ajv is a hard repo dependency — package.json "ajv": "^8.18.0") ─
 // Compiled once at module load. Ajv 8 CJS: require('ajv') is the constructor.
+// NOTE: fail-fast (default, NO allErrors). The receiver validates an UNTRUSTED
+// HTTP body from the plugin; `allErrors: true` would walk the entire (possibly
+// hostile, deeply-nested) object collecting every violation — a resource-
+// exhaustion / DoS amplifier (CodeQL js/resources-exhaustion). Fail-fast stops
+// at the first violation, which is all the 400 response needs. The 50MB
+// MAX_BODY_BYTES cap bounds input size; fail-fast bounds traversal cost.
 const AjvCtor = Ajv.default || Ajv;
-const _ajv = new AjvCtor({ strict: false, allErrors: true });
+const _ajv = new AjvCtor({ strict: false });
 const _validate = _ajv.compile(payloadSchema);
 
 /**

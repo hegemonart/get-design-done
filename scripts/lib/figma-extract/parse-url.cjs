@@ -38,12 +38,24 @@ function parseFigmaFileKey(input) {
     throw new TypeError('parseFigmaFileKey: non-empty input (file key or URL) required');
   }
 
-  const looksLikeUrl =
-    trimmed.startsWith('http://') ||
-    trimmed.startsWith('https://') ||
-    trimmed.includes('figma.com');
-
-  if (looksLikeUrl) {
+  // URL form carrying an http(s) scheme: validate the HOST is figma.com via the
+  // URL parser — NOT a substring check. A substring test (`includes('figma.com')`)
+  // is unsafe: `https://figma.com.evil.test/...` and `https://evil.test/figma.com`
+  // both contain the literal but are not Figma (CodeQL js/incomplete-url-substring-
+  // sanitization). new URL().hostname gives the real authority to compare exactly.
+  const hasScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed);
+  if (hasScheme) {
+    let host;
+    try {
+      host = new URL(trimmed).hostname.toLowerCase();
+    } catch {
+      throw new Error('parseFigmaFileKey: malformed URL: ' + trimmed);
+    }
+    const isFigmaHost =
+      host === 'figma.com' || host === 'www.figma.com' || host.endsWith('.figma.com');
+    if (!isFigmaHost) {
+      throw new Error('parseFigmaFileKey: not a figma.com URL: ' + trimmed);
+    }
     const match = trimmed.match(URL_KEY_RE);
     if (!match) {
       throw new Error(
@@ -53,7 +65,22 @@ function parseFigmaFileKey(input) {
     return match[1];
   }
 
-  // Bare key — return verbatim.
+  // Scheme-less path form (e.g. `www.figma.com/file/<key>` or `/design/<key>/...`):
+  // there is no parseable authority, so extract the key from the path segment.
+  if (trimmed.includes('/')) {
+    const match = trimmed.match(URL_KEY_RE);
+    if (!match) {
+      throw new Error(
+        'parseFigmaFileKey: could not extract a Figma file key from URL: ' + trimmed
+      );
+    }
+    return match[1];
+  }
+
+  // Bare key — a single URL-safe base62-ish token (no scheme, no path).
+  if (!/^[A-Za-z0-9]+$/.test(trimmed)) {
+    throw new Error('parseFigmaFileKey: invalid Figma file key: ' + trimmed);
+  }
   return trimmed;
 }
 
