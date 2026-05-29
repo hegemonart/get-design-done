@@ -1,0 +1,47 @@
+{
+  "nodes": {
+    "100:1": {
+      "document": {
+        "id": "100:1",
+        "name": "Sample/Color/Primary",
+        "type": "RECTANGLE",
+        "fills": [
+          {
+            "type": "SOLID",
+            "color": { "r": 0.06, "g": 0.64, "b": 0.5 },
+            "opacity": 1
+          }
+        ]
+      }
+    },
+    "100:2": {
+      "document": {
+        "id": "100:2",
+        "name": "Sample/Text/Body",
+        "type": "TEXT",
+        "style": {
+          "fontFamily": "Inter",
+          "fontWeight": 400,
+          "fontSize": 16,
+          "lineHeightPx": 24,
+          "letterSpacing": 0
+        }
+      }
+    },
+    "100:3": {
+      "document": {
+        "id": "100:3",
+        "name": "Sample/Shadow/Card",
+        "type": "RECTANGLE",
+        "effects": [
+          {
+            "type": "DROP_SHADOW",
+            "radius": 8,
+            "color": { "r": 0, "g": 0, "b": 0, "a": 0.1 },
+            "offset": { "x": 0, "y": 2 }
+          }
+        ]
+      }
+    }
+  }
+}
