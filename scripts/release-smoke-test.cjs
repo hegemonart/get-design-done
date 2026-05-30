@@ -4,7 +4,7 @@
 //
 // Validates that the freshly-checked-out tag produces a consistent plugin
 // surface. Runs deterministic (non-LLM) portions of /gdd:explore against
-// test-fixture/src/ in an isolated temp dir and diffs resulting artifacts
+// test/fixtures/src/ in an isolated temp dir and diffs resulting artifacts
 // against the provided baseline directory. Exit code:
 //   0 — zero diffs, zero missing artifacts
 //   1 — one or more diffs or missing artifacts
@@ -16,7 +16,7 @@
 //
 // Usage:
 //   node scripts/release-smoke-test.cjs --baseline <path>
-//   node scripts/release-smoke-test.cjs --baseline test-fixture/baselines/phase-13
+//   node scripts/release-smoke-test.cjs --baseline test/fixtures/baselines/phase-13
 //   node scripts/release-smoke-test.cjs --baseline <path> --keep  # keep tmp dir
 
 const fs = require('fs');
@@ -40,7 +40,7 @@ if (!fs.existsSync(baselineDir) || !fs.statSync(baselineDir).isDirectory()) {
 }
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const FIXTURE_SRC = path.join(REPO_ROOT, 'test-fixture', 'src');
+const FIXTURE_SRC = path.join(REPO_ROOT, 'test', 'fixtures', 'src');
 
 if (!fs.existsSync(FIXTURE_SRC)) {
   console.error(`fixture not found: ${FIXTURE_SRC}`);
