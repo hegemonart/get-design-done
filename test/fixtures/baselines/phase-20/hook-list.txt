@@ -12,4 +12,6 @@ gdd-sessionstart-recap.js
 gdd-trajectory-capture.js
 gdd-turn-closeout.js
 hooks.json
+inject-using-gdd.sh
+run-hook.cmd
 update-check.sh

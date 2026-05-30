@@ -85,6 +85,8 @@ hooks/gdd-sessionstart-recap.js
 hooks/gdd-trajectory-capture.js
 hooks/gdd-turn-closeout.js
 hooks/hooks.json
+hooks/inject-using-gdd.sh
+hooks/run-hook.cmd
 hooks/update-check.sh
 package.json
 recipes/.gitkeep
@@ -592,6 +594,7 @@ skills/resume/SKILL.md
 skills/review-backlog/SKILL.md
 skills/router/SKILL.md
 skills/router/capability-gap-emitter.md
+skills/router/router-pick-emitter.md
 skills/router/router-rules.md
 skills/scan/SKILL.md
 skills/scan/scan-procedure.md
@@ -613,6 +616,7 @@ skills/todo/SKILL.md
 skills/turn-closeout/SKILL.md
 skills/undo/SKILL.md
 skills/update/SKILL.md
+skills/using-gdd/SKILL.md
 skills/verify/SKILL.md
 skills/verify/verify-procedure.md
 skills/warm-cache/SKILL.md

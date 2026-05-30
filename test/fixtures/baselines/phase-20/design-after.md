@@ -78,4 +78,21 @@ Print the `=== Design stage complete ===` summary (tasks complete/total, deviati
 
 After all tasks finish, if STATE.md `<connections>` has `figma: available`, offer the user the figma-write opt-in prompt (modes: annotate / tokenize / mappings, with optional `--dry-run`). Spawn `design-figma-writer` with the selected mode on "yes"; skip silently on "no". NEVER auto-run without confirmation. Full prompt + dispatch logic: `./design-procedure.md` §Figma Write Dispatch.
 
+<HARD-GATE>
+Do NOT transition to verify (or invoke `/gdd:verify`) until `.design/DESIGN-SUMMARY.md` is committed. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
+
+## Rationalizations — Thought to Reality
+
+The excuses an agent uses to cut corners during design implementation, and the cost of each:
+
+| Thought | Reality |
+|---------|---------|
+| "I can skip planning for this small task and just implement it." | Plan-skipped tasks blow scope per cycle telemetry; the gate is for the typical case, not the exception. |
+| "These two tasks touch nearby files but I'll run them in parallel anyway." | Overlapping `Touches:` in a parallel batch produce merge conflicts that silently drop one task's work — split into sequential sub-waves. |
+| "Hardcoding this value is faster than wiring the token." | A hardcoded value is a stub the verifier catches as drift from the design tokens; you pay for it twice. |
+| "I'll emit the `.stories.tsx` stub later when Storybook is back up." | The CSF stub must land with the component or the next cycle's visual-regression scope misses it entirely. |
+| "This deviation is minor, I won't record a blocker." | An unrecorded deviation can't be resolved by a follow-up task, so it leaks into verify as an unexplained gap. |
+| "Auto-mode means I can ignore the wave checkpoints." | Auto-mode skips prompts, not the wave structure; ignoring wave order still corrupts dependent-task ordering. |
+
 ## DESIGN COMPLETE

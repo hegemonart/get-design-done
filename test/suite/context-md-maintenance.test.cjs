@@ -68,10 +68,16 @@ test('brief skill mentions ADR pointer', () => {
   assert.ok(/adr-format/.test(c), 'brief must link to ADR format reference');
 });
 
-test('brief skill stays under 99-line warn threshold', () => {
+test('brief skill stays under the 250-line block threshold (warn-band accepted post-Phase-32)', () => {
+  // Phase 28.5 held brief <=99 (advisory warn threshold). Phase 32 (v1.32.0)
+  // added the mandatory <HARD-GATE> + rationalization table + inline
+  // self-review discipline blocks to brief, moving it into the validator's
+  // advisory WARN band (>=100 lines) — accepted by design per the Phase 32
+  // Wave-A/B summaries ("warn, not block"; the gates + tables ARE the
+  // deliverable). The hard contract is the BLOCK threshold (250); guard that.
   const c = read(BRIEF);
   const n = lineCount(c);
-  assert.ok(n <= 99, `brief SKILL.md is ${n} lines; must be <=99 (D-01 warn threshold)`);
+  assert.ok(n < 250, `brief SKILL.md is ${n} lines; must stay under the 250-line block threshold (D-01)`);
 });
 
 test('brief skill name unchanged (D-05 no renames)', () => {
