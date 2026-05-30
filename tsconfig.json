@@ -21,6 +21,6 @@
     "noUncheckedIndexedAccess": true,
     "types": ["node"]
   },
-  "include": ["scripts/**/*.ts", "tests/**/*.ts", "hooks/**/*.ts", "reference/schemas/generated.d.ts"],
-  "exclude": ["node_modules", "test-fixture", ".planning", ".claude"]
+  "include": ["scripts/**/*.ts", "test/suite/**/*.ts", "hooks/**/*.ts", "reference/schemas/generated.d.ts"],
+  "exclude": ["node_modules", "test/fixtures", ".planning", ".claude"]
 }

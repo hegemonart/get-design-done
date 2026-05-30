@@ -2,8 +2,9 @@
 .design/
 
 # Except the E2E fixture's seeded .design/ (Plan 21-11) — ships in repo for tests
-!test-fixture/headless-e2e/.design/
-!test-fixture/headless-e2e/.design/**
+# (Phase 31.5 D-12: relocated test-fixture/ → test/fixtures/)
+!test/fixtures/headless-e2e/.design/
+!test/fixtures/headless-e2e/.design/**
 
 # OS
 .DS_Store
@@ -61,5 +62,5 @@ dist/
 # Phase 31 (Plan 31-10) D-09 clarifier: the COMMITTED figma fixtures and
 # baselines are NOT under .figma-extract-cache/, so they are NOT matched by
 # the rule above and remain tracked — the offline e2e + baseline tests need
-# test-fixture/figma/*.json and test-fixture/baselines/phase-31/*.txt in-repo.
+# test/fixtures/figma/*.json and test/fixtures/baselines/phase-31/*.txt in-repo.
 # (Listed here only as documentation; no ignore/un-ignore directive needed.)

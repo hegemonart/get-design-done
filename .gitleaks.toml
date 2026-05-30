@@ -12,15 +12,15 @@ description = "Known safe paths and placeholder patterns"
 paths = [
   '''\.planning/''',
   '''\.claude/''',
-  '''test-fixture/baselines/''',
+  '''test/fixtures/baselines/''',
   '''node_modules/''',
   '''\.design/''',
-  # tests/redact.test.cjs contains intentional fake JWTs + PEM blocks
+  # test/suite/redact.test.cjs contains intentional fake JWTs + PEM blocks
   # used to exercise the Phase 22 secret-scrubber regex registry. The
   # whole point of those test fixtures is for gitleaks-style detectors
   # to flag them in source — but the redact module is what consumes
   # them at runtime, not the leaked-credential surface.
-  '''tests/redact\.test\.cjs''',
+  '''test/suite/redact\.test\.cjs''',
   # reference/pseudonymization-rules.md is Phase 30's human-readable
   # documentation of the pseudonymizer's behavior. It includes
   # before/after examples that look like secrets to gitleaks (e.g.
@@ -28,12 +28,12 @@ paths = [
   # show what the module recognizes + scrubs. The examples are
   # deliberately illustrative, not real credentials.
   '''reference/pseudonymization-rules\.md''',
-  # tests/pseudonymize.test.cjs + tests/issue-reporter-payload.test.cjs
+  # test/suite/pseudonymize.test.cjs + test/suite/issue-reporter-payload.test.cjs
   # exercise the same surface with realistic example tokens for the
   # negative-presence assertions (Phase 30 D-04 redact-before-pseudo
   # order test uses an Anthropic-shaped key as the adversarial input).
-  '''tests/pseudonymize\.test\.cjs''',
-  '''tests/issue-reporter-payload\.test\.cjs''',
+  '''test/suite/pseudonymize\.test\.cjs''',
+  '''test/suite/issue-reporter-payload\.test\.cjs''',
   # Phase 31 (figma-extract) token-isolation tests. These three files flow
   # synthetic `figd_`-shaped sentinels (figd_x, figd_SENTINEL_DO_NOT_LEAK_31_09,
   # figd_SECRET_*) through pull/styles/health to assert the token is NEVER
@@ -42,9 +42,9 @@ paths = [
   # pseudonymize.test.cjs above. (The regexes block below also covers the
   # synthetic shapes, but the gitleaks pull_request range-scan applies path
   # allowlists most reliably — this is the authoritative suppression.)
-  '''tests/figma-extract-pull\.test\.cjs''',
-  '''tests/figma-extract-styles\.test\.cjs''',
-  '''tests/figma-extract-health\.test\.cjs''',
+  '''test/suite/figma-extract-pull\.test\.cjs''',
+  '''test/suite/figma-extract-styles\.test\.cjs''',
+  '''test/suite/figma-extract-health\.test\.cjs''',
 ]
 regexes = [
   # Placeholder tokens used in reference docs and examples
@@ -54,7 +54,7 @@ regexes = [
   # Shields.io / badge URLs (never real secrets)
   '''https://img\.shields\.io/.*''',
   # Phase 31 (figma-extract) — synthetic Figma-PAT sentinels used by the
-  # token-isolation tests (tests/figma-extract-{pull,styles,health}.test.cjs).
+  # token-isolation tests (test/suite/figma-extract-{pull,styles,health}.test.cjs).
   # Their whole PURPOSE is to flow a fake `figd_`-shaped token through pull/
   # styles/health and assert it is NEVER written to disk or logged (D-10).
   # Real Figma PATs are figd_ + a long base64-ish body; these synthetic forms

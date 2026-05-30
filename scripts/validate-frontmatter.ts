@@ -17,7 +17,7 @@ import { existsSync, statSync, readdirSync } from 'node:fs';
 import { join, basename, dirname, resolve } from 'node:path';
 import { createRequire } from 'node:module';
 
-import { readFrontmatter } from '../tests/helpers.ts';
+import { readFrontmatter } from '../test/suite/helpers.ts';
 
 // ── delegate_to capability matrix loader (Plan 27-06) ──────────────────────
 //

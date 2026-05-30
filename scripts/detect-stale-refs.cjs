@@ -32,7 +32,11 @@ const EXCLUDE_DIRS = new Set([
   '.planning',
   '.claude',
   '.design',
-  'test-fixture',
+  // Phase 31.5 D-12: the old root test trees were relocated under test/.
+  // Excluding 'test' skips the whole relocated tree (test/suite +
+  // test/fixtures) from the shipped-markdown stale-ref scan, exactly as the
+  // pre-relocation fixture-dir exclusion did.
+  'test',
   '.git',
 ]);
 
