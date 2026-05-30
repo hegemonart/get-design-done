@@ -77,6 +77,14 @@ The next stage (design) calls `mcp__gdd_state__transition_stage` on entry — th
 
 Print: plan tasks (N waves, M total tasks), files written (`.design/DESIGN-PLAN.md`, plus `.design/DESIGN-RESEARCH.md` if research ran), next step `/get-design-done:design`.
 
+## Spec self-review (before transition)
+
+Run this final spec-quality pass over `.design/DESIGN-PLAN.md` before the plan→design transition:
+- Placeholder scan: no TBD / TODO / `<placeholder>` / lorem left in the artifact.
+- Internal consistency: sections don't contradict each other.
+- Scope check: nothing in the artifact exceeds (or silently drops) the agreed scope.
+- Ambiguity check: every requirement/decision is specific enough to act on without a follow-up question.
+
 <HARD-GATE>
 Do NOT transition to design (or invoke `/gdd:design`) until `.design/DESIGN-PLAN.md` is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>

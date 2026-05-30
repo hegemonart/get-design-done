@@ -92,6 +92,14 @@ Next: @get-design-done explore
 ━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+## Spec self-review (before transition)
+
+Run this final spec-quality pass over `.design/BRIEF.md` before the brief→explore transition:
+- Placeholder scan: no TBD / TODO / `<placeholder>` / lorem left in the artifact.
+- Internal consistency: sections don't contradict each other.
+- Scope check: nothing in the artifact exceeds (or silently drops) the agreed scope.
+- Ambiguity check: every requirement/decision is specific enough to act on without a follow-up question.
+
 <HARD-GATE>
 Do NOT transition to explore (or invoke `/gdd:explore`) until the brief artifact (default `.design/BRIEF.md`) is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>
