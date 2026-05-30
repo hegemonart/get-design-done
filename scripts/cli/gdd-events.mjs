@@ -138,7 +138,7 @@ export function compileFilter(terms) {
 
 async function cmdTail(parsed) {
   const path = resolvePath(parsed.flags.path);
-  const { readEvents } = await import('../lib/event-stream/reader.ts');
+  const { readEvents } = await import('../../sdk/event-stream/reader.ts');
   if (!parsed.flags.follow) {
     for await (const ev of readEvents({ path })) {
       stdout.write(JSON.stringify(ev) + '\n');
@@ -188,7 +188,7 @@ async function cmdGrep(parsed) {
     return 2;
   }
   const predicate = compileFilter(terms);
-  const { readEvents } = await import('../lib/event-stream/reader.ts');
+  const { readEvents } = await import('../../sdk/event-stream/reader.ts');
   for await (const ev of readEvents({ path, predicate })) {
     stdout.write(JSON.stringify(ev) + '\n');
   }
@@ -197,7 +197,7 @@ async function cmdGrep(parsed) {
 
 async function cmdCat(parsed) {
   const path = resolvePath(parsed.flags.path);
-  const { readEvents } = await import('../lib/event-stream/reader.ts');
+  const { readEvents } = await import('../../sdk/event-stream/reader.ts');
   for await (const ev of readEvents({ path })) {
     const ts = ev.timestamp ?? '?';
     const tp = ev.type ?? '?';
@@ -207,7 +207,7 @@ async function cmdCat(parsed) {
 }
 
 async function cmdListTypes() {
-  const { KNOWN_EVENT_TYPES } = await import('../lib/event-stream/types.ts');
+  const { KNOWN_EVENT_TYPES } = await import('../../sdk/event-stream/types.ts');
   for (const t of KNOWN_EVENT_TYPES) stdout.write(t + '\n');
   return 0;
 }
@@ -236,7 +236,7 @@ async function cmdServe(parsed) {
   // Bridge live bus → ws transport. The transport is CommonJS and cannot
   // require .ts directly, so we import the bus here and pass subscribeAll
   // as a callback factory.
-  const { subscribeAll } = await import('../lib/event-stream/index.ts');
+  const { subscribeAll } = await import('../../sdk/event-stream/index.ts');
   const subscribe = (handler) => subscribeAll(handler);
   const handle = await mod.startServer({ port, token, tailFrom, subscribe });
   stderr.write(`gdd-events: WebSocket listening on :${port} (auth required)\n`);

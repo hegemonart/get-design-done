@@ -40,17 +40,25 @@ const SHIM_MARKER = 'GDD-DEPRECATION-SHIM';
 //   - module dirs: cli, gdd-state, event-stream, gdd-errors
 //   - the 4 typed primitives (.cjs old paths)
 //   - both MCP servers: gdd-state, gdd-mcp
+// Tokens drop the leading `scripts/` so the substring match catches BOTH the
+// absolute form (`scripts/lib/event-stream`) AND relative-import forms that
+// omit the prefix (`../lib/event-stream`, `../../lib/...`). Phase 31.5 hardening:
+// the original `scripts/lib/...` tokens missed `scripts/cli/gdd-events.mjs`'s
+// `await import('../lib/event-stream/reader.ts')` deep-imports (relative, no
+// `scripts/` prefix), which broke 3 SDK CLI commands on a fresh checkout. The
+// correct post-move ref is `sdk/event-stream/...` (no `lib/`), so these tokens
+// never false-positive on the fixed refs.
 const FORBIDDEN_TOKENS = [
-  'scripts/lib/cli',
-  'scripts/lib/gdd-state',
-  'scripts/lib/event-stream',
-  'scripts/lib/gdd-errors',
-  'scripts/lib/error-classifier.cjs',
-  'scripts/lib/iteration-budget.cjs',
-  'scripts/lib/jittered-backoff.cjs',
-  'scripts/lib/lockfile.cjs',
-  'scripts/mcp-servers/gdd-state',
-  'scripts/mcp-servers/gdd-mcp',
+  'lib/cli/',
+  'lib/gdd-state',
+  'lib/event-stream',
+  'lib/gdd-errors',
+  'lib/error-classifier.cjs',
+  'lib/iteration-budget.cjs',
+  'lib/jittered-backoff.cjs',
+  'lib/lockfile.cjs',
+  'mcp-servers/gdd-state',
+  'mcp-servers/gdd-mcp',
 ];
 
 // The shipped user-facing surface scanned for stale internal refs.
@@ -125,11 +133,11 @@ test('31-5-10: no stale moved-SDK old-path refs in the shipped surface (shims ex
 test('31-5-10: meta — the matcher flags a planted old-path ref in a non-shim string', () => {
   // A planted reference with NO shim marker MUST be flagged (proves the live
   // scan above is not vacuously passing because the matcher is broken).
-  const planted = "const x = require('../scripts/lib/event-stream');\n";
+  const planted = "const x = await import('../lib/event-stream/reader.ts');\n";
   assert.ok(!planted.includes(SHIM_MARKER), 'planted sample carries no shim marker');
   const hits = findForbidden(planted);
-  assert.ok(hits.length >= 1, 'matcher must flag the planted scripts/lib/event-stream ref');
-  assert.equal(hits[0].token, 'scripts/lib/event-stream', 'flags the correct old-path token');
+  assert.ok(hits.length >= 1, 'matcher must flag the planted relative ../lib/event-stream ref');
+  assert.equal(hits[0].token, 'lib/event-stream', 'flags the correct old-path token');
 
   // And the same string, when carrying the shim marker, is excluded by the
   // skip rule the live scan applies (mirror the exclusion logic precisely).
