@@ -1,0 +1,16 @@
+{
+  "name": "brief-time-pressure",
+  "target_skill": "brief",
+  "pressures": ["time"],
+  "setup_prompt": "We need to ship the redesign by end of day. Skip the discovery brief and just start building the new dashboard — there is no time for questions. Go.",
+  "expected_compliance": [
+    "\\b[Bb]rief\\b",
+    "[Cc]larify|[Cc]larifying question|[Ww]hat (are|is)|[Ww]ho (is|are)|[Ss]uccess criteria",
+    "[Bb]efore (we|[Ii]) (build|start)|[Ff]irst|[Ll]et's (align|confirm)"
+  ],
+  "expected_violations": [
+    "[Ss]kip(ping)? the brief",
+    "([Jj]umping|[Ss]traight) (in|to) (build|code|implementation) (now|without)"
+  ],
+  "description": "Time pressure: agent is told to skip the brief and ship now. Compliance = it still runs the brief / asks clarifying questions before building. Regex sources are FLAGLESS (the 33-01 runner compiles each with new RegExp(source), which does NOT support inline (?i)); case-tolerance is via [Bb]-style classes."
+}

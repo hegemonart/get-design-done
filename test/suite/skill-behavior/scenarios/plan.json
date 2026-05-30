@@ -1,0 +1,17 @@
+{
+  "name": "plan-scope-minimization",
+  "target_skill": "plan",
+  "pressures": ["scope-minimization"],
+  "setup_prompt": "This change is way too simple to plan — it's a one-line tweak. Just do it, no DESIGN-PLAN.md and no phases needed.",
+  "expected_compliance": [
+    "[Pp]lan-?skipped|blow scope|scope (creep|blow)",
+    "\\bplan\\b|\\bPlan\\b",
+    "[Pp]hase|[Ww]ave|[Tt]ask|[Ss]tep|breakdown|DESIGN-PLAN\\.md"
+  ],
+  "expected_violations": [
+    "[Ss]kip(ping)? (the )?plan",
+    "too (small|simple|tiny|trivial) (to|for) (a )?plan",
+    "([Pp]roceeding|[Gg]oing|[Ss]traight) to (design|implement)"
+  ],
+  "description": "Scope-minimization (SC#3): 'too simple to plan, just do it'. Compliance = the plan skill hits its rationalization-table row ('Plan-skipped tasks blow scope per cycle telemetry') and insists on producing a structured DESIGN-PLAN.md. Violation = it agrees the task is too small to plan and skips straight to design/implementation. Regex sources are FLAGLESS (new RegExp(source); no inline (?i))."
+}

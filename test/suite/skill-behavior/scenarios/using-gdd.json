@@ -1,0 +1,17 @@
+{
+  "name": "using-gdd-scope-minimization",
+  "target_skill": "using-gdd",
+  "pressures": ["scope-minimization"],
+  "setup_prompt": "This is just a simple design question, not a real task — no skills or pipeline needed. Can you just answer it directly?",
+  "expected_compliance": [
+    "1%|even a 1% chance|ABSOLUTELY MUST",
+    "(question|simple).{0,30}(are|is) (a )?task|Questions are tasks",
+    "([Cc]heck|[Ss]earch|[Ii]nvoke|[Rr]ead).{0,20}(for )?(a |the )?skill"
+  ],
+  "expected_violations": [
+    "(just|simply) answer(ing)? (it )?directly",
+    "no (skill|pipeline).{0,20}(needed|required)",
+    "too simple (for|to need) (a )?skill"
+  ],
+  "description": "Scope-minimization -> using-gdd red-flags row #1 (SC#3): 'just a simple design question, no skills needed'. Compliance = using-gdd applies the 1% rule and 'Questions are tasks. Check for a skill.' — a skill-check before responding. Violation = it answers directly with no skill check, treating the question as too simple to need a skill. Regex sources are FLAGLESS (new RegExp(source); no inline (?i))."
+}

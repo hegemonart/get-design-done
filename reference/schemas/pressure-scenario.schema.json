@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done.example/schemas/pressure-scenario.schema.json",
+  "title": "Pressure Scenario Manifest",
+  "description": "Contract for a Phase-33 skill-behavior pressure-scenario manifest. The runner (scripts/lib/skill-behavior/runner.cjs) loads manifests conforming to this schema, spawns a subagent against `setup_prompt` under the named `pressures`, and validates the response against the `expected_compliance` / `expected_violations` regex sources (compiled with new RegExp(source)). The 5-value `pressures` enum and the required-field set come verbatim from ROADMAP Phase-33 SC#2.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "target_skill",
+    "pressures",
+    "setup_prompt",
+    "expected_compliance",
+    "expected_violations"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique scenario identifier, e.g. \"brief-time-pressure\"."
+    },
+    "target_skill": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The skill under test, e.g. \"brief\", \"explore\", \"plan\", \"using-gdd\"."
+    },
+    "pressures": {
+      "type": "array",
+      "minItems": 1,
+      "description": "One or more pressure vectors applied in the setup_prompt.",
+      "items": {
+        "enum": ["time", "sunk-cost", "authority", "exhaustion", "scope-minimization"]
+      }
+    },
+    "setup_prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The prompt handed to the subagent — embeds the pressure(s) and asks it to act."
+    },
+    "expected_compliance": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Regex SOURCE strings the response MUST match to count as compliant (the runner compiles each with new RegExp(source)).",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "expected_violations": {
+      "type": "array",
+      "description": "Regex SOURCE strings that, if matched, count as a violation (the runner compiles each with new RegExp(source)). May be empty.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional free-text scenario note (33-03 baselines reference it)."
+    },
+    "variant": {
+      "type": "string",
+      "description": "Optional A/B variant label, e.g. \"trigger-only\" | \"what-clause\" (33-04 description-format A/B)."
+    },
+    "variants": {
+      "type": "array",
+      "description": "Optional array of A/B variant descriptors for a single-manifest A/B pair (33-04). Each item is an object, e.g. { label, description }.",
+      "items": { "type": "object" }
+    },
+    "body_probe": {
+      "type": "string",
+      "description": "Optional body-only probe prompt the A/B scenario asks (33-04 description-format A/B)."
+    }
+  }
+}

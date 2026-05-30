@@ -330,6 +330,19 @@ OFF_CADENCE_VERSIONS.add('1.31.5');
 //   - 1.32.0 → Phase 32 (skill-autotrigger-discipline); on-cadence MINOR from 1.31.5.
 OFF_CADENCE_VERSIONS.add('1.32.0');
 
+// Phase 33 — Skill Behavior Tests (Pressure-Scenario Harness) + 31.5 shim removal
+// (v1.33.0, 2026-05-30). On-cadence MINOR from the v1.32.x arc
+// (1.31.0 -> 1.31.5 -> 1.32.0 -> 1.33.0). Registered here for the same reason as
+// every post-1.0.x release (the EXPECTED_SEQUENCE check covers only the original
+// 1.0.x patch cadence; mainline MINORs are recognized via this Set — see the
+// 1.29.0 / 1.30.0 / 1.31.0 / 1.32.0 precedent comments above). Phase 33 ships the
+// skill-behavior pressure-scenario harness (manifest-driven runner + scenario
+// schema + 8 scenarios + synthetic RED baselines + description-format A/B +
+// reflector telemetry) AND retires the 6 Phase-31.5 deprecation shim groups
+// (BREAKING, D-04 — the documented v1.33.0 removal target).
+//   - 1.33.0 → Phase 33 (skill-behavior); on-cadence MINOR from 1.32.0.
+OFF_CADENCE_VERSIONS.add('1.33.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

@@ -249,14 +249,52 @@ Three ported artifacts:
 The mechanism is the contribution being attributed; the discipline content is
 original to get-design-done.
 
+──────────────────────────────────────────────────────────────────────────────
+Phase 33 — Skill Behavior Tests (Pressure-Scenario Harness) (v1.33.0, 2026-05-30)
+──────────────────────────────────────────────────────────────────────────────
+
+The skill-behavior pressure-scenario harness shipped in v1.33.0 ports the
+TDD-for-skills METHODOLOGY and the pressure-scenario PATTERN (not the content)
+from:
+
+  obra/superpowers/skills/writing-skills (https://github.com/obra/superpowers)
+  License: MIT
+
+writing-skills codifies the TDD-for-skills cycle (RED: an agent fails the task
+without the skill → GREEN: the skill counters those specific rationalizations →
+REFACTOR: close newly-discovered loopholes) and the pattern of testing a skill
+UNDER PRESSURE (time / sunk-cost / authority / exhaustion / scope-minimization)
+rather than only statically. We re-derive the methodology + pattern in GDD's own
+runtime and skill set:
+
+  scripts/lib/skill-behavior/runner.cjs
+    └─ The manifest-driven pressure-scenario runner (injectable agent-invoker
+       seam, N-attempts + majority rule, RED→GREEN structured result) adapts
+       writing-skills' TDD-for-skills test loop. GDD content: the injectable
+       invoker seam (no SDK dependency — D-03), the scenario-manifest schema,
+       and the stub-LLM CI path.
+
+  test/suite/skill-behavior/scenarios/*.json
+    └─ The pressure-scenario manifest pattern (a scenario applies a named
+       pressure to a skill and scores compliance vs violation against a rubric)
+       adapts writing-skills' pressure-test pattern. The specific scenarios,
+       pressures, rubrics, and the 8 covered skills are GDD-specific.
+
+  reference/schemas/pressure-scenario.schema.json
+    └─ The scenario-manifest contract formalizing the pattern. GDD original.
+
+The methodology + pattern are the contribution being attributed; the scenarios,
+rubrics, runner implementation, and skills are original to get-design-done.
+
 ────────────────────────────────────────────────────────────────────────
 
 Note on the broader codebase: get-design-done as a whole is licensed under
 the MIT License (see LICENSE). The Apache 2.0 attribution above applies
 specifically to the cc-multi-cli-derived files listed under the Phase 27
-block. The MIT attributions under Phase 28.5, Phase 28.7, and Phase 32 cover
-content/mechanism adapted from mattpocock/skills (MIT), gsd-build/get-shit-done
-(MIT), and obra/superpowers (MIT) respectively — the MIT-to-MIT re-licensing is
-straightforward and the attributions above provide the required source
-citation. The MIT and Apache 2.0 licenses are compatible — see
+block. The MIT attributions under Phase 28.5, Phase 28.7, Phase 32, and
+Phase 33 cover content/mechanism/methodology adapted from mattpocock/skills
+(MIT), gsd-build/get-shit-done (MIT), obra/superpowers (MIT), and
+obra/superpowers/skills/writing-skills (MIT) respectively — the MIT-to-MIT
+re-licensing is straightforward and the attributions above provide the
+required source citation. The MIT and Apache 2.0 licenses are compatible — see
 https://www.apache.org/legal/resolved.html#category-a.

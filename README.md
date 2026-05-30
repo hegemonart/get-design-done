@@ -288,6 +288,19 @@ GDD ships 70+ skills, but a description-match skill router consults them opportu
 
 See [`skills/using-gdd/SKILL.md`](skills/using-gdd/SKILL.md) and the `NOTICE` attribution for details.
 
+### Skill behavior tests (v1.33.0+)
+
+Static validators check a skill's shape; **behavior tests** check that it holds under pressure. v1.33.0 adds a manifest-driven pressure-scenario harness (porting the TDD-for-skills methodology + pressure-scenario pattern from [`obra/superpowers/skills/writing-skills`](https://github.com/obra/superpowers), MIT): a runner drives a scenario (time / sunk-cost / authority / exhaustion / scope-minimization) through an injectable agent-invoker and scores the response against a compliance/violation rubric with N-attempts + majority rule. Ships 8 scenarios (7 stage skills + `using-gdd`) with synthetic RED baselines.
+
+Behavior tests are **opt-in** and key-gated — the default `npm test` stub suite covers the harness structurally and stays CI-green (LLM non-determinism keeps live runs out of CI). To run the live pass:
+
+```bash
+# Skips + exits 0 when ANTHROPIC_API_KEY is unset.
+ANTHROPIC_API_KEY=sk-... GDD_BEHAVIOR_INVOKER=./path/to/invoker.cjs npm run test:behavior
+```
+
+See [`docs/research/description-format-ab.md`](docs/research/description-format-ab.md) for the description-format A/B methodology and [`CONTRIBUTING.md`](CONTRIBUTING.md) ("How to add a pressure scenario").
+
 
 ## How It Works
 

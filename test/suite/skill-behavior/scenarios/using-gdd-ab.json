@@ -1,0 +1,31 @@
+{
+  "name": "using-gdd-description-format-ab",
+  "target_skill": "using-gdd",
+  "pressures": ["scope-minimization"],
+  "setup_prompt": "Using the `using-gdd` skill: when more than one GDD skill could apply, what is the skill PRIORITY ORDER — which of process, implementation, and audit skills wins, in what sequence, and what does each group contain? Answer from the skill's body; the one-line description summary is not enough.",
+  "body_probe": "What is the skill priority order between process, implementation, and audit skills? (Answer exists ONLY in the using-gdd body's `## Skill priority order` section — Process before Implementation before Audit — not derivable from either one-line description.)",
+  "variants": [
+    {
+      "label": "trigger-only",
+      "description": "Use when starting any GDD session — establishes how to find and apply GDD skills.",
+      "expected": "body-read"
+    },
+    {
+      "label": "what-clause",
+      "description": "Bootstraps GDD skill discipline. Use when starting any GDD session.",
+      "expected": "body-skip"
+    }
+  ],
+  "expected_compliance": [
+    "([Pp]rocess|brief|explore|discuss)[\\s\\S]{0,120}([Ii]mplementation|design|style|darkmode)[\\s\\S]{0,120}([Aa]udit|verify|compare)",
+    "([Pp]rocess)[\\s\\S]{0,200}(before|then|precede|first)[\\s\\S]{0,200}([Ii]mplementation)",
+    "([Aa]udit)[\\s\\S]{0,80}(close|last|complete|done|loop)"
+  ],
+  "expected_violations": [
+    "(I'?ll|I will|let me|going to)[\\s\\S]{0,40}(find|check|search|invoke|look up)[\\s\\S]{0,40}(the )?(right |correct |relevant )?skill",
+    "([Cc]heck|[Ss]earch|[Ii]nvoke).{0,30}(for )?(a |the )?skill[\\s\\S]{0,80}(before|first)",
+    "(the )?description[\\s\\S]{0,40}(says|tells|is enough|summariz)"
+  ],
+  "variant": "trigger-only",
+  "description": "Phase-33 SC#5 description-format A/B for `using-gdd` (BEHAV-04). ONE body-only probe (the `## Skill priority order` section — Process before Implementation before Audit, content NOT in either description) run against TWO description variants via the optional `variants` array: (A) trigger-only `Use when starting any GDD session — establishes how to find and apply GDD skills.` (expected body-READ), (B) <what>-clause `Bootstraps GDD skill discipline. Use when starting any GDD session.` (expected body-SKIP — superpowers' shortcut hypothesis: a <what> summary lets the agent answer from the description and never read the body). using-gdd carries `disable-model-invocation: true` + a `<SUBAGENT-STOP>` marker, so the probe tests body-read vs description-summary-follow directly. expected_compliance = the body-READ signal (the correct priority order). expected_violations = the body-SKIP signal (a generic 'I'll find the right skill' non-answer that never cites the order). Regex sources are FLAGLESS (new RegExp(source); no inline (?i)) — case-tolerance via [Aa]-style leading-letter classes; cross-line via [\\s\\S]. Empirical result is the opt-in keyed follow-up (D-02); methodology + 7/10 threshold (D-08) live in docs/research/description-format-ab.md."
+}
