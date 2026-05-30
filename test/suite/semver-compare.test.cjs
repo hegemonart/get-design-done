@@ -298,6 +298,21 @@ OFF_CADENCE_VERSIONS.add('1.30.6');
 //   - 1.31.0 → Phase 31 (figma-extractor-sync); on-cadence MINOR from 1.30.6.
 OFF_CADENCE_VERSIONS.add('1.31.0');
 
+// Phase 31.5 — Repo Structure Consolidation (v1.31.5, 2026-05-29).
+// Off-cadence DECIMAL sub-phase from the v1.31.x arc (1.31.0 -> 1.31.5) — ships
+// AFTER Phase 31's v1.31.0 mainline per CONTEXT.md D-12 (decimal sub-phases land
+// as a patch on the parent line, not the next mainline bump). D-01: target
+// version is v1.31.5 (NOT the stale ROADMAP v1.28.0 — the phase was renumbered
+// 2026-05-16 to monotonic-with-phase-number). Phase 31.5 collects the public SDK
+// into sdk/ (cli/state/event-stream/errors/primitives + both MCP servers), ships
+// 3 working SDK bins (esbuild prepack + dual-mode trampolines), deprecation shims
+// at the old scripts/lib/... + scripts/mcp-servers/... paths (removal v1.33.0,
+// D-02), a corrected npm files allowlist + .npmignore, README i18n → docs/i18n/,
+// tests/ → test/suite/ + test-fixture/ → test/fixtures/, recipes/ scaffold, and
+// the private-files CI guard. 6-manifest lockstep at 1.31.5.
+//   - 1.31.5 → Phase 31.5 (repo-consolidation); off-cadence sub-phase from 1.31.0.
+OFF_CADENCE_VERSIONS.add('1.31.5');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
