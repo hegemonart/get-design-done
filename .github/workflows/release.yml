@@ -217,6 +217,14 @@ jobs:
       - name: Verify version sync across manifests
         run: node scripts/verify-version-sync.cjs
 
+      - name: Install dependencies (devDeps required for the prepack SDK compile)
+        # Phase 31.5 (31-5-9.5) added a `prepack` step that runs `npm run build:sdk`
+        # → `node scripts/build-sdk-bins.cjs`, which `require('esbuild')` (a devDep)
+        # to compile the SDK TS bins to runnable .js before packing. `npm publish`
+        # fires prepack, so esbuild must be present on the runner — install it here.
+        # (Pre-31.5 there was no prepack, so publish needed no node_modules; now it does.)
+        run: npm ci --no-audit --no-fund
+
       - name: Publish to npm (with provenance)
         # Auth: npm Trusted Publishing via OIDC, configured at
         # https://www.npmjs.com/package/@hegemonart/get-design-done/access (2026-05-20).
