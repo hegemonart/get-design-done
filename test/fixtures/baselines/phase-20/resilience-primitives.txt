@@ -23,6 +23,7 @@ probe-optional.cjs
 pseudonymize.cjs
 quality-gate-detect.cjs
 rate-guard.cjs
+recipe-loader.cjs
 redact.cjs
 reference-registry.cjs
 reference-resolver.cjs
