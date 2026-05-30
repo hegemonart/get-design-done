@@ -92,4 +92,8 @@ Next: @get-design-done explore
 ━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+<HARD-GATE>
+Do NOT transition to explore (or invoke `/gdd:explore`) until the brief artifact (default `.design/BRIEF.md`) is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
+
 ## BRIEF COMPLETE

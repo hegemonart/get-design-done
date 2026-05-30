@@ -85,4 +85,8 @@ Full interview protocol + JSON line schema: `./explore-procedure.md` §Step 3.
 
 Print: "=== Explore complete ===\nSaved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md\nNext: @get-design-done plan".
 
+<HARD-GATE>
+Do NOT transition to plan (or invoke `/gdd:plan`) until BOTH `.design/DESIGN.md` AND `.design/DESIGN-CONTEXT.md` are committed AND the user has approved them. If this project uses a custom `.design` location, read the artifact paths from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
+
 ## EXPLORE COMPLETE

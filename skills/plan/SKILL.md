@@ -77,4 +77,8 @@ The next stage (design) calls `mcp__gdd_state__transition_stage` on entry — th
 
 Print: plan tasks (N waves, M total tasks), files written (`.design/DESIGN-PLAN.md`, plus `.design/DESIGN-RESEARCH.md` if research ran), next step `/get-design-done:design`.
 
+<HARD-GATE>
+Do NOT transition to design (or invoke `/gdd:design`) until `.design/DESIGN-PLAN.md` is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
+
 ## PLAN COMPLETE
