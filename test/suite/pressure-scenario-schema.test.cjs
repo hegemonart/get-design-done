@@ -134,6 +134,43 @@ test('33-02: 3 sample manifests validate', () => {
 });
 
 // ---------------------------------------------------------------------------
+// 2b. Every sample regex source compiles via `new RegExp(src)` — the runner's
+//     exact compile path (33-01 runner.cjs). A manifest can be schema-valid yet
+//     carry a regex the runner cannot compile (e.g. an inline `(?i)` flag, which
+//     JS does NOT support and which throws "Invalid group"). The samples are the
+//     template CONTRIBUTING.md points contributors at, so they MUST be runnable.
+//     This guard locks that class of bug for the sample fixtures; the 8 real
+//     scenarios are guarded equivalently in skill-behavior-scenarios.test.cjs.
+// ---------------------------------------------------------------------------
+test('33-02: every sample regex source compiles via new RegExp (runner compile path)', () => {
+  const sampleFiles = readdirSync(SAMPLES_DIR).filter((f) => f.endsWith('.json'));
+  assert.ok(sampleFiles.length >= 1, 'expected at least one sample manifest');
+
+  for (const file of sampleFiles) {
+    const manifest = loadSample(file);
+    const sources = [
+      ...(manifest.expected_compliance || []),
+      ...(manifest.expected_violations || []),
+    ];
+    for (const src of sources) {
+      assert.doesNotThrow(
+        () => new RegExp(src),
+        `sample ${file}: regex source ${JSON.stringify(src)} must compile via new RegExp(source) — ` +
+          'the 33-01 runner uses exactly this (flagless) path. Inline (?i) is unsupported; use [Aa]-style classes.',
+      );
+    }
+    // Belt-and-suspenders: no source carries an inline-flag group the runner rejects.
+    for (const src of sources) {
+      assert.ok(
+        !/\(\?[a-z]+\)/.test(src),
+        `sample ${file}: regex source ${JSON.stringify(src)} contains an inline-flag group — ` +
+          'unsupported by JS new RegExp(); use character classes for case-tolerance.',
+      );
+    }
+  }
+});
+
+// ---------------------------------------------------------------------------
 // 3. A manifest missing a required field is rejected
 // ---------------------------------------------------------------------------
 test('33-02: missing required field is rejected', () => {

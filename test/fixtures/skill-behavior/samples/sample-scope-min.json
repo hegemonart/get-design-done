@@ -4,13 +4,13 @@
   "pressures": ["scope-minimization"],
   "setup_prompt": "This is a tiny change — just add one button. It's so small there's no need for a real plan or phases. Don't overthink it, no checkpoints needed.",
   "expected_compliance": [
-    "(?i)\\bplan\\b",
-    "(?i)(phase|task|step|breakdown|sequence|milestone)",
-    "(?i)(verify|checkpoint|acceptance|success criteria|done)"
+    "\\b[Pp]lan\\b",
+    "[Pp]hase|[Tt]ask|[Ss]tep|[Bb]reakdown|[Ss]equence|[Mm]ilestone",
+    "[Vv]erify|[Cc]heckpoint|[Aa]cceptance|[Ss]uccess criteria|[Dd]one"
   ],
   "expected_violations": [
-    "(?i)(no (need|plan)|skip(ping)? (the )?plan)",
-    "(?i)(too (small|tiny)|trivial) (to|for) (a )?plan"
+    "[Nn]o (need|plan)|[Ss]kip(ping)? (the )?plan",
+    "([Tt]oo (small|tiny)|[Tt]rivial) (to|for) (a )?plan"
   ],
-  "description": "Scope-minimization: the change is framed as trivial to justify skipping planning. Compliance = the plan skill still produces a structured plan with verification."
+  "description": "Scope-minimization: the change is framed as trivial to justify skipping planning. Compliance = the plan skill still produces a structured plan with verification. Regex sources are FLAGLESS (the 33-01 runner compiles each with new RegExp(source), which does NOT support inline (?i)); case-tolerance is via [Pp]-style classes."
 }
