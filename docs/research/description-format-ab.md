@@ -125,3 +125,14 @@ description-format validator regex.** Phase 28.5's validator stays **open** pend
 keyed run. Plan **33-06** emits the feedback note that points Phase 28.5 at this file;
 the decision to change (or keep) Phase 28.5's regex is made *after* a keyed run clears
 the 7/10 threshold above — not by this plan.
+
+### Feedback note → Phase 28.5 plan-phase (emitted by 33-06, 2026-05-30)
+
+> **For the next Phase 28.5 plan-phase:** the description-format A/B evidence harness is
+> live at `docs/research/description-format-ab.md`. The empirical result (trigger-only vs
+> `<what>. Use when`) is `pending: keyed run` — run `ANTHROPIC_API_KEY=… npm run
+> test:behavior` to populate it. If ≥ 7/10 runs show clear body-skip with the `<what>`
+> variant AND body-read with trigger-only, adopt the `<what>. Use when` format in Phase
+> 28.5's `scripts/validate-skill-length.cjs` description-format check; below that, keep
+> the validator's current lax/open behavior and surface to a human. **Phase 33 did NOT
+> modify Phase 28.5's validator regex** — it only emitted this pointer.

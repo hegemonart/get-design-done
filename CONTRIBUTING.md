@@ -71,6 +71,41 @@ node -e "process.stdout.write(require('./.claude-plugin/plugin.json').version + 
 Then update `BASELINE.md`, run `npm test`, and include the updated
 `current/` in your PR.
 
+## How to add a pressure scenario
+
+The skill-behavior harness (Phase 33) tests whether a skill holds **under
+pressure** (time / sunk-cost / authority / exhaustion / scope-minimization),
+complementing the static validators. To add a scenario:
+
+1. **Author the manifest** under `test/suite/skill-behavior/scenarios/<skill>.json`,
+   conforming to [`reference/schemas/pressure-scenario.schema.json`](reference/schemas/pressure-scenario.schema.json).
+   It names the target skill, the pressure prompt, the `expected_compliance[]`
+   regexes (must all match a compliant response) and the `expected_violations[]`
+   regexes (any match = a violation). Run `npm run validate:schemas` to check it.
+2. **Add a synthetic RED baseline** under `test/fixtures/skill-behavior-baseline/<skill>.md`
+   — a "synthetic-from-observed-cycle-drift" example of the agent rationalizing
+   its way out of the skill (the failing-without-the-skill case the skill must
+   counter).
+3. **Wire it into the structural tests.** The stub-driven tests
+   (`test/suite/skill-behavior-scenarios.test.cjs`) pick up new manifests in the
+   scenarios dir; run `npm test` to confirm the manifest is valid and the stub
+   path stays green. The structural (stub) tests run in the default suite and CI.
+4. **Run the live behavior pass (opt-in, key-gated — D-06).** Live agent runs are
+   **not** in the default `npm test` (LLM non-determinism). To run them you need
+   `ANTHROPIC_API_KEY` and a wired invoker:
+
+   ```bash
+   ANTHROPIC_API_KEY=sk-... GDD_BEHAVIOR_INVOKER=./path/to/invoker.cjs npm run test:behavior
+   ```
+
+   The invoker is a module exporting `invokeAgent(prompt, opts) -> { text }` (a
+   peer-CLI ACP spawn of a local `claude`/`codex`, or a thin keyed SDK adapter);
+   the harness itself ships no Anthropic SDK dependency (D-03). Without the key the
+   command prints a skip message and exits 0.
+
+The description-format A/B methodology lives at
+[`docs/research/description-format-ab.md`](docs/research/description-format-ab.md).
+
 ## Adding CI checks
 
 New CI checks go in `.github/workflows/ci.yml`. Follow the existing
