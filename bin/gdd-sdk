@@ -1,36 +1,47 @@
 #!/usr/bin/env node
-// bin/gdd-sdk — Plan 21-09 Task 7 (SDK-21).
+// bin/gdd-sdk — Plan 21-09 Task 7 (SDK-21); dual-mode since Plan 31-5-9.5 (D-16).
 //
-// CJS trampoline: spawns `node --experimental-strip-types` against the
-// real TS entry point in `sdk/cli/index.ts` and forwards argv +
-// exit code. Windows-compatible (npm's generated .cmd shim on Windows
-// has no way to inject the --experimental-strip-types flag otherwise).
+// DUAL-MODE CJS trampoline. Resolves the SDK CLI entry and re-launches it under
+// `node`, forwarding argv + exit code/signal. Two modes:
 //
-// Why a trampoline:
+//   • COMPILED (installed / packed): if the esbuild-bundled sibling
+//     `sdk/cli/index.js` exists, spawn `node <js>` with NO flag. This is the
+//     path a user gets from `npm i` — the entry lives under node_modules where
+//     Node refuses --experimental-strip-types on `.ts`
+//     (ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING). `prepack` compiles the .js
+//     before every pack/publish (see scripts/build-sdk-bins.cjs).
+//   • SOURCE (in-repo dev): otherwise spawn
+//     `node --experimental-strip-types sdk/cli/index.ts` — the raw TS, no build
+//     step, exactly as before this plan.
+//
+// Why a trampoline at all:
 //   POSIX shebangs can use `#!/usr/bin/env -S node --experimental-strip-types`,
-//   but Windows cmd.exe does not honor shebangs. npm's auto-generated
-//   .cmd shim invokes plain `node bin/gdd-sdk` without passing the
-//   experimental flag. The trampoline re-launches node with the flag
-//   explicitly so both platforms end up at the same TS entry.
+//   but Windows cmd.exe does not honor shebangs and npm's auto-generated .cmd
+//   shim invokes plain `node bin/gdd-sdk` with no way to inject the flag. The
+//   trampoline re-launches node correctly on both platforms.
 
 'use strict';
 
 const { spawn } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 
-const entry = path.resolve(
-  __dirname,
-  '..',
-  'sdk',
-  'cli',
-  'index.ts',
-);
+// Sibling compiled JS (preferred) and the TS source (dev fallback).
+const compiled = path.resolve(__dirname, '..', 'sdk', 'cli', 'index.js');
+const source = path.resolve(__dirname, '..', 'sdk', 'cli', 'index.ts');
 
-const child = spawn(
-  process.execPath,
-  ['--experimental-strip-types', entry, ...process.argv.slice(2)],
-  { stdio: 'inherit', shell: false },
-);
+// fs.existsSync (not a try/require) — the entry is launched in a child node,
+// not require()'d here, and we must not evaluate it in this process.
+const useCompiled = fs.existsSync(compiled);
+const entry = useCompiled ? compiled : source;
+const nodeArgs = useCompiled
+  ? [entry, ...process.argv.slice(2)]
+  : ['--experimental-strip-types', entry, ...process.argv.slice(2)];
+
+const child = spawn(process.execPath, nodeArgs, {
+  stdio: 'inherit',
+  shell: false,
+});
 
 child.on('exit', (code, signal) => {
   if (signal) {
@@ -49,6 +60,6 @@ child.on('exit', (code, signal) => {
 child.on('error', (err) => {
   // Failure to spawn node itself — extremely rare; surface to stderr.
   // eslint-disable-next-line no-console
-  console.error('gdd-sdk: failed to launch TypeScript entry:', err.message);
+  console.error('gdd-sdk: failed to launch SDK CLI entry:', err.message);
   process.exit(3);
 });

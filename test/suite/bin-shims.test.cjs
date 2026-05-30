@@ -5,15 +5,22 @@
 // trampolines added alongside the gdd-mcp move into sdk/mcp/gdd-mcp/.
 //
 // Both bin/gdd-state-mcp and bin/gdd-mcp clone the proven bin/gdd-sdk
-// pattern: a CJS trampoline that spawns `node --experimental-strip-types`
-// against the real TS server entry under sdk/mcp/*/server.ts and forwards
-// argv + exit code. The raw `.ts` bin entries they replace could not run
-// under npm's auto-generated Windows .cmd shim (no way to inject the
-// --experimental-strip-types flag).
+// pattern: a CJS trampoline that re-launches the real TS server entry under
+// sdk/mcp/*/server.ts and forwards argv + exit code. The raw `.ts` bin entries
+// they replace could not run under npm's auto-generated Windows .cmd shim (no
+// way to inject the --experimental-strip-types flag).
+//
+// DUAL-MODE (Plan 31-5-9.5, D-16): from a fresh npm install the .ts entries
+// live under node_modules, where Node refuses --experimental-strip-types
+// (ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING). Each trampoline now PREFERS
+// the esbuild-compiled sibling `.js` (spawn `node <js>`, no flag) when it
+// exists, and falls back to `node --experimental-strip-types <ts>` only for the
+// in-repo dev tree. So the strip-types flag is now CONDITIONAL (the fallback
+// branch), not unconditional.
 //
 // These tests assert:
-//   1. bin/gdd-state-mcp is a node trampoline targeting sdk/mcp/gdd-state/server.ts
-//   2. bin/gdd-mcp       is a node trampoline targeting sdk/mcp/gdd-mcp/server.ts
+//   1. bin/gdd-state-mcp is a dual-mode trampoline targeting sdk/mcp/gdd-state/server.{js,ts}
+//   2. bin/gdd-mcp       is a dual-mode trampoline targeting sdk/mcp/gdd-mcp/server.{js,ts}
 //   3. package.json bin maps gdd-state-mcp + gdd-mcp to the bin/ trampolines (no raw .ts)
 //   4. the unchanged bins (gdd-sdk, gdd-graph, gdd-events, get-design-done) are intact
 //
@@ -34,9 +41,11 @@ function fwd(p) {
 }
 
 /**
- * Shared assertions for a trampoline file: node shebang, 'use strict',
- * spawns node --experimental-strip-types, resolves an entry path ending in
- * the expected sdk/mcp/<server>/server.ts, and that entry file exists.
+ * Shared assertions for a DUAL-MODE trampoline file (Plan 31-5-9.5, D-16):
+ * node shebang, 'use strict', node:child_process spawn, argv-forward +
+ * signal re-raise, an fs.existsSync guard that PREFERS the compiled
+ * sdk/mcp/<server>/server.js and FALLS BACK to the .ts entry with
+ * --experimental-strip-types, and that the .ts source entry exists on disk.
  */
 function assertTrampoline(binName, serverSegment) {
   const binPath = path.join(BIN_DIR, binName);
@@ -51,12 +60,6 @@ function assertTrampoline(binName, serverSegment) {
   );
   assert.match(src, /'use strict'/, 'bin/' + binName + " must be 'use strict'");
 
-  // Spawns node with the experimental-strip-types flag (the whole point).
-  assert.match(
-    src,
-    /--experimental-strip-types/,
-    'bin/' + binName + ' must spawn node --experimental-strip-types',
-  );
   assert.match(
     src,
     /child_process/,
@@ -66,7 +69,7 @@ function assertTrampoline(binName, serverSegment) {
   assert.match(
     src,
     /process\.argv\.slice\(2\)/,
-    'bin/' + binName + ' must forward argv to the TS entry',
+    'bin/' + binName + ' must forward argv to the entry',
   );
   assert.match(
     src,
@@ -74,42 +77,64 @@ function assertTrampoline(binName, serverSegment) {
     'bin/' + binName + ' must re-raise the child signal (gdd-sdk pattern)',
   );
 
-  // The resolved entry path must end in sdk/mcp/<server>/server.ts.
-  const expectedEntry = path.resolve(
-    BIN_DIR,
-    '..',
-    'sdk',
-    'mcp',
-    serverSegment,
-    'server.ts',
-  );
-  const expectedTail = 'sdk/mcp/' + serverSegment + '/server.ts';
-  assert.ok(
-    fwd(expectedEntry).endsWith(expectedTail),
-    'computed entry must end in ' + expectedTail,
-  );
-  // The trampoline source must name the entry segments (defends against a
-  // copy-paste that points the wrong server at the wrong entry).
-  const segRe = new RegExp("'mcp',\\s*'" + serverSegment + "',\\s*'server\\.ts'");
+  // DUAL-MODE: must probe the compiled sibling first (fs.existsSync) and only
+  // fall back to --experimental-strip-types for the raw .ts dev path. The
+  // strip-types flag is now CONDITIONAL, so we assert BOTH halves explicitly.
   assert.match(
     src,
-    segRe,
-    'bin/' + binName + " entry must resolve sdk/mcp/" + serverSegment + "/server.ts",
+    /existsSync/,
+    'bin/' + binName + ' must fs.existsSync-probe the compiled sibling (dual-mode)',
+  );
+  assert.match(
+    src,
+    /--experimental-strip-types/,
+    'bin/' + binName + ' must keep the --experimental-strip-types fallback (dev .ts path)',
   );
 
-  // The real TS entry file the trampoline launches must exist on disk.
+  // The compiled-preferred entry resolves to sdk/mcp/<server>/server.js and the
+  // dev-fallback to sdk/mcp/<server>/server.ts. Both tails must be computable.
+  const compiledEntry = path.resolve(
+    BIN_DIR, '..', 'sdk', 'mcp', serverSegment, 'server.js',
+  );
+  const sourceEntry = path.resolve(
+    BIN_DIR, '..', 'sdk', 'mcp', serverSegment, 'server.ts',
+  );
   assert.ok(
-    fs.existsSync(expectedEntry),
-    'entry file must exist: ' + expectedTail,
+    fwd(compiledEntry).endsWith('sdk/mcp/' + serverSegment + '/server.js'),
+    'computed compiled entry must end in sdk/mcp/' + serverSegment + '/server.js',
+  );
+  assert.ok(
+    fwd(sourceEntry).endsWith('sdk/mcp/' + serverSegment + '/server.ts'),
+    'computed source entry must end in sdk/mcp/' + serverSegment + '/server.ts',
+  );
+  // The trampoline source must name the entry segments for BOTH the .js and .ts
+  // resolution (defends against a copy-paste that points the wrong server at
+  // the wrong entry).
+  const segReJs = new RegExp("'mcp',\\s*'" + serverSegment + "',\\s*'server\\.js'");
+  const segReTs = new RegExp("'mcp',\\s*'" + serverSegment + "',\\s*'server\\.ts'");
+  assert.match(
+    src, segReJs,
+    'bin/' + binName + " must resolve compiled sdk/mcp/" + serverSegment + "/server.js",
+  );
+  assert.match(
+    src, segReTs,
+    'bin/' + binName + " must resolve source sdk/mcp/" + serverSegment + "/server.ts",
+  );
+
+  // The real .ts source entry the trampoline falls back to must exist on disk
+  // (the .js is a gitignored build artifact, so we do NOT assert its presence).
+  assert.ok(
+    fs.existsSync(sourceEntry),
+    'source entry file must exist: sdk/mcp/' + serverSegment + '/server.ts',
   );
 }
 
 describe('31-5-05: MCP bin trampolines', () => {
-  test('31-5-05: bin/gdd-state-mcp is a trampoline targeting sdk/mcp/gdd-state/server.ts', () => {
+  test('31-5-05: bin/gdd-state-mcp is a dual-mode trampoline targeting sdk/mcp/gdd-state/server.{js,ts}', () => {
     assertTrampoline('gdd-state-mcp', 'gdd-state');
   });
 
-  test('31-5-05: bin/gdd-mcp is a trampoline targeting sdk/mcp/gdd-mcp/server.ts', () => {
+  test('31-5-05: bin/gdd-mcp is a dual-mode trampoline targeting sdk/mcp/gdd-mcp/server.{js,ts}', () => {
     assertTrampoline('gdd-mcp', 'gdd-mcp');
   });
 
