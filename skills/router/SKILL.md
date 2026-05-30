@@ -79,6 +79,10 @@ If `.design/budget.json` is missing, assume defaults from `reference/config-sche
 
 When the router cannot resolve `intent-string` to a known agent (no `description` match, no `default-tier` rule, no path-selection fallback), emit ONE `capability_gap` event with `source: "router"` before returning the conservative-fallback JSON. Feeds Phase 29 Stage-0 telemetry — see `./capability-gap-emitter.md` for the synchronous Node snippet, semantic notes (suggested_kind = `"agent"`, MCP-probe exclusion per D-08, back-compat invariant on router output), and the opaque-extras payload routing through `appendChainEvent`.
 
+## Emitting router_pick on a resolved pick
+
+When the router DID resolve a pick — it has the `path`/`complexity_class`/`resolved_models` decision and is about to return the decision JSON — emit ONE `router_pick` event (`source: "router"`) recording which skill/agent was auto-picked, as the last step before returning. Side-effect only; the output JSON contract is UNCHANGED. Feeds the D-02 under-reached-skill instrument (Phase 33 baselines per-skill pick rates) — see `./router-pick-emitter.md` for the synchronous Node snippet, the 7-field no-PII payload (context_hash only — never the raw prompt), and the opaque-extras routing through `appendChainEvent`.
+
 ## Non-Goals
 
 The router does not: (a) make a model call, (b) write files, (c) enforce budget caps (that's the hook's job), (d) learn from history (Phase 11 reflector territory per D-07).
