@@ -1,9 +1,9 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_decisions_list.ts
+// sdk/mcp/gdd-mcp/tools/gdd_decisions_list.ts
 //
 // Plan 27.7-02. Reads <decisions> block from STATE.md. Optional
 // input.status filter narrows the list to one DecisionStatus.
 
-import { read } from '../../../../sdk/state/index.ts';
+import { read } from '../../../state/index.ts';
 import {
   errorResponse,
   okResponse,

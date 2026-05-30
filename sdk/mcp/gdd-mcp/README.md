@@ -23,7 +23,7 @@ Phase 27.7. Mirror of the `sdk/mcp/gdd-state/` Phase 20 pattern. v1 is read-only
 
 All tools are thin wrappers (≤30 LOC) over `scripts/lib/*` helpers. The lint rule at `scripts/lib/mcp-tools-lint/` enforces no direct `fs.*`/`path.*` imports and zero write-tool names (`_create`, `_update`, `_delete`, `_append`, `_clear`, `_write`, `_set`). The 12-tool cap is hard (D-03) — adding a 13th requires a new plan.
 
-Schemas live under `reference/schemas/mcp-gdd-tools.schema.json` (Draft-07). Tool sources are under `scripts/mcp-servers/gdd-mcp/tools/*.ts`.
+Schemas live under `reference/schemas/mcp-gdd-tools.schema.json` (Draft-07). Tool sources are under `sdk/mcp/gdd-mcp/tools/*.ts` (moved here from `scripts/mcp-servers/gdd-mcp/` in Plan 31-5-05 for MCP-server symmetry with `sdk/mcp/gdd-state/` — D-08).
 
 ## Manual registration
 

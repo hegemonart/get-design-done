@@ -1,11 +1,11 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_plans_list.ts
+// sdk/mcp/gdd-mcp/tools/gdd_plans_list.ts
 //
 // Plan 27.7-02. STATE.md does not have a dedicated <plans> block — we
 // surface must_haves as the closest analog (the per-plan acceptance
 // criteria the pipeline tracks). Input.phase is reserved for future
 // multi-phase indexing.
 
-import { read } from '../../../../sdk/state/index.ts';
+import { read } from '../../../state/index.ts';
 import {
   errorResponse,
   okResponse,

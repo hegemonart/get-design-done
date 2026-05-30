@@ -1,10 +1,10 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_cycle_recap.ts
+// sdk/mcp/gdd-mcp/tools/gdd_cycle_recap.ts
 //
 // Plan 27.7-02. Diffs current STATE.md against the latest .design/snapshots/
 // snapshot. SnapshotNotFoundError → directory_not_found via errorResponse.
 
-import { read } from '../../../../sdk/state/index.ts';
-import { readLatestSnapshot } from '../../../lib/snapshot-reader/index.cjs';
+import { read } from '../../../state/index.ts';
+import { readLatestSnapshot } from '../../../../scripts/lib/snapshot-reader/index.cjs';
 import { errorResponse, okResponse, resolveProjectRoot, resolveStatePath, type ToolResponse } from './shared.ts';
 
 export const name = 'gdd_cycle_recap';

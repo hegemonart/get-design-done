@@ -1,8 +1,8 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_phase_current.ts
+// sdk/mcp/gdd-mcp/tools/gdd_phase_current.ts
 //
 // Plan 27.7-02. Returns the <position> block from STATE.md.
 
-import { read } from '../../../../sdk/state/index.ts';
+import { read } from '../../../state/index.ts';
 import {
   errorResponse,
   okResponse,

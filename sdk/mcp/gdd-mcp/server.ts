@@ -1,10 +1,12 @@
 #!/usr/bin/env -S node --experimental-strip-types
-// scripts/mcp-servers/gdd-mcp/server.ts
+// sdk/mcp/gdd-mcp/server.ts
 //
 // MCP server `gdd-mcp` — read-mostly project-state surface (Phase 27.7).
 // Exposes STATE.md sections, phases, decisions, plans, telemetry, intel
 // slices, and the latest reflection as typed MCP tools backed by the
-// same `scripts/lib/*` modules the CLI uses.
+// same `scripts/lib/*` + `sdk/*` modules the CLI uses.
+// (Moved from scripts/mcp-servers/gdd-mcp/ to sdk/mcp/gdd-mcp/ in Plan
+//  31-5-05 for MCP-server symmetry with sdk/mcp/gdd-state/ — D-08.)
 //
 // Lifecycle (mirrors Phase 20 `gdd-state` server):
 //   1. Construct a low-level Server (we use the low-level surface so we
@@ -42,7 +44,7 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { toToolError } from '../../../sdk/errors/classification.ts';
+import { toToolError } from '../../errors/classification.ts';
 import { TOOL_MODULES, type ToolModule } from './tools/index.ts';
 
 /** Server metadata advertised on initialize. */
@@ -57,12 +59,12 @@ export const SERVER_VERSION = '1.27.7';
  * Strategy: when this module is invoked as a script, `process.argv[1]`
  * points at this file; resolve its dirname. When it is imported for
  * tests, we fall back to walking from `process.cwd()` — tests run
- * from the repo root by convention, so `scripts/mcp-servers/gdd-mcp`
+ * from the repo root by convention, so `sdk/mcp/gdd-mcp`
  * resolves reliably. Both branches are canonicalized against the
  * on-disk tools directory.
  */
 function here(): string {
-  const expectedRel = join('scripts', 'mcp-servers', 'gdd-mcp');
+  const expectedRel = join('sdk', 'mcp', 'gdd-mcp');
   // Script invocation: process.argv[1] === .../server.ts (or a shim).
   const entry = process.argv[1];
   if (typeof entry === 'string' && entry.length > 0) {
@@ -88,7 +90,7 @@ function here(): string {
  *
  *  Scaffold ships with 0 tools — loadTools() returns []. Plan 27.7-02
  *  adds 12 tool modules, each with its own `schemaPath` pointing into
- *  `scripts/mcp-servers/gdd-mcp/schemas/`. */
+ *  `sdk/mcp/gdd-mcp/schemas/`. */
 interface LoadedTool extends ToolModule {
   inputSchema: Record<string, unknown>;
 }
@@ -297,14 +299,14 @@ let SHUTTING_DOWN = false;
  * Are we being invoked as a script? We compare the argv[1] file path's
  * basename to `server.ts` — test imports never match this because
  * `node --test tests/*.ts` sets argv[1] to the test runner entry, not
- * our file. A direct `node scripts/mcp-servers/gdd-mcp/server.ts`
+ * our file. A direct `node sdk/mcp/gdd-mcp/server.ts`
  * invocation DOES match. The Windows-safe path normalization uses
  * `.replace(/\\/g, '/')` before the endsWith check.
  */
 function isMain(): boolean {
   const entry = process.argv[1];
   if (typeof entry !== 'string' || entry.length === 0) return false;
-  return entry.replace(/\\/g, '/').endsWith('scripts/mcp-servers/gdd-mcp/server.ts');
+  return entry.replace(/\\/g, '/').endsWith('sdk/mcp/gdd-mcp/server.ts');
 }
 
 if (isMain()) {

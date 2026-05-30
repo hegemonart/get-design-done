@@ -1,10 +1,10 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_intel_get.ts
+// sdk/mcp/gdd-mcp/tools/gdd_intel_get.ts
 //
 // Plan 27.7-02. Reads a .design/intel/ slice via scripts/lib/intel-store/
 // (Warning #7: NOT design-search.cjs). IntelNotFoundError surfaces
 // gracefully via errorResponse's mcp_code projection (Warning #5).
 
-import { readSlice } from '../../../lib/intel-store/index.cjs';
+import { readSlice } from '../../../../scripts/lib/intel-store/index.cjs';
 import { errorResponse, okResponse, resolveProjectRoot, type ToolResponse } from './shared.ts';
 
 export const name = 'gdd_intel_get';

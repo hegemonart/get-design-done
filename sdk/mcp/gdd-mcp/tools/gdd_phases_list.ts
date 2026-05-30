@@ -1,11 +1,11 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_phases_list.ts
+// sdk/mcp/gdd-mcp/tools/gdd_phases_list.ts
 //
 // Plan 27.7-02. Parses .planning/ROADMAP.md via scripts/lib/roadmap-reader.
 
 import {
   readRoadmapMd,
   parsePhases,
-} from '../../../lib/roadmap-reader/index.cjs';
+} from '../../../../scripts/lib/roadmap-reader/index.cjs';
 import {
   errorResponse,
   okResponse,

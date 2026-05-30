@@ -1,4 +1,4 @@
-// scripts/mcp-servers/gdd-mcp/tools/shared.ts
+// sdk/mcp/gdd-mcp/tools/shared.ts
 //
 // Shared helpers for gdd-mcp tools. resolveProjectRoot() implements the
 // D-05 walk-up algorithm: scan from process.cwd() upward looking for
@@ -15,8 +15,8 @@
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-import { toToolError } from '../../../../sdk/errors/classification.ts';
-import type { ToolErrorPayload } from '../../../../sdk/errors/classification.ts';
+import { toToolError } from '../../../errors/classification.ts';
+import type { ToolErrorPayload } from '../../../errors/classification.ts';
 
 /** Public tool-handler response shape (consistent across all tools). */
 export type ToolResponse =

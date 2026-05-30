@@ -1,9 +1,9 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_learnings_digest.ts
+// sdk/mcp/gdd-mcp/tools/gdd_learnings_digest.ts
 //
 // Plan 27.7-02. Aggregates last N reflections into a <= 5 KB digest
 // via scripts/lib/reflections-reader/.
 
-import { readNReflections, digestReflections } from '../../../lib/reflections-reader/index.cjs';
+import { readNReflections, digestReflections } from '../../../../scripts/lib/reflections-reader/index.cjs';
 import { errorResponse, okResponse, resolveProjectRoot, type ToolResponse } from './shared.ts';
 
 export const name = 'gdd_learnings_digest';

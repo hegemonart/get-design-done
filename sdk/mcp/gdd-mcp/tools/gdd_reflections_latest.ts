@@ -1,10 +1,10 @@
-// scripts/mcp-servers/gdd-mcp/tools/gdd_reflections_latest.ts
+// sdk/mcp/gdd-mcp/tools/gdd_reflections_latest.ts
 //
 // Plan 27.7-02. Reads newest reflection under .design/reflections/.
 // ReflectionsNotFoundError surfaces as mcp_code='directory_not_found'
 // via errorResponse (Warning #5).
 
-import { readLatestReflection } from '../../../lib/reflections-reader/index.cjs';
+import { readLatestReflection } from '../../../../scripts/lib/reflections-reader/index.cjs';
 import { errorResponse, okResponse, resolveProjectRoot, type ToolResponse } from './shared.ts';
 
 export const name = 'gdd_reflections_latest';

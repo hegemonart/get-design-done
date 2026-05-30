@@ -1,4 +1,4 @@
-// scripts/mcp-servers/gdd-mcp/tools/index.ts
+// sdk/mcp/gdd-mcp/tools/index.ts
 //
 // Tool registry for `gdd-mcp`. Plan 27.7-02 populates with 12 read-only
 // tools. The 12-tool cap is D-03 (hard); enforced at module load by a
@@ -8,7 +8,7 @@
 //   - Each tool exports `name`, `schemaPath`, and `handle` from its own
 //     module (e.g. `./gdd_status.ts`).
 //   - `schemaPath` is relative to THIS file's directory and points into
-//     `scripts/mcp-servers/gdd-mcp/schemas/`. Server.ts joins it
+//     `sdk/mcp/gdd-mcp/schemas/`. Server.ts joins it
 //     against `<baseDir>/tools/` to load the Draft-07 JSON.
 //   - `TOOL_MODULES` is the canonical registry — server.ts iterates it
 //     once at startup to populate the dispatch map.
