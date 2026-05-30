@@ -30,8 +30,9 @@ function tmpRoot(label) {
 }
 
 // Build a 10-run window with exactly `failCount` failing entries (pass:false).
+// The first `failCount` entries fail (pass:false); the rest pass (pass:true).
 function windowWith(failCount, total = 10) {
-  return Array.from({ length: total }, (_v, i) => ({ pass: i >= total - failCount }));
+  return Array.from({ length: total }, (_v, i) => ({ pass: i >= failCount }));
 }
 
 // A canonical 33-01 runner result.
