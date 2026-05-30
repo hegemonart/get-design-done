@@ -64,3 +64,15 @@ dist/
 # the rule above and remain tracked — the offline e2e + baseline tests need
 # test/fixtures/figma/*.json and test/fixtures/baselines/phase-31/*.txt in-repo.
 # (Listed here only as documentation; no ignore/un-ignore directive needed.)
+
+# Phase 31.5 (Plan 31-5-9.5, D-16): esbuild-compiled SDK bin artifacts.
+# `npm run build:sdk` (and `prepack`) bundle the three TS-entry bins to
+# self-contained `.js` SIBLINGS so the packed/installed tarball ships RUNNABLE
+# JavaScript (raw `.ts` cannot run under --experimental-strip-types from inside
+# node_modules). The `.ts` are the source of truth; these `.js` are build
+# artifacts regenerated on every pack and cleaned by `postpack`. Listed
+# EXPLICITLY (not a `sdk/**/*.js` glob) so the hand-written, committed
+# `sdk/primitives/*.cjs` + `*.d.cts` are never at risk.
+sdk/cli/index.js
+sdk/mcp/gdd-state/server.js
+sdk/mcp/gdd-mcp/server.js

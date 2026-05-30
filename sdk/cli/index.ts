@@ -153,9 +153,14 @@ export async function main(
 //
 // `import.meta.url` is the POSIX idiom but this TS runs under --experimental-strip-types
 // as Node16 modules — we use process.argv to stay ESM/CJS-agnostic.
+//
+// Extension-agnostic match (.ts | .js | .cjs): the dual-mode bin trampoline
+// (Plan 31-5-9.5, D-16) runs the raw `.ts` in-repo via --experimental-strip-types
+// AND the esbuild-bundled `.js` from a packed/installed tarball. argv[1] ends in
+// `.js` in the compiled path, so a `.ts`-only check would silently skip main().
 
 const entryPath: string = (process.argv[1] ?? '').replace(/\\/g, '/');
-if (entryPath.endsWith('/sdk/cli/index.ts')) {
+if (/\/sdk\/cli\/index\.(ts|js|cjs|mjs)$/.test(entryPath)) {
   main().then(
     (code) => process.exit(code),
     (err) => {

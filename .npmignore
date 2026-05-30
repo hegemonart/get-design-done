@@ -27,6 +27,7 @@ scripts/detect-stale-refs.cjs
 scripts/run-injection-scanner-ci.cjs
 scripts/injection-patterns.cjs
 scripts/build-distribution-bundles.cjs
+scripts/build-sdk-bins.cjs
 scripts/build-intel.cjs
 scripts/gsd-cleanup-incubator.cjs
 scripts/aggregate-agent-metrics.ts

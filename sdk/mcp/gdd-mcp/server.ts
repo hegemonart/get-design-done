@@ -303,10 +303,16 @@ let SHUTTING_DOWN = false;
  * invocation DOES match. The Windows-safe path normalization uses
  * `.replace(/\\/g, '/')` before the endsWith check.
  */
+// Extension-agnostic (.ts | .js | .cjs | .mjs): the dual-mode bin trampoline
+// (Plan 31-5-9.5, D-16) runs the raw `.ts` in-repo via --experimental-strip-types
+// AND the esbuild-bundled `.js` from a packed/installed tarball. argv[1] ends in
+// `.js` in the compiled path, so a `.ts`-only check would never start the server.
 function isMain(): boolean {
   const entry = process.argv[1];
   if (typeof entry !== 'string' || entry.length === 0) return false;
-  return entry.replace(/\\/g, '/').endsWith('sdk/mcp/gdd-mcp/server.ts');
+  return /sdk\/mcp\/gdd-mcp\/server\.(ts|js|cjs|mjs)$/.test(
+    entry.replace(/\\/g, '/'),
+  );
 }
 
 if (isMain()) {

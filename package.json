@@ -47,6 +47,9 @@
   },
   "scripts": {
     "build:bundles": "node scripts/build-distribution-bundles.cjs",
+    "build:sdk": "node scripts/build-sdk-bins.cjs",
+    "prepack": "npm run build:sdk",
+    "postpack": "node scripts/build-sdk-bins.cjs --clean",
     "test": "node --test --experimental-strip-types \"test/suite/**/*.test.cjs\" \"test/suite/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "codegen:schemas": "node --experimental-strip-types scripts/codegen-schema-types.ts",
@@ -67,6 +70,7 @@
     "@types/node": "^25.6.0",
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.1",
+    "esbuild": "^0.25.12",
     "json-schema-to-typescript": "^15.0.0",
     "typescript": "^6.0.3"
   },
