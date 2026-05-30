@@ -62,12 +62,12 @@ const readBaselineFile = (dir, p) => fs.readFileSync(path.join(dir, p), 'utf8');
 // 7 README files: 1 English + 6 translations.
 const README_FILES = Object.freeze([
   'README.md',
-  'README.de.md',
-  'README.fr.md',
-  'README.it.md',
-  'README.ja.md',
-  'README.ko.md',
-  'README.zh-CN.md',
+  'docs/i18n/README.de.md',
+  'docs/i18n/README.fr.md',
+  'docs/i18n/README.it.md',
+  'docs/i18n/README.ja.md',
+  'docs/i18n/README.ko.md',
+  'docs/i18n/README.zh-CN.md',
 ]);
 
 // 4 NEW Phase 28.8 converters/scripts (from baseline converter-inventory.txt).

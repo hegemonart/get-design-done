@@ -2,7 +2,7 @@
 
 # GET DESIGN DONE
 
-[English](README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
+[English](../../README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
 **面向 AI 编码智能体的设计质量流水线:简报 → 探索 → 规划 → 实现 → 验证。**
 

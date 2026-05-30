@@ -2,7 +2,7 @@
 
 # GET DESIGN DONE
 
-[English](README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
+[English](../../README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
 **AI コーディングエージェントのためのデザイン品質パイプライン: ブリーフ → 探索 → 計画 → 実装 → 検証。**
 

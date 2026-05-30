@@ -2,7 +2,7 @@
 
 # GET DESIGN DONE
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · **Deutsch**
+[English](../../README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · **Deutsch**
 
 **Eine Design-Quality-Pipeline für AI-Coding-Agenten: Brief → Explore → Plan → Implementierung → Verifikation.**
 

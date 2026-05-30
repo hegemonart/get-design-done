@@ -2,7 +2,7 @@
 
 # GET DESIGN DONE
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
+[English](../../README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
 **AI 코딩 에이전트를 위한 디자인 품질 파이프라인: 브리프 → 탐색 → 계획 → 구현 → 검증.**
 

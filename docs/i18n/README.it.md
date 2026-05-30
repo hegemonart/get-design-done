@@ -2,7 +2,7 @@
 
 # GET DESIGN DONE
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · **Italiano** · [Deutsch](README.de.md)
+[English](../../README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · **Italiano** · [Deutsch](README.de.md)
 
 **Una pipeline di qualità del design per agenti di coding IA: brief → esplorazione → piano → implementazione → verifica.**
 
