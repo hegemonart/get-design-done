@@ -93,4 +93,7 @@ Full prompts + branching: `./verify-procedure.md` §Step 3.
 
 Print the `=== Verify complete ===` summary (status, gap counts, agent paths, next-step suggestion) from `./verify-procedure.md` §After Completion.
 
+<HARD-GATE>
+Do NOT mark the cycle complete until the user has reviewed `.design/DESIGN-VERIFICATION.md`. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
 ## VERIFY COMPLETE

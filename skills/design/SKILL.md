@@ -78,4 +78,8 @@ Print the `=== Design stage complete ===` summary (tasks complete/total, deviati
 
 After all tasks finish, if STATE.md `<connections>` has `figma: available`, offer the user the figma-write opt-in prompt (modes: annotate / tokenize / mappings, with optional `--dry-run`). Spawn `design-figma-writer` with the selected mode on "yes"; skip silently on "no". NEVER auto-run without confirmation. Full prompt + dispatch logic: `./design-procedure.md` §Figma Write Dispatch.
 
+<HARD-GATE>
+Do NOT transition to verify (or invoke `/gdd:verify`) until `.design/DESIGN-SUMMARY.md` is committed. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
+
 ## DESIGN COMPLETE
