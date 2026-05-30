@@ -443,6 +443,7 @@ sdk/cli/commands/init.ts
 sdk/cli/commands/query.ts
 sdk/cli/commands/run.ts
 sdk/cli/commands/stage.ts
+sdk/cli/index.js
 sdk/cli/index.ts
 sdk/cli/parse-args.ts
 sdk/errors/classification.ts
@@ -466,6 +467,7 @@ sdk/mcp/gdd-mcp/schemas/gdd_plans_list.schema.json
 sdk/mcp/gdd-mcp/schemas/gdd_reflections_latest.schema.json
 sdk/mcp/gdd-mcp/schemas/gdd_status.schema.json
 sdk/mcp/gdd-mcp/schemas/gdd_telemetry_query.schema.json
+sdk/mcp/gdd-mcp/server.js
 sdk/mcp/gdd-mcp/server.ts
 sdk/mcp/gdd-mcp/tools/gdd_cycle_recap.ts
 sdk/mcp/gdd-mcp/tools/gdd_decisions_list.ts
@@ -492,6 +494,7 @@ sdk/mcp/gdd-state/schemas/resolve_blocker.schema.json
 sdk/mcp/gdd-state/schemas/set_status.schema.json
 sdk/mcp/gdd-state/schemas/transition_stage.schema.json
 sdk/mcp/gdd-state/schemas/update_progress.schema.json
+sdk/mcp/gdd-state/server.js
 sdk/mcp/gdd-state/server.ts
 sdk/mcp/gdd-state/tools/add_blocker.ts
 sdk/mcp/gdd-state/tools/add_decision.ts

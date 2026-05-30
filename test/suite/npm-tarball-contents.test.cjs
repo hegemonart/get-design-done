@@ -129,6 +129,20 @@ test('31-5-08: must-ship runtime subtrees are present (D-09/D-14/D-15)', () => {
     hasExact('sdk/index.ts'),
     '31-5-08: tarball must include sdk/index.ts (the SDK barrel)',
   );
+  // 31-5-9.5 (D-16): the 3 esbuild-compiled SDK-bin entry .js MUST ship so a
+  // fresh `npm install` has runnable bins (raw .ts cannot run under
+  // --experimental-strip-types from inside node_modules). prepack compiles them
+  // before pack; this asserts they actually land in the tarball.
+  for (const compiledEntry of [
+    'sdk/cli/index.js',
+    'sdk/mcp/gdd-state/server.js',
+    'sdk/mcp/gdd-mcp/server.js',
+  ]) {
+    assert.ok(
+      hasExact(compiledEntry),
+      `31-5-08: tarball must include ${compiledEntry} (compiled SDK bin, 31-5-9.5/D-16 — prepack output)`,
+    );
+  }
   // recipes/ scaffold ships (empty of recipes, .gitkeep present).
   assert.ok(
     hasExact('recipes/.gitkeep'),

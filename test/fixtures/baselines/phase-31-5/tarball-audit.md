@@ -1,9 +1,20 @@
 # npm tarball audit — Phase 31.5, Plan 08 (D-09 corrected allowlist)
 
-Golden manifest: `tarball-manifest.txt` (617 paths, paths-only per D-07).
+Golden manifest: `tarball-manifest.txt` (620 paths, paths-only per D-07).
 Source of truth: `package.json` `files`. `.npmignore` is a defense-in-depth duplicate (D-10).
 Prior tarball (v1.31.0, `scripts/` wholesale, no sdk/recipes/docs-i18n/NOTICE): ~549 files.
-This tarball: 617 files (net +68 = +91 added − 23 maintainer dropped).
+This tarball: 620 files (net +71 = +91 added − 23 maintainer dropped + 3 compiled SDK-bin .js).
+
+**Plan 31-5-9.5 (D-16) update — +3 compiled SDK-bin `.js`:** `prepack`
+(`npm run build:sdk` → `scripts/build-sdk-bins.cjs`) esbuild-bundles the three
+TS-entry bins to self-contained CommonJS SIBLINGS that NOW SHIP so a fresh
+`npm install` has runnable bins (raw `.ts` cannot run under
+`--experimental-strip-types` from inside `node_modules`). The `.ts` remain the
+source of truth (the `.js` are gitignored build artifacts regenerated each
+pack; `postpack` cleans them). 617 → 620:
+  - `sdk/cli/index.js`            (gdd-sdk compiled entry)
+  - `sdk/mcp/gdd-state/server.js` (gdd-state-mcp compiled entry)
+  - `sdk/mcp/gdd-mcp/server.js`   (gdd-mcp compiled entry)
 
 One line per top-level entry (or notable subtree): KEPT (why it ships) / DROPPED (why removed) / ADDED.
 
@@ -27,7 +38,7 @@ One line per top-level entry (or notable subtree): KEPT (why it ships) / DROPPED
 
 ## ADDED (new in this allowlist vs prior tarball)
 
-- `sdk/` (83 files) — ADDED (the new SDK: cli, state, event-stream, errors, primitives, mcp/gdd-state, mcp/gdd-mcp, index.ts barrel, README.md; plugin.json advertises it).
+- `sdk/` (86 files) — ADDED (the new SDK: cli, state, event-stream, errors, primitives, mcp/gdd-state, mcp/gdd-mcp, index.ts barrel, README.md; plugin.json advertises it). Includes the 3 compiled-bin `.js` siblings (31-5-9.5, D-16): `sdk/cli/index.js`, `sdk/mcp/gdd-state/server.js`, `sdk/mcp/gdd-mcp/server.js`.
 - `recipes/` (1 file: `.gitkeep`) — ADDED (scaffold; ships empty of recipes).
 - `docs/i18n/` (6 files: README.{de,fr,it,ja,ko,zh-CN}.md) — ADDED (translations relocated from root in 31-5-07; D-11).
 - `NOTICE` — ADDED (third-party attributions; was missing from prior `files`).
@@ -40,7 +51,7 @@ Mechanism: `files` lists the runtime DIRECTORIES under `scripts/` (lib/, mcp-ser
 - `scripts/rollback-release.sh`, `scripts/apply-branch-protection.sh` — DROPPED (release ops).
 - `scripts/release-smoke-test.cjs`, `scripts/verify-version-sync.cjs`, `scripts/extract-changelog-section.cjs` — DROPPED (release tooling).
 - `scripts/detect-stale-refs.cjs`, `scripts/run-injection-scanner-ci.cjs`, `scripts/injection-patterns.cjs` — DROPPED (CI scanners).
-- `scripts/build-distribution-bundles.cjs`, `scripts/build-intel.cjs` — DROPPED (build tooling).
+- `scripts/build-distribution-bundles.cjs`, `scripts/build-sdk-bins.cjs`, `scripts/build-intel.cjs` — DROPPED (build tooling; build-sdk-bins.cjs is the 31-5-9.5 prepack compiler — runs at pack time, never ships).
 - `scripts/gsd-cleanup-incubator.cjs`, `scripts/validate-incubator-scope.cjs`, `scripts/validate-skill-length.cjs` — DROPPED (maintainer validation/cleanup).
 - `scripts/validate-frontmatter.ts`, `scripts/validate-schemas.ts`, `scripts/codegen-schema-types.ts`, `scripts/aggregate-agent-metrics.ts` — DROPPED (maintainer .ts tooling).
 - `scripts/lint-agentskills-spec.cjs` — DROPPED (maintainer lint).
