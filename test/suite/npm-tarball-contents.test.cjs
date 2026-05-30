@@ -115,10 +115,13 @@ test('31-5-08: must-ship runtime subtrees are present (D-09/D-14/D-15)', () => {
     hasPrefix('scripts/lib/figma-extract/'),
     '31-5-08: tarball must include scripts/lib/figma-extract/** (figma-extract SKILL, D-15)',
   );
-  // gdd-state + gdd-mcp deprecation shims (31-5-06).
+  // The 31.5 deprecation shims (scripts/mcp-servers/ + the scripts/lib/ shims)
+  // were REMOVED in v1.33.0 (Phase 33, D-04 — grace window 1.31.5 -> 1.32.0
+  // elapsed). They must NO LONGER ship; their absence is asserted by
+  // test/suite/phase-33-shims-removed.test.cjs.
   assert.ok(
-    hasExact('scripts/mcp-servers/gdd-state/server.ts'),
-    '31-5-08: tarball must include the scripts/mcp-servers/gdd-state shim (31-5-06)',
+    !hasPrefix('scripts/mcp-servers/'),
+    '31-5-08: tarball must NOT include scripts/mcp-servers/** (31.5 shims removed in v1.33.0, D-04)',
   );
   // The new SDK.
   assert.ok(

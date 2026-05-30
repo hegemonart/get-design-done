@@ -24,7 +24,6 @@
     "recipes/",
     "docs/i18n/",
     "scripts/lib/",
-    "scripts/mcp-servers/",
     "scripts/cli/",
     "scripts/install.cjs",
     "SKILL.md",

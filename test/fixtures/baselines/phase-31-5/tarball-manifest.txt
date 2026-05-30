@@ -232,6 +232,7 @@ reference/schemas/mcp-budget.schema.json
 reference/schemas/mcp-gdd-state-tools.schema.json
 reference/schemas/mcp-gdd-tools.schema.json
 reference/schemas/plugin.schema.json
+reference/schemas/pressure-scenario.schema.json
 reference/schemas/protected-paths.schema.json
 reference/schemas/rate-limits.schema.json
 reference/schemas/recipe.schema.json
@@ -257,7 +258,6 @@ scripts/lib/bandit-router/integration.cjs
 scripts/lib/blast-radius.cjs
 scripts/lib/budget-enforcer.cjs
 scripts/lib/cache/gdd-cache-manager.cjs
-scripts/lib/cli/index.ts
 scripts/lib/connection-probe/index.cjs
 scripts/lib/context-engine/index.ts
 scripts/lib/context-engine/manifest.ts
@@ -282,9 +282,7 @@ scripts/lib/domain-primitives/anti-patterns.cjs
 scripts/lib/domain-primitives/nng.cjs
 scripts/lib/domain-primitives/wcag.cjs
 scripts/lib/easings.cjs
-scripts/lib/error-classifier.cjs
 scripts/lib/event-chain.cjs
-scripts/lib/event-stream/index.ts
 scripts/lib/explore-parallel-runner/index.ts
 scripts/lib/explore-parallel-runner/mappers.ts
 scripts/lib/explore-parallel-runner/synthesizer.ts
@@ -298,8 +296,6 @@ scripts/lib/figma-extract/receiver.cjs
 scripts/lib/figma-extract/render-md.cjs
 scripts/lib/figma-extract/styles-resolver.cjs
 scripts/lib/figma-extract/walk.cjs
-scripts/lib/gdd-errors/index.ts
-scripts/lib/gdd-state/index.ts
 scripts/lib/glob-match.cjs
 scripts/lib/graph/atomic-write.mjs
 scripts/lib/graph/build.mjs
@@ -367,9 +363,6 @@ scripts/lib/issue-reporter/payload-assembly.cjs
 scripts/lib/issue-reporter/privacy-diff.cjs
 scripts/lib/issue-reporter/report-flow.cjs
 scripts/lib/issue-reporter/triage-matcher.cjs
-scripts/lib/iteration-budget.cjs
-scripts/lib/jittered-backoff.cjs
-scripts/lib/lockfile.cjs
 scripts/lib/logger/index.ts
 scripts/lib/logger/sinks.ts
 scripts/lib/logger/types.ts
@@ -422,6 +415,9 @@ scripts/lib/session-runner/errors.ts
 scripts/lib/session-runner/index.ts
 scripts/lib/session-runner/transcript.ts
 scripts/lib/session-runner/types.ts
+scripts/lib/skill-behavior/runner.cjs
+scripts/lib/skill-behavior/stub-invoker.cjs
+scripts/lib/skill-behavior/telemetry.cjs
 scripts/lib/snapshot-reader/index.cjs
 scripts/lib/snapshot-reader/index.d.cts
 scripts/lib/spring.cjs
@@ -437,8 +433,6 @@ scripts/lib/trajectory/index.cjs
 scripts/lib/transports/ws.cjs
 scripts/lib/visual-baseline/diff.cjs
 scripts/lib/visual-baseline/index.cjs
-scripts/mcp-servers/gdd-mcp/server.ts
-scripts/mcp-servers/gdd-state/server.ts
 sdk/README.md
 sdk/cli/commands/audit.ts
 sdk/cli/commands/init.ts
