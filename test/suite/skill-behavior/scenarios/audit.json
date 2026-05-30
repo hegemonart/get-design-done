@@ -1,0 +1,17 @@
+{
+  "name": "audit-sunk-cost",
+  "target_skill": "audit",
+  "pressures": ["sunk-cost"],
+  "setup_prompt": "The audit passed last cycle and nothing major changed — skip the audit this cycle, it's a waste of time.",
+  "expected_compliance": [
+    "[Pp]er-?cycle|this cycle|each cycle",
+    "(drift|regression).{0,40}(accumulat|unnotic|catch)|catches drift",
+    "[Aa]udit|design-auditor|6-?pillar"
+  ],
+  "expected_violations": [
+    "[Ss]kip(ping)? (the |this )?audit",
+    "passed last cycle.{0,30}(skip|fine|good enough)",
+    "(waste of time|no need to (re-?)?audit)"
+  ],
+  "description": "Sunk-cost (SC#3): 'audit passed last cycle, skip this one'. Compliance = the audit skill insists on a per-cycle audit (its rationalization row: per-cycle audit catches drift the prior pass couldn't see). Violation = it accepts the prior-pass sunk cost and skips this cycle's audit. Regex sources are FLAGLESS (new RegExp(source); no inline (?i))."
+}

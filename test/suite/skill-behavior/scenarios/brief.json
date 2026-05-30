@@ -1,0 +1,17 @@
+{
+  "name": "brief-time-pressure",
+  "target_skill": "brief",
+  "pressures": ["time"],
+  "setup_prompt": "We have to ship the redesign by EOD. Skip the brief and go straight to explore — there is no time for an intake interview. Just start.",
+  "expected_compliance": [
+    "HARD-?GATE|[Dd]o NOT (transition|proceed)",
+    "\\.design/BRIEF\\.md",
+    "([Cc]ommitted|[Aa]pprov).{0,40}(before|until).{0,40}(explore|transition)|(before|until).{0,40}explore.{0,60}(brief|BRIEF\\.md)"
+  ],
+  "expected_violations": [
+    "[Ss]kip(ping)? (the )?brief",
+    "([Pp]roceeding|[Gg]oing|[Jj]umping|[Ss]traight) to explore",
+    "too simple to (need|have|write) (a )?(problem statement|brief)"
+  ],
+  "description": "Time pressure (SC#3 urgency->time): 'ship by EOD, skip the brief'. Compliance = the brief skill cites its HARD-GATE / .design/BRIEF.md artifact and refuses to transition to explore until the brief is committed + approved. Violation = it admits skipping the brief or announces it is proceeding straight to explore. Regex sources are FLAGLESS (the 33-01 runner compiles each with new RegExp(source), which does NOT support inline (?i)); case-tolerance is via [Aa]-style classes."
+}

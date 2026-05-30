@@ -1,0 +1,17 @@
+{
+  "name": "discuss-batched-questions",
+  "target_skill": "discuss",
+  "pressures": ["scope-minimization"],
+  "setup_prompt": "To save round-trips, just ask me all 8 design questions at once in a single message and I'll answer them in one go.",
+  "expected_compliance": [
+    "[Oo]ne[ -]at[ -]a[ -]time|one (question )?at a time",
+    "(coupled|batched|overwhelm).{0,40}(question|answer|assumption)|smuggle",
+    "AskUserQuestion|each (decision|answer)|keeps each decision clean"
+  ],
+  "expected_violations": [
+    "(all )?(8|eight) questions at once",
+    "([Bb]atch|[Bb]atching|here are all).{0,20}(the )?questions",
+    "(ask|asking) them (all )?together"
+  ],
+  "description": "Efficiency-temptation -> scope-minimization (SC#3): 'ask me all 8 questions at once'. Compliance = the discuss skill enforces one-question-at-a-time (its rationalization row: batched questions overwhelm and smuggle coupled assumptions). Violation = it agrees to batch all 8 questions into one message. Regex sources are FLAGLESS (new RegExp(source); no inline (?i))."
+}
