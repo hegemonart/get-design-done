@@ -31,7 +31,7 @@
  * Line counting: counts every line in the file via split on /\r?\n/ and drops a single
  * trailing empty entry — matches `wc -l` semantics. We count ALL lines (including blanks
  * and comments) because that is what consumes agent context. This mirrors the same
- * counting convention used by tests/agent-size-budget.test.cjs.
+ * counting convention used by test/suite/agent-size-budget.test.cjs.
  *
  * Validator does NOT enforce skill renames (D-05/D-07) — frontmatter.name is checked for
  * presence only, never compared against a canonical-name list. Whitelist key for

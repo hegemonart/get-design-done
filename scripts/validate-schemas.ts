@@ -63,7 +63,7 @@ export type {
 
 /**
  * Discover the repo root by walking up from cwd to find our package.json.
- * Kept identical to the approach in tests/helpers.ts so both modules behave
+ * Kept identical to the approach in test/suite/helpers.ts so both modules behave
  * the same when invoked from worktrees, subdirectories, or CI.
  */
 function findRepoRoot(): string {
