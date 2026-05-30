@@ -4,6 +4,37 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.32.0] - 2026-05-30
+
+### Phase 32 — Skill Auto-Trigger Discipline + Defensive Guardrails
+
+Closes the auto-trigger gap between GDD's 70+ skills and the harness's description-match skill-discovery layer. GDD had zero forcing functions — agents consulted skills opportunistically, not disciplinedly. This release ports the skill-discipline **mechanism** (not content) from [`obra/superpowers`](https://github.com/obra/superpowers) (MIT): a SessionStart-injected bootstrap contract, defensive guardrails at every stage transition, and two lightweight skill-discovery instruments that feed Phase 33's behavioral A/B. 9 plans across Waves A–C.
+
+### Added
+
+- **`using-gdd` SessionStart bootstrap (the forcing function GDD lacked).** A new `skills/using-gdd/SKILL.md` discipline contract — the **1%-rule** ("if you think there is even a 1% chance a skill applies, you ABSOLUTELY MUST invoke it"), a ≥10-row **red-flags table** (Thought → Reality), a skill-priority order (Process → Implementation → Audit), an instruction-priority precedence (user CLAUDE.md > GDD skill > defaults), and the GDD pipeline flow. Carries `disable-model-invocation: true` (it is injected, not model-invoked) and a pure-trigger description (no `<what>` clause, per superpowers' shortcut finding — proof-by-implementation; Phase 28.5's description-format validator stays open pending Phase 33's A/B evidence).
+- **Per-harness SessionStart inject emitter.** `hooks/inject-using-gdd.sh` is a single polyglot script that reads `using-gdd` and emits it as the host harness's SessionStart `additionalContext` shape — Cursor (`additional_context`), Claude Code (`hookSpecificOutput.additionalContext`), and SDK-standard (top-level `additionalContext`) branches via env-var detection, with a pure-bash JSON escaper (no jq/python dependency). A `hooks/run-hook.cmd` polyglot Windows wrapper and a 5th `hooks/hooks.json` SessionStart entry (matcher `startup|clear|compact`) wire it in.
+- **`<SUBAGENT-STOP>` no-cascade structural guarantee.** The inject is wired ONLY under the SessionStart hook event; subagent spawns do not fire SessionStart, so the bootstrap contract cannot cascade into a subagent's context. The `using-gdd` body opens with a `<SUBAGENT-STOP>` tag. (Structural guarantee here; the behavioral proof under pressure is deferred to Phase 33.)
+- **`<HARD-GATE>` at the 5 stage transitions.** `skills/{brief,explore,plan,design,verify}/SKILL.md` each gain a `<HARD-GATE>` block that refuses to advance the pipeline until the stage's required artifact (`.design/BRIEF.md`, `DESIGN.md` + `DESIGN-CONTEXT.md`, etc.) exists and is approved — reading the artifact path from `.design/STATE.md` when a project uses a custom location.
+- **Rationalization tables in the 7 stage-orchestrator skills.** `brief / explore / plan / design / verify / discuss / audit` each carry a `| Thought | Reality |` rationalization table (≥6 rows) that names the common "skip the stage" justifications and rebuts each.
+- **Inline self-review blocks** in `brief` and `plan` (the 2 spec-producing transitions) — a 4-line inline checklist (Phase 28.5 progressive-disclosure: a short check belongs at the transition surface, not behind a skill-discovery hop).
+- **Portable discipline blocks** in `AGENTS.md` + `GEMINI.md` so non-Claude-Code harnesses (Codex, Gemini, etc.) inherit the same skill-discipline contract.
+- **`router_pick` skill-discovery telemetry** — a new `router_pick` event in `reference/schemas/events.schema.json` plus an emit point (`skills/router/router-pick-emitter.md`). Records a sha256 `context_hash` (never the raw intent — no PII) so Phase 33 can measure which skill the router actually selected.
+- **`lint-skill-descriptions.cjs` drift detector** — a maintainer/CI script (not shipped to npm) that flags any skill whose one-line `description:` is stale while its body changed ≥3 times since (the D-02 heuristic).
+- **`gdd-health` `skill_discipline` check (#7).** `scripts/lib/health-mirror/index.cjs` gains a 7th read-only check reporting `skill-discipline: ready` (using-gdd present AND `hooks.json` SessionStart wires the inject), `skill-discipline: missing using-gdd`, or `skill-discipline: hook not wired`. Documented in `skills/health/SKILL.md`.
+
+### Attribution
+
+- **Mechanism ported from [`obra/superpowers`](https://github.com/obra/superpowers) (MIT).** Three artifacts: the SessionStart hook-script structure, the 1%-rule + red-flags-table format, and the defensive-guardrail patterns (`<HARD-GATE>` / `<SUBAGENT-STOP>` / rationalization-table). See `NOTICE`. We port the MECHANISM, not the content — GDD's skills, gates, and tables are GDD-specific.
+
+### Notes
+
+- The pure-trigger `using-gdd` description ships as **proof-by-implementation** of superpowers' shortcut finding (a `<what>`-clause can make agents follow the description summary instead of reading the body). The counterfactual A/B description test and the pressure-scenario behavior runner are **deferred to Phase 33** (D-02); Phase 32 ships the `router_pick` events + drift-lint instruments that Phase 33 consumes. Phase 28.5's global description-format validator regex stays open until that evidence lands.
+- 4 stage skills (`brief`, `explore`, `plan`, `verify`) sit in the validator's advisory **warn** band (≥100 lines) after gaining the mandatory discipline blocks — well under the **block** threshold (250). Accepted by design: the gates + tables are the deliverable.
+- 6-manifest lockstep at **v1.32.0** (`package.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`).
+
+---
+
 ## [1.31.5] - 2026-05-29
 
 ### Phase 31.5 — Repo Structure Consolidation
