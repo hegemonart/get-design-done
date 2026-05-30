@@ -211,14 +211,52 @@ See `.planning/phases/30.6-graphify-self-ownership/` for full phase
 documentation including the 10 architectural decisions (D-01 through D-10)
 and the migration of the 8 dispatching callsites to native `bin/gdd-graph`.
 
+──────────────────────────────────────────────────────────────────────────────
+Phase 32 — Skill Auto-Trigger Discipline + Defensive Guardrails (v1.32.0, 2026-05-30)
+──────────────────────────────────────────────────────────────────────────────
+
+The skill-discipline layer shipped in v1.32.0 ports the MECHANISM (not the
+content) from:
+
+  obra/superpowers (https://github.com/obra/superpowers)
+  License: MIT
+
+GDD had 70+ skills and zero forcing functions; superpowers ships exactly one
+(`using-superpowers` SessionStart inject) plus the `<HARD-GATE>` /
+`<SUBAGENT-STOP>` / rationalization-table guardrail patterns, and reliably
+auto-triggers its skills. We re-derive the mechanism in GDD's own runtime and
+skill set; the skill bodies, gates, tables, and pipeline flow are GDD-specific.
+Three ported artifacts:
+
+  hooks/inject-using-gdd.sh
+    └─ SessionStart hook-script structure adapted from superpowers'
+       `using-superpowers` inject: one polyglot script, env-var branch per
+       harness, pure-bash escape_for_json (no jq/python dependency).
+
+  skills/using-gdd/SKILL.md
+    └─ The 1%-rule ("even a 1% chance a skill applies → invoke it") + the
+       red-flags `| Thought | Reality |` table format adapted from
+       superpowers' using-superpowers discipline contract. GDD content:
+       GDD pipeline stages, skill-priority order, instruction-priority.
+
+  skills/{brief,explore,plan,design,verify,discuss,audit}/SKILL.md
+    └─ The defensive-guardrail patterns — `<HARD-GATE>` (refuse to advance a
+       stage without its artifact), `<SUBAGENT-STOP>` (no-cascade into
+       subagents), and the rationalization-table pattern — adapted from
+       superpowers. The specific gates, artifact paths, and table rows are
+       GDD-specific.
+
+The mechanism is the contribution being attributed; the discipline content is
+original to get-design-done.
+
 ────────────────────────────────────────────────────────────────────────
 
 Note on the broader codebase: get-design-done as a whole is licensed under
 the MIT License (see LICENSE). The Apache 2.0 attribution above applies
 specifically to the cc-multi-cli-derived files listed under the Phase 27
-block. The MIT attributions under Phase 28.5 and Phase 28.7 cover content
-adapted from mattpocock/skills (MIT) and gsd-build/get-shit-done (MIT)
-respectively — the MIT-to-MIT re-licensing is straightforward and the
-attributions above provide the required source citation. The MIT and
-Apache 2.0 licenses are compatible — see
+block. The MIT attributions under Phase 28.5, Phase 28.7, and Phase 32 cover
+content/mechanism adapted from mattpocock/skills (MIT), gsd-build/get-shit-done
+(MIT), and obra/superpowers (MIT) respectively — the MIT-to-MIT re-licensing is
+straightforward and the attributions above provide the required source
+citation. The MIT and Apache 2.0 licenses are compatible — see
 https://www.apache.org/legal/resolved.html#category-a.
