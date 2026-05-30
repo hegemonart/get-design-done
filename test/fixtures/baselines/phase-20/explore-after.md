@@ -85,4 +85,21 @@ Full interview protocol + JSON line schema: `./explore-procedure.md` §Step 3.
 
 Print: "=== Explore complete ===\nSaved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md\nNext: @get-design-done plan".
 
+<HARD-GATE>
+Do NOT transition to plan (or invoke `/gdd:plan`) until BOTH `.design/DESIGN.md` AND `.design/DESIGN-CONTEXT.md` are committed AND the user has approved them. If this project uses a custom `.design` location, read the artifact paths from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
+
+## Rationalizations — Thought to Reality
+
+The shortcut excuses an agent reaches for during explore, and the drift each one introduces:
+
+| Thought | Reality |
+|---------|---------|
+| "I already know this codebase, I can skip the inventory scan." | An unscanned codebase hides the tokens/components you'll duplicate — the grep pass exists to stop you reinventing what's there. |
+| "The six connection probes are noise, I'll assume Figma is off." | A skipped probe means a wrong connection assumption silently breaks the design stage's tool dispatch. |
+| "`--skip-interview` is fine, the brief covered it." | The interview locks the gray areas the brief left fuzzy; skipping it ships undecided D-XX into planning. |
+| "I'll batch all the interview questions to save round-trips." | Batched questions overwhelm the user and smuggle in coupled assumptions — one-at-a-time keeps each decision clean. |
+| "DESIGN-DEBT.md is optional, the scan was clean enough." | Unrecorded debt resurfaces as an unexplained constraint three stages later with no provenance. |
+| "Prior sketches and project conventions don't apply this cycle." | Ignored conventions get overridden by defaults, producing inconsistency the audit will flag against the rest of the system. |
+
 ## EXPLORE COMPLETE

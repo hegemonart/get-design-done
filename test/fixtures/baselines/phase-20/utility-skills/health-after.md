@@ -63,6 +63,12 @@ After the health table, the `gdd_health` MCP surface (`scripts/lib/health-mirror
 
 Token PRESENCE only is detected (D-10) — the token value is never read, logged, or shown. The Free-tier signal is read from the local raw-pull cache only; no network call is made.
 
+## Skill-discipline bootstrap (skill_discipline)
+
+The `gdd_health` MCP surface also reports a `skill_discipline` check (Phase 32) confirming the using-gdd SessionStart bootstrap is live — detail is one of three exact strings:
+- `skill-discipline: ready` — `skills/using-gdd/SKILL.md` exists AND `hooks/hooks.json` SessionStart wires `inject-using-gdd.sh` (status `ok`).
+- `skill-discipline: missing using-gdd` (skill absent) or `skill-discipline: hook not wired` (skill present, no SessionStart inject) — both `warn`.
+
 ## Check MCP registration (gdd-mcp)
 
 After the health table, inspect whether `gdd-mcp` (Phase 27.7+) is registered with any installed harness and render a one-line status row. Dismissable via `.design/config.json#mcp_nudge=false`. Non-blocking: failure paths render `MCP server: unknown` rather than crash. Full detection procedure (dismissal check, detection via `scripts/lib/install/mcp-register.cjs`, row rendering for claude/codex/both/neither, fallback) lives in `./health-mcp-detection.md`.

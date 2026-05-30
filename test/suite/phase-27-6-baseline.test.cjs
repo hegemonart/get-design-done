@@ -75,13 +75,18 @@ test('27.6-baseline: both PreCompact + SessionStart hooks exist', () => {
   assert.ok(fs.existsSync(path.join(REPO_ROOT, 'hooks', 'gdd-sessionstart-recap.js')));
 });
 
-test('27.6-baseline: hooks.json registers PreCompact + 4-entry SessionStart', () => {
+test('27.6-baseline: hooks.json registers PreCompact + 5-entry SessionStart', () => {
   const h = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'hooks', 'hooks.json'), 'utf8'));
   assert.ok(Array.isArray(h.hooks.PreCompact), 'PreCompact array required');
   assert.ok(h.hooks.PreCompact.length >= 1, '>= 1 PreCompact entry');
   assert.ok(h.hooks.PreCompact[0].hooks[0].command.includes('gdd-precompact-snapshot'));
-  assert.equal(h.hooks.SessionStart.length, 4, 'SessionStart has 4 entries after Phase 27.6');
+  // Phase 27.6 left SessionStart at 4 entries; Phase 32 (v1.32.0) added a 5th —
+  // the inject-using-gdd.sh skill-discipline bootstrap (matcher startup|clear|compact).
+  assert.equal(h.hooks.SessionStart.length, 5, 'SessionStart has 5 entries after Phase 32');
+  // The Phase 27.6 recap entry stays at index 3 (additive, not reordered).
   assert.ok(h.hooks.SessionStart[3].hooks[0].command.includes('gdd-sessionstart-recap'));
+  // The Phase 32 inject entry is the 5th (index 4).
+  assert.ok(h.hooks.SessionStart[4].hooks[0].command.includes('inject-using-gdd'));
 });
 
 test('27.6-baseline: reference/perf-budget.md exists with phase 27.6 frontmatter', () => {

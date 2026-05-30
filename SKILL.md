@@ -243,6 +243,10 @@ If `$ARGUMENTS` is a stage or command name — invoke it directly, no state chec
 /gdd:sketch-wrap-up  → Skill("get-design-done:gdd-sketch-wrap-up")
 /gdd:spike           → Skill("get-design-done:gdd-spike")
 /gdd:spike-wrap-up   → Skill("get-design-done:gdd-spike-wrap-up")
+# --- Bootstrap (not slash-routed) ---
+# using-gdd → injected at SessionStart by hooks/inject-using-gdd.sh
+#   (disable-model-invocation: true). The skill-discipline contract;
+#   not a user-invoked command — see skills/using-gdd/SKILL.md.
 ```
 
 Pass remaining arguments through: `/gdd:explore --skip-interview` → `Skill("get-design-done:gdd-explore", "--skip-interview")`.

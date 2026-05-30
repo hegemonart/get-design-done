@@ -70,7 +70,14 @@ test('28.5-11 health: validator reports health as clean (0 errors, 0 warnings)',
     encoding: 'utf8',
     cwd: REPO_ROOT,
   });
-  assert.equal(r.status, 0, `validator exit ${r.status}; stderr: ${r.stderr}`);
+  // This test scopes to the HEALTH skill specifically (lines below). The
+  // process exit code reflects the WHOLE skills/ tree: Phase 32 (v1.32.0)
+  // intentionally pushed 4 stage skills (brief/explore/plan/verify) into the
+  // advisory warn band (>=100 lines) by adding the mandatory <HARD-GATE> +
+  // rationalization + self-review discipline blocks, so the validator now
+  // exits 1 (warnings present) rather than 0. Accept 0 (clean) OR 1 (warnings
+  // only); a genuine validator error (exit 2) or crash (other) still fails.
+  assert.ok([0, 1].includes(r.status), `validator exit ${r.status}; stderr: ${r.stderr}`);
   const out = JSON.parse(r.stdout);
   const h = out.skills.find(s => s.name === 'health');
   assert.ok(h, 'no health entry in validator output');

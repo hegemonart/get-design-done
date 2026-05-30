@@ -77,4 +77,29 @@ The next stage (design) calls `mcp__gdd_state__transition_stage` on entry — th
 
 Print: plan tasks (N waves, M total tasks), files written (`.design/DESIGN-PLAN.md`, plus `.design/DESIGN-RESEARCH.md` if research ran), next step `/get-design-done:design`.
 
+## Spec self-review (before transition)
+
+Run this final spec-quality pass over `.design/DESIGN-PLAN.md` before the plan→design transition:
+- Placeholder scan: no TBD / TODO / `<placeholder>` / lorem left in the artifact.
+- Internal consistency: sections don't contradict each other.
+- Scope check: nothing in the artifact exceeds (or silently drops) the agreed scope.
+- Ambiguity check: every requirement/decision is specific enough to act on without a follow-up question.
+
+<HARD-GATE>
+Do NOT transition to design (or invoke `/gdd:design`) until `.design/DESIGN-PLAN.md` is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+</HARD-GATE>
+
+## Rationalizations — Thought to Reality
+
+The reasons an agent gives to skip planning or rush DESIGN-PLAN.md, and what each one costs:
+
+| Thought | Reality |
+|---------|---------|
+| "This change is small, I can design straight from DESIGN-CONTEXT.md." | Plan-skipped tasks blow scope per cycle telemetry; the plan gate is for the typical case, not the exception you think you're in. |
+| "Pattern mapping is brownfield ceremony, I'll skip it." | Step 1.5 is mandatory because an unmapped brownfield is where the executor silently re-implements an existing pattern. |
+| "The plan-checker will just rubber-stamp it, skip the spawn." | The checker's 5 dimensions (coverage, wave order, must-have derivation) catch the gaps you can't see in your own plan. |
+| "I'll let the planner infer wave ordering at design time." | Unordered waves serialize work that could parallelize — or worse, run dependent tasks concurrently and corrupt the tree. |
+| "Research is overkill for this scope." | The complexity heuristic exists precisely because agents under-estimate scope; skipping research on a 3+-scope domain guarantees a mid-design surprise. |
+| "I can record decisions in DESIGN-PLAN.md prose instead of D-XX." | Prose decisions never reach STATE.md, so verify's integration-checker can't trace them and flags them orphaned. |
+
 ## PLAN COMPLETE

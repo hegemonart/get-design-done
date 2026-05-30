@@ -53,17 +53,20 @@ test('31-5-10: marketplace.json Tier-2 lockstep (metadata.version + plugins[0].v
 
 // ── CHANGELOG ─────────────────────────────────────────────────────────────────
 
-test('31-5-10: CHANGELOG has a [1.31.5] block and no stale [1.28.0] phase heading', () => {
+test('31-5-10: CHANGELOG carries a [1.31.5] block and no stale [1.28.0] phase heading', () => {
   const cl = read('CHANGELOG.md');
+  // The Phase 31.5 deliverable shipped at v1.31.5, so its block must still
+  // exist in the changelog history (guards against the stale ROADMAP v1.28.0
+  // ever propagating onto THIS phase's block).
   assert.match(cl, /## \[1\.31\.5\]/, 'CHANGELOG must carry a ## [1.31.5] entry (D-01)');
-  // The Phase 31.5 deliverable shipped at v1.31.5, NOT the stale ROADMAP
-  // v1.28.0. Guard that the closeout did not mistakenly author a [1.28.0]
-  // heading for THIS phase. (A historical ## [1.28.0] block for Phase 28 is
-  // fine — it exists far below; we assert the v1.31.5 block heading is the
-  // top-most release heading instead.)
+  // The Phase 31.5 closeout must NOT have authored a [1.28.0] heading for its
+  // own deliverable. (A historical ## [1.28.0] block for Phase 28 is fine — it
+  // lives far below.) Version-agnostic top-heading check (Phase 28 D-08 lesson):
+  // the top-most release heading tracks the LIVE package version, which advances
+  // each closeout (1.31.5 -> 1.32.0 -> ...). We only assert it is NOT 1.28.0.
   const firstHeading = cl.match(/^## \[(\d+\.\d+\.\d+)\]/m);
   assert.ok(firstHeading, 'CHANGELOG has at least one release heading');
-  assert.equal(firstHeading[1], '1.31.5', 'the top-most release heading is [1.31.5]');
+  assert.notEqual(firstHeading[1], '1.28.0', 'the top-most release heading must not be the stale [1.28.0]');
 });
 
 // ── phase-31-5 baselines ──────────────────────────────────────────────────────

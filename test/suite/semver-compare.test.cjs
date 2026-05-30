@@ -313,6 +313,23 @@ OFF_CADENCE_VERSIONS.add('1.31.0');
 //   - 1.31.5 → Phase 31.5 (repo-consolidation); off-cadence sub-phase from 1.31.0.
 OFF_CADENCE_VERSIONS.add('1.31.5');
 
+// Phase 32 — Skill Auto-Trigger Discipline + Defensive Guardrails
+// (v1.32.0, 2026-05-30). On-cadence MINOR from the v1.31.x arc
+// (1.31.0 -> 1.31.5 -> 1.32.0). Even though 1.32.0 is an on-cadence minor
+// (not a decimal off-cadence), the existing suite contract requires every
+// post-1.0.x release registered in OFF_CADENCE_VERSIONS to keep the
+// semver-ordering tests green — the EXPECTED_SEQUENCE check covers only the
+// original 1.0.x patch cadence, so mainline MINORs (1.14.0 / 1.20.0 / 1.25.0 /
+// 1.28.0 / 1.29.0 / 1.30.0 / 1.31.0) are all recognized via this Set (the
+// 1.29.0 / 1.30.0 / 1.31.0 precedent comments above). Phase 32 ports the
+// obra/superpowers (MIT) skill-discipline MECHANISM: the using-gdd SessionStart
+// inject (1%-rule + red-flags table + <SUBAGENT-STOP>), <HARD-GATE> at the 5
+// stage transitions, rationalization tables in 7 stage skills, AGENTS/GEMINI
+// discipline blocks, plus the router_pick telemetry + lint-skill-descriptions
+// drift instruments (Phase 33 inputs).
+//   - 1.32.0 → Phase 32 (skill-autotrigger-discipline); on-cadence MINOR from 1.31.5.
+OFF_CADENCE_VERSIONS.add('1.32.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

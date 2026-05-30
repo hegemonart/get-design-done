@@ -58,6 +58,9 @@ const DISABLE_INVOCATION_WHITELIST = new Set([
   'reapply-patches', 'list-assumptions', 'plant-seed', 'review-backlog',
   'cache-manager', 'warm-cache', 'synthesize', 'timeline', 'start',
   'recall', 'continue', 'update', 'undo', 'zoom-out',
+  // Phase 32 (D-10): using-gdd is a SessionStart bootstrap discipline contract,
+  // injected via additionalContext — not a model-invoked skill. Additive only.
+  'using-gdd',
 ]);
 
 function parseArgs(argv) {

@@ -10,7 +10,7 @@
     "type": {
       "type": "string",
       "minLength": 1,
-      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap."
+      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick."
     },
     "timestamp": {
       "type": "string",
@@ -181,6 +181,57 @@
         }
       },
       "description": "Phase 30.5-03 D-06 kfm-candidate payload — 7 fields, additionalProperties: false. Validated when the envelope's type === 'kfm-candidate' via the allOf[1] conditional."
+    },
+    "RouterPickPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "source",
+        "picked_skill",
+        "context_hash",
+        "rank",
+        "alternatives",
+        "ts"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "description": "UUIDv4 identifying this router_pick event. Stable across emit + read cycles."
+        },
+        "source": {
+          "type": "string",
+          "const": "router",
+          "description": "Phase 32-08 D-02 — the router_pick event class is emitted EXCLUSIVELY by the gdd-router skill at its resolved-pick point. No other producer is authorised."
+        },
+        "picked_skill": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The skill or agent the router auto-picked for this intent. Phase 33 baselines per-skill auto-pick rates from this field (pick-rate regression)."
+        },
+        "context_hash": {
+          "type": "string",
+          "minLength": 1,
+          "description": "sha256 of the intent/context that drove the pick — NEVER the raw prompt (no PII, mirrors CapabilityGapPayload.context_hash discipline). Used by Phase 33 aggregation to cluster picks for the same context."
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Rank of the picked_skill among the candidates considered (0 = top pick). Lets Phase 33 distinguish confident top picks from close calls."
+        },
+        "alternatives": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Other candidate skill/agent names the router considered (names only — no scores, no prompt text). May be empty when the router had a single match. Surfaces which skills the router weighs but does not reach for."
+        },
+        "ts": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of the pick emission."
+        }
+      },
+      "description": "Phase 32-08 D-02 router_pick payload — 7 fields, additionalProperties: false, NO PII (context_hash only). Records which skill the router auto-picked per intent — the instrument that surfaces under-reached skills. Validated when the envelope's type === 'router_pick' via the allOf[2] conditional."
     }
   },
   "allOf": [
@@ -203,6 +254,17 @@
       "then": {
         "properties": {
           "payload": { "$ref": "#/definitions/KfmCandidatePayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "router_pick" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/definitions/RouterPickPayload" }
         }
       }
     }

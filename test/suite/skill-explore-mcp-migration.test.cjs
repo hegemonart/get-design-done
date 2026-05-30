@@ -125,20 +125,29 @@ test('skill-explore-mcp-migration: no prose directs direct Edit/Write/update of 
 });
 
 test('skill-explore-mcp-migration: mapper/synthesizer prose preserved (DESIGN-CONTEXT.md count)', () => {
+  // Re-anchored from BEFORE_FIXTURE to AFTER_FIXTURE (same pattern the
+  // line-count test in this file adopted at Phase 28.5): Phase 32 (v1.32.0)
+  // added a <HARD-GATE> block to explore that legitimately references
+  // .design/DESIGN-CONTEXT.md once more (D-05 — gates name the specific
+  // artifact path), so the live count now exceeds the pre-migration (Plan
+  // 20-08) snapshot. That is a NEW gate reference, NOT an alteration of the
+  // mapper/synthesizer prose this test guards. Comparing against the
+  // regenerated post-Phase-32 AFTER_FIXTURE keeps the guard meaningful: the
+  // mapper/synthesizer DESIGN-CONTEXT.md mentions must match the snapshot.
   assert.ok(
-    fs.existsSync(BEFORE_FIXTURE),
-    `pre-migration baseline must exist at ${BEFORE_FIXTURE}`
+    fs.existsSync(AFTER_FIXTURE),
+    `post-migration baseline must exist at ${AFTER_FIXTURE}`
   );
-  const beforeBody = fs.readFileSync(BEFORE_FIXTURE, 'utf8');
-  const afterBody = readBody();
+  const afterFixtureBody = fs.readFileSync(AFTER_FIXTURE, 'utf8');
+  const liveBody = readBody();
   const needle = 'DESIGN-CONTEXT.md';
-  const beforeCount = countOccurrences(beforeBody, needle);
-  const afterCount = countOccurrences(afterBody, needle);
-  assert.ok(beforeCount > 0, 'pre-migration baseline should mention DESIGN-CONTEXT.md');
+  const fixtureCount = countOccurrences(afterFixtureBody, needle);
+  const liveCount = countOccurrences(liveBody, needle);
+  assert.ok(fixtureCount > 0, 'post-migration baseline should mention DESIGN-CONTEXT.md');
   assert.equal(
-    afterCount,
-    beforeCount,
-    `DESIGN-CONTEXT.md count drifted — mapper/synthesizer prose was altered (before=${beforeCount}, after=${afterCount})`
+    liveCount,
+    fixtureCount,
+    `DESIGN-CONTEXT.md count drifted — mapper/synthesizer prose was altered (fixture=${fixtureCount}, live=${liveCount})`
   );
 });
 

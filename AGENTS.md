@@ -1,7 +1,38 @@
 # GDD Plugin — Codex Runtime Instructions
 
 You are running inside Codex CLI with the @hegemonart/get-design-done plugin
-active. Before invoking any GDD skill, consult these two references:
+active.
+
+## Skill discipline
+
+GDD ships 70+ skills. Almost every request maps to a pipeline stage — brief,
+explore, plan, design, verify — or to a cross-cutting skill (discuss, audit,
+style, darkmode).
+
+**If you think there is even a 1% chance a skill might apply, you ABSOLUTELY MUST invoke the skill.**
+
+The cost of reading a skill is trivial; the cost of free-handing a stage is
+rework, scope creep, and a broken pipeline state.
+
+When you catch yourself thinking any of the following, STOP and check for a
+skill.
+
+| Thought | Reality |
+| --- | --- |
+| This is just a simple design question. | Questions are tasks. Check for a skill. |
+| I'll just tweak the CSS directly. | Token changes go through the pipeline — check /gdd:design. |
+| I already know the codebase, skip explore. | Explore probes connections you haven't re-checked this cycle. |
+| This change is too small to plan. | Plan-skipped tasks blow scope per cycle telemetry. Run /gdd:plan. |
+| I can write the brief later. | No brief means no shared problem statement — /gdd:brief comes first. |
+| The user clearly wants X, I'll skip discuss. | Ambiguity hides here. /gdd:discuss surfaces the real constraint. |
+| I'll verify by eyeballing it. | Verification is a stage with criteria — run /gdd:verify, don't guess. |
+| It's obviously a dark-mode tweak. | Color-scheme work has its own skill — check /gdd:darkmode. |
+| Let me just compare these two designs quickly. | Comparison is an audit task — /gdd:compare has the rubric. |
+| This is a one-off, no skill needed. | "One-off" is the most common rationalization in the telemetry. Check anyway. |
+| I'll refactor the style tokens by hand. | /gdd:style owns token edits so the pipeline stays consistent. |
+| The audit can wait until after I ship. | An un-audited cycle is an unverified cycle — /gdd:audit before close. |
+
+Before invoking any GDD skill, consult these two references:
 
 1. `reference/codex-tools.md` — tool-name mapping from CC → Codex equivalents.
 2. `skills/<stage>/SKILL.md` — the stage skill you're executing.
