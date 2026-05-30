@@ -80,4 +80,17 @@ Cycle: <name or "default">
 - Do not run the interview yourself — always spawn the agent.
 - Do not touch files outside `.design/`.
 
+## Rationalizations — Thought to Reality
+
+The shortcuts an agent takes during a discuss session, and what each one costs the decision record:
+
+| Thought | Reality |
+|---------|---------|
+| "I'll ask all eight questions at once to save time." | Batched questions overwhelm the user; one-at-a-time keeps each decision clean and prevents coupled answers. |
+| "I can run the interview inline instead of spawning the discussant." | The skill's contract is to always spawn the agent — running it yourself skips the discussant's mode handling and D-XX numbering. |
+| "This answer is good enough, I'll record it as a decision without follow-up." | A vague answer ("modern", "clean") recorded as a D-XX locks in an undecided premise; reject and re-ask once. |
+| "I'll batch all the new D-XX entries into STATE.md at the end." | Decisions written atomically per answer survive an interrupted session; batching loses everything if the session drops. |
+| "The glossary term can wait until I write the summary." | CONTEXT.md is written immediately per term — a deferred glossary entry is a naming inconsistency the next cycle inherits. |
+| "Every decision this session is worth an ADR." | ADRs require all three criteria (hard-to-reverse, surprising, real-tradeoff); auto-promoting routine choices buries the genuinely load-bearing ones. |
+
 ## DISCUSS COMMAND COMPLETE

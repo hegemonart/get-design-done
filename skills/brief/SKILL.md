@@ -96,4 +96,17 @@ Next: @get-design-done explore
 Do NOT transition to explore (or invoke `/gdd:explore`) until the brief artifact (default `.design/BRIEF.md`) is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>
 
+## Rationalizations — Thought to Reality
+
+The excuses an agent invents to skip or shortcut the brief, and what each one actually costs the cycle:
+
+| Thought | Reality |
+|---------|---------|
+| "This brief is too simple to need a problem statement." | Skip the brief = guess at requirements, then redesign mid-design when the real problem surfaces. |
+| "The user told me what to build, I can skip the interview." | Unasked constraints (a11y, brand, stack) become rework — the five questions exist because each one has blown a past cycle. |
+| "I'll capture success metrics later in verify." | Verify has nothing to check against; an un-metricked brief produces an un-verifiable cycle. |
+| "Scope is obvious, I don't need an in/out line." | Undeclared scope is scope creep waiting to happen — the explore scan widens to fill the vacuum. |
+| "I can answer all five questions for the user from context." | AskUserQuestion one-at-a-time exists because batched/assumed answers smuggle in wrong premises that compound downstream. |
+| "STATE.md bootstrap can wait." | Every later MCP mutation requires STATE.md to exist; skipping the bootstrap hard-blocks explore on entry. |
+
 ## BRIEF COMPLETE

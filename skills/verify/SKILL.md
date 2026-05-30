@@ -96,4 +96,18 @@ Print the `=== Verify complete ===` summary (status, gap counts, agent paths, ne
 <HARD-GATE>
 Do NOT mark the cycle complete until the user has reviewed `.design/DESIGN-VERIFICATION.md`. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>
+
+## Rationalizations — Thought to Reality
+
+The reasons an agent gives to skip or weaken verification, and what each one lets through:
+
+| Thought | Reality |
+|---------|---------|
+| "The implementation looks right, I can skip the verifier spawn." | Skipping verification ships unchecked must-haves; the 5-phase verifier exists to catch what "looks right" misses. |
+| "The integration-checker is redundant with the auditor." | The auditor scores quality; the integration-checker proves each D-XX is actually wired — an orphaned decision passes the audit but fails the product. |
+| "These gaps are minor, I'll accept-as-is without a blocker." | Accept-as-is without recording the unresolved gaps erases the trail; the next cycle re-discovers them from scratch. |
+| "The quality gate timed out, I'll treat that as a pass." | Timeout is a signal, not a pass — masking it lets a genuinely failing gate slip through to ship. |
+| "I'll loop the fixer a fourth time to clear the last gap." | The 3-iteration cap exists because a gap surviving three fixes is a design problem, not a code problem — save and escalate. |
+| "Post-handoff bundles don't need the faithfulness check." | Skipping the handoff-faithfulness section means a divergence from the source design ships unflagged. |
+
 ## VERIFY COMPLETE

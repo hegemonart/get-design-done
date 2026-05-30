@@ -63,4 +63,17 @@ After the consolidated audit summary has been printed (and any reflection-propos
 
 Written by `hooks/update-check.sh`; suppressed mid-pipeline and when the latest release is dismissed.
 
+## Rationalizations — Thought to Reality
+
+The excuses an agent reaches for to skip or thin out an audit, and the drift each one misses:
+
+| Thought | Reality |
+|---------|---------|
+| "The audit passed last cycle, I can skip it this cycle." | Per-cycle audit catches drift the prior pass couldn't see; a skipped review is exactly where regressions accumulate unnoticed. |
+| "`--quick` is fine, integration isn't the concern here." | Dropping the integration-checker hides orphaned decisions — wiring breaks even when the 6-pillar score looks healthy. |
+| "I can eyeball the scores instead of spawning the auditor." | The auditor's rubric scores six pillars consistently; an eyeballed review drifts toward whatever the agent already believes. |
+| "Reflection proposals are optional polish, skip the reflector." | The reflector turns this cycle's learnings into next-cycle improvements; skipping it lets the same mistakes repeat. |
+| "I'll modify the source while I'm in here fixing findings." | Audit is read-only by contract; editing source mid-audit invalidates the very scores you're producing. |
+| "Retroactive mode is overkill for a finished cycle." | Retroactive verification is the only check on tasks that shipped without per-task verify — skipping it leaves a completed cycle unaudited. |
+
 ## AUDIT COMPLETE
