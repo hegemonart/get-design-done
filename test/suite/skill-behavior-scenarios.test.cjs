@@ -135,8 +135,13 @@ function loadManifest(scenario) {
 // 1. All 8 scenario manifests present + schema-valid (reuse the 33-02 schema)
 // ---------------------------------------------------------------------------
 test('33-03: all 8 scenario manifests present + schema-valid', () => {
-  const files = readdirSync(SCENARIOS_DIR).filter((f) => f.endsWith('.json'));
-  assert.equal(files.length, SCENARIOS.length, 'expected exactly 8 scenario manifests');
+  // Exclude A/B variant manifests (e.g. using-gdd-ab.json — a 33-04 artifact that
+  // shares this directory) so this 33-03 count asserts the 8 CANONICAL scenarios,
+  // not "this directory contains exactly 8 files".
+  const files = readdirSync(SCENARIOS_DIR).filter(
+    (f) => f.endsWith('.json') && !f.endsWith('-ab.json'),
+  );
+  assert.equal(files.length, SCENARIOS.length, 'expected exactly 8 canonical scenario manifests');
 
   const v = makeValidator();
   for (const scenario of SCENARIOS) {
