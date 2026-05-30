@@ -80,11 +80,20 @@ test('28.5-11 baseline: validator-summary is parseable JSON with required fields
   assert.ok(Number.isInteger(obj.blockers), 'summary.blockers missing or non-integer');
 });
 
-test('28.5-11 baseline: summary records 0 blockers + 0 warnings (D-12 success criterion)', () => {
+test('28.5-11 baseline: summary records 0 blockers (D-12 success criterion; warnings accepted post-Phase-32)', () => {
   const text = fs.readFileSync(SUMMARY_PATH, 'utf8').trim();
   const summary = JSON.parse(text);
-  assert.equal(summary.blockers, 0, `baseline records blockers=${summary.blockers}; expected 0 post-rework`);
-  assert.equal(summary.warnings, 0, `baseline records warnings=${summary.warnings}; expected 0 post-rework`);
+  // Phase 28.5 (D-12) shipped with 0 blockers AND 0 warnings. Phase 32
+  // (v1.32.0) intentionally added the mandatory <HARD-GATE> + rationalization
+  // + self-review discipline blocks to the 5 stage-transition skills, pushing
+  // 4 of them (brief/explore/plan/verify) into the validator's advisory WARN
+  // band (>=100 lines, well under the BLOCK threshold of 250) — accepted by
+  // design per the Phase 32 Wave-A/B summaries ("warn, not block"). The
+  // ZERO-BLOCKERS invariant is the hard contract and remains enforced; the
+  // warn count is now re-locked to the post-Phase-32 distribution snapshot
+  // (see the "current run matches baseline summary" test below).
+  assert.equal(summary.blockers, 0, `baseline records blockers=${summary.blockers}; expected 0 (hard contract)`);
+  assert.equal(summary.warnings, 4, `baseline records warnings=${summary.warnings}; expected 4 post-Phase-32 (brief/explore/plan/verify discipline blocks)`);
 });
 
 test('28.5-11 baseline: current validator run matches baseline summary (zero regression in blockers/warnings)', () => {

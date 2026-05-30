@@ -240,7 +240,7 @@ test('27.7-02: reflections-reader.digestReflections truncates to <= 5 KB', () =>
 // health-mirror (renamed from gsd-health-mirror in Phase 30.6-08 per D-10)
 // =========================================================================
 
-test('27.7-02: health-mirror.getHealthChecks returns 6 checks', async () => {
+test('27.7-02: health-mirror.getHealthChecks returns 7 checks', async () => {
   const lib = require(path.join(LIB_DIR, 'health-mirror', 'index.cjs'));
   const root = tmp('health-mirror');
   // Create a minimal project surface
@@ -255,8 +255,9 @@ test('27.7-02: health-mirror.getHealthChecks returns 6 checks', async () => {
   assert.ok(Array.isArray(result.checks));
   // Plan 30-06 added 5th check (issue_reporter); was 4 in Plan 27.7-02.
   // Plan 31-09 added 6th check (figma_extract).
-  assert.equal(result.checks.length, 6);
-  // All six checks should have a valid status enum value for a complete fixture
+  // Plan 32-07 added 7th check (skill_discipline).
+  assert.equal(result.checks.length, 7);
+  // All seven checks should have a valid status enum value for a complete fixture
   for (const c of result.checks) {
     assert.ok(['ok', 'warn', 'fail'].includes(c.status), 'invalid status: ' + c.status);
     assert.equal(typeof c.name, 'string');

@@ -8,13 +8,14 @@
 // Surface:
 //   async getHealthChecks(rootDir) → { checks: HealthCheck[] }
 //
-// The 6 checks (in stable order) are:
+// The 7 checks (in stable order) are:
 //   1. claude_md            — CLAUDE.md presence
 //   2. planning_dir         — .planning/ presence
 //   3. design_dir           — .design/ presence
 //   4. package_json         — package.json present AND parseable
 //   5. issue_reporter       — kill-switch state (Plan 30-06 / D-08)
 //   6. figma_extract        — extract readiness + Free-tier signal (Plan 31-09)
+//   7. skill_discipline     — using-gdd bootstrap + SessionStart inject (Plan 32-07)
 //
 // Check 5 was added in Plan 30-06 — surfaces the report-issue kill-switch
 // (env or config disable) so users can verify why the command is
@@ -34,6 +35,17 @@
 // logged, or placed in the detail. The Free-tier state is derived from a LOCAL
 // signal only (a prior pull's _meta.json recording a 403/skip on the Variables
 // endpoint) — never a live network call (health-mirror is pure read-only).
+//
+// Check 7 was added in Plan 32-07 — surfaces whether the skill-discipline
+// bootstrap (Phase 32) is live so a user can confirm the using-gdd SessionStart
+// inject is wired. The detail line is one of three exact strings:
+//   - "skill-discipline: ready"            (using-gdd present AND hooks.json
+//                                           SessionStart wires inject-using-gdd.sh)
+//   - "skill-discipline: missing using-gdd" (skills/using-gdd/SKILL.md absent)
+//   - "skill-discipline: hook not wired"    (skill present but no SessionStart
+//                                           inject-using-gdd entry)
+// status: 'ok' when ready, 'warn' otherwise. PURE read-only (rootDir-relative
+// file + JSON inspection only) — NEVER throws, NEVER networks.
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -174,7 +186,73 @@ async function getHealthChecks(rootDir) {
     checks.push({ name: 'figma_extract', status, detail });
   }
 
+  // 7. skill_discipline — using-gdd bootstrap + SessionStart inject (Plan 32-07).
+  // Reports exactly one of three states. PURE read-only: file existence +
+  // hooks.json JSON inspection only. NEVER throws, NEVER networks (every read
+  // is wrapped defensively like the figma_extract check above).
+  {
+    const skillPresent = fileExists(
+      path.join(rootDir, 'skills', 'using-gdd', 'SKILL.md')
+    );
+    const hookWired = skillPresent && sessionStartWiresInject(rootDir);
+
+    let detail;
+    let status;
+    if (!skillPresent) {
+      detail = 'skill-discipline: missing using-gdd';
+      status = 'warn';
+    } else if (!hookWired) {
+      detail = 'skill-discipline: hook not wired';
+      status = 'warn';
+    } else {
+      detail = 'skill-discipline: ready';
+      status = 'ok';
+    }
+    checks.push({ name: 'skill_discipline', status, detail });
+  }
+
   return { checks };
+}
+
+/**
+ * Does hooks/hooks.json wire the inject-using-gdd SessionStart entry?
+ * PURE read-only JSON inspection. Defensive: a missing/garbage hooks.json or an
+ * unexpected shape returns false (→ "hook not wired") rather than throwing — the
+ * health probe must never crash on this check. NEVER networks.
+ *
+ * @param {string} rootDir project root passed to getHealthChecks
+ * @returns {boolean} true iff a SessionStart hook command references inject-using-gdd
+ */
+function sessionStartWiresInject(rootDir) {
+  try {
+    const p = path.join(rootDir, 'hooks', 'hooks.json');
+    let hooks;
+    try {
+      hooks = JSON.parse(fs.readFileSync(p, 'utf8'));
+    } catch {
+      return false; // missing/garbage hooks.json → not wired
+    }
+    const sessionStart =
+      hooks && hooks.hooks && Array.isArray(hooks.hooks.SessionStart)
+        ? hooks.hooks.SessionStart
+        : [];
+    for (const entry of sessionStart) {
+      const inner = entry && Array.isArray(entry.hooks) ? entry.hooks : [];
+      for (const h of inner) {
+        if (
+          h &&
+          typeof h.command === 'string' &&
+          /inject-using-gdd/.test(h.command)
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  } catch {
+    // Absolute safety net — never crash the health probe on this check.
+    return false;
+  }
 }
 
 /**
