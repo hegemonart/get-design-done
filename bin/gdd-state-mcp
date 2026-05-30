@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+// bin/gdd-state-mcp — Plan 31-5-05 (SDK-03, D-08).
+//
+// CJS trampoline: spawns `node --experimental-strip-types` against the
+// real TS entry point in `sdk/mcp/gdd-state/server.ts` and forwards
+// argv + exit code. Replaces the prior raw `.ts` bin entry
+// (./sdk/mcp/gdd-state/server.ts) so npm's generated Windows .cmd shim
+// can launch the MCP server — the .cmd shim invokes plain `node <bin>`
+// with no way to inject the --experimental-strip-types flag otherwise.
+// Mirrors the proven bin/gdd-sdk trampoline pattern.
+//
+// Why a trampoline:
+//   POSIX shebangs can use `#!/usr/bin/env -S node --experimental-strip-types`,
+//   but Windows cmd.exe does not honor shebangs. npm's auto-generated
+//   .cmd shim invokes plain `node bin/gdd-state-mcp` without passing the
+//   experimental flag. The trampoline re-launches node with the flag
+//   explicitly so both platforms end up at the same TS entry.
+
+'use strict';
+
+const { spawn } = require('node:child_process');
+const path = require('node:path');
+
+const entry = path.resolve(
+  __dirname,
+  '..',
+  'sdk',
+  'mcp',
+  'gdd-state',
+  'server.ts',
+);
+
+const child = spawn(
+  process.execPath,
+  ['--experimental-strip-types', entry, ...process.argv.slice(2)],
+  { stdio: 'inherit', shell: false },
+);
+
+child.on('exit', (code, signal) => {
+  if (signal) {
+    // Re-raise the signal to ourselves so the parent shell sees the same
+    // termination mode (e.g., Ctrl+C propagates as SIGINT exit).
+    try {
+      process.kill(process.pid, signal);
+    } catch {
+      process.exit(1);
+    }
+    return;
+  }
+  process.exit(typeof code === 'number' ? code : 0);
+});
+
+child.on('error', (err) => {
+  // Failure to spawn node itself — extremely rare; surface to stderr.
+  // eslint-disable-next-line no-console
+  console.error('gdd-state-mcp: failed to launch TypeScript entry:', err.message);
+  process.exit(3);
+});

@@ -11,9 +11,11 @@
 // OPTIONAL in the plan and ship as full tests here.
 //
 // Required reading discipline: this test reads tools/index.ts dynamically
-// via `import('../../scripts/mcp-servers/gdd-mcp/tools/index.ts')` to verify
+// via `import('../../sdk/mcp/gdd-mcp/tools/index.ts')` to verify
 // TOOL_COUNT === 12 and that all 12 tool names match the baseline. The
 // TS import requires Node 22+ with --experimental-strip-types.
+// (gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan
+//  31-5-05, D-08; bin repointed to the ./bin/gdd-mcp trampoline.)
 
 'use strict';
 
@@ -58,7 +60,7 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     assert.equal(reg.count, 12, 'tool-registry.count must be 12');
     assert.equal(reg.write_tools.length, 0, 'write_tools must be empty (D-04)');
     // Dynamic import of TS tool registry — verifies baseline matches reality.
-    const mod = await import('../../scripts/mcp-servers/gdd-mcp/tools/index.ts');
+    const mod = await import('../../sdk/mcp/gdd-mcp/tools/index.ts');
     assert.equal(mod.TOOL_COUNT, 12, 'TOOL_COUNT must be 12 (D-03)');
     const actualNames = mod.TOOL_MODULES.map((t) => t.name).sort();
     const baselineNames = [...reg.tools].sort();
@@ -99,7 +101,7 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     // Explicit /index.cjs because this lib has no package.json#main and
     // Node's default resolution looks for index.js (not index.cjs).
     const { lintMcpToolsDir } = require('../../scripts/lib/mcp-tools-lint/index.cjs');
-    const result = lintMcpToolsDir({ dir: 'scripts/mcp-servers/gdd-mcp/tools/' });
+    const result = lintMcpToolsDir({ dir: 'sdk/mcp/gdd-mcp/tools/' });
     if (result.violations && result.violations.length > 0) {
       // Diagnostic: dump violations before failing.
       // eslint-disable-next-line no-console
@@ -108,12 +110,12 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     assert.equal(result.violations.length, 0, 'production tools must lint clean');
   });
 
-  test('27.7-07: package.json bin.gdd-mcp points to scripts/mcp-servers/gdd-mcp/server.ts', () => {
+  test('27.7-07: package.json bin.gdd-mcp points to the ./bin/gdd-mcp trampoline (Plan 31-5-05, D-08)', () => {
     const bin = JSON.parse(fs.readFileSync(PKG_PATH, 'utf8')).bin;
     assert.equal(
       bin['gdd-mcp'],
-      './scripts/mcp-servers/gdd-mcp/server.ts',
-      'bin.gdd-mcp must point at the TS server entrypoint',
+      './bin/gdd-mcp',
+      'bin.gdd-mcp must point at the ./bin/gdd-mcp trampoline (was ./scripts/mcp-servers/gdd-mcp/server.ts; gdd-mcp moved to sdk/mcp/gdd-mcp/ in Plan 31-5-05)',
     );
   });
 

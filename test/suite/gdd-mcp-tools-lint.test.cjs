@@ -1,7 +1,8 @@
 'use strict';
 // tests/gdd-mcp-tools-lint.test.cjs
 // ---------------------------------------------------------------------------
-// Plan 27.7-03 — static lint for scripts/mcp-servers/gdd-mcp/tools/.
+// Plan 27.7-03 — static lint for sdk/mcp/gdd-mcp/tools/ (moved from
+// scripts/mcp-servers/gdd-mcp/tools/ in Plan 31-5-05, D-08).
 //
 // 4 enforced rules (D-XX in Phase 27.7 CONTEXT):
 //   - forbid-fs-path (D-06): no `node:fs`/`node:path` (or bare `fs`/`path`)
@@ -25,8 +26,8 @@ const { lintMcpToolsDir } = require('../../scripts/lib/mcp-tools-lint/index.cjs'
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const PROD_TOOLS_DIR = path.join(
   REPO_ROOT,
-  'scripts',
-  'mcp-servers',
+  'sdk',
+  'mcp',
   'gdd-mcp',
   'tools',
 );
@@ -51,7 +52,7 @@ function cleanToolBody(name) {
 }
 
 describe('27.7-03: gdd-mcp tools lint', () => {
-  test('27.7-03: production-clean — scripts/mcp-servers/gdd-mcp/tools/ has zero violations', () => {
+  test('27.7-03: production-clean — sdk/mcp/gdd-mcp/tools/ has zero violations', () => {
     const result = lintMcpToolsDir({ dir: PROD_TOOLS_DIR });
     if (result.violations.length > 0) {
       // Surface details so a regression is debuggable in CI.

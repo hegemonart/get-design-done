@@ -29,9 +29,9 @@
   "bin": {
     "gdd-events": "./scripts/cli/gdd-events.mjs",
     "gdd-graph": "./bin/gdd-graph",
-    "gdd-mcp": "./scripts/mcp-servers/gdd-mcp/server.ts",
+    "gdd-mcp": "./bin/gdd-mcp",
     "gdd-sdk": "./bin/gdd-sdk",
-    "gdd-state-mcp": "./sdk/mcp/gdd-state/server.ts",
+    "gdd-state-mcp": "./bin/gdd-state-mcp",
     "get-design-done": "./scripts/install.cjs"
   },
   "publishConfig": {
