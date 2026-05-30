@@ -28,7 +28,17 @@ test('install.cjs exists and is declared as the npm bin', () => {
     fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'),
   );
   assert.equal(pkg.bin['get-design-done'], './scripts/install.cjs');
-  assert.ok(pkg.files.includes('scripts/'), 'scripts/ must be in package files');
+  // 31-5-08 (D-09): the install bin ships via the explicit `scripts/install.cjs`
+  // entry, not the old wholesale `scripts/` (which dragged maintainer-only files
+  // into node_modules). Wholesale `scripts/` must NOT be present.
+  assert.ok(
+    pkg.files.includes('scripts/install.cjs'),
+    'scripts/install.cjs must be in package files (D-09 install-bin allowlist entry)',
+  );
+  assert.ok(
+    !pkg.files.includes('scripts/'),
+    'wholesale scripts/ must NOT be in package files (D-09 keeps runtime subtrees only)',
+  );
 });
 
 test('install.cjs --help exits 0 with usage text', () => {
