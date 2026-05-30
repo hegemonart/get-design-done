@@ -27,7 +27,7 @@ const DEFAULT_THRESHOLD = 3;  // D-11 — '>= 3 agents'
  */
 function getAppendEvent() {
   try {
-    const m = require('../event-stream');
+    const m = require('../../../sdk/event-stream');
     if (m && typeof m.appendEvent === 'function') return m.appendEvent;
   } catch { /* swallow — event-stream not on path */ }
   return function noopAppend(_ev) {};

@@ -15,7 +15,7 @@
 //     name is in the set. Unknown stage names in `skipStages` are
 //     tolerated (no-op) — the filter is a membership check.
 
-import { ValidationError } from '../gdd-errors/index.ts';
+import { ValidationError } from '../../../sdk/errors/index.ts';
 import type { Stage } from './types.ts';
 
 /**

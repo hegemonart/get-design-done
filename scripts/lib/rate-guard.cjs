@@ -20,7 +20,7 @@
 // `resetAt` wins. This matches the D-01 rule in the plan.
 //
 // State-file writes are atomic (temp + rename) and coordinated by
-// scripts/lib/lockfile.cjs so two child processes hitting `ingestHeaders`
+// sdk/primitives/lockfile.cjs so two child processes hitting `ingestHeaders`
 // concurrently can never corrupt the file. The lock is scoped to the
 // state file, not to the provider directory, so different providers can
 // update in parallel.
@@ -30,7 +30,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { acquire, renameWithRetry } = require('./lockfile.cjs');
+const { acquire, renameWithRetry } = require('../../sdk/primitives/lockfile.cjs');
 
 const STATE_DIR_REL = path.join('.design', 'rate-limits');
 const LOCK_MAX_WAIT_MS = 3_000;

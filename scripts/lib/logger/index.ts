@@ -29,7 +29,7 @@
 //     process.stderr); the logger contract never propagates event-stream
 //     failures back to the caller.
 
-import { appendEvent } from '../event-stream/index.ts';
+import { appendEvent } from '../../../sdk/event-stream/index.ts';
 import { ConsoleSink, JsonlSink, MultiSink } from './sinks.ts';
 import {
   LEVEL_ORDER,

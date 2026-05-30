@@ -45,7 +45,7 @@ function detectHarness() {
 
 function getAppendEvent() {
   try {
-    const m = require('../scripts/lib/event-stream');
+    const m = require('../sdk/event-stream');
     if (m && typeof m.appendEvent === 'function') return m.appendEvent;
   } catch {
     /* swallow — event-stream is optional infrastructure */

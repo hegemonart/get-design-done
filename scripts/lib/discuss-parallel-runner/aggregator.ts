@@ -27,7 +27,7 @@ import type {
   SessionResult,
   SessionRunnerOptions,
 } from '../session-runner/types.ts';
-import { ValidationError } from '../gdd-errors/index.ts';
+import { ValidationError } from '../../../sdk/errors/index.ts';
 import { getLogger } from '../logger/index.ts';
 
 import type {

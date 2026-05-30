@@ -6,7 +6,7 @@
  * `.design/telemetry/trajectories/<cycle>.jsonl` files (agent trace
  * lines per Phase 22).
  *
- * JSONL discipline (same as scripts/lib/event-stream/reader.ts):
+ * JSONL discipline (same as sdk/event-stream/reader.ts):
  *   - One JSON object per line.
  *   - Blank lines / whitespace-only lines ignored silently.
  *   - Malformed lines tolerated — counted in skipped_count, NOT thrown.

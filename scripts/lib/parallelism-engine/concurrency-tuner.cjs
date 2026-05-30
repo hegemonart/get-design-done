@@ -59,7 +59,7 @@ function getAppendEvent() {
     // with --experimental-strip-types (or Node 24 built-in TS) can
     // require it. If require fails (e.g., older runtime, missing
     // module), fall through to the no-op.
-    const m = require('../event-stream');
+    const m = require('../../../sdk/event-stream');
     if (m && typeof m.appendEvent === 'function') return m.appendEvent;
   } catch {
     // Swallow — best-effort telemetry. Losing one verdict is

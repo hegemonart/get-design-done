@@ -4,6 +4,50 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.31.5] - 2026-05-29
+
+### Phase 31.5 — Repo Structure Consolidation
+
+One audit-clean repo layout with **zero changes to the public surface** (commands, agents, skills, hooks, connections, install flow) and **no file content lost**. The SDK that `plugin.json` has advertised since v1.20.0 now actually lives in `sdk/`; the npm tarball ships only what plugin users need; the repo root is decluttered. Every move was history-preserving (`git mv`), guarded by three independent regression nets (test-parity, tarball-diff golden, headless-E2E install) and a one-minor deprecation-shim grace window. 10 plans + 1 follow-up across Waves A–E (31-5-01..31-5-10 + 31-5-9.5).
+
+### Added
+
+- **`sdk/` — the public SDK, collected.** `git mv` consolidated the strewn modules into one place: `sdk/cli`, `sdk/state`, `sdk/event-stream`, `sdk/errors`, `sdk/primitives/*` (the 4 typed `.cjs`+`.d.cts` pairs), and **both** MCP servers under `sdk/mcp/` (`sdk/mcp/gdd-state`, `sdk/mcp/gdd-mcp` — D-08). A `sdk/index.ts` barrel re-exports the surface, and `sdk/README.md` (≤120 lines, D-06) documents what the SDK is with a per-module import-path table (module → public import → helpers → stability tag). Public import paths are explicit per-module (`/sdk/cli`, `/sdk/state`, `/sdk/event-stream`, `/sdk/primitives/*`, `/sdk/errors`, `/sdk/mcp/gdd-state`, `/sdk/mcp/gdd-mcp`) plus the barrel (D-04).
+- **3 SDK bins that now work from an npm install.** `bin/gdd-sdk`, `bin/gdd-state-mcp`, and `bin/gdd-mcp` are dual-mode trampolines (prefer a compiled `.js` sibling, fall back to `.ts` strip in-repo). A `prepack` step (`npm run build:sdk` → esbuild) bundles the three TS-entry bins to self-contained CommonJS siblings that ship in the tarball — fixing a **pre-existing latent break**: raw `.ts` bins cannot run under `--experimental-strip-types` from inside `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), which had silently shipped since the TS bins were introduced. The `.ts` remain the source of truth; the `.js` are gitignored build artifacts (`postpack` cleans them).
+- **`recipes/` scaffold** — `recipes/` + a recipe-loader + `reference/schemas/recipe.schema.json`. Ships empty of recipes (the loading machinery, not content).
+- **`docs/i18n/`** — the 6 `README.{de,fr,it,ja,ko,zh-CN}.md` translations relocated from the repo root (D-11). English `README.md` stays at root; its language-selector links were repointed.
+- **`.npmignore`** — a defense-in-depth duplicate of the `package.json` `files` allowlist (D-10).
+- **Private-files CI guard** — `test/suite/no-private-files-tracked.test.cjs` asserts 0 tracked `.planning/` / `REVIEW.md` / `tmp_support_preview*` files so the (already-remediated) leak stays closed (D-03).
+- **`no-stale-internal-refs` static guard** — `test/suite/no-stale-internal-refs.test.cjs` greps the shipped user-facing surface (hooks/, agents/, skills/, bin/, scripts/cli/, scripts/install.cjs) for any reference to an OLD moved-SDK path and fails on any hit outside a deprecation shim. Proves every internal caller was repointed to `sdk/`.
+
+### Changed
+
+- **`package.json` `files` narrowed to an explicit allowlist (+ `.npmignore`).** Maintainer-only top-level scripts no longer reach a user's `node_modules`. **Tarball diff vs the prior (v1.31.0) tarball:**
+  - **ADDED:** `sdk/` (the SDK, incl. the 3 compiled-bin `.js` siblings), `recipes/`, `docs/i18n/`, `NOTICE`.
+  - **DROPPED (23 maintainer-only files):** `scripts/` wholesale + the top-level `bootstrap*`, `rollback-release.sh`, `apply-branch-protection.sh`, `release-smoke-test.cjs`, `verify-version-sync.cjs`, `extract-changelog-section.cjs`, `detect-stale-refs.cjs`, `run-injection-scanner-ci.cjs`, `injection-patterns.cjs`, `build-*.cjs`, `validate-*` (`.cjs`/`.ts`), `codegen-schema-types.ts`, `aggregate-agent-metrics.ts`, `lint-agentskills-spec.cjs`, `scripts/e2e/`, `scripts/tests/`.
+  - **KEPT (runtime subtrees, D-09) — a "drop `scripts/` wholesale" allowlist would have shipped a *broken* package:** `scripts/lib/` (incl. `scripts/lib/graph/` for `gdd-graph` per D-14 and `scripts/lib/figma-extract/` for the figma-extract SKILL per D-15), `scripts/mcp-servers/` (the residual MCP deprecation shims), `scripts/cli/` (the `gdd-events` target), and `scripts/install.cjs`.
+  - Tarball golden manifest pinned at **620 paths** (paths-only per D-07).
+- **`tests/` → `test/suite/` and `test-fixture/` → `test/fixtures/`** (D-12) — a pure mechanical, history-preserving relocation done with an identical full-suite pass before/after. Contributor-facing only; not shipped in the tarball. All subsequent tests are authored into `test/suite/`.
+
+### Deprecated
+
+- **`scripts/lib/{cli,gdd-state,event-stream,gdd-errors}/`, the 4 primitive `.cjs` (`error-classifier`, `iteration-budget`, `jittered-backoff`, `lockfile`), and `scripts/mcp-servers/{gdd-state,gdd-mcp}/server.ts` are now thin deprecation shims** that re-export from `sdk/*` and emit a one-time `DeprecationWarning`. They exist for undocumented EXTERNAL importers who reached into `node_modules/.../scripts/lib/...` directly. **Removed in v1.33.0** (D-02). Grace window: v1.31.5 ships with shims → v1.32.0 still has them → v1.33.0 removes them with a breaking-change note. **If you imported from `node_modules/@hegemonart/get-design-done/scripts/lib/...` directly, switch to `sdk/...`** (e.g. `scripts/lib/cli` → `sdk/cli`, `scripts/lib/error-classifier.cjs` → `sdk/primitives/error-classifier.cjs`, `scripts/mcp-servers/gdd-state/server.ts` → `sdk/mcp/gdd-state/server.ts`). Internal callers already use `sdk/`.
+
+### Backward compatibility
+
+- Public surface unchanged — no command, agent, skill, hook, or connection was renamed (zero-rename discipline). All install flows and all 6 bins resolve identically; MCP handshakes and primitive imports verified by the headless pack→install→run E2E.
+- 6-manifest lockstep at v1.31.5 (`package.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`).
+
+### Decisions
+
+- **D-01**: Target version is **v1.31.5** (the stale ROADMAP v1.28.0 was a pre-renumber artifact — the phase was renumbered 2026-05-16 to monotonic-with-phase-number).
+- **D-02**: Deprecation-shim removal target is **v1.33.0** (the stale ROADMAP v1.29.0 is already shipped/past). One-minor grace window.
+- **D-03**: The private-file leak was already remediated on main; Plan 01 ships only the CI guard.
+- **D-08**: `gdd-mcp` (Phase 27.7) folded in for full symmetry with `gdd-state-mcp` — both MCP servers live under `sdk/mcp/`.
+- **D-09**: The `files` allowlist keeps the runtime subtrees `scripts/lib` + `scripts/mcp-servers` + `scripts/cli` + `scripts/install.cjs` so `gdd-graph`, `figma-extract`, and `gdd-mcp` keep working.
+
+---
+
 ## [1.31.0] - 2026-05-29
 
 ### Phase 31 — Figma Off-Context Extractor + Variables Sync Plugin

@@ -22,5 +22,5 @@
   "MD009": false,           // trailing spaces — one-off, accept silently
   "MD001": false,           // heading increment — legitimate use inside GH callouts (> [!IMPORTANT] blocks) with ### sub-headings fires this
   "MD025": false,           // multiple H1 — `#` lines inside python heredocs in skill code blocks trigger false positives
-  "MD012": false            // multi blank lines — tests/fixtures/prompt-sanitizer/*-expected.md intentionally contain multi-blank sections to assert sanitizer preserves them
+  "MD012": false            // multi blank lines — test/suite/fixtures/prompt-sanitizer/*-expected.md intentionally contain multi-blank sections to assert sanitizer preserves them
 }

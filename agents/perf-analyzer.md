@@ -80,7 +80,7 @@ For each regression, emit a `perf.regression_detected` event via `appendEvent` f
 
 ```javascript
 // Pseudo-instruction for the executor — the agent runs Bash with this shape
-const { appendEvent } = require('./scripts/lib/event-stream');
+const { appendEvent } = require('./sdk/event-stream');
 appendEvent({
   type: 'perf.regression_detected',
   timestamp: new Date().toISOString(),
@@ -89,7 +89,7 @@ appendEvent({
 });
 ```
 
-The `perf.regression_detected` event type is additive to the Phase 22 registry — the writer accepts unknown types (per `scripts/lib/event-stream/types.ts` envelope invariant: "unknown types are allowed; validation is structural, not a closed enum").
+The `perf.regression_detected` event type is additive to the Phase 22 registry — the writer accepts unknown types (per `sdk/event-stream/types.ts` envelope invariant: "unknown types are allowed; validation is structural, not a closed enum").
 
 If `detectCostRegressions` returns `summary.regressions_count === 0`, write a single line: `No token-cost regressions detected (threshold 25%, >=3 cycles).` and skip event emission for this section.
 

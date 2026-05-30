@@ -29,8 +29,8 @@ import { createRequire } from 'node:module';
 import { createInterface } from 'node:readline';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 
-import { appendEvent } from '../scripts/lib/event-stream/index.ts';
-import type { HookFiredEvent } from '../scripts/lib/event-stream/index.ts';
+import { appendEvent } from '../sdk/event-stream/index.ts';
+import type { HookFiredEvent } from '../sdk/event-stream/index.ts';
 
 // ── require-bridge to the shared .cjs pattern file ──────────────────────────
 

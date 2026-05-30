@@ -49,7 +49,7 @@ const TAIL_BYTES = 8_192; // last 8 KiB is plenty for one event line (<<64KiB ca
  * Lightweight parse of the `<position>` block in STATE.md. Returns the fields
  * we care about, or null if the block isn't present / well-formed.
  *
- * We intentionally avoid the full parser at scripts/lib/gdd-state/parser.ts
+ * We intentionally avoid the full parser at sdk/state/parser.ts
  * because (a) it requires TS execution and (b) its overhead would blow the
  * 10ms budget. The position block is k=v lines so a regex pass is fine.
  */

@@ -397,7 +397,7 @@ function spawnWithTimeout(args: {
     // `.cmd` shim being discoverable on Windows. The bin is the CJS
     // trampoline (bin/gdd-sdk), which spawns TS — we skip that layer
     // by invoking the TS entry directly with the experimental flag.
-    const tsEntry = resolvePath(dirname(args.bin), '..', 'scripts', 'lib', 'cli', 'index.ts');
+    const tsEntry = resolvePath(dirname(args.bin), '..', 'sdk', 'cli', 'index.ts');
     const nodeArgs = ['--experimental-strip-types', tsEntry, ...args.argv];
     const child = spawn(process.execPath, nodeArgs, {
       cwd: args.cwd,

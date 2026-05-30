@@ -2,7 +2,7 @@
 // transcript writer for Phase 21 headless Agent SDK sessions
 // (Plan 21-01 Task 4).
 //
-// Design mirrors scripts/lib/event-stream/writer.ts but is scoped to one
+// Design mirrors sdk/event-stream/writer.ts but is scoped to one
 // session per file rather than the global telemetry stream. Each session
 // owns a dedicated `.design/sessions/<ISO>-<stage>.jsonl` file; the
 // filename is stable for the full run and survives retries (retries

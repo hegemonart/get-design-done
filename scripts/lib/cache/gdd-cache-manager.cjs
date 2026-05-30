@@ -83,7 +83,7 @@ function clamp01(n) {
 function getAppendEvent() {
   try {
     // Resolved relative to this file: `scripts/lib/cache/` → `../event-stream`.
-    const m = require('../event-stream');
+    const m = require('../../../sdk/event-stream');
     if (m && typeof m.appendEvent === 'function') return m.appendEvent;
   } catch {
     // Swallow — fall through to the no-op below. The event is

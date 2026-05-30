@@ -146,7 +146,7 @@ export const PAIRS: readonly Pair[] = [
     // so we cannot point ajv-cli at it as a `data` subject — each *line*
     // is the schema subject, not the file. Schema-compile only here;
     // per-line structural discipline is enforced by the EventWriter at
-    // runtime (Plan 20-06). See scripts/lib/event-stream/writer.ts.
+    // runtime (Plan 20-06). See sdk/event-stream/writer.ts.
     data: null,
     required: false,
   },
@@ -154,7 +154,7 @@ export const PAIRS: readonly Pair[] = [
     name: 'mcp-gdd-state-tools',
     schema: 'reference/schemas/mcp-gdd-state-tools.schema.json',
     // The combined tool manifest is a codegen artifact — individual per-tool
-    // schemas live under scripts/mcp-servers/gdd-state/schemas/ and are
+    // schemas live under sdk/mcp/gdd-state/schemas/ and are
     // consumed directly by the server. Schema-compile only here so the
     // Draft-07 declaration stays valid as tools evolve. See Plan 20-05.
     data: null,
@@ -187,7 +187,7 @@ export const PAIRS: readonly Pair[] = [
     name: 'iteration-budget',
     schema: 'reference/schemas/iteration-budget.schema.json',
     // .design/iteration-budget.json is runtime-only, written by
-    // scripts/lib/iteration-budget.cjs. Schema-compile only here.
+    // sdk/primitives/iteration-budget.cjs. Schema-compile only here.
     // See Plan 20-14.
     data: null,
     required: false,

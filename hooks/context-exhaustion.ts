@@ -28,8 +28,8 @@ import {
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline';
 
-import { appendEvent } from '../scripts/lib/event-stream/index.ts';
-import type { HookFiredEvent } from '../scripts/lib/event-stream/index.ts';
+import { appendEvent } from '../sdk/event-stream/index.ts';
+import type { HookFiredEvent } from '../sdk/event-stream/index.ts';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 

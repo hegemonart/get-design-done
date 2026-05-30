@@ -44,8 +44,8 @@ import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { createRequire } from 'node:module';
 
-import { appendEvent } from '../scripts/lib/event-stream/index.ts';
-import type { HookFiredEvent } from '../scripts/lib/event-stream/index.ts';
+import { appendEvent } from '../sdk/event-stream/index.ts';
+import type { HookFiredEvent } from '../sdk/event-stream/index.ts';
 // Consume the generated BudgetSchema so this hook participates in the
 // Plan 20-00 codegen graph. We treat parsed JSON as BudgetSchema after
 // the structural merge with defaults — the schema permits every field
@@ -71,7 +71,7 @@ function resolveHookPath(): string {
 }
 const nodeRequire = createRequire(resolveHookPath());
 const rateGuard = nodeRequire('../scripts/lib/rate-guard.cjs') as typeof import('../scripts/lib/rate-guard.cjs');
-const iterationBudget = nodeRequire('../scripts/lib/iteration-budget.cjs') as typeof import('../scripts/lib/iteration-budget.cjs');
+const iterationBudget = nodeRequire('../sdk/primitives/iteration-budget.cjs') as typeof import('../sdk/primitives/iteration-budget.cjs');
 // Plan 26-05: shared cost-computation backend for the resolved_models
 // consumer path. Pure module — takes (model_id, runtime, token_counts) →
 // cost_usd by reading per-runtime price tables under reference/prices/.
@@ -612,9 +612,9 @@ export function writeTelemetry(partial: TelemetryRowPartial): void {
 
 /**
  * Emit one hook.fired event per hook decision. Uses the pre-registered
- * HookFiredEvent subtype from scripts/lib/event-stream/types.ts and
+ * HookFiredEvent subtype from sdk/event-stream/types.ts and
  * stamps sessionId from the process PID + boot time — same scheme as
- * scripts/mcp-servers/gdd-state/tools/shared.ts but inlined here so the
+ * sdk/mcp/gdd-state/tools/shared.ts but inlined here so the
  * hook stays dependency-light.
  */
 let CACHED_SESSION_ID: string | null = null;
