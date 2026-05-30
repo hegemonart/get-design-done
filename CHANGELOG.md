@@ -4,6 +4,38 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.33.0] - 2026-05-30
+
+### Phase 33 — Skill Behavior Tests (Pressure-Scenario Harness)
+
+Adds a **behavior-test category** that complements the static validators (Phase 28.5 line/frontmatter) and static guardrails (Phase 32 `<HARD-GATE>` presence) with tests that verify skills hold UNDER PRESSURE. A manifest-driven runner drives a pressure scenario (time / sunk-cost / authority / exhaustion / scope-minimization) through an injectable agent-invoker and validates the response against a compliance/violation rubric with N-attempts + majority rule. Ships the harness + 8 baseline scenarios + synthetic RED baselines + the description-format A/B methodology + reflector telemetry integration. Ports the TDD-for-skills methodology + the pressure-scenario pattern from [`obra/superpowers/skills/writing-skills`](https://github.com/obra/superpowers) (MIT). 6 plans across Waves A–C.
+
+### Added
+
+- **Manifest-driven pressure-scenario runner** — `scripts/lib/skill-behavior/runner.cjs` exposes an INJECTABLE `invokeAgent(prompt, opts) -> { text }` seam (no `@anthropic-ai/sdk` dependency — D-03): a deterministic STUB invoker (`scripts/lib/skill-behavior/stub-invoker.cjs`) for CI/tests, plus a documented real-invoker adapter for the opt-in keyed run. Runs each scenario N times and decides compliance by majority.
+- **Pressure-scenario schema** — `reference/schemas/pressure-scenario.schema.json` (wired into `validate:schemas`), with conformance tests for the 8 scenario manifests.
+- **8 pressure scenarios + synthetic RED baselines** — `test/suite/skill-behavior/scenarios/` (7 stage skills + `using-gdd`) with synthetic-from-observed-cycle-drift RED baselines at `test/fixtures/skill-behavior-baseline/` (D-02 — ROADMAP-sanctioned).
+- **Description-format A/B methodology** — `docs/research/description-format-ab.md` documents the trigger-only vs `<what>. Use when` counterfactual + the 7/10-run threshold (D-08), with a `pending: keyed run` marker. The empirical result is an opt-in maintainer follow-up (no API key in CI).
+- **Reflector telemetry** — `scripts/lib/skill-behavior/telemetry.cjs` emits to `.design/telemetry/skill-behavior.jsonl`; a sustained-failure signal (≥3 of last 10 runs failing for a scenario) feeds an `apply-reflections` proposal (stub-tested integration — D-07).
+- **`npm run test:behavior` (opt-in, D-06).** A new script that runs the behavior tests ONLY when `ANTHROPIC_API_KEY` is set (a clear skip message + exit 0 otherwise). The default `npm test` is UNCHANGED — the structural stub tests stay CI-green (LLM non-determinism keeps live behavior runs out of the default suite).
+- **Docs** — `CONTRIBUTING.md` gains a "How to add a pressure scenario" section + the keyed `ANTHROPIC_API_KEY=… npm run test:behavior` procedure; `README.md` gains a "Skill behavior tests" subsection.
+
+### Removed
+
+- **BREAKING: the Phase-31.5 deprecation shims are removed (D-04).** The 10 `GDD-DEPRECATION-SHIM` re-exports re-created at the OLD SDK paths in v1.31.5 — `scripts/lib/{cli,event-stream,gdd-state,gdd-errors}/index.ts`, `scripts/lib/{error-classifier,iteration-budget,jittered-backoff,lockfile}.cjs`, and `scripts/mcp-servers/{gdd-state,gdd-mcp}/server.ts` — are deleted. The grace window elapsed (v1.31.5 shipped with shims → v1.32.0 still had them → v1.33.0 removes them). The now-empty `scripts/mcp-servers/` is dropped from the `package.json` `files` allowlist. **If you imported `scripts/lib/…` or `scripts/mcp-servers/…` directly, import from `sdk/…` instead** (e.g. `scripts/lib/cli` → `sdk/cli`, `scripts/lib/error-classifier.cjs` → `sdk/primitives/error-classifier.cjs`, `scripts/mcp-servers/gdd-state/server.ts` → `sdk/mcp/gdd-state/server.ts`). Internal callers were all repointed to `sdk/` in 31.5 + the Phase-32 gdd-events fix; the `gdd-state-mcp` / `gdd-mcp` bins target `sdk/`, so deletion drops only the external re-export — proven by the `no-stale-internal-refs` guard + the full suite + the 31.5 headless pack→install→run E2E.
+
+### Attribution
+
+- **Methodology + pattern ported from [`obra/superpowers/skills/writing-skills`](https://github.com/obra/superpowers) (MIT).** The TDD-for-skills cycle (RED: agent fails without the skill → GREEN: skill counters the rationalizations → REFACTOR: close new loopholes) and the pressure-scenario pattern. See `NOTICE`. We port the methodology, not the content — GDD's scenarios, rubrics, and skills are GDD-specific.
+
+### Notes
+
+- The behavioral evidence (real RED baselines from live agent runs + the empirical A/B result) is NOT capturable autonomously (no API key / SDK in CI). RED baselines are authored synthetic-from-observed-cycle-drift (D-02); the A/B evidence file documents methodology + expected-signal + a `pending: keyed run` marker. A Phase-28.5 feedback note points at `docs/research/description-format-ab.md`; **Phase 28.5's description-format validator regex is unchanged** (33-06 emits the pointer only — D-08).
+- The 31.5 tarball golden (`test/fixtures/baselines/phase-31-5/tarball-manifest.txt`) was regenerated as a reviewed delta: **+4** skill-behavior paths (`reference/schemas/pressure-scenario.schema.json` + the 3 `scripts/lib/skill-behavior/*.cjs`) and **−10** removed shim paths (618 paths).
+- 6-manifest lockstep at **v1.33.0** (`package.json` + `package-lock.json` + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`). Version-sync hygiene done upfront (D-09): `OFF_CADENCE_VERSIONS.add('1.33.0')` + prior `manifests-version.txt` baselines forward-propagated 1.32.0 → 1.33.0.
+
+---
+
 ## [1.32.0] - 2026-05-30
 
 ### Phase 32 — Skill Auto-Trigger Discipline + Defensive Guardrails
