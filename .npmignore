@@ -1,0 +1,53 @@
+# .npmignore — defense-in-depth (D-10), NOT the source of truth.
+#
+# package.json "files" is the PRIMARY allowlist npm honors. This .npmignore is a
+# belt-and-suspenders duplicate of that allowlist's intent: if a future edit ever
+# re-adds "scripts/" wholesale to "files" (or drops the explicit subtree entries),
+# these excludes still keep the maintainer-only artifacts out of the published tarball.
+#
+# RULE: this file MUST NOT contradict "files". In particular it must NEVER exclude the
+# runtime subtrees that the package needs at runtime — those MUST ship (D-09/D-14/D-15):
+#   scripts/lib/         (gdd-graph -> scripts/lib/graph/, figma-extract SKILL ->
+#                         node scripts/lib/figma-extract/*.cjs, health-mirror,
+#                         issue-reporter, recipe-loader, deprecation-shim primitives)
+#   scripts/mcp-servers/ (gdd-state + gdd-mcp deprecation shims, grace window -> v1.33.0)
+#   scripts/cli/         (gdd-events bin: scripts/cli/gdd-events.mjs)
+#   scripts/install.cjs  (get-design-done install bin / npm postinstall entry)
+#   sdk/ recipes/ docs/i18n/ bin/  (all required at runtime / by the plugin)
+
+# --- maintainer-only files that sit DIRECTLY under scripts/ (never reach node_modules) ---
+scripts/bootstrap.sh
+scripts/bootstrap-manifest.txt
+scripts/rollback-release.sh
+scripts/apply-branch-protection.sh
+scripts/release-smoke-test.cjs
+scripts/verify-version-sync.cjs
+scripts/extract-changelog-section.cjs
+scripts/detect-stale-refs.cjs
+scripts/run-injection-scanner-ci.cjs
+scripts/injection-patterns.cjs
+scripts/build-distribution-bundles.cjs
+scripts/build-intel.cjs
+scripts/gsd-cleanup-incubator.cjs
+scripts/aggregate-agent-metrics.ts
+scripts/validate-frontmatter.ts
+scripts/validate-schemas.ts
+scripts/validate-incubator-scope.cjs
+scripts/validate-skill-length.cjs
+scripts/codegen-schema-types.ts
+scripts/lint-*.cjs
+
+# --- maintainer-only subtrees directly under scripts/ ---
+scripts/e2e/
+scripts/tests/
+
+# --- repo noise / private / dev-only (consistent with "files") ---
+.planning/
+.claude/
+.github/
+.design/
+test/
+test-fixture/
+tests/
+*.tsbuildinfo
+.DS_Store

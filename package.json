@@ -17,14 +17,21 @@
     "agents/",
     "skills/",
     "hooks/",
-    "scripts/",
     "connections/",
     "reference/",
     "bin/",
+    "sdk/",
+    "recipes/",
+    "docs/i18n/",
+    "scripts/lib/",
+    "scripts/mcp-servers/",
+    "scripts/cli/",
+    "scripts/install.cjs",
     "SKILL.md",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE"
   ],
   "bin": {
     "gdd-events": "./scripts/cli/gdd-events.mjs",
