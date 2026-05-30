@@ -162,7 +162,7 @@ jobs:
       - name: Run release smoke test against current baseline
         run: |
           set -euo pipefail
-          node scripts/release-smoke-test.cjs --baseline test-fixture/baselines/current
+          node scripts/release-smoke-test.cjs --baseline test/fixtures/baselines/current
 
       - name: Rollback guidance on failure
         if: failure()

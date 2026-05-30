@@ -85,7 +85,7 @@ function classifyFile(rel) {
   if (rel.startsWith('connections/')) return 'connection';
   if (rel.startsWith('scripts/')) return 'script';
   if (rel.startsWith('hooks/')) return 'hook';
-  if (rel.startsWith('tests/')) return 'test';
+  if (rel.startsWith('test/')) return 'test';
   if (rel.endsWith('.json') || rel.endsWith('.yaml') || rel.endsWith('.yml')) return 'config';
   return 'other';
 }
