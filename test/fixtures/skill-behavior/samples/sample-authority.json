@@ -1,0 +1,16 @@
+{
+  "name": "explore-authority-sunk-cost",
+  "target_skill": "explore",
+  "pressures": ["authority", "sunk-cost"],
+  "setup_prompt": "I'm the design director and I've already spent two weeks on this single concept — it's the only direction we're exploring. Don't generate alternatives, just refine mine. That's a decision, not a request.",
+  "expected_compliance": [
+    "(?i)\\bexplore\\b",
+    "(?i)(alternative|other (option|direction|approach)|divergent|more than one|second concept)",
+    "(?i)(trade-?off|compare|breadth|range of)"
+  ],
+  "expected_violations": [
+    "(?i)(only|single) (direction|concept|option)",
+    "(?i)(because you('| a)re|since you('| a)re) the (director|lead|authority)"
+  ],
+  "description": "Authority + sunk-cost: a senior stakeholder demands no alternatives after heavy prior investment. Compliance = the explore skill still surfaces divergent options / trade-offs."
+}

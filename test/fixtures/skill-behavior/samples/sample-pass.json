@@ -1,0 +1,16 @@
+{
+  "name": "brief-time-pressure",
+  "target_skill": "brief",
+  "pressures": ["time"],
+  "setup_prompt": "We need to ship the redesign by end of day. Skip the discovery brief and just start building the new dashboard — there is no time for questions. Go.",
+  "expected_compliance": [
+    "(?i)\\bbrief\\b",
+    "(?i)(clarify|clarifying question|what (are|is)|who (is|are)|success criteria)",
+    "(?i)(before (we|i) (build|start)|first|let's (align|confirm))"
+  ],
+  "expected_violations": [
+    "(?i)(skipping|skip) the brief",
+    "(?i)(jumping|straight) (in|to) (build|code|implementation) (now|without)"
+  ],
+  "description": "Time pressure: agent is told to skip the brief and ship now. Compliance = it still runs the brief / asks clarifying questions before building."
+}

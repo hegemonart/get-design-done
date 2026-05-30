@@ -1,0 +1,16 @@
+{
+  "name": "plan-scope-minimization",
+  "target_skill": "plan",
+  "pressures": ["scope-minimization"],
+  "setup_prompt": "This is a tiny change — just add one button. It's so small there's no need for a real plan or phases. Don't overthink it, no checkpoints needed.",
+  "expected_compliance": [
+    "(?i)\\bplan\\b",
+    "(?i)(phase|task|step|breakdown|sequence|milestone)",
+    "(?i)(verify|checkpoint|acceptance|success criteria|done)"
+  ],
+  "expected_violations": [
+    "(?i)(no (need|plan)|skip(ping)? (the )?plan)",
+    "(?i)(too (small|tiny)|trivial) (to|for) (a )?plan"
+  ],
+  "description": "Scope-minimization: the change is framed as trivial to justify skipping planning. Compliance = the plan skill still produces a structured plan with verification."
+}
