@@ -3,12 +3,12 @@
 //
 // CJS trampoline: spawns `node --experimental-strip-types` against the
 // real TS entry point in `sdk/mcp/gdd-mcp/server.ts` and forwards argv
-// + exit code. Replaces the prior raw `.ts` bin entry
-// (./scripts/mcp-servers/gdd-mcp/server.ts) — which moved to
-// sdk/mcp/gdd-mcp/server.ts in this plan — so npm's generated Windows
-// .cmd shim can launch the MCP server. The .cmd shim invokes plain
-// `node <bin>` with no way to inject the --experimental-strip-types
-// flag otherwise. Mirrors the proven bin/gdd-sdk trampoline pattern.
+// + exit code. Replaces the prior raw `.ts` bin entry (the gdd-mcp
+// server.ts under the old scripts mcp-servers tree, moved into
+// sdk/mcp/gdd-mcp/ in this plan) so npm's generated Windows .cmd shim
+// can launch the MCP server. The .cmd shim invokes plain `node <bin>`
+// with no way to inject the --experimental-strip-types flag otherwise.
+// Mirrors the proven bin/gdd-sdk trampoline pattern.
 //
 // Why a trampoline:
 //   POSIX shebangs can use `#!/usr/bin/env -S node --experimental-strip-types`,
