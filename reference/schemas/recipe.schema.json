@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/recipe.schema.json",
+  "title": "Recipe",
+  "description": "Shape of a declarative recipe loaded from recipes/<name>.json by scripts/lib/recipe-loader.cjs (Plan 31-5-03, RECIPE-01 / SC#14). The recipes/ directory ships EMPTY of recipes and is populated downstream by Phase 32 (skill-trigger recipes), Phase 33.6 (per-provider), Phase 26 (per-runtime/per-model), and Phase 23.5 (bandit-arm shape). This is a minimal, forward-compatible envelope: a recipe MUST carry name/version/steps; additionalProperties:true lets the populating phases extend the envelope without breaking the loader contract. Modelled on Storybloq's src/autonomous/recipes/ loader.ts pattern.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["name", "version", "steps"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The recipe identifier. Matches the filename stem (recipes/<name>.json)."
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Recipe/schema version string for forward-compatibility. Lets the loader and downstream phases reason about envelope evolution."
+    },
+    "steps": {
+      "type": "array",
+      "description": "The ordered recipe body. Item shape is kept permissive for now — each step is an object carrying at least a `kind` OR an `id` string. Downstream phases (32/33.6/26/23.5) tighten the step contract per their domain.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "anyOf": [
+          { "required": ["kind"], "properties": { "kind": { "type": "string", "minLength": 1 } } },
+          { "required": ["id"], "properties": { "id": { "type": "string", "minLength": 1 } } }
+        ]
+      }
+    }
+  }
+}
