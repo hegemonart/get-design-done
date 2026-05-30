@@ -19,7 +19,8 @@ const path = require('node:path');
 const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const TOOLS_DIR = path.join(REPO_ROOT, 'scripts', 'mcp-servers', 'gdd-mcp', 'tools');
+// gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan 31-5-05 (D-08).
+const TOOLS_DIR = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'tools');
 const SCHEMA_PATH = path.join(REPO_ROOT, 'reference', 'schemas', 'mcp-gdd-tools.schema.json');
 
 const TOOL_NAMES = [

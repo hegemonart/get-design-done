@@ -24,7 +24,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const README_PATH = path.join(REPO_ROOT, 'scripts', 'mcp-servers', 'gdd-mcp', 'README.md');
+// gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan 31-5-05 (D-08).
+const README_PATH = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'README.md');
 const BENCHMARK_PATH = path.join(
   REPO_ROOT,
   'test', 'fixtures',

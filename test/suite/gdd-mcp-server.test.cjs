@@ -31,18 +31,20 @@ const path = require('node:path');
 const os = require('node:os');
 
 // Path roots — the test file lives in tests/, the server one level up.
+// gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan
+// 31-5-05 (D-08); these paths follow the move.
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const SERVER_PATH = path.join(
   REPO_ROOT,
-  'scripts',
-  'mcp-servers',
+  'sdk',
+  'mcp',
   'gdd-mcp',
   'server.ts',
 );
 const SHARED_PATH = path.join(
   REPO_ROOT,
-  'scripts',
-  'mcp-servers',
+  'sdk',
+  'mcp',
   'gdd-mcp',
   'tools',
   'shared.ts',
@@ -110,8 +112,8 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
         path
           .join(
             REPO_ROOT,
-            'scripts',
-            'mcp-servers',
+            'sdk',
+            'mcp',
             'gdd-mcp',
             'tools',
             'index.ts',
