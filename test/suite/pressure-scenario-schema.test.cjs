@@ -174,13 +174,22 @@ test('33-02: pressure-scenario is registered in validate-schemas PAIRS', () => {
     /schema:\s*'reference\/schemas\/pressure-scenario\.schema\.json'/,
     'PAIRS entry must point at reference/schemas/pressure-scenario.schema.json',
   );
-  // Compile-only (data:null) because scenarios are a directory (D-05). Assert the
-  // entry's data:null sits in the same object as the schema path.
-  const entryMatch = source.match(
-    /name:\s*'pressure-scenario'[\s\S]{0,200}?data:\s*null[\s\S]{0,80}?required:\s*false/,
+  // Compile-only (data:null, required:false) because scenarios are a directory
+  // (D-05). The entry carries an explanatory comment between the schema path and
+  // data:null, so isolate the entry's object body (schema path -> closing brace)
+  // and assert data:null + required:false live inside it.
+  const entryBody = source.match(
+    /schema:\s*'reference\/schemas\/pressure-scenario\.schema\.json'[\s\S]*?\n\s*\},/,
   );
-  assert.ok(
-    entryMatch,
-    'pressure-scenario PAIRS entry must be compile-only (data: null, required: false)',
+  assert.ok(entryBody, 'pressure-scenario PAIRS entry object must be locatable');
+  assert.match(
+    entryBody[0],
+    /data:\s*null/,
+    'pressure-scenario entry must be compile-only (data: null) — scenarios are a directory',
+  );
+  assert.match(
+    entryBody[0],
+    /required:\s*false/,
+    'pressure-scenario entry must set required: false',
   );
 });

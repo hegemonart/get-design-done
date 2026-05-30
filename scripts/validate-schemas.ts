@@ -192,6 +192,19 @@ export const PAIRS: readonly Pair[] = [
     data: null,
     required: false,
   },
+  {
+    name: 'pressure-scenario',
+    schema: 'reference/schemas/pressure-scenario.schema.json',
+    // Phase-33 pressure-scenario manifests live in a DIRECTORY
+    // (test/suite/skill-behavior/scenarios/), not a single tracked subject
+    // file, so ajv-cli (which validates one -d data file) cannot point at the
+    // dir. Schema-compile only here so the Draft-07 declaration stays valid.
+    // Per-manifest conformance is enforced by the Phase-33 tests: the 3
+    // samples by test/suite/pressure-scenario-schema.test.cjs (33-02) and the
+    // 8 real scenarios by 33-03. See Plan 33-02 + CONTEXT D-05.
+    data: null,
+    required: false,
+  },
 ];
 
 const USE_NPX: boolean = !process.argv.includes('--no-npx');
