@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { KNOWN_EVENT_TYPES } from '../../scripts/lib/event-stream/index.ts';
+import { KNOWN_EVENT_TYPES } from '../../sdk/event-stream/index.ts';
 
 test('22-01: KNOWN_EVENT_TYPES has all 26 pre-registered subtypes (23 from Phase 20+22, +3 from Phase 27)', () => {
   // Phase 20 + 22 = 23 types. Phase 27 (Plan 27-08) added 3 peer-call types

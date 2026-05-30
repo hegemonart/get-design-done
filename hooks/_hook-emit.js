@@ -45,7 +45,7 @@ function getAppendEvent() {
     // require()'ing — if Node refuses to parse `.ts`, we silently fall
     // back to no-op.
     // eslint-disable-next-line node/no-missing-require, global-require
-    cachedAppendEvent = require('../scripts/lib/event-stream/index.ts').appendEvent;
+    cachedAppendEvent = require('../sdk/event-stream/index.ts').appendEvent;
     return cachedAppendEvent;
   } catch {
     cachedAppendEvent = null;

@@ -2,7 +2,7 @@
 // bin/gdd-sdk — Plan 21-09 Task 7 (SDK-21).
 //
 // CJS trampoline: spawns `node --experimental-strip-types` against the
-// real TS entry point in `scripts/lib/cli/index.ts` and forwards argv +
+// real TS entry point in `sdk/cli/index.ts` and forwards argv +
 // exit code. Windows-compatible (npm's generated .cmd shim on Windows
 // has no way to inject the --experimental-strip-types flag otherwise).
 //
@@ -21,8 +21,7 @@ const path = require('node:path');
 const entry = path.resolve(
   __dirname,
   '..',
-  'scripts',
-  'lib',
+  'sdk',
   'cli',
   'index.ts',
 );

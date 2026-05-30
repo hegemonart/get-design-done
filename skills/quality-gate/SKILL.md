@@ -58,11 +58,11 @@ Else: increment `iteration`, emit `quality_gate_iteration`, spawn `design-fixer`
 
 ## Step 5 — STATE write
 
-Mutate `state.quality_gate.run` to `{started_at, completed_at, status, iteration, commands_run, extra_attrs:{}}`. Persist via `mcp__gdd_state__set_quality_gate` or `apply()` mutator from `scripts/lib/gdd-state/mutator.ts` — identical on-disk shape.
+Mutate `state.quality_gate.run` to `{started_at, completed_at, status, iteration, commands_run, extra_attrs:{}}`. Persist via `mcp__gdd_state__set_quality_gate` or `apply()` mutator from `sdk/state/mutator.ts` — identical on-disk shape.
 
 ## Step 6 — Event emission (D-09)
 
-Use `appendEvent` from `scripts/lib/event-stream/index.ts` — persist-first / broadcast-second; never throws on persist path. `ts` / `cycle` / `stage` are stamped by the writer. Six event types (one per lifecycle position):
+Use `appendEvent` from `sdk/event-stream/index.ts` — persist-first / broadcast-second; never throws on persist path. `ts` / `cycle` / `stage` are stamped by the writer. Six event types (one per lifecycle position):
 
 | Event | When | Payload |
 |-------|------|---------|

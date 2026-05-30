@@ -2,7 +2,7 @@
 
 Read-only MCP server exposing GDD project state — STATE.md sections, phases, decisions, plans, telemetry, intel slices, latest reflections — as 12 typed MCP tools. Sessions prime in 3 MCP calls instead of 100+ file reads, on the same project a per-session reduction of −30% tokens and ~34× wall-clock speedup (see benchmark below).
 
-Phase 27.7. Mirror of the `scripts/mcp-servers/gdd-state/` Phase 20 pattern. v1 is read-only — mutation belongs to slash-skills and the lockfile-safe `gdd-state-mcp` writers (Phase 20 surface).
+Phase 27.7. Mirror of the `sdk/mcp/gdd-state/` Phase 20 pattern. v1 is read-only — mutation belongs to slash-skills and the lockfile-safe `gdd-state-mcp` writers (Phase 20 surface).
 
 ## Tools
 
@@ -60,7 +60,7 @@ Per CONTEXT.md D-09 the benchmark is informational — failure to hit the −30%
 
 ## See also
 
-- `scripts/mcp-servers/gdd-state/` — Phase 20 STATE.md mutation MCP (write surface)
+- `sdk/mcp/gdd-state/` — Phase 20 STATE.md mutation MCP (write surface)
 - `scripts/lib/mcp-tools-lint/` — Static analysis enforcing thin-wrapper discipline
 - `reference/schemas/mcp-gdd-tools.schema.json` — Tool input/output schemas (Draft-07)
 - `.planning/phases/27.7-gdd-mcp-server/CONTEXT.md` — Phase 27.7 decisions and rationale

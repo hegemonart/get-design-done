@@ -23,11 +23,11 @@
 //
 // NEVER throws — every failure becomes a `PipelineResult`.
 
-import { appendEvent } from '../event-stream/index.ts';
-import type { BaseEvent } from '../event-stream/index.ts';
+import { appendEvent } from '../../../sdk/event-stream/index.ts';
+import type { BaseEvent } from '../../../sdk/event-stream/index.ts';
 import { getLogger } from '../logger/index.ts';
-import { transition as defaultTransition, TransitionGateFailed } from '../gdd-state/index.ts';
-import { ValidationError } from '../gdd-errors/index.ts';
+import { transition as defaultTransition, TransitionGateFailed } from '../../../sdk/state/index.ts';
+import { ValidationError } from '../../../sdk/errors/index.ts';
 
 import {
   STAGE_ORDER,

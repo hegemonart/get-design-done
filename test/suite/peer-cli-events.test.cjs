@@ -17,7 +17,7 @@ const REPO_ROOT = path.resolve(__dirname, '../..');
 
 test('27-08: event-stream/types.ts declares peer_call_started event', () => {
   const src = fs.readFileSync(
-    path.join(REPO_ROOT, 'scripts/lib/event-stream/types.ts'),
+    path.join(REPO_ROOT, 'sdk/event-stream/types.ts'),
     'utf8',
   );
   assert.match(src, /peer_call_started/, 'types.ts must declare peer_call_started');
@@ -27,7 +27,7 @@ test('27-08: event-stream/types.ts declares peer_call_started event', () => {
 
 test('27-08: event-stream/types.ts declares runtime_role tag', () => {
   const src = fs.readFileSync(
-    path.join(REPO_ROOT, 'scripts/lib/event-stream/types.ts'),
+    path.join(REPO_ROOT, 'sdk/event-stream/types.ts'),
     'utf8',
   );
   assert.match(src, /runtime_role/, 'types.ts must declare runtime_role tag');
@@ -45,7 +45,7 @@ test('27-08: event-stream/types.ts declares runtime_role tag', () => {
 
 test('27-08: event-stream/types.ts declares peer_id field', () => {
   const src = fs.readFileSync(
-    path.join(REPO_ROOT, 'scripts/lib/event-stream/types.ts'),
+    path.join(REPO_ROOT, 'sdk/event-stream/types.ts'),
     'utf8',
   );
   assert.match(src, /peer_id/, 'types.ts must declare peer_id field');
@@ -55,7 +55,7 @@ test('27-08: event-stream/types.ts declares peer_id field', () => {
 
 test('27-08: event-stream exports PEER_CALL_* constants', () => {
   const src = fs.readFileSync(
-    path.join(REPO_ROOT, 'scripts/lib/event-stream/types.ts'),
+    path.join(REPO_ROOT, 'sdk/event-stream/types.ts'),
     'utf8',
   );
   assert.match(src, /PEER_CALL_STARTED/, 'must export PEER_CALL_STARTED constant');
@@ -93,7 +93,7 @@ test('27-08: budget-enforcer threads peer_id when present', () => {
 
 test('27-08: default runtime_role is "host" (back-compat)', () => {
   const types = fs.readFileSync(
-    path.join(REPO_ROOT, 'scripts/lib/event-stream/types.ts'),
+    path.join(REPO_ROOT, 'sdk/event-stream/types.ts'),
     'utf8',
   );
   // Look for a default-host annotation in comments or code:
@@ -110,7 +110,7 @@ test('27-08: default runtime_role is "host" (back-compat)', () => {
 
 test('27-08: event-stream/index.ts re-exports peer-call event constants', () => {
   const src = fs.readFileSync(
-    path.join(REPO_ROOT, 'scripts/lib/event-stream/index.ts'),
+    path.join(REPO_ROOT, 'sdk/event-stream/index.ts'),
     'utf8',
   );
   assert.match(

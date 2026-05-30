@@ -27,13 +27,13 @@ import {
   parseArgs,
   coerceFlags,
   type FlagSpec,
-} from '../../scripts/lib/cli/parse-args.ts';
-import { runCommand } from '../../scripts/lib/cli/commands/run.ts';
-import { stageCommand } from '../../scripts/lib/cli/commands/stage.ts';
-import { queryCommand } from '../../scripts/lib/cli/commands/query.ts';
-import { auditCommand } from '../../scripts/lib/cli/commands/audit.ts';
-import { initCommand } from '../../scripts/lib/cli/commands/init.ts';
-import { dispatch, main, USAGE } from '../../scripts/lib/cli/index.ts';
+} from '../../sdk/cli/parse-args.ts';
+import { runCommand } from '../../sdk/cli/commands/run.ts';
+import { stageCommand } from '../../sdk/cli/commands/stage.ts';
+import { queryCommand } from '../../sdk/cli/commands/query.ts';
+import { auditCommand } from '../../sdk/cli/commands/audit.ts';
+import { initCommand } from '../../sdk/cli/commands/init.ts';
+import { dispatch, main, USAGE } from '../../sdk/cli/index.ts';
 import type {
   PipelineConfig,
   PipelineResult,

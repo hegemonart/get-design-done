@@ -26,8 +26,8 @@
 //     (always; payload status mirrors SessionResult.status). Optional
 //     `session.budget_exceeded` emitted when the budget trips.
 
-import { appendEvent } from '../event-stream/index.ts';
-import type { BaseEvent } from '../event-stream/index.ts';
+import { appendEvent } from '../../../sdk/event-stream/index.ts';
+import type { BaseEvent } from '../../../sdk/event-stream/index.ts';
 import { sanitize as defaultSanitize } from '../prompt-sanitizer/index.ts';
 
 import { mapSdkError } from './errors.ts';
@@ -64,7 +64,7 @@ function _findRepoRoot(): string {
 const _REPO_ROOT = _findRepoRoot();
 const _nodeRequire = createRequire(_join(_REPO_ROOT, 'package.json'));
 const jitteredBackoff = _nodeRequire(
-  _resolve(_REPO_ROOT, 'scripts/lib/jittered-backoff.cjs'),
+  _resolve(_REPO_ROOT, 'sdk/primitives/jittered-backoff.cjs'),
 ) as {
   delayMs: (attempt: number, opts?: { baseMs?: number; maxMs?: number; factor?: number; jitter?: number }) => number;
 };

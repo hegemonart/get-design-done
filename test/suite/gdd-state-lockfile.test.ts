@@ -18,8 +18,8 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { hostname } from 'node:os';
 
-import { acquire } from '../../scripts/lib/gdd-state/lockfile.ts';
-import { LockAcquisitionError } from '../../scripts/lib/gdd-state/types.ts';
+import { acquire } from '../../sdk/state/lockfile.ts';
+import { LockAcquisitionError } from '../../sdk/state/types.ts';
 
 function tmpPath(): { path: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), 'gdd-lockfile-'));

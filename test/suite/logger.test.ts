@@ -51,7 +51,7 @@ import {
   appendEvent,
   getWriter,
   reset as resetEventStream,
-} from '../../scripts/lib/event-stream/index.ts';
+} from '../../sdk/event-stream/index.ts';
 
 // Keep the appendEvent import live under isolatedModules; we reference it
 // by using the event-stream writer in integration tests.

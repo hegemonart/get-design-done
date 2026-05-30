@@ -1,9 +1,9 @@
 // scripts/mcp-servers/gdd-mcp/tools/gdd_telemetry_query.ts
 //
 // Plan 27.7-02. Typed reader over .design/telemetry/*.jsonl via
-// scripts/lib/event-stream/index.ts readEvents.
+// sdk/event-stream/index.ts readEvents.
 
-import { readEvents } from '../../../lib/event-stream/index.ts';
+import { readEvents } from '../../../../sdk/event-stream/index.ts';
 import { errorResponse, okResponse, resolveTelemetryDir, type ToolResponse } from './shared.ts';
 
 export const name = 'gdd_telemetry_query';

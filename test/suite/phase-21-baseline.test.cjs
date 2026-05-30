@@ -84,7 +84,7 @@ test('phase-21 baseline: gdd-sdk -h lists every baseline subcommand', () => {
   const subcommands = readLines('cli-subcommands.txt');
   assert.ok(subcommands.length > 0, 'cli-subcommands.txt is empty');
 
-  const entry = path.join(REPO_ROOT, 'scripts', 'lib', 'cli', 'index.ts');
+  const entry = path.join(REPO_ROOT, 'sdk', 'cli', 'index.ts');
   let help;
   try {
     help = execSync(

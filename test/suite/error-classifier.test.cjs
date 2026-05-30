@@ -9,7 +9,7 @@ const {
   classify,
   SUGGESTED_ACTIONS,
   RETRYABLE,
-} = require('../../scripts/lib/error-classifier.cjs');
+} = require('../../sdk/primitives/error-classifier.cjs');
 
 function expect(fixture, reason, retryable) {
   const r = classify(fixture);

@@ -21,7 +21,7 @@
 //   * Plan 21-01 `session-runner`  — computes `allowedTools` for each session.
 //   * Plan 21-05 `pipeline-runner` — picks the correct scope per stage.
 
-import { ValidationError } from '../gdd-errors/index.ts';
+import { ValidationError } from '../../../sdk/errors/index.ts';
 import type { Scope, ScopeInput, ScopeViolation, Stage } from './types.ts';
 import {
   NATIVE_TOOLS,

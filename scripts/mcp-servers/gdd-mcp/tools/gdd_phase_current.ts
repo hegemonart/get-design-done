@@ -2,7 +2,7 @@
 //
 // Plan 27.7-02. Returns the <position> block from STATE.md.
 
-import { read } from '../../../lib/gdd-state/index.ts';
+import { read } from '../../../../sdk/state/index.ts';
 import {
   errorResponse,
   okResponse,

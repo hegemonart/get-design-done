@@ -5,7 +5,7 @@
 // criteria the pipeline tracks). Input.phase is reserved for future
 // multi-phase indexing.
 
-import { read } from '../../../lib/gdd-state/index.ts';
+import { read } from '../../../../sdk/state/index.ts';
 import {
   errorResponse,
   okResponse,

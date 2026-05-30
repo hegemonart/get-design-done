@@ -21,11 +21,11 @@ import {
   LockAcquisitionError,
   TransitionGateFailed,
   ParseError,
-} from '../../scripts/lib/gdd-errors/index.ts';
+} from '../../sdk/errors/index.ts';
 import {
   classify,
   toToolError,
-} from '../../scripts/lib/gdd-errors/classification.ts';
+} from '../../sdk/errors/classification.ts';
 
 // ------------------------------------------------------------------
 // Base-class discriminants

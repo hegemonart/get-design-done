@@ -104,7 +104,7 @@ test('phase-27 baseline: bandit-router has delegate dimension (Plan 27-07)', () 
 });
 
 test('phase-27 baseline: event-stream declares peer_call_* event types (Plan 27-08)', () => {
-  const src = read('scripts/lib/event-stream/types.ts');
+  const src = read('sdk/event-stream/types.ts');
   assert.match(src, /peer_call_started/);
   assert.match(src, /peer_call_complete/);
   assert.match(src, /peer_call_failed/);

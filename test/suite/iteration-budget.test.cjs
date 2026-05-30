@@ -3,7 +3,7 @@
 //
 // Covers iteration-budget consume/refund/exhaustion + concurrent lock
 // safety + lock release on error. The concurrent test also exercises
-// scripts/lib/lockfile.cjs by construction.
+// sdk/primitives/lockfile.cjs by construction.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -26,13 +26,13 @@ function tmpCwd() {
 }
 
 function loadIb() {
-  delete require.cache[require.resolve('../../scripts/lib/iteration-budget.cjs')];
-  return require('../../scripts/lib/iteration-budget.cjs');
+  delete require.cache[require.resolve('../../sdk/primitives/iteration-budget.cjs')];
+  return require('../../sdk/primitives/iteration-budget.cjs');
 }
 
 function loadLockfile() {
-  delete require.cache[require.resolve('../../scripts/lib/lockfile.cjs')];
-  return require('../../scripts/lib/lockfile.cjs');
+  delete require.cache[require.resolve('../../sdk/primitives/lockfile.cjs')];
+  return require('../../sdk/primitives/lockfile.cjs');
 }
 
 test('reset(10) + 5 consume() → remaining=5, consumed=5', async () => {
@@ -121,7 +121,7 @@ test('concurrent consume from 10 spawned children: consumed=10, no lost incremen
     const ib = loadIb();
     await ib.reset(50);
 
-    const modulePath = require.resolve('../../scripts/lib/iteration-budget.cjs');
+    const modulePath = require.resolve('../../sdk/primitives/iteration-budget.cjs');
     const childScript = `
       (async () => {
         const ib = require(${JSON.stringify(modulePath)});

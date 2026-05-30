@@ -3,7 +3,7 @@
 // Plan 27.7-02. Diffs current STATE.md against the latest .design/snapshots/
 // snapshot. SnapshotNotFoundError → directory_not_found via errorResponse.
 
-import { read } from '../../../lib/gdd-state/index.ts';
+import { read } from '../../../../sdk/state/index.ts';
 import { readLatestSnapshot } from '../../../lib/snapshot-reader/index.cjs';
 import { errorResponse, okResponse, resolveProjectRoot, resolveStatePath, type ToolResponse } from './shared.ts';
 

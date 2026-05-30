@@ -29,7 +29,7 @@ import {
   type Scope,
   type Stage,
 } from '../../scripts/lib/tool-scoping/index.ts';
-import { ValidationError, GDDError } from '../../scripts/lib/gdd-errors/index.ts';
+import { ValidationError, GDDError } from '../../sdk/errors/index.ts';
 
 const FIX = (name: string): string =>
   resolve('test/suite/fixtures/tool-scoping', name);

@@ -5,8 +5,8 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { readEvents, aggregate } from '../../scripts/lib/event-stream/reader.ts';
-import type { BaseEvent } from '../../scripts/lib/event-stream/types.ts';
+import { readEvents, aggregate } from '../../sdk/event-stream/reader.ts';
+import type { BaseEvent } from '../../sdk/event-stream/types.ts';
 
 function makeFile(events: BaseEvent[]): string {
   const dir = mkdtempSync(join(tmpdir(), 'gdd-reader-'));

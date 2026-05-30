@@ -78,7 +78,7 @@ test('peer-cli e2e: frontmatter validator accepts known delegate_to values', () 
 
 test('peer-cli e2e: event-stream types module exports peer_call_* constants', () => {
   const types = fs.readFileSync(
-    path.join(REPO_ROOT, 'scripts/lib/event-stream/types.ts'),
+    path.join(REPO_ROOT, 'sdk/event-stream/types.ts'),
     'utf8',
   );
   // The 3 new event types must be declared.

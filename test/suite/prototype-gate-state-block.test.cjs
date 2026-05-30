@@ -23,8 +23,8 @@ const REPO_ROOT = path.join(__dirname, '../..');
 // The parser/mutator are TS modules that Node 22 strips at runtime (the test
 // runner uses --experimental-strip-types per package.json#scripts.test). The
 // require() resolves the .ts file directly under that flag.
-const { parse } = require(path.join(REPO_ROOT, 'scripts/lib/gdd-state/parser.ts'));
-const { apply, serialize } = require(path.join(REPO_ROOT, 'scripts/lib/gdd-state/mutator.ts'));
+const { parse } = require(path.join(REPO_ROOT, 'sdk/state/parser.ts'));
+const { apply, serialize } = require(path.join(REPO_ROOT, 'sdk/state/mutator.ts'));
 
 // Minimal STATE.md fixture carrying one sketch, one spike, and one skipped
 // entry. The trailing block layout (newlines around block tags) matches the
@@ -83,7 +83,7 @@ const WITH_PROTOTYPING = [
 // Same shape as WITH_PROTOTYPING but with the <prototyping> block removed.
 // The serializer MUST NOT emit an empty <prototyping></prototyping> pair on
 // round-trip; that's the omission-on-null contract documented on
-// ParsedState.prototyping in scripts/lib/gdd-state/types.ts.
+// ParsedState.prototyping in sdk/state/types.ts.
 const WITHOUT_PROTOTYPING = [
   '---',
   'pipeline_state_version: 1.0',
@@ -131,7 +131,7 @@ const WITHOUT_PROTOTYPING = [
 
 test('25-09 prototype-gate: <prototyping> block round-trips byte-identically', () => {
   // apply() = parse + identity-mutate + serialize-with-fidelity. This is the
-  // canonical round-trip path consumed by callers in scripts/lib/gdd-state.
+  // canonical round-trip path consumed by callers in sdk/state.
   const out = apply(WITH_PROTOTYPING, (s) => s);
   assert.equal(out, WITH_PROTOTYPING, 'apply(state, identity) must match the input verbatim');
 });

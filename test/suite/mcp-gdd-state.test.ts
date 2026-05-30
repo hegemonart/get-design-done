@@ -33,8 +33,8 @@ import { REPO_ROOT } from './helpers.ts';
 
 const SERVER_ENTRY = join(
   REPO_ROOT,
-  'scripts',
-  'mcp-servers',
+  'sdk',
+  'mcp',
   'gdd-state',
   'server.ts',
 );

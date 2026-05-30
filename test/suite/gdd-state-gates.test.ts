@@ -2,7 +2,7 @@
 //
 // Plan 20-02 (SDK-03). Eight fixture STATE.md files at
 // tests/fixtures/state/gates/ are loaded, parsed, and evaluated by the
-// matching gate from scripts/lib/gdd-state/gates.ts. Pass fixtures MUST
+// matching gate from sdk/state/gates.ts. Pass fixtures MUST
 // produce `{ pass: true, blockers: [] }`; fail fixtures MUST produce
 // `{ pass: false, blockers: ["…", …] }` where each blocker is a
 // non-empty human-readable string.
@@ -26,7 +26,7 @@ import {
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-import { parse } from '../../scripts/lib/gdd-state/parser.ts';
+import { parse } from '../../sdk/state/parser.ts';
 import {
   briefToExplore,
   exploreToPlan,
@@ -35,12 +35,12 @@ import {
   gateFor,
   GATES,
   type GateFn,
-} from '../../scripts/lib/gdd-state/gates.ts';
+} from '../../sdk/state/gates.ts';
 import {
   transition,
   TransitionGateFailed,
-} from '../../scripts/lib/gdd-state/index.ts';
-import type { Stage } from '../../scripts/lib/gdd-state/types.ts';
+} from '../../sdk/state/index.ts';
+import type { Stage } from '../../sdk/state/types.ts';
 import { REPO_ROOT } from './helpers.ts';
 
 const FIXTURES: string = join(REPO_ROOT, 'test', 'suite', 'fixtures', 'state', 'gates');

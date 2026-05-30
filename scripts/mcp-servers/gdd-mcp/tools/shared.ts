@@ -15,8 +15,8 @@
 import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
-import { toToolError } from '../../../lib/gdd-errors/classification.ts';
-import type { ToolErrorPayload } from '../../../lib/gdd-errors/classification.ts';
+import { toToolError } from '../../../../sdk/errors/classification.ts';
+import type { ToolErrorPayload } from '../../../../sdk/errors/classification.ts';
 
 /** Public tool-handler response shape (consistent across all tools). */
 export type ToolResponse =

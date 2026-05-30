@@ -194,7 +194,7 @@ After classifying the new entries (Step 5) but BEFORE writing the snapshot (Step
 - `/known issues/i`
 - `/pitfalls/i`
 
-For each entry whose `title` matches ANY pattern, emit a single `kfm-candidate` event to the events stream (`.design/telemetry/events.jsonl`) via `scripts/lib/event-stream/writer.ts` (or the Bash equivalent — `printf '%s\n' "<json>" >> .design/telemetry/events.jsonl`).
+For each entry whose `title` matches ANY pattern, emit a single `kfm-candidate` event to the events stream (`.design/telemetry/events.jsonl`) via `sdk/event-stream/writer.ts` (or the Bash equivalent — `printf '%s\n' "<json>" >> .design/telemetry/events.jsonl`).
 
 Event payload shape — validates against `reference/schemas/events.schema.json` definitions `KfmCandidatePayload` (allOf[1] branch). Required 7 fields:
 

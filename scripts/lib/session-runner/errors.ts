@@ -38,7 +38,7 @@ import {
   OperationFailedError,
   StateConflictError,
   type GDDError,
-} from '../gdd-errors/index.ts';
+} from '../../../sdk/errors/index.ts';
 
 /**
  * Build an absolute path to a repo-root-relative file. We can't use
@@ -68,7 +68,7 @@ const REPO_ROOT = findRepoRoot();
  */
 const nodeRequire = createRequire(join(REPO_ROOT, 'package.json'));
 const transportClassifier = nodeRequire(
-  resolve(REPO_ROOT, 'scripts/lib/error-classifier.cjs'),
+  resolve(REPO_ROOT, 'sdk/primitives/error-classifier.cjs'),
 ) as {
   classify: (err: unknown) => {
     reason: string;
@@ -375,7 +375,7 @@ export function mapSdkError(err: unknown): MappedSdkError {
   }
 
   // 9. Transport-layer classification (ECONNRESET, ETIMEDOUT, etc.).
-  //    Delegate to scripts/lib/error-classifier.cjs which knows the errno
+  //    Delegate to sdk/primitives/error-classifier.cjs which knows the errno
   //    vocabulary. Only trust its `retryable` flag for transient network
   //    classes — other classes were already handled above.
   const classified = transportClassifier.classify(err);

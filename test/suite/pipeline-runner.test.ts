@@ -46,12 +46,12 @@ import {
 } from '../../scripts/lib/pipeline-runner/index.ts';
 import type { SessionResult, SessionRunnerOptions } from '../../scripts/lib/session-runner/types.ts';
 import type { ContextBundle } from '../../scripts/lib/context-engine/types.ts';
-import { ValidationError } from '../../scripts/lib/gdd-errors/index.ts';
+import { ValidationError } from '../../sdk/errors/index.ts';
 import {
   reset as resetEventStream,
   subscribeAll,
-} from '../../scripts/lib/event-stream/index.ts';
-import type { BaseEvent } from '../../scripts/lib/event-stream/index.ts';
+} from '../../sdk/event-stream/index.ts';
+import type { BaseEvent } from '../../sdk/event-stream/index.ts';
 import {
   createLogger,
   setLogger,

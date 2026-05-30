@@ -6,7 +6,7 @@
  * writes an atomic snapshot of STATE.md sections + last-N event-chain
  * entries + last-N decisions to `.design/snapshots/<ts>.json`.
  *
- * Phase 27.6 D-08: atomic .tmp + rename via scripts/lib/lockfile.cjs.
+ * Phase 27.6 D-08: atomic .tmp + rename via sdk/primitives/lockfile.cjs.
  *   - Lockfile serializes concurrent PreCompact writers.
  *   - .tmp + rename guarantees no partial file ever appears at target path
  *     (a SIGKILL between writeFileSync and renameSync leaves an orphan
@@ -52,7 +52,7 @@ function detectHarness() {
 
 function getAppendEvent() {
   try {
-    const m = require('../scripts/lib/event-stream');
+    const m = require('../sdk/event-stream');
     if (m && typeof m.appendEvent === 'function') return m.appendEvent;
   } catch {
     /* swallow — event-stream is optional infrastructure */
@@ -224,7 +224,7 @@ async function main() {
   // PreCompact writers; the second writer either waits or fails-silent.
   let release = null;
   try {
-    const lockfile = require('../scripts/lib/lockfile.cjs');
+    const lockfile = require('../sdk/primitives/lockfile.cjs');
     release = await lockfile.acquire(snapshotPath, {
       staleMs: 60_000,
       maxWaitMs: 10_000,

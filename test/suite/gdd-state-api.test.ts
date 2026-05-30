@@ -21,7 +21,7 @@ import {
   mutate,
   transition,
   TransitionGateFailed,
-} from '../../scripts/lib/gdd-state/index.ts';
+} from '../../sdk/state/index.ts';
 import { REPO_ROOT } from './helpers.ts';
 
 const FIXTURES: string = join(REPO_ROOT, 'test', 'suite', 'fixtures', 'state');

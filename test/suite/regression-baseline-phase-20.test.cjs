@@ -175,12 +175,12 @@ test('phase-20 baseline: mcp-tools schema sha256 matches snapshot (catches schem
   }
 });
 
-test('phase-20 baseline: mcp-tools covers every schema in scripts/mcp-servers/gdd-state/schemas/', () => {
+test('phase-20 baseline: mcp-tools covers every schema in sdk/mcp/gdd-state/schemas/', () => {
   const manifest = JSON.parse(readBaseline('mcp-tools-manifest.json'));
   const schemaDir = path.join(
     REPO_ROOT,
-    'scripts',
-    'mcp-servers',
+    'sdk',
+    'mcp',
     'gdd-state',
     'schemas',
   );

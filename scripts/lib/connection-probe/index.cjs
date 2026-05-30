@@ -42,7 +42,7 @@
 const { writeFileSync, readFileSync, existsSync, mkdirSync, renameSync } = require('node:fs');
 const { dirname, isAbsolute, resolve, join } = require('node:path');
 
-const { delayMs } = require('../jittered-backoff.cjs');
+const { delayMs } = require('../../../sdk/primitives/jittered-backoff.cjs');
 
 const DEFAULT_STATE_PATH = '.design/telemetry/connection-state.json';
 

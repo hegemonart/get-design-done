@@ -47,7 +47,7 @@ import type {
   ResearcherSpec,
 } from '../../scripts/lib/init-runner/index.ts';
 import type { BudgetCap } from '../../scripts/lib/session-runner/types.ts';
-import { reset as resetEventStream, getWriter } from '../../scripts/lib/event-stream/index.ts';
+import { reset as resetEventStream, getWriter } from '../../sdk/event-stream/index.ts';
 
 // ── Sandbox + helpers ───────────────────────────────────────────────────────
 

@@ -45,8 +45,8 @@ import {
   getWriter,
   reset as resetEventStream,
   subscribeAll,
-} from '../../scripts/lib/event-stream/index.ts';
-import type { BaseEvent } from '../../scripts/lib/event-stream/index.ts';
+} from '../../sdk/event-stream/index.ts';
+import type { BaseEvent } from '../../sdk/event-stream/index.ts';
 import {
   assistantChunk,
   makeMockQuery,

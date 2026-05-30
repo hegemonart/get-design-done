@@ -28,12 +28,12 @@ import {
   reset,
   subscribe,
   subscribeAll,
-} from '../../scripts/lib/event-stream/index.ts';
+} from '../../sdk/event-stream/index.ts';
 import type {
   BaseEvent,
   StateMutationEvent,
   StateTransitionEvent,
-} from '../../scripts/lib/event-stream/index.ts';
+} from '../../sdk/event-stream/index.ts';
 
 function mkTmp(prefix: string): { dir: string; cleanup: () => void } {
   const dir = mkdtempSync(join(tmpdir(), prefix));

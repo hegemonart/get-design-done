@@ -40,9 +40,9 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fork, type ChildProcess } from 'node:child_process';
 
-import { read } from '../../scripts/lib/gdd-state/index.ts';
-import { parse } from '../../scripts/lib/gdd-state/parser.ts';
-import { serialize } from '../../scripts/lib/gdd-state/mutator.ts';
+import { read } from '../../sdk/state/index.ts';
+import { parse } from '../../sdk/state/parser.ts';
+import { serialize } from '../../sdk/state/mutator.ts';
 import { REPO_ROOT } from './helpers.ts';
 
 interface WorkerSummary {

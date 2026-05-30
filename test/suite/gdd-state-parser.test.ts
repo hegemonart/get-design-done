@@ -10,9 +10,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { parse } from '../../scripts/lib/gdd-state/parser.ts';
-import { serialize } from '../../scripts/lib/gdd-state/mutator.ts';
-import { ParseError } from '../../scripts/lib/gdd-state/types.ts';
+import { parse } from '../../sdk/state/parser.ts';
+import { serialize } from '../../sdk/state/mutator.ts';
+import { ParseError } from '../../sdk/state/types.ts';
 import { REPO_ROOT } from './helpers.ts';
 
 const FIXTURES: string = join(REPO_ROOT, 'test', 'suite', 'fixtures', 'state');

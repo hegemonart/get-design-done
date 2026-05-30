@@ -31,7 +31,7 @@
     "gdd-graph": "./bin/gdd-graph",
     "gdd-mcp": "./scripts/mcp-servers/gdd-mcp/server.ts",
     "gdd-sdk": "./bin/gdd-sdk",
-    "gdd-state-mcp": "./scripts/mcp-servers/gdd-state/server.ts",
+    "gdd-state-mcp": "./sdk/mcp/gdd-state/server.ts",
     "get-design-done": "./scripts/install.cjs"
   },
   "publishConfig": {
@@ -54,7 +54,7 @@
     "release:extract-changelog": "node scripts/extract-changelog-section.cjs",
     "verify:version-sync": "node scripts/verify-version-sync.cjs",
     "typecheck:session-runner": "tsc --noEmit",
-    "gdd-sdk": "node --experimental-strip-types scripts/lib/cli/index.ts"
+    "gdd-sdk": "node --experimental-strip-types sdk/cli/index.ts"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

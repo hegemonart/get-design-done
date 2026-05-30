@@ -27,7 +27,7 @@
 // Consumers: `discuss` skill (Plan 21-08 / future) + `gdd-sdk discuss`
 // CLI subcommand (Plan 21-09).
 
-import { OperationFailedError } from '../gdd-errors/index.ts';
+import { OperationFailedError } from '../../../sdk/errors/index.ts';
 import { getLogger } from '../logger/index.ts';
 import { resolveConcurrency } from '../parallelism-engine/concurrency-tuner.cjs';
 

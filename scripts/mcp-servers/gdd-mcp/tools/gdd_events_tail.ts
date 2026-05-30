@@ -1,9 +1,9 @@
 // scripts/mcp-servers/gdd-mcp/tools/gdd_events_tail.ts
 //
 // Plan 27.7-02. Last-N events from .design/telemetry/events.jsonl with
-// optional type filter. Uses scripts/lib/event-stream readEvents.
+// optional type filter. Uses sdk/event-stream readEvents.
 
-import { readEvents } from '../../../lib/event-stream/index.ts';
+import { readEvents } from '../../../../sdk/event-stream/index.ts';
 import { errorResponse, okResponse, resolveTelemetryDir, type ToolResponse } from './shared.ts';
 
 export const name = 'gdd_events_tail';

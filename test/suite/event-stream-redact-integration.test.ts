@@ -5,8 +5,8 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { EventWriter } from '../../scripts/lib/event-stream/writer.ts';
-import type { BaseEvent } from '../../scripts/lib/event-stream/types.ts';
+import { EventWriter } from '../../sdk/event-stream/writer.ts';
+import type { BaseEvent } from '../../sdk/event-stream/types.ts';
 
 test('22-02: writer redacts secrets from payload before disk-write', () => {
   const dir = mkdtempSync(join(tmpdir(), 'gdd-redact-'));

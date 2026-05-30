@@ -1,5 +1,5 @@
 bin/gdd-sdk
-scripts/lib/cli
+sdk/cli
 scripts/lib/context-engine
 scripts/lib/discuss-parallel-runner
 scripts/lib/explore-parallel-runner

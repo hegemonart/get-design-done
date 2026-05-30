@@ -18,7 +18,7 @@
 // post-hoc count how many adds/resolves survived vs. which were absorbed
 // into the final state.
 
-import { mutate } from '../../../scripts/lib/gdd-state/index.ts';
+import { mutate } from '../../../sdk/state/index.ts';
 
 interface WorkerSummary {
   workerId: number;

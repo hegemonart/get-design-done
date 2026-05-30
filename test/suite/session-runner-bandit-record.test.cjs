@@ -50,7 +50,7 @@ const sessionRunner = require(
   join(REPO_ROOT, 'scripts', 'lib', 'session-runner', 'index.ts'),
 );
 const eventStream = require(
-  join(REPO_ROOT, 'scripts', 'lib', 'event-stream', 'index.ts'),
+  join(REPO_ROOT, 'sdk', 'event-stream', 'index.ts'),
 );
 
 const POSTERIOR_REL = '.design/telemetry/posterior.json';

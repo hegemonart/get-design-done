@@ -42,7 +42,7 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { toToolError } from '../../lib/gdd-errors/classification.ts';
+import { toToolError } from '../../../sdk/errors/classification.ts';
 import { TOOL_MODULES, type ToolModule } from './tools/index.ts';
 
 /** Server metadata advertised on initialize. */

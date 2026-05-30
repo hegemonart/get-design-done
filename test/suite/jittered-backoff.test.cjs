@@ -4,7 +4,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { delayMs, sleep, DEFAULTS } = require('../../scripts/lib/jittered-backoff.cjs');
+const { delayMs, sleep, DEFAULTS } = require('../../sdk/primitives/jittered-backoff.cjs');
 
 // Helper: sample `n` calls of `delayMs(attempt, opts)` into an array.
 function sample(attempt, opts, n) {

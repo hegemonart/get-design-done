@@ -1,9 +1,9 @@
 // scripts/mcp-servers/gdd-mcp/tools/gdd_status.ts
 //
-// Plan 27.7-02. Thin wrapper over scripts/lib/gdd-state. NO fs/path
+// Plan 27.7-02. Thin wrapper over sdk/state. NO fs/path
 // imports here — all I/O via gdd-state.read() + shared.ts helpers.
 
-import { read } from '../../../lib/gdd-state/index.ts';
+import { read } from '../../../../sdk/state/index.ts';
 import {
   errorResponse,
   okResponse,

@@ -22,12 +22,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { parse } from '../../scripts/lib/gdd-state/parser.ts';
-import { apply, serialize } from '../../scripts/lib/gdd-state/mutator.ts';
+import { parse } from '../../sdk/state/parser.ts';
+import { apply, serialize } from '../../sdk/state/mutator.ts';
 import type {
   ParsedState,
   QualityGateBlock,
-} from '../../scripts/lib/gdd-state/types.ts';
+} from '../../sdk/state/types.ts';
 
 // All blocks below carry at least one body line — same rationale as the
 // prototyping test: empty/comment-only block layout is litigated elsewhere,

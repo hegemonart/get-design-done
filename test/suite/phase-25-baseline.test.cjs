@@ -151,7 +151,7 @@ test('phase-25 baseline: scripts/lib/quality-gate-detect.cjs exposes the detecti
 
 test('phase-25 baseline: verify SKILL.md documents the Step 2.5 quality-gate entry-gate', () => {
   // Plan 25-07 deviation: the gateForVerifyEntry pure-function helper was
-  // NOT added to scripts/lib/gdd-state/gates.ts (executor honored the
+  // NOT added to sdk/state/gates.ts (executor honored the
   // tighter scope per orchestrator instruction). The verify-entry-refuses-
   // on-fail acceptance is therefore asserted at the SKILL.md content
   // level — same pattern as phase-24-baseline asserting on install.cjs

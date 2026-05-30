@@ -3,7 +3,7 @@
 // Plan 27.7-02. Reads <decisions> block from STATE.md. Optional
 // input.status filter narrows the list to one DecisionStatus.
 
-import { read } from '../../../lib/gdd-state/index.ts';
+import { read } from '../../../../sdk/state/index.ts';
 import {
   errorResponse,
   okResponse,
