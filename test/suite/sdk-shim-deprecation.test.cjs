@@ -75,14 +75,16 @@ const abs = (rel) => path.join(REPO_ROOT, rel);
  */
 function captureWarnings(relTarget, stripTypes, requireCount = 1) {
   const target = abs(relTarget);
-  // Child script: install listener, then require N times. Printing a
-  // sentinel-prefixed line per warning lets the parent count reliably even
-  // if Node prints its own (Use `node --trace-deprecation`) hint to stderr.
+  // Child script: install listener, then require N times WITH THE MODULE
+  // CACHE INTACT (no cache clearing). The once-per-import guard is precisely
+  // that requiring the SAME cached module repeatedly evaluates it only once,
+  // so it warns only once. Printing a sentinel-prefixed line per warning lets
+  // the parent count reliably even if Node prints its own
+  // (Use `node --trace-deprecation`) hint to stderr.
   const child = [
-    'const path=require("node:path");',
     'process.on("warning",(w)=>{if(w.name==="DeprecationWarning"){process.stdout.write("GDD_WARN::"+w.message+"\\n");}});',
     `const t=${JSON.stringify(target)};`,
-    `for(let i=0;i<${requireCount};i++){delete require.cache[require.resolve(t)]===undefined?0:0;require(t);}`,
+    `for(let i=0;i<${requireCount};i++){require(t);}`,
   ].join('');
   const args = stripTypes ? ['--experimental-strip-types', '-e', child] : ['-e', child];
   const out = execFileSync(process.execPath, args, {
