@@ -1,7 +1,8 @@
-/* Fixture: an @page + font-embed + CMYK + 300dpi stylesheet with NO bleed box
-   and NO crop/registration marks -> flags exactly PR-BLEED-01.
+/* Fixture: an @page + font-embed + CMYK + 300dpi stylesheet that omits any
+   edge-to-edge trim signal -> flags exactly PR-BLEED-01.
    Every OTHER class is satisfied so PR-BLEED-01 is the only violation.
-   (Intentionally contains no bleed / crop / registration signal of any kind.) */
+   (Intentionally carries no trim/edge-cut signal of any kind — neither a
+   declaration nor a documented note — so the one missing class is unambiguous.) */
 
 /* CMYK target — color-profile note for the RIP (PR-CMYK-01) */
 :root { color-profile: url(./CoatedFOGRA39.icc); }
@@ -9,7 +10,7 @@
 @page {
   size: Letter;
   margin: 15mm;
-  /* PR-PAGE-01 satisfied; deliberately no edge-trim signal here */
+  /* PR-PAGE-01 satisfied; this page deliberately defines no edge-trim signal */
 }
 
 @font-face {
