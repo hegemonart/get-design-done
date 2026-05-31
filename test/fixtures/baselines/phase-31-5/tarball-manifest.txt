@@ -185,6 +185,7 @@ reference/motion-interpolate.md
 reference/motion-spring.md
 reference/motion-transition-taxonomy.md
 reference/motion.md
+reference/native-platforms.md
 reference/onboarding-progressive-disclosure.md
 reference/openrouter-tier-mapping.md
 reference/output-contracts/motion-map.schema.json
@@ -273,10 +274,14 @@ scripts/lib/dangerous-patterns.cjs
 scripts/lib/design-search.cjs
 scripts/lib/design-solidify.mjs
 scripts/lib/design-tokens/_js-harness.cjs
+scripts/lib/design-tokens/_native-shared.cjs
+scripts/lib/design-tokens/compose.cjs
 scripts/lib/design-tokens/css-vars.cjs
 scripts/lib/design-tokens/figma.cjs
+scripts/lib/design-tokens/flutter.cjs
 scripts/lib/design-tokens/index.cjs
 scripts/lib/design-tokens/js-const.cjs
+scripts/lib/design-tokens/swift.cjs
 scripts/lib/design-tokens/tailwind.cjs
 scripts/lib/detect-ui-root.cjs
 scripts/lib/discuss-parallel-runner/aggregator.ts

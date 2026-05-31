@@ -91,6 +91,7 @@ motion-interpolate: reference/motion-interpolate.md
 motion-map-contract: reference/output-contracts/motion-map.schema.json
 motion-spring: reference/motion-spring.md
 motion-transition-taxonomy: reference/motion-transition-taxonomy.md
+native-platforms: reference/native-platforms.md
 onboarding-progressive-disclosure: reference/onboarding-progressive-disclosure.md
 openrouter-tier-mapping: reference/openrouter-tier-mapping.md
 palette-catalog: reference/palette-catalog.md
