@@ -1,0 +1,15 @@
+{
+  "good": {
+    "ok": true,
+    "violations": []
+  },
+  "bad": {
+    "ok": false,
+    "violations": [
+      {
+        "rule": "EM-LAYOUT-01",
+        "detail": "email layout must use role=\"presentation\" tables, not modern box primitives (found display:flex, display:grid, position:absolute|fixed|sticky)"
+      }
+    ]
+  }
+}

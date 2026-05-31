@@ -26,6 +26,7 @@ This directory contains connection specifications for external tools and MCPs th
 | OpenRouter | Active | [`connections/openrouter.md`](connections/openrouter.md) | Model-router (no MCP); env: `OPENROUTER_API_KEY` (optional `OPENROUTER_BASE_URL`); opt-in tier-resolution overlay, graceful-degrade-to-native |
 | Xcode Simulator | Active | [`connections/xcode-simulator.md`](connections/xcode-simulator.md) | **Optional** (macOS-only); CLI: `simctl` (no MCP); native-iOS rendered evidence for verify; degrade-to-code-only when absent (D-03) |
 | Android Emulator | Active | [`connections/android-emulator.md`](connections/android-emulator.md) | **Optional**; CLI: `adb` / `emulator` (no MCP); native-Android rendered evidence for verify; degrade-to-code-only when absent (D-03) |
+| Litmus | Active | [`connections/litmus.md`](connections/litmus.md) | **Optional** render-test (email; Email-on-Acid alternative); cross-client rendered screenshots for verify; degrade-to-static-validator / code-only when absent (D-03) |
 
 ---
 
@@ -51,6 +52,7 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | OpenRouter | — | — | — | — | — | — | ✓ (model-router: tier→model resolution, all stages) |
 | Xcode Simulator | — | — | — | native iOS code-gen target (swift-executor / emitSwift) | rendered SwiftUI snapshot when simulator available, else degrade to code-only structural audit (D-03) | — | — |
 | Android Emulator | — | — | — | native Android code-gen target (compose-executor / emitCompose) | rendered Compose screenshot when emulator available, else degrade to code-only structural audit (D-03) | — | — |
+| Litmus | — | — | — | email render-test target (email-executor) | cross-client rendered evidence when Litmus available, else degrade to the static email-HTML validator / code-only (D-03) | — | — |
 
 **Column definitions:**
 
