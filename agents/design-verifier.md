@@ -354,6 +354,17 @@ In DESIGN-VERIFICATION.md, add a `## Phase 4B — Screenshot Evidence` section l
 
 ---
 
+## Phase 4D — Native Verify (no-DOM targets)
+
+When `<project_type>` in DESIGN-CONTEXT.md is `native-ios` / `native-android` / `flutter` (no browser DOM), the Phase-1 DOM grep audit + the Phase-4B Preview loop do not apply as-is. Run instead:
+
+- **Snapshot audit** — IF a simulator/emulator screenshot is supplied (via `connections/xcode-simulator.md`, `connections/android-emulator.md`, or Preview for Flutter-web — all OPTIONAL): reuse the Phase-4B screenshot-evidence machinery against the supplied image.
+- **Code-only structural audit** (DEFAULT — no screenshot/simulator): verify the generated native source structurally — expected SwiftUI views / Compose composables / Flutter widgets present + token-bridge usage — instead of rendered pixels. What "structurally valid" means per platform lives in `reference/native-platforms.md` (do not inline it).
+
+Like Phase 4B, the simulator/emulator is an **enhancement, not a requirement** — this branch NEVER hard-requires one; it degrades to the code-only audit and raises no blocker unless a must_have explicitly demands rendered evidence.
+
+---
+
 ## Phase 4C — paper.design Canvas Screenshots (when paper-design: available)
 
 **Gate:** Skip this entire Phase 4C block if `paper-design` is `not_configured` or `unavailable` in STATE.md `<connections>`. Print: `paper.design canvas screenshots: skipped.`
@@ -555,21 +566,7 @@ Grade: [before] → [after]
 
 ### Response Body
 
-After writing DESIGN-VERIFICATION.md, emit in the response:
-
-**If zero gaps found:**
-
-Emit a 2–4 sentence summary paragraph describing results, then:
-
-```
-## VERIFICATION COMPLETE
-```
-
-**If gaps found:**
-
-Emit `## GAPS FOUND` heading, then the full structured gap list (BLOCKER first, MAJOR, MINOR, COSMETIC), then on a new line:
-
-```
+After writing DESIGN-VERIFICATION.md, emit in the response. **If zero gaps found:** emit a 2–4 sentence summary paragraph describing results. **If gaps found:** emit the `## GAPS FOUND` heading, then the full structured gap list (BLOCKER first, MAJOR, MINOR, COSMETIC).
 
 ## Record
 
@@ -581,10 +578,9 @@ At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
 
 Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_written` array for read-only agents.
 
-## VERIFICATION COMPLETE
-```
-
 CRITICAL: Always end with `## VERIFICATION COMPLETE` as the final line, regardless of pass or fail. The stage detects completion by this marker. Do not omit it under any circumstances.
+
+## VERIFICATION COMPLETE
 
 ---
 

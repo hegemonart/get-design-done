@@ -212,7 +212,39 @@ curl -sf http://localhost:6006/stories.json
 
 **If index.json fetch errors:** update STATE.md `storybook: unavailable`, fall back to grep-based inventory in Step 1. Continue without error.
 
-Proceed to Step 1 regardless of whether Step 0D ran or was skipped.
+Proceed to Step 0E regardless of whether Step 0D ran or was skipped.
+
+## Step 0E — Project-Type Detection (routes to the matching executor)
+
+Detect the **project type** so the pipeline routes the brief to the correct executor. Reuse the Step 0C / Step 1 grep/glob idiom (file reads only, < 1 second, no skip condition).
+
+**Enum (4 values — D-06):** `web` (DEFAULT) · `native-ios` · `native-android` · `flutter`.
+
+**Detection signals + precedence** (first match wins; brief overrides — if the user explicitly says "iOS app" / "Android app" / "Flutter app", honor that):
+
+```bash
+ls pubspec.yaml 2>/dev/null                       # → flutter
+ls *.xcodeproj Package.swift 2>/dev/null          # → native-ios   (when no pubspec)
+ls build.gradle build.gradle.kts settings.gradle 2>/dev/null  # → native-android (when no pubspec)
+ls package.json 2>/dev/null                       # → web          (default; also the fallback when none match)
+```
+
+Precedence: `pubspec.yaml` (flutter) > `*.xcodeproj`/`Package.swift` (native-ios) > `build.gradle*`/`settings.gradle` (native-android) > `package.json` / none (web — DEFAULT).
+
+**Routing table** (project type → executor — one row per type, trivially appendable):
+
+| Project type     | Executor          |
+|------------------|-------------------|
+| web (default)    | design-executor   |
+| native-ios       | swift-executor    |
+| native-android   | compose-executor  |
+| flutter          | flutter-executor  |
+
+<!-- 34.2 (email) / 34.3 (print) append their project type + executor row here — this enum and routing table are intentionally OPEN and extensible; 34.1 adds the native types ONLY (D-06). Do NOT add email/print rows in 34.1. -->
+
+Record the detected type in DESIGN-CONTEXT.md as a `<project_type>` line (e.g. `<project_type>native-ios</project_type>`) so downstream stages route correctly. The native specifics (token→theme bridge) live in `reference/native-platforms.md` — do not inline them here.
+
+Proceed to Step 1 regardless of outcome.
 
 ## Step 1 — Auto-Detect Design System State
 
@@ -524,6 +556,8 @@ baseline_grade: [A/B/C/D/F]
 <domain>
 [What's in scope. Specific files/directories if relevant.]
 </domain>
+
+<project_type>[web | native-ios | native-android | flutter — from Step 0E; routes to design/swift/compose/flutter-executor]</project_type>
 
 <audience>
 Primary: [one sentence]
