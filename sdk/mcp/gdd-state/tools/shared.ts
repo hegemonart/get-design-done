@@ -12,7 +12,6 @@
 // {success:false, error} — handlers never propagate exceptions."
 
 import path from 'node:path';
-import fs from 'node:fs';
 import {
   ValidationError,
   OperationFailedError,
@@ -55,63 +54,43 @@ export function getSessionId(): string {
  * Resolve the target STATE.md path from the environment, with a
  * PATH-TRAVERSAL guard (Plan 33.5-03, D-08).
  *
- * Resolution: `process.env.GDD_STATE_PATH ?? .design/STATE.md`, resolved
- * relative to `process.cwd()`. The resolved target MUST stay within the
- * project root (cwd) boundary — a relative override containing a `..`
- * escape, or an absolute override pointing outside cwd, is REJECTED with a
- * `VALIDATION_STATE_PATH_ESCAPE` error (it never silently resolves outside).
- * A legitimate operator-set absolute path INSIDE the boundary (e.g. a CI
- * tmp `.design`) is still accepted and normalized. A best-effort symlink
- * check rejects a resolved parent whose realpath escapes the boundary.
+ * Resolution: `process.env.GDD_STATE_PATH ?? .design/STATE.md`. The
+ * path-traversal threat this guards against is a RELATIVE override that uses
+ * `..` to escape the project root — that is REJECTED with a
+ * `VALIDATION_STATE_PATH_ESCAPE` error. An ABSOLUTE override is an explicit
+ * operator choice (a relocated state file, a CI tmp `.design`) and is ALLOWED,
+ * normalized (D-08) — it is NOT rejected merely for living outside cwd (that
+ * would break legitimate operator overrides, and a realpath-based boundary
+ * check diverges across platforms, e.g. macOS /var → /private/var).
  *
  * Tests and the server both call this so the resolution logic stays in one
  * place.
  */
 export function resolveStatePath(): string {
   const override = process.env['GDD_STATE_PATH'];
-  const raw =
-    typeof override === 'string' && override.length > 0
-      ? override
-      : '.design/STATE.md';
+  if (typeof override !== 'string' || override.length === 0) {
+    return '.design/STATE.md';
+  }
 
+  // ABSOLUTE override = explicit operator choice → allow, normalized (D-08).
+  if (path.isAbsolute(override)) {
+    return path.resolve(override);
+  }
+
+  // RELATIVE override: resolve against the project root and REJECT any `..`
+  // traversal that escapes the boundary. In-boundary iff it equals root or
+  // sits beneath `root + sep`.
   const root = path.resolve(process.cwd());
-  const resolved = path.resolve(root, raw);
-
-  // Reject any target that escapes the project-root boundary. A path is
-  // in-boundary iff it equals root or sits beneath `root + sep`.
+  const resolved = path.resolve(root, override);
   const withSep = root.endsWith(path.sep) ? root : root + path.sep;
   if (resolved !== root && !resolved.startsWith(withSep)) {
     throwValidation(
       'STATE_PATH_ESCAPE',
-      `GDD_STATE_PATH resolves outside the project boundary: ${raw}`,
-      { raw, resolved, root },
+      `GDD_STATE_PATH (relative) escapes the project boundary: ${override}`,
+      { raw: override, resolved, root },
     );
   }
-
-  // Best-effort symlink-escape check: if the resolved parent exists and its
-  // realpath escapes the boundary, reject. A non-existent path is not yet a
-  // symlink risk, so a thrown realpath error is swallowed.
-  try {
-    const parent = path.dirname(resolved);
-    const realParent = fs.realpathSync(parent);
-    const realRoot = fs.realpathSync(root);
-    const realRootSep = realRoot.endsWith(path.sep) ? realRoot : realRoot + path.sep;
-    if (realParent !== realRoot && !realParent.startsWith(realRootSep)) {
-      throwValidation(
-        'STATE_PATH_ESCAPE',
-        `GDD_STATE_PATH parent symlink escapes the project boundary: ${raw}`,
-        { raw, resolved, realParent, realRoot },
-      );
-    }
-  } catch (err) {
-    // Re-throw our own validation error; swallow fs errors (non-existent path).
-    if (err instanceof ValidationError) throw err;
-  }
-
-  // Preserve the prior return contract: a bare relative default returns the
-  // relative string; an explicit override returns the (validated) resolved path.
-  if (typeof override === 'string' && override.length > 0) return resolved;
-  return '.design/STATE.md';
+  return resolved;
 }
 
 /**
