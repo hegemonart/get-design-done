@@ -188,6 +188,12 @@ jobs:
       - name: Injection scanner (CI mode)
         run: npm run scan:injection
 
+      - name: Outbound-network scan (CI mode)
+        run: npm run scan:outbound
+
+      - name: WebSocket bind scan (CI mode)
+        run: npm run scan:ws-bind
+
   size-budget:
     name: "Size budget (blocking)"
     needs: [test]

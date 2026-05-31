@@ -13,7 +13,8 @@
       "properties": {
         "fields": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "maxItems": 64,
+          "items": { "type": "string", "minLength": 1, "maxLength": 256 },
           "description": "Optional projection. When present, limit data.state to these top-level keys. Unknown keys are ignored (no error)."
         }
       }

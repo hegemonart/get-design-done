@@ -1,0 +1,62 @@
+{
+  "_comment": "Phase 33.5 STRIDE checklist snapshot. Machine-readable mirror of reference/gdd-threat-model.md: the 5 in-scope components and the residual-risk -> closing-plan map. A regression that re-opens a closed residual (or drops a component) trips test/suite/phase-33-5-baseline.test.cjs.",
+  "source": "reference/gdd-threat-model.md",
+  "taxonomy": "STRIDE",
+  "components": [
+    "hooks",
+    "mcp-gdd-state",
+    "peer-cli",
+    "websocket",
+    "issue-reporter"
+  ],
+  "residuals": [
+    {
+      "risk": "WS binds 0.0.0.0 by default (listen, no host) + timing-unsafe != token compare",
+      "component": "websocket",
+      "plan": "33.5-03"
+    },
+    {
+      "risk": "GDD_STATE_PATH path traversal (no guard) + no payload-size cap + un-tightened tool schemas",
+      "component": "mcp-gdd-state",
+      "plan": "33.5-03"
+    },
+    {
+      "risk": "Full process.env (ANTHROPIC_API_KEY / GH_TOKEN) leaks to spawned peers (acp/asp)",
+      "component": "peer-cli",
+      "plan": "33.5-04"
+    },
+    {
+      "risk": "Outbound egress sites have no machine-readable allowlist + no CI gate",
+      "component": "cross-cutting",
+      "plan": "33.5-02 (allowlist) + 33.5-04 (scan gate)"
+    },
+    {
+      "risk": "Secret-scan misses Gemini AIza / GitHub fine-grained github_pat_ / GitHub server gh[sour]_ tokens",
+      "component": "redact (cross-cutting)",
+      "plan": "33.5-05"
+    },
+    {
+      "risk": "No published vulnerability-disclosure policy",
+      "component": "project",
+      "plan": "33.5-06"
+    }
+  ],
+  "already_mitigated": [
+    {
+      "surface": "Outbound via gh CLI only; frozen destination; dual-surface kill-switch",
+      "component": "issue-reporter"
+    },
+    {
+      "surface": "Bearer-token auth on every WS upgrade + >=8-char token rule",
+      "component": "websocket"
+    },
+    {
+      "surface": "16 MiB un-newlined-stdout DoS cap on untrusted peer output",
+      "component": "peer-cli"
+    },
+    {
+      "surface": "Deep-walk secret scrub of every event payload at serialize time",
+      "component": "cross-cutting (event bus)"
+    }
+  ]
+}

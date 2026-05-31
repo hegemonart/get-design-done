@@ -24,7 +24,9 @@
 'use strict';
 
 const http = require('node:http');
+const crypto = require('node:crypto');
 const { readFileSync, existsSync } = require('node:fs');
+const path = require('node:path');
 const { probeOptional } = require('../probe-optional.cjs');
 
 const ws = probeOptional('ws');
@@ -57,15 +59,61 @@ function* readEventsSync(path) {
 }
 
 /**
+ * Defensively read `.design/config.json`. Returns the parsed object or `{}`
+ * on ANY failure (missing file, bad JSON, read error) — NEVER throws. The
+ * transport must still start when no config is present, so this mirrors the
+ * house defensive-fs idiom.
+ *
+ * @returns {Record<string, any>}
+ */
+function readDesignConfig() {
+  try {
+    const cfgPath = path.join(process.cwd(), '.design', 'config.json');
+    if (!existsSync(cfgPath)) return {};
+    const parsed = JSON.parse(readFileSync(cfgPath, 'utf8'));
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Resolve the bind host once, before listen (D-04). Order:
+ *   opts.host → env GDD_WS_BIND_HOST → .design/config.json#event_stream.bind_host → '127.0.0.1'
+ * The DEFAULT (no opt, no env, no config) is loopback only — remote bind is
+ * an explicit operator opt-in.
+ *
+ * @param {{ host?: unknown }} opts
+ * @returns {string}
+ */
+function resolveBindHost(opts) {
+  if (typeof opts.host === 'string' && opts.host.trim()) {
+    return opts.host.trim();
+  }
+  const envHost = process.env['GDD_WS_BIND_HOST'];
+  if (typeof envHost === 'string' && envHost.trim()) {
+    return envHost.trim();
+  }
+  const cfg = readDesignConfig();
+  const cfgHost =
+    cfg && cfg.event_stream && typeof cfg.event_stream.bind_host === 'string'
+      ? cfg.event_stream.bind_host.trim()
+      : '';
+  if (cfgHost) return cfgHost;
+  return '127.0.0.1';
+}
+
+/**
  * Start the WebSocket server. Returns a handle with `close()`.
  *
  * @param {{
  *   port: number,
  *   token: string,
+ *   host?: string,
  *   tailFrom?: string,
  *   subscribe?: (handler: (ev: unknown) => void) => () => void,
  * }} opts
- * @returns {Promise<{close: () => void, port: number}>}
+ * @returns {Promise<{close: () => void, port: number, host: string}>}
  */
 async function startServer(opts) {
   if (typeof opts.port !== 'number' || !Number.isFinite(opts.port)) {
@@ -74,6 +122,9 @@ async function startServer(opts) {
   if (typeof opts.token !== 'string' || opts.token.length < 8) {
     throw new TypeError('startServer: token (string, ≥8 chars) required');
   }
+
+  // Resolve the bind host once (D-04): default 127.0.0.1 (loopback only).
+  const host = resolveBindHost(opts);
 
   const httpServer = http.createServer((_req, res) => {
     res.statusCode = 426; // Upgrade Required
@@ -109,7 +160,16 @@ async function startServer(opts) {
 
   httpServer.on('upgrade', (req, socket, head) => {
     const auth = req.headers['authorization'];
-    if (!auth || auth !== `Bearer ${opts.token}`) {
+    const expected = `Bearer ${opts.token}`;
+    // Constant-time compare (D-04, D-12 node:crypto built-in). The length
+    // pre-check is REQUIRED — timingSafeEqual throws on a length mismatch —
+    // and is acceptable here because the secret is the TOKEN bytes, not its
+    // length. A missing/short/mismatched token still yields the 401 close.
+    const ok =
+      typeof auth === 'string' &&
+      Buffer.byteLength(auth) === Buffer.byteLength(expected) &&
+      crypto.timingSafeEqual(Buffer.from(auth), Buffer.from(expected));
+    if (!ok) {
       socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
       socket.destroy();
       return;
@@ -142,12 +202,16 @@ async function startServer(opts) {
 
   await new Promise((resolve, reject) => {
     httpServer.once('error', reject);
-    httpServer.listen(opts.port, () => resolve(undefined));
+    httpServer.listen(opts.port, host, () => resolve(undefined));
   });
 
   const addr = httpServer.address();
   return {
     port: typeof addr === 'object' && addr ? addr.port : opts.port,
+    host:
+      typeof addr === 'object' && addr && typeof addr.address === 'string'
+        ? addr.address
+        : host,
     close() {
       try {
         unsub();

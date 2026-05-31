@@ -2,42 +2,42 @@
   {
     "name": "gdd_state__add_blocker",
     "schemaPath": "sdk/mcp/gdd-state/schemas/add_blocker.schema.json",
-    "schemaHash": "8f1b5207756a92fc4f95aa14ab24b7921a25f35fa89924f779fd3ba77f353cfa"
+    "schemaHash": "13b52b4dbe8d0903c6a96af08ee0ab8fe9dc3f20f145859c9fa3940f56da492b"
   },
   {
     "name": "gdd_state__add_decision",
     "schemaPath": "sdk/mcp/gdd-state/schemas/add_decision.schema.json",
-    "schemaHash": "ad22870a77804450bcaf8e1e8590db5af6a34f06768fd0231936ebf6e1b8ed9d"
+    "schemaHash": "4287a37637c188ade1e274eefbed74e39cece0819bd256347dd51638a1a70fac"
   },
   {
     "name": "gdd_state__add_must_have",
     "schemaPath": "sdk/mcp/gdd-state/schemas/add_must_have.schema.json",
-    "schemaHash": "f45c77afa7d0ad523d55e2f3aaa7a1372146f95e8035d663d073d15396682215"
+    "schemaHash": "f83e0cc3f86b834f2e4db4616cf67896bb2444ace3703146984ff12367ae7089"
   },
   {
     "name": "gdd_state__checkpoint",
     "schemaPath": "sdk/mcp/gdd-state/schemas/checkpoint.schema.json",
-    "schemaHash": "18c16303d57f09cb4eadfc386cb32f949fbf6af1e31b638d68ab899c8a0a2b23"
+    "schemaHash": "9f5f60aa3bc30ab218012333f70abd2c061fdeb2af6bdc6c09ac27092db7a4cd"
   },
   {
     "name": "gdd_state__frontmatter_update",
     "schemaPath": "sdk/mcp/gdd-state/schemas/frontmatter_update.schema.json",
-    "schemaHash": "52522b215aa8aa593bb5c0829e85ef8843a645f11143549047a8526e00b82509"
+    "schemaHash": "ae856dcaa64f1b7f3d616613b7e04b47f740488695d83e8fe1048abde2a15ee6"
   },
   {
     "name": "gdd_state__get",
     "schemaPath": "sdk/mcp/gdd-state/schemas/get.schema.json",
-    "schemaHash": "420bf37c48c84dc64f070a6f0d6ae4bbde92e61ba14c05313c850da3524e3dc9"
+    "schemaHash": "83c14f78f00f1d16f8d7b1f087715d259b0f575da98f40bad17b0ff3a8392cf1"
   },
   {
     "name": "gdd_state__probe_connections",
     "schemaPath": "sdk/mcp/gdd-state/schemas/probe_connections.schema.json",
-    "schemaHash": "c7ea84bf2e103d71f26361229b67e7d15bc2f92ddd494e4afeef67ef514ab57f"
+    "schemaHash": "7558e8a81c90be9fa74281636461a113e4de5c26d34dd4829637ca6956a22275"
   },
   {
     "name": "gdd_state__resolve_blocker",
     "schemaPath": "sdk/mcp/gdd-state/schemas/resolve_blocker.schema.json",
-    "schemaHash": "1a6cd884b5c4eefa60c2f4d45bc37e0b1961433d82799376cecfd271f59af52e"
+    "schemaHash": "60dbe5628ae7919daa4e4a0732be8ae2e07cec5673ef615f68a0f10d0232af7a"
   },
   {
     "name": "gdd_state__set_status",

@@ -50,6 +50,7 @@
 
 const { spawn } = require('child_process');
 const { EventEmitter } = require('events');
+const { sanitizeEnv, readPeerCliAllowlist } = require('./sanitize-env.cjs');
 
 /**
  * Hard cap on the size of a single un-terminated line read from the
@@ -99,7 +100,14 @@ function createAcpClient(opts) {
   const command = opts.command;
   const args = Array.isArray(opts.args) ? opts.args : [];
   const cwd = typeof opts.cwd === 'string' ? opts.cwd : process.cwd();
-  const env = opts.env && typeof opts.env === 'object' ? opts.env : process.env;
+  // Plan 33.5-04 (D-03): when the caller does not supply an explicit env, the
+  // child inherits a SANITIZED env (OS-essential baseline + the configured
+  // peer_cli.env_allowlist) instead of the raw full process.env — so GDD's
+  // ANTHROPIC_API_KEY/GH_TOKEN/GDD_* never leak to spawned peers. An explicit
+  // opts.env still wins (callers/tests can pass a full env).
+  const env = opts.env && typeof opts.env === 'object'
+    ? opts.env
+    : sanitizeEnv(process.env, { allowlist: readPeerCliAllowlist() });
 
   const events = new EventEmitter();
 

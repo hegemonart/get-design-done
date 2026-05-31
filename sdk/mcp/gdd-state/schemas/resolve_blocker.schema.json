@@ -23,6 +23,7 @@
         "text": {
           "type": "string",
           "minLength": 1,
+          "maxLength": 8192,
           "description": "Exact text match against blocker.text. First matching row is removed. Mutually exclusive with index."
         }
       }

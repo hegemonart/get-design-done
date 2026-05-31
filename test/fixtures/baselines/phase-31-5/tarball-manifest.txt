@@ -163,6 +163,8 @@ reference/figma-sandbox.md
 reference/first-principles.md
 reference/form-patterns.md
 reference/framer-motion-patterns.md
+reference/gdd-runtime-audit.md
+reference/gdd-threat-model.md
 reference/gemini-tools.md
 reference/gestalt.md
 reference/heuristics.md
@@ -381,6 +383,7 @@ scripts/lib/peer-cli/adapters/qwen.cjs
 scripts/lib/peer-cli/asp-client.cjs
 scripts/lib/peer-cli/broker-lifecycle.cjs
 scripts/lib/peer-cli/registry.cjs
+scripts/lib/peer-cli/sanitize-env.cjs
 scripts/lib/peer-cli/spawn-cmd.cjs
 scripts/lib/perf-analyzer/cost-regression.cjs
 scripts/lib/perf-analyzer/index.cjs

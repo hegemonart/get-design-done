@@ -11,6 +11,7 @@ import {
   type ConnectionStatus,
 } from '../../../state/types.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -28,6 +29,7 @@ export interface ProbeConnectionsInput {
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as ProbeConnectionsInput;
     if (!Array.isArray(typed.probe_results) || typed.probe_results.length === 0) {
       throwValidation(

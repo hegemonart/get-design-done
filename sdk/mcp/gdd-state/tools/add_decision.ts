@@ -8,6 +8,7 @@
 import { mutate } from '../../../state/index.ts';
 import type { Decision } from '../../../state/types.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -46,6 +47,7 @@ function nextDecisionId(existing: Decision[]): string {
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as AddDecisionInput;
     if (typeof typed.text !== 'string' || typed.text.length === 0) {
       throwValidation('MISSING_FIELD', 'add_decision requires a non-empty text');

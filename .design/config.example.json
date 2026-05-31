@@ -2,5 +2,11 @@
   "reflector": {
     "capability_gap_threshold": 3,
     "capability_gap_scan_enabled": true
+  },
+  "peer_cli": {
+    "env_allowlist": []
+  },
+  "event_stream": {
+    "bind_host": "127.0.0.1"
   }
 }

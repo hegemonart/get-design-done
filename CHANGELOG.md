@@ -4,6 +4,31 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.33.5] - 2026-05-31
+
+### Phase 33.5 — GDD Runtime Security Hardening
+
+Audits and hardens GDD's **own** runtime attack surface — the multi-MCP-server, peer-CLI-spawning, WebSocket-transport-emitting SDK that grew across Phases 20–27 without a formalized security model. Phase 14.5 ships a safety floor for *user code being audited*; this phase is the equivalent for GDD's *own* runtime. Ships a STRIDE threat model + static runtime audit, an outbound-network CI gate, WebSocket bind hardening, gdd-state MCP input validation, peer-CLI env sandboxing, a secret-scan extension + fuzz, a published disclosure policy, and a regression baseline. A decimal release on the v1.33.x arc (CHANGELOG-only, D-01); no new runtime dependency (built-ins only, D-12). 6 plans across Waves A–C.
+
+### Added
+
+- **STRIDE threat model + runtime audit.** `reference/gdd-threat-model.md` models the five in-scope runtime components (hooks, the `gdd-state` MCP server, the peer-CLI broker, the WebSocket transport, the issue-reporter outbound path) with a per-component Assets / Entry-points / STRIDE / Mitigations / Residual treatment and a residual-risk → closing-plan map; `reference/gdd-runtime-audit.md` records the static audit that backs it. Both are registry-tracked.
+- **Outbound-network CI gate.** `scripts/scan-outbound-network.cjs` + `npm run scan:outbound`, wired into the CI `security` job, statically gates **active egress** (require/import of `node:http(s)`/`ws`/`node-fetch`/`axios`/`undici`, `fetch(`, `http(s).get/.request`, `new WebSocket(Server)`, and child-process spawn of `gh`/`curl`/`wget`/`nc`/`ssh`/`scp`) under `hooks/ scripts/ sdk/ bin/`, failing on any active-egress site not under an allowlisted glob in `scripts/security/outbound-allowlist.json` (D-06). Comment-only matches and bare-URL literals are skipped (a URL cannot exfiltrate without a call). This forces Phase 33.6's OpenRouter REST client to explicitly allowlist its new egress.
+- **WebSocket localhost-default bind + timing-safe token.** `scripts/lib/transports/ws.cjs` now defaults its bind host to **127.0.0.1** (was the implicit `0.0.0.0` all-interfaces bind); a remote bind is opt-in via `.design/config.json` `event_stream.bind_host` or the `GDD_WS_BIND_HOST` env override, and `scripts/scan-ws-bind.cjs` gates that the default config would never bind `0.0.0.0`. The Bearer-token compare is upgraded to `crypto.timingSafeEqual` (was `!==`, timing-unsafe); the existing ≥8-char-token rule is retained (D-04).
+- **gdd-state MCP input validation.** `sdk/mcp/gdd-state/tools/shared.ts` gains a `resolveStatePath()` path-traversal guard (rejects `..`-escape / absolute-outside / best-effort symlink-escape on the `GDD_STATE_PATH` override) and an `assertInputWithinLimits()` payload cap (64 KiB input / 8192-char string / depth-32 JSON-bomb guard) wired into all 11 tool handlers; the 11 tool input schemas are tightened with `maxLength`/`maxItems` (and already carried `additionalProperties:false`) (D-08).
+- **Peer-CLI env sandbox (allowlist-forward / default-deny).** A shared `scripts/lib/peer-cli/sanitize-env.cjs` helper builds the spawned child's environment from an OS-essential baseline **plus** an explicit allowlist read from `.design/config.json` `peer_cli.env_allowlist`, applied to both the acp and asp clients. GDD's `ANTHROPIC_API_KEY` / `GH_TOKEN` / `GDD_*` and anything secret-shaped are never forwarded to a spawned peer unless explicitly allowlisted (D-03).
+- **Secret-scan extension + fuzz.** `scripts/lib/redact.cjs` adds three modern token formats — Gemini/GCP `AIza…`, GitHub fine-grained `github_pat_…`, and GitHub server/oauth/user/refresh `gh[sour]_…` — bringing the redaction set to **11 patterns**, with a synthetic-secret fuzz test asserting zero leak per provider format (D-07). The existing PEM/JWT/anthropic/stripe/slack/`ghp_`/AWS/`sk-` patterns are retained.
+- **`SECURITY.md` disclosure policy.** A repo-root `SECURITY.md` documents the supported-versions stance and routes vulnerability reports through **GitHub private security advisories** (the repo Security tab → "Report a vulnerability"); it publishes no email / no PII (D-02) and notes that enabling private vulnerability reporting is a one-line repo setting the maintainer must toggle (D-11).
+- **Regression baseline.** `test/fixtures/baselines/phase-33-5/` freezes the hardened surface — a STRIDE-checklist snapshot, a hardening-surface invariant manifest (ws default host, redact pattern count, sanitize-env module + allowlist key, 11 gdd-state schemas, allowlist/threat-model/audit paths), and a synthetic secret-fuzz corpus — pinned by `test/suite/phase-33-5-baseline.test.cjs` so a future change cannot silently undo a hardened surface.
+
+### Notes
+
+- **WebSocket event-stream now binds `127.0.0.1` by default (was `0.0.0.0`).** Opt into a remote bind via `.design/config.json` `event_stream.bind_host` or the `GDD_WS_BIND_HOST` env override. This is **not marked BREAKING** — the event stream is a token-gated observability surface (Bearer auth ships on every upgrade), and the safe-by-default localhost bind only restricts an unintended off-box exposure; the opt-in escape hatch preserves the remote-bind workflow for anyone who relied on it.
+- All Phase 33.5 tests are hermetic (no network, no live peer; the WS test binds ephemeral localhost; the outbound + bind gates are static scans), so the default `npm test` stays green (D-10).
+- 6-manifest lockstep at **v1.33.5** (`package.json` + `package-lock.json` (root + `packages.""`) + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`). Version-sync hygiene done upfront (D-09): `OFF_CADENCE_VERSIONS.add('1.33.5')` + the 13 live-pinned `manifests-version.txt` baselines forward-propagated 1.33.0 → 1.33.5.
+
+---
+
 ## [1.33.0] - 2026-05-30
 
 ### Phase 33 — Skill Behavior Tests (Pressure-Scenario Harness)

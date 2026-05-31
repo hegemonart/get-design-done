@@ -11,6 +11,7 @@
 // This mirrors the invariant in the plan: "Tool errors are returned as
 // {success:false, error} — handlers never propagate exceptions."
 
+import path from 'node:path';
 import {
   ValidationError,
   OperationFailedError,
@@ -50,17 +51,126 @@ export function getSessionId(): string {
 }
 
 /**
- * Resolve the target STATE.md path from the environment. Mirrors the
- * plan's contract: `process.env.GDD_STATE_PATH ?? .design/STATE.md`.
+ * Resolve the target STATE.md path from the environment, with a
+ * PATH-TRAVERSAL guard (Plan 33.5-03, D-08).
  *
- * Resolution is relative to `process.cwd()` when the env override is
- * missing or relative. Tests and the server both call this so the
- * resolution logic stays in one place.
+ * Resolution: `process.env.GDD_STATE_PATH ?? .design/STATE.md`. The
+ * path-traversal threat this guards against is a RELATIVE override that uses
+ * `..` to escape the project root — that is REJECTED with a
+ * `VALIDATION_STATE_PATH_ESCAPE` error. An ABSOLUTE override is an explicit
+ * operator choice (a relocated state file, a CI tmp `.design`) and is ALLOWED,
+ * normalized (D-08) — it is NOT rejected merely for living outside cwd (that
+ * would break legitimate operator overrides, and a realpath-based boundary
+ * check diverges across platforms, e.g. macOS /var → /private/var).
+ *
+ * Tests and the server both call this so the resolution logic stays in one
+ * place.
  */
 export function resolveStatePath(): string {
   const override = process.env['GDD_STATE_PATH'];
-  if (typeof override === 'string' && override.length > 0) return override;
-  return '.design/STATE.md';
+  if (typeof override !== 'string' || override.length === 0) {
+    return '.design/STATE.md';
+  }
+
+  // ABSOLUTE override = explicit operator choice → allow, normalized (D-08).
+  if (path.isAbsolute(override)) {
+    return path.resolve(override);
+  }
+
+  // RELATIVE override: resolve against the project root and REJECT any `..`
+  // traversal that escapes the boundary. In-boundary iff it equals root or
+  // sits beneath `root + sep`.
+  const root = path.resolve(process.cwd());
+  const resolved = path.resolve(root, override);
+  const withSep = root.endsWith(path.sep) ? root : root + path.sep;
+  if (resolved !== root && !resolved.startsWith(withSep)) {
+    throwValidation(
+      'STATE_PATH_ESCAPE',
+      `GDD_STATE_PATH (relative) escapes the project boundary: ${override}`,
+      { raw: override, resolved, root },
+    );
+  }
+  return resolved;
+}
+
+/**
+ * Documented input limits for the gdd-state tools (Plan 33.5-03, D-08).
+ * Defends against JSON-bomb / memory-exhaustion inputs. The schema
+ * `maxLength` bounds are the declarative twin of MAX_STRING_LEN.
+ */
+export const MAX_INPUT_BYTES = 64 * 1024; // 64 KiB serialized input cap
+export const MAX_STRING_LEN = 8192; // longest single free-form string field
+export const MAX_DEPTH = 32; // deepest object/array nesting
+
+interface InputLimitOpts {
+  maxInputBytes?: number;
+  maxStringLen?: number;
+  maxDepth?: number;
+}
+
+/**
+ * Reject oversized / pathologically deep tool inputs BEFORE processing
+ * (Plan 33.5-03, D-08). Throws a `VALIDATION_INPUT_*` error on breach:
+ *   - INPUT_TOO_LARGE   — serialized JSON byte-size exceeds the cap
+ *   - INPUT_FIELD_TOO_LARGE — a single string field exceeds MAX_STRING_LEN
+ *   - INPUT_TOO_DEEP    — object/array nesting exceeds MAX_DEPTH
+ * Handlers call this on their raw input; it is also unit-tested directly.
+ */
+export function assertInputWithinLimits(
+  input: unknown,
+  opts?: InputLimitOpts,
+): void {
+  const maxBytes = opts?.maxInputBytes ?? MAX_INPUT_BYTES;
+  const maxStr = opts?.maxStringLen ?? MAX_STRING_LEN;
+  const maxDepth = opts?.maxDepth ?? MAX_DEPTH;
+
+  // Walk first so a deep/long field is caught even on huge inputs, bounding
+  // the depth so the walk itself cannot be turned into the attack.
+  const walk = (node: unknown, depth: number): void => {
+    if (depth > maxDepth) {
+      throwValidation(
+        'INPUT_TOO_DEEP',
+        `Input nesting exceeds the maximum depth of ${maxDepth}`,
+        { maxDepth },
+      );
+    }
+    if (typeof node === 'string') {
+      if (node.length > maxStr) {
+        throwValidation(
+          'INPUT_FIELD_TOO_LARGE',
+          `A string field exceeds the maximum length of ${maxStr}`,
+          { maxStringLen: maxStr, length: node.length },
+        );
+      }
+      return;
+    }
+    if (Array.isArray(node)) {
+      for (const item of node) walk(item, depth + 1);
+      return;
+    }
+    if (node !== null && typeof node === 'object') {
+      for (const value of Object.values(node as Record<string, unknown>)) {
+        walk(value, depth + 1);
+      }
+    }
+  };
+  walk(input, 0);
+
+  // Total serialized byte-size cap (JSON-bomb guard). Guard against a circular
+  // structure — JSON.stringify would throw; treat that as a rejectable input.
+  let bytes: number;
+  try {
+    bytes = Buffer.byteLength(JSON.stringify(input) ?? '');
+  } catch {
+    throwValidation('INPUT_TOO_LARGE', 'Input is not serializable JSON', {});
+  }
+  if (bytes > maxBytes) {
+    throwValidation(
+      'INPUT_TOO_LARGE',
+      `Serialized input (${bytes} bytes) exceeds the maximum of ${maxBytes} bytes`,
+      { maxInputBytes: maxBytes, bytes },
+    );
+  }
 }
 
 /** Narrow helper: is this a well-known Stage string? */

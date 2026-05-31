@@ -45,10 +45,29 @@ const PATTERNS = [
     type: 'slack',
     re: /\bxox[baprs]-[A-Za-z0-9-]{10,}\b/g,
   },
-  // GitHub personal access token.
+  // GitHub personal access token (classic).
   {
     type: 'github_pat',
     re: /\bghp_[A-Za-z0-9]{36,}\b/g,
+  },
+  // Google / Gemini / GCP API key (AIza…). Distinct shape — no collision
+  // with any existing pattern; placed with the specific patterns (D-07, 33.5-05).
+  {
+    type: 'gemini',
+    re: /\bAIza[0-9A-Za-z_\-]{35}\b/g,
+  },
+  // GitHub fine-grained PAT (github_pat_…). Distinct prefix from classic
+  // `ghp_` — both coexist (D-07, 33.5-05).
+  {
+    type: 'github_pat_fine_grained',
+    re: /\bgithub_pat_[0-9A-Za-z_]{22,}\b/g,
+  },
+  // GitHub server/oauth/user/refresh tokens (ghs_/gho_/ghu_/ghr_). The
+  // `[sour]` class excludes `p`, so this never collides with `ghp_` above
+  // (D-07, 33.5-05).
+  {
+    type: 'github_token',
+    re: /\bgh[sour]_[A-Za-z0-9]{36,}\b/g,
   },
   // AWS access key ID.
   {

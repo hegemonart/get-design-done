@@ -1,0 +1,29 @@
+{
+  "description": "Canonical ACTIVE-egress allowlist consumed by scripts/scan-outbound-network.cjs (Phase 33.5-04). Each entry permits the matched file(s) to make outbound network calls / child-process spawns of gh|curl|wget. Any ACTIVE-egress site (require/import of node:http(s)|http(s)|ws|node-fetch|axios|undici, fetch(, http(s).get/.request(, new WebSocket/new WebSocketServer/WebSocketServer(, or spawn/spawnSync/exec* of gh|curl|wget|nc|ssh|scp) under hooks/ scripts/ sdk/ bin/ that is NOT matched by a glob below fails the gate. Bare https?:// string literals (reference/comment URLs, frozen destination constants, spec links) are NOT gated — a bare URL cannot exfiltrate without an accompanying call; those are documented in reference/gdd-runtime-audit.md and covered by gitleaks + the threat model. Directory globs (dir/**) are preferred so a new helper added to an already-trusted module does not silently trip the gate, while every glob is asserted to resolve to >=1 real file (test/suite/phase-33-5-audit.test.cjs) so the gate cannot be defeated by an entry that matches nothing. Paths are forward-slash and matched relative to the repo root.",
+  "entries": [
+    {
+      "glob": "scripts/lib/figma-extract/**",
+      "justification": "Figma REST extractor — pull.cjs/styles-resolver.cjs fetch the read-only Figma API (https://api.figma.com/v1) with a token read from FIGMA_TOKEN/FIGMA_PERSONAL_ACCESS_TOKEN env (never persisted/logged), and receiver.cjs runs an EPHEMERAL local node:http handshake server (127.0.0.1, bound for one extract run then exits). Legitimate, read-only, user-initiated."
+    },
+    {
+      "glob": "scripts/lib/issue-reporter/**",
+      "justification": "Issue reporter — outbound is via the `gh` CLI spawn ONLY (gh-submit.cjs/dedup.cjs/gh-absent-fallback.cjs use spawn/spawnSync('gh')); it rides gh's own logged-in auth, the destination repo is frozen (destination.cjs), and an env + .design/config.json kill-switch gates it. No raw HTTP; no GDD-held secret is forwarded."
+    },
+    {
+      "glob": "scripts/lib/peer-cli/**",
+      "justification": "Peer-CLI broker — spawns LOCAL peer binaries (ACP/ASP clients) over stdio (child_process.spawn, no shell); this is IPC, not network egress. The child env is sanitized to allowlist-forward (default-deny) by 33.5-04 so GDD's ANTHROPIC_API_KEY/GH_TOKEN/GDD_* are not leaked to peers."
+    },
+    {
+      "glob": "scripts/lib/transports/ws.cjs",
+      "justification": "Event-stream WebSocket transport — runs a WebSocketServer over a node:http upgrade. Hardened in 33.5-03: localhost (127.0.0.1) default bind + opt-in remote, Bearer-token auth (>=8 chars) upgraded to a timing-safe compare. Server-side only; no outbound client connection."
+    },
+    {
+      "glob": "scripts/e2e/**",
+      "justification": "Headless E2E runner (run-headless.ts) — a key-gated live Anthropic API run used only as test infrastructure; gated on ANTHROPIC_API_KEY presence + main-branch and never part of the default `npm test` suite (D-10)."
+    },
+    {
+      "glob": "scripts/lib/authority-watcher/**",
+      "justification": "Authority-feed watcher — the design-authority feed module; the live article fetch is delegated to the agents/design-authority-watcher.md runner, and index.cjs is the pure-CommonJS classifier that consumes already-fetched records. Allowlisted so any direct outbound fetch of the authority list added here stays pre-approved rather than tripping the gate."
+    }
+  ]
+}
