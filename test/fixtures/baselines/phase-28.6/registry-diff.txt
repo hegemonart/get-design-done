@@ -60,6 +60,7 @@ debugger-philosophy: reference/debugger-philosophy.md
 DEPRECATIONS: reference/DEPRECATIONS.md
 design-system-guidance: reference/design-system-guidance.md
 design-systems-catalog: reference/design-systems-catalog.md
+email-design: reference/email-design.md
 emotional-design: reference/emotional-design.md
 error-recovery: reference/error-recovery.md
 figma-sandbox: reference/figma-sandbox.md
