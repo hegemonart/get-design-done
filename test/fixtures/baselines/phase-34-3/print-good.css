@@ -1,0 +1,36 @@
+/* Fixture: a minimal but VALID print stylesheet — all five statically-checkable
+   classes satisfied, so validatePrintCss(print-good) -> { ok:true, violations:[] }.
+   Frozen here as the phase-34-3 regression baseline (Phase 34.3-04, D-05).
+
+   PR-PAGE-01  @page rule present (the print box model)
+   PR-BLEED-01 bleed: + marks: crop signal present
+   PR-CMYK-01  cmyk() color + a /* CMYK target */ color-profile note present
+   PR-FONT-01  @font-face with an embedded src: present
+   PR-DPI-01   image-resolution: 300dpi present
+*/
+
+/* CMYK target — color-profile note for the RIP (PR-CMYK-01) */
+:root { color-profile: url(./CoatedFOGRA39.icc); }
+
+@page {
+  size: A4;
+  margin: 12mm;
+  marks: crop cross;   /* PR-BLEED-01: crop/registration marks */
+  bleed: 3mm;          /* PR-BLEED-01: 3mm bleed box */
+}
+
+@font-face {
+  font-family: "Brand";
+  src: url(./Brand.woff2) format("woff2");   /* PR-FONT-01: embedded font */
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family: "Brand", serif;
+  color: cmyk(0% 80% 95% 0%);   /* PR-CMYK-01: CMYK color value */
+}
+
+img {
+  image-resolution: 300dpi;     /* PR-DPI-01: 300dpi raster fallback */
+}
