@@ -390,6 +390,19 @@ OFF_CADENCE_VERSIONS.add('1.34.1');
 //   - 1.34.2 → Phase 34.2 (email); off-cadence decimal on the 1.34.x arc.
 OFF_CADENCE_VERSIONS.add('1.34.2');
 
+// Phase 34.3 — Non-Web Output Layer: Print/PDF (v1.34.3, 2026-05-31). THIRD and
+// FINAL sub-phase of the split Phase 34 — completing it completes the parent
+// Phase 34 (native 34.1 + email 34.2 + print 34.3). Off-cadence DECIMAL release
+// on the v1.34.x arc (1.34.2 -> 1.34.3; CHANGELOG-only, D-01). Ships the
+// print-constraint catalogue (reference/print-design.md, registered) + the
+// static print-CSS validator (scripts/lib/print/validate-print-css.cjs, no
+// pdfkit/paged dep) + the pdf-executor (Paged.js-compatible HTML/CSS + PDFKit
+// fallback, D-02) + the print-renderer connection (optional render-test,
+// degrade-to-static-validator, D-03) + the design-context-builder `print` route
+// (seam CLOSED) + the design-verifier consolidated non-web verify section.
+//   - 1.34.3 → Phase 34.3 (print); off-cadence decimal closing the 1.34.x arc.
+OFF_CADENCE_VERSIONS.add('1.34.3');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

@@ -122,6 +122,14 @@ GDD also generates **email templates** — the project-type detector routes an `
 
 The constraints live in [`reference/email-design.md`](reference/email-design.md) — table-based layout (no flexbox/grid/`position`), inline styles (no `<style>` sheet in Gmail), MSO conditional comments for Outlook's Word engine, dark-mode `color-scheme` handling, ~600px width, and the top-20-client quirks. A deterministic static checker ([`scripts/lib/email/validate-email-html.cjs`](scripts/lib/email/validate-email-html.cjs)) flags the statically-verifiable subset (`EM-LAYOUT`/`EM-STYLE`/`EM-MSO`/`EM-DARK`). Cross-client rendered verification via [`Litmus`](connections/litmus.md) (or Email-on-Acid) is **optional** — when absent the verify stage degrades to the static validator. Email generation is opt-in; **web stays the default**.
 
+### Print/PDF output (v1.34.3)
+
+GDD also generates **print/PDF** output — the project-type detector routes a `print` brief to a dedicated executor that honors the production constraints screen-RGB web HTML ignores. This **completes the Non-Web Output Layer** (native + email + print all shipped):
+
+- **[`pdf-executor`](agents/pdf-executor.md)** — generates **Paged.js-compatible print HTML/CSS** (with PDFKit-fallback notes for Chrome-less runtimes) against the constraint catalogue, with the static validator as its own self-check. It is an agent-prompt, not a compiler — **no headless Chrome, no PDFKit, no network** is needed to produce the print HTML/CSS.
+
+The constraints live in [`reference/print-design.md`](reference/print-design.md) — the `@page` box model (size/margin/marks), bleed box + crop/registration marks, CMYK color-space awareness (print is subtractive CMYK, not screen RGB), font embedding/outlining (print RIPs have no web fonts), and a 300dpi raster fallback. A deterministic static checker ([`scripts/lib/print/validate-print-css.cjs`](scripts/lib/print/validate-print-css.cjs)) flags the statically-verifiable subset (`PR-PAGE`/`PR-BLEED`/`PR-CMYK`/`PR-FONT`/`PR-DPI`). Rendered PDF/page verification via the optional [`print-renderer`](connections/print-renderer.md) connection (Paged.js/headless-Chrome or PDFKit) is **optional** — when absent the verify stage degrades to the static validator. Print generation is opt-in; **web stays the default**.
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

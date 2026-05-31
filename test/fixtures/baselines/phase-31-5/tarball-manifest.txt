@@ -44,6 +44,7 @@ agents/gdd-graph-refresh.md
 agents/gdd-intel-updater.md
 agents/gdd-learnings-extractor.md
 agents/motion-mapper.md
+agents/pdf-executor.md
 agents/perf-analyzer.md
 agents/prototype-gate.md
 agents/quality-gate-runner.md
@@ -70,6 +71,7 @@ connections/paper-design.md
 connections/pencil-dev.md
 connections/pinterest.md
 connections/preview.md
+connections/print-renderer.md
 connections/refero.md
 connections/storybook.md
 connections/xcode-simulator.md
@@ -221,6 +223,7 @@ reference/prices/opencode.md
 reference/prices/qwen.md
 reference/prices/trae.md
 reference/prices/windsurf.md
+reference/print-design.md
 reference/priority-matrix.md
 reference/project-skills-guide.md
 reference/proportion-systems.md
@@ -410,6 +413,7 @@ scripts/lib/pipeline-runner/index.ts
 scripts/lib/pipeline-runner/stage-handlers.ts
 scripts/lib/pipeline-runner/state-machine.ts
 scripts/lib/pipeline-runner/types.ts
+scripts/lib/print/validate-print-css.cjs
 scripts/lib/probe-optional.cjs
 scripts/lib/prompt-dedup/index.cjs
 scripts/lib/prompt-sanitizer/index.ts
