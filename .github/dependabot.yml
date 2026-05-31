@@ -4,9 +4,9 @@ version: 2
 #
 # Why this file exists: by default Dependabot enumerates every package.json in
 # the repo, including the inert framework-detection fixtures under
-# `test-fixture/src/ui-detection/*/package.json`. Those manifests are NEVER
-# `npm install`-ed — they exist purely so `tests/detect-ui-root.test.cjs` and
-# `tests/start-findings-engine.test.cjs` can read dependency NAMES out of them
+# `test/fixtures/src/ui-detection/*/package.json`. Those manifests are NEVER
+# `npm install`-ed — they exist purely so `test/suite/detect-ui-root.test.cjs` and
+# `test/suite/start-findings-engine.test.cjs` can read dependency NAMES out of them
 # to verify framework-detection heuristics. The vulnerable code these fixtures
 # pin (vite / next / react-router / fastify) is never executed in CI or
 # production, so version bumps there are noise.
