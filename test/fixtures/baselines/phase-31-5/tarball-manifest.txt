@@ -10,6 +10,7 @@ agents/a11y-mapper.md
 agents/component-benchmark-harvester.md
 agents/component-benchmark-synthesizer.md
 agents/component-taxonomy-mapper.md
+agents/compose-executor.md
 agents/design-advisor.md
 agents/design-assumptions-analyzer.md
 agents/design-auditor.md
@@ -37,6 +38,7 @@ agents/design-start-writer.md
 agents/design-update-checker.md
 agents/design-verifier-gate.md
 agents/design-verifier.md
+agents/flutter-executor.md
 agents/gdd-graph-refresh.md
 agents/gdd-intel-updater.md
 agents/gdd-learnings-extractor.md
@@ -44,6 +46,7 @@ agents/motion-mapper.md
 agents/perf-analyzer.md
 agents/prototype-gate.md
 agents/quality-gate-runner.md
+agents/swift-executor.md
 agents/token-mapper.md
 agents/visual-hierarchy-mapper.md
 bin/gdd-graph
@@ -51,6 +54,7 @@ bin/gdd-mcp
 bin/gdd-sdk
 bin/gdd-state-mcp
 connections/21st-dev.md
+connections/android-emulator.md
 connections/chromatic.md
 connections/claude-design.md
 connections/connections.md
@@ -66,6 +70,7 @@ connections/pinterest.md
 connections/preview.md
 connections/refero.md
 connections/storybook.md
+connections/xcode-simulator.md
 docs/i18n/README.de.md
 docs/i18n/README.fr.md
 docs/i18n/README.it.md

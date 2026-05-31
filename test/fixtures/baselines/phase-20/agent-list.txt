@@ -3,6 +3,7 @@ a11y-mapper.md
 component-benchmark-harvester.md
 component-benchmark-synthesizer.md
 component-taxonomy-mapper.md
+compose-executor.md
 design-advisor.md
 design-assumptions-analyzer.md
 design-auditor.md
@@ -30,6 +31,7 @@ design-start-writer.md
 design-update-checker.md
 design-verifier-gate.md
 design-verifier.md
+flutter-executor.md
 gdd-graph-refresh.md
 gdd-intel-updater.md
 gdd-learnings-extractor.md
@@ -37,5 +39,6 @@ motion-mapper.md
 perf-analyzer.md
 prototype-gate.md
 quality-gate-runner.md
+swift-executor.md
 token-mapper.md
 visual-hierarchy-mapper.md

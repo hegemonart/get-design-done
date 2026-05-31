@@ -1,4 +1,18 @@
 {
+  "compose-executor.md": [
+    "color",
+    "default-tier",
+    "description",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "size_budget_rationale",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
   "design-advisor.md": [
     "color",
     "default-tier",
@@ -335,6 +349,34 @@
     "parallel-safe",
     "reads-only",
     "size_budget",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
+  "flutter-executor.md": [
+    "color",
+    "default-tier",
+    "description",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "size_budget_rationale",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
+  "swift-executor.md": [
+    "color",
+    "default-tier",
+    "description",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "size_budget_rationale",
     "tier-rationale",
     "tools",
     "typical-duration-seconds",
