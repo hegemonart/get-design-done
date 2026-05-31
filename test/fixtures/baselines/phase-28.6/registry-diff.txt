@@ -92,6 +92,7 @@ motion-map-contract: reference/output-contracts/motion-map.schema.json
 motion-spring: reference/motion-spring.md
 motion-transition-taxonomy: reference/motion-transition-taxonomy.md
 onboarding-progressive-disclosure: reference/onboarding-progressive-disclosure.md
+openrouter-tier-mapping: reference/openrouter-tier-mapping.md
 palette-catalog: reference/palette-catalog.md
 palettes-data: reference/data/palettes.csv
 parallelism-rules: reference/parallelism-rules.md
@@ -111,6 +112,7 @@ prices-cursor: reference/prices/cursor.md
 prices-gemini: reference/prices/gemini.md
 prices-kilo: reference/prices/kilo.md
 prices-opencode: reference/prices/opencode.md
+prices-openrouter: reference/prices.openrouter.md
 prices-qwen: reference/prices/qwen.md
 prices-trae: reference/prices/trae.md
 prices-windsurf: reference/prices/windsurf.md

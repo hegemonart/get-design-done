@@ -59,6 +59,7 @@ connections/figma.md
 connections/gdd-state.md
 connections/graphify.md
 connections/magic-patterns.md
+connections/openrouter.md
 connections/paper-design.md
 connections/pencil-dev.md
 connections/pinterest.md
@@ -185,6 +186,7 @@ reference/motion-spring.md
 reference/motion-transition-taxonomy.md
 reference/motion.md
 reference/onboarding-progressive-disclosure.md
+reference/openrouter-tier-mapping.md
 reference/output-contracts/motion-map.schema.json
 reference/output-contracts/planner-decision.schema.json
 reference/output-contracts/verifier-decision.schema.json
@@ -195,6 +197,7 @@ reference/peer-protocols.md
 reference/perf-budget.md
 reference/performance.md
 reference/platforms.md
+reference/prices.openrouter.md
 reference/prices/antigravity.md
 reference/prices/augment.md
 reference/prices/claude.md
@@ -371,6 +374,7 @@ scripts/lib/logger/types.ts
 scripts/lib/mcp-tools-lint/index.cjs
 scripts/lib/mcp-tools-lint/index.d.cts
 scripts/lib/mmr-rerank.cjs
+scripts/lib/openrouter/catalog-fetcher.cjs
 scripts/lib/parallelism-engine/concurrency-tuner.cjs
 scripts/lib/parallelism-engine/concurrency-tuner.d.cts
 scripts/lib/parse-contract.cjs
@@ -425,6 +429,7 @@ scripts/lib/snapshot-reader/index.cjs
 scripts/lib/snapshot-reader/index.d.cts
 scripts/lib/spring.cjs
 scripts/lib/start-findings-engine.cjs
+scripts/lib/tier-resolver-openrouter.cjs
 scripts/lib/tier-resolver.cjs
 scripts/lib/tool-scoping/index.ts
 scripts/lib/tool-scoping/parse-agent-tools.ts
@@ -567,6 +572,7 @@ skills/new-cycle/milestone-completeness-rubric.md
 skills/new-project/SKILL.md
 skills/next/SKILL.md
 skills/note/SKILL.md
+skills/openrouter-status/SKILL.md
 skills/optimize/SKILL.md
 skills/pause/SKILL.md
 skills/peer-cli-add/SKILL.md

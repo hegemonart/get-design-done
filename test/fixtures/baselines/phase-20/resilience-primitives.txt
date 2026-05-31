@@ -30,5 +30,6 @@ relevance-counter.cjs
 runtime-detect.cjs
 spring.cjs
 start-findings-engine.cjs
+tier-resolver-openrouter.cjs
 tier-resolver.cjs
 touches-pattern-miner.cjs
