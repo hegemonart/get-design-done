@@ -343,6 +343,16 @@ OFF_CADENCE_VERSIONS.add('1.32.0');
 //   - 1.33.0 → Phase 33 (skill-behavior); on-cadence MINOR from 1.32.0.
 OFF_CADENCE_VERSIONS.add('1.33.0');
 
+// Phase 33.5 — GDD Runtime Security Hardening (v1.33.5, 2026-05-31). Decimal
+// sub-phase on the v1.33.x arc (1.33.0 -> 1.33.5; CHANGELOG-only, D-01).
+// Ships the STRIDE threat model + runtime audit + outbound-network CI gate,
+// WebSocket localhost-default bind + timing-safe token, gdd-state path-traversal
+// guard + payload cap + 11 tightened schemas, peer-CLI env sandbox (allowlist-
+// forward), the redact secret-scan extension (Gemini + GitHub fine-grained/server)
+// + fuzz, and SECURITY.md. Registered off-cadence from the 1.33.0 parent.
+//   - 1.33.5 → Phase 33.5 (runtime-security); off-cadence sub-phase from 1.33.0.
+OFF_CADENCE_VERSIONS.add('1.33.5');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

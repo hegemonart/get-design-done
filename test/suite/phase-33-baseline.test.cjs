@@ -62,24 +62,29 @@ test('33-06: marketplace.json Tier-2 lockstep (metadata.version + plugins[0].ver
 
 // ── 3. CHANGELOG ────────────────────────────────────────────────────────────────
 
-test('33-06: CHANGELOG has a [1.33.0] block at the top (D-01)', () => {
+test('33-06: CHANGELOG carries the [1.33.0] block + BREAKING shim-removal note (top-most heading is the live release)', () => {
   const cl = read('CHANGELOG.md');
-  assert.match(cl, /## \[1\.33\.0\]/, 'CHANGELOG must carry a ## [1.33.0] entry (D-01)');
-  // It must be the top-most release heading.
+  // The Phase-33 [1.33.0] block must remain in the CHANGELOG (this phase's history).
+  assert.match(cl, /## \[1\.33\.0\]/, 'CHANGELOG must retain the ## [1.33.0] entry (D-01)');
+  // The top-most release heading tracks the LIVE version (version-agnostic — a
+  // later decimal release on the 1.33.x arc, e.g. 1.33.5, legitimately sits above
+  // [1.33.0]; matches the phase-32 idiom so closeout bumps don't break this test).
+  const live = readJsonRel('package.json').version;
   const firstHeading = cl.match(/^## \[(\d+\.\d+\.\d+)\]/m);
   assert.ok(firstHeading, 'CHANGELOG has at least one release heading');
-  assert.equal(firstHeading[1], '1.33.0', 'the top-most release heading must be [1.33.0]');
-  // The BREAKING shim-removal migration note must be present.
+  assert.equal(firstHeading[1], live, `the top-most release heading must be [${live}] (the live version)`);
+  // The BREAKING shim-removal migration note must be present (Phase-33 [1.33.0] body).
   assert.match(cl, /import from `sdk\/…` instead|import from sdk\/\.\.\. instead|sdk\/…` instead/,
     'CHANGELOG [1.33.0] must carry the BREAKING shim-removal migration note (import from sdk/ instead)');
 });
 
 // ── 4. phase-33 manifests-version baseline = live version ───────────────────────
 
-test('33-06: phase-33/manifests-version.txt baseline = 1.33.0 == live package version', () => {
+test('33-06: phase-33/manifests-version.txt baseline matches the live package version (D-09 forward-prop)', () => {
+  // Version-agnostic (phase-32 idiom): the phase-33 baseline is a D-09 forward-prop
+  // target, so a later decimal release (1.33.5) advances it in lockstep with live.
   const baseline = readBaseline('manifests-version.txt').replace(/\s+$/, '');
   const live = readJsonRel('package.json').version;
-  assert.equal(baseline, '1.33.0', 'phase-33 manifests-version.txt must be 1.33.0');
   assert.equal(baseline, live, `phase-33 manifests-version.txt (${baseline}) != package.json version (${live})`);
 });
 
