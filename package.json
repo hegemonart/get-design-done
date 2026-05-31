@@ -113,6 +113,7 @@
     "ws": "^8.20.0"
   },
   "overrides": {
-    "fast-json-patch": "^3.1.1"
+    "fast-json-patch": "^3.1.1",
+    "qs": ">=6.15.2"
   }
 }
