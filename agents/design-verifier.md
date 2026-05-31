@@ -354,21 +354,17 @@ In DESIGN-VERIFICATION.md, add a `## Phase 4B — Screenshot Evidence` section l
 
 ---
 
-## Phase 4D — Native Verify (no-DOM targets)
+## Phase 4D — Non-Web Verify (no-DOM targets)
 
-When `<project_type>` in DESIGN-CONTEXT.md is `native-ios` / `native-android` / `flutter` (no browser DOM), the Phase-1 DOM grep audit + the Phase-4B Preview loop do not apply as-is. Run instead:
+When `<project_type>` is a **no-DOM target** — `native-ios`/`native-android`/`flutter`, `email`, or `print` — the Phase-1 web DOM grep + the Phase-4B Preview loop do not apply as-is. Route by `<project_type>` to the matching constraint/structural audit **by delegation** (the per-type rules live in the reference, never inlined here), with the optional render-connection as a degrade-able enhancement — the Phase-4B precedent:
 
-- **Snapshot audit** — IF a simulator/emulator screenshot is supplied (via `connections/xcode-simulator.md`, `connections/android-emulator.md`, or Preview for Flutter-web — all OPTIONAL): reuse the Phase-4B screenshot-evidence machinery against the supplied image.
-- **Code-only structural audit** (DEFAULT — no screenshot/simulator): verify the generated native source structurally — expected SwiftUI views / Compose composables / Flutter widgets present + token-bridge usage — instead of rendered pixels. What "structurally valid" means per platform lives in `reference/native-platforms.md` (do not inline it). Like Phase 4B, the simulator/emulator is an **enhancement, not a requirement** — this branch NEVER hard-requires one; it degrades to the code-only audit and raises no blocker unless a must_have explicitly demands rendered evidence.
+| `<project_type>` | reference (authority) + static audit | optional render-connection (degrade if absent) |
+|---|---|---|
+| `native-ios` / `native-android` / `flutter` | `reference/native-platforms.md` — **code-only structural audit**: expected SwiftUI views / Compose composables / Flutter widgets present + token-bridge usage (a snapshot audit when a screenshot is supplied) | `xcode-simulator` / `android-emulator` / Preview (Flutter-web) → degrade to the code-only structural audit |
+| `email` | `reference/email-design.md` + `scripts/lib/email/validate-email-html.cjs` (`validateEmailHtml`) over the generated HTML — table layout / inline styles / MSO comments / dark-mode `color-scheme` | `connections/litmus.md` cross-client screenshots → degrade to the static validator / code-only |
+| `print` | `reference/print-design.md` + `scripts/lib/print/validate-print-css.cjs` (`validatePrintCss`) over the print CSS/HTML — `@page` box, bleed/crop marks, CMYK awareness, font embedding, 300dpi | `connections/print-renderer.md` (Paged.js-headless / PDFKit render) → degrade to the static validator / code-only |
 
----
-
-## Phase 4E — Email Verify (project_type: email)
-
-When `<project_type>` is `email` (no browser DOM — the Phase-1 DOM grep + Phase-4B Preview loop do not apply), run an email-constraint audit BY DELEGATION (the ~30 constraints live in `reference/email-design.md` — the authority; do NOT inline them):
-
-- **Static constraint audit** (DEFAULT) — run `scripts/lib/email/validate-email-html.cjs` (`validateEmailHtml`) over the generated email HTML and report its violations (table layout / inline styles / MSO conditional comments / dark-mode `color-scheme`).
-- **Rendered enhancement** (OPTIONAL) — IF the Litmus connection (`connections/litmus.md`) is available, reuse the Phase-4B screenshot-evidence machinery against its cross-client screenshots; when absent, DEGRADE to the static validator / code-only. Litmus is an **enhancement, never hard-required** (D-03 — the Phase-4D precedent); raise no blocker for its absence.
+**Degrade posture (D-03, the Phase-4B precedent — applies to every row):** the render-connection (simulator/emulator/Litmus/print-render) is an **enhancement, NEVER hard-required**. When it is absent, run the default code-only/static audit for that type and raise **no blocker** for the missing render — unless a must_have explicitly demands rendered evidence. Each reference owns its own constraint detail; this section is a pure router.
 
 ---
 
