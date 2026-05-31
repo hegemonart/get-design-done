@@ -15,6 +15,7 @@ import { read, transition } from '../../../state/index.ts';
 import { isStage, type Stage } from '../../../state/types.ts';
 import { TransitionGateFailed } from '../../../errors/index.ts';
 import {
+  assertInputWithinLimits,
   emitStateTransition,
   errorResponse,
   okResponse,
@@ -32,6 +33,7 @@ export interface TransitionStageInput {
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as TransitionStageInput;
     if (!isStage(typed.to)) {
       throwValidation(

@@ -9,6 +9,7 @@
 import { mutate } from '../../../state/index.ts';
 import type { Blocker } from '../../../state/types.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -28,6 +29,7 @@ export interface ResolveBlockerInput {
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as ResolveBlockerInput;
     const hasIndex = typeof typed.index === 'number';
     const hasText = typeof typed.text === 'string' && typed.text.length > 0;

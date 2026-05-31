@@ -12,6 +12,7 @@
 import { mutate } from '../../../state/index.ts';
 import type { MustHave } from '../../../state/types.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -46,6 +47,7 @@ function nextMustHaveId(existing: MustHave[]): string {
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as AddMustHaveInput;
     if (typeof typed.text !== 'string' || typed.text.length === 0) {
       throwValidation(

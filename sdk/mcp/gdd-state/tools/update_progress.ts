@@ -6,6 +6,7 @@
 
 import { mutate } from '../../../state/index.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -35,6 +36,7 @@ const STATUSES = new Set([
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as UpdateProgressInput;
     if (typed.task_progress === undefined && typed.status === undefined) {
       throwValidation(

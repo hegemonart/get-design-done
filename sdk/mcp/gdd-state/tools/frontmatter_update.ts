@@ -10,6 +10,7 @@
 
 import { mutate } from '../../../state/index.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -38,6 +39,7 @@ function isScalar(v: unknown): v is string | number | boolean {
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as FrontmatterUpdateInput;
     if (
       typed.patch === undefined ||

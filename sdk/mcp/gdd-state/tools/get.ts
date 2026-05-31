@@ -9,6 +9,7 @@
 import { read } from '../../../state/index.ts';
 import type { ParsedState } from '../../../state/types.ts';
 import {
+  assertInputWithinLimits,
   errorResponse,
   okResponse,
   resolveStatePath,
@@ -38,6 +39,7 @@ function project(state: ParsedState, fields: string[]): Record<string, unknown> 
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as GetInput;
     const path = resolveStatePath();
     const state = await read(path);

@@ -8,6 +8,7 @@
 
 import { mutate } from '../../../state/index.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -25,6 +26,7 @@ export interface CheckpointInput {
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as CheckpointInput;
     if (
       typed.label !== undefined &&

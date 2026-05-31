@@ -7,6 +7,7 @@
 
 import { mutate } from '../../../state/index.ts';
 import {
+  assertInputWithinLimits,
   emitStateMutation,
   errorResponse,
   okResponse,
@@ -31,6 +32,7 @@ const STATUSES = new Set([
 
 export async function handle(input: unknown): Promise<ToolResponse> {
   try {
+    assertInputWithinLimits(input);
     const typed = (input ?? {}) as SetStatusInput;
     if (typeof typed.status !== 'string' || !STATUSES.has(typed.status)) {
       throwValidation(

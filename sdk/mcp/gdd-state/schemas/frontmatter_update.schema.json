@@ -17,7 +17,7 @@
           "minProperties": 1,
           "additionalProperties": {
             "oneOf": [
-              { "type": "string" },
+              { "type": "string", "maxLength": 8192 },
               { "type": "number" },
               { "type": "boolean" }
             ]
