@@ -114,6 +114,14 @@ GDD now generates **native mobile** UI, not just web. A project-type detector ro
 
 All three are fed by a shared **token-bridge** ([`reference/native-platforms.md`](reference/native-platforms.md)) that extends the Phase-23 token engine with `swift`/`compose`/`flutter` emitters — mapping your canonical tokens (`#3B82F6`, `16px`, `Inter`) deterministically onto each platform's theme primitives (`Color`/`Font`, `MaterialTheme`, `ThemeData`) with a documented, round-trippable precision contract, so the executors never hand-author colour or dimension math. Rendered verification via the iOS Simulator / Android emulator is **optional** — when no simulator is present the verify stage degrades to a code-only structural audit (the simulator only *adds* rendered confirmation).
 
+### Email output (v1.34.2)
+
+GDD also generates **email templates** — the project-type detector routes an `email` brief to a dedicated executor that honors the real client constraints web HTML/CSS breaks on:
+
+- **[`email-executor`](agents/email-executor.md)** — generates one email per task as **MJML source (canonical) + the derived HTML**, against the constraint catalogue, with the static validator as its own self-check. It is an agent-prompt, not a compiler — **no `mjml` runtime, no Litmus account, no network** is needed to produce the email.
+
+The constraints live in [`reference/email-design.md`](reference/email-design.md) — table-based layout (no flexbox/grid/`position`), inline styles (no `<style>` sheet in Gmail), MSO conditional comments for Outlook's Word engine, dark-mode `color-scheme` handling, ~600px width, and the top-20-client quirks. A deterministic static checker ([`scripts/lib/email/validate-email-html.cjs`](scripts/lib/email/validate-email-html.cjs)) flags the statically-verifiable subset (`EM-LAYOUT`/`EM-STYLE`/`EM-MSO`/`EM-DARK`). Cross-client rendered verification via [`Litmus`](connections/litmus.md) (or Email-on-Acid) is **optional** — when absent the verify stage degrades to the static validator. Email generation is opt-in; **web stays the default**.
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

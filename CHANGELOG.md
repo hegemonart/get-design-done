@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.34.2] - 2026-05-31
+
+### Phase 34.2 — Non-Web Output Layer: Email
+
+Second sub-phase of the split Phase 34 (Non-Web Output Layer). Adds **email-template output** — a dedicated executor that generates email honoring the real client constraints (table-based layout, inline styles, MSO conditional comments for Outlook's Word engine, dark-mode `color-scheme` handling, and the top-20-client quirks) that modern web HTML/CSS breaks on — behind the same project-type detector that routes native (34.1). Email generation is **opt-in via project-type detection — web remains the default**. A decimal release on the v1.34.x arc (CHANGELOG-only, D-01); **no new runtime dependency** — the executor generates the email as an agent-prompt and the plugin checks it with a deterministic static validator, no `mjml` runtime (D-02/D-10). Native (Phase 34.1) shipped; Print/PDF (Phase 34.3) is the next sub-phase, out of 34.2 (D-07). 4 plans across Waves A–C.
+
+### Added
+
+- **Email-constraint catalogue + static validator (no `mjml` dependency, D-02/D-03).** `reference/email-design.md` — the authoritative email-constraint catalogue (~30 catalogued constraints: table-based layout, inline styles, MSO conditional comments, dark-mode `color-scheme`, ~600px width, image/alt rules, and the top-20-client quirks), registered in `reference/registry.json`. `scripts/lib/email/validate-email-html.cjs` — a pure, deterministic static checker (zero `require`, no fs/network/mjml) that flags the statically-verifiable subset: `EM-LAYOUT-01` (no flexbox/grid/`position`), `EM-STYLE-01` (no `<style>` as the primary styling mechanism; a small `@media`-only block is tolerated), `EM-MSO-01` (an MSO conditional comment in a full email), `EM-DARK-01` (a `color-scheme` signal present) — returning `{ ok, violations:[{ rule, detail }] }`.
+- **`email-executor` agent (MJML canonical + derived HTML, D-02/D-04).** `agents/email-executor.md` — generates **one email template per task**: an MJML source (the canonical artifact) plus the equivalent derived HTML, generated against the `reference/email-design.md` catalogue and run through the static validator as its own self-check. It is an agent-prompt (like `design-executor`/`flutter-executor`), **not** a compiler — no running `mjml`, no Litmus account, no network is required to produce the email. Carries a `## Record` section from the start (the record-contract lesson) and an honest `size_budget`.
+- **`litmus` connection (optional render-test, degrade-to-static-validator, D-03).** `connections/litmus.md` — cross-client rendered screenshots (Email-on-Acid is the documented alternative) for the verify stage when present, mirroring `connections/chromatic.md`. **Never hard-required**: when absent the verify stage degrades to the static email-HTML validator / code-only structural audit. Added to the `connections/connections.md` index + Capability Matrix in this closeout.
+- **`design-context-builder` `email` project-type route + `design-verifier` email-verify branch (delegated, D-06/D-09).** The context-builder appends the `email` enum + the `email-executor` route at the 34.1 seam (the seam is left open for 34.3/print). The verifier gains an email-verify branch by **delegation** to `reference/email-design.md` (the verifier stayed within its ≤700-line budget).
+- **Regression baseline.** `test/fixtures/baselines/phase-34-2/` freezes the email surface — a valid email fixture (`email-good.html`), a validator golden (`validator-golden.json`, the recorded `validateEmailHtml` output for a passing + a failing fixture, proving the rule-output shape is frozen), and `manifests-version.txt`=1.34.2 — pinned by `test/suite/phase-34-2-baseline.test.cjs` so a future change cannot silently break the validator or its verdict shape.
+
+### Notes
+
+- All Phase 34.2 tests are hermetic (D-10): the static email-HTML validator is a pure string→verdict function (fixture HTML → constraint checks, no network/mjml), the email-executor is validated **structurally** (frontmatter + catalogue reference + validator reference + presence), and the default `npm test` invokes **no** Litmus/Email-on-Acid and pulls in **no** `mjml` runtime. Rendered cross-client verification is the opt-in degraded-mode path (D-03).
+- The 31.5 tarball golden (`test/fixtures/baselines/phase-31-5/tarball-manifest.txt`) was regenerated as a reviewed delta: **+2** newly-shipped files (`agents/email-executor.md`, `connections/litmus.md`), zero removals (641 paths). The other two new email files (`reference/email-design.md`, `scripts/lib/email/validate-email-html.cjs`) were already in the golden from their Wave-A (34.2-01) commit — so the four new shipped files net to a +2 line-delta on the golden.
+- 6-manifest lockstep at **v1.34.2** (`package.json` + `package-lock.json` (root + `packages.""`) + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`); marketplace `plugins[0].keywords` + plugin keywords gain `email`. Version-sync hygiene done upfront (D-08): `OFF_CADENCE_VERSIONS.add('1.34.2')` + the 16 live-pinned `manifests-version.txt` baselines forward-propagated 1.34.1 → 1.34.2 (phase-34-1, the prior closeout's own baseline, joined the set).
+
+---
+
 ## [1.34.1] - 2026-05-31
 
 ### Phase 34.1 — Non-Web Output Layer: Native Mobile
