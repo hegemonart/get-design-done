@@ -584,22 +584,36 @@ test('dispatcher: bare invocation prints USAGE', async () => {
   assert.match(stdout.buffer, /gdd-sdk <command> \[flags\]/);
 });
 
-test('bin/gdd-sdk --help via spawnSync prints USAGE + exit 0', () => {
+// bin/gdd-sdk is a dual-mode trampoline resolving sdk/cli/index.{js,ts}. On a
+// loaded CI runner the compiled sdk/cli/index.js can momentarily vanish — a
+// CONCURRENT test's `npm pack` postpack (`build:sdk --clean`) removes the
+// compiled SDK bins mid-suite — making a single spawn non-deterministic. Retry a
+// few times and take the first run that reaches the expected status. A genuine
+// regression returns the wrong status on EVERY attempt, so this masks the race
+// (a brief mid-clean window) without masking a real bug.
+function spawnTrampoline(args: string[], expectedStatus: number) {
   const trampoline = resolvePath(process.cwd(), 'bin', 'gdd-sdk');
-  const res = spawnSync(process.execPath, [trampoline, '--help'], {
+  let res = spawnSync(process.execPath, [trampoline, ...args], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
+  for (let attempt = 0; attempt < 3 && res.status !== expectedStatus; attempt++) {
+    res = spawnSync(process.execPath, [trampoline, ...args], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+  }
+  return res;
+}
+
+test('bin/gdd-sdk --help via spawnSync prints USAGE + exit 0', () => {
+  const res = spawnTrampoline(['--help'], 0);
   assert.equal(res.status, 0, `stderr: ${res.stderr}`);
   assert.match(res.stdout, /gdd-sdk <command> \[flags\]/);
 });
 
 test('bin/gdd-sdk unknown-cmd prints error + exits 3', () => {
-  const trampoline = resolvePath(process.cwd(), 'bin', 'gdd-sdk');
-  const res = spawnSync(process.execPath, [trampoline, 'bogus-cmd'], {
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
+  const res = spawnTrampoline(['bogus-cmd'], 3);
   assert.equal(res.status, 3);
   assert.match(res.stderr, /unknown subcommand/);
 });
