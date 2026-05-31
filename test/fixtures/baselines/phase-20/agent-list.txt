@@ -37,6 +37,7 @@ gdd-graph-refresh.md
 gdd-intel-updater.md
 gdd-learnings-extractor.md
 motion-mapper.md
+pdf-executor.md
 perf-analyzer.md
 prototype-gate.md
 quality-gate-runner.md

@@ -1,0 +1,15 @@
+{
+  "good": {
+    "ok": true,
+    "violations": []
+  },
+  "bad": {
+    "ok": false,
+    "violations": [
+      {
+        "rule": "PR-PAGE-01",
+        "detail": "a print stylesheet must declare an @page rule (the print box model — size/margin/marks); none found"
+      }
+    ]
+  }
+}

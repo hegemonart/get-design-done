@@ -118,6 +118,7 @@ prices-openrouter: reference/prices.openrouter.md
 prices-qwen: reference/prices/qwen.md
 prices-trae: reference/prices/trae.md
 prices-windsurf: reference/prices/windsurf.md
+print-design: reference/print-design.md
 priority-matrix: reference/priority-matrix.md
 project-skills-guide: reference/project-skills-guide.md
 proportion-systems: reference/proportion-systems.md

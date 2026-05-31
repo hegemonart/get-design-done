@@ -1,0 +1,24 @@
+/* Fixture: an @page + bleed + CMYK + 300dpi stylesheet with a bare
+   system-font-stack and NO @font-face embed (and no embed/outline note)
+   -> flags exactly PR-FONT-01 (print RIPs have no web fonts).
+   Every OTHER class is satisfied so PR-FONT-01 is the only violation. */
+
+/* CMYK target — color-profile note for the RIP (PR-CMYK-01) */
+:root { color-profile: url(./CoatedFOGRA39.icc); }
+
+@page {
+  size: A4;
+  margin: 12mm;
+  marks: crop cross;   /* PR-BLEED-01: crop/registration marks */
+  bleed: 3mm;          /* PR-BLEED-01: 3mm bleed box */
+}
+
+body {
+  /* PR-FONT-01 VIOLATION: a bare system-font-stack, no embedded face */
+  font-family: Arial, Helvetica, sans-serif;
+  color: cmyk(0% 80% 95% 0%);   /* PR-CMYK-01: CMYK color value */
+}
+
+img {
+  image-resolution: 300dpi;     /* PR-DPI-01: 300dpi raster fallback */
+}
