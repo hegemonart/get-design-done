@@ -61,6 +61,10 @@ const DISABLE_INVOCATION_WHITELIST = new Set([
   // Phase 32 (D-10): using-gdd is a SessionStart bootstrap discipline contract,
   // injected via additionalContext — not a model-invoked skill. Additive only.
   'using-gdd',
+  // Phase 33.6 (D-09): openrouter-status is a read-only OpenRouter catalog +
+  // tier-mapping diagnostic (/gdd:openrouter-status), user-invoked only — never
+  // auto-spawned by the model. Mirrors the cache-manager no-spawn discipline.
+  'openrouter-status',
 ]);
 
 function parseArgs(argv) {
