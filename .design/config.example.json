@@ -2,5 +2,8 @@
   "reflector": {
     "capability_gap_threshold": 3,
     "capability_gap_scan_enabled": true
+  },
+  "peer_cli": {
+    "env_allowlist": []
   }
 }

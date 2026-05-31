@@ -80,6 +80,7 @@
 'use strict';
 
 const { spawn } = require('node:child_process');
+const { sanitizeEnv, readPeerCliAllowlist } = require('./sanitize-env.cjs');
 
 /** Per-line cap before we treat the stream as malformed. */
 const MAX_LINE_BYTES = 16 * 1024 * 1024;
@@ -119,7 +120,15 @@ function createAspClient(opts) {
     stdio: ['pipe', 'pipe', 'pipe'],
   };
   if (typeof opts.cwd === 'string' && opts.cwd.length > 0) spawnOptions.cwd = opts.cwd;
-  if (opts.env && typeof opts.env === 'object') spawnOptions.env = opts.env;
+  if (opts.env && typeof opts.env === 'object') {
+    spawnOptions.env = opts.env;
+  } else {
+    // Plan 33.5-04 (D-03): without an explicit env, the child ALWAYS gets a
+    // defined, SANITIZED env (OS-essential baseline + peer_cli.env_allowlist)
+    // rather than Node defaulting to the raw process.env — closing the
+    // ANTHROPIC_API_KEY/GH_TOKEN/GDD_* leak. Explicit opts.env still wins.
+    spawnOptions.env = sanitizeEnv(process.env, { allowlist: readPeerCliAllowlist() });
+  }
 
   // Test-injection seam: callers (or unit tests) can supply a pre-built
   // ChildProcess so we don't actually fork a binary in tests. The mock
