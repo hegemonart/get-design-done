@@ -364,6 +364,20 @@ OFF_CADENCE_VERSIONS.add('1.33.5');
 //   - 1.33.6 → Phase 33.6 (openrouter); off-cadence sub-phase from 1.33.0.
 OFF_CADENCE_VERSIONS.add('1.33.6');
 
+// Phase 34.1 — Non-Web Output Layer: Native Mobile (v1.34.1, 2026-05-31).
+// First sub-phase of the split Phase 34. Off-cadence DECIMAL release on the new
+// v1.34.x arc (1.33.6 -> 1.34.1; CHANGELOG-only, D-01). Ships the native
+// token-bridge (reference/native-platforms.md + swift/compose/flutter emitters
+// extending the Phase-23 engine, with the round-trippable precision contract) +
+// the swift/compose/flutter executors + the xcode-simulator/android-emulator
+// connections (optional, degrade-to-code-only, D-03) + the design-verifier
+// native no-DOM branch + the design-context-builder project-type routing
+// (web/native-ios/native-android/flutter, extensible for email/print).
+// Registered off-cadence (the 1.34.x arc opens with the .1 decimal; email=34.2
+// / print=34.3 follow).
+//   - 1.34.1 → Phase 34.1 (native-mobile); off-cadence decimal opening the 1.34.x arc.
+OFF_CADENCE_VERSIONS.add('1.34.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
