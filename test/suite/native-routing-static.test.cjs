@@ -93,14 +93,16 @@ test('34.1-05: routing table is append-shaped with a documented extensibility se
   );
 });
 
-test('34.1-05: 34.1 does NOT add email/print enum values yet (D-06 — native only)', () => {
-  // The seam may MENTION email/print as FUTURE work — that is allowed. What is
-  // NOT allowed is an ACTIVE email/print routing row (an email-executor /
-  // print-executor mapping) shipped in 34.1.
+test('34.1-05: print is still deferred to 34.3 — no print-executor route yet (D-06/D-07)', () => {
+  // 34.2 supersedes the email half: email IS now routed (locked by
+  // email-routing-static.test.cjs '34.2-03: ... routes email → email-executor').
+  // Print stays deferred to 34.3, so the print-executor route must still be
+  // absent — the seam MAY still MENTION print as FUTURE work (allowed), but no
+  // ACTIVE print-executor mapping is shipped before 34.3.
   assert.doesNotMatch(
     contextBuilder,
-    /email-executor|print-executor/i,
-    'D-06: 34.1 must not add an email/print executor routing row — those land in 34.2/34.3',
+    /print-executor/i,
+    'D-06/D-07: print is deferred to 34.3 — no print-executor route in 34.2',
   );
 });
 
