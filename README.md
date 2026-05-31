@@ -104,6 +104,16 @@ See [docs/PEER-DELEGATION.md](docs/PEER-DELEGATION.md) for the ops guide (when d
 
 You can route any agent's tier (`opus`/`sonnet`/`haiku`) through **OpenRouter** — an aggregator that fronts Claude, GPT, Llama, Gemini, DeepSeek and more behind a single API key — *alongside* your native provider auth, never instead of it. Set `OPENROUTER_API_KEY` and GDD's tier-resolver adapter dynamically fetches the OpenRouter catalog (24h TTL cache) and maps each tier onto a concrete model via a closed-vs-open + pricing heuristic, with a `.design/config.json#openrouter_tier_overrides` escape hatch for pinning exact ids. When the key is absent or the catalog is unreachable, resolution gracefully falls back to your native provider — OpenRouter is purely additive. See [`connections/openrouter.md`](connections/openrouter.md) for setup, the probe pattern, and fallback behavior, and run `/gdd:openrouter-status` to inspect catalog freshness and the resolved tier→model mapping.
 
+### Native mobile output (v1.34.1)
+
+GDD now generates **native mobile** UI, not just web. A project-type detector routes the brief to the matching executor — web stays the default; `native-ios` / `native-android` / `flutter` opt in via the brief plus `package.json` / `pubspec.yaml` / `*.xcodeproj` presence:
+
+- **[`swift-executor`](agents/swift-executor.md)** — compilable **SwiftUI** views per iOS conventions (navigation, safe areas, SF Pro Dynamic Type).
+- **[`compose-executor`](agents/compose-executor.md)** — **Jetpack Compose** Material 3 composables (Kotlin), edge-to-edge with the Material 3 `sp` type scale.
+- **[`flutter-executor`](agents/flutter-executor.md)** — one Dart codebase that adapts the theme **per target**: Material 3 for web/Android, Cupertino for iOS.
+
+All three are fed by a shared **token-bridge** ([`reference/native-platforms.md`](reference/native-platforms.md)) that extends the Phase-23 token engine with `swift`/`compose`/`flutter` emitters — mapping your canonical tokens (`#3B82F6`, `16px`, `Inter`) deterministically onto each platform's theme primitives (`Color`/`Font`, `MaterialTheme`, `ThemeData`) with a documented, round-trippable precision contract, so the executors never hand-author colour or dimension math. Rendered verification via the iOS Simulator / Android emulator is **optional** — when no simulator is present the verify stage degrades to a code-only structural audit (the simulator only *adds* rendered confirmation).
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).
