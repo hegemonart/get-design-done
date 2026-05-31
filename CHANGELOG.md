@@ -4,6 +4,30 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.33.6] - 2026-05-31
+
+### Phase 33.6 — OpenRouter Provider Adapter
+
+Adds **OpenRouter** as a tier-resolver provider so users can route any agent's tier (`opus`/`sonnet`/`haiku`) through OpenRouter's aggregator catalog (one API key → Claude/GPT/Llama/Gemini/DeepSeek) **alongside** native provider auth. This introduces the plugin's **first plugin-side outbound REST client** — it lands under the Phase-33.5 audited outbound baseline (the catalog-fetcher's egress is explicitly allowlisted, the outbound CI gate stays green). A decimal release on the v1.33.x arc (CHANGELOG-only, D-01); no new runtime dependency (Node built-in `fetch` only, D-10). OpenRouter is **opt-in alongside** native auth, never OpenRouter-only (D-08).
+
+### Added
+
+- **Dynamic OpenRouter catalog fetcher.** `scripts/lib/openrouter/catalog-fetcher.cjs` fetches `https://openrouter.ai/api/v1/models`, maps it into the cache shape, and writes it ATOMICALLY to `.design/cache/openrouter-models.json` (gitignored runtime artifact) with a **24h TTL** skip-if-fresh (D-02, configurable via `.design/config.json#openrouter_catalog_ttl_hours`). The fetch is gated behind an **injectable `fetchImpl`** (default global `fetch`) so the entire default test suite is hermetic — no live network in `npm test` (D-07) — and uses the `sdk/primitives` jittered-backoff + error-classifier + `rate-guard` for bounded transient/rate-limit retry. The `fetch(` egress is allowlisted via `scripts/lib/openrouter/**` in `scripts/security/outbound-allowlist.json`, with a matching egress entry in `reference/gdd-threat-model.md` (D-06). The `OPENROUTER_API_KEY` is sent only as an `Authorization: Bearer` header and is never persisted to the cache.
+- **OpenRouter tier-resolver adapter.** `scripts/lib/tier-resolver-openrouter.cjs` — `resolve(tier) → openrouter-model-id | null` — maps GDD's `opus`/`sonnet`/`haiku` vocabulary (D-04) onto a concrete catalog id via a deterministic closed-vs-open + completion-price heuristic (opus = top closed, sonnet = mid/top-open, haiku = cheap open), with a `.design/config.json#openrouter_tier_overrides` escape hatch that wins verbatim (D-03). Never throws; an absent key / missing cache / unknown tier degrades to `null` so the caller falls back to the native provider via the existing Phase-26 tier-resolver chain (graceful-degrade — D-08). `reference/openrouter-tier-mapping.md` documents the heuristic and is registered in `reference/registry.json` in the same plan that created it (D-11).
+- **OpenRouter connection + status skill.** `connections/openrouter.md` (the Phase-14 connection spec — Setup / Probe Pattern / Tools / Pipeline Integration / Fallback Behavior) and the `/gdd:openrouter-status` skill (`skills/openrouter-status/SKILL.md`) report catalog freshness, the resolved tier→model mapping, and override state.
+- **Optional `cost.update` provider tag (back-compat).** The `cost.update` event payload gains an OPTIONAL `provider` field, set to `'openrouter'` when the adapter resolved the model; absent otherwise. Additive — the events JSON schema is unchanged, so existing consumers are unaffected.
+- **OpenRouter price sub-table + catalog-drift watch.** `reference/prices.openrouter.md` (a catalog-derived view; the dynamic catalog stays the source of truth) and an authority-watcher catalog-drift classifier (`diffOpenRouterCatalog`) that surfaces deprecated/withdrawn models matching `openrouter_tier_overrides` (noise-controlled — new-model / pricing-change are classified but not surfaced).
+- **Regression baseline.** `test/fixtures/baselines/phase-33-6/` freezes the OpenRouter surface — a golden tier-resolution snapshot (the `opus`/`sonnet`/`haiku` ids the adapter resolves from the shared fixture catalog) plus encoded TTL / fallback-no-key / drift-on-synthetic-deprecation expectations — pinned by `test/suite/phase-33-6-baseline.test.cjs` so a future change cannot silently undo the heuristic, the TTL, the graceful-degrade, or the drift classifier.
+
+### Notes
+
+- **OpenRouter is a tier-RESOLUTION-layer adapter, not an install-registry runtime (D-12).** SC#5's "runtimes.cjs extension" wording is reinterpreted: `scripts/lib/install/runtimes.cjs` is the Phase-24-locked install matrix (how to install GDD *into* a runtime; guarded at exactly 16 entries) — you don't install GDD "into" OpenRouter. OpenRouter lives only in the tier-resolution adapter (`scripts/lib/tier-resolver-openrouter.cjs`), which reads the dynamic catalog rather than the install registry, so it fully delivers SC#5's intent without polluting or weakening the Phase-24 install lock. `install/runtimes.cjs` and its 16-count guard are preserved intact.
+- All Phase 33.6 tests are hermetic (injected stub fetch + a fixture catalog; no network, no real `OPENROUTER_API_KEY`), so the default `npm test` stays green (D-07), and `npm run scan:outbound` stays green with the OpenRouter egress allowlisted (D-06).
+- The 31.5 tarball golden (`test/fixtures/baselines/phase-31-5/tarball-manifest.txt`) was regenerated as a reviewed delta: **+6** shipped OpenRouter files (`connections/openrouter.md`, `reference/openrouter-tier-mapping.md`, `reference/prices.openrouter.md`, `scripts/lib/openrouter/catalog-fetcher.cjs`, `scripts/lib/tier-resolver-openrouter.cjs`, `skills/openrouter-status/SKILL.md`), zero removals (627 paths).
+- 6-manifest lockstep at **v1.33.6** (`package.json` + `package-lock.json` (root + `packages.""`) + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`). Version-sync hygiene done upfront (D-09): `OFF_CADENCE_VERSIONS.add('1.33.6')` + the 14 live-pinned `manifests-version.txt` baselines forward-propagated 1.33.5 → 1.33.6.
+
+---
+
 ## [1.33.5] - 2026-05-31
 
 ### Phase 33.5 — GDD Runtime Security Hardening

@@ -23,6 +23,7 @@ This directory contains connection specifications for external tools and MCPs th
 | pencil.dev | Active | [`connections/pencil-dev.md`](connections/pencil-dev.md) | File-based; `.pen` YAML specs; git-tracked; no MCP |
 | 21st.dev Magic MCP | Active | [`connections/21st-dev.md`](connections/21st-dev.md) | Uses `mcp__21st*` tools; `TWENTY_FIRST_API_KEY` required |
 | Magic Patterns | Active | [`connections/magic-patterns.md`](connections/magic-patterns.md) | Claude connector (`mcp__magic_patterns*`) + API key fallback |
+| OpenRouter | Active | [`connections/openrouter.md`](connections/openrouter.md) | Model-router (no MCP); env: `OPENROUTER_API_KEY` (optional `OPENROUTER_BASE_URL`); opt-in tier-resolution overlay, graceful-degrade-to-native |
 
 ---
 
@@ -45,6 +46,7 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | pencil.dev | `.pen` discovery | `.pen` as canonical design source | — | pencil-writer: annotate/roundtrip | spec-vs-impl diff | ✓ | — |
 | 21st.dev | — | prior-art gate: marketplace search before greenfield build | — | component-generator (21st impl) | — | — | ✓ |
 | Magic Patterns | — | — | — | component-generator (magic-patterns impl) | preview_url → `? VISUAL` check | — | ✓ |
+| OpenRouter | — | — | — | — | — | — | ✓ (model-router: tier→model resolution, all stages) |
 
 **Column definitions:**
 

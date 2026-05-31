@@ -59,23 +59,35 @@ test('33.5-06: 6-manifest version lockstep (package + claude plugin + marketplac
   }
 });
 
-// ── 2. phase-33-5 manifests-version baseline == live == 1.33.5 ──────────────────
+// ── 2. phase-33-5 manifests-version baseline == live (version-agnostic) ─────────
+// NOTE: this baseline is a D-09 forward-prop target — it tracks the LIVE package
+// version, not a frozen 1.33.5. The original hard-coded `=== '1.33.5'` was a
+// latent defect that breaks on every later decimal release (it broke at v1.33.6
+// when 33.6-04 forward-propped this file). Made version-agnostic to match the
+// phase-32/phase-33 idiom: assert it equals the live version and is not stale.
 
-test('33.5-06: phase-33-5/manifests-version.txt baseline == 1.33.5 == live package version', () => {
+test('33.5-06: phase-33-5/manifests-version.txt baseline == live package version (forward-prop target)', () => {
   const baseline = readBaseline('manifests-version.txt').replace(/\s+$/, '');
   const live = readJsonRel('package.json').version;
-  assert.equal(baseline, '1.33.5', 'phase-33-5 manifests-version.txt must be 1.33.5');
+  assert.match(baseline, /^\d+\.\d+\.\d+$/, 'phase-33-5 manifests-version.txt looks like semver');
   assert.equal(baseline, live, `phase-33-5 manifests-version.txt (${baseline}) != package.json version (${live})`);
 });
 
-// ── 3. CHANGELOG [1.33.5] ───────────────────────────────────────────────────────
+// ── 3. CHANGELOG [1.33.5] present (version-agnostic top check) ──────────────────
 
-test('33.5-06: CHANGELOG has a [1.33.5] block at the top (D-01)', () => {
+test('33.5-06: CHANGELOG carries the [1.33.5] block (D-01)', () => {
   const cl = read('CHANGELOG.md');
   assert.match(cl, /## \[1\.33\.5\]/, 'CHANGELOG must carry a ## [1.33.5] entry (D-01)');
+  // The top-most heading tracks the LIVE version (later decimal releases insert
+  // above [1.33.5]); assert it is a valid heading == the live version rather than
+  // hard-pinning 1.33.5 (the original literal broke at v1.33.6).
   const firstHeading = cl.match(/^## \[(\d+\.\d+\.\d+)\]/m);
   assert.ok(firstHeading, 'CHANGELOG has at least one release heading');
-  assert.equal(firstHeading[1], '1.33.5', 'the top-most release heading must be [1.33.5]');
+  assert.equal(
+    firstHeading[1],
+    readJsonRel('package.json').version,
+    'the top-most CHANGELOG release heading must match the live package version',
+  );
 });
 
 // ── 4. SECURITY.md disclosure + no PII (D-02) ───────────────────────────────────

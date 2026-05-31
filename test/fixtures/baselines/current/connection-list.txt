@@ -7,6 +7,7 @@ figma.md
 gdd-state.md
 graphify.md
 magic-patterns.md
+openrouter.md
 paper-design.md
 pencil-dev.md
 pinterest.md

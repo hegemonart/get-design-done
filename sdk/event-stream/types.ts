@@ -146,10 +146,32 @@ export type ParallelismVerdictEvent = BaseEvent & {
   payload: { task_ids: string[]; verdict: 'parallel' | 'sequential'; reason: string };
 };
 
-/** Phase 10.1 cost-telemetry event-stream sink. */
+/**
+ * Phase 10.1 cost-telemetry event-stream sink.
+ *
+ * Phase 33.6 / Plan 33.6-03 (SC#6) extension — additive/back-compat: the
+ * payload gains an OPTIONAL `provider?: string`, set to `'openrouter'` when the
+ * model for this cost row was resolved via the OpenRouter tier-resolver adapter
+ * (`scripts/lib/tier-resolver-openrouter.cjs`). Absent on every pre-33.6 event
+ * (and on native-resolution rows) — exactly the same additive discipline as the
+ * Phase-27 `runtime_role`/`peer_id` extension documented above. The cost-row
+ * emit site that threads it is
+ * `scripts/lib/budget-enforcer.cjs#buildCostEventPayload`.
+ */
 export type CostUpdateEvent = BaseEvent & {
   type: 'cost.update';
-  payload: { agent: string; tier: string; usd: number; tokens_in: number; tokens_out: number };
+  payload: {
+    agent: string;
+    tier: string;
+    usd: number;
+    tokens_in: number;
+    tokens_out: number;
+    /**
+     * Phase 33.6 SC#6. Set to `'openrouter'` when the model was resolved via the
+     * OpenRouter adapter; omitted otherwise (native-resolution + pre-33.6 rows).
+     */
+    provider?: string;
+  };
 };
 
 /** Rate-guard / backoff stream (Plan 20-10, 20-11). */

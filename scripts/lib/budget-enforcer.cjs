@@ -407,6 +407,15 @@ function computeCost(args, opts) {
  *   Phase 27. The peer-CLI ID when `runtime_role === "peer"` (e.g.
  *   `"gemini"`, `"codex"`). Omitted from output when absent or when
  *   `runtime_role === "host"`.
+ * @param {string} [args.provider]
+ *   Phase 33.6 / Plan 33.6-03 (SC#6). The resolution provider — set to
+ *   `"openrouter"` by the caller when the model was resolved via the
+ *   OpenRouter tier-resolver adapter
+ *   (`scripts/lib/tier-resolver-openrouter.cjs`). Additive/back-compat:
+ *   when absent (the native-resolution default + every pre-33.6 caller)
+ *   the key is OMITTED — exactly how `peer_id` is omitted for host rows —
+ *   so the legacy on-disk cost-row shape stays byte-stable. Only a
+ *   non-empty string is threaded; anything else is dropped.
  * @returns {object}
  */
 function buildCostEventPayload(args) {
@@ -432,6 +441,13 @@ function buildCostEventPayload(args) {
       ? args.peer_id
       : null;
     out.peer_id = pid;
+  }
+  // Phase 33.6 SC#6 — additive provider tag. Threaded ONLY when the caller
+  // passes a non-empty string (e.g. "openrouter" when the OpenRouter adapter
+  // resolved the model). Omitted otherwise, mirroring peer_id, so the legacy
+  // cost-row shape stays stable for native-resolution + pre-33.6 callers.
+  if (args && typeof args.provider === 'string' && args.provider.length > 0) {
+    out.provider = args.provider;
   }
   return out;
 }

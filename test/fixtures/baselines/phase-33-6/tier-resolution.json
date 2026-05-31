@@ -1,0 +1,17 @@
+{
+  "_comment": "Plan 33.6-04 regression golden (SC#10). The opus/sonnet/haiku ids were RECORDED from scripts/lib/tier-resolver-openrouter.cjs#resolve() run over the shared fixture catalog (catalog_fixture) at authoring time — NOT hand-invented. The phase-33-6-baseline.test.cjs re-runs resolve() and asserts equality, so any heuristic regression trips this lock. ttl_hours/fallback_no_key encode the catalog-fetcher's recorded TTL + graceful-degrade behavior (D-02/D-08); drift_synthetic encodes the authority-watcher diffOpenRouterCatalog classification on a synthetic withdrawal of an override-pinned id plus a brand-new model (SC#8).",
+  "catalog_fixture": "test/fixtures/baselines/phase-33-6/openrouter-catalog.json",
+  "golden": {
+    "opus": "anthropic/claude-opus-4-7",
+    "sonnet": "anthropic/claude-sonnet-4-7",
+    "haiku": "meta-llama/llama-3.1-8b-instruct"
+  },
+  "ttl_hours": 24,
+  "fallback_no_key": null,
+  "drift_synthetic": {
+    "overrides": ["anthropic/claude-opus-4-7"],
+    "withdrawn_surfaced": "anthropic/claude-opus-4-7",
+    "new_model_id": "newvendor/brand-new-1",
+    "new_model_surfaced": false
+  }
+}

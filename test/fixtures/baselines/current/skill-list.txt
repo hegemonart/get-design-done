@@ -31,6 +31,7 @@ new-cycle
 new-project
 next
 note
+openrouter-status
 optimize
 pause
 peer-cli-add

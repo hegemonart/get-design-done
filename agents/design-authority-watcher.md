@@ -115,6 +115,10 @@ Apply the decision table below to each new entry. Emit `{ ...entry, classificati
 
 The skip row is evaluated LAST and overrides the kind-based row — a component-system release titled "Sponsored: shipping our new sponsor tier" still ends up `skip`.
 
+### OpenRouter catalog drift (Phase 33.6, SC#8)
+
+Beyond the design-authority feeds above, the **OpenRouter model catalog** (`.design/cache/openrouter-models.json`, fetched by `scripts/lib/openrouter/catalog-fetcher.cjs`) is a **weekly-diff feed**. Diff the prior vs current catalog via `scripts/lib/authority-watcher/index.cjs#diffOpenRouterCatalog(prevModels, currModels, { overrides })`, which classifies each delta as `new-model` / `pricing-change` / `deprecated` / `withdrawn`. To keep the report actionable and quiet, **surface ONLY `deprecated`/`withdrawn` entries whose id matches a configured `.design/config.json#openrouter_tier_overrides` pin** — i.e. the user pinned a model that is going away. `new-model` and `pricing-change` deltas are classified (returned, `surfaced:false`) but never surfaced as alerts (noise control). When OpenRouter is not configured (no catalog), this feed is silently skipped.
+
 ## Step 6 — Write Snapshot
 
 For each feed, merge the newly-fetched entries into `feeds[feed-id].entries`:

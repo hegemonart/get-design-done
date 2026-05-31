@@ -43,6 +43,7 @@ controls; the table names what crosses the line.
 | gdd-state MCP `←` environment / config / tool input | Whoever sets `GDD_STATE_PATH` or supplies a tool-call payload, or authors `.design/config.json` | The `GDD_STATE_PATH` env value + the JSON tool-input payloads |
 | Peer-CLI broker `↔` spawned child | A spawned peer CLI (Codex / Gemini / Cursor / Copilot / Qwen) and its stdout stream | The child's stdout JSON frames + the parent env handed to the child |
 | Outbound call sites `↔` external host | The remote HTTP host / GitHub / Figma the call reaches | The outbound request payload + whatever the remote returns |
+| OpenRouter catalog fetch `→` openrouter.ai | The OpenRouter `/models` API host (and any MITM on the path) | The `Authorization: Bearer <OPENROUTER_API_KEY>` request header + the untrusted `/models` JSON the host returns |
 
 The event payloads that traverse the bus (and therefore the WS transport and
 any persisted JSONL) are scrubbed at serialize time — see Component 4's
@@ -308,6 +309,68 @@ model).
   outbound-network allowlist data, which lists `scripts/lib/issue-reporter/**`
   as an allowed egress glob) and **33.5-04** (the `scan:outbound` CI gate that
   fails on any active-egress site not under an allowlisted glob).
+
+---
+
+## Component 6 — OpenRouter catalog fetcher (scripts/lib/openrouter/catalog-fetcher.cjs)
+
+> Added in Phase 33.6 (OR-01, CONTEXT D-06). This is the runtime's **first
+> plugin-side outbound REST client** — the issue-reporter (Component 5) reaches
+> the network only through the user's `gh` CLI, and the WS transport (Component
+> 4) is a *server*, not an outbound client. The catalog fetcher is the first
+> first-party code to open an outbound HTTP request to a third-party host
+> directly, which is why it lands only after the 33.5 audited baseline and the
+> `scan:outbound` gate (33.5-04) are in place.
+
+`scripts/lib/openrouter/catalog-fetcher.cjs` performs a read-only GET to the
+OpenRouter model catalog (`https://openrouter.ai/api/v1/models`) through an
+**injectable `fetchImpl`** (default global `fetch`), maps the response into the
+`.design/cache/openrouter-models.json` cache shape, and writes it atomically.
+The live fetch is opt-in — gated on `OPENROUTER_API_KEY` being present at
+runtime; absent it, the fetcher returns cached-if-any-else-null and tier
+resolution falls back to the native provider.
+
+- **Assets:** The **`OPENROUTER_API_KEY`** (a billable provider credential) and
+  the integrity of the cached catalog the tier-resolver later trusts.
+- **Entry points:** The **`/models` JSON the OpenRouter host returns** (untrusted
+  remote input the fetcher must parse), and the `OPENROUTER_BASE_URL` env (an
+  operator-supplied endpoint override).
+- **STRIDE threats:**
+  - **Spoofing:** A spoofed `/models` endpoint (DNS/MITM, or a hostile
+    `OPENROUTER_BASE_URL`) could feed a forged catalog.
+  - **Tampering:** A malformed/oversized `/models` body could try to corrupt the
+    cache the resolver reads, or smuggle unexpected fields downstream.
+  - **Information disclosure:** **The headline risk** — leaking the
+    `OPENROUTER_API_KEY` by persisting it to the cache, logging it, or sending it
+    to an unintended host.
+  - **Denial of service:** A hung or slow host could stall the fetch; a giant
+    catalog could pressure memory.
+  - **Elevation of privilege:** A forged catalog could steer tier resolution to
+    an attacker-chosen model id.
+- **Current mitigations:** The key is read from **`OPENROUTER_API_KEY` env only**,
+  sent **solely** as an `Authorization: Bearer` request header, and is **never
+  persisted to the cache nor written to any log seam** — the cache shape carries
+  only `id`/`name`/`context_length`/`pricing`, and the mapper keeps **only** those
+  fields, dropping everything else (the `/models` body is **mapped, never
+  eval'd**). The cache write is **atomic** (per-pid temp + rename) into the
+  **gitignored** `.design/cache/`, so a partial/corrupt fetch can't leave a
+  half-written catalog and the cache never enters git history. The fetcher
+  **never throws** (D-08): no key / fetch failure / parse failure all degrade to
+  cached-if-any-else-null, bounding the DoS surface, and retries are **bounded**
+  (max 3 attempts) on a jittered-backoff curve with `rate-guard` awareness.
+  Egress is **allowlisted** via `scripts/lib/openrouter/**` in
+  `scripts/security/outbound-allowlist.json` — the only sanctioned outbound site
+  in that subtree — so the 33.5 `scan:outbound` gate proves no un-approved egress
+  crept in. The **injectable `fetchImpl`** keeps the default `npm test` suite
+  hermetic (D-07) — no live network — and there is **no new HTTP dependency**
+  (global `fetch` + `sdk/primitives` only — D-10), avoiding both a new supply-chain
+  surface and the gate's `axios`/`node-fetch`/`undici` package patterns.
+- **Residual risks:** None this phase leaves open. The catalog is advisory data
+  consumed by the tier-resolver heuristic (33.6-02), which already clamps to
+  GDD's `opus`/`sonnet`/`haiku` vocabulary and supports user overrides, so a
+  forged catalog cannot escalate beyond model-id selection within that bounded
+  set; a future hardening could pin the OpenRouter TLS cert or sign the cache,
+  but neither is required for the current trust model.
 
 ---
 

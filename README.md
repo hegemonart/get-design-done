@@ -100,6 +100,10 @@ Closes the **outbound** half of multi-runtime: gdd agents now OPTIONALLY delegat
 
 See [docs/PEER-DELEGATION.md](docs/PEER-DELEGATION.md) for the ops guide (when delegation fires, fallback diagnostics, broker lifecycle, Windows quirks) and [reference/peer-protocols.md](reference/peer-protocols.md) for the ACP + ASP protocol cheat sheet.
 
+### OpenRouter provider (v1.33.6, opt-in)
+
+You can route any agent's tier (`opus`/`sonnet`/`haiku`) through **OpenRouter** — an aggregator that fronts Claude, GPT, Llama, Gemini, DeepSeek and more behind a single API key — *alongside* your native provider auth, never instead of it. Set `OPENROUTER_API_KEY` and GDD's tier-resolver adapter dynamically fetches the OpenRouter catalog (24h TTL cache) and maps each tier onto a concrete model via a closed-vs-open + pricing heuristic, with a `.design/config.json#openrouter_tier_overrides` escape hatch for pinning exact ids. When the key is absent or the catalog is unreachable, resolution gracefully falls back to your native provider — OpenRouter is purely additive. See [`connections/openrouter.md`](connections/openrouter.md) for setup, the probe pattern, and fallback behavior, and run `/gdd:openrouter-status` to inspect catalog freshness and the resolved tier→model mapping.
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

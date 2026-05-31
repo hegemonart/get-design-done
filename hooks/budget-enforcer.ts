@@ -93,6 +93,22 @@ interface BudgetEnforcerBackend {
     reason: string | null;
   };
   modelFromResolved(resolved: unknown, agent: string): string | null;
+  // Plan 33.6-03 (SC#6): the canonical cost-row payload builder (the
+  // types.ts:237-designated emit site). Threads the optional `provider` tag
+  // ("openrouter" when the OpenRouter adapter resolved the model), omitting it
+  // when absent (back-compat).
+  buildCostEventPayload(args: {
+    runtime: string;
+    agent: string;
+    model_id: string | null;
+    tier: string | null;
+    tokens_in: number;
+    tokens_out: number;
+    cost_usd: number | null;
+    runtime_role?: 'host' | 'peer';
+    peer_id?: string | null;
+    provider?: string;
+  }): Record<string, unknown>;
 }
 const budgetBackend = nodeRequire('../scripts/lib/budget-enforcer.cjs') as BudgetEnforcerBackend;
 // Plan 26-05: runtime detection for the cost-event runtime tag. Returns
@@ -174,6 +190,51 @@ interface TierResolverModule {
 const tierResolver = nodeRequire(
   '../scripts/lib/tier-resolver.cjs',
 ) as TierResolverModule;
+
+// Plan 33.6-03 (SC#6, D-08, D-12): OpenRouter tier-resolver adapter. When the
+// user opts in (`.design/config.json#openrouter_enabled: true` OR
+// `OPENROUTER_API_KEY` present), the hook consults this adapter FIRST for a
+// resolved model; a non-null result routes to OpenRouter and tags the cost row
+// `provider: "openrouter"`, a null result falls back to the native resolution
+// path (unchanged default behavior). `resolve(tier, opts)` never throws.
+interface TierResolverOpenRouterModule {
+  resolve(
+    tier: string,
+    opts?: { catalog?: unknown; models?: unknown; overrides?: unknown; cachePath?: string; configPath?: string; cwd?: string },
+  ): string | null;
+}
+const tierResolverOpenRouter = nodeRequire(
+  '../scripts/lib/tier-resolver-openrouter.cjs',
+) as TierResolverOpenRouterModule;
+
+/**
+ * Plan 33.6-03 (SC#6 opt-in). OpenRouter is consulted ONLY when the user opts
+ * in — either `.design/config.json#openrouter_enabled === true` OR
+ * `OPENROUTER_API_KEY` is present in the environment. Best-effort + never
+ * throws: a missing/corrupt config degrades to "env var only". This keeps the
+ * default (no OpenRouter) behavior byte-identical for every existing user
+ * (D-08, D-12).
+ *
+ * @param cwd base dir for `.design/config.json` (default process.cwd())
+ */
+function isOpenRouterEnabled(cwd?: string): boolean {
+  if (
+    typeof process.env.OPENROUTER_API_KEY === 'string' &&
+    process.env.OPENROUTER_API_KEY.length > 0
+  ) {
+    return true;
+  }
+  try {
+    const configPath = join(cwd ?? process.cwd(), '.design', 'config.json');
+    if (!existsSync(configPath)) return false;
+    const parsed = JSON.parse(readFileSync(configPath, 'utf8')) as {
+      openrouter_enabled?: unknown;
+    };
+    return Boolean(parsed && parsed.openrouter_enabled === true);
+  } catch {
+    return false;
+  }
+}
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -661,6 +722,11 @@ function emitCostRecorded(
     tokens_in: number;
     tokens_out: number;
     cost_usd: number | null;
+    // Plan 33.6-03 SC#6 — optional resolution provider ("openrouter" when the
+    // OpenRouter adapter resolved the model). Additive/back-compat: omitted
+    // from the on-disk row when absent, so the legacy cost_recorded shape is
+    // preserved for every native-resolution + pre-33.6 spawn.
+    provider?: string;
   },
   cycle?: string,
 ): void {
@@ -677,6 +743,10 @@ function emitCostRecorded(
       tokens_in: payload.tokens_in,
       tokens_out: payload.tokens_out,
       cost_usd: payload.cost_usd,
+      // Omit-when-absent (mirrors the .cjs buildCostEventPayload discipline).
+      ...(typeof payload.provider === 'string' && payload.provider.length > 0
+        ? { provider: payload.provider }
+        : {}),
     },
   };
   try {
@@ -1149,6 +1219,36 @@ export async function main(): Promise<void> {
     }
   }
 
+  // ── Plan 33.6-03 — OpenRouter resolution consultation (SC#6, D-08, D-12) ────
+  //
+  // When the user opts in (`.design/config.json#openrouter_enabled: true` OR
+  // `OPENROUTER_API_KEY` present), consult the OpenRouter adapter for the
+  // effective tier FIRST. A non-null result routes this spawn to OpenRouter:
+  // we override the model id and tag the cost row `provider: "openrouter"`. A
+  // null result (no key / catalog missing-or-stale / no match) falls through to
+  // the native resolution that's already in `effectiveModelId` — so the default
+  // (OpenRouter disabled) path is byte-identical to pre-33.6 behavior (D-08).
+  // The adapter never throws; this whole branch is also wrapped defensively.
+  let costProvider: string | undefined;
+  if (isOpenRouterEnabled()) {
+    try {
+      const openrouterModel = tierResolverOpenRouter.resolve(effectiveTier);
+      if (typeof openrouterModel === 'string' && openrouterModel.length > 0) {
+        effectiveModelId = openrouterModel;
+        costProvider = 'openrouter';
+        // Reflect the OpenRouter pick into resolved_models so downstream
+        // consumers see the actual model (mirrors the bandit override above).
+        if (routerDecision !== undefined) {
+          const rm = routerDecision.resolved_models ?? {};
+          rm[agent] = openrouterModel;
+          routerDecision.resolved_models = rm;
+        }
+      }
+    } catch {
+      // Fail open — never let OpenRouter resolution block a spawn (D-08).
+    }
+  }
+
   // Compute runtime-aware cost via the shared backend. Failures return
   // null cost; we emit the event regardless so the cost-aggregator sees
   // the lookup attempt (Phase 22 events.jsonl tagging).
@@ -1169,6 +1269,9 @@ export async function main(): Promise<void> {
       tokens_in: Number(toolInput._tokens_in_est ?? 0),
       tokens_out: Number(toolInput._tokens_out_est ?? 0),
       cost_usd: costLookup.cost_usd,
+      // Plan 33.6-03 SC#6 — tag the row when OpenRouter resolved the model.
+      // Omitted (undefined) on the native path → buildCostEventPayload drops it.
+      ...(costProvider !== undefined ? { provider: costProvider } : {}),
     },
     cycle,
   );
