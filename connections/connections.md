@@ -24,6 +24,8 @@ This directory contains connection specifications for external tools and MCPs th
 | 21st.dev Magic MCP | Active | [`connections/21st-dev.md`](connections/21st-dev.md) | Uses `mcp__21st*` tools; `TWENTY_FIRST_API_KEY` required |
 | Magic Patterns | Active | [`connections/magic-patterns.md`](connections/magic-patterns.md) | Claude connector (`mcp__magic_patterns*`) + API key fallback |
 | OpenRouter | Active | [`connections/openrouter.md`](connections/openrouter.md) | Model-router (no MCP); env: `OPENROUTER_API_KEY` (optional `OPENROUTER_BASE_URL`); opt-in tier-resolution overlay, graceful-degrade-to-native |
+| Xcode Simulator | Active | [`connections/xcode-simulator.md`](connections/xcode-simulator.md) | **Optional** (macOS-only); CLI: `simctl` (no MCP); native-iOS rendered evidence for verify; degrade-to-code-only when absent (D-03) |
+| Android Emulator | Active | [`connections/android-emulator.md`](connections/android-emulator.md) | **Optional**; CLI: `adb` / `emulator` (no MCP); native-Android rendered evidence for verify; degrade-to-code-only when absent (D-03) |
 
 ---
 
@@ -47,6 +49,8 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | 21st.dev | — | prior-art gate: marketplace search before greenfield build | — | component-generator (21st impl) | — | — | ✓ |
 | Magic Patterns | — | — | — | component-generator (magic-patterns impl) | preview_url → `? VISUAL` check | — | ✓ |
 | OpenRouter | — | — | — | — | — | — | ✓ (model-router: tier→model resolution, all stages) |
+| Xcode Simulator | — | — | — | native iOS code-gen target (swift-executor / emitSwift) | rendered SwiftUI snapshot when simulator available, else degrade to code-only structural audit (D-03) | — | — |
+| Android Emulator | — | — | — | native Android code-gen target (compose-executor / emitCompose) | rendered Compose screenshot when emulator available, else degrade to code-only structural audit (D-03) | — | — |
 
 **Column definitions:**
 

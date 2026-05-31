@@ -191,21 +191,36 @@ test('33.6-04: 6-manifest version lockstep (package + claude plugin + marketplac
   }
 });
 
-// ── 5. phase-33-6 manifests-version baseline == live == 1.33.6 ──────────────────
+// ── 5. phase-33-6 manifests-version baseline == live (version-agnostic) ─────────
+//
+// The phase-33-6 manifests-version baseline is a forward-prop target: it tracks
+// the LIVE package version, not a frozen 1.33.6. The original hard-coded
+// `=== '1.33.6'` was a latent defect (the same one phase-33-5's baseline already
+// fixed) that breaks on every later decimal release — it broke at v1.34.1 when
+// Phase 34.1 forward-propagated this baseline 1.33.6 → 1.34.1 (D-08). Assert
+// baseline == live and that the [1.33.6] release is still RECORDED in the
+// CHANGELOG, rather than pinning the literal.
 
-test('33.6-04: phase-33-6/manifests-version.txt baseline == 1.33.6 == live package version', () => {
+test('33.6-04: phase-33-6/manifests-version.txt baseline == live package version (forward-prop target)', () => {
   const baseline = readBaseline('manifests-version.txt').replace(/\s+$/, '');
   const live = readJsonRel('package.json').version;
-  assert.equal(baseline, '1.33.6', 'phase-33-6 manifests-version.txt must be 1.33.6 (D-09 forward-prop target)');
+  assert.match(baseline, /^\d+\.\d+\.\d+$/, 'phase-33-6 manifests-version.txt looks like semver');
   assert.equal(baseline, live, `phase-33-6 manifests-version.txt (${baseline}) != package.json version (${live})`);
 });
 
-// ── 6. CHANGELOG [1.33.6] at the top ────────────────────────────────────────────
+// ── 6. CHANGELOG carries the [1.33.6] block (version-agnostic top check) ────────
 
-test('33.6-04: CHANGELOG has a [1.33.6] block at the top (D-01)', () => {
+test('33.6-04: CHANGELOG carries the [1.33.6] block (D-01)', () => {
   const cl = read('CHANGELOG.md');
   assert.match(cl, /## \[1\.33\.6\]/, 'CHANGELOG must carry a ## [1.33.6] entry (D-01)');
+  // The top-most heading tracks the live version (later decimals stack above
+  // [1.33.6]); assert it is a valid heading == the live version rather than
+  // hard-pinning 1.33.6 (the original literal broke at v1.34.1).
   const firstHeading = cl.match(/^## \[(\d+\.\d+\.\d+)\]/m);
   assert.ok(firstHeading, 'CHANGELOG has at least one release heading');
-  assert.equal(firstHeading[1], '1.33.6', 'the top-most release heading must be [1.33.6]');
+  assert.equal(
+    firstHeading[1],
+    readJsonRel('package.json').version,
+    'the top-most CHANGELOG release heading must match the live package version',
+  );
 });

@@ -17,6 +17,12 @@ const { readJsConst } = require('./js-const.cjs');
 const { readTailwind } = require('./tailwind.cjs');
 const { readFigma } = require('./figma.cjs');
 
+// Phase 34.1 — native theme emitters (token-bridge, D-02: extend the engine,
+// do not fork a native IR). See reference/native-platforms.md.
+const { emitSwift, reextractSwift } = require('./swift.cjs');
+const { emitCompose, reextractCompose } = require('./compose.cjs');
+const { emitFlutter, reextractFlutter } = require('./flutter.cjs');
+
 /**
  * @typedef {Object} TokenSet
  * @property {Object<string, string>} tokens
@@ -97,4 +103,11 @@ module.exports = {
   readJsConst,
   readTailwind,
   readFigma,
+  // Phase 34.1 native token-bridge emitters + symmetric re-extractors.
+  emitSwift,
+  emitCompose,
+  emitFlutter,
+  reextractSwift,
+  reextractCompose,
+  reextractFlutter,
 };
