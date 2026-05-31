@@ -129,4 +129,14 @@ This agent MUST NOT:
 
 ---
 
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"compose-executor","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<which Compose composable(s) + Material 3 conventions applied>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`.
+
 ## EXECUTION COMPLETE

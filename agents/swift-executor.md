@@ -213,4 +213,14 @@ This agent MUST NOT:
 - Commit files from other tasks in the same commit
 - Use `git add .` or `git add -A`
 
+## Record
+
+At run-end, append one JSONL line to `.design/intel/insights.jsonl`:
+
+```json
+{"ts":"<ISO-8601>","agent":"swift-executor","cycle":"<cycle from STATE.md>","stage":"<stage from STATE.md>","one_line_insight":"<which SwiftUI view(s) + iOS conventions (safe areas / gestures / type) applied>","artifacts_written":["<files written>"]}
+```
+
+Schema: `reference/schemas/insight-line.schema.json`.
+
 ## EXECUTION COMPLETE
