@@ -1,0 +1,28 @@
+{
+  "input": {
+    "color-primary": "#3B82F6",
+    "space-4": "16px",
+    "font-family-body": "Inter, system-ui"
+  },
+  "swift": {
+    "tokens": {
+      "color-primary": "#3b82f6",
+      "font-family-body": "Inter, system-ui",
+      "space-4": "16px"
+    }
+  },
+  "compose": {
+    "tokens": {
+      "color-primary": "#3b82f6",
+      "space-4": "16px",
+      "font-family-body": "Inter, system-ui"
+    }
+  },
+  "flutter": {
+    "tokens": {
+      "color-primary": "#3b82f6",
+      "font-family-body": "Inter, system-ui",
+      "space-4": "16px"
+    }
+  }
+}

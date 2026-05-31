@@ -2,3 +2,7 @@
 *.md    text eol=lf
 *.sh    text eol=lf
 *.json  text eol=lf
+# Byte-equal regression baselines (e.g. phase-34-1 native-theme fixtures) are
+# compared against LF emitter output — pin .txt to LF so a CRLF checkout cannot
+# break the determinism lock.
+*.txt   text eol=lf
