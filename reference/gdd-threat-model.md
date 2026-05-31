@@ -225,7 +225,7 @@ install hint instead of starting. When running, it is a network listener.
     local-only observability feature into a remotely-reachable data source.
 - **Current mitigations:** **Bearer-token auth is enforced on every upgrade**:
   `ws.cjs` lines 110–116 reject any upgrade whose header is missing or where
-  `auth !== \`Bearer ${opts.token}\`` with an `HTTP/1.1 401 Unauthorized` and a
+  the supplied token does not match the expected `Bearer` value, returning an `HTTP/1.1 401 Unauthorized` and a
   socket destroy. The token **must be ≥8 chars** — `startServer` throws a
   `TypeError` if `opts.token.length < 8` (line 74), preventing trivially weak
   tokens. Backpressure is **fire-and-forget with no queue** (lines 91–108):
