@@ -862,6 +862,13 @@
       "description": "Phase 30 triage gate catalogue — locally-fixable failure modes (id/pattern/diagnosis/remedy/severity, with optional propose_report whitelist flag per D-11) consulted by scripts/lib/issue-reporter/triage-matcher.cjs before the report-issue consent prompt (D-07/D-11)."
     },
     {
+      "name": "gdd-threat-model",
+      "path": "reference/gdd-threat-model.md",
+      "type": "heuristic",
+      "phase": 33.5,
+      "description": "Phase 33.5 STRIDE threat model of GDD's own runtime attack surface — hooks, the gdd-state + gdd-mcp MCP servers, the peer-CLI broker, the WebSocket event-stream transport, and issue-reporter outbound; maps each residual risk to the 33.5 plan that closes it."
+    },
+    {
       "name": "gdd-runtime-audit",
       "path": "reference/gdd-runtime-audit.md",
       "type": "heuristic",
