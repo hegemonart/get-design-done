@@ -170,6 +170,147 @@ function buildKfmCandidate(article, options) {
   };
 }
 
+// -------------------------------------------------------------------
+// Plan 33.6-03 (SC#8) — OpenRouter catalog drift
+// -------------------------------------------------------------------
+
+/**
+ * Index a catalog `models[]` by id, keeping only well-formed rows
+ * (objects with a non-empty string `id`). Last write wins on dup ids.
+ *
+ * @param {unknown} models
+ * @returns {Map<string, object>}
+ */
+function indexById(models) {
+  const map = new Map();
+  if (!Array.isArray(models)) return map;
+  for (const m of models) {
+    if (m && typeof m === 'object' && typeof m.id === 'string' && m.id.length > 0) {
+      map.set(m.id, m);
+    }
+  }
+  return map;
+}
+
+/**
+ * Best-effort "is this model flagged deprecated?" signal. Tolerant of the
+ * several shapes an upstream catalog might use: a boolean `deprecated`,
+ * or a `status`/`lifecycle`/`availability` string containing "deprecat".
+ *
+ * @param {object} model
+ * @returns {boolean}
+ */
+function isDeprecatedFlag(model) {
+  if (!model || typeof model !== 'object') return false;
+  if (model.deprecated === true) return true;
+  for (const key of ['status', 'lifecycle', 'availability', 'state']) {
+    const v = model[key];
+    if (typeof v === 'string' && /deprecat/i.test(v)) return true;
+  }
+  return false;
+}
+
+/**
+ * Stable string-compare of a single pricing field. A pricing field is the
+ * catalog's `pricing.prompt` / `pricing.completion` (strings like "0.000003").
+ * Compares as strings (the catalog stores them as strings) after a defensive
+ * String() coercion; missing → ''.
+ */
+function priceStr(model, field) {
+  if (!model || typeof model !== 'object' || !model.pricing || typeof model.pricing !== 'object') {
+    return '';
+  }
+  const v = model.pricing[field];
+  return v === undefined || v === null ? '' : String(v);
+}
+
+function pricingChanged(prevModel, currModel) {
+  return (
+    priceStr(prevModel, 'prompt') !== priceStr(currModel, 'prompt') ||
+    priceStr(prevModel, 'completion') !== priceStr(currModel, 'completion')
+  );
+}
+
+/**
+ * Diff a prior vs current OpenRouter catalog (`models[]` arrays) and classify
+ * each delta. Plan 33.6-03 / SC#8.
+ *
+ * Classification per id:
+ *   - `new-model`      — id in curr, not in prev.
+ *   - `withdrawn`      — id in prev, not in curr.
+ *   - `deprecated`     — id in BOTH, and the curr row carries a deprecated/status
+ *                        flag (best-effort `isDeprecatedFlag`). Takes precedence
+ *                        over a coincident pricing change.
+ *   - `pricing-change` — id in BOTH, not deprecated, with a changed
+ *                        pricing.prompt or pricing.completion.
+ *   - (unchanged ids produce NO entry.)
+ *
+ * Surfacing (the actionable "a model you pinned is going away" signal):
+ *   `surfaced === true` ONLY when `change ∈ {deprecated, withdrawn}` AND the id
+ *   is in `options.overrides` (the configured `openrouter_tier_overrides`
+ *   values). `new-model` / `pricing-change` are classified but `surfaced:false`
+ *   (noise control per CONTEXT). A deprecated/withdrawn id NOT in overrides is
+ *   also `surfaced:false`.
+ *
+ * Pure, zero deps, NEVER throws — garbage inputs degrade to `[]`.
+ *
+ * @param {Array<object>} prevModels prior catalog `models[]`
+ * @param {Array<object>} currModels current catalog `models[]`
+ * @param {object} [options]
+ * @param {Array<string>} [options.overrides] configured openrouter_tier_overrides id values
+ * @returns {Array<{id:string, change:('new-model'|'pricing-change'|'deprecated'|'withdrawn'), surfaced:boolean}>}
+ */
+function diffOpenRouterCatalog(prevModels, currModels, options) {
+  try {
+    const prev = indexById(prevModels);
+    const curr = indexById(currModels);
+
+    const opts = options && typeof options === 'object' ? options : {};
+    const overrideList = Array.isArray(opts.overrides) ? opts.overrides : [];
+    const overrides = new Set(overrideList.filter(x => typeof x === 'string' && x.length > 0));
+
+    /** @type {Array<{id:string, change:string, surfaced:boolean}>} */
+    const out = [];
+
+    // Deterministic id order: union of all ids, sorted ascending. Keeps the
+    // output stable for a fixed input pair (no Date, no randomness).
+    const allIds = new Set([...prev.keys(), ...curr.keys()]);
+    const sortedIds = [...allIds].sort();
+
+    for (const id of sortedIds) {
+      const inPrev = prev.has(id);
+      const inCurr = curr.has(id);
+      let change = null;
+
+      if (inCurr && !inPrev) {
+        change = 'new-model';
+      } else if (inPrev && !inCurr) {
+        change = 'withdrawn';
+      } else {
+        // id in both.
+        const currModel = curr.get(id);
+        if (isDeprecatedFlag(currModel)) {
+          change = 'deprecated';
+        } else if (pricingChanged(prev.get(id), currModel)) {
+          change = 'pricing-change';
+        } else {
+          continue; // unchanged → no delta
+        }
+      }
+
+      const actionable = change === 'deprecated' || change === 'withdrawn';
+      const surfaced = actionable && overrides.has(id);
+      out.push({ id, change, surfaced });
+    }
+
+    return out;
+  } catch {
+    // Absolute backstop — diffOpenRouterCatalog NEVER throws (parity with the
+    // never-throws discipline of the 33.6 adapter/fetcher).
+    return [];
+  }
+}
+
 /**
  * Classify a list of fetched articles into events. Emits one kfm-candidate
  * per whitelist-matched article. Other articles produce no events here
@@ -192,10 +333,16 @@ module.exports = {
   classifyArticles,
   matchesKfmWhitelist,
   buildKfmCandidate,
+  // Plan 33.6-03 (SC#8) — OpenRouter catalog weekly-diff classifier. Added as a
+  // sibling pure function; the existing API above is unchanged.
+  diffOpenRouterCatalog,
   // Exposed for tests / advanced consumers.
   KFM_WHITELIST_PATTERNS,
   MAX_RAW_EXCERPT,
   _deriveSymptom: deriveSymptom,
   _derivePatternHint: derivePatternHint,
   _truncateExcerpt: truncateExcerpt,
+  _indexById: indexById,
+  _isDeprecatedFlag: isDeprecatedFlag,
+  _pricingChanged: pricingChanged,
 };
