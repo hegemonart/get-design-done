@@ -881,6 +881,13 @@
       "type": "heuristic",
       "phase": 33.6,
       "description": "Phase 33.6 OpenRouter tier-mapping heuristic — maps GDD opus/sonnet/haiku onto OpenRouter catalog ids via closed-vs-open + pricing buckets (high/medium/low), with the .design/config.json#openrouter_tier_overrides escape hatch (override wins) and graceful-null → native fallback."
+    },
+    {
+      "name": "prices-openrouter",
+      "path": "reference/prices.openrouter.md",
+      "type": "data",
+      "phase": 33.6,
+      "description": "Phase 33.6 catalog-derived OpenRouter price sub-table — per-model prompt/completion $/tok snapshot of .design/cache/openrouter-models.json; derived view, the dynamic catalog is the source of truth (D-11 registry round-trip)."
     }
   ]
 }
