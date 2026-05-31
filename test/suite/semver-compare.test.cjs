@@ -353,6 +353,17 @@ OFF_CADENCE_VERSIONS.add('1.33.0');
 //   - 1.33.5 → Phase 33.5 (runtime-security); off-cadence sub-phase from 1.33.0.
 OFF_CADENCE_VERSIONS.add('1.33.5');
 
+// Phase 33.6 — OpenRouter Provider Adapter (v1.33.6, 2026-05-31). Decimal
+// sub-phase on the v1.33.x arc (1.33.5 -> 1.33.6; CHANGELOG-only, D-01). Ships
+// the dynamic OpenRouter catalog-fetcher (24h TTL, atomic, injectable fetch,
+// hermetic) under the 33.5 outbound allowlist + the tier-resolver-openrouter
+// adapter (opus/sonnet/haiku heuristic + overrides, graceful-degrade) + the
+// connection + /gdd:openrouter-status skill + the optional cost.update provider
+// tag + tier-mapping/prices docs + authority-watcher catalog-drift. Registered
+// off-cadence from the 1.33.0 parent.
+//   - 1.33.6 → Phase 33.6 (openrouter); off-cadence sub-phase from 1.33.0.
+OFF_CADENCE_VERSIONS.add('1.33.6');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
