@@ -10,7 +10,7 @@
 - [ ] **Phase affected**: <!-- phase-NN name, or "none / utility" -->
 - [ ] **Version bumped?** (Y/N) — required for phase closeout PRs; set Y + update `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json`
 - [ ] **CHANGELOG updated?** (Y/N) — append a `## [<version>]` section when Y
-- [ ] **Baseline relocked?** (Y/N) — run relock procedure in `test-fixture/baselines/current/README.md` if agents/skills/connections changed
+- [ ] **Baseline relocked?** (Y/N) — run relock procedure in `test/fixtures/baselines/current/README.md` if agents/skills/connections changed
 - [ ] **Tests pass** locally: `npm test` exits 0
 - [ ] **Lint clean**: `npm run lint:md && npm run validate:schemas && npm run validate:frontmatter && npm run detect:stale-refs` exits 0
 

@@ -20,7 +20,7 @@
 //   No flag, env var, or argument disables the check. Promotion targets that
 //   fail the regex check throw — period. There is no opt-out flag, no
 //   environment override, and the CLI offers no escape hatch. (The scan in
-//   tests/apply-reflections-incubator.test.cjs grep-asserts the absence of
+//   test/suite/apply-reflections-incubator.test.cjs grep-asserts the absence of
 //   bypass tokens in this file's source, so even adding such an option in
 //   future would break the build.)
 //
