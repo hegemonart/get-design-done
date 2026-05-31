@@ -888,6 +888,13 @@
       "type": "data",
       "phase": 33.6,
       "description": "Phase 33.6 catalog-derived OpenRouter price sub-table — per-model prompt/completion $/tok snapshot of .design/cache/openrouter-models.json; derived view, the dynamic catalog is the source of truth (D-11 registry round-trip)."
+    },
+    {
+      "name": "native-platforms",
+      "path": "reference/native-platforms.md",
+      "type": "heuristic",
+      "phase": 34.1,
+      "description": "Phase 34.1 token-bridge spec — maps the canonical CSS-token form (Phase 23) to SwiftUI Color/Font/ViewModifier, Jetpack Compose Color/Shapes/Typography/MaterialTheme, and Flutter ThemeData/ColorScheme/TextTheme, with the precision contract (color hex→8-bit channels exact, dimension px→pt/dp/logical px) defining token-identity for the round-trip."
     }
   ]
 }
