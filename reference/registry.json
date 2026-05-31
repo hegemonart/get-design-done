@@ -902,6 +902,13 @@
       "type": "heuristic",
       "phase": 34.2,
       "description": "Phase 34.2 email-constraint catalogue — table-based layout (not flexbox/grid/position), inline styles (not a <style> block), MSO conditional comments for Outlook, dark-mode color-scheme/prefers-color-scheme handling, ~600px max-width, image/alt rules, and top-20-client quirks; the authority the email-executor generates against and the design-verifier email branch audits against, and the rule-id source for scripts/lib/email/validate-email-html.cjs."
+    },
+    {
+      "name": "print-design",
+      "path": "reference/print-design.md",
+      "type": "heuristic",
+      "phase": 34.3,
+      "description": "Phase 34.3 print-constraint catalogue — @page size/margin/marks (the print box model), bleed box + crop/registration marks, CMYK color-space awareness (subtractive, not screen RGB), font embedding/outlining (print RIPs have no web fonts), and 300dpi raster-fallback guidance; the authority the pdf-executor generates against and the design-verifier print branch audits against, and the rule-id source for scripts/lib/print/validate-print-css.cjs."
     }
   ]
 }

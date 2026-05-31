@@ -1,0 +1,27 @@
+/* Fixture: an @page + font-embed + CMYK + 300dpi stylesheet with NO bleed box
+   and NO crop/registration marks -> flags exactly PR-BLEED-01.
+   Every OTHER class is satisfied so PR-BLEED-01 is the only violation.
+   (Intentionally contains no bleed / crop / registration signal of any kind.) */
+
+/* CMYK target — color-profile note for the RIP (PR-CMYK-01) */
+:root { color-profile: url(./CoatedFOGRA39.icc); }
+
+@page {
+  size: Letter;
+  margin: 15mm;
+  /* PR-PAGE-01 satisfied; deliberately no edge-trim signal here */
+}
+
+@font-face {
+  font-family: "Brand";
+  src: url(./Brand.woff2) format("woff2");   /* PR-FONT-01: embedded font */
+}
+
+body {
+  font-family: "Brand", serif;
+  color: cmyk(0% 80% 95% 0%);   /* PR-CMYK-01: CMYK color value */
+}
+
+img {
+  image-resolution: 300dpi;     /* PR-DPI-01: 300dpi raster fallback */
+}

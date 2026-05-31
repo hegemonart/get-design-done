@@ -1,0 +1,23 @@
+/* Fixture: a print-ish stylesheet with the bleed + CMYK + font-embed + 300dpi
+   signals but NO @page rule -> flags exactly PR-PAGE-01 (missing print box model).
+   Every OTHER class is satisfied so PR-PAGE-01 is the only violation. */
+
+/* PR-BLEED-01: a documented bleed/crop-marks convention note (no @page needed)
+   bleed: 3mm; marks: crop cross  -- recorded here as the production intent */
+
+/* CMYK target — color-profile note for the RIP (PR-CMYK-01) */
+:root { color-profile: url(./CoatedFOGRA39.icc); }
+
+@font-face {
+  font-family: "Brand";
+  src: url(./Brand.woff2) format("woff2");   /* PR-FONT-01: embedded font */
+}
+
+body {
+  font-family: "Brand", serif;
+  color: cmyk(0% 80% 95% 0%);   /* PR-CMYK-01: CMYK color value */
+}
+
+img {
+  image-resolution: 300dpi;     /* PR-DPI-01: 300dpi raster fallback */
+}
