@@ -151,21 +151,42 @@ test('34.1-06: 6-manifest version lockstep (package + claude plugin + marketplac
   }
 });
 
-// ── 4. phase-34-1 manifests-version baseline == live == 1.34.1 ──────────────────
+// ── 4. phase-34-1 manifests-version baseline == live (version-agnostic) ─────────
+// The phase-34-1 baseline is a D-08 FORWARD-PROP target: each later closeout
+// bumps it to the new live version (Phase 34.2 forward-propped it 1.34.1 ->
+// 1.34.2 as the prior closeout's own baseline now trailing live), so this
+// asserts == live (the same phase-32/33/33.5/33.6 idiom — a hard-coded literal
+// here is a latent defect that breaks on every subsequent decimal release) and
+// >= 1.34.1 (it must never regress below the version this baseline froze).
 
-test('34.1-06: phase-34-1/manifests-version.txt baseline == 1.34.1 == live package version', () => {
+test('34.1-06: phase-34-1/manifests-version.txt baseline == live package version (>= 1.34.1)', () => {
   const baseline = readBaseline('manifests-version.txt').replace(/\s+$/, '');
   const live = readJsonRel('package.json').version;
-  assert.equal(baseline, '1.34.1', 'phase-34-1 manifests-version.txt must be 1.34.1 (D-08 forward-prop target)');
   assert.equal(baseline, live, `phase-34-1 manifests-version.txt (${baseline}) != package.json version (${live})`);
+  const [maj, min, pat] = baseline.split('.').map(Number);
+  const gteBaseline =
+    maj > 1 || (maj === 1 && min > 34) || (maj === 1 && min === 34 && pat >= 1);
+  assert.ok(gteBaseline, `phase-34-1 manifests-version.txt (${baseline}) must be >= 1.34.1 (D-08 forward-prop target; must not regress)`);
 });
 
-// ── 5. CHANGELOG [1.34.1] at the top ────────────────────────────────────────────
+// ── 5. CHANGELOG [1.34.1] block present + not regressed below 1.34.1 ─────────────
+// Version-agnostic (the phase-32/33/33.5/33.6 idiom): a later decimal release
+// (e.g. 1.34.2 from Phase 34.2) legitimately sits ABOVE [1.34.1], so this
+// asserts the [1.34.1] entry still EXISTS (the 34.1 regression lock) and that
+// the top-most heading has not REGRESSED below 1.34.1 — not that 1.34.1 is top.
 
-test('34.1-06: CHANGELOG has a [1.34.1] block at the top (D-01)', () => {
+test('34.1-06: CHANGELOG has a [1.34.1] block and the top heading has not regressed (D-01)', () => {
   const cl = read('CHANGELOG.md');
   assert.match(cl, /## \[1\.34\.1\]/, 'CHANGELOG must carry a ## [1.34.1] entry (D-01)');
   const firstHeading = cl.match(/^## \[(\d+\.\d+\.\d+)\]/m);
   assert.ok(firstHeading, 'CHANGELOG has at least one release heading');
-  assert.equal(firstHeading[1], '1.34.1', 'the top-most release heading must be [1.34.1]');
+  const [maj, min, pat] = firstHeading[1].split('.').map(Number);
+  const topGteBaseline =
+    maj > 1 ||
+    (maj === 1 && min > 34) ||
+    (maj === 1 && min === 34 && pat >= 1);
+  assert.ok(
+    topGteBaseline,
+    `the top-most CHANGELOG release heading (${firstHeading[1]}) must be >= 1.34.1 (must not regress below the 34.1 baseline)`,
+  );
 });

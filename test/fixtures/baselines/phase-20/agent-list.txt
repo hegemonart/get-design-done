@@ -31,6 +31,7 @@ design-start-writer.md
 design-update-checker.md
 design-verifier-gate.md
 design-verifier.md
+email-executor.md
 flutter-executor.md
 gdd-graph-refresh.md
 gdd-intel-updater.md

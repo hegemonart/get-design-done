@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- color-scheme present so this fixture trips ONLY EM-LAYOUT-01 -->
+  <meta name="color-scheme" content="light dark">
+  <title>Promo</title>
+  <!--[if mso]><!-- MSO comment present so EM-MSO-01 is satisfied --><![endif]-->
+</head>
+<body style="margin:0;padding:0;background-color:#ffffff;">
+  <!-- VIOLATION (EM-LAYOUT-01): modern box primitives email clients drop -->
+  <div style="display:flex;flex-direction:row;gap:16px;padding:24px;font-family:Arial,sans-serif;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;">
+      <span style="color:#111111;">Left</span>
+      <span style="color:#111111;">Right</span>
+    </div>
+    <div style="position:absolute;top:0;right:0;color:#3B82F6;">Badge</div>
+  </div>
+</body>
+</html>

@@ -218,18 +218,19 @@ Proceed to Step 0E regardless of whether Step 0D ran or was skipped.
 
 Detect the **project type** so the pipeline routes the brief to the correct executor. Reuse the Step 0C / Step 1 grep/glob idiom (file reads only, < 1 second, no skip condition).
 
-**Enum (4 values — D-06):** `web` (DEFAULT) · `native-ios` · `native-android` · `flutter`.
+**Enum (5 values — D-06):** `web` (DEFAULT) · `native-ios` · `native-android` · `flutter` · `email`.
 
-**Detection signals + precedence** (first match wins; brief overrides — if the user explicitly says "iOS app" / "Android app" / "Flutter app", honor that):
+**Detection signals + precedence** (first match wins; brief overrides — if the user explicitly says "iOS app" / "Android app" / "Flutter app" / "email" / "newsletter" / "email template", honor that):
 
 ```bash
 ls pubspec.yaml 2>/dev/null                       # → flutter
 ls *.xcodeproj Package.swift 2>/dev/null          # → native-ios   (when no pubspec)
 ls build.gradle build.gradle.kts settings.gradle 2>/dev/null  # → native-android (when no pubspec)
+ls **/*.mjml email/ emails/ templates/email 2>/dev/null  # → email (email-template signals)
 ls package.json 2>/dev/null                       # → web          (default; also the fallback when none match)
 ```
 
-Precedence: `pubspec.yaml` (flutter) > `*.xcodeproj`/`Package.swift` (native-ios) > `build.gradle*`/`settings.gradle` (native-android) > `package.json` / none (web — DEFAULT).
+Precedence: an explicit brief override (the user says "email" / "newsletter" / "email template") wins like the other brief-overrides; otherwise `pubspec.yaml` (flutter) > `*.xcodeproj`/`Package.swift` (native-ios) > `build.gradle*`/`settings.gradle` (native-android) > `.mjml` files / an `email/` templates directory (email) > `package.json` / none (web — DEFAULT).
 
 **Routing table** (project type → executor — one row per type, trivially appendable):
 
@@ -239,10 +240,11 @@ Precedence: `pubspec.yaml` (flutter) > `*.xcodeproj`/`Package.swift` (native-ios
 | native-ios       | swift-executor    |
 | native-android   | compose-executor  |
 | flutter          | flutter-executor  |
+| email            | email-executor    |
 
-<!-- 34.2 (email) / 34.3 (print) append their project type + executor row here — this enum and routing table are intentionally OPEN and extensible; 34.1 adds the native types ONLY (D-06). Do NOT add email/print rows in 34.1. -->
+<!-- 34.2 added `email` (above) → email-executor; 34.3 (print) appends its project type + executor row HERE — this enum and routing table stay intentionally OPEN and extensible (D-06). 34.2 adds email ONLY; do NOT add a print row until 34.3. -->
 
-Record the detected type in DESIGN-CONTEXT.md as a `<project_type>` line (e.g. `<project_type>native-ios</project_type>`) so downstream stages route correctly. The native specifics (token→theme bridge) live in `reference/native-platforms.md` — do not inline them here.
+Record the detected type in DESIGN-CONTEXT.md as a `<project_type>` line (e.g. `<project_type>native-ios</project_type>`) so downstream stages route correctly. The native specifics (token→theme bridge) live in `reference/native-platforms.md`; the email specifics (table layout, inline styles, MSO/dark-mode constraints) live in `reference/email-design.md` — do not inline either here.
 
 Proceed to Step 1 regardless of outcome.
 

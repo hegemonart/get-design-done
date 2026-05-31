@@ -378,6 +378,18 @@ OFF_CADENCE_VERSIONS.add('1.33.6');
 //   - 1.34.1 → Phase 34.1 (native-mobile); off-cadence decimal opening the 1.34.x arc.
 OFF_CADENCE_VERSIONS.add('1.34.1');
 
+// Phase 34.2 — Non-Web Output Layer: Email (v1.34.2, 2026-05-31). Second
+// sub-phase of the split Phase 34. Off-cadence DECIMAL release on the v1.34.x
+// arc (1.34.1 -> 1.34.2; CHANGELOG-only, D-01). Ships the email-constraint
+// catalogue (reference/email-design.md, registered) + the static email-HTML
+// validator (scripts/lib/email/validate-email-html.cjs, no mjml dep) + the
+// email-executor (MJML canonical + derived HTML, D-02) + the litmus connection
+// (optional render-test, degrade-to-static-validator, D-03) + the
+// design-context-builder `email` route + the design-verifier email-verify
+// branch (delegated). Registered off-cadence (print=34.3 follows on the arc).
+//   - 1.34.2 → Phase 34.2 (email); off-cadence decimal on the 1.34.x arc.
+OFF_CADENCE_VERSIONS.add('1.34.2');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

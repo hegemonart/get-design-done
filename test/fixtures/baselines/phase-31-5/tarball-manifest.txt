@@ -38,6 +38,7 @@ agents/design-start-writer.md
 agents/design-update-checker.md
 agents/design-verifier-gate.md
 agents/design-verifier.md
+agents/email-executor.md
 agents/flutter-executor.md
 agents/gdd-graph-refresh.md
 agents/gdd-intel-updater.md
@@ -62,6 +63,7 @@ connections/design-corpora.md
 connections/figma.md
 connections/gdd-state.md
 connections/graphify.md
+connections/litmus.md
 connections/magic-patterns.md
 connections/openrouter.md
 connections/paper-design.md
@@ -162,6 +164,7 @@ reference/data/styles.csv
 reference/debugger-philosophy.md
 reference/design-system-guidance.md
 reference/design-systems-catalog.md
+reference/email-design.md
 reference/emotional-design.md
 reference/error-recovery.md
 reference/external/NOTICE.hyperframes
@@ -297,6 +300,7 @@ scripts/lib/domain-primitives/anti-patterns.cjs
 scripts/lib/domain-primitives/nng.cjs
 scripts/lib/domain-primitives/wcag.cjs
 scripts/lib/easings.cjs
+scripts/lib/email/validate-email-html.cjs
 scripts/lib/event-chain.cjs
 scripts/lib/explore-parallel-runner/index.ts
 scripts/lib/explore-parallel-runner/mappers.ts

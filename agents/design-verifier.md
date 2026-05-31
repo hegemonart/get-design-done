@@ -359,9 +359,16 @@ In DESIGN-VERIFICATION.md, add a `## Phase 4B — Screenshot Evidence` section l
 When `<project_type>` in DESIGN-CONTEXT.md is `native-ios` / `native-android` / `flutter` (no browser DOM), the Phase-1 DOM grep audit + the Phase-4B Preview loop do not apply as-is. Run instead:
 
 - **Snapshot audit** — IF a simulator/emulator screenshot is supplied (via `connections/xcode-simulator.md`, `connections/android-emulator.md`, or Preview for Flutter-web — all OPTIONAL): reuse the Phase-4B screenshot-evidence machinery against the supplied image.
-- **Code-only structural audit** (DEFAULT — no screenshot/simulator): verify the generated native source structurally — expected SwiftUI views / Compose composables / Flutter widgets present + token-bridge usage — instead of rendered pixels. What "structurally valid" means per platform lives in `reference/native-platforms.md` (do not inline it).
+- **Code-only structural audit** (DEFAULT — no screenshot/simulator): verify the generated native source structurally — expected SwiftUI views / Compose composables / Flutter widgets present + token-bridge usage — instead of rendered pixels. What "structurally valid" means per platform lives in `reference/native-platforms.md` (do not inline it). Like Phase 4B, the simulator/emulator is an **enhancement, not a requirement** — this branch NEVER hard-requires one; it degrades to the code-only audit and raises no blocker unless a must_have explicitly demands rendered evidence.
 
-Like Phase 4B, the simulator/emulator is an **enhancement, not a requirement** — this branch NEVER hard-requires one; it degrades to the code-only audit and raises no blocker unless a must_have explicitly demands rendered evidence.
+---
+
+## Phase 4E — Email Verify (project_type: email)
+
+When `<project_type>` is `email` (no browser DOM — the Phase-1 DOM grep + Phase-4B Preview loop do not apply), run an email-constraint audit BY DELEGATION (the ~30 constraints live in `reference/email-design.md` — the authority; do NOT inline them):
+
+- **Static constraint audit** (DEFAULT) — run `scripts/lib/email/validate-email-html.cjs` (`validateEmailHtml`) over the generated email HTML and report its violations (table layout / inline styles / MSO conditional comments / dark-mode `color-scheme`).
+- **Rendered enhancement** (OPTIONAL) — IF the Litmus connection (`connections/litmus.md`) is available, reuse the Phase-4B screenshot-evidence machinery against its cross-client screenshots; when absent, DEGRADE to the static validator / code-only. Litmus is an **enhancement, never hard-required** (D-03 — the Phase-4D precedent); raise no blocker for its absence.
 
 ---
 
