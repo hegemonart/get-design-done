@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- color-scheme present so this fixture trips ONLY EM-MSO-01 -->
+  <meta name="color-scheme" content="light dark">
+  <title>Receipt</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;">
+  <!-- Table-based, fully inline-styled, color-scheme-bearing email,
+       but with NO MSO conditional comment anywhere → VIOLATION (EM-MSO-01) -->
+  <table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;margin:0 auto;background-color:#ffffff;">
+    <tr>
+      <td style="padding:24px;font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#111111;background-color:#ffffff;">
+        <h1 style="margin:0 0 16px;font-size:24px;color:#111111;">Your receipt</h1>
+        <p style="margin:0 0 16px;">Thanks for your purchase.</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="border-radius:4px;background-color:#3B82F6;">
+              <a href="https://example.com" style="display:block;padding:12px 24px;font-family:Arial,sans-serif;font-size:16px;color:#ffffff;text-decoration:none;">View order</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

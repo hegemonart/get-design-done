@@ -895,6 +895,13 @@
       "type": "heuristic",
       "phase": 34.1,
       "description": "Phase 34.1 token-bridge spec — maps the canonical CSS-token form (Phase 23) to SwiftUI Color/Font/ViewModifier, Jetpack Compose Color/Shapes/Typography/MaterialTheme, and Flutter ThemeData/ColorScheme/TextTheme, with the precision contract (color hex→8-bit channels exact, dimension px→pt/dp/logical px) defining token-identity for the round-trip."
+    },
+    {
+      "name": "email-design",
+      "path": "reference/email-design.md",
+      "type": "heuristic",
+      "phase": 34.2,
+      "description": "Phase 34.2 email-constraint catalogue — table-based layout (not flexbox/grid/position), inline styles (not a <style> block), MSO conditional comments for Outlook, dark-mode color-scheme/prefers-color-scheme handling, ~600px max-width, image/alt rules, and top-20-client quirks; the authority the email-executor generates against and the design-verifier email branch audits against, and the rule-id source for scripts/lib/email/validate-email-html.cjs."
     }
   ]
 }

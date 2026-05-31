@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- color-scheme present so this fixture trips ONLY EM-STYLE-01 -->
+  <meta name="color-scheme" content="light dark">
+  <title>Newsletter</title>
+  <!--[if mso]><!-- MSO comment present so EM-MSO-01 is satisfied --><![endif]-->
+  <!-- VIOLATION (EM-STYLE-01): visual styling lives in a <head><style> block of
+       NON-@media rules used as the primary styling mechanism; Gmail strips it -->
+  <style>
+    body { margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif; }
+    .container { width: 600px; margin: 0 auto; background-color: #ffffff; }
+    .cell { padding: 24px; font-size: 16px; line-height: 24px; color: #111111; }
+    h1 { margin: 0 0 16px; font-size: 24px; color: #111111; }
+    a.button { display: inline-block; padding: 12px 24px; background-color: #3B82F6; color: #ffffff; text-decoration: none; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <table role="presentation" class="container" width="600" align="center" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td class="cell">
+        <h1>This month at Acme</h1>
+        <p>All styling is in the head sheet instead of inline.</p>
+        <a class="button" href="https://example.com">Read more</a>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
