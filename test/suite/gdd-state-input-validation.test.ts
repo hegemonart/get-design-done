@@ -66,15 +66,28 @@ test('33.5-03: rejects ..-escape GDD_STATE_PATH', () => {
       'POSIX ../../etc/passwd must be rejected',
     );
   });
-  // Windows-style escape.
-  withStatePath('..\\..\\windows\\system32\\config\\sam', () => {
-    assert.throws(
-      () => resolveStatePath(),
-      (err: unknown) =>
-        err instanceof Error && /escape|traversal|STATE_PATH/i.test(err.message),
-      'Windows ..\\..\\ escape must be rejected',
-    );
-  });
+  // Windows-style escape: `\` is a path separator ONLY on win32. On POSIX it
+  // is a literal filename character, so `..\..\...` resolves to a contained
+  // literal name UNDER the root (genuinely NOT a traversal) and is correctly
+  // accepted. Assert the platform-appropriate behavior so the guard is exact
+  // on both (path.resolve uses the host separator).
+  if (process.platform === 'win32') {
+    withStatePath('..\\..\\windows\\system32\\config\\sam', () => {
+      assert.throws(
+        () => resolveStatePath(),
+        (err: unknown) =>
+          err instanceof Error && /escape|traversal|STATE_PATH/i.test(err.message),
+        'Windows ..\\..\\ escape must be rejected',
+      );
+    });
+  } else {
+    withStatePath('..\\..\\windows\\system32\\config\\sam', () => {
+      assert.doesNotThrow(
+        () => resolveStatePath(),
+        'on POSIX a backslash path is a contained literal filename, not a traversal escape',
+      );
+    });
+  }
 });
 
 test('33.5-03: accepts a legit in-boundary path', () => {
