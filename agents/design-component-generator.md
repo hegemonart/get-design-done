@@ -31,7 +31,11 @@ Read `.design/STATE.md` `<connections>` block. Check for:
 - `magic-patterns: available` → prefer magic-patterns (DS-aware + preview_url); use magic-patterns impl
 - `21st-dev: available` (and magic-patterns not available) → use 21st.dev impl
 - Both available → prefer magic-patterns (DS-aware + preview_url); 21st.dev as fallback
-- Neither available → Print: "No component generator configured. Set up 21st.dev or Magic Patterns per connections/21st-dev.md or connections/magic-patterns.md." STOP.
+- `v0-dev: available` → use the v0 impl (generator; MCP-first → REST + `V0_API_KEY`)
+- `plasmic: available` → use the plasmic impl (canvas read + code emission)
+- `builder-io: available` → use the builder-io impl (Visual Copilot; pull-only this phase)
+- Priority when several are available: magic-patterns > 21st.dev > v0 > plasmic > builder-io (DS-awareness + preview first); `--tool` overrides.
+- None available → Print: "No component generator configured. Set up 21st.dev / Magic Patterns / v0.dev / Plasmic / Builder.io per the matching `connections/<tool>.md`." STOP.
 
 ---
 
@@ -39,7 +43,7 @@ Read `.design/STATE.md` `<connections>` block. Check for:
 
 Parse flags:
 - `--dry-run` — emit proposal only, no writes
-- `--tool 21st|magic-patterns` — override generator selection
+- `--tool 21st|magic-patterns|v0|plasmic|builder-io` — override generator selection
 - `--ds <design-system>` — design system target: `shadcn | tailwind | mantine | chakra`
 - Component description (required positional arg): natural-language component spec
 
@@ -163,6 +167,30 @@ Returns new `{ code, preview_url }`. Repeat Step 3–5 with new code.
 After generating, write `preview_url` to STATE.md `<generator>` block (see Step 5).
 
 <!-- /impl: magic-patterns -->
+
+<!-- impl: v0 -->
+## v0.dev Implementation
+
+### Step 2D — v0.dev: Generate
+
+Probe per `connections/v0-dev.md` (MCP-first → REST + `V0_API_KEY`). Generate from the description + DS context: MCP available → call the v0 generate tool (verify the name via ToolSearch) with the spec + `--ds` target; REST fallback → POST the spec to the v0 Platform API with `V0_API_KEY`. v0 emits React + Tailwind + shadcn by default — reconcile to the project `--ds`. Carry into Step 3 (proposal); never write to `src/` without confirmation. Full tool catalogue + setup: `connections/v0-dev.md`.
+<!-- /impl: v0 -->
+
+<!-- impl: plasmic -->
+## Plasmic Implementation
+
+### Step 2E — Plasmic: Read canvas + emit code
+
+Probe per `connections/plasmic.md`. Plasmic is dual: **canvas read** → pull the Plasmic project's components as a design source (like Figma); **code emission** → emit the component code for the `--ds` target. Reconcile emitted code to the project DS; carry into Step 3 (proposal). Detail: `connections/plasmic.md`.
+<!-- /impl: plasmic -->
+
+<!-- impl: builder-io -->
+## Builder.io Implementation
+
+### Step 2F — Builder.io: Visual Copilot (pull-only)
+
+Probe per `connections/builder-io.md` (MCP-first → `BUILDER_API_KEY`). **Pull-only this phase**: generate / ingest patterns via Visual Copilot, reconcile to `--ds`, carry into Step 3 (proposal). NO write-back this phase. Detail: `connections/builder-io.md`.
+<!-- /impl: builder-io -->
 
 ---
 

@@ -9,7 +9,7 @@ last_updated: 2026-05-18
 
 Source: extracted from `skills/connections/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
 The skill's load-bearing routing + invocation-mode dispatch stays in `../skills/connections/SKILL.md`;
-this file holds the 21 probe scripts, bucket categorization, per-connection setup screen,
+this file holds the 27 probe scripts, bucket categorization, per-connection setup screen,
 auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json write contracts.
 
 # Connections Onboarding Procedure
@@ -27,7 +27,7 @@ this file does NOT duplicate them; it points at them by name.
 
 ---
 
-## Step 1 — Probe all 21 connections
+## Step 1 — Probe all 27 connections
 
 Run every probe below in order. MCP probes call `ToolSearch` first (deferred tools fail silently without it). Write every result to `STATE.md <connections>` when done.
 
@@ -196,7 +196,49 @@ Bash: find . -name "*.riv" -not -path "*/node_modules/*" 2>/dev/null | head
   → none                               → rive: not_configured
 ```
 
-After all 21 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
+**framer:** (AI-native Wave 2 — canvas; MCP or API token)
+```
+ToolSearch({ query: "framer", max_results: 5 })
+→ Empty → framer: not_configured
+→ Non-empty → framer: available
+```
+
+**penpot:** (AI-native Wave 2 — canvas; self-hosted URL/token or cloud)
+```
+ToolSearch({ query: "penpot", max_results: 5 })
+→ Empty → penpot: not_configured
+→ Non-empty → penpot: available
+```
+
+**webflow:** (AI-native Wave 2 — generator; MCP or WEBFLOW token)
+```
+ToolSearch({ query: "webflow", max_results: 5 })
+→ Empty → webflow: not_configured
+→ Non-empty → webflow: available
+```
+
+**v0-dev:** (AI-native Wave 2 — generator; MCP-first, else V0_API_KEY)
+```
+ToolSearch({ query: "v0", max_results: 5 })
+→ Empty → v0-dev: not_configured
+→ Non-empty → v0-dev: available
+```
+
+**plasmic:** (AI-native Wave 2 — generator+canvas; MCP or token)
+```
+ToolSearch({ query: "plasmic", max_results: 5 })
+→ Empty → plasmic: not_configured
+→ Non-empty → plasmic: available
+```
+
+**builder-io:** (AI-native Wave 2 — generator; MCP-first, else BUILDER_API_KEY)
+```
+ToolSearch({ query: "builder", max_results: 5 })
+→ Empty → builder-io: not_configured
+→ Non-empty → builder-io: available
+```
+
+After all 27 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
 
 ---
 
@@ -286,6 +328,12 @@ One-line value props (use verbatim):
 | notion | export — `/gdd:export --format notion` writes a stakeholder page (degrade-to-HTML) |
 | lottie | verify — Lottie JSON motion check (frame-rate / duration / bloat / perf-budget), WARN-never-block |
 | rive | verify — Rive `.riv` motion check (size + state-machine reachability via the opt-in runtime), WARN-never-block |
+| framer | design — read Framer frames + write proposals (canvas, Wave 2) |
+| penpot | design — open-source Figma alt; read boards (self-hosted or cloud) |
+| webflow | design — read site structure as an adaptation source (Wave 2) |
+| v0-dev | generator — Vercel v0 prompt→component (MCP-first → REST + V0_API_KEY) |
+| plasmic | generator + canvas — emit code + read the Plasmic canvas |
+| builder-io | generator — Builder.io Visual Copilot (pull-only this phase) |
 
 ---
 
@@ -313,7 +361,7 @@ options:
   - "Exit"                            → emit ## CONNECTIONS COMPLETE, exit
 ```
 
-If recommended bucket is empty, swap that option for "Show all 21 and pick."
+If recommended bucket is empty, swap that option for "Show all 27 and pick."
 
 ---
 
@@ -379,6 +427,12 @@ options:
 | notion | `claude mcp add notion ...` (Notion MCP) | ✓ yes | Reversible MCP add; OAuth on first call |
 | lottie | (file-based — no install; drop a Lottie `.json` export in the repo) | n/a | Detected from Lottie exports / a `lottie-web` dep; live player opt-in |
 | rive | (file-based — no install; add a `.riv` export / `@rive-app` dep) | n/a | Detected from `.riv` files / a `@rive-app` dep; Rive runtime opt-in |
+| framer | `claude mcp add framer ...` (or API token) | ✓ yes | Reversible MCP add; canvas-category |
+| penpot | `claude mcp add penpot ...` (self-hosted URL or cloud + token) | ✓ yes | Reversible; self-host vs cloud |
+| webflow | `claude mcp add webflow ...` (or WEBFLOW token) | ✓ yes | Reversible; reads structure, not CMS authoring |
+| v0-dev | `claude mcp add v0 ...` (or V0_API_KEY) | ✓ yes | Reversible; MCP-first → REST fallback |
+| plasmic | `claude mcp add plasmic ...` (or token) | ✓ yes | Reversible; dual canvas+generator |
+| builder-io | `claude mcp add builder ...` (or BUILDER_API_KEY) | ✓ yes | Reversible; pull-only this phase |
 
 For non-auto-run connections, hide the "Run install command now" option entirely in 5.3.
 

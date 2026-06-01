@@ -4,6 +4,27 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.37.1] - 2026-06-01
+
+### Phase 37.1 — AI-Native Tools Wave 2 (Framer + Penpot + Webflow + v0.dev + Plasmic + Builder.io)
+
+First sub-phase of the split **Phase 37**. Schedules Phase 14's explicit backlog: six AI-native design tools, each under the existing connection capability contract (canvas | generator | shared probe). **No new runtime dependency, no new egress** — each tool is an opt-in user-connected MCP/API, probed via ToolSearch/env; absent → degrade-to-code-only.
+
+### Added
+
+- **`connections/framer.md`** + **`penpot.md`** + **`webflow.md`** — canvas-category specs. Framer (read frames + write proposals), Penpot (open-source Figma alt; self-hosted-vs-cloud probe), Webflow (read site structure as a design-adaptation source — not CMS authoring). Contribute at the **design** stage.
+- **`connections/v0-dev.md`** + **`plasmic.md`** + **`builder-io.md`** — generator-category specs. v0.dev (MCP-first → REST + `V0_API_KEY`), Plasmic (dual: canvas read + code emission), Builder.io Visual Copilot (pull-only this phase). Drive the **generator** stage.
+- **`agents/design-component-generator.md`** — Step-0 detection + `--tool` flag extended to `v0|plasmic|builder-io`, plus compact `<!-- impl: v0 -->` / `<!-- impl: plasmic -->` / `<!-- impl: builder-io -->` sections that cross-link to the connection specs (231 → 259, under the LARGE budget). Priority: magic-patterns > 21st.dev > v0 > plasmic > builder-io; `--tool` overrides.
+- **`connections/connections.md`** + onboarding — 21 → 27 onboarded (6 Active rows + 6 capability-matrix rows: framer/penpot → canvas, webflow/v0/builder-io → generator, **Plasmic → canvas + generator dual**; probes + value-prop + setup matrix).
+
+### Notes
+
+- **No new runtime dependency, no new egress** — opt-in MCP/API connections; the generator never writes to `src/` without proposal→confirm.
+- 6-manifest lockstep at **v1.37.1** + `OFF_CADENCE_VERSIONS.add('1.37.1')` + the 26 live-pinned `manifests-version.txt` baselines forward-propagated 1.36.3 → 1.37.1 (opens the v1.37.x arc).
+- Inventory relock: connection-list 29 → 35 (+6), onboarding → 27, tarball golden 670 → 676 (+6). Registry unchanged (no `reference/` doc); no new skill/agent dir (the generator agent pre-exists).
+
+---
+
 ## [1.36.3] - 2026-06-01
 
 ### Phase 36.3 — Knowledge Tier-3: Conversational UI — completes Phase 36

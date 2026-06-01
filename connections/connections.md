@@ -2,7 +2,7 @@
 
 This directory contains connection specifications for external tools and MCPs that the get-design-done pipeline integrates with. Each connection has its own spec file. This file is the index.
 
-**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 21 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
+**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 27 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
 
 ---
 
@@ -37,6 +37,12 @@ This directory contains connection specifications for external tools and MCPs th
 | Notion | Active | [`connections/notion.md`](connections/notion.md) | **Export** write-path (not a pipeline stage) — `mcp__notion__*` (ToolSearch probe); `/gdd:export --format notion`; redact + `GDD_DISABLE_NOTION` kill-switch; degrade-to-HTML |
 | Lottie | Active | [`connections/lottie.md`](connections/lottie.md) | **Optional** motion verify (Lottie JSON); static floor = `validate-motion.cjs` (MO-* warnings + perf budget); player opt-in; WARN-never-block, degrade-to-static/code-only (36.2, D-02/D-03) |
 | Rive | Active | [`connections/rive.md`](connections/rive.md) | **Optional** motion verify (Rive `.riv`); size + RIVE-header floor; deep state-machine graph via opt-in Rive runtime, else manual-review advisory; WARN-never-block (36.2, D-02/D-04) |
+| Framer | Active | [`connections/framer.md`](connections/framer.md) | **AI-native** (Wave 2, canvas) — read frames + write proposals; MCP probe; degrade-to-code-only (37.1) |
+| Penpot | Active | [`connections/penpot.md`](connections/penpot.md) | **AI-native** (Wave 2, canvas) — open-source Figma alt; self-hosted-vs-cloud probe; degrade-to-code-only (37.1) |
+| Webflow | Active | [`connections/webflow.md`](connections/webflow.md) | **AI-native** (Wave 2, generator) — read site structure as an adaptation source (not CMS authoring); degrade-to-code-only (37.1) |
+| v0.dev | Active | [`connections/v0-dev.md`](connections/v0-dev.md) | **AI-native** (Wave 2, generator) — Vercel v0; MCP-first → REST + `V0_API_KEY`; component-generator `v0` impl (37.1) |
+| Plasmic | Active | [`connections/plasmic.md`](connections/plasmic.md) | **AI-native** (Wave 2, dual) — canvas read + code emission; component-generator `plasmic` impl (37.1) |
+| Builder.io | Active | [`connections/builder-io.md`](connections/builder-io.md) | **AI-native** (Wave 2, generator) — Visual Copilot, pull-only this phase; component-generator `builder-io` impl (37.1) |
 
 ---
 
@@ -66,6 +72,12 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | Print-Renderer | — | — | — | print render-test target (pdf-executor) | rendered PDF/page evidence when the print-render is available, else degrade to the static print-CSS validator / code-only (D-03) | — | — | — | — |
 | Lottie | — | — | — | — | Lottie-export motion check: `validate-motion.cjs` (MO-FR/DUR/IMG/BUDGET) when present, WARN-never-block (D-02) | — | — | — | — |
 | Rive | — | — | — | — | Rive-export motion check: size + RIVE-header floor; state-machine graph via opt-in runtime, else manual-review advisory; WARN (D-02/D-04) | — | — | — | — |
+| Framer | — | — | — | canvas source (read frames, write proposals) | — | ✓ | — | — | — |
+| Penpot | — | — | — | canvas source (read boards/components) | — | ✓ | — | — | — |
+| Webflow | — | — | — | structure / adaptation source | — | — | ✓ | — | — |
+| v0.dev | — | — | — | component-generator (v0 impl) | — | — | ✓ | — | — |
+| Plasmic | — | — | — | component-generator (plasmic impl) + canvas read | — | ✓ | ✓ | — | — |
+| Builder.io | — | — | — | component-generator (builder-io impl) | — | — | ✓ | — | — |
 | Lazyweb | — | reference search via `lazyweb_search` (**Tier 1 — free, tried first**; D-01); complements refero/pinterest | — | — | — | — | — | — | — |
 | Mobbin | — | reference search via mobbin tools (**Tier 2 — paid, mobile/flow-level**; D-01); complements refero/lazyweb | — | — | — | — | — | — | — |
 | Slack | — | — | — | — | — | — | — | verify-fail/audit-pass/ship → Slack webhook (routed, redacted, degrade-to-noop; D-04/D-05) | — |
