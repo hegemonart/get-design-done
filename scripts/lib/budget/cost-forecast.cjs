@@ -12,7 +12,7 @@
 //   best   = max(0, mean − k·stddev)
 // with k = 1 by default. Projection over the next N cycles is linear on the chosen rate.
 //
-// Zero require(). Deterministic.
+// No `require` — pure. Deterministic.
 
 /** Coerce to a finite, non-negative number or throw. */
 function num(x, label) {

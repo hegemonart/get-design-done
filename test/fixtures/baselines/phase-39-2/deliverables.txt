@@ -1,0 +1,7 @@
+scripts/lib/budget/cost-forecast.cjs
+scripts/lib/budget/roi.cjs
+scripts/lib/budget/project-cap.cjs
+agents/cost-forecaster.md
+skills/budget/SKILL.md
+skills/roi/SKILL.md
+reference/cost-governance.md

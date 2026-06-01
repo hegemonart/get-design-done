@@ -155,3 +155,4 @@ shadcn-v2: reference/migrations/shadcn-v2.md
 tailwind-v4: reference/migrations/tailwind-v4.md
 mui-v6: reference/migrations/mui-v6.md
 material-3-to-4: reference/migrations/material-3-to-4.md
+cost-governance: reference/cost-governance.md

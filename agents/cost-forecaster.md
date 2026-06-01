@@ -73,6 +73,17 @@ the `project_cap` semantics.
 `k = 1`. The projection is linear on the chosen rate. Always show the band, not just the point —
 a wide best↔worst gap is itself the signal that spend is volatile.
 
+## Record
+
+At run-end, print a `## Cost forecast` summary — the scenario, the per-cycle rate + band, the
+projected next-N-cycle total, and the cycles-to-cap line (when a `project_cap_usd` is set). Then
+append one JSONL line to `.design/intel/insights.jsonl` (per `reference/schemas/insight-line.schema.json`)
+recording the forecast `{ scenario, perCycle, projectedTotal, cyclesToCap }`. Close with:
+
+```
+## COST FORECAST COMPLETE
+```
+
 ## Boundaries
 
 - Forecast is **cycle-scoped**, never per-agent-call.

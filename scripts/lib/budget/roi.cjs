@@ -6,7 +6,7 @@
 // were REVERTED, and reads per-cycle cost from .design/telemetry/costs.jsonl. It hands the joined rows
 // here. This module does ONLY the arithmetic + markdown formatting — no fs, no clock, no git. Pure.
 //
-// Zero require(). Deterministic.
+// No `require` — pure. Deterministic.
 
 function num(x, label) {
   const n = Number(x);

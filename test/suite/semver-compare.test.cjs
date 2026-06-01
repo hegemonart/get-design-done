@@ -493,6 +493,13 @@ OFF_CADENCE_VERSIONS.add('1.38.5');
 // text, never runs jscodeshift/ast-grep), no new egress.
 OFF_CADENCE_VERSIONS.add('1.39.1');
 
+// 1.39.2 → Phase 39.2 (Long-Horizon Cost Governance). Second sub-phase of the split Phase 39 (closes
+// the parent). Adds the 3 pure budget cores (scripts/lib/budget/{cost-forecast,roi,project-cap}.cjs),
+// agents/cost-forecaster.md, skills/budget + skills/roi, reference/cost-governance.md, and an additive
+// project_cap branch in hooks/budget-enforcer.ts (project_cap_usd disabled by default). No new runtime
+// dependency, no new egress.
+OFF_CADENCE_VERSIONS.add('1.39.2');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

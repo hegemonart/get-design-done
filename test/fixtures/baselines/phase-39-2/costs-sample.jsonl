@@ -1,0 +1,6 @@
+{"ts":"2026-05-01T10:00:00Z","agent":"design-explorer","tier":"sonnet","tokens_in":4200,"tokens_out":1100,"cache_hit":false,"est_cost_usd":4.0,"cycle":"cycle-1","phase":"explore"}
+{"ts":"2026-05-01T11:00:00Z","agent":"design-executor","tier":"sonnet","tokens_in":8000,"tokens_out":2000,"cache_hit":false,"est_cost_usd":6.0,"cycle":"cycle-1","phase":"design"}
+{"ts":"2026-05-08T10:00:00Z","agent":"design-explorer","tier":"sonnet","tokens_in":5000,"tokens_out":1200,"cache_hit":false,"est_cost_usd":5.0,"cycle":"cycle-2","phase":"explore"}
+{"ts":"2026-05-08T11:00:00Z","agent":"design-executor","tier":"opus","tokens_in":9000,"tokens_out":2500,"cache_hit":false,"est_cost_usd":7.0,"cycle":"cycle-2","phase":"design"}
+{"ts":"2026-05-15T10:00:00Z","agent":"design-explorer","tier":"sonnet","tokens_in":3800,"tokens_out":900,"cache_hit":false,"est_cost_usd":3.0,"cycle":"cycle-3","phase":"explore"}
+{"ts":"2026-05-15T11:00:00Z","agent":"design-executor","tier":"sonnet","tokens_in":7000,"tokens_out":1800,"cache_hit":false,"est_cost_usd":5.0,"cycle":"cycle-3","phase":"design"}

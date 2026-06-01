@@ -11,7 +11,7 @@
 // zero behavior change. The halt is graceful: the hook fires on PreToolUse:Agent, so a 'halt' blocks
 // the NEXT agent spawn, letting the current stage finish.
 //
-// Zero require(). Deterministic.
+// No `require` — pure. Deterministic.
 
 const WARN_50 = 50;
 const WARN_80 = 80;
