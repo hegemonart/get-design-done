@@ -143,3 +143,7 @@ pr-review-integration: reference/pr-review-integration.md
 notification-routing: reference/notification-routing.md
 ticket-sync: reference/ticket-sync.md
 export-formats: reference/export-formats.md
+finance: reference/domains/finance-patterns.md
+healthcare: reference/domains/healthcare-patterns.md
+gaming: reference/domains/gaming-patterns.md
+civic: reference/domains/civic-patterns.md

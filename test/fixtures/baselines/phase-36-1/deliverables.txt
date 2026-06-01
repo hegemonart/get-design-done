@@ -1,0 +1,4 @@
+reference/domains/finance-patterns.md
+reference/domains/healthcare-patterns.md
+reference/domains/gaming-patterns.md
+reference/domains/civic-patterns.md

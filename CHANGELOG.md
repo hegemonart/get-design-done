@@ -4,6 +4,30 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.36.1] - 2026-06-01
+
+### Phase 36.1 — Knowledge Tier-3: Domain Packs (finance + healthcare + gaming + civic)
+
+First sub-phase of the split **Phase 36 (Knowledge Tier 3)**. Adds four industry-specific design-pattern reference packs and wires **domain detection** into the pipeline — closing the industry-lens gap (GDD shipped 18 generic design systems + foundational Tier-2, but no domain-specific patterns). Finance and healthcare especially carry regulatory constraints (PCI-DSS, MiFID II, HIPAA, Section 508) that bleed into UI. **No new pillar, no breaking scoring change, no new runtime dependency, no new egress** — pure reference markdown + agent-prompt edits; detection is keyword/dep matching done by the agent.
+
+### Added
+
+- **`reference/domains/finance-patterns.md`** — data-table density (tabular-nums, right-aligned numerics), trading-interface conventions (gain/loss never color-alone), regulatory disclosure placement (Reg-T, MiFID II cost & charges), PCI-DSS PAN masking, number-formatting precision, real-time data states.
+- **`reference/domains/healthcare-patterns.md`** — HIPAA-aware PHI isolation (no PHI in URLs/logs/analytics), idle auto-logout, audit-trail-as-UI, MyChart-class flows, WCAG 2.1 AAA, medical-data visualization. Surfaces risk; does **not** certify compliance.
+- **`reference/domains/gaming-patterns.md`** — HUD/diegetic UI taxonomy, vestibular + photosensitive safety (≤3 flashes/sec, reduced-motion + in-game toggles), ESRB/PEGI age-gates, input-model adaptation (controller/touch/KBM), TV-safe area.
+- **`reference/domains/civic-patterns.md`** — Section 508 + WCAG 2.1 AA hard floor, multi-language gov forms (EN/ES/zh-Hans), Plain Writing Act (grade 6-8), USWDS, session-timeout warnings, one-thing-per-page forms.
+- **`agents/design-context-builder.md`** — new **Step 0F (Domain Detection)**: a dispatcher table (keywords + `package.json` deps → pack) + the confidence rule (≥2 signals or any dep match → auto-apply; 1 weak keyword → suggest; none → skip) + a `<domain>` line in DESIGN-CONTEXT.md. Orthogonal to project-type.
+- **`agents/design-auditor.md`** — **domain checklist addendum**: when a `<domain>` is active, also run that pack's `## Audit checklist` and fold findings into the relevant pillar (additive — never replaces the 7-pillar scoring).
+- All four packs **registered** in `reference/registry.json` (`type: heuristic`, `phase: 36.1`); 145 → 149 entries.
+
+### Notes
+
+- **No new runtime dependency, no new egress.** Detection is the agent matching a small embedded signal table — no code, no network.
+- 6-manifest lockstep at **v1.36.1** + `OFF_CADENCE_VERSIONS.add('1.36.1')` + the 23 live-pinned `manifests-version.txt` baselines forward-propagated 1.35.5 → 1.36.1 (opens the v1.36.x arc).
+- The 31.5 tarball golden was regenerated as a reviewed delta: **+4** (the four domain packs), zero removals (661 → 665).
+
+---
+
 ## [1.35.5] - 2026-06-01
 
 ### Phase 35.5 — Design-Artifact Export (`/gdd:export`)

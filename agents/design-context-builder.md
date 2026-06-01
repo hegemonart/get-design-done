@@ -250,6 +250,36 @@ Record the detected type in DESIGN-CONTEXT.md as a `<project_type>` line (e.g. `
 
 Proceed to Step 1 regardless of outcome.
 
+## Step 0F — Domain Detection (Tier-3 packs)
+
+Detect the **industry domain** — orthogonal to project type (a finance app can be `web` or `native-ios`). When a domain matches, load its Tier-3 pattern pack so downstream stages (interview, executor, auditor) inherit industry-specific patterns + regulatory constraints. Reuse the file-read grep/glob idiom (< 1 second, no skip).
+
+**Domains + packs** (each pack's own `## Detection signals` section is canonical; this table is the dispatcher):
+
+| Domain | Pack | Keyword signals | `package.json` dependency signals |
+|--------|------|-----------------|-----------------------------------|
+| finance | `reference/domains/finance-patterns.md` | trading, portfolio, brokerage, ledger, invoice, banking, fintech, payments, KYC | `stripe`, `@stripe/*`, `plaid`, `@plaid/*`, `dwolla-v2`, `finnhub`, `@alpacahq/*`, `ccxt`, `lightweight-charts`, `react-financial-charts`, `highcharts` |
+| healthcare | `reference/domains/healthcare-patterns.md` | patient, clinical, EHR, EMR, telehealth, HIPAA, PHI, provider, diagnosis | `fhir`, `fhirclient`, `fhir-kit-client`, `@medplum/*`, `medplum`, `hl7`, `redox` |
+| gaming | `reference/domains/gaming-patterns.md` | game, HUD, player, level, multiplayer, leaderboard, inventory, quest | `phaser`, `three`, `@react-three/*`, `pixi.js`, `babylonjs`, `@babylonjs/*`, `colyseus`, `playcanvas`, `excalibur`, `matter-js` |
+| civic | `reference/domains/civic-patterns.md` | gov, government, public, citizen, benefits, permit, tax, election, municipal | `@uswds/uswds`, `uswds`, `@trussworks/react-uswds`, `govuk-frontend`, `@18f/*` |
+
+```bash
+grep -iE "trading|portfolio|brokerage|fintech|patient|clinical|EHR|HIPAA|HUD|multiplayer|leaderboard|gov|citizen|benefits|permit" -r . --include="*.md" --include="*.tsx" 2>/dev/null | head
+node -e "const p=require('./package.json');const d={...p.dependencies,...p.devDependencies};console.log(Object.keys(d).join(' '))" 2>/dev/null   # match against the dependency column
+```
+
+**Confidence rule (D-02):**
+
+- **≥2 distinct signals, OR any dependency match → auto-apply** the pack. Record it + note it in the brief ("Detected finance domain — loaded finance-patterns.md").
+- **Exactly 1 weak keyword signal → suggest**, don't impose ("This looks like a healthcare project — load healthcare-patterns.md? [y/N]").
+- **No signal → skip** (most projects have no domain pack; that's fine).
+
+Domain packs are **additive context, never a hard gate**. Multiple domains can co-apply (rare). A brief override wins (if the user says "it's a fintech dashboard", honor it).
+
+Record the result in DESIGN-CONTEXT.md as a `<domain>` line (e.g. `<domain>finance</domain>`, or omit when none). Do not inline the pack content here — the executor + `design-auditor` read `reference/domains/<domain>-patterns.md` directly.
+
+Proceed to Step 1 regardless of outcome.
+
 ## Step 1 — Auto-Detect Design System State
 
 Run all detection commands before asking any questions. Record what is found — this pre-populates the interview and reduces questions to only genuine unknowns.
