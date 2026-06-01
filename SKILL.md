@@ -105,6 +105,8 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `budget [--cycles N] [--scenario best\|typical\|worst]` | `get-design-done:gdd-budget` | Phase 39.2 — forecast design-cycle spend (best/typical/worst from telemetry variance) via `cost-forecaster`; "at the current rate you'll hit your $X project cap in Y cycles." Read-only — never spends, edits `budget.json`, or halts (the budget-enforcer hook halts) |
 | `roi [--since <date>] [--window-days 14]` | `get-design-done:gdd-roi` | Phase 39.2 — ROI table joining per-cycle cost with commits that shipped (survived ≥14d) vs reverted → cost-per-shipped-commit + stick rate. Read-only markdown report |
 | `migrate [--yes] [--dry-run]` | `get-design-done:gdd-migrate` | Phase 39.5 — migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
+| `review-decisions [<id>] [--pending]` | `get-design-done:gdd-review-decisions` | Phase 40 — surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
+| `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `get-design-done:gdd-unlock-decision` | Phase 40 — reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
 
 ## Handoff Routing
 
