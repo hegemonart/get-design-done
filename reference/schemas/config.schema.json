@@ -40,6 +40,43 @@
     "update_dismissed": {
       "type": "string",
       "description": "Latest plugin tag (e.g. \"v1.0.7.3\") whose update nudge the user has dismissed. Set by /gdd:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears."
+    },
+    "gdd_cycle_mode": {
+      "type": "string",
+      "enum": ["designer", "dev", "full"],
+      "description": "Phase 40 sectional handoff. designer = Brief + Explore only; dev = Plan + Design + Verify; full = all stages (default). scripts/lib/collab/cycle-mode.cjs gates STATE writes by stage so a designer and a dev can hand a cycle back and forth without overwriting each other's sections."
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Phase 40 per-section write permissions (scripts/lib/collab/permissions.cjs). Permissive by default (absent = everyone is owner). A team narrows it, e.g. only @lead-designer may lock decisions. A CI gate enforces on PRs.",
+      "properties": {
+        "default": { "type": "string", "enum": ["owner", "contributor", "reviewer", "viewer"], "description": "Role for any actor not listed in `actors`. Default owner." },
+        "actors": { "type": "object", "additionalProperties": { "type": "string", "enum": ["owner", "contributor", "reviewer", "viewer"] }, "description": "Per-actor role map (git user/handle -> role)." },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "section": { "type": "string", "description": "STATE.md section (decisions/prototyping/rollout_status/status/progress/blockers) or '*'." },
+              "action": { "type": "string", "enum": ["write", "lock", "unlock", "approve", "*"] },
+              "roles": { "type": "array", "items": { "type": "string", "enum": ["owner", "contributor", "reviewer", "viewer"] } }
+            }
+          },
+          "description": "Restrictive rules: a (section, action) is limited to the listed roles. No matching rule = allowed (permissive)."
+        }
+      }
+    },
+    "collab": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Phase 40 team-collaboration settings.",
+      "properties": {
+        "multi_writer_enabled": { "type": "boolean", "description": "When true, the gdd-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process)." },
+        "lock_timeout_ms": { "type": "integer", "minimum": 0, "description": "Override the team-mode lock acquire maxWaitMs (default 30000)." },
+        "sync_backend": { "type": "string", "enum": ["git", "s3", "git-lfs"], "description": "Cross-machine .design/ sync backend (scripts/lib/collab/sync-backend.cjs). Default git (existing push/pull). s3 / git-lfs are opt-in declarations; a live client is not bundled this phase." }
+      }
     }
   }
 }

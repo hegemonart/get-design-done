@@ -376,3 +376,22 @@ If `.design/cache-manifest.json` is missing when `hooks/budget-enforcer.js` read
 - `.design/budget.json` — provides `cache_ttl_seconds` default.
 - `.design/telemetry/costs.jsonl` (Plan 10.1-05) — records `cache_hit: true` rows with zero tokens and zero cost when the short-circuit fires.
 - D-05, D-08, D-09 in `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` — decision lineage.
+
+## Team collaboration (Phase 40)
+
+Three optional top-level `.design/config.json` keys enable team mode. All are absent/off by default —
+single-operator projects are unaffected. Full contract: `reference/multi-author-model.md`.
+
+- **`gdd_cycle_mode`** (`designer` | `dev` | `full`, default `full`) — sectional handoff. `designer`
+  permits Brief + Explore writes; `dev` permits Plan + Design + Verify; `full` = all stages.
+  `scripts/lib/collab/cycle-mode.cjs` `stagePermitted(mode, stage)` gates STATE writes by stage.
+- **`permissions`** — per-section write permissions (`scripts/lib/collab/permissions.cjs`). Permissive
+  by default (absent = everyone `owner`). Shape: `{ default, actors: {<actor>: <role>}, rules:
+  [{section, action, roles}] }`, roles in `owner|contributor|reviewer|viewer`. A rule restricts a
+  `(section, action)` to its listed roles; an unruled pair is allowed. `viewer` never mutates. A CI
+  gate calls `can(config, actor, section, action)` to enforce on PRs.
+- **`collab`** — `{ multi_writer_enabled (bool), lock_timeout_ms (int), sync_backend
+  (git|s3|git-lfs) }`. `multi_writer_enabled: true` switches the gdd-state advisory lock to the
+  team-mode policy (`scripts/lib/collab/lock-policy.cjs` — 30 s wait + 100 ms backoff);
+  `sync_backend` selects the cross-machine `.design/` backend (`scripts/lib/collab/sync-backend.cjs`,
+  default `git`; `s3`/`git-lfs` are opt-in declarations — a live client is not bundled this phase).

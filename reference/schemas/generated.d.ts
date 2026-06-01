@@ -101,6 +101,56 @@ export interface DesignConfigJson {
    * Latest plugin tag (e.g. "v1.0.7.3") whose update nudge the user has dismissed. Set by /gdd:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears.
    */
   update_dismissed?: string;
+  /**
+   * Phase 40 sectional handoff. designer = Brief + Explore only; dev = Plan + Design + Verify; full = all stages (default). scripts/lib/collab/cycle-mode.cjs gates STATE writes by stage so a designer and a dev can hand a cycle back and forth without overwriting each other's sections.
+   */
+  gdd_cycle_mode?: 'designer' | 'dev' | 'full';
+  /**
+   * Phase 40 per-section write permissions (scripts/lib/collab/permissions.cjs). Permissive by default (absent = everyone is owner). A team narrows it, e.g. only @lead-designer may lock decisions. A CI gate enforces on PRs.
+   */
+  permissions?: {
+    /**
+     * Role for any actor not listed in `actors`. Default owner.
+     */
+    default?: 'owner' | 'contributor' | 'reviewer' | 'viewer';
+    /**
+     * Per-actor role map (git user/handle -> role).
+     */
+    actors?: {
+      [k: string]: 'owner' | 'contributor' | 'reviewer' | 'viewer';
+    };
+    /**
+     * Restrictive rules: a (section, action) is limited to the listed roles. No matching rule = allowed (permissive).
+     */
+    rules?: {
+      /**
+       * STATE.md section (decisions/prototyping/rollout_status/status/progress/blockers) or '*'.
+       */
+      section?: string;
+      action?: 'write' | 'lock' | 'unlock' | 'approve' | '*';
+      roles?: ('owner' | 'contributor' | 'reviewer' | 'viewer')[];
+      [k: string]: unknown;
+    }[];
+    [k: string]: unknown;
+  };
+  /**
+   * Phase 40 team-collaboration settings.
+   */
+  collab?: {
+    /**
+     * When true, the gdd-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process).
+     */
+    multi_writer_enabled?: boolean;
+    /**
+     * Override the team-mode lock acquire maxWaitMs (default 30000).
+     */
+    lock_timeout_ms?: number;
+    /**
+     * Cross-machine .design/ sync backend (scripts/lib/collab/sync-backend.cjs). Default git (existing push/pull). s3 / git-lfs are opt-in declarations; a live client is not bundled this phase.
+     */
+    sync_backend?: 'git' | 's3' | 'git-lfs';
+    [k: string]: unknown;
+  };
   [k: string]: unknown;
 }
 
