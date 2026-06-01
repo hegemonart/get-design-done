@@ -972,6 +972,13 @@
       "type": "heuristic",
       "phase": 36.3,
       "description": "Phase 36.3 Tier-3 conversational-UI patterns (voice + chatbot): voice-flow no-input/no-match reprompts + confirmation + human handoff, multi-turn dialogue (context carryover, slot-filling, repair), prompt-as-UX (the assistant persona/tone/boundaries as a versioned design artifact), chatbot empty-states + suggested replies, voice-first onboarding, error recovery + accessibility (transcripts/captions). Carries Detection signals + an Audit checklist; loaded by design-context-builder for the conversational project type. CLI/REPL UX out of scope."
+    },
+    {
+      "name": "ds-bootstrap-rubric",
+      "path": "reference/ds-bootstrap-rubric.md",
+      "type": "heuristic",
+      "phase": 37.2,
+      "description": "Phase 37.2 greenfield DS emission rules for /gdd:bootstrap-ds + agents/ds-generator.md: primary→9 OKLCH tints (native oklch(), no color library), never >2 brand colors, neutrals + semantic colors, modular type scale (ratio 1.2/1.25/1.333), 4pt/8pt spacing, radius + motion defaults, the 3 variants (conservative/balanced/bold), role-named CSS-custom-property emission + framework mapping, and button/input/card proof scaffolding. Deterministic math in scripts/lib/ds/token-scale.cjs."
     }
   ]
 }
