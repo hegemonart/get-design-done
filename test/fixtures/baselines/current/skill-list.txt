@@ -30,6 +30,7 @@ health
 help
 list-assumptions
 map
+migrate
 new-cycle
 new-project
 next

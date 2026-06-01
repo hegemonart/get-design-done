@@ -5,6 +5,7 @@ blast-radius.cjs
 budget-enforcer.cjs
 cost-arbitrage.cjs
 dangerous-patterns.cjs
+deprecation-registry.cjs
 design-search.cjs
 detect-ui-root.cjs
 easings.cjs
