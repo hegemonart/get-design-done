@@ -8,7 +8,9 @@ discord.md
 figma.md
 gdd-state.md
 graphify.md
+jira.md
 lazyweb.md
+linear.md
 litmus.md
 magic-patterns.md
 mobbin.md

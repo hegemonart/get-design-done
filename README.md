@@ -142,6 +142,10 @@ After `/gdd:ship` opens the PR, the [`pr-commenter`](agents/pr-commenter.md) age
 
 Routes pipeline events (verify-fail / audit-pass / ship) to **Slack** + **Discord** via incoming webhooks ([`connections/slack.md`](connections/slack.md) / [`connections/discord.md`](connections/discord.md)). The dispatcher ([`scripts/lib/notify/dispatch.cjs`](scripts/lib/notify/dispatch.cjs)) redacts every body at a single chokepoint, honors per-channel kill-switches (`GDD_DISABLE_SLACK` / `GDD_DISABLE_DISCORD`), and degrades to a noop when a webhook URL is unset — notification never blocks the pipeline. **No new runtime dependency** (injectable `fetch`, no Slack/Discord SDK). Routing: [`reference/notification-routing.md`](reference/notification-routing.md).
 
+### Team surfaces — Ticket sync (v1.35.3)
+
+Links a design cycle to a **Linear** or **Jira** ticket and keeps them in sync ([`connections/linear.md`](connections/linear.md) / [`connections/jira.md`](connections/jira.md), MCP-based). [`agents/ticket-sync-agent.md`](agents/ticket-sync-agent.md) surfaces the linked ticket's comments as context when a design file opens (via the decision-injector) and, on `/gdd:complete-cycle`, transitions the ticket + posts a **redacted** summary. Per-system kill-switches (`GDD_DISABLE_LINEAR` / `GDD_DISABLE_JIRA`); degrade-to-noop (never gates the cycle). **No new runtime dependency, no new egress** (MCP tools only). Contract: [`reference/ticket-sync.md`](reference/ticket-sync.md). **Completes the Team Surfaces layer** (PR inline + notifications + ticket sync).
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

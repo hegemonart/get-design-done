@@ -33,7 +33,8 @@ test('35.2-02: dispatcher redacts + injectable fetch + allowlisted egress', () =
 test('35.2-02: connections.md gains the notify column + slack/discord rows (14 -> 16)', () => {
   const c = read('connections/connections.md');
   assert.match(c, /\| Connection \| scan \| discover \| plan \| design \| verify \| canvas \| generator \| notify \|/, 'matrix has a notify column');
-  assert.match(c, /probes all 16 connections/, 'intro says 16');
+  // the onboarded COUNT grows with later phases (35.3 → 18); freeze the 35.2 rows + the
+  // notify column, not the count.
   assert.match(c, /\| Slack \| Active \|/, 'Slack active row');
   assert.match(c, /\| Discord \| Active \|/, 'Discord active row');
 });

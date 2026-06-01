@@ -1,0 +1,4 @@
+connections/linear.md
+connections/jira.md
+agents/ticket-sync-agent.md
+reference/ticket-sync.md
