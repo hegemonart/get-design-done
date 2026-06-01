@@ -311,6 +311,21 @@ grep -rEn "w-4 h-4|w-5 h-5|w-6 h-6" src/ --include="*.tsx" --include="*.jsx" 2>/
 
 ---
 
+## Domain checklist addendum (Tier-3)
+
+If DESIGN-CONTEXT.md carries a `<domain>` line (set by `design-context-builder` Step 0F — `finance` / `healthcare` / `gaming` / `civic`), **also** run that pack's `## Audit checklist` from `reference/domains/<domain>-patterns.md` and fold its findings into the relevant pillar:
+
+| Domain | Pack | Folds into pillar(s) |
+|--------|------|----------------------|
+| finance | `reference/domains/finance-patterns.md` | Typography (tabular-nums / number formatting), Color (gain/loss never color-only), Copy (regulatory disclosure placement), Experience (destructive-action guards) |
+| healthcare | `reference/domains/healthcare-patterns.md` | Experience (PHI isolation, idle auto-logout), Copy (plain medical language), Color (critical-value flags not color-only), Visual Hierarchy (audit-trail surfacing) |
+| gaming | `reference/domains/gaming-patterns.md` | Micro-Polish + Experience (reduced-motion / vestibular, flash thresholds), Layout (TV-safe area), Experience (input-model adaptation, no hover-only) |
+| civic | `reference/domains/civic-patterns.md` | Copy (plain language, grade 6-8), Color (WCAG AA contrast floor), Experience (session-timeout warnings, keyboard operability), Typography (reading level) |
+
+A failed domain check is a **finding in its pillar** (it lowers that pillar's score and appears in DESIGN-AUDIT.md), not a separate score. When no `<domain>` is set, skip this addendum. This is **additive** — it never replaces the 7-pillar scoring (per "Supplement, Not Replace" above).
+
+---
+
 ## Execution Steps
 
 ### Step 1: Load Context

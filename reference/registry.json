@@ -937,6 +937,34 @@
       "type": "heuristic",
       "phase": 35.5,
       "description": "Phase 35.5 /gdd:export contract — the source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots), the three formats (self-contained HTML via scripts/lib/export/build-html.cjs, Paged.js-compatible print PDF rendered by the user, Notion page via the Notion MCP), mandatory scripts/lib/redact.cjs + the --pseudonymize opt-in (scripts/lib/pseudonymize.cjs), and the --pr hand-off to pr-commenter. No bundled PDF/markdown runtime (D-02)."
+    },
+    {
+      "name": "finance",
+      "path": "reference/domains/finance-patterns.md",
+      "type": "heuristic",
+      "phase": 36.1,
+      "description": "Phase 36.1 Tier-3 domain pack — finance/fintech UI patterns: data-table density (tabular-nums), trading-interface conventions (colorblind-safe gain/loss), regulatory disclosure placement (Reg-T, MiFID II), PCI-DSS PAN masking, number-formatting precision, real-time data states. Carries Detection signals (keywords + deps) + an Audit checklist consumed by design-context-builder Step 0F + design-auditor."
+    },
+    {
+      "name": "healthcare",
+      "path": "reference/domains/healthcare-patterns.md",
+      "type": "heuristic",
+      "phase": 36.1,
+      "description": "Phase 36.1 Tier-3 domain pack — healthcare/clinical UI patterns: HIPAA-aware PHI isolation (no PHI in URLs/logs/analytics), idle auto-logout, audit-trail-as-UI, MyChart-class flows, WCAG 2.1 AAA, medical-data visualization. Surfaces risk, does not certify compliance. Detection signals + Audit checklist for Step 0F + design-auditor."
+    },
+    {
+      "name": "gaming",
+      "path": "reference/domains/gaming-patterns.md",
+      "type": "heuristic",
+      "phase": 36.1,
+      "description": "Phase 36.1 Tier-3 domain pack — game UI/HUD patterns: diegetic/non-diegetic/spatial/meta HUD taxonomy, vestibular + photosensitive safety (3 flashes/sec, reduced-motion + in-game toggles), ESRB/PEGI age-gates, input-model adaptation (controller/touch/KBM), TV-safe area. Detection signals + Audit checklist for Step 0F + design-auditor."
+    },
+    {
+      "name": "civic",
+      "path": "reference/domains/civic-patterns.md",
+      "type": "heuristic",
+      "phase": 36.1,
+      "description": "Phase 36.1 Tier-3 domain pack — civic/government UI patterns: Section 508 + WCAG 2.1 AA hard floor, multi-language gov forms (EN/ES/zh-Hans), Plain Writing Act (grade 6-8), USWDS, session-timeout warnings, one-thing-per-page forms. Detection signals + Audit checklist for Step 0F + design-auditor."
     }
   ]
 }
