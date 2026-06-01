@@ -1,0 +1,4 @@
+scripts/lib/motion/validate-motion.cjs
+connections/lottie.md
+connections/rive.md
+agents/motion-verifier.md
