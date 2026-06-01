@@ -53,6 +53,7 @@ reflect
 report-issue
 resume
 review-backlog
+review-decisions
 roi
 rollout-status
 router
@@ -72,6 +73,7 @@ timeline
 todo
 turn-closeout
 undo
+unlock-decision
 update
 using-gdd
 verify

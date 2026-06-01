@@ -4,6 +4,39 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.40.0] - 2026-06-01
+
+### Phase 40 — Team Collaboration Mode
+
+The largest architectural phase: GDD's single-operator baseline (Phase 20 lockfile + atomic STATE.md) now extends to **multiple developers**. Multi-writer STATE.md merges per-section, decisions are attributed + reviewed through an async queue with hard locks, a conflict-resolver reconciles parallel branches, decisions export to a read-only shared journal, and per-section permissions + sectional handoff gate who writes what. Everything is **git-native + advisory** — no server, no live multiplayer, no SSO. **No new runtime dependency, no new egress.**
+
+### Breaking changes
+
+**None.** Every Phase 40 surface is additive and **off by default**: `gdd_cycle_mode` defaults to `full` (current behavior), `permissions` absent = everyone is `owner`, `collab.multi_writer_enabled` defaults to `false`, `collab.sync_backend` defaults to `git`, and the decision attribution suffix is optional + backward-compatible. A single-operator project upgrading to v1.40.0 behaves exactly as it did on v1.39.5.
+
+### Added
+
+- **`reference/multi-author-model.md`** — the team-collaboration contract (merge model, attribution, review queue + locks, lock policy, sectional handoff, permissions, journal export + PR threading, opt-in sync). Registered.
+- **`scripts/lib/collab/`** — 7 pure, dep-free cores: `attribution` (decision `[author= co-author=]` suffix), `section-merge` (git-merge-driver per-section semantic merge — union by D-id, conflict only on same-id divergence), `lock-policy` (team-mode advisory-lock backoff), `review-queue` (proposed→reviewing→approved→locked + audited unlock), `cycle-mode` (sectional handoff stage gate), `permissions` (per-section `can()`), `sync-backend` (git/s3/git-lfs selector).
+- **`agents/conflict-resolver.md`** — three-way STATE.md merge, per-section + human-confirmed; never auto-picks or drops a decision.
+- **`agents/decision-journal-exporter.md`** — `<decisions>` → `pseudonymize` → read-only Notion/Confluence on cycle close (write-only; degrades to local markdown).
+- **`skills/review-decisions/SKILL.md`** (`/gdd:review-decisions`) + **`skills/unlock-decision/SKILL.md`** (`/gdd:unlock-decision <id> --approver`, the only audited escape from a hard lock).
+
+### Changed
+
+- **`reference/schemas/config.schema.json`** — + `gdd_cycle_mode` (designer|dev|full) + `permissions` + `collab` (multi_writer_enabled / lock_timeout_ms / sync_backend); `generated.d.ts` regenerated.
+- **`reference/STATE-TEMPLATE.md`** — document the optional decision attribution suffix.
+- **`agents/design-reflector.md`** — a "Per-author patterns" note (reads attribution).
+- **`agents/pr-commenter.md`** — thread PR comments on `D-XX` decisions (team-mode).
+
+### Notes
+
+- **No new runtime dependency, no new egress** — 7 pure cores + reference/agent/skill prose + an additive config-schema; the live S3/git-LFS sync client is explicitly out of scope (the selector ships, the backend is pluggable).
+- 6-manifest lockstep at **v1.40.0** + `OFF_CADENCE_VERSIONS.add('1.40.0')` (a minor bump) + the 33 live-pinned `manifests-version.txt` baselines forward-propagated 1.39.5 → 1.40.0.
+- Inventory relock: registry-diff 158 → 159 (+`multi-author-model`), skill-list 80 → 82 (+`review-decisions`, +`unlock-decision`), agent-list +`conflict-resolver` +`decision-journal-exporter` + both frontmatter-snapshots, skill-length-distribution relocked, tarball golden 709 → 721 (+12). Root `SKILL.md` command table += both skills.
+
+---
+
 ## [1.39.5] - 2026-06-01
 
 ### Phase 39.5 — GDD Self-Migration Tooling

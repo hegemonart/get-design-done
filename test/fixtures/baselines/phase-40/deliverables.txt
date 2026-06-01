@@ -1,0 +1,12 @@
+scripts/lib/collab/attribution.cjs
+scripts/lib/collab/section-merge.cjs
+scripts/lib/collab/lock-policy.cjs
+scripts/lib/collab/review-queue.cjs
+scripts/lib/collab/cycle-mode.cjs
+scripts/lib/collab/permissions.cjs
+scripts/lib/collab/sync-backend.cjs
+reference/multi-author-model.md
+agents/conflict-resolver.md
+agents/decision-journal-exporter.md
+skills/review-decisions/SKILL.md
+skills/unlock-decision/SKILL.md

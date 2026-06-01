@@ -11,7 +11,9 @@ agents/component-benchmark-harvester.md
 agents/component-benchmark-synthesizer.md
 agents/component-taxonomy-mapper.md
 agents/compose-executor.md
+agents/conflict-resolver.md
 agents/cost-forecaster.md
+agents/decision-journal-exporter.md
 agents/design-advisor.md
 agents/design-assumptions-analyzer.md
 agents/design-auditor.md
@@ -238,6 +240,7 @@ reference/motion-interpolate.md
 reference/motion-spring.md
 reference/motion-transition-taxonomy.md
 reference/motion.md
+reference/multi-author-model.md
 reference/native-platforms.md
 reference/notification-routing.md
 reference/onboarding-progressive-disclosure.md
@@ -325,6 +328,13 @@ scripts/lib/budget/cost-forecast.cjs
 scripts/lib/budget/project-cap.cjs
 scripts/lib/budget/roi.cjs
 scripts/lib/cache/gdd-cache-manager.cjs
+scripts/lib/collab/attribution.cjs
+scripts/lib/collab/cycle-mode.cjs
+scripts/lib/collab/lock-policy.cjs
+scripts/lib/collab/permissions.cjs
+scripts/lib/collab/review-queue.cjs
+scripts/lib/collab/section-merge.cjs
+scripts/lib/collab/sync-backend.cjs
 scripts/lib/connection-probe/index.cjs
 scripts/lib/context-engine/index.ts
 scripts/lib/context-engine/manifest.ts
@@ -675,6 +685,7 @@ skills/report-issue/SKILL.md
 skills/report-issue/report-issue-procedure.md
 skills/resume/SKILL.md
 skills/review-backlog/SKILL.md
+skills/review-decisions/SKILL.md
 skills/roi/SKILL.md
 skills/rollout-status/SKILL.md
 skills/router/SKILL.md
@@ -700,6 +711,7 @@ skills/timeline/SKILL.md
 skills/todo/SKILL.md
 skills/turn-closeout/SKILL.md
 skills/undo/SKILL.md
+skills/unlock-decision/SKILL.md
 skills/update/SKILL.md
 skills/using-gdd/SKILL.md
 skills/verify/SKILL.md
