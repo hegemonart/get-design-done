@@ -456,6 +456,13 @@ OFF_CADENCE_VERSIONS.add('1.36.2');
 // an agent-prompt enum addition).
 OFF_CADENCE_VERSIONS.add('1.36.3');
 
+// 1.37.1 → Phase 37.1 (AI-Native Tools Wave 2). First sub-phase of the split Phase 37.
+// Opens the v1.37.x arc (1.36.3 → 1.37.1, minor+patch jump, off-cadence). Adds 6 AI-native
+// design-tool connections (framer/penpot/webflow canvas; v0-dev/plasmic/builder-io generator)
+// + design-component-generator impl sections. No new runtime dependency, no new egress
+// (each tool is an opt-in user-connected MCP/API; degrade-to-code-only).
+OFF_CADENCE_VERSIONS.add('1.37.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

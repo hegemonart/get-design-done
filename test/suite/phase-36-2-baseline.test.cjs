@@ -24,9 +24,10 @@ test('36.2-03: motion deliverables exist + validator is pure', () => {
   assert.ok(read('agents/motion-verifier.md').length > 800, 'agents/motion-verifier.md');
 });
 
-test('36.2-03: connections.md gains lottie/rive rows + intro 21', () => {
+test('36.2-03: connections.md gains lottie/rive rows (count-agnostic intro)', () => {
   const c = read('connections/connections.md');
-  assert.match(c, /probes all 21 connections/, 'intro → 21');
+  // count-agnostic: later phases grow the onboarded count — freeze the lottie/rive rows, not the number.
+  assert.match(c, /probes all \d+ connections/, 'intro probes all N connections');
   assert.match(c, /\| Lottie \| Active \|/, 'Lottie Active row');
   assert.match(c, /\| Rive \| Active \|/, 'Rive Active row');
 });
