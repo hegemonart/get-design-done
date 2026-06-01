@@ -29,6 +29,7 @@ graphify
 health
 help
 list-assumptions
+locale
 map
 migrate
 new-cycle

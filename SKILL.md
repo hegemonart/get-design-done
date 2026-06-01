@@ -107,6 +107,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `migrate [--yes] [--dry-run]` | `get-design-done:gdd-migrate` | Phase 39.5 — migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
 | `review-decisions [<id>] [--pending]` | `get-design-done:gdd-review-decisions` | Phase 40 — surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
 | `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `get-design-done:gdd-unlock-decision` | Phase 40 — reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
+| `locale [<code>]` | `get-design-done:gdd-locale` | Phase 40.5 — inspect or set the GDD CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
 
 ## Handoff Routing
 

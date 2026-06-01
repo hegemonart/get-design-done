@@ -515,6 +515,13 @@ OFF_CADENCE_VERSIONS.add('1.39.5');
 // lint-changelog floor (1.39.0) — its CHANGELOG entry declares a `### Breaking changes` section.
 OFF_CADENCE_VERSIONS.add('1.40.0');
 
+// 1.40.5 → Phase 40.5 (GDD CLI Localization). Decimal sub-patch on 1.40.0. Adds scripts/lib/i18n/
+// (locale resolver: config.locale > env LANG > en, fallback chain locale->base->en) + 7 flat-JSON
+// message tables (en complete, ru full, uk/de/fr/zh/ja placeholders), the /gdd:locale skill, the
+// opt-in description_i18n frontmatter, and reference/cli-localization.md. No new runtime dependency,
+// no new egress. The final phase of the directed 38.5->40.5 sequence.
+OFF_CADENCE_VERSIONS.add('1.40.5');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

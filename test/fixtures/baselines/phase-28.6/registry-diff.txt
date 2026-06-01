@@ -157,3 +157,4 @@ mui-v6: reference/migrations/mui-v6.md
 material-3-to-4: reference/migrations/material-3-to-4.md
 cost-governance: reference/cost-governance.md
 multi-author-model: reference/multi-author-model.md
+cli-localization: reference/cli-localization.md

@@ -39,6 +39,7 @@ Every agent file begins with a YAML frontmatter block. All fields except `model`
 |-------|------|-----------------|---------|
 | `name` | kebab-case string | unique within plugin | Identifier passed to the `Task` tool — must match the filename without `.md` |
 | `description` | string | free-form | One sentence: what the agent does + when it is spawned |
+| `description_i18n` | object | `{ <locale>: "<description>" }` | **Phase 40.5, opt-in.** Localized descriptions keyed by locale (en/ru/uk/de/fr/zh/ja). `scripts/lib/i18n/index.cjs` `descriptionFor(frontmatter, locale)` resolves it via the fallback chain and falls back to the English `description` when a locale is absent. Backward-compatible — omit it and nothing changes. |
 | `tools` | comma-separated list | `Read`, `Write`, `Edit`, `Bash`, `Grep`, `Glob`, `Task`, `WebFetch`, `TodoWrite`, `mcp__*` | Claude tools the agent may use — list only what is needed |
 | `color` | enum | `yellow`, `green`, `blue`, `red` | Terminal display color for the agent's output |
 | `model` | enum (optional) | `inherit`, `sonnet`, `haiku` | Omit to use the project's configured profile default. Use `inherit` to bypass the profile and use the highest available model (quality-tier work) |

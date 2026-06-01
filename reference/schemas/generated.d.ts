@@ -102,6 +102,10 @@ export interface DesignConfigJson {
    */
   update_dismissed?: string;
   /**
+   * Phase 40.5 CLI locale override for GDD's own --help, error messages, and skill prompt headers. Set via /gdd:locale <code>. Precedence: this key > env LANG/LC_ALL > en. Missing message keys fall back to English per scripts/lib/i18n/index.cjs (locale -> base -> en). en + ru are complete; uk/de/fr/zh/ja are placeholders that fall back to English.
+   */
+  locale?: 'en' | 'ru' | 'uk' | 'de' | 'fr' | 'zh' | 'ja';
+  /**
    * Phase 40 sectional handoff. designer = Brief + Explore only; dev = Plan + Design + Verify; full = all stages (default). scripts/lib/collab/cycle-mode.cjs gates STATE writes by stage so a designer and a dev can hand a cycle back and forth without overwriting each other's sections.
    */
   gdd_cycle_mode?: 'designer' | 'dev' | 'full';
