@@ -99,6 +99,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `watch-authorities [--refresh] [--since <date>] [--feed <name>] [--schedule <cadence>]` | `get-design-done:gdd-watch-authorities` | Run design-authority-watcher — fetch curated feeds, diff snapshot, classify new entries → `.design/authority-report.md` (consumed by `/gdd:reflect`) |
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
+| `export <cycle> --format html\|pdf\|notion [--pseudonymize] [--pr]` | `get-design-done:gdd-export` | Phase 35.5 — package a finished cycle's design output into a stakeholder-shareable artifact (self-contained HTML / Paged.js-print PDF / Notion page); redacts always, `--pseudonymize` masks identity for external sharing, `--pr` posts the HTML preview via pr-commenter |
 
 ## Handoff Routing
 

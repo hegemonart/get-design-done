@@ -428,6 +428,13 @@ OFF_CADENCE_VERSIONS.add('1.35.2');
 // No new runtime dependency, no new egress (MCP tools only).
 OFF_CADENCE_VERSIONS.add('1.35.3');
 
+// 1.35.5 → Phase 35.5 (Design-Artifact Export — /gdd:export). Decimal on the v1.35.x arc
+// AFTER the Team Surfaces sub-phases (1.35.3 → 1.35.5; 1.35.4 not used). Adds the pure
+// build-html assembler (scripts/lib/export/build-html.cjs), skills/export/SKILL.md, the
+// Notion write-path connection, and reference/export-formats.md. No new runtime dependency
+// (D-02: pure JS; PDF = print-CSS-on-HTML the user renders; Notion via MCP). No new egress.
+OFF_CADENCE_VERSIONS.add('1.35.5');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
