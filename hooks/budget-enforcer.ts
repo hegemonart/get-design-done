@@ -207,6 +207,27 @@ const tierResolverOpenRouter = nodeRequire(
   '../scripts/lib/tier-resolver-openrouter.cjs',
 ) as TierResolverOpenRouterModule;
 
+// Phase 39.2 D-04: project-level cap classifier (pure). Keeping the threshold
+// math in scripts/lib/budget/project-cap.cjs (out of this hook) mirrors how the
+// hook already delegates cost computation to scripts/lib/budget-enforcer.cjs,
+// and makes the 50/80/100 thresholds unit-testable. The hook only reads the
+// running project spend and asks this module what to do.
+interface ProjectCapClassification {
+  enabled: boolean;
+  pct: number;
+  level: 'ok' | 'warn-50' | 'warn-80' | 'halt';
+  cap: number;
+  spend: number;
+}
+interface ProjectCapModule {
+  classifyProjectBudget(spendUsd: number, capUsd: number): ProjectCapClassification;
+  shouldHalt(c: ProjectCapClassification | null, enforcementMode: string): boolean;
+  capMessage(c: ProjectCapClassification | null): string | null;
+}
+const projectCap = nodeRequire(
+  '../scripts/lib/budget/project-cap.cjs',
+) as ProjectCapModule;
+
 /**
  * Plan 33.6-03 (SC#6 opt-in). OpenRouter is consulted ONLY when the user opts
  * in — either `.design/config.json#openrouter_enabled === true` OR
@@ -380,6 +401,15 @@ const PHASE_TOTALS_PATH = join(
   'telemetry',
   'phase-totals.json',
 );
+// Phase 39.2 D-04: optional fast-path for the running project spend, mirroring
+// PHASE_TOTALS_PATH. When absent the hook replays costs.jsonl (the project cap
+// is opt-in, so this replay only happens for users who set project_cap_usd).
+const PROJECT_TOTALS_PATH = join(
+  process.cwd(),
+  '.design',
+  'telemetry',
+  'project-totals.json',
+);
 const STATE_PATH = join(process.cwd(), '.design', 'STATE.md');
 
 /** Defaults per D-12 — mirror scripts/bootstrap.sh budget.json bootstrap. */
@@ -392,6 +422,7 @@ const BUDGET_DEFAULTS: Required<
     | 'auto_downgrade_on_cap'
     | 'cache_ttl_seconds'
     | 'enforcement_mode'
+    | 'project_cap_usd'
   >
 > = {
   per_task_cap_usd: 2.0,
@@ -400,6 +431,11 @@ const BUDGET_DEFAULTS: Required<
   auto_downgrade_on_cap: true,
   cache_ttl_seconds: 3600,
   enforcement_mode: 'enforce',
+  // Phase 39.2 D-04: project-level cap is DISABLED by default (0). Existing
+  // users — who have no project_cap_usd in budget.json — see zero behavior
+  // change. project_cap_enforcement_mode stays optional and falls back to
+  // enforcement_mode at the use-site.
+  project_cap_usd: 0,
 };
 
 /**
@@ -497,6 +533,40 @@ export function currentPhaseSpend(phase: string): number {
     try {
       const row = JSON.parse(line) as { phase?: string; est_cost_usd?: number };
       if (row.phase === phase) sum += Number(row.est_cost_usd ?? 0);
+    } catch {
+      // tolerant — skip malformed lines
+    }
+  }
+  return sum;
+}
+
+// ── cumulative project spend (Phase 39.2 D-04) ───────────────────────────────
+
+/**
+ * Total project spend = sum of est_cost_usd across the WHOLE costs.jsonl ledger.
+ * Fast path: a `project-totals.json` (`{ total: number }`, written by the
+ * aggregator) mirrors the WR-02 phase-totals optimization. Falls back to a full
+ * ledger replay otherwise. Returns 0 on any error. Only ever consulted when
+ * project_cap_usd > 0, so the replay cost is paid only by opt-in users.
+ */
+export function currentProjectSpend(): number {
+  if (existsSync(PROJECT_TOTALS_PATH)) {
+    try {
+      const data = JSON.parse(readFileSync(PROJECT_TOTALS_PATH, 'utf8')) as { total?: number };
+      return Number(data.total ?? 0);
+    } catch {
+      // fall through to replay
+    }
+  }
+  if (!existsSync(TELEMETRY_PATH)) return 0;
+  const lines = readFileSync(TELEMETRY_PATH, 'utf8')
+    .split(/\r?\n/)
+    .filter(Boolean);
+  let sum = 0;
+  for (const line of lines) {
+    try {
+      const row = JSON.parse(line) as { est_cost_usd?: number };
+      sum += Number(row.est_cost_usd ?? 0);
     } catch {
       // tolerant — skip malformed lines
     }
@@ -984,6 +1054,82 @@ export async function main(): Promise<void> {
 
   const estCost = Number(toolInput._est_cost_usd ?? 0);
   const phaseSpend = currentPhaseSpend(phase);
+
+  // ── Phase 39.2 D-04: project-level cap ─────────────────────────────────────
+  //
+  // Independent of enforcement_mode: the 50%/80% warnings + the 100% halt are
+  // governed by project_cap_enforcement_mode (falling back to enforcement_mode).
+  // No-op when project_cap_usd <= 0 (the opt-in default), so existing users see
+  // zero change. Checked here, before the per-task/per-phase branches, so a
+  // project-level breach halts the NEXT spawn regardless of the per-scope caps —
+  // the graceful halt (the current stage's in-flight spawns already ran).
+  if (budget.project_cap_usd > 0) {
+    const projectSpend = currentProjectSpend();
+    const projClass = projectCap.classifyProjectBudget(
+      projectSpend + estCost,
+      budget.project_cap_usd,
+    );
+    const projMode = budget.project_cap_enforcement_mode ?? budget.enforcement_mode;
+    if (projClass.level === 'warn-50' || projClass.level === 'warn-80') {
+      try {
+        appendEvent({
+          type: 'project_cap_warning',
+          timestamp: new Date().toISOString(),
+          sessionId: getSessionId(),
+          ...(cycle !== undefined && cycle !== 'unknown' ? { cycle } : {}),
+          payload: {
+            pct: projClass.pct,
+            spend: projClass.spend,
+            cap: projClass.cap,
+            level: projClass.level,
+          },
+        } as unknown as HookFiredEvent);
+      } catch {
+        // fail-open — event-stream errors never block the hook.
+      }
+      process.stderr.write(`gdd-budget-enforcer WARN: ${projectCap.capMessage(projClass)}\n`);
+    } else if (projClass.level === 'halt') {
+      try {
+        appendEvent({
+          type: 'project_cap_halt',
+          timestamp: new Date().toISOString(),
+          sessionId: getSessionId(),
+          ...(cycle !== undefined && cycle !== 'unknown' ? { cycle } : {}),
+          payload: {
+            pct: projClass.pct,
+            spend: projClass.spend,
+            cap: projClass.cap,
+            enforcementMode: projMode,
+          },
+        } as unknown as HookFiredEvent);
+      } catch {
+        // fail-open.
+      }
+      if (projectCap.shouldHalt(projClass, projMode)) {
+        writeTelemetry({
+          agent,
+          tier: toolInput._tier_override ?? toolInput._default_tier ?? 'sonnet',
+          tokens_in: Number(toolInput._tokens_in_est ?? 0),
+          tokens_out: Number(toolInput._tokens_out_est ?? 0),
+          cache_hit: false,
+          est_cost_usd: estCost,
+          enforcement_mode: projMode,
+          block_reason: 'project_cap',
+          _cyclePhase: cyclePhase,
+        });
+        emitHookFired('block', cycle);
+        const response: ToolOutput = {
+          continue: false,
+          suppressOutput: false,
+          message: `Project budget cap reached: $${projClass.spend.toFixed(2)} of $${budget.project_cap_usd.toFixed(2)} (${projClass.pct.toFixed(0)}%). Raise project_cap_usd in .design/budget.json, or set project_cap_enforcement_mode to "warn" to keep going. (Graceful halt — the current stage's earlier spawns already completed; this blocks the next one.)`,
+        };
+        process.stdout.write(JSON.stringify(response));
+        return;
+      }
+      // warn / log mode: surface the 100% breach but allow the spawn.
+      process.stderr.write(`gdd-budget-enforcer WARN: ${projectCap.capMessage(projClass)}\n`);
+    }
+  }
 
   // Phase 25 / D-05: per-spawn cap is class-specific when
   // complexity_class is present and class_caps_usd[class] is defined.
