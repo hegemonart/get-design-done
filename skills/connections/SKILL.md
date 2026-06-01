@@ -1,6 +1,6 @@
 ---
 name: gdd-connections
-description: "Interactive onboarding wizard for the 14 external integrations the pipeline supports — probes all (`figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`, `pinterest`, `claude-design`, `paper-design`, `pencil-dev`, `21st-dev`, `magic-patterns`, `lazyweb`, `mobbin`), recommends based on project type, walks the user through setup (auto-run MCP install or copy-command fallback), writes results to `STATE.md <connections>`. Use after `/gdd:new-project` or whenever the user wants to add, inspect, or skip a connection. Re-runnable anytime."
+description: "Interactive onboarding wizard for the 16 external integrations the pipeline supports — probes all (`figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`, `pinterest`, `claude-design`, `paper-design`, `pencil-dev`, `21st-dev`, `magic-patterns`, `lazyweb`, `mobbin`, `slack`, `discord`), recommends based on project type, walks the user through setup (auto-run MCP install or copy-command fallback), writes results to `STATE.md <connections>`. Use after `/gdd:new-project` or whenever the user wants to add, inspect, or skip a connection. Re-runnable anytime."
 argument-hint: "[list | <connection-name> | --auto]"
 user-invocable: true
 tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, ToolSearch
@@ -8,11 +8,11 @@ tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, ToolSearch
 
 # /gdd:connections
 
-Interactive onboarding for the 14 external integrations the pipeline supports. Replaces "probe silently at scan entry and hope the user noticed" with an explicit "here is what can plug in, here is how."
+Interactive onboarding for the 16 external integrations the pipeline supports. Replaces "probe silently at scan entry and hope the user noticed" with an explicit "here is what can plug in, here is how."
 
 Canonical per-connection specs live in `../../connections/<name>.md` (one file per integration). The capability matrix + probe-pattern spec live in `../../connections/connections.md`. This skill is the **user-facing front end** for those specs.
 
-For the 14 probe scripts (MCP + HTTP + CLI + file probes), bucket categorization, per-connection setup screen, auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json write contracts, see `./connections-onboarding.md`. For the cross-skill probe pattern + connection-handshake summary, see `../../reference/shared-preamble.md#connection-handshake-summary`. For the cross-skill output discipline, see `../../reference/shared-preamble.md#output-contract-reminders`.
+For the 16 probe scripts (MCP + HTTP + CLI + file probes), bucket categorization, per-connection setup screen, auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json write contracts, see `./connections-onboarding.md`. For the cross-skill probe pattern + connection-handshake summary, see `../../reference/shared-preamble.md#connection-handshake-summary`. For the cross-skill output discipline, see `../../reference/shared-preamble.md#output-contract-reminders`.
 
 ---
 
@@ -38,7 +38,7 @@ For the 14 probe scripts (MCP + HTTP + CLI + file probes), bucket categorization
 
 ## Workflow
 
-1. **Probe all 14 connections** — run every probe script per `./connections-onboarding.md#step-1--probe-all-14-connections`. MCP probes use `ToolSearch` first; HTTP / CLI / file probes follow non-MCP patterns. Merge results into `STATE.md <connections>` with the three-value schema (`available | unavailable | not_configured`) — never add new values.
+1. **Probe all 16 connections** — run every probe script per `./connections-onboarding.md#step-1--probe-all-16-connections`. MCP probes use `ToolSearch` first; HTTP / CLI / file probes follow non-MCP patterns. Merge results into `STATE.md <connections>` with the three-value schema (`available | unavailable | not_configured`) — never add new values.
 2. **Categorize + build summary** — bucket each probe result (available / recommended / optional / skipped / unavailable) using project-hint detection. Detail + recommendation mapping: `./connections-onboarding.md#step-2--bucket-categorization`.
 3. **Print summary table** — show buckets + value-prop one-liners (verbatim from `./connections-onboarding.md#step-3--summary-table`).
 4. **Route by mode** — `list` / `--auto` exits after summary; `<name>` jumps straight to Step 5; default mode opens an AskUserQuestion (configure recommended / pick one by one / configure all optional / re-check specific / exit). Routing detail: `./connections-onboarding.md#step-4--route-by-mode`.

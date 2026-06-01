@@ -28,6 +28,10 @@
     {
       "glob": "scripts/lib/openrouter/**",
       "justification": "OpenRouter catalog fetcher — catalog-fetcher.cjs makes a READ-ONLY GET to the OpenRouter models API (https://openrouter.ai/api/v1/models) via global fetch, with a Bearer token read from OPENROUTER_API_KEY env (never persisted/logged), atomic-writing the result to the gitignored .design/cache/openrouter-models.json. Graceful-degrade: absent key or fetch failure returns cached-if-any-else-null, never throws. The plugin's first plugin-side outbound REST client; injectable fetchImpl keeps the default suite hermetic (D-07), and there is no new HTTP dependency — global fetch + sdk/primitives only (D-10)."
+    },
+    {
+      "glob": "scripts/lib/notify/**",
+      "justification": "Notification backplane (Phase 35.2) — dispatch.cjs POSTs a routed, REDACTED (scripts/lib/redact.cjs — the single chokepoint) pipeline-event body to Slack/Discord INCOMING WEBHOOKS (SLACK_WEBHOOK_URL/DISCORD_WEBHOOK_URL env) via an injectable fetchImpl (default global fetch; no @slack/discord SDK). Per-channel kill-switch (GDD_DISABLE_SLACK/DISCORD) + degrade-to-noop (missing URL/disabled/error never throws). Injectable fetchImpl keeps the default suite hermetic (no live webhook); the notify-privacy-guard test asserts no notify module bypasses redact."
     }
   ]
 }

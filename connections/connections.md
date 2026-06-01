@@ -2,7 +2,7 @@
 
 This directory contains connection specifications for external tools and MCPs that the get-design-done pipeline integrates with. Each connection has its own spec file. This file is the index.
 
-**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 14 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
+**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 16 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
 
 ---
 
@@ -30,6 +30,8 @@ This directory contains connection specifications for external tools and MCPs th
 | Print-Renderer | Active | [`connections/print-renderer.md`](connections/print-renderer.md) | **Optional** print render-test (Paged.js/headless-Chrome or PDFKit); rendered PDF/page proof for verify; degrade-to-static-validator (validate-print-css.cjs) / code-only when absent (D-03) |
 | Lazyweb | Active | [`connections/lazyweb.md`](connections/lazyweb.md) | **Free** bearer-token MCP `lazyweb_search` / `lazyweb_health` (ToolSearch-only probe; copy-command setup, no auto-run); discover **Tier 1** — tried first (D-01) |
 | Mobbin | Active | [`connections/mobbin.md`](connections/mobbin.md) | **Paid** HTTP MCP `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` (ToolSearch-only probe; auto-run-safe, OAuth); discover **Tier 2** — mobile/flow-level (D-01) |
+| Slack | Active | [`connections/slack.md`](connections/slack.md) | **Notify** (Team Surfaces) — `SLACK_WEBHOOK_URL` incoming webhook; routed+redacted pipeline events; `GDD_DISABLE_SLACK` kill-switch; degrade-to-noop |
+| Discord | Active | [`connections/discord.md`](connections/discord.md) | **Notify** (Team Surfaces) — `DISCORD_WEBHOOK_URL` channel webhook; parity with Slack; `GDD_DISABLE_DISCORD` kill-switch; degrade-to-noop |
 
 ---
 
@@ -37,28 +39,30 @@ This directory contains connection specifications for external tools and MCPs th
 
 Each cell describes what the connection contributes at that pipeline stage, or `—` if it is not used.
 
-| Connection | scan | discover | plan | design | verify | canvas | generator |
-|-----------|------|----------|------|--------|--------|--------|-----------|
-| gdd-state | STATE mutation (init position, probe_connections, add_decision) | STATE mutation (add_decision, add_must_have, transition gate) | STATE mutation (locked decisions, must_haves, transition gate) | STATE mutation (update_progress, resolve_blocker, transition gate) | STATE mutation (must_have pass/fail, add_blocker, set_status) | — | — |
-| Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | write tokens/annotations/Code Connect via `use_figma` (FWR-01..04) | — | — | — |
-| Refero | — | reference search via `mcp__refero__search`; fallback → awesome-design-md (CONN-05) | — | — | — | — | — |
-| Preview | — | — | — | — | screenshots for `? VISUAL` checks (VIS-02) | — | — |
-| Storybook | — | component inventory (STB-01) | change-risk via story count (STB-02) | `.stories.tsx` stub (STB-03) | a11y per story (STB-02) | — | — |
-| Chromatic | — | — | change-risk scoping (CHR-02) | — | visual delta narration (CHR-01) | — | — |
-| Graphify | — | — | dependency scoping (GRF-03) | — | orphan detection (GRF-04) | — | — |
-| Pinterest | probe only | visual reference search via `pinterest_search`; fallback → Refero → awesome-design-md | — | — | — | — | — |
-| Claude Design | bundle probe → `claude_design: available` | synthesizer handoff mode — parses bundle → D-XX decisions; discussant `--from-handoff` confirms | — (skipped in handoff) | — (skipped in handoff) | Handoff Faithfulness section; bidirectional write-back via figma-writer `implementation-status` mode | — | — |
-| paper.design | — | canvas read: `get_selection`, `get_jsx`, `get_computed_styles` | — | paper-writer: annotate/tokenize/roundtrip | `get_screenshot` for `? VISUAL` | ✓ | — |
-| pencil.dev | `.pen` discovery | `.pen` as canonical design source | — | pencil-writer: annotate/roundtrip | spec-vs-impl diff | ✓ | — |
-| 21st.dev | — | prior-art gate: marketplace search before greenfield build | — | component-generator (21st impl) | — | — | ✓ |
-| Magic Patterns | — | — | — | component-generator (magic-patterns impl) | preview_url → `? VISUAL` check | — | ✓ |
-| OpenRouter | — | — | — | — | — | — | ✓ (model-router: tier→model resolution, all stages) |
-| Xcode Simulator | — | — | — | native iOS code-gen target (swift-executor / emitSwift) | rendered SwiftUI snapshot when simulator available, else degrade to code-only structural audit (D-03) | — | — |
-| Android Emulator | — | — | — | native Android code-gen target (compose-executor / emitCompose) | rendered Compose screenshot when emulator available, else degrade to code-only structural audit (D-03) | — | — |
-| Litmus | — | — | — | email render-test target (email-executor) | cross-client rendered evidence when Litmus available, else degrade to the static email-HTML validator / code-only (D-03) | — | — |
-| Print-Renderer | — | — | — | print render-test target (pdf-executor) | rendered PDF/page evidence when the print-render is available, else degrade to the static print-CSS validator / code-only (D-03) | — | — |
-| Lazyweb | — | reference search via `lazyweb_search` (**Tier 1 — free, tried first**; D-01); complements refero/pinterest | — | — | — | — | — |
-| Mobbin | — | reference search via mobbin tools (**Tier 2 — paid, mobile/flow-level**; D-01); complements refero/lazyweb | — | — | — | — | — |
+| Connection | scan | discover | plan | design | verify | canvas | generator | notify |
+|-----------|------|----------|------|--------|--------|--------|-----------|--------|
+| gdd-state | STATE mutation (init position, probe_connections, add_decision) | STATE mutation (add_decision, add_must_have, transition gate) | STATE mutation (locked decisions, must_haves, transition gate) | STATE mutation (update_progress, resolve_blocker, transition gate) | STATE mutation (must_have pass/fail, add_blocker, set_status) | — | — | — |
+| Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | write tokens/annotations/Code Connect via `use_figma` (FWR-01..04) | — | — | — | — |
+| Refero | — | reference search via `mcp__refero__search`; fallback → awesome-design-md (CONN-05) | — | — | — | — | — | — |
+| Preview | — | — | — | — | screenshots for `? VISUAL` checks (VIS-02) | — | — | — |
+| Storybook | — | component inventory (STB-01) | change-risk via story count (STB-02) | `.stories.tsx` stub (STB-03) | a11y per story (STB-02) | — | — | — |
+| Chromatic | — | — | change-risk scoping (CHR-02) | — | visual delta narration (CHR-01) | — | — | — |
+| Graphify | — | — | dependency scoping (GRF-03) | — | orphan detection (GRF-04) | — | — | — |
+| Pinterest | probe only | visual reference search via `pinterest_search`; fallback → Refero → awesome-design-md | — | — | — | — | — | — |
+| Claude Design | bundle probe → `claude_design: available` | synthesizer handoff mode — parses bundle → D-XX decisions; discussant `--from-handoff` confirms | — (skipped in handoff) | — (skipped in handoff) | Handoff Faithfulness section; bidirectional write-back via figma-writer `implementation-status` mode | — | — | — |
+| paper.design | — | canvas read: `get_selection`, `get_jsx`, `get_computed_styles` | — | paper-writer: annotate/tokenize/roundtrip | `get_screenshot` for `? VISUAL` | ✓ | — | — |
+| pencil.dev | `.pen` discovery | `.pen` as canonical design source | — | pencil-writer: annotate/roundtrip | spec-vs-impl diff | ✓ | — | — |
+| 21st.dev | — | prior-art gate: marketplace search before greenfield build | — | component-generator (21st impl) | — | — | ✓ | — |
+| Magic Patterns | — | — | — | component-generator (magic-patterns impl) | preview_url → `? VISUAL` check | — | ✓ | — |
+| OpenRouter | — | — | — | — | — | — | ✓ (model-router: tier→model resolution, all stages) | — |
+| Xcode Simulator | — | — | — | native iOS code-gen target (swift-executor / emitSwift) | rendered SwiftUI snapshot when simulator available, else degrade to code-only structural audit (D-03) | — | — | — |
+| Android Emulator | — | — | — | native Android code-gen target (compose-executor / emitCompose) | rendered Compose screenshot when emulator available, else degrade to code-only structural audit (D-03) | — | — | — |
+| Litmus | — | — | — | email render-test target (email-executor) | cross-client rendered evidence when Litmus available, else degrade to the static email-HTML validator / code-only (D-03) | — | — | — |
+| Print-Renderer | — | — | — | print render-test target (pdf-executor) | rendered PDF/page evidence when the print-render is available, else degrade to the static print-CSS validator / code-only (D-03) | — | — | — |
+| Lazyweb | — | reference search via `lazyweb_search` (**Tier 1 — free, tried first**; D-01); complements refero/pinterest | — | — | — | — | — | — |
+| Mobbin | — | reference search via mobbin tools (**Tier 2 — paid, mobile/flow-level**; D-01); complements refero/lazyweb | — | — | — | — | — | — |
+| Slack | — | — | — | — | — | — | — | verify-fail/audit-pass/ship → Slack webhook (routed, redacted, degrade-to-noop; D-04/D-05) |
+| Discord | — | — | — | — | — | — | — | parity with Slack — events → Discord webhook (routed, redacted, degrade-to-noop) |
 
 **Column definitions:**
 
@@ -162,6 +166,22 @@ Step E1 — ToolSearch check:
   → Non-empty result  → mobbin: available
 
 Write mobbin status to STATE.md <connections>.
+```
+
+**Slack probe (env-based, no MCP):**
+
+```
+Step F1 — Bash: test -n "$SLACK_WEBHOOK_URL"
+  → empty / GDD_DISABLE_SLACK=1    → slack: not_configured
+  → non-empty                      → slack: available
+```
+
+**Discord probe (env-based, no MCP):**
+
+```
+Step G1 — Bash: test -n "$DISCORD_WEBHOOK_URL"
+  → empty / GDD_DISABLE_DISCORD=1  → discord: not_configured
+  → non-empty                      → discord: available
 ```
 
 Note: Lazyweb + Mobbin probes are ToolSearch-only (no live call). The discover stage resolves reference sources **cost-aware (D-01): Lazyweb (free) → Mobbin / Refero (paid, whichever is bound + subscribed) → Pinterest → awesome-design-md → WebFetch.**
