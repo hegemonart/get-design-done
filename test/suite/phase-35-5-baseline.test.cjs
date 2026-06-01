@@ -37,7 +37,9 @@ test('35.5-02: notion connection is MCP-based + redacts + kill-switch + degrades
 
 test('35.5-02: connections.md gains the Notion row + intro 19 (export-only, no matrix column)', () => {
   const c = read('connections/connections.md');
-  assert.match(c, /probes all 19 connections/, 'intro count → 19');
+  // count-agnostic: the onboarded count grows with later phases — freeze the Notion row + that
+  // the intro still advertises probing all N connections, not the specific number.
+  assert.match(c, /probes all \d+ connections/, 'intro probes all N connections');
   assert.match(c, /\| Notion \| Active \|/, 'Notion Active-table row');
 });
 

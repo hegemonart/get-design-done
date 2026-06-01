@@ -154,6 +154,10 @@ Links a design cycle to a **Linear** or **Jira** ticket and keeps them in sync (
 
 Four industry-specific design-pattern packs at [`reference/domains/`](reference/domains/) — **finance** (data-table density, trading-UI color semantics, Reg-T/MiFID II disclosure, PCI-DSS masking, number-formatting precision), **healthcare** (HIPAA PHI isolation, audit-trail-as-UI, WCAG 2.1 AAA, medical-data viz), **gaming** (HUD/diegetic taxonomy, vestibular + photosensitive safety, ESRB/PEGI age-gates, controller/touch input adaptation), and **civic** (Section 508 + WCAG 2.1 AA floor, multi-language gov forms, Plain Writing Act, USWDS). The [`design-context-builder`](agents/design-context-builder.md) auto-detects the domain from brief keywords + `package.json` dependencies (`@stripe/`, `fhir`, `@react-three/fiber`, `@uswds/uswds`, …) and loads the matching pack into downstream context; [`design-auditor`](agents/design-auditor.md) folds each pack's audit checklist into the relevant pillar. Additive knowledge — no new pillar, no new runtime dependency. First sub-phase of Phase 36 (Motion-tool verification + Conversational UI follow).
 
+### Motion-tool verification (v1.36.2)
+
+GDD now opens the motion **exports** a project ships. The pure, dependency-free [`validate-motion`](scripts/lib/motion/validate-motion.cjs) checks a **Lottie** JSON for frame-rate sanity, non-positive duration, embedded-asset bloat, and a perf budget (`MO-*` rules); for **Rive** `.riv` (binary) it does size + a `RIVE`-header sanity, and surfaces the state-machine graph (unreachable states, no-exit loops) when the opt-in Rive runtime is present. The [`motion-verifier`](agents/motion-verifier.md) agent runs at verify time ([`connections/lottie.md`](connections/lottie.md) / [`connections/rive.md`](connections/rive.md)) and **WARNs — never blocks** (motion is creative). **No new runtime dependency** — the Lottie player and Rive runtime are opt-in. Second sub-phase of Phase 36.
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

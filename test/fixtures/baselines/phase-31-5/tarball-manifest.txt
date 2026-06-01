@@ -44,6 +44,7 @@ agents/gdd-graph-refresh.md
 agents/gdd-intel-updater.md
 agents/gdd-learnings-extractor.md
 agents/motion-mapper.md
+agents/motion-verifier.md
 agents/pdf-executor.md
 agents/perf-analyzer.md
 agents/pr-commenter.md
@@ -71,6 +72,7 @@ connections/jira.md
 connections/lazyweb.md
 connections/linear.md
 connections/litmus.md
+connections/lottie.md
 connections/magic-patterns.md
 connections/mobbin.md
 connections/notion.md
@@ -81,6 +83,7 @@ connections/pinterest.md
 connections/preview.md
 connections/print-renderer.md
 connections/refero.md
+connections/rive.md
 connections/slack.md
 connections/storybook.md
 connections/xcode-simulator.md
@@ -409,6 +412,7 @@ scripts/lib/logger/types.ts
 scripts/lib/mcp-tools-lint/index.cjs
 scripts/lib/mcp-tools-lint/index.d.cts
 scripts/lib/mmr-rerank.cjs
+scripts/lib/motion/validate-motion.cjs
 scripts/lib/notify/dispatch.cjs
 scripts/lib/openrouter/catalog-fetcher.cjs
 scripts/lib/parallelism-engine/concurrency-tuner.cjs

@@ -442,6 +442,13 @@ OFF_CADENCE_VERSIONS.add('1.35.5');
 // No new runtime dependency, no new egress (reference markdown + agent-prompt edits only).
 OFF_CADENCE_VERSIONS.add('1.36.1');
 
+// 1.36.2 → Phase 36.2 (Knowledge Tier-3: Motion-Tool Verification — Lottie + Rive).
+// Decimal on the v1.36.x arc (1.36.1 → 1.36.2). Adds scripts/lib/motion/validate-motion.cjs
+// (pure, dep-free), connections/{lottie,rive}.md, and agents/motion-verifier.md + a design-
+// verifier Phase 4E hook. No new runtime dependency, no new egress (pure JSON.parse + file
+// checks; the Lottie player / Rive runtime are opt-in).
+OFF_CADENCE_VERSIONS.add('1.36.2');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

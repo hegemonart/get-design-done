@@ -4,6 +4,29 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.36.2] - 2026-06-01
+
+### Phase 36.2 — Knowledge Tier-3: Motion-Tool Verification (Lottie + Rive)
+
+Second sub-phase of the split **Phase 36**. Motion existed as a *principle* (Phase 18) but not as a *verifiable artifact* — Lottie/Rive ship animation exports + state machines and GDD never opened them. 36.2 adds a pure motion validator + two optional connections + a verify-time agent. **No new runtime dependency, no new egress** (pure `JSON.parse` + file checks; the Lottie player / Rive runtime are opt-in). Every motion finding is a **warning, never a blocker** (motion is creative, not contractually broken).
+
+### Added
+
+- **`scripts/lib/motion/validate-motion.cjs`** — a pure, dependency-free (zero `require`) motion validator. `validateLottie(json, {bytes, budgetBytes})` checks frame-rate sanity, non-positive duration, layer count, embedded-asset bloat, and the perf budget (rules `MO-PARSE/FR/DUR/LAYERS/IMG/BUDGET`); `motionBudget` is the shared byte-cap check; `riveHeader` is the `.riv` magic-byte sanity. Deterministic.
+- **`connections/lottie.md`** — file-probe connection for Lottie JSON exports; static floor = `validateLottie`; the live player is opt-in; degrade-to-static → code-only.
+- **`connections/rive.md`** — file-probe connection for Rive `.riv` exports. `.riv` is binary, so the deep state-machine graph (unreachable states, no-exit loops) needs the opt-in Rive runtime; the pure-JS floor is size + the `RIVE` header + a manual-review advisory.
+- **`agents/motion-verifier.md`** — at verify time, discovers Lottie/Rive exports, runs `validate-motion.cjs`, enforces a perf budget (`motion_budget_kb`, fallback 200 KB), and WARNs. Reads-only.
+- **`agents/design-verifier.md`** — Phase 4E motion hook (gate on exports → delegate to `motion-verifier` → degrade-to-noop).
+- **`connections/connections.md`** + onboarding — 19 → 21 (Lottie + Rive Active rows, `verify` capability-matrix entries, file probes, value-prop + setup matrix).
+
+### Notes
+
+- **No new runtime dependency, no new egress.** The pure validator never opens the network; the Lottie player + Rive runtime are maintainer-supplied opt-ins (the print-render precedent).
+- 6-manifest lockstep at **v1.36.2** + `OFF_CADENCE_VERSIONS.add('1.36.2')` + the 24 live-pinned `manifests-version.txt` baselines forward-propagated 1.36.1 → 1.36.2.
+- Inventory relock: connection-list 27 → 29, phase-20 agent-list + frontmatter-snapshot += `motion-verifier`, onboarding → 21, tarball golden 665 → 669 (+4). Registry unchanged (no new `reference/` doc).
+
+---
+
 ## [1.36.1] - 2026-06-01
 
 ### Phase 36.1 — Knowledge Tier-3: Domain Packs (finance + healthcare + gaming + civic)

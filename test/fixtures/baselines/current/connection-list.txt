@@ -12,6 +12,7 @@ jira.md
 lazyweb.md
 linear.md
 litmus.md
+lottie.md
 magic-patterns.md
 mobbin.md
 notion.md
@@ -22,6 +23,7 @@ pinterest.md
 preview.md
 print-renderer.md
 refero.md
+rive.md
 slack.md
 storybook.md
 xcode-simulator.md

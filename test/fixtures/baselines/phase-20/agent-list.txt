@@ -37,6 +37,7 @@ gdd-graph-refresh.md
 gdd-intel-updater.md
 gdd-learnings-extractor.md
 motion-mapper.md
+motion-verifier.md
 pdf-executor.md
 perf-analyzer.md
 pr-commenter.md
