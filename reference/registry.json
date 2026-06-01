@@ -965,6 +965,13 @@
       "type": "heuristic",
       "phase": 36.1,
       "description": "Phase 36.1 Tier-3 domain pack — civic/government UI patterns: Section 508 + WCAG 2.1 AA hard floor, multi-language gov forms (EN/ES/zh-Hans), Plain Writing Act (grade 6-8), USWDS, session-timeout warnings, one-thing-per-page forms. Detection signals + Audit checklist for Step 0F + design-auditor."
+    },
+    {
+      "name": "conversational-ui",
+      "path": "reference/conversational-ui.md",
+      "type": "heuristic",
+      "phase": 36.3,
+      "description": "Phase 36.3 Tier-3 conversational-UI patterns (voice + chatbot): voice-flow no-input/no-match reprompts + confirmation + human handoff, multi-turn dialogue (context carryover, slot-filling, repair), prompt-as-UX (the assistant persona/tone/boundaries as a versioned design artifact), chatbot empty-states + suggested replies, voice-first onboarding, error recovery + accessibility (transcripts/captions). Carries Detection signals + an Audit checklist; loaded by design-context-builder for the conversational project type. CLI/REPL UX out of scope."
     }
   ]
 }
