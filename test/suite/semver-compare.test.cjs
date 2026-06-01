@@ -410,6 +410,12 @@ OFF_CADENCE_VERSIONS.add('1.34.3');
 // No new runtime dependency (optional user-installed MCPs, Refero precedent).
 OFF_CADENCE_VERSIONS.add('1.34.4');
 
+// 1.35.1 → Phase 35.1 (Team Surfaces: PR Inline Integration — first sub-phase of the
+// split Phase 35). Opens the v1.35.x arc (1.34.4 → 1.35.1, minor+patch jump, off-cadence).
+// Adds agents/pr-commenter.md (gh-api inline PR review + gdd/design-review check-run) +
+// reference/pr-review-integration.md + /gdd:ship wiring. No new runtime dependency (gh only).
+OFF_CADENCE_VERSIONS.add('1.35.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

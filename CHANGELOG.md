@@ -4,6 +4,27 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.35.1] - 2026-06-01
+
+### Phase 35.1 — Team Surfaces: PR Inline Integration
+
+First sub-phase of the split **Phase 35 (Team Surfaces Layer)**. Makes GDD's verify/audit output visible **inline on the pull request** — the surface a non-GDD-running teammate actually watches. After `/gdd:ship` creates the PR, the new `pr-commenter` agent posts inline review comments on changed lines, attaches Preview/Chromatic before-after screenshot pairs, and registers a `gdd/design-review` status check (audit pillar scores + verify pass/fail + a11y). **No new runtime dependency** — `gh` is the outbound channel (the `/gdd:ship` + `/gdd:report-issue` precedent); every outbound body is redacted; a `GDD_DISABLE_PR_COMMENTER` kill-switch + degrade-to-noop guarantee the agent never fails the ship. Opens the v1.35.x arc (CHANGELOG-only decimal). The parent Phase 35 stays open (35.2 Notification Backplane + 35.3 Ticket Sync remain).
+
+### Added
+
+- **`agents/pr-commenter.md` (inline PR review + status check, D-02/D-03).** A single-shot post-ship agent: posts inline review comments via `gh api .../pulls/{n}/comments` (selector-specific WCAG/verify findings on changed lines), attaches Preview (Phase 8) / Chromatic (Phase 25) before-after screenshot pairs when present, and registers the `gdd/design-review` check-run via `gh api .../check-runs` carrying audit pillar scores + verify pass/fail + a11y result. `size_budget: M`, `## Record`.
+- **`reference/pr-review-integration.md` (the gh contract, registered).** The authoritative `gh`-CLI shapes the agent posts against — inline-comment payload, summary review, the `gdd/design-review` check-run, screenshot-pair attachment, mandatory `redact.cjs`, the kill-switch, and the consent-driven branch-protection setup (`scripts/apply-branch-protection.sh`; GDD registers the check, never force-edits protection). Registered in `reference/registry.json`.
+- **`/gdd:ship` wiring (D-06).** `skills/ship/SKILL.md` Step 6.5 spawns `pr-commenter` (via `Task`) after `gh pr create` — degrade-to-noop, never blocks the ship success path.
+- **Regression baseline.** `test/fixtures/baselines/phase-35-1/` + `test/suite/phase-35-1-baseline.test.cjs` (version-agnostic); plus structural + ship-wiring tests (`pr-commenter-static`, `ship-pr-commenter-wiring`).
+
+### Notes
+
+- **No new runtime dependency** — `gh` only (no `@octokit`/GitHub SDK); every outbound body routes through `scripts/lib/redact.cjs`; per-surface kill-switch `GDD_DISABLE_PR_COMMENTER` mirrors Phase 30.
+- The 31.5 tarball golden was regenerated as a reviewed delta: **+2** (`agents/pr-commenter.md`, `reference/pr-review-integration.md`), zero removals.
+- 6-manifest lockstep at **v1.35.1**. Version-sync hygiene upfront (D-09): `OFF_CADENCE_VERSIONS.add('1.35.1')` + the 19 live-pinned `manifests-version.txt` baselines forward-propagated 1.34.4 → 1.35.1.
+
+---
+
 ## [1.34.4] - 2026-06-01
 
 ### Phase 34.4 — Lazyweb + Mobbin Research Connections (recovered)
