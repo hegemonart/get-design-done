@@ -40,6 +40,7 @@ agents/design-verifier-gate.md
 agents/design-verifier.md
 agents/ds-generator.md
 agents/email-executor.md
+agents/experiment-result-ingester.md
 agents/flutter-executor.md
 agents/gdd-graph-refresh.md
 agents/gdd-intel-updater.md
@@ -54,6 +55,7 @@ agents/quality-gate-runner.md
 agents/swift-executor.md
 agents/ticket-sync-agent.md
 agents/token-mapper.md
+agents/user-research-synthesizer.md
 agents/visual-hierarchy-mapper.md
 bin/gdd-graph
 bin/gdd-mcp
@@ -71,12 +73,16 @@ connections/figma.md
 connections/framer.md
 connections/gdd-state.md
 connections/graphify.md
+connections/growthbook.md
+connections/hotjar.md
 connections/jira.md
+connections/launchdarkly.md
 connections/lazyweb.md
 connections/linear.md
 connections/litmus.md
 connections/lottie.md
 connections/magic-patterns.md
+connections/maze.md
 connections/mobbin.md
 connections/notion.md
 connections/openrouter.md
@@ -90,7 +96,9 @@ connections/print-renderer.md
 connections/refero.md
 connections/rive.md
 connections/slack.md
+connections/statsig.md
 connections/storybook.md
+connections/usertesting.md
 connections/v0-dev.md
 connections/webflow.md
 connections/xcode-simulator.md
@@ -186,6 +194,7 @@ reference/data/styles.csv
 reference/debugger-philosophy.md
 reference/design-system-guidance.md
 reference/design-systems-catalog.md
+reference/design-variants.md
 reference/domains/civic-patterns.md
 reference/domains/finance-patterns.md
 reference/domains/gaming-patterns.md
@@ -331,6 +340,7 @@ scripts/lib/discuss-parallel-runner/types.ts
 scripts/lib/domain-primitives/anti-patterns.cjs
 scripts/lib/domain-primitives/nng.cjs
 scripts/lib/domain-primitives/wcag.cjs
+scripts/lib/ds-arms/design-arms-store.cjs
 scripts/lib/ds/token-scale.cjs
 scripts/lib/easings.cjs
 scripts/lib/email/validate-email-html.cjs

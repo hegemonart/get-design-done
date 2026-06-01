@@ -10,12 +10,16 @@ figma.md
 framer.md
 gdd-state.md
 graphify.md
+growthbook.md
+hotjar.md
 jira.md
+launchdarkly.md
 lazyweb.md
 linear.md
 litmus.md
 lottie.md
 magic-patterns.md
+maze.md
 mobbin.md
 notion.md
 openrouter.md
@@ -29,7 +33,9 @@ print-renderer.md
 refero.md
 rive.md
 slack.md
+statsig.md
 storybook.md
+usertesting.md
 v0-dev.md
 webflow.md
 xcode-simulator.md

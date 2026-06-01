@@ -979,6 +979,13 @@
       "type": "heuristic",
       "phase": 37.2,
       "description": "Phase 37.2 greenfield DS emission rules for /gdd:bootstrap-ds + agents/ds-generator.md: primary→9 OKLCH tints (native oklch(), no color library), never >2 brand colors, neutrals + semantic colors, modular type scale (ratio 1.2/1.25/1.333), 4pt/8pt spacing, radius + motion defaults, the 3 variants (conservative/balanced/bold), role-named CSS-custom-property emission + framework mapping, and button/input/card proof scaffolding. Deterministic math in scripts/lib/ds/token-scale.cjs."
+    },
+    {
+      "name": "design-variants",
+      "path": "reference/design-variants.md",
+      "type": "heuristic",
+      "phase": 38,
+      "description": "Phase 38 design-variants schema + the design_arms outcome loop: /gdd:design --variants N emits N hypothesis-tagged competing variants (<variant id component pattern hypothesis>); each (component_type, variant_pattern_hash) is a Beta(2,8) arm in scripts/lib/ds-arms/design-arms-store.cjs that learns which patterns win with USERS from A/B (experiment-result-ingester) + user-research (user-research-synthesizer) outcomes. Advisory not directive (the user always wins, D-03). Distinct from the routing bandit."
     }
   ]
 }

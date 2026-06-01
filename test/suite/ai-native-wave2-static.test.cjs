@@ -22,9 +22,10 @@ test('37.1-03: all 6 Wave-2 connection specs exist with the standard sections', 
   }
 });
 
-test('37.1-03: connections index — intro 27 + 6 Active rows + matrix categories', () => {
+test('37.1-03: connections index — 6 Active rows + matrix categories (count-agnostic)', () => {
   const c = read('connections/connections.md');
-  assert.match(c, /probes all 27 connections/, 'intro → 27');
+  // count-agnostic: later phases grow the onboarded count — freeze the Wave-2 rows, not the number.
+  assert.match(c, /probes all \d+ connections/, 'intro probes all N connections');
   for (const [name] of [['Framer'], ['Penpot'], ['Webflow'], ['v0.dev'], ['Plasmic'], ['Builder.io']]) {
     assert.match(c, new RegExp(`\\| ${name.replace('.', '\\.')} \\| Active \\|`), `${name} Active row`);
   }

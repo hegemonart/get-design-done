@@ -9,7 +9,7 @@ last_updated: 2026-05-18
 
 Source: extracted from `skills/connections/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
 The skill's load-bearing routing + invocation-mode dispatch stays in `../skills/connections/SKILL.md`;
-this file holds the 27 probe scripts, bucket categorization, per-connection setup screen,
+this file holds the 33 probe scripts, bucket categorization, per-connection setup screen,
 auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json write contracts.
 
 # Connections Onboarding Procedure
@@ -27,7 +27,7 @@ this file does NOT duplicate them; it points at them by name.
 
 ---
 
-## Step 1 — Probe all 27 connections
+## Step 1 — Probe all 33 connections
 
 Run every probe below in order. MCP probes call `ToolSearch` first (deferred tools fail silently without it). Write every result to `STATE.md <connections>` when done.
 
@@ -238,7 +238,49 @@ ToolSearch({ query: "builder", max_results: 5 })
 → Non-empty → builder-io: available
 ```
 
-After all 27 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
+**launchdarkly:** (Outcome — experiment-source; read-only A/B)
+```
+ToolSearch({ query: "launchdarkly", max_results: 5 })  (else check the platform API-key env)
+→ Empty / GDD_DISABLE_LAUNCHDARKLY=1 → launchdarkly: not_configured
+→ Non-empty / key set                       → launchdarkly: available
+```
+
+**statsig:** (Outcome — experiment-source; read-only)
+```
+ToolSearch({ query: "statsig", max_results: 5 })  (else check the platform API-key env)
+→ Empty / GDD_DISABLE_STATSIG=1 → statsig: not_configured
+→ Non-empty / key set                       → statsig: available
+```
+
+**growthbook:** (Outcome — experiment-source; self-host/cloud)
+```
+ToolSearch({ query: "growthbook", max_results: 5 })  (else check the platform API-key env)
+→ Empty / GDD_DISABLE_GROWTHBOOK=1 → growthbook: not_configured
+→ Non-empty / key set                       → growthbook: available
+```
+
+**usertesting:** (Outcome — user-research; pseudonymize-first)
+```
+ToolSearch({ query: "usertesting", max_results: 5 })  (else check the platform API-key env)
+→ Empty / GDD_DISABLE_USERTESTING=1 → usertesting: not_configured
+→ Non-empty / key set                       → usertesting: available
+```
+
+**maze:** (Outcome — user-research; pseudonymize-first)
+```
+ToolSearch({ query: "maze", max_results: 5 })  (else check the platform API-key env)
+→ Empty / GDD_DISABLE_MAZE=1 → maze: not_configured
+→ Non-empty / key set                       → maze: available
+```
+
+**hotjar:** (Outcome — user-research; indexed insights only)
+```
+ToolSearch({ query: "hotjar", max_results: 5 })  (else check the platform API-key env)
+→ Empty / GDD_DISABLE_HOTJAR=1 → hotjar: not_configured
+→ Non-empty / key set                       → hotjar: available
+```
+
+After all 33 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
 
 ---
 
@@ -334,6 +376,12 @@ One-line value props (use verbatim):
 | v0-dev | generator — Vercel v0 prompt→component (MCP-first → REST + V0_API_KEY) |
 | plasmic | generator + canvas — emit code + read the Plasmic canvas |
 | builder-io | generator — Builder.io Visual Copilot (pull-only this phase) |
+| launchdarkly | outcome — read A/B results → design_arms posterior (experiment-source) |
+| statsig | outcome — read experiment/pulse results → design_arms (experiment-source) |
+| growthbook | outcome — read experiment results → design_arms (experiment-source; OSS) |
+| usertesting | outcome — read test reports → brief findings (user-research; pseudonymized) |
+| maze | outcome — read usability metrics → brief findings (user-research; pseudonymized) |
+| hotjar | outcome — read indexed insights → brief findings (user-research; pseudonymized) |
 
 ---
 
@@ -361,7 +409,7 @@ options:
   - "Exit"                            → emit ## CONNECTIONS COMPLETE, exit
 ```
 
-If recommended bucket is empty, swap that option for "Show all 27 and pick."
+If recommended bucket is empty, swap that option for "Show all 33 and pick."
 
 ---
 
@@ -433,6 +481,12 @@ options:
 | v0-dev | `claude mcp add v0 ...` (or V0_API_KEY) | ✓ yes | Reversible; MCP-first → REST fallback |
 | plasmic | `claude mcp add plasmic ...` (or token) | ✓ yes | Reversible; dual canvas+generator |
 | builder-io | `claude mcp add builder ...` (or BUILDER_API_KEY) | ✓ yes | Reversible; pull-only this phase |
+| launchdarkly | (set `LAUNCHDARKLY_API_KEY` / add the LaunchDarkly MCP) | ✓ yes | Reversible; read-only experiment-source |
+| statsig | (set `STATSIG_API_KEY` / add the Statsig MCP) | ✓ yes | Reversible; read-only experiment-source |
+| growthbook | (set `GROWTHBOOK_API_KEY` [+ host] / add the MCP) | ✓ yes | Reversible; self-host or cloud |
+| usertesting | (set `USERTESTING_API_KEY` / add the MCP) | ✓ yes | Reversible; read-only; pseudonymize-first |
+| maze | (set `MAZE_API_KEY` / add the MCP) | ✓ yes | Reversible; read-only; pseudonymize-first |
+| hotjar | (set `HOTJAR_API_KEY` / add the MCP) | ✓ yes | Reversible; indexed insights only; pseudonymize-first |
 
 For non-auto-run connections, hide the "Run install command now" option entirely in 5.3.
 

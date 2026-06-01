@@ -1,7 +1,7 @@
 ---
 name: design
 description: "Stage 4 of 5 orchestrator that reads DESIGN-PLAN.md, partitions tasks by wave + parallel-safe flag, and spawns design-executor agents with the appropriate isolation (worktree for parallel batches, in-place for sequential tail). Use when DESIGN-PLAN.md is approved and ready for implementation."
-argument-hint: "[--auto] [--parallel]"
+argument-hint: "[--auto] [--parallel] [--variants N]"
 user-invocable: true
 tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint
 ---
@@ -28,6 +28,7 @@ Detail: `./design-procedure.md` §Stage entry.
 
 - `--auto` -> `auto_mode=true` (no mid-stage prompts; architectural deviations stop the individual task but continue the rest).
 - `--parallel` -> `parallel_mode=true` (use worktree isolation for `Parallel: true` tasks).
+- `--variants N` -> `variants_mode` (default N=2): for tasks that build a user-facing surface, the executor emits **N competing, hypothesis-tagged variants** (`<variant id component pattern hypothesis>`) instead of one. Before generating, consult the `design_arms` posterior (`scripts/lib/ds-arms/design-arms-store.cjs`) to bias toward patterns that have won prior A/B / user-research outcomes — **advisory, never directive** (the user's explicit choice always wins). The tagged variants flow to A/B (LaunchDarkly/Statsig/GrowthBook) for outcome ingestion. Full schema + the outcome loop: `../../reference/design-variants.md`.
 - **Directionally-open check** (skipped if `auto_mode`): scan DESIGN-PLAN.md for tasks whose criteria read "explore N directions" / "pick a visual approach" and suggest `/gdd:sketch` first.
 - **Project-local conventions**: include any `./.claude/skills/design-*-conventions.md` and `~/.claude/gdd/global-skills/*.md` in every executor's `<required_reading>` — global conventions inform but do not override project-local D-XX decisions.
 - **`.stories.tsx` stub**: after each new component file is created by the executor, emit a CSF stub alongside if `.storybook/` exists or `"storybook"` is in `package.json`, even with the dev server offline. Detail: `./design-procedure.md` §.stories.tsx Stub.

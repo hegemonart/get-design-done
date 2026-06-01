@@ -2,7 +2,7 @@
 
 This directory contains connection specifications for external tools and MCPs that the get-design-done pipeline integrates with. Each connection has its own spec file. This file is the index.
 
-**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 27 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
+**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 33 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
 
 ---
 
@@ -43,6 +43,12 @@ This directory contains connection specifications for external tools and MCPs th
 | v0.dev | Active | [`connections/v0-dev.md`](connections/v0-dev.md) | **AI-native** (Wave 2, generator) — Vercel v0; MCP-first → REST + `V0_API_KEY`; component-generator `v0` impl (37.1) |
 | Plasmic | Active | [`connections/plasmic.md`](connections/plasmic.md) | **AI-native** (Wave 2, dual) — canvas read + code emission; component-generator `plasmic` impl (37.1) |
 | Builder.io | Active | [`connections/builder-io.md`](connections/builder-io.md) | **AI-native** (Wave 2, generator) — Visual Copilot, pull-only this phase; component-generator `builder-io` impl (37.1) |
+| LaunchDarkly | Active | [`connections/launchdarkly.md`](connections/launchdarkly.md) | **Outcome** (experiment-source) — read-only A/B results (`LAUNCHDARKLY_API_KEY`/MCP); `experiment-result-ingester` → `design_arms`; `GDD_DISABLE_LAUNCHDARKLY`; degrade-to-noop (38) |
+| Statsig | Active | [`connections/statsig.md`](connections/statsig.md) | **Outcome** (experiment-source) — read-only experiment/pulse results (`STATSIG_API_KEY`/MCP); → `design_arms`; `GDD_DISABLE_STATSIG`; degrade-to-noop (38) |
+| GrowthBook | Active | [`connections/growthbook.md`](connections/growthbook.md) | **Outcome** (experiment-source) — read-only results (`GROWTHBOOK_API_KEY`, self-hosted/cloud, /MCP); → `design_arms`; `GDD_DISABLE_GROWTHBOOK`; degrade-to-noop (38) |
+| UserTesting | Active | [`connections/usertesting.md`](connections/usertesting.md) | **Outcome** (user-research) — read-only test reports; **pseudonymize-first** → `user-research-synthesizer` → brief `<prior-research>`; `GDD_DISABLE_USERTESTING`; degrade-to-noop (38) |
+| Maze | Active | [`connections/maze.md`](connections/maze.md) | **Outcome** (user-research) — read-only usability metrics; **pseudonymize-first** → `user-research-synthesizer`; `GDD_DISABLE_MAZE`; degrade-to-noop (38) |
+| Hotjar | Active | [`connections/hotjar.md`](connections/hotjar.md) | **Outcome** (user-research) — read-only indexed insights (no raw video); **pseudonymize-first** → `user-research-synthesizer`; `GDD_DISABLE_HOTJAR`; degrade-to-noop (38) |
 
 ---
 

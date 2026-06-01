@@ -4,7 +4,8 @@ apply-reflections: 92
 audit: 79
 bandit-status: 94
 benchmark: 65
-brief: 120
+bootstrap-ds: 43
+brief: 128
 cache-manager: 66
 check-update: 98
 compare: 82
@@ -13,11 +14,12 @@ connections: 71
 continue: 24
 darkmode: 76
 debug: 41
-design: 98
+design: 99
 discover: 72
 discuss: 96
 do: 45
 explore: 105
+export: 30
 extract-learnings: 98
 fast: 91
 figma-extract: 64
@@ -31,6 +33,7 @@ new-cycle: 37
 new-project: 53
 next: 68
 note: 48
+openrouter-status: 86
 optimize: 97
 pause: 77
 peer-cli-add: 88
@@ -52,11 +55,11 @@ router: 89
 scan: 92
 settings: 87
 ship: 48
-sketch: 78
 sketch-wrap-up: 92
+sketch: 78
 skill-manifest: 79
-spike: 67
 spike-wrap-up: 86
+spike: 67
 start: 67
 stats: 51
 style: 71
