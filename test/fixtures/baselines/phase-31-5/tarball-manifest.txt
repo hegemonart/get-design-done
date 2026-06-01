@@ -11,6 +11,7 @@ agents/component-benchmark-harvester.md
 agents/component-benchmark-synthesizer.md
 agents/component-taxonomy-mapper.md
 agents/compose-executor.md
+agents/cost-forecaster.md
 agents/design-advisor.md
 agents/design-assumptions-analyzer.md
 agents/design-auditor.md
@@ -187,6 +188,7 @@ reference/config-schema.md
 reference/context-md-format.md
 reference/contrast-advanced.md
 reference/conversational-ui.md
+reference/cost-governance.md
 reference/css-grid-layout.md
 reference/cycle-handoff-preamble.md
 reference/data-visualization.md
@@ -319,6 +321,9 @@ scripts/lib/bandit-router.cjs
 scripts/lib/bandit-router/integration.cjs
 scripts/lib/blast-radius.cjs
 scripts/lib/budget-enforcer.cjs
+scripts/lib/budget/cost-forecast.cjs
+scripts/lib/budget/project-cap.cjs
+scripts/lib/budget/roi.cjs
 scripts/lib/cache/gdd-cache-manager.cjs
 scripts/lib/connection-probe/index.cjs
 scripts/lib/context-engine/index.ts
@@ -606,6 +611,7 @@ skills/bandit-status/SKILL.md
 skills/benchmark/SKILL.md
 skills/bootstrap-ds/SKILL.md
 skills/brief/SKILL.md
+skills/budget/SKILL.md
 skills/cache-manager/SKILL.md
 skills/cache-manager/cache-policy.md
 skills/check-update/SKILL.md
@@ -667,6 +673,7 @@ skills/report-issue/SKILL.md
 skills/report-issue/report-issue-procedure.md
 skills/resume/SKILL.md
 skills/review-backlog/SKILL.md
+skills/roi/SKILL.md
 skills/rollout-status/SKILL.md
 skills/router/SKILL.md
 skills/router/capability-gap-emitter.md

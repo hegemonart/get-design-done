@@ -58,6 +58,14 @@ export interface DesignBudgetJson {
    * D-11 enforcement policy. enforce = block + auto-downgrade; warn = print warnings but allow spawn; log = advisory-only telemetry without gating.
    */
   enforcement_mode?: 'enforce' | 'warn' | 'log';
+  /**
+   * Phase 39.2 D-04 — project-level hard cap (USD) across the whole project's costs.jsonl. 0 or absent = DISABLED (no project-level enforcement; zero behavior change for existing users). When > 0, hooks/budget-enforcer.ts warns at 50% + 80% of this cap and (under project_cap_enforcement_mode=enforce) hard-halts the next PreToolUse:Agent spawn at 100%. Distinct from per_task_cap_usd / per_phase_cap_usd.
+   */
+  project_cap_usd?: number;
+  /**
+   * Phase 39.2 D-04 — enforcement policy for project_cap_usd specifically. enforce = hard-halt at 100%; warn = print at 100% but allow; log = advisory telemetry only. Falls back to enforcement_mode when absent.
+   */
+  project_cap_enforcement_mode?: 'enforce' | 'warn' | 'log';
   [k: string]: unknown;
 }
 
@@ -106,7 +114,7 @@ export type Event = {
   [k: string]: unknown;
 } & {
   /**
-   * Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap.
+   * Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick, verify_outcome, rollout_started, rollout_advanced, rollout_stuck, budget_forecast, project_cap_warning, project_cap_halt.
    */
   type: string;
   /**
@@ -581,6 +589,62 @@ export interface ClaudePluginJson {
 
 export type PluginSchema = ClaudePluginJson;
 
+// ---- pressure-scenario.schema.json ----
+/**
+ * Contract for a Phase-33 skill-behavior pressure-scenario manifest. The runner (scripts/lib/skill-behavior/runner.cjs) loads manifests conforming to this schema, spawns a subagent against `setup_prompt` under the named `pressures`, and validates the response against the `expected_compliance` / `expected_violations` regex sources (compiled with new RegExp(source)). The 5-value `pressures` enum and the required-field set come verbatim from ROADMAP Phase-33 SC#2.
+ */
+export interface PressureScenarioManifest {
+  /**
+   * Unique scenario identifier, e.g. "brief-time-pressure".
+   */
+  name: string;
+  /**
+   * The skill under test, e.g. "brief", "explore", "plan", "using-gdd".
+   */
+  target_skill: string;
+  /**
+   * One or more pressure vectors applied in the setup_prompt.
+   *
+   * @minItems 1
+   */
+  pressures: [
+    'time' | 'sunk-cost' | 'authority' | 'exhaustion' | 'scope-minimization',
+    ...('time' | 'sunk-cost' | 'authority' | 'exhaustion' | 'scope-minimization')[],
+  ];
+  /**
+   * The prompt handed to the subagent — embeds the pressure(s) and asks it to act.
+   */
+  setup_prompt: string;
+  /**
+   * Regex SOURCE strings the response MUST match to count as compliant (the runner compiles each with new RegExp(source)).
+   *
+   * @minItems 1
+   */
+  expected_compliance: [string, ...string[]];
+  /**
+   * Regex SOURCE strings that, if matched, count as a violation (the runner compiles each with new RegExp(source)). May be empty.
+   */
+  expected_violations: string[];
+  /**
+   * Optional free-text scenario note (33-03 baselines reference it).
+   */
+  description?: string;
+  /**
+   * Optional A/B variant label, e.g. "trigger-only" | "what-clause" (33-04 description-format A/B).
+   */
+  variant?: string;
+  /**
+   * Optional array of A/B variant descriptors for a single-manifest A/B pair (33-04). Each item is an object, e.g. { label, description }.
+   */
+  variants?: {}[];
+  /**
+   * Optional body-only probe prompt the A/B scenario asks (33-04 description-format A/B).
+   */
+  body_probe?: string;
+}
+
+export type PressureScenarioSchema = PressureScenarioManifest;
+
 // ---- protected-paths.schema.json ----
 /**
  * Glob list describing paths the plugin refuses to Edit/Write or mutate via destructive Bash. User additions MERGE with this default list; users cannot reduce the default set.
@@ -621,6 +685,35 @@ export interface RateLimits {
 }
 
 export type RateLimitsSchema = RateLimits;
+
+// ---- recipe.schema.json ----
+/**
+ * Shape of a declarative recipe loaded from recipes/<name>.json by scripts/lib/recipe-loader.cjs (Plan 31-5-03, RECIPE-01 / SC#14). The recipes/ directory ships EMPTY of recipes and is populated downstream by Phase 32 (skill-trigger recipes), Phase 33.6 (per-provider), Phase 26 (per-runtime/per-model), and Phase 23.5 (bandit-arm shape). This is a minimal, forward-compatible envelope: a recipe MUST carry name/version/steps; additionalProperties:true lets the populating phases extend the envelope without breaking the loader contract. Modelled on Storybloq's src/autonomous/recipes/ loader.ts pattern.
+ */
+export interface Recipe {
+  /**
+   * The recipe identifier. Matches the filename stem (recipes/<name>.json).
+   */
+  name: string;
+  /**
+   * Recipe/schema version string for forward-compatibility. Lets the loader and downstream phases reason about envelope evolution.
+   */
+  version: string;
+  /**
+   * The ordered recipe body. Item shape is kept permissive for now — each step is an object carrying at least a `kind` OR an `id` string. Downstream phases (32/33.6/26/23.5) tighten the step contract per their domain.
+   */
+  steps: (
+    | {
+        kind: string;
+      }
+    | {
+        id: string;
+      }
+  )[];
+  [k: string]: unknown;
+}
+
+export type RecipeSchema = Recipe;
 
 // ---- runtime-models.schema.json ----
 /**

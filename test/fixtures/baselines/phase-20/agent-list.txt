@@ -4,6 +4,7 @@ component-benchmark-harvester.md
 component-benchmark-synthesizer.md
 component-taxonomy-mapper.md
 compose-executor.md
+cost-forecaster.md
 design-advisor.md
 design-assumptions-analyzer.md
 design-auditor.md

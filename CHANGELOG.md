@@ -4,6 +4,36 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.39.2] - 2026-06-01
+
+### Phase 39.2 — Long-Horizon Cost Governance
+
+Closes the split Phase 39 (39.1 shipped DS migration). Phase 10.1 per-task caps + Phase 26 per-runtime telemetry track *cost* — none **forecast** it, cap it at the *project* level, or show whether the spend actually *shipped* anything. 39.2 adds a per-cycle spend **forecast**, a **`project_cap`** hard-halt, and an **ROI dashboard**. **No new runtime dependency, no new egress** — three pure helpers + an additive, disabled-by-default branch on the existing budget-enforcer hook.
+
+### Added
+
+- **`scripts/lib/budget/cost-forecast.cjs`** — pure, dep-free per-cycle forecast: `forecast()` (best/typical/worst from the mean ± k·σ of historical per-cycle rates) + `cyclesToCap()` ("hit your cap in Y cycles"). Deterministic.
+- **`scripts/lib/budget/roi.cjs`** — pure ROI join: `computeRoi()` (per-cycle cost ⋈ shipped/reverted commits → cost-per-shipped-commit + stick rate) + `roiTableMarkdown()`.
+- **`scripts/lib/budget/project-cap.cjs`** — pure cap classifier: `classifyProjectBudget(spend, cap)` → `ok`/`warn-50`/`warn-80`/`halt`; **disabled when `cap ≤ 0`** (the non-breaking default).
+- **`agents/cost-forecaster.md`** — groups `costs.jsonl` by cycle, runs the model, supports `--scenario best|typical|worst`, emits a `budget_forecast` event. Report-only (sonnet, size_budget M).
+- **`skills/budget/SKILL.md`** (`/gdd:budget [--cycles N] [--scenario …]`) — forecast + "at the current rate you'll hit your $X project cap in Y cycles."
+- **`skills/roi/SKILL.md`** (`/gdd:roi [--since <date>] [--window-days 14]`) — the ROI table; "shipped" = a commit surviving ≥ 14 days (catches revert-after-bug-discovery).
+- **`reference/cost-governance.md`** — the contract (forecast model, `project_cap` semantics, ROI signal, events). Registered.
+
+### Changed
+
+- **`hooks/budget-enforcer.ts`** — an **additive** `project_cap` branch (delegates the threshold math to `project-cap.cjs`): warns at 50% + 80%, hard-halts at 100% under `enforce`. **Disabled by default** (`project_cap_usd: 0`) so existing users see zero behavior change. **Graceful** — it blocks the *next* PreToolUse:Agent spawn, letting the current stage finish.
+- **`reference/schemas/budget.schema.json`** — + `project_cap_usd` (≥ 0; 0/absent = disabled) + `project_cap_enforcement_mode` (enforce|warn|log).
+- **`reference/schemas/events.schema.json`** — free-form `type` seed += `budget_forecast` / `project_cap_warning` / `project_cap_halt` (schema-seed only; `KNOWN_EVENT_TYPES` count unchanged).
+
+### Notes
+
+- **No new runtime dependency, no new egress** — three pure text/arithmetic helpers + a local `package.json`/`costs.jsonl` read; the hook only ever *blocks*, never spends.
+- 6-manifest lockstep at **v1.39.2** + `OFF_CADENCE_VERSIONS.add('1.39.2')` + the 31 live-pinned `manifests-version.txt` baselines forward-propagated 1.39.1 → 1.39.2.
+- Inventory relock: registry-diff 157 → 158 (+`cost-governance`), skill-list 77 → 79 (+`budget`, +`roi`), agent-list +`cost-forecaster` + both frontmatter-snapshots, event-schema-snapshot sha256 re-locked (the seed-list edit, LF-normalized), tarball golden 700 → 707 (+7). Root `SKILL.md` command table += `budget` + `roi`.
+
+---
+
 ## [1.39.1] - 2026-06-01
 
 ### Phase 39.1 — DS Migration Workflows

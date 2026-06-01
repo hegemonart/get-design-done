@@ -6,6 +6,7 @@ bandit-status
 benchmark
 bootstrap-ds
 brief
+budget
 cache-manager
 check-update
 compare
@@ -51,6 +52,7 @@ reflect
 report-issue
 resume
 review-backlog
+roi
 rollout-status
 router
 scan
