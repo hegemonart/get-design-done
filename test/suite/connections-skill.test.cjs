@@ -5,7 +5,7 @@
  * Validates the /gdd:connections onboarding skill:
  *   - skill file exists at skills/connections/SKILL.md
  *   - frontmatter declares the required tools
- *   - handles all 16 known connections by name (per connections/connections.md)
+ *   - handles all 18 known connections by name (per connections/connections.md)
  *   - documents the three-value status schema
  *   - documents the four-option per-connection setup prompt
  *   - documents the resumability / pending_verification mechanism
@@ -19,7 +19,7 @@ const { REPO_ROOT } = require('./helpers.ts');
 
 const SKILL_PATH = path.join(REPO_ROOT, 'skills', 'connections', 'SKILL.md');
 
-// The 16 connections the onboarding wizard must handle. Hyphenated names kept as-is
+// The 18 connections the onboarding wizard must handle. Hyphenated names kept as-is
 // here (they match `connections/<name>.md`); STATE.md key normalization (e.g.
 // 21st-dev → twenty_first) is a separate concern covered by the merge-logic checks.
 const ONBOARDED_CONNECTIONS = [
@@ -39,6 +39,8 @@ const ONBOARDED_CONNECTIONS = [
   'mobbin',
   'slack',
   'discord',
+  'linear',
+  'jira',
 ];
 
 test('connections-skill: SKILL.md exists', () => {
@@ -67,7 +69,7 @@ test('connections-skill: marked user-invocable', () => {
   assert.match(fm, /user-invocable:\s*true/, 'skill must be user-invocable');
 });
 
-test('connections-skill: references all 16 known connections by name', () => {
+test('connections-skill: references all 18 known connections by name', () => {
   const body = fs.readFileSync(SKILL_PATH, 'utf8');
   for (const name of ONBOARDED_CONNECTIONS) {
     assert.match(

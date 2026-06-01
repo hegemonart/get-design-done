@@ -422,6 +422,12 @@ OFF_CADENCE_VERSIONS.add('1.35.1');
 // + reference/notification-routing.md. No new runtime dependency.
 OFF_CADENCE_VERSIONS.add('1.35.2');
 
+// 1.35.3 → Phase 35.3 (Team Surfaces: Ticket Sync — Linear + Jira). FINAL sub-phase of
+// the split Phase 35; completing it marks the parent Phase 35 COMPLETE. Adds connections/
+// {linear,jira}.md (MCP-based) + agents/ticket-sync-agent.md + reference/ticket-sync.md.
+// No new runtime dependency, no new egress (MCP tools only).
+OFF_CADENCE_VERSIONS.add('1.35.3');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

@@ -137,6 +137,7 @@ start-interview: reference/start-interview.md
 style-vocabulary: reference/style-vocabulary.md
 styles-data: reference/data/styles.csv
 surfaces: reference/surfaces.md
+ticket-sync: reference/ticket-sync.md
 typography: reference/typography.md
 user-research: reference/user-research.md
 variable-fonts-loading: reference/variable-fonts-loading.md

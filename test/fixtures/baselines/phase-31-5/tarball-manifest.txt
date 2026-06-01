@@ -50,6 +50,7 @@ agents/pr-commenter.md
 agents/prototype-gate.md
 agents/quality-gate-runner.md
 agents/swift-executor.md
+agents/ticket-sync-agent.md
 agents/token-mapper.md
 agents/visual-hierarchy-mapper.md
 bin/gdd-graph
@@ -66,7 +67,9 @@ connections/discord.md
 connections/figma.md
 connections/gdd-state.md
 connections/graphify.md
+connections/jira.md
 connections/lazyweb.md
+connections/linear.md
 connections/litmus.md
 connections/magic-patterns.md
 connections/mobbin.md
@@ -266,6 +269,7 @@ reference/skill-authoring-contract.md
 reference/start-interview.md
 reference/style-vocabulary.md
 reference/surfaces.md
+reference/ticket-sync.md
 reference/typography.md
 reference/user-research.md
 reference/variable-fonts-loading.md

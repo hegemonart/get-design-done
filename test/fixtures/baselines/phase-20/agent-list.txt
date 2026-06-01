@@ -43,5 +43,6 @@ pr-commenter.md
 prototype-gate.md
 quality-gate-runner.md
 swift-executor.md
+ticket-sync-agent.md
 token-mapper.md
 visual-hierarchy-mapper.md

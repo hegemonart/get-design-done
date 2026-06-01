@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.35.3] - 2026-06-01
+
+### Phase 35.3 — Team Surfaces: Ticket Sync (Linear + Jira) — completes Phase 35
+
+Third and **FINAL** sub-phase of the split **Phase 35 (Team Surfaces Layer)** — completing it marks the **parent Phase 35 COMPLETE** (PR-inline 35.1 + Notification 35.2 + Ticket-sync 35.3 all shipped). Wires GDD ↔ Linear/Jira bidirectionally: it reads a linked ticket's comments as cycle context (via the decision-injector) and, on cycle completion, transitions the ticket + posts a redacted summary. **MCP-based** (`mcp__linear__*` / `mcp__atlassian__*`) — no bundled SDK, no new outbound egress. Every outbound body is redacted; per-system kill-switches + degrade-to-noop guarantee ticket-sync never gates the cycle.
+
+### Added
+
+- **`connections/linear.md` + `connections/jira.md`** — MCP-based bidirectional ticket-sync connections (Linear MCP / Atlassian MCP; ToolSearch probe, redact + kill-switch + degrade-to-noop). Onboarded 16 → 18.
+- **`agents/ticket-sync-agent.md`** — reads linked-ticket comments on `.design/**.md` open (decision-injector), maintains the STATE `<ticket_links>` block, and on cycle completion transitions the ticket + posts a **redacted** summary via the MCP tools. `size_budget: M`, `## Record`; tracker-wins conflict resolution.
+- **`reference/ticket-sync.md`** — the `<ticket_links>` schema + read/write flow + the default status-transition map + redact + kill-switch contract; registered in `reference/registry.json`.
+- **`connections/connections.md`** — a **ticket-sync** capability-matrix column + Linear/Jira rows + ToolSearch probes.
+
+### Notes
+
+- **No new runtime dependency** (MCP tools, no Linear/Jira SDK) and **no new egress** (`scan:outbound` unchanged — GDD calls MCP tools, not raw HTTP). Per-system kill-switch `GDD_DISABLE_LINEAR` / `GDD_DISABLE_JIRA`.
+- 6-manifest lockstep at **v1.35.3** + `OFF_CADENCE_VERSIONS.add('1.35.3')` + the 21 live-pinned `manifests-version.txt` baselines forward-propagated 1.35.2 → 1.35.3.
+- The 31.5 tarball golden was regenerated as a reviewed delta: **+4** (`connections/linear.md`, `connections/jira.md`, `agents/ticket-sync-agent.md`, `reference/ticket-sync.md`), zero removals.
+- **This completes the parent Phase 35 (Team Surfaces Layer) — PR inline + notifications + ticket sync.**
+
+---
+
 ## [1.35.2] - 2026-06-01
 
 ### Phase 35.2 — Team Surfaces: Notification Backplane (Slack + Discord)
