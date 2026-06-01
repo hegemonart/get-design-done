@@ -178,6 +178,10 @@ GDD now learns **which design patterns win with users**, not just which pass lin
 
 GDD now tracks a design past "PR merged" to **actually live**. [`/gdd:rollout-status`](skills/rollout-status/SKILL.md) reads the feature-flag service (the Phase 38 LaunchDarkly/Statsig/GrowthBook connections) via [`rollout-coordinator`](agents/rollout-coordinator.md) and classifies each cycle — `unrolled` / `staging-only` / `canary-N%` / `prod-100%` — surfacing **stuck** rollouts (a canary that hasn't advanced in N days). The pure [`rollout-status`](scripts/lib/rollout/rollout-status.cjs) classifier also computes a **deployed-percentage weight** that feeds the `design_arms` posterior via `verify_outcome` events — a variant that only reached 10% of users counts as weak evidence (0.1), a fully-rolled one counts 1.0. **Read-only** (GDD never advances or rolls back) and **no new runtime dependency**.
 
+### DS migration workflows (v1.39.1)
+
+When a design system ships a breaking major — shadcn/ui v1→v2, Tailwind v3→v4, MUI v5→v6, or the Material 2/3 token rename — GDD detects the skew from the in-repo `package.json`, consults a curated rule library ([`reference/migrations/`](reference/migrations/)), and produces an **impact-scored, proposal-only** migration plan via [`ds-migration-planner`](agents/ds-migration-planner.md). Each affected component is scored by visual-delta × usage × tests-affected, and the planner emits codemod scaffolds to `.design/migration/` through the pure [`codemod-gen`](scripts/lib/migration/codemod-gen.cjs) — which produces jscodeshift/ast-grep template **text only** (it never imports or runs a codemod engine). [`design-verifier`](agents/design-verifier.md) then treats an in-flight migration as a contract: visual-diff within threshold, component API surface unchanged, tests green, and an unmigrated high-impact rule is a gap. **Proposal-only, no new runtime dependency, no new egress.**
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

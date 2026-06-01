@@ -32,6 +32,7 @@ design-update-checker.md
 design-verifier-gate.md
 design-verifier.md
 ds-generator.md
+ds-migration-planner.md
 email-executor.md
 experiment-result-ingester.md
 flutter-executor.md

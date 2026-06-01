@@ -30,8 +30,8 @@ Detect a Material-token design system from `package.json` **only** (no lockfile,
 | MD-11 | token-rename | `--mdc-elevation-*` / elevation z-values → `--md-sys-elevation-level0..level5` | Numeric dp elevations become a 6-step token scale; pair with surface-container roles. |
 | MD-12 | token-rename | `--mdc-shape-medium` / corner radii → `--md-sys-shape-corner-medium` (`-small` / `-large` / `-extra-large` / `-full`) | Shape scale renamed and bucketed into corner roles. |
 | MD-13 | new-default | *(opt-in)* → dynamic color enabled (`md.sys.color.*` derived from a seed/source color) | M3 default theming model; replaces a static brand palette. Highest visual delta. |
-| MD-14 | rename-component | `mwc-button` → `md-filled-button` (and `md-outlined-button` / `md-text-button` / `md-tonal-button`) | `@material/web` element rename; one MWC element fans out to explicit M3 variants. |
-| MD-15 | rename-component | `mwc-textfield` → `md-filled-text-field` / `md-outlined-text-field` | `mwc-*` → `md-*` rename; appearance now encoded in the element name. |
+| MD-14 | remove-component | `mwc-button` → `md-filled-button` (and `md-outlined-button` / `md-text-button` / `md-tonal-button`) | `@material/web` element rename; one MWC element fans out to explicit M3 variants — no clean 1:1 transform, pick a variant by hand (manual TODO). |
+| MD-15 | remove-component | `mwc-textfield` → `md-filled-text-field` / `md-outlined-text-field` | `mwc-*` → `md-*` rename; one element fans out to 2 variants — appearance now encoded in the element name, choose by hand (manual TODO). |
 | MD-16 | rename-prop | `?outlined` / `?raised` boolean attrs → variant element (per MD-14/MD-15) | Style-toggle props removed; pick the right `md-*` element instead of toggling a flag. |
 | MD-17 | remove-component | `mwc-icon-button-toggle` → *(removed)* — compose `md-icon-button` + `toggle` selected state | Dedicated toggle element dropped; rebuild with base icon-button + selected state. |
 | MD-18 | rename-class | `.mdc-button` / `.mdc-card` (BEM CSS classes) → web-component element + part styling | M3 Web moves from BEM-class theming to custom-element `::part()` / token styling. |

@@ -486,6 +486,13 @@ OFF_CADENCE_VERSIONS.add('1.38.0');
 // No new runtime dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.38.5');
 
+// 1.39.1 → Phase 39.1 (DS Migration Workflows). First sub-phase of the split Phase 39. Opens the
+// v1.39.x arc. Adds reference/migrations/{shadcn-v2,tailwind-v4,mui-v6,material-3-to-4}.md, the
+// pure scripts/lib/migration/codemod-gen.cjs, agents/ds-migration-planner.md, and a design-verifier
+// migration-validation note. Proposal-only; no new runtime dependency (codemod-gen emits template
+// text, never runs jscodeshift/ast-grep), no new egress.
+OFF_CADENCE_VERSIONS.add('1.39.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

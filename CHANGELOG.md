@@ -4,6 +4,27 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.39.1] - 2026-06-01
+
+### Phase 39.1 — DS Migration Workflows
+
+Opens the v1.39.x arc and the first half of the split Phase 39. When a design system ships a breaking major (shadcn/ui v1→v2, Tailwind v3→v4, MUI v5→v6, Material 2/3 token rename), GDD can now read the in-repo `package.json`, detect the version skew, consult a curated rule library, and produce an **impact-scored, proposal-only migration plan** with codemod scaffolds. Nothing runs automatically and no codemod engine is bundled — `codemod-gen` emits jscodeshift/ast-grep template **text** the developer reviews and runs themselves. **No new runtime dependency, no new egress.**
+
+### Added
+
+- **`reference/migrations/{shadcn-v2,tailwind-v4,mui-v6,material-3-to-4}.md`** — 4 curated rule libraries. Each carries `## Detection` (package.json dep + version), a `## Migration rules` table (Rule ID · Kind · From → To · Note, where Kind ∈ `rename-class`/`rename-prop`/`remove-component`/`token-rename`/`new-default`), and `## Impact notes`. Grounded in the official upstream migration guides (Tailwind v4 browser baseline, MUI Grid2/`experimental_` removal, Material M2→M3 `--mdc-*` → `--md-sys-*` tokens). Registered.
+- **`scripts/lib/migration/codemod-gen.cjs`** — pure, dep-free `emitCodemod(rule, { engine: 'jscodeshift' | 'ast-grep' })` → `{ ruleId, engine, kind, template }`. One template per rule kind; deterministic. Emits template **text only** — it never imports or runs jscodeshift/ast-grep.
+- **`agents/ds-migration-planner.md`** — detects the DS + version from `package.json`, consults `reference/migrations/<ds>.md`, scores each affected component (visual-delta × usage × tests-affected), and emits codemod scaffolds to `.design/migration/` via `codemod-gen`. **Proposal-only**; long-tail DS fall back to a generic template.
+- **`agents/design-verifier.md`** — an in-place note (net-zero, stays at the 700-line cap): when a DS migration is in flight, the verifier also asserts the migration preserved the contract (visual-diff within threshold, component API surface unchanged, tests pass) and treats an unmigrated high-impact rule as a gap.
+
+### Notes
+
+- **No new runtime dependency, no new egress** — `codemod-gen` is a pure text emitter; version detection is a local `package.json` read.
+- 6-manifest lockstep at **v1.39.1** + `OFF_CADENCE_VERSIONS.add('1.39.1')` + the 30 live-pinned `manifests-version.txt` baselines forward-propagated 1.38.5 → 1.39.1.
+- Inventory relock: registry-diff 153 → 157 (+4 rule libraries), agent-list +`ds-migration-planner` + both frontmatter-snapshots, tarball golden 694 → 700 (+6: 4 rule libraries + `codemod-gen.cjs` + `ds-migration-planner.md`). No skill/connection deltas.
+
+---
+
 ## [1.38.5] - 2026-06-01
 
 ### Phase 38.5 — Deployment Coordination Loop
