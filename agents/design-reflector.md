@@ -92,6 +92,8 @@ After listing standard surprises, apply the **Four Principles Checks** from `ref
 
 Scan STATE.md `<decisions>` block for D-XX codes. Cross-reference `.design/learnings/` files from prior cycles if present. Flag decisions that: (a) appeared in multiple sessions of the same cycle, or (b) appear under the same keyword in learnings from ≥2 prior cycles. These are candidates for `reference/` additions.
 
+**Per-author patterns (Phase 40, team mode).** When decisions carry the `[author= co-author=]` attribution suffix (see `reference/multi-author-model.md`), parse it with `scripts/lib/collab/attribution.cjs` (`parseDecisionsBlock` + `groupByAuthor`) and add a brief **Per-author patterns** sub-note: who locks decisions early, whose decisions get reverted or unlocked most, and any author whose decisions cluster around a recurring keyword. Skip silently when no decision is attributed (single-author projects).
+
 ### 3. Agent Performance
 
 Read `.design/agent-metrics.json`. For each agent:

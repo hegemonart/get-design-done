@@ -53,6 +53,7 @@ reflect: 85
 report-issue: 53
 resume: 93
 review-backlog: 46
+review-decisions: 42
 roi: 54
 rollout-status: 35
 router: 89
@@ -72,6 +73,7 @@ timeline: 66
 todo: 64
 turn-closeout: 95
 undo: 31
+unlock-decision: 54
 update: 56
 using-gdd: 78
 verify: 113

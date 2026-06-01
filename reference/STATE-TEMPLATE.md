@@ -47,6 +47,9 @@ skipped_stages: ""
 <decisions>
 <!-- Filled by discover stage. Format: -->
 <!-- D-01: [decision text] (locked | tentative) -->
+<!-- Phase 40 (team mode): an optional attribution suffix records provenance for multi-author merges: -->
+<!-- D-01: [decision text] (locked | tentative) [author=<git-user> co-author=<gdd-instance-id>] -->
+<!-- The suffix is optional + backward-compatible; see reference/multi-author-model.md. -->
 </decisions>
 
 <must_haves>

@@ -507,6 +507,14 @@ OFF_CADENCE_VERSIONS.add('1.39.2');
 // gate. No new runtime dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.39.5');
 
+// 1.40.0 → Phase 40 (Team Collaboration Mode). A MINOR bump (not an exact patch bump from 1.39.5):
+// multi-writer STATE.md via git-merge-driver per-section merge, conflict-resolver, async review queue
+// + hard locks, decision-journal export, attribution, sectional handoff (gdd_cycle_mode), permission
+// model, opt-in cross-machine sync. 7 pure cores in scripts/lib/collab/ + 2 agents + 2 skills +
+// reference/multi-author-model.md + config.schema collab keys. The first minor since the Phase 39.5
+// lint-changelog floor (1.39.0) — its CHANGELOG entry declares a `### Breaking changes` section.
+OFF_CADENCE_VERSIONS.add('1.40.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

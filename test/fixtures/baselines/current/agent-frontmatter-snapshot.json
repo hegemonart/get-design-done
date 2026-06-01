@@ -13,7 +13,37 @@
     "typical-duration-seconds",
     "writes"
   ],
+  "conflict-resolver.md": [
+    "color",
+    "default-tier",
+    "description",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "required_reading",
+    "size_budget",
+    "size_budget_rationale",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
   "cost-forecaster.md": [
+    "color",
+    "default-tier",
+    "description",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "required_reading",
+    "size_budget",
+    "size_budget_rationale",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
+  "decision-journal-exporter.md": [
     "color",
     "default-tier",
     "description",
