@@ -48,7 +48,7 @@ Every body written to a ticket — the status comment, the summary — passes th
 
 ## Kill-switches (per system)
 
-A system is a noop when **either** `GDD_DISABLE_LINEAR=1` / `GDD_DISABLE_JIRA=1` (env) **or** `.design/config.json` `ticket_sync.<system>.enabled === false`. `gsd-health` surfaces each system's state (mirrors Phase 30 / 35.1 / 35.2).
+A system is a noop when **either** `GDD_DISABLE_LINEAR=1` / `GDD_DISABLE_JIRA=1` (env) **or** `.design/config.json` `ticket_sync.<service>.enabled === false`. `gsd-health` surfaces each system's state (mirrors Phase 30 / 35.1 / 35.2).
 
 ## Degrade-to-noop (never blocks the cycle)
 

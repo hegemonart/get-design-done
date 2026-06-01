@@ -38,7 +38,7 @@ You are an **agent-prompt**, not a service: you reach Linear via `mcp__linear__*
 
 ## Kill-switch + degrade (check FIRST)
 
-1. **Kill-switch.** `GDD_DISABLE_LINEAR=1` / `GDD_DISABLE_JIRA=1` (env) OR `.design/config.json` `ticket_sync.<system>.enabled === false` → that system is a noop.
+1. **Kill-switch.** `GDD_DISABLE_LINEAR=1` / `GDD_DISABLE_JIRA=1` (env) OR `.design/config.json` `ticket_sync.<service>.enabled === false` → that system is a noop.
 2. **Availability.** `ToolSearch({ query: "linear" })` / `ToolSearch({ query: "atlassian jira" })` — empty → `not_configured` → noop for that system. Resolve the exact tool names from the result before any call.
 3. **Link present.** No `<ticket_links>` entry for this cycle → nothing to sync (read path: nothing to surface; write path: noop). Never error.
 
