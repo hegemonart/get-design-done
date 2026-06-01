@@ -395,3 +395,11 @@ single-operator projects are unaffected. Full contract: `reference/multi-author-
   team-mode policy (`scripts/lib/collab/lock-policy.cjs` — 30 s wait + 100 ms backoff);
   `sync_backend` selects the cross-machine `.design/` backend (`scripts/lib/collab/sync-backend.cjs`,
   default `git`; `s3`/`git-lfs` are opt-in declarations — a live client is not bundled this phase).
+
+## CLI localization (Phase 40.5)
+
+- **`locale`** (`en`|`ru`|`uk`|`de`|`fr`|`zh`|`ja`) — overrides the language of GDD's own `--help`,
+  common error messages, and skill prompt headers. Set via `/gdd:locale <code>`. Precedence: this key >
+  env `LANG`/`LC_ALL` > `en`. Missing message keys fall back to English (`scripts/lib/i18n/index.cjs`,
+  chain `locale → base → en`); `en` + `ru` are complete, the other five are placeholders. Full
+  contract: `reference/cli-localization.md`.
