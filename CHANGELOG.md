@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.38.5] - 2026-06-01
+
+### Phase 38.5 — Deployment Coordination Loop
+
+Bridges the gap between `/gdd:verify` passing and the design **actually being live**. `/gdd:ship` ends at "PR merged"; the post-merge journey (staging → canary % → 100% rollout) was invisible. 38.5 reads the feature-flag service (Phase 38's LaunchDarkly/Statsig/GrowthBook connections), tracks per-cycle rollout %, and weights the `design_arms` posterior by how widely a variant actually deployed. **No new runtime dependency, no new egress** (pure classifier + the Phase-38 read-only connections). **Read-only** — GDD reports + notifies; it never advances or rolls back.
+
+### Added
+
+- **`scripts/lib/rollout/rollout-status.cjs`** — pure, dep-free classifier: `classifyRollout` (`unrolled`/`staging-only`/`canary-N%`/`prod-100%`), `deployedPct`, `isStuck` (default 14 days), `deployedWeight` (linear). Deterministic.
+- **`agents/rollout-coordinator.md`** — reads the flag service → classifies → writes `STATE.md <rollout_status>` → emits `rollout_*`/`verify_outcome` events → folds the outcome into `design_arms` weighted by `deployedPct` (a 10%-rolled variant counts 0.1; a 100% one counts 1.0). Read-only, notify-on-stuck.
+- **`skills/rollout-status/SKILL.md`** (`/gdd:rollout-status [<cycle>] [--all] [--stuck]`) — reports rollout state + surfaces stuck rollouts.
+- **`reference/rollout-coordination.md`** — the `<rollout_status>` schema + state transitions + the deployed_pct weighting + the events. Registered.
+- **`reference/schemas/events.schema.json`** — the free-form `type` seed list gains `verify_outcome` / `rollout_started` / `rollout_advanced` / `rollout_stuck` (Phase 22 extension).
+
+### Notes
+
+- **No new runtime dependency, no new egress** — pure classifier; the flag-service reads reuse Phase 38's read-only connections.
+- 6-manifest lockstep at **v1.38.5** + `OFF_CADENCE_VERSIONS.add('1.38.5')` + the 29 live-pinned `manifests-version.txt` baselines forward-propagated 1.38.0 → 1.38.5.
+- Inventory relock: skill-list 76 → 77 (+`rollout-status`), agent-list 52 → 53 (+`rollout-coordinator`) + both frontmatter-snapshots, registry-diff 152 → 153, tarball golden 690 → 694 (+4), and the phase-20 `event-schema-snapshot.json` sha256 re-locked (the seed-list edit). Root `SKILL.md` command table + `command-count-sync` updated.
+
+---
+
 ## [1.38.0] - 2026-06-01
 
 ### Phase 38 — Outcome-Driven Adaptation (A/B Variants + Inbound User-Research Signals)

@@ -174,6 +174,10 @@ Six more AI-native design tools join the connection layer (Phase 14's backlog, n
 
 GDD now learns **which design patterns win with users**, not just which pass lint. `/gdd:design --variants N` emits N competing, hypothesis-tagged variants; a new `design_arms` posterior ([`design-arms-store`](scripts/lib/ds-arms/design-arms-store.cjs) — Beta(2,8), distinct from the routing bandit) consults prior outcomes to bias generation (**advisory, never directive**). Two read-only external signal sources close the loop: **A/B experiments** ([LaunchDarkly / Statsig / GrowthBook](connections/launchdarkly.md) → [`experiment-result-ingester`](agents/experiment-result-ingester.md)) and **user research** ([UserTesting / Maze / Hotjar](connections/usertesting.md) → [`user-research-synthesizer`](agents/user-research-synthesizer.md)), the latter **pseudonymized before any agent context** (a tested PII guard). Findings populate the brief's `<prior-research>` block, which verify cross-checks. **No new runtime dependency.** Onboarding 27 → 33.
 
+### Deployment coordination (v1.38.5)
+
+GDD now tracks a design past "PR merged" to **actually live**. [`/gdd:rollout-status`](skills/rollout-status/SKILL.md) reads the feature-flag service (the Phase 38 LaunchDarkly/Statsig/GrowthBook connections) via [`rollout-coordinator`](agents/rollout-coordinator.md) and classifies each cycle — `unrolled` / `staging-only` / `canary-N%` / `prod-100%` — surfacing **stuck** rollouts (a canary that hasn't advanced in N days). The pure [`rollout-status`](scripts/lib/rollout/rollout-status.cjs) classifier also computes a **deployed-percentage weight** that feeds the `design_arms` posterior via `verify_outcome` events — a variant that only reached 10% of users counts as weak evidence (0.1), a fully-rolled one counts 1.0. **Read-only** (GDD never advances or rolls back) and **no new runtime dependency**.
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

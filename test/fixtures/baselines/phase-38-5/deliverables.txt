@@ -1,0 +1,4 @@
+scripts/lib/rollout/rollout-status.cjs
+reference/rollout-coordination.md
+agents/rollout-coordinator.md
+skills/rollout-status/SKILL.md

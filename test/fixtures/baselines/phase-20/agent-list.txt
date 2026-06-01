@@ -45,6 +45,7 @@ perf-analyzer.md
 pr-commenter.md
 prototype-gate.md
 quality-gate-runner.md
+rollout-coordinator.md
 swift-executor.md
 ticket-sync-agent.md
 token-mapper.md

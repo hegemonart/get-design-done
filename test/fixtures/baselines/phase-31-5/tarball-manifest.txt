@@ -52,6 +52,7 @@ agents/perf-analyzer.md
 agents/pr-commenter.md
 agents/prototype-gate.md
 agents/quality-gate-runner.md
+agents/rollout-coordinator.md
 agents/swift-executor.md
 agents/ticket-sync-agent.md
 agents/token-mapper.md
@@ -270,6 +271,7 @@ reference/registry.json
 reference/registry.schema.json
 reference/retrieval-contract.md
 reference/review-format.md
+reference/rollout-coordination.md
 reference/rtl-cjk-cultural.md
 reference/runtime-models.md
 reference/schemas/authority-snapshot.schema.json
@@ -478,6 +480,7 @@ scripts/lib/reflector/capability-gap-scan.cjs
 scripts/lib/relevance-counter.cjs
 scripts/lib/roadmap-reader/index.cjs
 scripts/lib/roadmap-reader/index.d.cts
+scripts/lib/rollout/rollout-status.cjs
 scripts/lib/runtime-detect.cjs
 scripts/lib/session-runner/errors.ts
 scripts/lib/session-runner/index.ts
@@ -658,6 +661,7 @@ skills/report-issue/SKILL.md
 skills/report-issue/report-issue-procedure.md
 skills/resume/SKILL.md
 skills/review-backlog/SKILL.md
+skills/rollout-status/SKILL.md
 skills/router/SKILL.md
 skills/router/capability-gap-emitter.md
 skills/router/router-pick-emitter.md
