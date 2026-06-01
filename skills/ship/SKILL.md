@@ -29,6 +29,12 @@ Closes the verify → merge gap: runs `/gdd:pr-branch` for a clean branch, assem
 - Do not include `.design/` or `.planning/` files in the PR branch — that is `/gdd:pr-branch`'s job.
 - Do not skip the verify pre-flight silently — always surface a failure and ask.
 
+## Step 6.5 — PR inline review surface (pr-commenter)
+
+ONLY on the success path — after the PR has been created (Step 5) and its URL printed (Step 6) — spawn `agents/pr-commenter.md` via the `Task` tool to post GDD's verify/audit output **inline** on the new PR: inline review comments on changed lines, Preview/Chromatic before-after screenshot pairs, and the `gdd/design-review` check-run (audit pillar scores + verify pass/fail + a11y). Pass the PR number + `owner/repo` in the Task context.
+
+This is a **degrade-to-noop** surface and MUST NOT fail the ship: if `gh` is unavailable, the `GDD_DISABLE_PR_COMMENTER` kill-switch (env or `.design/config.json`) is set, or the agent errors, the ship still succeeds (pr-commenter prints the bodies for manual paste). Skip this step entirely if PR creation failed in Step 5. The posting contract (gh-api shapes, check-run payload, redaction, branch-protection setup) lives in `reference/pr-review-integration.md`.
+
 ## Step 7 — Update notice (post-closeout surface)
 
 ONLY on the success path — after the PR has been created and the URL has been printed — emit the plugin-update banner. If PR creation failed earlier, skip this step (do not suggest upgrades in the middle of a PR-creation failure).

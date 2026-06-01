@@ -909,6 +909,13 @@
       "type": "heuristic",
       "phase": 34.3,
       "description": "Phase 34.3 print-constraint catalogue — @page size/margin/marks (the print box model), bleed box + crop/registration marks, CMYK color-space awareness (subtractive, not screen RGB), font embedding/outlining (print RIPs have no web fonts), and 300dpi raster-fallback guidance; the authority the pdf-executor generates against and the design-verifier print branch audits against, and the rule-id source for scripts/lib/print/validate-print-css.cjs."
+    },
+    {
+      "name": "pr-review-integration",
+      "path": "reference/pr-review-integration.md",
+      "type": "heuristic",
+      "phase": 35.1,
+      "description": "Phase 35.1 PR-inline contract — the gh-CLI shapes agents/pr-commenter.md posts against: inline review comments (gh api pulls/{n}/comments with path+line), the summary review (event=COMMENT), the gdd/design-review check-run (gh api check-runs with name/head_sha/conclusion/output.summary carrying audit pillar scores + verify pass/fail + a11y result), Preview/Chromatic screenshot-pair attachment (degrade-to-text), mandatory scripts/lib/redact.cjs on every outbound body, the GDD_DISABLE_PR_COMMENTER kill-switch, and the consent-driven branch-protection setup (scripts/apply-branch-protection.sh; GDD registers the check, never force-edits protection)."
     }
   ]
 }
