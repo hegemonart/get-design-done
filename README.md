@@ -158,6 +158,10 @@ Four industry-specific design-pattern packs at [`reference/domains/`](reference/
 
 GDD now opens the motion **exports** a project ships. The pure, dependency-free [`validate-motion`](scripts/lib/motion/validate-motion.cjs) checks a **Lottie** JSON for frame-rate sanity, non-positive duration, embedded-asset bloat, and a perf budget (`MO-*` rules); for **Rive** `.riv` (binary) it does size + a `RIVE`-header sanity, and surfaces the state-machine graph (unreachable states, no-exit loops) when the opt-in Rive runtime is present. The [`motion-verifier`](agents/motion-verifier.md) agent runs at verify time ([`connections/lottie.md`](connections/lottie.md) / [`connections/rive.md`](connections/rive.md)) and **WARNs — never blocks** (motion is creative). **No new runtime dependency** — the Lottie player and Rive runtime are opt-in. Second sub-phase of Phase 36.
 
+### Conversational UI (v1.36.3)
+
+[`reference/conversational-ui.md`](reference/conversational-ui.md) closes a zero-coverage surface: voice flows + chatbots. It codifies voice-flow reprompts (no-input / no-match → human handoff), multi-turn dialogue (context carryover, slot-filling, repair), **prompt-as-UX** (the assistant's persona/tone/boundaries as a versioned design artifact), chatbot empty-states + suggested replies, voice-first onboarding, and error recovery + accessibility. [`design-context-builder`](agents/design-context-builder.md) detects a `conversational` project type (brief keywords + chatbot/voice deps like `botpress` / `dialogflow` / `actions-on-google` / `ask-sdk-core`) and loads the pack into context. **No new runtime dependency.** This is the **final sub-phase of Phase 36 — which is now complete** (domain packs + motion-tool verification + conversational UI).
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

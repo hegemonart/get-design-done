@@ -449,6 +449,13 @@ OFF_CADENCE_VERSIONS.add('1.36.1');
 // checks; the Lottie player / Rive runtime are opt-in).
 OFF_CADENCE_VERSIONS.add('1.36.2');
 
+// 1.36.3 → Phase 36.3 (Knowledge Tier-3: Conversational UI). FINAL sub-phase of the split
+// Phase 36 — completing it marks the parent Phase 36 COMPLETE (domain packs 36.1 + motion 36.2
+// + conversational 36.3). Adds reference/conversational-ui.md + a `conversational` project type
+// in design-context-builder. No new runtime dependency, no new egress (reference markdown +
+// an agent-prompt enum addition).
+OFF_CADENCE_VERSIONS.add('1.36.3');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

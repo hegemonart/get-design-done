@@ -4,6 +4,26 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.36.3] - 2026-06-01
+
+### Phase 36.3 — Knowledge Tier-3: Conversational UI — completes Phase 36
+
+Third and **FINAL** sub-phase of the split **Phase 36 (Knowledge Tier 3)** — completing it marks the **parent Phase 36 COMPLETE** (domain packs 36.1 + motion-tool verification 36.2 + conversational UI 36.3 all shipped). Conversational UI was zero-coverage even though it's a real surface (chatbot empty-states, voice flow design, prompt-as-UX). **No new pillar, no new runtime dependency, no new egress** (reference markdown + an agent-prompt enum addition).
+
+### Added
+
+- **`reference/conversational-ui.md`** — voice-flow patterns (no-input / no-match reprompts, confirmation, human handoff), multi-turn dialogue (context carryover, slot-filling, repair), prompt-as-UX (the assistant persona/tone/boundaries as a versioned design artifact), chatbot empty-states + suggested replies, voice-first onboarding, and error recovery + accessibility (transcripts/captions). Carries a `## Detection signals` section + an `## Audit checklist`. Registered in `reference/registry.json` (`type: heuristic`, `phase: 36.3`; 149 → 150). CLI/REPL UX is out of scope this phase.
+- **`agents/design-context-builder.md`** — Step 0E gains a **7th** project type `conversational` (enum 6 → 7). It routes to `design-executor` (a chat widget / voice-app card is still rendered code) **and loads `reference/conversational-ui.md`** for the interaction patterns. Detection from brief keywords (chatbot, voice, assistant, conversational) + `package.json` deps (`botpress`, `rasa`, `dialogflow`, `actions-on-google`, `ask-sdk-core`, `botframework`). The first six project types remain the Phase-34 rendered-output set; `conversational` is the Phase-36.3 interaction-surface type on the same axis.
+
+### Notes
+
+- **No new runtime dependency, no new egress.** Detection is the agent matching keywords/deps; no code, no network.
+- 6-manifest lockstep at **v1.36.3** + `OFF_CADENCE_VERSIONS.add('1.36.3')` + the 25 live-pinned `manifests-version.txt` baselines forward-propagated 1.36.2 → 1.36.3.
+- Inventory relock: registry-diff 149 → 150, tarball golden 669 → 670 (+`reference/conversational-ui.md`). No new connection/skill/agent dir. `design-verifier.md` deliberately untouched (it is at its 700-line cap; conversational verify rides the normal web path).
+- **This completes the parent Phase 36 (Knowledge Tier 3) — domain packs + motion-tool verification + conversational UI.**
+
+---
+
 ## [1.36.2] - 2026-06-01
 
 ### Phase 36.2 — Knowledge Tier-3: Motion-Tool Verification (Lottie + Rive)
