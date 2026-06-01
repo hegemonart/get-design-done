@@ -4,6 +4,29 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.38.0] - 2026-06-01
+
+### Phase 38 — Outcome-Driven Adaptation (A/B Variants + Inbound User-Research Signals)
+
+Closes the external-outcome loop. The bandit's reward was **internal** (lint/test/visual pass-fail); it couldn't learn "which design pattern wins with **users**" because user-outcome signals never entered the system. Phase 38 adds two external signal sources — **A/B experiments** + **user research** — feeding a new `design_arms` posterior + the brief/verify loop. **No new runtime dependency** (a pure Beta-posterior store + injectable `fetch`; the platforms are opt-in, read-only).
+
+### Added
+
+- **`scripts/lib/ds-arms/design-arms-store.cjs`** — a pure `design_arms` posterior class, **distinct from the routing bandit** (`bandit-router.cjs`). Keyed by `(component_type, variant_pattern_hash)` (inline FNV-1a — no `crypto`), conservative **Beta(2, 8)** prior (mean 0.2 — a pattern earns trust from real outcomes). `variantKey` / `pull` / `observe` / `all`; atomic persist to `.design/telemetry/design-arms.json`. node-builtins only.
+- **`reference/design-variants.md`** + **`design` `--variants N`** — N competing, hypothesis-tagged variants (`<variant id component pattern hypothesis>`, default N=2); the design stage consults the posterior to bias generation — **advisory, never directive (the user always wins, D-03)**. Registered.
+- **`connections/launchdarkly.md` + `statsig.md` + `growthbook.md`** — A/B **experiment-source** connections (read-only; never run experiments — D-04). **`agents/experiment-result-ingester.md`** maps variant→outcome by the primary metric + significance → `observe()` into `design_arms` → `experiment_result` event.
+- **`connections/usertesting.md` + `maze.md` + `hotjar.md`** + **`agents/user-research-synthesizer.md`** — user-research sources (read-only, indexed insights). **PII guard (D-05): every payload routes through `scripts/lib/pseudonymize.cjs` BEFORE any agent context** — enforced by `test/suite/phase-38-pii-guard.test.cjs`. Synthesizes ranked findings (finding · frequency · severity) into the brief **`<prior-research>`** block.
+- **Verify cross-check** — `design-verifier` asserts each `<prior-research>` finding is addressed or explicitly deferred (unaddressed `critical`/`serious` = a gap).
+
+### Notes
+
+- **No new runtime dependency, no new egress** — pure Beta store + injectable `fetchImpl` (hermetic tests); the A/B + research platforms are opt-in user-connected MCP/API, read-only.
+- The 6 outcome connections are **Active-table + onboarding entries** (27 → 33 onboarded), NOT pipeline-stage capability-matrix rows — outcome-ingest is post-pipeline (the Notion export-only precedent), so it does not occupy a stage column.
+- 6-manifest lockstep at **v1.38.0** + `OFF_CADENCE_VERSIONS.add('1.38.0')` + the 28 live-pinned `manifests-version.txt` baselines forward-propagated 1.37.2 → 1.38.0.
+- Inventory relock: connection-list 35 → 41 (+6), phase-20 agent-list 50 → 52 (+`experiment-result-ingester` + `user-research-synthesizer`) + both frontmatter-snapshots, registry-diff 151 → 152 (+`design-variants`), tarball golden 680 → 690 (+10). `design-verifier` augmented in place (stays at the 700 cap).
+
+---
+
 ## [1.37.2] - 2026-06-01
 
 ### Phase 37.2 — Greenfield Design-System Bootstrap (`/gdd:bootstrap-ds`) — completes Phase 37

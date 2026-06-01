@@ -33,6 +33,7 @@ design-verifier-gate.md
 design-verifier.md
 ds-generator.md
 email-executor.md
+experiment-result-ingester.md
 flutter-executor.md
 gdd-graph-refresh.md
 gdd-intel-updater.md
@@ -47,4 +48,5 @@ quality-gate-runner.md
 swift-executor.md
 ticket-sync-agent.md
 token-mapper.md
+user-research-synthesizer.md
 visual-hierarchy-mapper.md

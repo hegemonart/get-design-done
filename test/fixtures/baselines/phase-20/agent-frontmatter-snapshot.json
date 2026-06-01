@@ -465,6 +465,20 @@
     "typical-duration-seconds",
     "writes"
   ],
+  "experiment-result-ingester.md": [
+    "color",
+    "default-tier",
+    "description",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "size_budget_rationale",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
   "flutter-executor.md": [
     "color",
     "default-tier",
@@ -648,6 +662,20 @@
     "name",
     "parallel-safe",
     "reads-only",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
+  "user-research-synthesizer.md": [
+    "color",
+    "default-tier",
+    "description",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "size_budget_rationale",
     "tier-rationale",
     "tools",
     "typical-duration-seconds",

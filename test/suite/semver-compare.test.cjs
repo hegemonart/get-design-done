@@ -470,6 +470,15 @@ OFF_CADENCE_VERSIONS.add('1.37.1');
 // dependency (native CSS oklch(), no color library), no new egress.
 OFF_CADENCE_VERSIONS.add('1.37.2');
 
+// 1.38.0 → Phase 38 (Outcome-Driven Adaptation). On-cadence MINOR (a major closed-loop feature)
+// from the v1.37.x arc. Registered here per the suite contract (every post-1.0.x release is in
+// OFF_CADENCE_VERSIONS). Adds the design_arms posterior class (scripts/lib/ds-arms/design-arms-
+// store.cjs), design --variants, 6 outcome connections (LaunchDarkly/Statsig/GrowthBook +
+// UserTesting/Maze/Hotjar), the experiment-result-ingester + user-research-synthesizer agents,
+// the brief <prior-research> block + verify cross-check, and the PII guard. No new runtime
+// dependency (pure Beta store + injectable fetch); no new egress.
+OFF_CADENCE_VERSIONS.add('1.38.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

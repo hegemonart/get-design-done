@@ -54,7 +54,15 @@ Write the brief with these sections, preserving any pre-existing answers:
 
 ## Scope
 <answer>
+
+<prior-research>
+<!-- Phase 38: populated by agents/user-research-synthesizer.md from UserTesting/Maze/Hotjar
+     (pseudonymized) — ranked findings {finding · frequency · severity}. Empty on a fresh brief;
+     the verify stage cross-checks each finding (addressed or explicitly deferred). -->
+</prior-research>
 ```
+
+Leave the `<prior-research>` block empty on a greenfield brief — it is filled by `/gdd:research-sync` (the `user-research-synthesizer`) when a research source is connected, and re-checked at verify. See `reference/design-variants.md` for the outcome loop.
 
 ## Step 4 — Bootstrap STATE.md (if missing)
 

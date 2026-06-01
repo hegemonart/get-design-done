@@ -170,6 +170,10 @@ Six more AI-native design tools join the connection layer (Phase 14's backlog, n
 
 `/gdd:bootstrap-ds` gives a brand-new project a coherent design system from a brand input (a primary color + optional secondary + tone tags + target framework). The pure [`token-scale`](scripts/lib/ds/token-scale.cjs) helper emits a 9-stop OKLCH color scale as native CSS `oklch()` (no color-conversion library), a modular type scale, a 4pt/8pt spacing scale, and radius/motion defaults; [`ds-generator`](agents/ds-generator.md) offers **3 variants** (conservative / balanced / bold) to pick from per [`reference/ds-bootstrap-rubric.md`](reference/ds-bootstrap-rubric.md), then scaffolds button/input/card proof components. Never invents a brand; never overwrites an existing DS. **No new runtime dependency.** This **completes Phase 37** (AI-native Wave 2 + greenfield bootstrap).
 
+### Outcome-driven adaptation (v1.38.0)
+
+GDD now learns **which design patterns win with users**, not just which pass lint. `/gdd:design --variants N` emits N competing, hypothesis-tagged variants; a new `design_arms` posterior ([`design-arms-store`](scripts/lib/ds-arms/design-arms-store.cjs) — Beta(2,8), distinct from the routing bandit) consults prior outcomes to bias generation (**advisory, never directive**). Two read-only external signal sources close the loop: **A/B experiments** ([LaunchDarkly / Statsig / GrowthBook](connections/launchdarkly.md) → [`experiment-result-ingester`](agents/experiment-result-ingester.md)) and **user research** ([UserTesting / Maze / Hotjar](connections/usertesting.md) → [`user-research-synthesizer`](agents/user-research-synthesizer.md)), the latter **pseudonymized before any agent context** (a tested PII guard). Findings populate the brief's `<prior-research>` block, which verify cross-checks. **No new runtime dependency.** Onboarding 27 → 33.
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).
