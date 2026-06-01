@@ -1,0 +1,7 @@
+{
+  "_meta": { "locale": "fr", "coverage": "placeholder", "fallback": "en" },
+  "help.tagline": "Un pipeline de qualité de conception pour les agents de codage IA.",
+  "status.complete": "Terminé.",
+  "status.in_progress": "En cours.",
+  "status.blocked": "Bloqué."
+}

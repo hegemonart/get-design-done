@@ -1,0 +1,7 @@
+{
+  "_meta": { "locale": "ja", "coverage": "placeholder", "fallback": "en" },
+  "help.tagline": "AI コーディングエージェントのためのデザイン品質パイプライン。",
+  "status.complete": "完了。",
+  "status.in_progress": "進行中。",
+  "status.blocked": "ブロック中。"
+}

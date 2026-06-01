@@ -1,0 +1,7 @@
+{
+  "_meta": { "locale": "de", "coverage": "placeholder", "fallback": "en" },
+  "help.tagline": "Eine Design-Qualitäts-Pipeline für KI-Coding-Agenten.",
+  "status.complete": "Fertig.",
+  "status.in_progress": "In Bearbeitung.",
+  "status.blocked": "Blockiert."
+}

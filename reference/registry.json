@@ -1035,6 +1035,13 @@
       "type": "meta-rules",
       "phase": 40,
       "description": "Phase 40 team-collaboration contract: multi-writer STATE.md via a git-merge-driver with per-section semantic merge (scripts/lib/collab/section-merge.cjs — union by D-id, conflict only on same-id divergence); decision attribution line-suffix [author= co-author=] (attribution.cjs); the async review queue proposed->reviewing->approved->locked with hard locks + audited /gdd:unlock-decision (review-queue.cjs); the multi-writer advisory-lock policy (lock-policy.cjs, 30s/100ms backoff in team mode); sectional handoff gdd_cycle_mode designer|dev|full (cycle-mode.cjs); the permission model (permissions.cjs) + CI gate; decision-journal-exporter (pseudonymized, write-only Notion) + pr-commenter D-XX threading; opt-in cross-machine sync (sync-backend.cjs, defaults to git). Agents conflict-resolver + decision-journal-exporter; skills /gdd:review-decisions + /gdd:unlock-decision."
+    },
+    {
+      "name": "cli-localization",
+      "path": "reference/cli-localization.md",
+      "type": "meta-rules",
+      "phase": 40.5,
+      "description": "Phase 40.5 CLI-localization contract: locale resolution (config.locale > env LANG > en) + fallback chain locale->base->en + flat-JSON message tables via scripts/lib/i18n/index.cjs; tables at scripts/lib/i18n/messages/{en,ru,uk,de,fr,zh,ja}.json (en source-complete, ru full, 5 placeholders with en fallback); the opt-in description_i18n frontmatter (descriptionFor falls back to English); /gdd:locale skill; warn-only completeness; the add-a-locale contribution path (translate table + NOTICE credit + PR). Distinct from reference/i18n.md (which covers USER-design i18n)."
     }
   ]
 }

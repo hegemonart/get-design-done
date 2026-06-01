@@ -1,0 +1,7 @@
+{
+  "_meta": { "locale": "uk", "coverage": "placeholder", "fallback": "en" },
+  "help.tagline": "Конвеєр якості дизайну для ШІ-агентів програмування.",
+  "status.complete": "Готово.",
+  "status.in_progress": "У процесі.",
+  "status.blocked": "Заблоковано."
+}
