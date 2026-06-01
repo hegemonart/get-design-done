@@ -182,7 +182,7 @@ Allow-list seed (skip): `console\.(log|error|warn|info|debug)`, dev-only `/* */`
 
 ## Phase 2 — Must-Have Check
 
-Read `.design/STATE.md` `<must_haves>`. Also read must-haves from DESIGN-PLAN.md acceptance criteria. For each M-XX must-have, determine verification method and verify:
+Read `.design/STATE.md` `<must_haves>`. Also read must-haves from DESIGN-PLAN.md acceptance criteria, **and the brief's `<prior-research>` findings (Phase 38)** — for each prior-research finding, assert the current design addresses it or note an explicit defer + rationale (an unaddressed `critical`/`serious` finding is a gap). For each M-XX must-have, determine verification method and verify:
 
 | Must-have type | Verification method |
 |---|---|
