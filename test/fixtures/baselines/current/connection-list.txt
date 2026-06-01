@@ -14,6 +14,7 @@ linear.md
 litmus.md
 magic-patterns.md
 mobbin.md
+notion.md
 openrouter.md
 paper-design.md
 pencil-dev.md

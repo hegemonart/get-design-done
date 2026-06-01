@@ -1,0 +1,21 @@
+{
+  "title": "Checkout Redesign — Design Review",
+  "subtitle": "Cycle 2026-06-export-demo · redacted for sharing",
+  "print": false,
+  "sections": [
+    {
+      "heading": "Experience",
+      "markdown": "## What we set out to do\n\nMake **checkout** feel instant. Key principle: `progressive disclosure`.\n\n- Reduce steps from 4 to 2\n- Inline validation\n\nSee the [pattern reference](https://example.com/patterns)."
+    },
+    {
+      "heading": "Verification",
+      "markdown": "All must-haves passed.\n\n> Verified against the NNG heuristics.\n\n![checkout before](shot-before)"
+    }
+  ],
+  "images": [
+    {
+      "name": "shot-before",
+      "dataUri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    }
+  ]
+}

@@ -18,6 +18,7 @@ discover
 discuss
 do
 explore
+export
 extract-learnings
 fast
 figma-extract

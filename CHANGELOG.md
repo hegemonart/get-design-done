@@ -4,6 +4,27 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.35.5] - 2026-06-01
+
+### Phase 35.5 — Design-Artifact Export (`/gdd:export`)
+
+Closes the gap that a completed cycle's design output (`EXPERIENCE.md`, `DESIGN.md`, `DESIGN-VERIFICATION.md`, the decision log, screenshots) lives only in the repo — stakeholders not in code can't consume it. `/gdd:export <cycle> --format html|pdf|notion` packages it into a shareable artifact. **No new runtime dependency** (D-02): `build-html.cjs` is a pure, dep-free assembler; the PDF format is the same HTML plus Paged.js-compatible `@page` print CSS that the user renders (GDD ships **no** PDF runtime); Notion is written via the Notion MCP. Every artifact is **redacted** (mandatory `scripts/lib/redact.cjs`); `--pseudonymize` masks git identity / paths / hostname for external sharing; `--pr` posts the HTML preview as a PR comment via `pr-commenter`.
+
+### Added
+
+- **`scripts/lib/export/build-html.cjs`** — a pure, dependency-free self-contained HTML assembler: inline `<style>`, base64-embedded screenshots, **zero external resource references**, a minimal deterministic markdown→HTML subset. `print: true` adds the Paged.js `@page` print CSS for the PDF format. Same input → byte-identical output.
+- **`skills/export/SKILL.md`** (`/gdd:export`) — resolves the cycle, reads the design source set, redacts always (+ pseudonymizes on `--pseudonymize`), renders html/pdf via `build-html` or a Notion page via the MCP, and hands the HTML to `pr-commenter` on `--pr`.
+- **`connections/notion.md`** — Notion MCP write-path (`mcp__notion__*`, ToolSearch probe, redact, `GDD_DISABLE_NOTION` kill-switch, degrade-to-HTML). Onboarded 18 → 19 — **export-only** (not a pipeline stage; no capability-matrix column).
+- **`reference/export-formats.md`** — the `/gdd:export` contract (source set, the three formats, redact + `--pseudonymize`, the `--pr` hand-off, the self-contained guarantee); registered in `reference/registry.json`.
+
+### Notes
+
+- **No new runtime dependency** (D-02) and **no new egress** (`scan:outbound` unchanged — Notion is written via MCP tools, not raw HTTP).
+- 6-manifest lockstep at **v1.35.5** + `OFF_CADENCE_VERSIONS.add('1.35.5')` + the 22 live-pinned `manifests-version.txt` baselines forward-propagated 1.35.3 → 1.35.5 (1.35.4 not used).
+- The 31.5 tarball golden was regenerated as a reviewed delta: **+4** (`scripts/lib/export/build-html.cjs`, `skills/export/SKILL.md`, `connections/notion.md`, `reference/export-formats.md`), zero removals (657 → 661).
+
+---
+
 ## [1.35.3] - 2026-06-01
 
 ### Phase 35.3 — Team Surfaces: Ticket Sync (Linear + Jira) — completes Phase 35

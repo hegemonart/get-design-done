@@ -146,6 +146,10 @@ Routes pipeline events (verify-fail / audit-pass / ship) to **Slack** + **Discor
 
 Links a design cycle to a **Linear** or **Jira** ticket and keeps them in sync ([`connections/linear.md`](connections/linear.md) / [`connections/jira.md`](connections/jira.md), MCP-based). [`agents/ticket-sync-agent.md`](agents/ticket-sync-agent.md) surfaces the linked ticket's comments as context when a design file opens (via the decision-injector) and, on `/gdd:complete-cycle`, transitions the ticket + posts a **redacted** summary. Per-system kill-switches (`GDD_DISABLE_LINEAR` / `GDD_DISABLE_JIRA`); degrade-to-noop (never gates the cycle). **No new runtime dependency, no new egress** (MCP tools only). Contract: [`reference/ticket-sync.md`](reference/ticket-sync.md). **Completes the Team Surfaces layer** (PR inline + notifications + ticket sync).
 
+### Design-artifact export (v1.35.5)
+
+`/gdd:export <cycle> --format html|pdf|notion` packages a finished cycle's design output (`EXPERIENCE.md`, `DESIGN.md`, `DESIGN-VERIFICATION.md`, the decision log, screenshots) into a stakeholder-shareable artifact — for PMs/execs/brand who aren't in the repo. The [`build-html`](scripts/lib/export/build-html.cjs) assembler emits a **self-contained** HTML (inline CSS, base64-embedded screenshots, **zero external references**); `pdf` is the same HTML plus Paged.js-compatible `@page` print CSS you render yourself; `notion` writes a page via the Notion MCP ([`connections/notion.md`](connections/notion.md), degrade-to-HTML). Every artifact is **redacted**; `--pseudonymize` masks identity/paths/hostname for external sharing; `--pr` posts the HTML preview as a PR comment via `pr-commenter`. **No new runtime dependency** (D-02: pure assembler, no PDF/markdown library). Contract: [`reference/export-formats.md`](reference/export-formats.md).
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

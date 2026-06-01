@@ -1,6 +1,6 @@
 {
   "name": "get-design-done",
-  "version": "1.35.3",
+  "version": "1.35.5",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": {
     "name": "hegemonart",
@@ -27,7 +27,11 @@
   "mcpServers": {
     "gdd-mcp": {
       "command": "npx",
-      "args": ["-y", "--package=@hegemonart/get-design-done", "gdd-mcp"]
+      "args": [
+        "-y",
+        "--package=@hegemonart/get-design-done",
+        "gdd-mcp"
+      ]
     }
   },
   "interface": {
@@ -36,7 +40,10 @@
     "longDescription": "A design-quality pipeline for AI coding agents: brief, explore, plan, implement, and verify. Get Design Done keeps AI-generated UI tied to your brief, your design system, your references, and your quality gates. Works with Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline.",
     "developerName": "hegemonart",
     "category": "Design",
-    "capabilities": ["Read", "Write"],
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
     "websiteURL": "https://github.com/hegemonart/get-design-done",
     "defaultPrompt": [
       "Run /gdd:brief to start a design cycle.",

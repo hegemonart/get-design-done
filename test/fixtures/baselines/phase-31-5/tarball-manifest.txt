@@ -73,6 +73,7 @@ connections/linear.md
 connections/litmus.md
 connections/magic-patterns.md
 connections/mobbin.md
+connections/notion.md
 connections/openrouter.md
 connections/paper-design.md
 connections/pencil-dev.md
@@ -177,6 +178,7 @@ reference/design-systems-catalog.md
 reference/email-design.md
 reference/emotional-design.md
 reference/error-recovery.md
+reference/export-formats.md
 reference/external/NOTICE.hyperframes
 reference/figma-sandbox.md
 reference/first-principles.md
@@ -320,6 +322,7 @@ scripts/lib/explore-parallel-runner/index.ts
 scripts/lib/explore-parallel-runner/mappers.ts
 scripts/lib/explore-parallel-runner/synthesizer.ts
 scripts/lib/explore-parallel-runner/types.ts
+scripts/lib/export/build-html.cjs
 scripts/lib/failure-mode-matcher.cjs
 scripts/lib/figma-extract/digest.cjs
 scripts/lib/figma-extract/parse-url.cjs
@@ -586,6 +589,7 @@ skills/discuss/SKILL.md
 skills/do/SKILL.md
 skills/explore/SKILL.md
 skills/explore/explore-procedure.md
+skills/export/SKILL.md
 skills/extract-learnings/SKILL.md
 skills/fast/SKILL.md
 skills/figma-extract/SKILL.md
