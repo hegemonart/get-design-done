@@ -993,6 +993,34 @@
       "type": "heuristic",
       "phase": 38.5,
       "description": "Phase 38.5 rollout-coordination contract: the <rollout_status> STATE block (unrolled/staging-only/canary-N%/prod-100%), stuck detection (default 14 days), linear deployed_pct weighting feeding design_arms via verify_outcome (a 10%-rolled variant counts 0.1), and the rollout_started/advanced/stuck/verify_outcome events. Classifier scripts/lib/rollout/rollout-status.cjs; agent agents/rollout-coordinator.md; skill /gdd:rollout-status. Read-only — GDD never drives the rollout."
+    },
+    {
+      "name": "shadcn-v2",
+      "path": "reference/migrations/shadcn-v2.md",
+      "type": "heuristic",
+      "phase": 39.1,
+      "description": "Phase 39.1 migration rule library — shadcn/ui v1→v2 (Tailwind v4 alignment, OKLCH CSS vars, sonner, Radix React-19 refs). Migration-rules table (id/kind/from→to) + Detection + Impact; consumed by agents/ds-migration-planner.md + scripts/lib/migration/codemod-gen.cjs (proposal-only)."
+    },
+    {
+      "name": "tailwind-v4",
+      "path": "reference/migrations/tailwind-v4.md",
+      "type": "heuristic",
+      "phase": 39.1,
+      "description": "Phase 39.1 migration rule library — Tailwind CSS v3→v4 (@import directive, CSS-first @theme, renamed shadow/blur/radius/ring scale, opacity slash syntax, default border color). Rules + Detection + Impact; codemod-gen-consumable."
+    },
+    {
+      "name": "mui-v6",
+      "path": "reference/migrations/mui-v6.md",
+      "type": "heuristic",
+      "phase": 39.1,
+      "description": "Phase 39.1 migration rule library — MUI (Material UI) v5→v6 (Grid2-as-default, cssVariables theme, extendTheme/CssVarsProvider de-prefixing, theme.vars). Rules + Detection + Impact; codemod-gen-consumable."
+    },
+    {
+      "name": "material-3-to-4",
+      "path": "reference/migrations/material-3-to-4.md",
+      "type": "heuristic",
+      "phase": 39.1,
+      "description": "Phase 39.1 migration rule library — Material Design token migration (M3→next), grounded in the real M2→M3 token-system patterns (md.sys.color/typescale roles, @material/web mwc-→md-) — no fabricated M4 spec. Rules + Detection + Impact; codemod-gen-consumable."
     }
   ]
 }

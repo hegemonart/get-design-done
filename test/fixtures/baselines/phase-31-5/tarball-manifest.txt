@@ -39,6 +39,7 @@ agents/design-update-checker.md
 agents/design-verifier-gate.md
 agents/design-verifier.md
 agents/ds-generator.md
+agents/ds-migration-planner.md
 agents/email-executor.md
 agents/experiment-result-ingester.md
 agents/flutter-executor.md
@@ -223,6 +224,10 @@ reference/intel-schema.md
 reference/known-failure-modes.md
 reference/mcp-budget.default.json
 reference/meta-rules.md
+reference/migrations/material-3-to-4.md
+reference/migrations/mui-v6.md
+reference/migrations/shadcn-v2.md
+reference/migrations/tailwind-v4.md
 reference/model-prices.md
 reference/model-tiers.md
 reference/motion-advanced.md
@@ -433,6 +438,7 @@ scripts/lib/logger/sinks.ts
 scripts/lib/logger/types.ts
 scripts/lib/mcp-tools-lint/index.cjs
 scripts/lib/mcp-tools-lint/index.d.cts
+scripts/lib/migration/codemod-gen.cjs
 scripts/lib/mmr-rerank.cjs
 scripts/lib/motion/validate-motion.cjs
 scripts/lib/notify/dispatch.cjs

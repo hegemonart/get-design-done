@@ -1,0 +1,6 @@
+scripts/lib/migration/codemod-gen.cjs
+agents/ds-migration-planner.md
+reference/migrations/shadcn-v2.md
+reference/migrations/tailwind-v4.md
+reference/migrations/mui-v6.md
+reference/migrations/material-3-to-4.md
