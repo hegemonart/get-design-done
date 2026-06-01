@@ -923,6 +923,13 @@
       "type": "heuristic",
       "phase": 35.2,
       "description": "Phase 35.2 notification-backplane routing contract — event→channel routing (verify_fail/audit_pass/ship → slack/discord, overridable via .design/config.json#notifications.routing), the mandatory scripts/lib/redact.cjs chokepoint on every outbound body, per-channel kill-switches (GDD_DISABLE_SLACK/GDD_DISABLE_DISCORD), and the injectable-fetchImpl + degrade-to-noop transport consumed by scripts/lib/notify/dispatch.cjs (allowlisted under the 33.5 outbound gate)."
+    },
+    {
+      "name": "ticket-sync",
+      "path": "reference/ticket-sync.md",
+      "type": "heuristic",
+      "phase": 35.3,
+      "description": "Phase 35.3 ticket-sync contract — the STATE <ticket_links> cycle→ticket map, the bidirectional read (decision-injector surfaces linked-ticket comments on .design open) + write (transition + redacted summary on cycle completion) flow via MCP tools (mcp__linear__* / mcp__atlassian__*; no SDK, no raw HTTP), the default status-transition map, tracker-wins conflict resolution, the mandatory scripts/lib/redact.cjs chokepoint, and the GDD_DISABLE_LINEAR/GDD_DISABLE_JIRA kill-switches. Consumed by agents/ticket-sync-agent.md."
     }
   ]
 }
