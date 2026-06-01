@@ -23,6 +23,24 @@ Updates the `get-design-done` plugin to the latest release (or a specific tag), 
 
    > Run `/gdd:reapply-patches` if you have customized any `reference/` files to restore your modifications.
 
+7.5. **Deprecation advisory** (Phase 39.5) — load the path-migration registry and report anything that
+   crossed into `deprecated` or `removed` over the `[prevVersion → currentVersion]` window:
+
+   ```bash
+   node -e '
+     const fs = require("fs");
+     const dr = require("./scripts/lib/deprecation-registry.cjs");
+     const entries = dr.parseDeprecations(fs.readFileSync("reference/DEPRECATIONS.md","utf8"));
+     const crossed = entries.filter(e =>
+       dr.classify(e, currentVersion) !== "pending" &&
+       (prevVersion == null || dr.classify(e, prevVersion) !== dr.classify(e, currentVersion)));
+     console.log(JSON.stringify(crossed));
+   '
+   ```
+
+   If any entry crossed, print a `## Deprecations in this update` list (old → new + status) and point
+   the user at **`/gdd:migrate`** to rewrite their local references. If none crossed, say nothing.
+
 8. Print the new version and the changelog URL (`https://github.com/hegemonart/get-design-done/releases`).
 
 ## Output
