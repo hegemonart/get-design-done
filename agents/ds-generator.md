@@ -3,7 +3,7 @@ name: ds-generator
 description: Greenfield design-system generator. Turns a brand input (primary color + optional secondary + tone tags + target framework) into a coherent token system — OKLCH color tints/shades, a modular type scale, a 4pt/8pt spacing scale, radius + motion defaults — via the pure scripts/lib/ds/token-scale.cjs and reference/ds-bootstrap-rubric.md. Emits 3 variants (conservative/balanced/bold) for the user to pick, then scaffolds proof components (button/input/card) in the detected framework. Proposal→confirm; never overwrites an existing design system.
 tools: Read, Write, Bash, Glob, Grep
 color: green
-default-tier: inherit
+default-tier: opus
 tier-rationale: "Greenfield token-system synthesis is a design-judgment task (OKLCH color relationships, scale selection, tone→ratio mapping grounded in color-theory) — Opus-tier, not a mechanical worker."
 size_budget: LARGE
 size_budget_rationale: "Honest tier sized to the ~120-line body. The agent states the brand-input → token-system → 3-variants → scaffold flow and DELEGATES the deterministic math to scripts/lib/ds/token-scale.cjs and the emission rules to reference/ds-bootstrap-rubric.md (the pdf-executor→validate-print-css precedent)."

@@ -148,3 +148,4 @@ healthcare: reference/domains/healthcare-patterns.md
 gaming: reference/domains/gaming-patterns.md
 civic: reference/domains/civic-patterns.md
 conversational-ui: reference/conversational-ui.md
+ds-bootstrap-rubric: reference/ds-bootstrap-rubric.md

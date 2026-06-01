@@ -166,6 +166,10 @@ GDD now opens the motion **exports** a project ships. The pure, dependency-free 
 
 Six more AI-native design tools join the connection layer (Phase 14's backlog, now scheduled): **Framer**, **Penpot**, and **Webflow** (canvas-category — read frames/boards/structure as design sources) plus **v0.dev**, **Plasmic**, and **Builder.io** (generator-category — prompt→component, wired into [`design-component-generator`](agents/design-component-generator.md) as `<!-- impl: -->` sections). Plasmic is dual (canvas + generator). Onboarding grows 21 → 27. Each is an opt-in MCP/API connection that degrades to code-only when absent — **no new runtime dependency**. First sub-phase of Phase 37 (Greenfield DS Bootstrap follows).
 
+### Greenfield design-system bootstrap (v1.37.2)
+
+`/gdd:bootstrap-ds` gives a brand-new project a coherent design system from a brand input (a primary color + optional secondary + tone tags + target framework). The pure [`token-scale`](scripts/lib/ds/token-scale.cjs) helper emits a 9-stop OKLCH color scale as native CSS `oklch()` (no color-conversion library), a modular type scale, a 4pt/8pt spacing scale, and radius/motion defaults; [`ds-generator`](agents/ds-generator.md) offers **3 variants** (conservative / balanced / bold) to pick from per [`reference/ds-bootstrap-rubric.md`](reference/ds-bootstrap-rubric.md), then scaffolds button/input/card proof components. Never invents a brand; never overwrites an existing DS. **No new runtime dependency.** This **completes Phase 37** (AI-native Wave 2 + greenfield bootstrap).
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

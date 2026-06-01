@@ -463,6 +463,13 @@ OFF_CADENCE_VERSIONS.add('1.36.3');
 // (each tool is an opt-in user-connected MCP/API; degrade-to-code-only).
 OFF_CADENCE_VERSIONS.add('1.37.1');
 
+// 1.37.2 → Phase 37.2 (Greenfield DS Bootstrap). FINAL sub-phase of the split Phase 37 —
+// completing it marks the parent Phase 37 COMPLETE (Wave-2 tools 37.1 + greenfield 37.2). Adds
+// scripts/lib/ds/token-scale.cjs (pure OKLCH token generator), reference/ds-bootstrap-rubric.md,
+// agents/ds-generator.md, and skills/bootstrap-ds/SKILL.md (/gdd:bootstrap-ds). No new runtime
+// dependency (native CSS oklch(), no color library), no new egress.
+OFF_CADENCE_VERSIONS.add('1.37.2');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

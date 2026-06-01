@@ -4,6 +4,7 @@ apply-reflections
 audit
 bandit-status
 benchmark
+bootstrap-ds
 brief
 cache-manager
 check-update

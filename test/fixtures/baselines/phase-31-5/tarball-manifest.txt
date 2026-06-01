@@ -38,6 +38,7 @@ agents/design-start-writer.md
 agents/design-update-checker.md
 agents/design-verifier-gate.md
 agents/design-verifier.md
+agents/ds-generator.md
 agents/email-executor.md
 agents/flutter-executor.md
 agents/gdd-graph-refresh.md
@@ -189,6 +190,7 @@ reference/domains/civic-patterns.md
 reference/domains/finance-patterns.md
 reference/domains/gaming-patterns.md
 reference/domains/healthcare-patterns.md
+reference/ds-bootstrap-rubric.md
 reference/email-design.md
 reference/emotional-design.md
 reference/error-recovery.md
@@ -329,6 +331,7 @@ scripts/lib/discuss-parallel-runner/types.ts
 scripts/lib/domain-primitives/anti-patterns.cjs
 scripts/lib/domain-primitives/nng.cjs
 scripts/lib/domain-primitives/wcag.cjs
+scripts/lib/ds/token-scale.cjs
 scripts/lib/easings.cjs
 scripts/lib/email/validate-email-html.cjs
 scripts/lib/event-chain.cjs
@@ -582,6 +585,7 @@ skills/apply-reflections/apply-reflections-procedure.md
 skills/audit/SKILL.md
 skills/bandit-status/SKILL.md
 skills/benchmark/SKILL.md
+skills/bootstrap-ds/SKILL.md
 skills/brief/SKILL.md
 skills/cache-manager/SKILL.md
 skills/cache-manager/cache-policy.md
