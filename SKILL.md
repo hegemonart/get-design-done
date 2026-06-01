@@ -104,6 +104,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `rollout-status [<cycle>] [--all] [--stuck]` | `get-design-done:gdd-rollout-status` | Phase 38.5 — track a shipped cycle's production rollout (unrolled / staging-only / canary-N% / prod-100%) by reading the feature-flag service via `rollout-coordinator`; surfaces STUCK rollouts; feeds `design_arms` by deployed %. Read-only — never advances or rolls back |
 | `budget [--cycles N] [--scenario best\|typical\|worst]` | `get-design-done:gdd-budget` | Phase 39.2 — forecast design-cycle spend (best/typical/worst from telemetry variance) via `cost-forecaster`; "at the current rate you'll hit your $X project cap in Y cycles." Read-only — never spends, edits `budget.json`, or halts (the budget-enforcer hook halts) |
 | `roi [--since <date>] [--window-days 14]` | `get-design-done:gdd-roi` | Phase 39.2 — ROI table joining per-cycle cost with commits that shipped (survived ≥14d) vs reverted → cost-per-shipped-commit + stick rate. Read-only markdown report |
+| `migrate [--yes] [--dry-run]` | `get-design-done:gdd-migrate` | Phase 39.5 — migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
 
 ## Handoff Routing
 

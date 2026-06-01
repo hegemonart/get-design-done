@@ -4,6 +4,52 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.39.5] - 2026-06-01
+
+### Phase 39.5 — GDD Self-Migration Tooling
+
+GDD migrates *user* design systems (39.1) but had no systematic story for **its own** breaking
+changes — Phase 31.5 moved `scripts/lib/**` → `sdk/**` with ad-hoc shims. 39.5 formalizes it: a
+machine-readable deprecation registry, a version-aware reader, a `/gdd:migrate` skill, a post-update
+advisory, and two CI gates (a completeness check + a CHANGELOG Breaking-changes linter). **No new
+runtime dependency, no new egress** — two pure helpers + a docs/skill surface.
+
+### Breaking changes
+
+None. (This release *adds* the deprecation machinery; it removes nothing. The historical Phase 31.5 →
+`sdk/` removals it documents already shipped in v1.33.0.)
+
+### Added
+
+- **`reference/DEPRECATIONS.md`** — a `## Path migrations (machine-readable)` table
+  (`Since · Removed in · Old · New · Migration hint`) + status semantics, backfilled with the 10
+  verified Phase 31.5 → `sdk/` removals (all confirmed gone from the tree).
+- **`scripts/lib/deprecation-registry.cjs`** — pure, dep-free reader: `compareVersions`,
+  `parseDeprecations` (markdown-table parser), `classify` (pending/deprecated/removed by version),
+  `checkReference`.
+- **`skills/migrate/SKILL.md`** (`/gdd:migrate [--yes] [--dry-run]`) — scans a project's references for
+  paths deprecated/removed at the installed version and **previews a diff** before rewriting. Preview-first.
+- **`scripts/lint-changelog.cjs`** (`npm run lint:changelog`) — every `## [x.y.0]` minor at/after the
+  1.39.0 floor must declare a `### Breaking changes` section; historical minors are grandfathered.
+- **`test/suite/deprecation-completeness.test.cjs`** — the SC#4 gate: every `removed` entry's old path
+  is gone + its replacement exists; every `deprecated` entry still has a shim. No orphan entries.
+
+### Changed
+
+- **`skills/update/SKILL.md`** — a post-update step that reports deprecations crossing into
+  `deprecated`/`removed` over the upgrade window and points the user at `/gdd:migrate`.
+
+### Notes
+
+- **No new runtime dependency, no new egress.** `lint-changelog.cjs` is a maintainer/CI tool (not shipped).
+- 6-manifest lockstep at **v1.39.5** + `OFF_CADENCE_VERSIONS.add('1.39.5')` + the 32 live-pinned
+  `manifests-version.txt` baselines forward-propagated 1.39.2 → 1.39.5.
+- Inventory relock: skill-list 79 → 80 (+`migrate`, phase-20 + current), tarball golden 707 → 709
+  (+`deprecation-registry.cjs` + `skills/migrate/SKILL.md`). No agent/event/connection deltas. Root
+  `SKILL.md` command table += `migrate`.
+
+---
+
 ## [1.39.2] - 2026-06-01
 
 ### Phase 39.2 — Long-Horizon Cost Governance

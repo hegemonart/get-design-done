@@ -500,6 +500,13 @@ OFF_CADENCE_VERSIONS.add('1.39.1');
 // dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.39.2');
 
+// 1.39.5 → Phase 39.5 (GDD Self-Migration Tooling). Formalizes GDD's own breaking-change story: a
+// machine-readable path-migration table in reference/DEPRECATIONS.md, the pure
+// scripts/lib/deprecation-registry.cjs reader, scripts/lint-changelog.cjs (forward-only Breaking-changes
+// gate, floor 1.39.0), the /gdd:migrate skill, a /gdd:update advisory, and a deprecation-completeness
+// gate. No new runtime dependency, no new egress.
+OFF_CADENCE_VERSIONS.add('1.39.5');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

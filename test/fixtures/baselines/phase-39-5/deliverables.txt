@@ -1,0 +1,4 @@
+reference/DEPRECATIONS.md
+scripts/lib/deprecation-registry.cjs
+scripts/lint-changelog.cjs
+skills/migrate/SKILL.md

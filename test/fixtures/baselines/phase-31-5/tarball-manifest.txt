@@ -332,6 +332,7 @@ scripts/lib/context-engine/truncate.ts
 scripts/lib/context-engine/types.ts
 scripts/lib/cost-arbitrage.cjs
 scripts/lib/dangerous-patterns.cjs
+scripts/lib/deprecation-registry.cjs
 scripts/lib/design-search.cjs
 scripts/lib/design-solidify.mjs
 scripts/lib/design-tokens/_js-harness.cjs
@@ -645,6 +646,7 @@ skills/health/health-skill-length-report.md
 skills/help/SKILL.md
 skills/list-assumptions/SKILL.md
 skills/map/SKILL.md
+skills/migrate/SKILL.md
 skills/new-cycle/SKILL.md
 skills/new-cycle/milestone-completeness-rubric.md
 skills/new-project/SKILL.md
