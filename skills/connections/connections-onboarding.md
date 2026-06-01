@@ -9,7 +9,7 @@ last_updated: 2026-05-18
 
 Source: extracted from `skills/connections/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
 The skill's load-bearing routing + invocation-mode dispatch stays in `../skills/connections/SKILL.md`;
-this file holds the 14 probe scripts, bucket categorization, per-connection setup screen,
+this file holds the 16 probe scripts, bucket categorization, per-connection setup screen,
 auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json write contracts.
 
 # Connections Onboarding Procedure
@@ -27,7 +27,7 @@ this file does NOT duplicate them; it points at them by name.
 
 ---
 
-## Step 1 — Probe all 14 connections
+## Step 1 — Probe all 16 connections
 
 Run every probe below in order. MCP probes call `ToolSearch` first (deferred tools fail silently without it). Write every result to `STATE.md <connections>` when done.
 
@@ -100,6 +100,20 @@ ToolSearch({ query: "mobbin", max_results: 5 })
 → Non-empty → mobbin: available
 ```
 
+**slack:** (notify — Team Surfaces, env-based)
+```
+Bash: test -n "$SLACK_WEBHOOK_URL"  (and GDD_DISABLE_SLACK != 1)
+→ empty / disabled → slack: not_configured
+→ non-empty        → slack: available
+```
+
+**discord:** (notify — parity, env-based)
+```
+Bash: test -n "$DISCORD_WEBHOOK_URL"  (and GDD_DISABLE_DISCORD != 1)
+→ empty / disabled → discord: not_configured
+→ non-empty        → discord: available
+```
+
 ### Non-MCP probes
 
 **storybook** (HTTP):
@@ -145,7 +159,7 @@ Bash: ls .design/handoff/ 2>/dev/null || find . -maxdepth 3 \
   → Non-empty → claude_design: available
 ```
 
-After all 14 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
+After all 16 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
 
 ---
 
@@ -228,6 +242,8 @@ One-line value props (use verbatim):
 | magic-patterns | AI component generator (DS-aware) |
 | lazyweb | free design reference search (pricing/onboarding/redesign) — discover Tier 1 |
 | mobbin | curated mobile + flow-level references (paid) — discover Tier 2 |
+| slack | notify — route verify-fail/audit-pass/ship to a Slack channel (redacted) |
+| discord | notify — route pipeline events to a Discord channel (redacted) |
 
 ---
 
@@ -255,7 +271,7 @@ options:
   - "Exit"                            → emit ## CONNECTIONS COMPLETE, exit
 ```
 
-If recommended bucket is empty, swap that option for "Show all 14 and pick."
+If recommended bucket is empty, swap that option for "Show all 16 and pick."
 
 ---
 
@@ -314,6 +330,8 @@ options:
 | claude-design | handoff bundle drop | ✗ no | User-driven file drop — force manual |
 | mobbin | `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` | ✓ yes | Reversible MCP add; no credential filesystem-write (OAuth on first call) |
 | lazyweb | `claude plugin install lazyweb@lazyweb` (after token write to `~/.lazyweb/`) | ✗ no | Writes a bearer token to disk — force manual (user-consent step) |
+| slack | set `SLACK_WEBHOOK_URL` env (Slack Incoming Webhook URL) | ✗ no | Env credential — user sets it; no install command (degrade-to-noop when unset) |
+| discord | set `DISCORD_WEBHOOK_URL` env (Discord channel Webhook URL) | ✗ no | Env credential — user sets it; no install command (degrade-to-noop when unset) |
 
 For non-auto-run connections, hide the "Run install command now" option entirely in 5.3.
 

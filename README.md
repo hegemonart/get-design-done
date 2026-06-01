@@ -138,6 +138,10 @@ The **discover** stage grounds design in real product references, resolving sour
 
 After `/gdd:ship` opens the PR, the [`pr-commenter`](agents/pr-commenter.md) agent posts GDD's verify/audit output **inline** on it: selector-specific findings as inline review comments on changed lines, Preview/Chromatic before-after screenshot pairs, and a `gdd/design-review` status check (audit pillar scores + verify pass/fail + a11y) that a teammate's branch protection can require. Outbound bodies are redacted; `GDD_DISABLE_PR_COMMENTER` (or `.design/config.json`) is the kill-switch; it degrades to a noop (prints bodies for manual paste) and **never fails the ship**. Uses `gh` only — **no new runtime dependency**. First sub-phase of the Team Surfaces layer (Slack/Discord notifications + Linear/Jira ticket-sync follow). Contract: [`reference/pr-review-integration.md`](reference/pr-review-integration.md).
 
+### Team surfaces — Notification backplane (v1.35.2)
+
+Routes pipeline events (verify-fail / audit-pass / ship) to **Slack** + **Discord** via incoming webhooks ([`connections/slack.md`](connections/slack.md) / [`connections/discord.md`](connections/discord.md)). The dispatcher ([`scripts/lib/notify/dispatch.cjs`](scripts/lib/notify/dispatch.cjs)) redacts every body at a single chokepoint, honors per-channel kill-switches (`GDD_DISABLE_SLACK` / `GDD_DISABLE_DISCORD`), and degrades to a noop when a webhook URL is unset — notification never blocks the pipeline. **No new runtime dependency** (injectable `fetch`, no Slack/Discord SDK). Routing: [`reference/notification-routing.md`](reference/notification-routing.md).
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

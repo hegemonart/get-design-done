@@ -62,6 +62,7 @@ connections/chromatic.md
 connections/claude-design.md
 connections/connections.md
 connections/design-corpora.md
+connections/discord.md
 connections/figma.md
 connections/gdd-state.md
 connections/graphify.md
@@ -76,6 +77,7 @@ connections/pinterest.md
 connections/preview.md
 connections/print-renderer.md
 connections/refero.md
+connections/slack.md
 connections/storybook.md
 connections/xcode-simulator.md
 docs/i18n/README.de.md
@@ -199,6 +201,7 @@ reference/motion-spring.md
 reference/motion-transition-taxonomy.md
 reference/motion.md
 reference/native-platforms.md
+reference/notification-routing.md
 reference/onboarding-progressive-disclosure.md
 reference/openrouter-tier-mapping.md
 reference/output-contracts/motion-map.schema.json
@@ -395,6 +398,7 @@ scripts/lib/logger/types.ts
 scripts/lib/mcp-tools-lint/index.cjs
 scripts/lib/mcp-tools-lint/index.d.cts
 scripts/lib/mmr-rerank.cjs
+scripts/lib/notify/dispatch.cjs
 scripts/lib/openrouter/catalog-fetcher.cjs
 scripts/lib/parallelism-engine/concurrency-tuner.cjs
 scripts/lib/parallelism-engine/concurrency-tuner.d.cts

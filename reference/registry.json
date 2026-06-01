@@ -916,6 +916,13 @@
       "type": "heuristic",
       "phase": 35.1,
       "description": "Phase 35.1 PR-inline contract — the gh-CLI shapes agents/pr-commenter.md posts against: inline review comments (gh api pulls/{n}/comments with path+line), the summary review (event=COMMENT), the gdd/design-review check-run (gh api check-runs with name/head_sha/conclusion/output.summary carrying audit pillar scores + verify pass/fail + a11y result), Preview/Chromatic screenshot-pair attachment (degrade-to-text), mandatory scripts/lib/redact.cjs on every outbound body, the GDD_DISABLE_PR_COMMENTER kill-switch, and the consent-driven branch-protection setup (scripts/apply-branch-protection.sh; GDD registers the check, never force-edits protection)."
+    },
+    {
+      "name": "notification-routing",
+      "path": "reference/notification-routing.md",
+      "type": "heuristic",
+      "phase": 35.2,
+      "description": "Phase 35.2 notification-backplane routing contract — event→channel routing (verify_fail/audit_pass/ship → slack/discord, overridable via .design/config.json#notifications.routing), the mandatory scripts/lib/redact.cjs chokepoint on every outbound body, per-channel kill-switches (GDD_DISABLE_SLACK/GDD_DISABLE_DISCORD), and the injectable-fetchImpl + degrade-to-noop transport consumed by scripts/lib/notify/dispatch.cjs (allowlisted under the 33.5 outbound gate)."
     }
   ]
 }

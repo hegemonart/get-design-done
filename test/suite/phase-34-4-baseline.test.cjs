@@ -49,7 +49,11 @@ test('34.4-04: onboarded-connections snapshot is 14, each with a connections/<na
       `connections/${n}.md must exist for onboarded connection "${n}"`,
     );
   }
-  assert.match(read('connections/connections.md'), /probes all 14 connections/, 'connections.md intro must say 14');
+  // 34.4 added lazyweb + mobbin to the index; the onboarded COUNT grows with later phases
+  // (35.2 added slack/discord → 16), so freeze the 34.4 DELIVERABLES are indexed, not the count.
+  const c = read('connections/connections.md');
+  assert.match(c, /connections\/lazyweb\.md/, 'connections.md must index lazyweb (34.4)');
+  assert.match(c, /connections\/mobbin\.md/, 'connections.md must index mobbin (34.4)');
 });
 
 // ── 4. 6-manifest version lockstep (version-agnostic) ────────────────────────────────

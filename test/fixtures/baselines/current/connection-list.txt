@@ -4,6 +4,7 @@ chromatic.md
 claude-design.md
 connections.md
 design-corpora.md
+discord.md
 figma.md
 gdd-state.md
 graphify.md
@@ -18,5 +19,6 @@ pinterest.md
 preview.md
 print-renderer.md
 refero.md
+slack.md
 storybook.md
 xcode-simulator.md
