@@ -100,6 +100,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
 | `export <cycle> --format html\|pdf\|notion [--pseudonymize] [--pr]` | `get-design-done:gdd-export` | Phase 35.5 — package a finished cycle's design output into a stakeholder-shareable artifact (self-contained HTML / Paged.js-print PDF / Notion page); redacts always, `--pseudonymize` masks identity for external sharing, `--pr` posts the HTML preview via pr-commenter |
+| `bootstrap-ds [--primary <color>] [--secondary <color>] [--tone <tags>] [--framework <t>]` | `get-design-done:gdd-bootstrap-ds` | Phase 37.2 — bootstrap a design system for a GREENFIELD project (no DS): brand input → OKLCH token system (color tints + modular type + 4pt/8pt spacing + radius/motion) in 3 variants to pick, then button/input/card proof scaffolding via `ds-generator` |
 
 ## Handoff Routing
 

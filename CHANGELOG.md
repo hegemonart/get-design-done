@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.37.2] - 2026-06-01
+
+### Phase 37.2 — Greenfield Design-System Bootstrap (`/gdd:bootstrap-ds`) — completes Phase 37
+
+Second and **FINAL** sub-phase of the split **Phase 37** — completing it marks the **parent Phase 37 COMPLETE** (AI-Native Tools Wave 2 + Greenfield DS Bootstrap). Closes the greenfield gap: GDD assumed a design system already existed (in code or Figma) — a brand-new project has none. `/gdd:bootstrap-ds` turns a brand input into a coherent token system + proof components. **No new runtime dependency** — the token math emits native CSS `oklch()` (no color-conversion library).
+
+### Added
+
+- **`scripts/lib/ds/token-scale.cjs`** — a pure, dependency-free (zero `require`) token generator. `oklchScale(primary)` → 9 tint/shade stops as native CSS `oklch()`, anchored at the primary, lightness interpolated toward white/black, chroma damped at the extremes (no OKLab→sRGB conversion, no color library); `typeScale` (modular), `spacingScale` (4pt/8pt), `radiusScale`. Deterministic.
+- **`reference/ds-bootstrap-rubric.md`** — greenfield emission rules: primary → 9 tints; **never more than 2 brand colors**; neutrals + semantic colors; type ratios 1.2/1.25/1.333; 4pt/8pt spacing; radius + motion defaults; the 3 variants; role-named CSS-custom-property emission + framework mapping; proof scaffolding. Registered (`type: heuristic`, `phase: 37.2`; 150 → 151).
+- **`agents/ds-generator.md`** — brand-input → token system via `token-scale.cjs` + the rubric + `color-theory.md`. Emits **3 variants** (conservative / balanced / bold), the user picks one, then scaffolds **button / input / card** in the detected framework (web default; native via Phase 34). Never invents a brand; never overwrites an existing DS; proposal→confirm.
+- **`skills/bootstrap-ds/SKILL.md`** (`/gdd:bootstrap-ds`) — brand-input intake (primary + secondary + tone tags + target framework) → `ds-generator`. 43 lines (≤100 Phase-28.5 contract).
+
+### Notes
+
+- **No new runtime dependency** (native `oklch()`), **no new egress**.
+- 6-manifest lockstep at **v1.37.2** + `OFF_CADENCE_VERSIONS.add('1.37.2')` + the 27 live-pinned `manifests-version.txt` baselines forward-propagated 1.37.1 → 1.37.2.
+- Inventory relock: skill-list 75 → 76 (+`bootstrap-ds`, both `current/` + `phase-20/`), phase-20 agent-list 49 → 50 (+`ds-generator`) + both frontmatter-snapshots, registry-diff 150 → 151, tarball golden 676 → 680 (+4); root `SKILL.md` command table + `command-count-sync` gate updated.
+- **This completes the parent Phase 37 (AI-Native Tools Wave 2 + Greenfield DS Bootstrap).**
+
+---
+
 ## [1.37.1] - 2026-06-01
 
 ### Phase 37.1 — AI-Native Tools Wave 2 (Framer + Penpot + Webflow + v0.dev + Plasmic + Builder.io)
