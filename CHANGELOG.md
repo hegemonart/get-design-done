@@ -4,6 +4,36 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.40.5] - 2026-06-01
+
+### Phase 40.5 — GDD CLI Localization
+
+GDD's README is multilingual, but the CLI talked English. 40.5 adds locale resolution + per-locale
+message tables for the highest-traffic surface — `--help`, common error messages, and skill prompt
+headers. English is always the final fallback, so a partial locale never breaks the CLI. **No new
+runtime dependency, no new egress.**
+
+### Added
+
+- **`scripts/lib/i18n/index.cjs`** — locale resolver: `resolveLocale` (`config.locale` > env `LANG`/`LC_ALL` > `en`), `fallbackChain` (`locale → base → en`), `translate` (chain walk; a missing key returns the key, never throws), `descriptionFor` (`description_i18n` || English). Pure functions + a thin `loadTable` reader.
+- **`scripts/lib/i18n/messages/{en,ru,uk,de,fr,zh,ja}.json`** — flat message tables. `en` is the complete source (24 keys: `help.*`/`error.*`/`prompt.*`/`status.*`), `ru` a full translation, `uk`/`de`/`fr`/`zh`/`ja` placeholders (a `_meta` marker + a starter subset) that fall back to English.
+- **`skills/locale/SKILL.md`** (`/gdd:locale [<code>]`) — inspect the resolved locale + per-locale coverage, or set `.design/config.json#locale`.
+- **`reference/cli-localization.md`** — the resolver contract + the add-a-locale contribution path (translate the table, add a `NOTICE` translator credit, open a PR; warn-only completeness). Registered. Distinct from `reference/i18n.md` (which covers *user-design* i18n).
+
+### Changed
+
+- **`reference/schemas/config.schema.json`** — + `locale` (enum en/ru/uk/de/fr/zh/ja); `generated.d.ts` regenerated.
+- **`agents/README.md`** — document the opt-in `description_i18n` frontmatter field (falls back to the English `description`; backward-compatible — the 28.5 contract validates it only when present).
+
+### Notes
+
+- **No new runtime dependency, no new egress.** Pure resolver + JSON tables + docs.
+- The completeness gate is **warn-only** — only `en` + `ru` are full; the five placeholder locales rely on the English fallback and are never required to be 100%.
+- 6-manifest lockstep at **v1.40.5** + `OFF_CADENCE_VERSIONS.add('1.40.5')` + the 34 live-pinned `manifests-version.txt` baselines forward-propagated 1.40.0 → 1.40.5.
+- Inventory relock: registry-diff 159 → 160 (+`cli-localization`), skill-list 82 → 83 (+`locale`), skill-length-distribution relocked, tarball golden 721 → 731 (+10). No agent/event deltas. Root `SKILL.md` command table += `locale`.
+
+---
+
 ## [1.40.0] - 2026-06-01
 
 ### Phase 40 — Team Collaboration Mode

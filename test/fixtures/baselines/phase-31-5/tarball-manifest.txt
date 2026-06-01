@@ -145,6 +145,7 @@ reference/bandit-integration.md
 reference/brand-voice.md
 reference/capability-gap-stage-gate.md
 reference/checklists.md
+reference/cli-localization.md
 reference/codex-tools.md
 reference/color-theory.md
 reference/component-authoring.md
@@ -399,6 +400,14 @@ scripts/lib/harness/tool-map.ts
 scripts/lib/health-mirror/index.cjs
 scripts/lib/health-mirror/index.d.cts
 scripts/lib/hedge-ensemble.cjs
+scripts/lib/i18n/index.cjs
+scripts/lib/i18n/messages/de.json
+scripts/lib/i18n/messages/en.json
+scripts/lib/i18n/messages/fr.json
+scripts/lib/i18n/messages/ja.json
+scripts/lib/i18n/messages/ru.json
+scripts/lib/i18n/messages/uk.json
+scripts/lib/i18n/messages/zh.json
 scripts/lib/incubator-author.cjs
 scripts/lib/init-runner/index.ts
 scripts/lib/init-runner/researchers.ts
@@ -655,6 +664,7 @@ skills/health/health-mcp-detection.md
 skills/health/health-skill-length-report.md
 skills/help/SKILL.md
 skills/list-assumptions/SKILL.md
+skills/locale/SKILL.md
 skills/map/SKILL.md
 skills/migrate/SKILL.md
 skills/new-cycle/SKILL.md

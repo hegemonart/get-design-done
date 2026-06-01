@@ -1,0 +1,5 @@
+scripts/lib/i18n/index.cjs
+scripts/lib/i18n/messages/en.json
+scripts/lib/i18n/messages/ru.json
+reference/cli-localization.md
+skills/locale/SKILL.md

@@ -29,6 +29,7 @@ graphify: 49
 health: 99
 help: 87
 list-assumptions: 61
+locale: 51
 map: 89
 migrate: 70
 new-cycle: 37
