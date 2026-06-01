@@ -67,6 +67,16 @@ test('35.5-02: images embed as base64 data URIs (not external src)', () => {
   assert.ok(html.includes(PNG_1PX), 'the exact data URI is present in the document');
 });
 
+test('35.5-02: image alt cannot break out of the attribute (js/incomplete-html-attribute-sanitization)', () => {
+  const html = buildHtml({
+    title: 't',
+    sections: [{ heading: 'h', markdown: '![evil"><script>alert(1)</script>](shot)' }],
+    images: [{ name: 'shot', dataUri: PNG_1PX }],
+  });
+  assert.match(html, /alt="evil&quot;&gt;&lt;script&gt;/, 'alt quotes + brackets are escaped');
+  assert.doesNotMatch(html, /alt="evil"><script>/, 'no raw attribute breakout');
+});
+
 test('35.5-02: document is self-contained — ZERO external resource references', () => {
   const html = buildHtml(FIXTURE);
   // No remote resource loads: no external stylesheet/script, no img/src pointing at http(s),
@@ -113,6 +123,8 @@ test('35.5-02: HTML is escaped — no injection via title/heading/markdown', () 
 
 test('35.5-02: helpers are pure + dep-free (esc / inline / mdToHtml exported)', () => {
   assert.equal(esc('a<b>&c'), 'a&lt;b&gt;&amp;c');
+  // attribute-safety: quotes are escaped so esc() output is safe inside alt="..." / href="..."
+  assert.equal(esc('"q" & \'a\' <b>'), '&quot;q&quot; &amp; &#39;a&#39; &lt;b&gt;');
   assert.match(inline('**x** and `y`'), /<strong>x<\/strong> and <code>y<\/code>/);
   assert.match(mdToHtml('## H\n\ntext', []), /<h2>H<\/h2>\n<p>text<\/p>/);
   // dep-free: the module requires nothing (pure JS, no markdown/pdf runtime — D-02).

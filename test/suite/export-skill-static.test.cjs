@@ -60,8 +60,10 @@ test('35.5-02: --pr hands the HTML to pr-commenter', () => {
 });
 
 test('35.5-02: reads the design source set', () => {
+  // Literal filename match — substring, not a built-from-string regex (avoids
+  // js/incomplete-sanitization: a partial `.`-only escape leaves `\` unescaped).
   for (const src of ['EXPERIENCE.md', 'DESIGN.md', 'DESIGN-VERIFICATION.md']) {
-    assert.match(SKILL, new RegExp(src.replace(/\./g, '\\.')), `source set includes ${src}`);
+    assert.ok(SKILL.includes(src), `source set includes ${src}`);
   }
 });
 

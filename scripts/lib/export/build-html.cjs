@@ -9,8 +9,17 @@
  * byte-identical output (hermetic tests, D-07).
  */
 
+// Escapes the 5 HTML-significant characters so the result is safe in BOTH element
+// content AND double/single-quoted attribute values (e.g. <img alt="...">). Escaping
+// the quotes is what makes attribute interpolation injection-safe (js/incomplete-html-
+// attribute-sanitization). Order matters: & first so the entity ampersands aren't re-escaped.
 function esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // Minimal, deterministic inline-markdown → HTML (escapes first, then re-introduces tags for
