@@ -175,6 +175,10 @@ reference/data/styles.csv
 reference/debugger-philosophy.md
 reference/design-system-guidance.md
 reference/design-systems-catalog.md
+reference/domains/civic-patterns.md
+reference/domains/finance-patterns.md
+reference/domains/gaming-patterns.md
+reference/domains/healthcare-patterns.md
 reference/email-design.md
 reference/emotional-design.md
 reference/error-recovery.md

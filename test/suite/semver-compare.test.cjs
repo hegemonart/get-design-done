@@ -435,6 +435,13 @@ OFF_CADENCE_VERSIONS.add('1.35.3');
 // (D-02: pure JS; PDF = print-CSS-on-HTML the user renders; Notion via MCP). No new egress.
 OFF_CADENCE_VERSIONS.add('1.35.5');
 
+// 1.36.1 → Phase 36.1 (Knowledge Tier-3: Domain Packs — finance/healthcare/gaming/civic).
+// First sub-phase of the split Phase 36; opens the v1.36.x arc (1.35.5 → 1.36.1, minor+
+// patch jump, off-cadence). Adds reference/domains/{finance,healthcare,gaming,civic}-
+// patterns.md + design-context-builder Step 0F domain detection + design-auditor addendum.
+// No new runtime dependency, no new egress (reference markdown + agent-prompt edits only).
+OFF_CADENCE_VERSIONS.add('1.36.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
