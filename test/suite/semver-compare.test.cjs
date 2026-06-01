@@ -416,6 +416,12 @@ OFF_CADENCE_VERSIONS.add('1.34.4');
 // reference/pr-review-integration.md + /gdd:ship wiring. No new runtime dependency (gh only).
 OFF_CADENCE_VERSIONS.add('1.35.1');
 
+// 1.35.2 → Phase 35.2 (Team Surfaces: Notification Backplane — Slack + Discord).
+// Decimal on the v1.35.x arc. Adds connections/slack.md + connections/discord.md +
+// scripts/lib/notify/dispatch.cjs (routing + redact + injectable fetch + kill-switch)
+// + reference/notification-routing.md. No new runtime dependency.
+OFF_CADENCE_VERSIONS.add('1.35.2');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

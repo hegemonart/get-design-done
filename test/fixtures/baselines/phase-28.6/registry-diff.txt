@@ -94,6 +94,7 @@ motion-spring: reference/motion-spring.md
 motion-transition-taxonomy: reference/motion-transition-taxonomy.md
 motion: reference/motion.md
 native-platforms: reference/native-platforms.md
+notification-routing: reference/notification-routing.md
 onboarding-progressive-disclosure: reference/onboarding-progressive-disclosure.md
 openrouter-tier-mapping: reference/openrouter-tier-mapping.md
 palette-catalog: reference/palette-catalog.md

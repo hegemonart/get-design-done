@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.35.2] - 2026-06-01
+
+### Phase 35.2 — Team Surfaces: Notification Backplane (Slack + Discord)
+
+Second sub-phase of the split **Phase 35**. Routes GDD pipeline events (verify-fail, audit-pass, ship) to **Slack + Discord** via incoming webhooks, so a non-GDD-running teammate is alerted in the channel they watch. **No new runtime dependency** — the dispatcher POSTs via an injectable `fetchImpl` (default global `fetch`; no `@slack/*` / `discord.js` SDK). Every outbound body is **redacted** at a single chokepoint; per-channel kill-switches + degrade-to-noop guarantee notification delivery never blocks the pipeline. A decimal on the v1.35.x arc. The parent Phase 35 stays open (35.3 Ticket Sync remains).
+
+### Added
+
+- **`connections/slack.md` + `connections/discord.md`** — incoming-webhook notification specs (`SLACK_WEBHOOK_URL` / `DISCORD_WEBHOOK_URL` env; env-presence probe; redact + kill-switch + degrade-to-noop).
+- **`scripts/lib/notify/dispatch.cjs`** — `dispatch(event, {fetchImpl, config, env})`: resolves event→channel routing, builds the **redacted** payload (single chokepoint), honors per-channel kill-switches, POSTs via an **injectable fetchImpl** (no Slack/Discord SDK), and **degrades-to-noop** (missing URL / disabled / error never throws). Allowlisted under the Phase-33.5 outbound gate (`scripts/lib/notify/**`); `scan:outbound` 0 findings.
+- **`reference/notification-routing.md`** — event→channel routing contract + the redact chokepoint + kill-switches; registered in `reference/registry.json`.
+- **`connections/connections.md`** — a **notify** capability-matrix column + Slack/Discord rows + env-based probes; onboarded 14 → 16.
+- **Privacy guard** — `test/suite/notify-privacy-guard.test.cjs` asserts no `scripts/lib/notify/*.cjs` builds an outbound body without `redact` (SC#5).
+
+### Notes
+
+- **No new runtime dependency** (injectable `fetch`); per-channel kill-switch `GDD_DISABLE_SLACK` / `GDD_DISABLE_DISCORD` mirrors Phase 30 / 35.1.
+- 6-manifest lockstep at **v1.35.2** + `OFF_CADENCE_VERSIONS.add('1.35.2')` + the 20 live-pinned `manifests-version.txt` baselines forward-propagated 1.35.1 → 1.35.2.
+- The 31.5 tarball golden was regenerated as a reviewed delta: **+4** (`connections/slack.md`, `connections/discord.md`, `scripts/lib/notify/dispatch.cjs`, `reference/notification-routing.md`), zero removals.
+
+---
+
 ## [1.35.1] - 2026-06-01
 
 ### Phase 35.1 — Team Surfaces: PR Inline Integration
