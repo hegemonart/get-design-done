@@ -9,7 +9,7 @@ last_updated: 2026-05-18
 
 Source: extracted from `skills/connections/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
 The skill's load-bearing routing + invocation-mode dispatch stays in `../skills/connections/SKILL.md`;
-this file holds the 12 probe scripts, bucket categorization, per-connection setup screen,
+this file holds the 14 probe scripts, bucket categorization, per-connection setup screen,
 auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json write contracts.
 
 # Connections Onboarding Procedure
@@ -27,7 +27,7 @@ this file does NOT duplicate them; it points at them by name.
 
 ---
 
-## Step 1 — Probe all 12 connections
+## Step 1 — Probe all 14 connections
 
 Run every probe below in order. MCP probes call `ToolSearch` first (deferred tools fail silently without it). Write every result to `STATE.md <connections>` when done.
 
@@ -86,6 +86,20 @@ ToolSearch({ query: "mcp__magic_patterns", max_results: 5 })
 → Non-empty → magic_patterns: available
 ```
 
+**lazyweb:** (discover Tier 1 — free, tried first; D-01)
+```
+ToolSearch({ query: "lazyweb", max_results: 5 })
+→ Empty → lazyweb: not_configured
+→ Non-empty → lazyweb: available
+```
+
+**mobbin:** (discover Tier 2 — paid, mobile/flow-level; D-01)
+```
+ToolSearch({ query: "mobbin", max_results: 5 })
+→ Empty → mobbin: not_configured
+→ Non-empty → mobbin: available
+```
+
 ### Non-MCP probes
 
 **storybook** (HTTP):
@@ -131,7 +145,7 @@ Bash: ls .design/handoff/ 2>/dev/null || find . -maxdepth 3 \
   → Non-empty → claude_design: available
 ```
 
-After all 12 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
+After all 14 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
 
 ---
 
@@ -167,7 +181,7 @@ HAS_FIGMA_HINT=$( grep -r "figma\.com/file" -l . --include="*.md" 2>/dev/null | 
 | `HAS_STORYBOOK_DIR` or storybook available | storybook, chromatic |
 | `HAS_PEN_FILES` | pencil-dev |
 | `HAS_REACT` | 21st-dev, magic-patterns |
-| Always | refero, preview |
+| Always | refero, preview, lazyweb (free — cost-aware default, D-01) |
 
 ---
 
@@ -212,6 +226,8 @@ One-line value props (use verbatim):
 | pencil-dev | `.pen` spec files as canonical design source |
 | 21st-dev | AI component generator (marketplace search) |
 | magic-patterns | AI component generator (DS-aware) |
+| lazyweb | free design reference search (pricing/onboarding/redesign) — discover Tier 1 |
+| mobbin | curated mobile + flow-level references (paid) — discover Tier 2 |
 
 ---
 
@@ -239,7 +255,7 @@ options:
   - "Exit"                            → emit ## CONNECTIONS COMPLETE, exit
 ```
 
-If recommended bucket is empty, swap that option for "Show all 12 and pick."
+If recommended bucket is empty, swap that option for "Show all 14 and pick."
 
 ---
 
@@ -296,6 +312,8 @@ options:
 | 21st-dev | `npx @21st-dev/magic init` + env var | ✗ no | Env var required — force manual |
 | pencil-dev | VS Code extension | ✗ no | IDE-level install — force manual |
 | claude-design | handoff bundle drop | ✗ no | User-driven file drop — force manual |
+| mobbin | `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` | ✓ yes | Reversible MCP add; no credential filesystem-write (OAuth on first call) |
+| lazyweb | `claude plugin install lazyweb@lazyweb` (after token write to `~/.lazyweb/`) | ✗ no | Writes a bearer token to disk — force manual (user-consent step) |
 
 For non-auto-run connections, hide the "Run install command now" option entirely in 5.3.
 

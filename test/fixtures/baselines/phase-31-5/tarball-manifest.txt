@@ -64,8 +64,10 @@ connections/design-corpora.md
 connections/figma.md
 connections/gdd-state.md
 connections/graphify.md
+connections/lazyweb.md
 connections/litmus.md
 connections/magic-patterns.md
+connections/mobbin.md
 connections/openrouter.md
 connections/paper-design.md
 connections/pencil-dev.md

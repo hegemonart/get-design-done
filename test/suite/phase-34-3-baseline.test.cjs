@@ -115,11 +115,11 @@ test('34.3-04: 6-manifest version lockstep (package + claude plugin + marketplac
 
 // ── 3. phase-34-3 manifests-version baseline == live == 1.34.3 ──────────────────
 
-test('34.3-04: phase-34-3/manifests-version.txt baseline == 1.34.3 == live package version', () => {
+test('34.3-04: phase-34-3/manifests-version.txt baseline == live package version (forward-propped, D-09)', () => {
   const baseline = readBaseline('manifests-version.txt').replace(/\s+$/, '');
   const live = readJsonRel('package.json').version;
-  assert.equal(baseline, '1.34.3', 'phase-34-3 manifests-version.txt must be 1.34.3 (D-09 forward-prop target)');
-  assert.equal(baseline, live, `phase-34-3 manifests-version.txt (${baseline}) != package.json version (${live})`);
+  assert.match(baseline, /^\d+\.\d+\.\d+$/, 'phase-34-3 manifests-version.txt looks like semver');
+  assert.equal(baseline, live, `phase-34-3 manifests-version.txt (${baseline}) != package.json version (${live}) — forward-prop on each release (D-09)`);
 });
 
 // ── 4. CHANGELOG [1.34.3] at the top ────────────────────────────────────────────
@@ -129,5 +129,5 @@ test('34.3-04: CHANGELOG has a [1.34.3] block at the top (D-01)', () => {
   assert.match(cl, /## \[1\.34\.3\]/, 'CHANGELOG must carry a ## [1.34.3] entry (D-01)');
   const firstHeading = cl.match(/^## \[(\d+\.\d+\.\d+)\]/m);
   assert.ok(firstHeading, 'CHANGELOG has at least one release heading');
-  assert.equal(firstHeading[1], '1.34.3', 'the top-most release heading must be [1.34.3]');
+  assert.equal(firstHeading[1], readJsonRel('package.json').version, 'the top-most release heading must be the live version (forward-prop on each release)');
 });

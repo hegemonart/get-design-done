@@ -1,0 +1,14 @@
+21st-dev
+chromatic
+claude-design
+figma
+graphify
+lazyweb
+magic-patterns
+mobbin
+paper-design
+pencil-dev
+pinterest
+preview
+refero
+storybook

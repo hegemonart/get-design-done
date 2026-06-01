@@ -403,6 +403,13 @@ OFF_CADENCE_VERSIONS.add('1.34.2');
 //   - 1.34.3 → Phase 34.3 (print); off-cadence decimal closing the 1.34.x arc.
 OFF_CADENCE_VERSIONS.add('1.34.3');
 
+// 1.34.4 → Phase 34.4 (Lazyweb + Mobbin research connections — recovered from a
+// stranded Phase 30.5 worktree fork). Off-cadence decimal on the v1.34.x arc
+// (CHANGELOG-only, D-02): adds two discover-stage visual-reference MCP connections
+// (free Lazyweb Tier 1 + paid Mobbin Tier 2) with the D-01 cost-aware tier order.
+// No new runtime dependency (optional user-installed MCPs, Refero precedent).
+OFF_CADENCE_VERSIONS.add('1.34.4');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

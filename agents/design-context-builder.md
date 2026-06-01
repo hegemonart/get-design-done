@@ -1,7 +1,7 @@
 ---
 name: design-context-builder
 description: Detects existing design system state via grep/glob, runs discovery interview asking ONLY unanswered questions, produces .design/DESIGN-CONTEXT.md. Spawned by the discover stage.
-tools: Read, Write, Bash, Grep, Glob, mcp__figma__get_variable_defs, mcp__figma__get_metadata, mcp__figma-desktop__get_variable_defs, mcp__figma-desktop__get_metadata, mcp__Figma__get_variable_defs, mcp__Figma__get_metadata, mcp__refero__search
+tools: Read, Write, Bash, Grep, Glob, mcp__figma__get_variable_defs, mcp__figma__get_metadata, mcp__figma-desktop__get_variable_defs, mcp__figma-desktop__get_metadata, mcp__Figma__get_variable_defs, mcp__Figma__get_metadata, mcp__refero__search, mcp__lazyweb__search, mcp__lazyweb__health, mcp__mobbin__search
 required_reading:
   - connections/storybook.md
 color: blue
@@ -383,51 +383,34 @@ The NOT is equally important:
 
 **Style direction (style-vocabulary.md):** Ask the user to confirm or adjust the inferred UI aesthetic style before writing the context file. Infer the style from the brand direction words captured above. Look up the inferred style name verbatim in `reference/style-vocabulary.md` to confirm it is coherent with the product type (Best For / Avoid For columns) and to surface the performance cost (Performance column) in the Constraints section. Record the confirmed style name verbatim in the context file as a `D-0N` decision so downstream agents can pattern-match it. Example: `D-04: [Style] "Glassmorphism Dark" — confirmed for gaming media player context; GPU cost noted in constraints.`
 
-### Area 5 — Visual References (Refero-augmented)
+### Area 5 — Visual References (cost-aware — free source first)
 
-This area uses Refero MCP when available, with graceful fallback to local brand archetypes and finally WebFetch. Refero tool names may vary — verify via ToolSearch before calling.
+This area pulls real product references, resolving sources **cost-aware (D-01, Phase 34.4): try the free source before any paid one.** Check `.design/STATE.md` `<connections>` for `lazyweb:` / `mobbin:` / `refero:` / `pinterest:` status before proceeding. Tool names may vary — verify via ToolSearch before calling. **Two or more references are required.**
 
-Check `.design/STATE.md` `<connections>` for `refero:` status before proceeding.
+**Tier 1 — Lazyweb (FREE — tried first; if `lazyweb: available`)**
 
-**Tier 1 — Refero (if `refero: available` in `.design/STATE.md` `<connections>`)**
-
-ToolSearch first — Refero tools may be in the deferred tool set:
+ToolSearch first (tools may be deferred): `ToolSearch({ query: "lazyweb", max_results: 10 })` (expect `lazyweb_search` + `lazyweb_health`). Run ≥2 `lazyweb_search` queries — one **structural** (from README/scope, e.g. `"pricing page three tiers"`, `"onboarding checklist"`, `"data table pagination"`) + one **aesthetic** (from the Area-4 brand direction, e.g. `"warm editorial SaaS"`, `"neutral Swiss dashboard"`). Pre-populate:
 
 ```
-ToolSearch({ query: "refero", max_results: 10 })
+L-01: [Lazyweb result title] — source: lazyweb — borrow: [inferred borrow rationale]
+L-02: [Lazyweb result title] — source: lazyweb — borrow: [inferred borrow rationale]
 ```
 
-Confirm the exact search tool name from results (expected: `mcp__refero__search` — may differ).
+**Tier 2 — Mobbin / Refero (PAID — use whichever is bound + has an active subscription; if both, Mobbin for mobile/flow-level, Refero for broad screen-level)**
 
-Run at least 2 searches:
+Fall here when Lazyweb is unavailable, or for paid depth. If `mobbin: available`: `ToolSearch({ query: "mobbin", max_results: 10 })`, run structural/flow + aesthetic queries, cite `M-01: [title] — source: mobbin — borrow: …`. If `refero: available`: `ToolSearch({ query: "refero", max_results: 10 })` (expected `mcp__refero__search` — may differ), run a structural + an aesthetic query, cite `R-01: [title] — source: refero — borrow: …`. Present to user: "I found these references. Confirm or replace?"
 
-1. **Structural query** — inferred from README / project scope (example: `"admin dashboard filters"`, `"onboarding flow"`, `"data table pagination"`)
-2. **Aesthetic query** — inferred from brand direction captured in Area 4, if any (example: `"brutalist editorial UI"`, `"warm developer tool dashboard"`)
+**Tier 3 — Pinterest (if `pinterest: available`)**
 
-Select 2–3 results. Pre-populate references as:
+Visual inspiration search via the verified Pinterest tool (ToolSearch `"mcp-pinterest"` first). Cite `P-01: [title] — source: pinterest — borrow: …`.
 
-```
-R-01: [Refero result title] — source: refero — borrow: [inferred borrow rationale from result content]
-R-02: [Refero result title] — source: refero — borrow: [inferred borrow rationale]
-```
+**Tier 4 — awesome-design-md (local brand archetypes, if no reference MCP is available)**
 
-Present to user: "I found these references from Refero. Confirm or replace?"
+Look in `~/.claude/libs/awesome-design-md/design-md/` — 68 brand archetypes, each with a full `DESIGN.md` token file. Pick 1–2 closest matches by inferred product category (e.g., B2B SaaS → Linear, Vercel; consumer → Airbnb, Spotify; editorial → NYT, Bloomberg). Pre-populate `R-01: [Brand name] — source: awesome-design-md — borrow: [token values — color palette, spacing scale, typography]` + add a note in `<references>`: `Note: no reference MCP available — using local brand archetypes.`
 
-**Tier 2 — awesome-design-md (if `refero: not_configured` OR `refero: unavailable`)**
+**Tier 5 — WebFetch (last resort, if awesome-design-md unavailable)**
 
-Look in `~/.claude/libs/awesome-design-md/design-md/` — 68 brand archetypes, each with a full `DESIGN.md` token file. Pick 1–2 closest matches by inferred product category (e.g., B2B SaaS → Linear, Vercel; consumer → Airbnb, Spotify; editorial → NYT, Bloomberg).
-
-Pre-populate: `R-01: [Brand name] — source: awesome-design-md — borrow: [token values — color palette, spacing scale, typography]`
-
-Add a note in `<references>`: `Note: Refero unavailable — using local brand archetypes as references.`
-
-**Tier 3 — WebFetch (last resort, if awesome-design-md unavailable)**
-
-Ask the user for a getdesign.md URL. WebFetch it and extract design tokens.
-
-Pre-populate: `R-01: [URL] — source: webfetch — borrow: [extracted tokens: color palette, type scale, spacing units]`
-
-Note: Refero tool name may differ — always verify via ToolSearch. Two or more references are required.
+Ask the user for a getdesign.md URL. WebFetch it and extract design tokens. Pre-populate `R-01: [URL] — source: webfetch — borrow: [extracted tokens: color palette, type scale, spacing units]`.
 
 ### Area 6 — Constraints
 
