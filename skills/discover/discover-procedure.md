@@ -68,7 +68,25 @@ C2. Empty result  -> pinterest: not_configured
 
 No live `pinterest_search` call at probe time — ToolSearch presence is sufficient. The synthesizer makes the actual search calls.
 
-After all probes (A, B, C), update `.design/STATE.md` `<connections>` with the results and continue. Downstream stages (design-context-builder) read `<connections>` from STATE.md rather than re-probing.
+### D — Lazyweb probe (ToolSearch-only — free, discover Tier 1 per D-01)
+
+```
+D1. ToolSearch({ query: "lazyweb", max_results: 5 })
+D2. Empty result  -> lazyweb: not_configured
+    Non-empty     -> lazyweb: available
+```
+
+### E — Mobbin probe (ToolSearch-only — paid, discover Tier 2 per D-01)
+
+```
+E1. ToolSearch({ query: "mobbin", max_results: 5 })
+E2. Empty result  -> mobbin: not_configured
+    Non-empty     -> mobbin: available
+```
+
+**Reference-source tier order (cost-aware, D-01):** Lazyweb (free, tried first) → Mobbin / Refero (paid, whichever is bound + subscribed) → Pinterest → awesome-design-md → WebFetch.
+
+After all probes (A, B, C, D, E), update `.design/STATE.md` `<connections>` with the results and continue. Downstream stages (design-context-builder) read `<connections>` from STATE.md rather than re-probing.
 
 ---
 

@@ -2,7 +2,7 @@
 
 This directory contains connection specifications for external tools and MCPs that the get-design-done pipeline integrates with. Each connection has its own spec file. This file is the index.
 
-**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 12 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
+**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 14 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
 
 ---
 
@@ -28,6 +28,8 @@ This directory contains connection specifications for external tools and MCPs th
 | Android Emulator | Active | [`connections/android-emulator.md`](connections/android-emulator.md) | **Optional**; CLI: `adb` / `emulator` (no MCP); native-Android rendered evidence for verify; degrade-to-code-only when absent (D-03) |
 | Litmus | Active | [`connections/litmus.md`](connections/litmus.md) | **Optional** render-test (email; Email-on-Acid alternative); cross-client rendered screenshots for verify; degrade-to-static-validator / code-only when absent (D-03) |
 | Print-Renderer | Active | [`connections/print-renderer.md`](connections/print-renderer.md) | **Optional** print render-test (Paged.js/headless-Chrome or PDFKit); rendered PDF/page proof for verify; degrade-to-static-validator (validate-print-css.cjs) / code-only when absent (D-03) |
+| Lazyweb | Active | [`connections/lazyweb.md`](connections/lazyweb.md) | **Free** bearer-token MCP `lazyweb_search` / `lazyweb_health` (ToolSearch-only probe; copy-command setup, no auto-run); discover **Tier 1** — tried first (D-01) |
+| Mobbin | Active | [`connections/mobbin.md`](connections/mobbin.md) | **Paid** HTTP MCP `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` (ToolSearch-only probe; auto-run-safe, OAuth); discover **Tier 2** — mobile/flow-level (D-01) |
 
 ---
 
@@ -55,6 +57,8 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | Android Emulator | — | — | — | native Android code-gen target (compose-executor / emitCompose) | rendered Compose screenshot when emulator available, else degrade to code-only structural audit (D-03) | — | — |
 | Litmus | — | — | — | email render-test target (email-executor) | cross-client rendered evidence when Litmus available, else degrade to the static email-HTML validator / code-only (D-03) | — | — |
 | Print-Renderer | — | — | — | print render-test target (pdf-executor) | rendered PDF/page evidence when the print-render is available, else degrade to the static print-CSS validator / code-only (D-03) | — | — |
+| Lazyweb | — | reference search via `lazyweb_search` (**Tier 1 — free, tried first**; D-01); complements refero/pinterest | — | — | — | — | — |
+| Mobbin | — | reference search via mobbin tools (**Tier 2 — paid, mobile/flow-level**; D-01); complements refero/lazyweb | — | — | — | — | — |
 
 **Column definitions:**
 
@@ -137,6 +141,30 @@ Write refero status to STATE.md <connections>.
 ```
 
 Note: Refero probe is ToolSearch-only (no live tool call). ToolSearch presence is sufficient; a live Refero search as probe would waste tokens before confirming the connection is even needed.
+
+**Lazyweb probe (execute at stage entry, after reading STATE.md):**
+
+```
+Step D1 — ToolSearch check:
+  ToolSearch({ query: "lazyweb", max_results: 5 })
+  → Empty result      → lazyweb: not_configured  (use fallback chain)
+  → Non-empty result  → lazyweb: available
+
+Write lazyweb status to STATE.md <connections>.
+```
+
+**Mobbin probe (execute at stage entry, after reading STATE.md):**
+
+```
+Step E1 — ToolSearch check:
+  ToolSearch({ query: "mobbin", max_results: 5 })
+  → Empty result      → mobbin: not_configured  (use fallback chain)
+  → Non-empty result  → mobbin: available
+
+Write mobbin status to STATE.md <connections>.
+```
+
+Note: Lazyweb + Mobbin probes are ToolSearch-only (no live call). The discover stage resolves reference sources **cost-aware (D-01): Lazyweb (free) → Mobbin / Refero (paid, whichever is bound + subscribed) → Pinterest → awesome-design-md → WebFetch.**
 
 ---
 
