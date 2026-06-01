@@ -46,6 +46,7 @@ agents/gdd-learnings-extractor.md
 agents/motion-mapper.md
 agents/pdf-executor.md
 agents/perf-analyzer.md
+agents/pr-commenter.md
 agents/prototype-gate.md
 agents/quality-gate-runner.md
 agents/swift-executor.md
@@ -210,6 +211,7 @@ reference/peer-protocols.md
 reference/perf-budget.md
 reference/performance.md
 reference/platforms.md
+reference/pr-review-integration.md
 reference/prices.openrouter.md
 reference/prices/antigravity.md
 reference/prices/augment.md

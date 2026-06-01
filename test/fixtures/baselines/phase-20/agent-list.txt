@@ -39,6 +39,7 @@ gdd-learnings-extractor.md
 motion-mapper.md
 pdf-executor.md
 perf-analyzer.md
+pr-commenter.md
 prototype-gate.md
 quality-gate-runner.md
 swift-executor.md

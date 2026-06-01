@@ -134,6 +134,10 @@ The constraints live in [`reference/print-design.md`](reference/print-design.md)
 
 The **discover** stage grounds design in real product references, resolving sources **cost-aware — the free source is tried before any paid one**. [`Lazyweb`](connections/lazyweb.md) (free MCP, 250k+ app screens — pricing pages, onboarding, redesign comparisons) is **Tier 1, always first**; [`Mobbin`](connections/mobbin.md) (paid MCP, 600k+ screens / 130k+ flows — mobile + flow-level) and [`Refero`](connections/refero.md) are **Tier 2** (use whichever you subscribe to), then Pinterest → local archetypes → WebFetch. Both are optional user-installed MCPs (**no new runtime dependency**), onboardable via `/gdd:connections`.
 
+### Team surfaces — PR inline review (v1.35.1)
+
+After `/gdd:ship` opens the PR, the [`pr-commenter`](agents/pr-commenter.md) agent posts GDD's verify/audit output **inline** on it: selector-specific findings as inline review comments on changed lines, Preview/Chromatic before-after screenshot pairs, and a `gdd/design-review` status check (audit pillar scores + verify pass/fail + a11y) that a teammate's branch protection can require. Outbound bodies are redacted; `GDD_DISABLE_PR_COMMENTER` (or `.design/config.json`) is the kill-switch; it degrades to a noop (prints bodies for manual paste) and **never fails the ship**. Uses `gh` only — **no new runtime dependency**. First sub-phase of the Team Surfaces layer (Slack/Discord notifications + Linear/Jira ticket-sync follow). Contract: [`reference/pr-review-integration.md`](reference/pr-review-integration.md).
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

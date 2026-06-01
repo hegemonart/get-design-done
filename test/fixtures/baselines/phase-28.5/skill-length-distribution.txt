@@ -51,7 +51,7 @@ review-backlog: 46
 router: 89
 scan: 92
 settings: 87
-ship: 42
+ship: 48
 sketch: 78
 sketch-wrap-up: 92
 skill-manifest: 79
