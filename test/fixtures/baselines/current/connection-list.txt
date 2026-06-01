@@ -7,8 +7,10 @@ design-corpora.md
 figma.md
 gdd-state.md
 graphify.md
+lazyweb.md
 litmus.md
 magic-patterns.md
+mobbin.md
 openrouter.md
 paper-design.md
 pencil-dev.md

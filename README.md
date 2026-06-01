@@ -130,6 +130,10 @@ GDD also generates **print/PDF** output — the project-type detector routes a `
 
 The constraints live in [`reference/print-design.md`](reference/print-design.md) — the `@page` box model (size/margin/marks), bleed box + crop/registration marks, CMYK color-space awareness (print is subtractive CMYK, not screen RGB), font embedding/outlining (print RIPs have no web fonts), and a 300dpi raster fallback. A deterministic static checker ([`scripts/lib/print/validate-print-css.cjs`](scripts/lib/print/validate-print-css.cjs)) flags the statically-verifiable subset (`PR-PAGE`/`PR-BLEED`/`PR-CMYK`/`PR-FONT`/`PR-DPI`). Rendered PDF/page verification via the optional [`print-renderer`](connections/print-renderer.md) connection (Paged.js/headless-Chrome or PDFKit) is **optional** — when absent the verify stage degrades to the static validator. Print generation is opt-in; **web stays the default**.
 
+### Research connections — Lazyweb + Mobbin (v1.34.4)
+
+The **discover** stage grounds design in real product references, resolving sources **cost-aware — the free source is tried before any paid one**. [`Lazyweb`](connections/lazyweb.md) (free MCP, 250k+ app screens — pricing pages, onboarding, redesign comparisons) is **Tier 1, always first**; [`Mobbin`](connections/mobbin.md) (paid MCP, 600k+ screens / 130k+ flows — mobile + flow-level) and [`Refero`](connections/refero.md) are **Tier 2** (use whichever you subscribe to), then Pinterest → local archetypes → WebFetch. Both are optional user-installed MCPs (**no new runtime dependency**), onboardable via `/gdd:connections`.
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

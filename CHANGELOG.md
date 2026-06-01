@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.34.4] - 2026-06-01
+
+### Phase 34.4 — Lazyweb + Mobbin Research Connections (recovered)
+
+Adds **two visual-reference MCP connections** to the discover stage — **Lazyweb** (free) and **Mobbin** (paid) — modeled on the existing Refero/Pinterest connection contract. Purely additive: no new pipeline stage, no new artifact, no new audit pillar; **no new runtime dependency** (both are optional user-installed MCPs, documented in their spec, never pre-declared in the plugin manifest — the Refero precedent). Recovered from a stranded Phase 30.5 fork (authored 2026-05-04 → expanded 2026-05-16) that never reached the canonical roadmap because `.planning/` is gitignored and a parallel session reused the 30.5 slot. A decimal release on the v1.34.x arc (CHANGELOG-only, D-02).
+
+### Added
+
+- **`connections/lazyweb.md` — free reference MCP (discover Tier 1, D-01).** Free bearer-token Streamable-HTTP MCP at `https://www.lazyweb.com/mcp` (`lazyweb_search` + `lazyweb_health`); 250k+ real app screens for pricing pages, onboarding flows, redesign comparisons, UI benchmarking. Copy-command setup (token at `~/.lazyweb/lazyweb_mcp_token`, then `claude plugin install lazyweb@lazyweb`) — **no auto-run** (the token write is a user-consent step). ToolSearch-only probe.
+- **`connections/mobbin.md` — curated mobile/flow reference MCP (discover Tier 2, D-01).** HTTP MCP at `https://api.mobbin.com/mcp` (`claude mcp add mobbin --transport http https://api.mobbin.com/mcp`, auto-run-safe — OAuth on first call, requires an active Mobbin subscription); 600k+ screens / 130k+ flows for mobile + flow-level references. ToolSearch-only probe.
+- **Cost-aware discover tier order (D-01).** Reference sources now resolve **Lazyweb (free, tried first) → Mobbin / Refero (paid, whichever is bound + subscribed) → Pinterest → awesome-design-md → WebFetch** — try the zero-cost source before any paid one. Wired through `connections/connections.md` (table + Capability Matrix + probe pattern, onboarded 12 → 14), `skills/discover/discover-procedure.md` (probes D/E), `skills/connections/` (`/gdd:connections` wizard + onboarding reference), and `agents/design-context-builder.md` (Area 5 rewrite + `tools` frontmatter).
+- **Regression baseline.** `test/fixtures/baselines/phase-34-4/` (onboarded-connections snapshot + `manifests-version.txt`=1.34.4) pinned by `test/suite/phase-34-4-baseline.test.cjs`.
+
+### Notes
+
+- **No new runtime dependency** — both connections are optional user-installed MCPs (Refero precedent); neither is declared in `.claude-plugin/plugin.json`. Discover-stage only — no scan/plan/design/verify integration.
+- The 31.5 tarball golden (`test/fixtures/baselines/phase-31-5/tarball-manifest.txt`) was regenerated as a reviewed delta: **+2** newly-shipped files (`connections/lazyweb.md`, `connections/mobbin.md`), zero removals. Tests are not shipped.
+- 6-manifest lockstep at **v1.34.4** (`package.json` + `package-lock.json` (root + `packages.""`) + `.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json` (metadata.version + plugins[0].version) + `.cursor-plugin/plugin.json` + `.codex-plugin/plugin.json`). Version-sync hygiene upfront (D-09): `OFF_CADENCE_VERSIONS.add('1.34.4')` + the 18 live-pinned `manifests-version.txt` baselines forward-propagated 1.34.3 → 1.34.4.
+- **Provenance:** recovered from the `thirsty-curran` worktree's stranded `.planning` fork during a roadmap-reconciliation audit; the contiguity renumber (Phase 36→35 …, 2026-06-01) is unrelated and concurrent.
+
+---
+
 ## [1.34.3] - 2026-05-31
 
 ### Phase 34.3 — Non-Web Output Layer: Print/PDF
