@@ -930,6 +930,13 @@
       "type": "heuristic",
       "phase": 35.3,
       "description": "Phase 35.3 ticket-sync contract — the STATE <ticket_links> cycle→ticket map, the bidirectional read (decision-injector surfaces linked-ticket comments on .design open) + write (transition + redacted summary on cycle completion) flow via MCP tools (mcp__linear__* / mcp__atlassian__*; no SDK, no raw HTTP), the default status-transition map, tracker-wins conflict resolution, the mandatory scripts/lib/redact.cjs chokepoint, and the GDD_DISABLE_LINEAR/GDD_DISABLE_JIRA kill-switches. Consumed by agents/ticket-sync-agent.md."
+    },
+    {
+      "name": "export-formats",
+      "path": "reference/export-formats.md",
+      "type": "heuristic",
+      "phase": 35.5,
+      "description": "Phase 35.5 /gdd:export contract — the source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots), the three formats (self-contained HTML via scripts/lib/export/build-html.cjs, Paged.js-compatible print PDF rendered by the user, Notion page via the Notion MCP), mandatory scripts/lib/redact.cjs + the --pseudonymize opt-in (scripts/lib/pseudonymize.cjs), and the --pr hand-off to pr-commenter. No bundled PDF/markdown runtime (D-02)."
     }
   ]
 }

@@ -2,7 +2,7 @@
 
 This directory contains connection specifications for external tools and MCPs that the get-design-done pipeline integrates with. Each connection has its own spec file. This file is the index.
 
-**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 18 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
+**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 19 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
 
 ---
 
@@ -34,6 +34,7 @@ This directory contains connection specifications for external tools and MCPs th
 | Discord | Active | [`connections/discord.md`](connections/discord.md) | **Notify** (Team Surfaces) — `DISCORD_WEBHOOK_URL` channel webhook; parity with Slack; `GDD_DISABLE_DISCORD` kill-switch; degrade-to-noop |
 | Linear | Active | [`connections/linear.md`](connections/linear.md) | **Ticket-sync** (Team Surfaces) — `mcp__linear__*` (ToolSearch probe); bidirectional cycle↔issue; redact + `GDD_DISABLE_LINEAR` kill-switch; degrade-to-noop |
 | Jira | Active | [`connections/jira.md`](connections/jira.md) | **Ticket-sync** (Team Surfaces) — Atlassian MCP `mcp__atlassian__*` (ToolSearch probe); parity with Linear; `GDD_DISABLE_JIRA` kill-switch; degrade-to-noop |
+| Notion | Active | [`connections/notion.md`](connections/notion.md) | **Export** write-path (not a pipeline stage) — `mcp__notion__*` (ToolSearch probe); `/gdd:export --format notion`; redact + `GDD_DISABLE_NOTION` kill-switch; degrade-to-HTML |
 
 ---
 
@@ -170,6 +171,14 @@ Step E1 — ToolSearch check:
   → Non-empty result  → mobbin: available
 
 Write mobbin status to STATE.md <connections>.
+```
+
+**Notion probe (ToolSearch-only — export write-path, 35.5):**
+
+```
+Step J1 — ToolSearch({ query: "notion", max_results: 5 })
+  → Empty / GDD_DISABLE_NOTION=1 → notion: not_configured (export degrades to the HTML format)
+  → Non-empty                    → notion: available
 ```
 
 **Linear probe (ToolSearch-only — ticket-sync):**
