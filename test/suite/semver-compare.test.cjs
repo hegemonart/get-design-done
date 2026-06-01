@@ -479,6 +479,13 @@ OFF_CADENCE_VERSIONS.add('1.37.2');
 // dependency (pure Beta store + injectable fetch); no new egress.
 OFF_CADENCE_VERSIONS.add('1.38.0');
 
+// 1.38.5 → Phase 38.5 (Deployment Coordination Loop). Off-cadence decimal from the v1.38.x arc.
+// Adds scripts/lib/rollout/rollout-status.cjs (pure), agents/rollout-coordinator.md, the
+// /gdd:rollout-status skill, reference/rollout-coordination.md, and the verify_outcome / rollout_*
+// event seeds. Reads the Phase-38 flag connections (read-only); feeds design_arms by deployed_pct.
+// No new runtime dependency, no new egress.
+OFF_CADENCE_VERSIONS.add('1.38.5');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

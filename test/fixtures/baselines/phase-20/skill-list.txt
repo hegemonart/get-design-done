@@ -51,6 +51,7 @@ reflect
 report-issue
 resume
 review-backlog
+rollout-status
 router
 scan
 settings

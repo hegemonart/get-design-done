@@ -986,6 +986,13 @@
       "type": "heuristic",
       "phase": 38,
       "description": "Phase 38 design-variants schema + the design_arms outcome loop: /gdd:design --variants N emits N hypothesis-tagged competing variants (<variant id component pattern hypothesis>); each (component_type, variant_pattern_hash) is a Beta(2,8) arm in scripts/lib/ds-arms/design-arms-store.cjs that learns which patterns win with USERS from A/B (experiment-result-ingester) + user-research (user-research-synthesizer) outcomes. Advisory not directive (the user always wins, D-03). Distinct from the routing bandit."
+    },
+    {
+      "name": "rollout-coordination",
+      "path": "reference/rollout-coordination.md",
+      "type": "heuristic",
+      "phase": 38.5,
+      "description": "Phase 38.5 rollout-coordination contract: the <rollout_status> STATE block (unrolled/staging-only/canary-N%/prod-100%), stuck detection (default 14 days), linear deployed_pct weighting feeding design_arms via verify_outcome (a 10%-rolled variant counts 0.1), and the rollout_started/advanced/stuck/verify_outcome events. Classifier scripts/lib/rollout/rollout-status.cjs; agent agents/rollout-coordinator.md; skill /gdd:rollout-status. Read-only — GDD never drives the rollout."
     }
   ]
 }
