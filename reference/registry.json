@@ -1021,6 +1021,13 @@
       "type": "heuristic",
       "phase": 39.1,
       "description": "Phase 39.1 migration rule library — Material Design token migration (M3→next), grounded in the real M2→M3 token-system patterns (md.sys.color/typescale roles, @material/web mwc-→md-) — no fabricated M4 spec. Rules + Detection + Impact; codemod-gen-consumable."
+    },
+    {
+      "name": "cost-governance",
+      "path": "reference/cost-governance.md",
+      "type": "heuristic",
+      "phase": 39.2,
+      "description": "Phase 39.2 cost-governance contract: the per-cycle forecast model (best/typical/worst from mean ± k·σ, cyclesToCap) via scripts/lib/budget/cost-forecast.cjs; the project_cap hard-halt (disabled by default, graceful PreToolUse:Agent block, warn 50/80 + halt 100) via scripts/lib/budget/project-cap.cjs + hooks/budget-enforcer.ts; the ROI dashboard (shipped = surviving >=14d, cost-per-shipped-commit) via scripts/lib/budget/roi.cjs; and the budget_forecast/project_cap_warning/project_cap_halt events. Agent agents/cost-forecaster.md; skills /gdd:budget + /gdd:roi. Read/report-only — the hook only blocks, never spends."
     }
   ]
 }

@@ -37,6 +37,16 @@
       "type": "string",
       "enum": ["enforce", "warn", "log"],
       "description": "D-11 enforcement policy. enforce = block + auto-downgrade; warn = print warnings but allow spawn; log = advisory-only telemetry without gating."
+    },
+    "project_cap_usd": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Phase 39.2 D-04 — project-level hard cap (USD) across the whole project's costs.jsonl. 0 or absent = DISABLED (no project-level enforcement; zero behavior change for existing users). When > 0, hooks/budget-enforcer.ts warns at 50% + 80% of this cap and (under project_cap_enforcement_mode=enforce) hard-halts the next PreToolUse:Agent spawn at 100%. Distinct from per_task_cap_usd / per_phase_cap_usd."
+    },
+    "project_cap_enforcement_mode": {
+      "type": "string",
+      "enum": ["enforce", "warn", "log"],
+      "description": "Phase 39.2 D-04 — enforcement policy for project_cap_usd specifically. enforce = hard-halt at 100%; warn = print at 100% but allow; log = advisory telemetry only. Falls back to enforcement_mode when absent."
     }
   }
 }
