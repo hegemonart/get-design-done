@@ -1028,6 +1028,13 @@
       "type": "heuristic",
       "phase": 39.2,
       "description": "Phase 39.2 cost-governance contract: the per-cycle forecast model (best/typical/worst from mean ± k·σ, cyclesToCap) via scripts/lib/budget/cost-forecast.cjs; the project_cap hard-halt (disabled by default, graceful PreToolUse:Agent block, warn 50/80 + halt 100) via scripts/lib/budget/project-cap.cjs + hooks/budget-enforcer.ts; the ROI dashboard (shipped = surviving >=14d, cost-per-shipped-commit) via scripts/lib/budget/roi.cjs; and the budget_forecast/project_cap_warning/project_cap_halt events. Agent agents/cost-forecaster.md; skills /gdd:budget + /gdd:roi. Read/report-only — the hook only blocks, never spends."
+    },
+    {
+      "name": "multi-author-model",
+      "path": "reference/multi-author-model.md",
+      "type": "meta-rules",
+      "phase": 40,
+      "description": "Phase 40 team-collaboration contract: multi-writer STATE.md via a git-merge-driver with per-section semantic merge (scripts/lib/collab/section-merge.cjs — union by D-id, conflict only on same-id divergence); decision attribution line-suffix [author= co-author=] (attribution.cjs); the async review queue proposed->reviewing->approved->locked with hard locks + audited /gdd:unlock-decision (review-queue.cjs); the multi-writer advisory-lock policy (lock-policy.cjs, 30s/100ms backoff in team mode); sectional handoff gdd_cycle_mode designer|dev|full (cycle-mode.cjs); the permission model (permissions.cjs) + CI gate; decision-journal-exporter (pseudonymized, write-only Notion) + pr-commenter D-XX threading; opt-in cross-machine sync (sync-backend.cjs, defaults to git). Agents conflict-resolver + decision-journal-exporter; skills /gdd:review-decisions + /gdd:unlock-decision."
     }
   ]
 }
