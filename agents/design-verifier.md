@@ -368,6 +368,16 @@ When `<project_type>` is a **no-DOM target** — `native-ios`/`native-android`/`
 
 ---
 
+## Phase 4E — Motion Verification (when Lottie/Rive exports present)
+
+**Gate:** only when a Lottie export (`*.json` carrying the `v`/`fr`/`layers` signature, or a `lottie-web`/`@lottiefiles` dep) or a Rive export (`*.riv`, or a `@rive-app` dep) is found. None present → print `motion verification: no Lottie/Rive exports — skipped.` and continue.
+
+When exports are present, **delegate to `agents/motion-verifier.md`**: it runs the pure `scripts/lib/motion/validate-motion.cjs` over Lottie (frame-rate / duration / embedded-asset / perf-budget — the MO-* rules), checks size + the `RIVE` magic header on `.riv`, and surfaces state-machine reachability for Rive when the Rive runtime is present. Fold its `## Motion verification` findings into DESIGN-VERIFICATION.md.
+
+**WARN, never block (D-02):** motion findings are warnings, never `<blocker>`s — motion is creative, not contractually broken — unless a `must_have` explicitly requires motion verification. Per-tool probe + degrade detail: `connections/lottie.md` / `connections/rive.md`.
+
+---
+
 ## Phase 4C — paper.design Canvas Screenshots (when paper-design: available)
 
 **Gate:** Skip this entire Phase 4C block if `paper-design` is `not_configured` or `unavailable` in STATE.md `<connections>`. Print: `paper.design canvas screenshots: skipped.`

@@ -9,7 +9,7 @@ last_updated: 2026-05-18
 
 Source: extracted from `skills/connections/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
 The skill's load-bearing routing + invocation-mode dispatch stays in `../skills/connections/SKILL.md`;
-this file holds the 19 probe scripts, bucket categorization, per-connection setup screen,
+this file holds the 21 probe scripts, bucket categorization, per-connection setup screen,
 auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json write contracts.
 
 # Connections Onboarding Procedure
@@ -27,7 +27,7 @@ this file does NOT duplicate them; it points at them by name.
 
 ---
 
-## Step 1 — Probe all 19 connections
+## Step 1 — Probe all 21 connections
 
 Run every probe below in order. MCP probes call `ToolSearch` first (deferred tools fail silently without it). Write every result to `STATE.md <connections>` when done.
 
@@ -180,7 +180,23 @@ Bash: ls .design/handoff/ 2>/dev/null || find . -maxdepth 3 \
   → Non-empty → claude_design: available
 ```
 
-After all 19 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
+**lottie** (file probe — Lottie JSON motion export):
+```
+Bash: find . -name "*.json" -not -path "*/node_modules/*" 2>/dev/null | head   (confirm the Lottie signature: top-level v / fr / layers)
+      grep -lE '"lottie-web"|@lottiefiles|lottie-react' package.json 2>/dev/null
+  → Lottie exports or a lottie dep found → lottie: available
+  → none                                → lottie: not_configured
+```
+
+**rive** (file probe — Rive .riv motion export):
+```
+Bash: find . -name "*.riv" -not -path "*/node_modules/*" 2>/dev/null | head
+      grep -E '@rive-app|rive-react' package.json 2>/dev/null
+  → .riv files or a @rive-app dep found → rive: available
+  → none                               → rive: not_configured
+```
+
+After all 21 probes complete, merge results into `STATE.md <connections>`. Preserve the three-value schema verbatim (`available | unavailable | not_configured`). Do not add new values.
 
 ---
 
@@ -268,6 +284,8 @@ One-line value props (use verbatim):
 | linear | ticket-sync — link a cycle to a Linear issue; read comments + transition on completion |
 | jira | ticket-sync — parity with Linear via the Atlassian MCP |
 | notion | export — `/gdd:export --format notion` writes a stakeholder page (degrade-to-HTML) |
+| lottie | verify — Lottie JSON motion check (frame-rate / duration / bloat / perf-budget), WARN-never-block |
+| rive | verify — Rive `.riv` motion check (size + state-machine reachability via the opt-in runtime), WARN-never-block |
 
 ---
 
@@ -295,7 +313,7 @@ options:
   - "Exit"                            → emit ## CONNECTIONS COMPLETE, exit
 ```
 
-If recommended bucket is empty, swap that option for "Show all 19 and pick."
+If recommended bucket is empty, swap that option for "Show all 21 and pick."
 
 ---
 
@@ -359,6 +377,8 @@ options:
 | linear | `claude mcp add linear ...` (Linear MCP) | ✓ yes | Reversible MCP add; OAuth on first call, no credential filesystem-write |
 | jira | `claude mcp add atlassian ...` (Atlassian MCP) | ✓ yes | Reversible MCP add; OAuth on first call |
 | notion | `claude mcp add notion ...` (Notion MCP) | ✓ yes | Reversible MCP add; OAuth on first call |
+| lottie | (file-based — no install; drop a Lottie `.json` export in the repo) | n/a | Detected from Lottie exports / a `lottie-web` dep; live player opt-in |
+| rive | (file-based — no install; add a `.riv` export / `@rive-app` dep) | n/a | Detected from `.riv` files / a `@rive-app` dep; Rive runtime opt-in |
 
 For non-auto-run connections, hide the "Run install command now" option entirely in 5.3.
 
