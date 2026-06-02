@@ -3,7 +3,7 @@
 Last verified: 2026-04-24
 
 When a GDD skill references a Claude Code tool name, the Codex runtime
-translates to the equivalent below. Skills do NOT need to branch — the tool
+translates to the equivalent below. Skills do NOT need to branch - the tool
 name in prose is authoritative; Codex resolves via this map.
 
 ## Tool-name mapping
@@ -49,5 +49,5 @@ All 11 tools exposed by the server appear as `mcp__gdd_state__*` in Codex.
 
 ---
 
-Last verified: 2026-04-24 — tool surface re-checked against Codex CLI docs
+Last verified: 2026-04-24 - tool surface re-checked against Codex CLI docs
 current to this date. Revisit whenever Codex ships a tool-vocabulary change.

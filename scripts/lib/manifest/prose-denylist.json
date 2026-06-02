@@ -115,7 +115,7 @@
     {
       "pattern": "\\u2014",
       "kind": "token",
-      "note": "Em dash — banned in the project's own user-facing prose (Phase 43)."
+      "note": "Em dash - banned in the project's own user-facing prose (Phase 43)."
     },
     {
       "pattern": "--",

@@ -9,11 +9,11 @@ disable-model-invocation: true
 
 **Role:** Walk through parked backlog items and for each ask: promote to this cycle, keep parked, or archive.
 
-## Step 1 — Read backlog
+## Step 1 - Read backlog
 
 Read `.design/backlog/BACKLOG.md`. Parse each `## <title>` block with its metadata and body. If no parked items, print "No parked backlog items." and stop.
 
-## Step 2 — Loop
+## Step 2 - Loop
 
 For each item with `**Status**: parked`:
 
@@ -26,7 +26,7 @@ Added: <date>
 Promote to this cycle | Keep parked | Archive
 ```
 
-## Step 3 — Apply decision
+## Step 3 - Apply decision
 
 - **Promote**: append `- [ ] [YYYY-MM-DD] <title>` under `## P1 — High` in `.design/TODO.md` (create file from the TODO.md skeleton if missing). Update backlog item status to `**Status**: promoted` + `**Promoted**: YYYY-MM-DD`.
 - **Keep parked**: leave unchanged.

@@ -1,6 +1,6 @@
 # Civic & Government Design Patterns
 
-This pack collects the design patterns, legal floors, and review heuristics that apply when building public-sector interfaces — benefits portals, permit and licensing flows, tax filing, election information, and municipal services. GDD loads it automatically when it detects a government / public-sector / civic project (see Detection signals). The legal citations below assume a US context, but the underlying patterns — accessibility floors, plain language, multilingual access, and high-trust defaults — generalize to public services anywhere.
+This pack collects the design patterns, legal floors, and review heuristics that apply when building public-sector interfaces - benefits portals, permit and licensing flows, tax filing, election information, and municipal services. GDD loads it automatically when it detects a government / public-sector / civic project (see Detection signals). The legal citations below assume a US context, but the underlying patterns - accessibility floors, plain language, multilingual access, and high-trust defaults - generalize to public services anywhere.
 
 ## Why civic is different
 
@@ -8,7 +8,7 @@ In the private sector, accessibility, plain language, and translation are often 
 
 ## Accessibility legal floor
 
-Section 508 of the Rehabilitation Act incorporates **WCAG 2.1 Level AA** as the binding technical standard for US federal ICT. The Americans with Disabilities Act (ADA) extends comparable obligations to state and local government (Title II) and many public accommodations. Treat **WCAG 2.1 AA as a hard floor** — not optional, not an AAA-aspirational stretch goal. You do not "prioritize" it against other work; you cannot ship below it.
+Section 508 of the Rehabilitation Act incorporates **WCAG 2.1 Level AA** as the binding technical standard for US federal ICT. The Americans with Disabilities Act (ADA) extends comparable obligations to state and local government (Title II) and many public accommodations. Treat **WCAG 2.1 AA as a hard floor** - not optional, not an AAA-aspirational stretch goal. You do not "prioritize" it against other work; you cannot ship below it.
 
 Concretely, every civic UI must satisfy at least:
 
@@ -18,7 +18,7 @@ Concretely, every civic UI must satisfy at least:
 | Visible focus | 2.4.7 | A clear, non-removed focus indicator on every focusable control. |
 | Landmarks & headings | 1.3.1, 2.4.6 | Real `main`/`nav`/`header`/`footer` regions; a logical, non-skipping heading outline. |
 | Error identification | 3.3.1 | Errors are described in text, programmatically associated with their field. |
-| Labels & instructions | 3.3.2 | Every input has a persistent, programmatic label — placeholder is not a label. |
+| Labels & instructions | 3.3.2 | Every input has a persistent, programmatic label - placeholder is not a label. |
 | Not color alone | 1.4.1 | Status, required fields, and errors never rely on color as the only cue. |
 | Text contrast | 1.4.3 | 4.5:1 for body text, 3:1 for large text and meaningful UI/graphics (1.4.11). |
 | Reflow | 1.4.10 | Usable at 400% zoom / 320 CSS px with no loss of content or horizontal scroll. |
@@ -34,7 +34,7 @@ A practical US minimum is **English + Spanish + Simplified Chinese (`zh-Hans`)**
 Patterns:
 
 - **Persistent language toggle** in a predictable location (top of every page), not buried in a footer or settings panel. Selection persists across the whole session and survives navigation.
-- **Translate the content, not just the chrome.** Field labels, help text, **validation/error messages**, confirmation screens, emails, and PDFs must all be localized — a form that switches its buttons to Spanish but throws English errors has failed.
+- **Translate the content, not just the chrome.** Field labels, help text, **validation/error messages**, confirmation screens, emails, and PDFs must all be localized - a form that switches its buttons to Spanish but throws English errors has failed.
 - Set `lang` on the document and on any in-page language switches so assistive tech pronounces content correctly.
 - **Right-to-left readiness**: build layouts with logical properties / `dir="rtl"` support so Arabic, Farsi, Urdu, and Hebrew mirror correctly. Don't hard-code left/right.
 - **Avoid machine-only translation for legal text.** Eligibility rules, consent, rights notices, and binding terms need human translation and review; raw MT can be a compliance and liability problem.
@@ -55,7 +55,7 @@ The **Plain Writing Act of 2010** requires US federal agencies to write public-f
 
 - **Generous session timeouts with warning + extend.** Per **WCAG 2.2.1 (Timing Adjustable)**, warn before a session expires and let the user extend or turn off the limit; never silently discard a half-finished benefits application. Pair with save-and-resume.
 - **No dark patterns.** No pre-checked consent, no confirm-shaming, no buried opt-outs, no fake urgency. Government must not manipulate; defaults should favor the user.
-- **Save-and-resume for long forms.** Let users leave and return without losing data — assume interruptions, shared/library computers, and multi-session completion.
+- **Save-and-resume for long forms.** Let users leave and return without losing data - assume interruptions, shared/library computers, and multi-session completion.
 - **Print-friendliness.** Provide clean print styles and downloadable/printable confirmations and records; many users keep paper copies or mail documents.
 - **Low-bandwidth / older-device tolerance.** Server-render core content, keep payloads small, avoid blocking on heavy JS, and ensure the form is usable without the latest browser. Test on slow connections and old devices.
 - **Clear `.gov` identity & PII handling.** Show the official agency identity (the USWDS gov banner pattern), a plain-language privacy notice, and explain what personal information is collected, why, and how it is protected. Minimize PII collected; never expose SSNs or case numbers in URLs.
@@ -75,10 +75,10 @@ GDD should auto-detect the civic/government domain from any combination of:
 
 - **Content / naming keywords:** `gov`, `government`, `public`, `citizen`, `benefits`, `permit`, `license`, `tax`, `election`, `voter`, `municipal`, `county`, `agency`, `eligibility`, `enrollment`, `public service`.
 - **`package.json` dependencies (strong signal):**
-  - `@uswds/uswds`, `uswds` — US Web Design System
-  - `@trussworks/react-uswds` — React USWDS components
-  - `govuk-frontend` — GOV.UK Design System
-  - `@18f/...` — 18F / TTS tooling and components
+  - `@uswds/uswds`, `uswds` - US Web Design System
+  - `@trussworks/react-uswds` - React USWDS components
+  - `govuk-frontend` - GOV.UK Design System
+  - `@18f/...` - 18F / TTS tooling and components
 - **Domain / config signals:** a `.gov`, `.mil`, or `.gov.<cc>` domain in config or deploy targets; accessibility-first project config (axe-core, `pa11y`, `jest-axe`, `eslint-plugin-jsx-a11y`, Lighthouse a11y budgets) wired into CI.
 
 Any one strong dependency match, or several keyword + domain matches together, should trigger loading this pack.
@@ -95,7 +95,7 @@ The auditor agent runs these against a civic UI. Each item is concrete and verif
 6. Every input has a persistent programmatic label (not placeholder-only); errors are described in text and tied to their field (WCAG 3.3.1, 3.3.2).
 7. On submit failure, an error summary lists each problem, links to and moves focus to the field, and user input is preserved.
 8. Reading level is grade 6–8: active voice, short sentences, no undefined jargon/acronyms, question-style labels (Plain Writing Act of 2010).
-9. A persistent language toggle covers content, help text, and **errors** — not just UI chrome — for at least EN + ES + zh-Hans, with correct `lang` and RTL readiness; legal/eligibility text is human-translated, not machine-only.
+9. A persistent language toggle covers content, help text, and **errors** - not just UI chrome - for at least EN + ES + zh-Hans, with correct `lang` and RTL readiness; legal/eligibility text is human-translated, not machine-only.
 10. Session timeout warns before expiry and offers an extend/disable option, and the form supports save-and-resume (WCAG 2.2.1).
 11. No dark patterns: no pre-checked consent, confirm-shaming, or buried opt-outs; defaults favor the user.
 12. Official `.gov` identity, a plain-language privacy/PII notice, print-friendly confirmations, and graceful behavior on low bandwidth / older devices are all present; no PII (SSN, case IDs) exposed in URLs.

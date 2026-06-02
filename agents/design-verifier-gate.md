@@ -27,9 +27,9 @@ You run once per verify invocation. You are read-only (no Write tool). You do no
 
 The orchestrator supplies three fields in the prompt context:
 
-- `diff_files` — newline-separated list of paths changed since the last verified commit (output of `git diff --name-only <baseline_sha>..HEAD`).
-- `diff_body` — unified-diff body truncated to ~4000 lines (output of `git diff <baseline_sha>..HEAD`).
-- `baseline_sha` — the SHA the diff is computed against (from `.design/STATE.md` `last_verified_sha`, or `HEAD~1` if absent).
+- `diff_files` - newline-separated list of paths changed since the last verified commit (output of `git diff --name-only <baseline_sha>..HEAD`).
+- `diff_body` - unified-diff body truncated to ~4000 lines (output of `git diff <baseline_sha>..HEAD`).
+- `baseline_sha` - the SHA the diff is computed against (from `.design/STATE.md` `last_verified_sha`, or `HEAD~1` if absent).
 
 ## Heuristic
 
@@ -92,7 +92,7 @@ You MAY:
 
 ## Why this agent exists
 
-Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. Gate agent: reads DIFF of changed files, applies heuristic (design-system paths touched? copy strings touched? token files touched?), returns `{spawn: true|false, rationale: '...'}`. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the verifier-specific instance of that pattern — full `design-verifier` is an XL-size spawn and the most expensive single agent in the pipeline, so gating it behind a cheap Haiku diff-scan yields the largest single cost win in Phase 10.1.
+Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. Gate agent: reads DIFF of changed files, applies heuristic (design-system paths touched? copy strings touched? token files touched?), returns `{spawn: true|false, rationale: '...'}`. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the verifier-specific instance of that pattern - full `design-verifier` is an XL-size spawn and the most expensive single agent in the pipeline, so gating it behind a cheap Haiku diff-scan yields the largest single cost win in Phase 10.1.
 
 ## Record
 

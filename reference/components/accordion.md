@@ -1,4 +1,4 @@
-# Accordion — Benchmark Spec
+# Accordion - Benchmark Spec
 
 **Harvested from**: WAI-ARIA APG, Radix UI, Carbon, Chakra UI, Material 3, Mantine, shadcn/ui, Atlassian
 **Wave**: 2 · **Category**: Containers
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-An accordion is a vertically stacked set of headers that each reveal or conceal an associated section of content when activated. It reduces visual clutter by hiding content that is not immediately relevant. The header MUST be a button (or have `role="button"`) — users must be able to activate sections by keyboard. *(WAI-ARIA APG, Radix, Carbon all agree)*
+An accordion is a vertically stacked set of headers that each reveal or conceal an associated section of content when activated. It reduces visual clutter by hiding content that is not immediately relevant. The header MUST be a button (or have `role="button"`) - users must be able to activate sections by keyboard. *(WAI-ARIA APG, Radix, Carbon all agree)*
 
 ---
 
@@ -47,7 +47,7 @@ An accordion is a vertically stacked set of headers that each reveal or conceal 
 | With icon | Leading icon per header | Carbon, Atlassian |
 
 **Norm** (≥5/18): chevron icon rotates on open (180°); panel animates height.
-**Diverge**: single-open vs. multi-open — Radix defaults to multi-open (more flexible); Material 3 defaults to single-open (simpler UX). Multi-open is safer for long FAQ pages where users may want to compare sections.
+**Diverge**: single-open vs. multi-open - Radix defaults to multi-open (more flexible); Material 3 defaults to single-open (simpler UX). Multi-open is safer for long FAQ pages where users may want to compare sections.
 
 ---
 
@@ -57,8 +57,8 @@ An accordion is a vertically stacked set of headers that each reveal or conceal 
 |-------|---------|--------|------|
 | collapsed | default | Panel hidden | `aria-expanded="false"` on button |
 | expanded | button activated | Panel visible | `aria-expanded="true"` on button |
-| hover | pointer over header | Header background tint | — |
-| focus | keyboard | 2px focus ring on button | — |
+| hover | pointer over header | Header background tint | - |
+| focus | keyboard | 2px focus ring on button | - |
 | disabled | programmatic | 38% opacity; non-interactive | `aria-disabled="true"` on button |
 
 ---
@@ -77,7 +77,7 @@ An accordion is a vertically stacked set of headers that each reveal or conceal 
 
 ## Typography
 
-- Header: 14–16px/500 — slightly heavier than panel body
+- Header: 14–16px/500 - slightly heavier than panel body
 - Panel body: 14px/400
 - Disabled header: same size, 38% opacity
 
@@ -91,7 +91,7 @@ An accordion is a vertically stacked set of headers that each reveal or conceal 
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/accordion/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/accordion/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -107,12 +107,12 @@ Arrow/Home/End navigation is optional; Tab navigation between headers is always 
 
 ### Accessibility Rules
 
-- Header MUST be wrapped in an `<h2>`–`<h6>` tag to maintain document outline — the heading level should match the surrounding page hierarchy
-- The trigger MUST be a `<button>` (or `role="button"`) — `<div>` headers are inaccessible by keyboard
+- Header MUST be wrapped in an `<h2>`–`<h6>` tag to maintain document outline - the heading level should match the surrounding page hierarchy
+- The trigger MUST be a `<button>` (or `role="button"`) - `<div>` headers are inaccessible by keyboard
 - `aria-expanded` MUST be on the trigger button, not the panel
-- Panel SHOULD have `role="region"` + `aria-labelledby` referencing the trigger button id — this creates a named region for landmark navigation
+- Panel SHOULD have `role="region"` + `aria-labelledby` referencing the trigger button id - this creates a named region for landmark navigation
 - `role="region"` should be omitted if there are more than 6 accordions (too many regions = noisy landmark nav)
-- Avoid `display:none` for the panel in open state — use `hidden` or height animation
+- Avoid `display:none` for the panel in open state - use `hidden` or height animation
 
 ---
 
@@ -131,7 +131,7 @@ Arrow/Home/End navigation is optional; Tab navigation between headers is always 
 .panel > div { overflow: hidden; }
 ```
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip height animation, instant toggle
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: skip height animation, instant toggle
 
 ---
 
@@ -140,13 +140,13 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip height anim
 ### Do
 - Wrap header triggers in proper heading tags (`<h2>`–`<h6>`) *(WAI-ARIA APG, Carbon)*
 - Use `aria-expanded` on the trigger button, not on the panel *(WAI-ARIA APG)*
-- Animate height with `grid-template-rows` trick — no JS height measurement needed *(CSS-only pattern)*
+- Animate height with `grid-template-rows` trick - no JS height measurement needed *(CSS-only pattern)*
 - Support Tab navigation between accordion headers at minimum *(WAI-ARIA APG)*
 
 ### Don't
 - Don't use `<div>` as the accordion header without `role="button"` *(WAI-ARIA APG)*
-- Don't use `display:none` to hide the panel in collapsed state if you want animation — use CSS grid trick *(CSS pattern)*
-- Don't use `role="region"` for more than 6 accordions — excessive landmarks harm screen reader navigation *(WAI-ARIA APG note)*
+- Don't use `display:none` to hide the panel in collapsed state if you want animation - use CSS grid trick *(CSS pattern)*
+- Don't use `role="region"` for more than 6 accordions - excessive landmarks harm screen reader navigation *(WAI-ARIA APG note)*
 - Don't auto-close other panels in a "single-open" accordion without announcing the change *(Atlassian)*
 
 ---

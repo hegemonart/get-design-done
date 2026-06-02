@@ -1,4 +1,4 @@
-# Progress — Benchmark Spec
+# Progress - Benchmark Spec
 
 **Harvested from**: Material 3, Carbon (ProgressIndicator), Polaris, Mantine
 **Wave**: 3 · **Category**: Feedback
@@ -33,8 +33,8 @@ A progress indicator communicates the status of an ongoing operation. Determinat
 |------|----------|-------|
 | Track | Yes | Background rail (linear) or ring background (circular) |
 | Fill / indicator | Yes | Foreground showing progress amount |
-| Label (visually hidden ok) | Yes | `aria-label` or `aria-labelledby` — describes what is loading |
-| Value text | No | Rendered percentage (e.g. "45%") — supplement to ARIA value |
+| Label (visually hidden ok) | Yes | `aria-label` or `aria-labelledby` - describes what is loading |
+| Value text | No | Rendered percentage (e.g. "45%") - supplement to ARIA value |
 
 ---
 
@@ -70,7 +70,7 @@ A progress indicator communicates the status of an ongoing operation. Determinat
 | Size | Height | Notes |
 |------|--------|-------|
 | sm | 4px (default) | Decorative; thin above content |
-| md | 8px | Accessible minimum — recommended when bar is the primary indicator |
+| md | 8px | Accessible minimum - recommended when bar is the primary indicator |
 | lg | 12px | High-emphasis; file upload, step progress |
 
 **Circular**
@@ -87,11 +87,11 @@ A progress indicator communicates the status of an ongoing operation. Determinat
 
 ## Typography
 
-- Value label (if shown): numeric-sm (12px/tabular-nums) — percentage readability
-- Associated label (if visible): body-sm (14px/400) — describes what is loading
+- Value label (if shown): numeric-sm (12px/tabular-nums) - percentage readability
+- Associated label (if visible): body-sm (14px/400) - describes what is loading
 - Do not truncate the associated label; use a visually-hidden version if space is constrained
 
-Cross-link: `reference/typography.md` — tabular-nums for percentage values
+Cross-link: `reference/typography.md` - tabular-nums for percentage values
 
 ---
 
@@ -102,7 +102,7 @@ Cross-link: `reference/typography.md` — tabular-nums for percentage values
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/meter/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/meter/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -112,14 +112,14 @@ Progress indicators are read-only status elements. They receive no keyboard focu
 
 ### Accessibility Rules
 
-- `aria-label` or `aria-labelledby` MUST describe what is loading (e.g. "Uploading file", "Loading results") — a bare `role="progressbar"` with no label is announced as empty *(WAI-ARIA APG)*
+- `aria-label` or `aria-labelledby` MUST describe what is loading (e.g. "Uploading file", "Loading results") - a bare `role="progressbar"` with no label is announced as empty *(WAI-ARIA APG)*
 - Determinate bars MUST include `aria-valuenow` matching the current integer percentage *(WAI-ARIA APG)*
 - Indeterminate bars MUST omit `aria-valuenow` and instead set `aria-valuetext="Loading"` or similar *(WAI-ARIA APG)*
 - `aria-valuemin` and `aria-valuemax` MUST be present on all progress bars (default 0 and 100)
-- Indeterminate animation MUST respect `prefers-reduced-motion` — reduce to opacity pulse or static indicator *(WCAG 2.3.3)*
+- Indeterminate animation MUST respect `prefers-reduced-motion` - reduce to opacity pulse or static indicator *(WCAG 2.3.3)*
 - Color contrast of fill vs. track MUST meet 3:1 minimum for non-text UI components *(WCAG 1.4.11)*
 
-Cross-link: `reference/accessibility.md` — `prefers-reduced-motion`, WCAG 1.4.11
+Cross-link: `reference/accessibility.md` - `prefers-reduced-motion`, WCAG 1.4.11
 
 ---
 
@@ -132,9 +132,9 @@ Cross-link: `reference/accessibility.md` — `prefers-reduced-motion`, WCAG 1.4.
 | Circular spin | 1.2s | linear | Single full rotation per cycle |
 | Complete → remove | 400ms | ease-in | Brief hold at 100% then fade/collapse |
 
-**BAN**: Bouncing or elasticity on indeterminate loop — communicates false progress rhythm. Do not use `transition: all` (catches color changes during theme swap).
+**BAN**: Bouncing or elasticity on indeterminate loop - communicates false progress rhythm. Do not use `transition: all` (catches color changes during theme swap).
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: replace sweep with opacity 0.5→1 pulse
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: replace sweep with opacity 0.5→1 pulse
 
 ---
 
@@ -143,14 +143,14 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion`: replace sweep wi
 ### Do
 - Always provide `aria-label` describing what is loading *(WAI-ARIA APG)*
 - Use `aria-valuenow` on determinate variants and omit on indeterminate *(WAI-ARIA APG)*
-- Use 8px+ height for standalone linear bars — 4px bars lack sufficient touch and visual target *(Carbon)*
+- Use 8px+ height for standalone linear bars - 4px bars lack sufficient touch and visual target *(Carbon)*
 - Transition fill smoothly (300ms ease-out) when value updates *(Material 3, Mantine)*
 
 ### Don't
-- Don't use `aria-valuenow` on indeterminate bars — it implies a known value *(WAI-ARIA APG)*
-- Don't show a spinner (circular indeterminate) when content shape is known — use Skeleton instead *(Carbon, Polaris)*
-- Don't remove the progress bar the instant it hits 100% — hold briefly so the completion is registered *(Material 3)*
-- Don't animate with infinite bounce — implies bouncing progress rhythm *(Carbon, Mantine)*
+- Don't use `aria-valuenow` on indeterminate bars - it implies a known value *(WAI-ARIA APG)*
+- Don't show a spinner (circular indeterminate) when content shape is known - use Skeleton instead *(Carbon, Polaris)*
+- Don't remove the progress bar the instant it hits 100% - hold briefly so the completion is registered *(Material 3)*
+- Don't animate with infinite bounce - implies bouncing progress rhythm *(Carbon, Mantine)*
 
 ---
 

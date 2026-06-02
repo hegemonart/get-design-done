@@ -22,19 +22,19 @@ writes:
 
 ## Role
 
-Close the qualitative side of the outcome loop: turn pre-collected user-research into **brief-grade insights** the next cycle can act on. Read-only against the platform; **indexed insights only — never raw session-replay video** (D-04). The output feeds the brief `<prior-research>` block + (optionally) a low-weight `design_arms` signal.
+Close the qualitative side of the outcome loop: turn pre-collected user-research into **brief-grade insights** the next cycle can act on. Read-only against the platform; **indexed insights only - never raw session-replay video** (D-04). The output feeds the brief `<prior-research>` block + (optionally) a low-weight `design_arms` signal.
 
-## PII guard — non-negotiable (D-05)
+## PII guard - non-negotiable (D-05)
 
-**Every research payload passes through `scripts/lib/pseudonymize.cjs` BEFORE it enters ANY agent context, log, or event.** Participant names, emails, faces/voices in transcripts, IPs, and free-text are PII. The flow is **read → pseudonymize → reason** — never read → reason → redact. There is no path where a raw research payload reaches the model. A static CI test asserts this routing.
+**Every research payload passes through `scripts/lib/pseudonymize.cjs` BEFORE it enters ANY agent context, log, or event.** Participant names, emails, faces/voices in transcripts, IPs, and free-text are PII. The flow is **read → pseudonymize → reason** - never read → reason → redact. There is no path where a raw research payload reaches the model. A static CI test asserts this routing.
 
 ## When invoked
 
 On demand (`/gdd:research-sync`) or auto-suggested when the verify cross-check finds `<prior-research>` data > 14 days old. Gate on a research source being `available` (per `connections/usertesting.md` / `connections/maze.md` / `connections/hotjar.md`); none → `research synthesis: no research source configured — skipped.` (degrade-to-noop).
 
-## Step 1 — Read (read-only) + pseudonymize
+## Step 1 - Read (read-only) + pseudonymize
 
-Probe the configured source (ToolSearch MCP, else the platform API key env; injectable `fetchImpl` for hermetic tests). Pull indexed insights — test-report findings, task success/time, misclick rates, survey responses, heatmap aggregates. **Immediately** pipe every payload through `pseudonymize.cjs`:
+Probe the configured source (ToolSearch MCP, else the platform API key env; injectable `fetchImpl` for hermetic tests). Pull indexed insights - test-report findings, task success/time, misclick rates, survey responses, heatmap aggregates. **Immediately** pipe every payload through `pseudonymize.cjs`:
 
 ```bash
 node -e "const {pseudonymize}=require('./scripts/lib/pseudonymize.cjs'); process.stdout.write(pseudonymize(require('fs').readFileSync(0,'utf8')))" < raw-payload.json > safe-payload.json
@@ -42,19 +42,19 @@ node -e "const {pseudonymize}=require('./scripts/lib/pseudonymize.cjs'); process
 
 Only `safe-payload.json` is ever read into reasoning.
 
-## Step 2 — Synthesize brief-grade findings
+## Step 2 - Synthesize brief-grade findings
 
 From the pseudonymized payload, extract the top findings, each with:
 
-- **finding** — a one-line observation in user terms ("users miss the secondary CTA on mobile").
-- **frequency** — how many participants / sessions exhibited it.
-- **severity** — `critical | serious | minor` (blocks the task / slows it / cosmetic).
+- **finding** - a one-line observation in user terms ("users miss the secondary CTA on mobile").
+- **frequency** - how many participants / sessions exhibited it.
+- **severity** - `critical | serious | minor` (blocks the task / slows it / cosmetic).
 
-Rank by `severity × frequency`. Keep the top N (default 7) — a brief is a focus list, not a transcript dump.
+Rank by `severity × frequency`. Keep the top N (default 7) - a brief is a focus list, not a transcript dump.
 
-## Step 3 — Write the `<prior-research>` block + optional signal
+## Step 3 - Write the `<prior-research>` block + optional signal
 
-Write the ranked findings into the brief's `<prior-research>` block (consumed by `skills/brief/SKILL.md` + checked at verify). When a finding maps cleanly to a tested design pattern, optionally fold a **low-weight** qualitative signal into `design_arms` (`observe(component, key, { won, source: 'research', weight: 0.5 })`) — research corroborates A/B, it does not outweigh it.
+Write the ranked findings into the brief's `<prior-research>` block (consumed by `skills/brief/SKILL.md` + checked at verify). When a finding maps cleanly to a tested design pattern, optionally fold a **low-weight** qualitative signal into `design_arms` (`observe(component, key, { won, source: 'research', weight: 0.5 })`) - research corroborates A/B, it does not outweigh it.
 
 ## Record
 

@@ -29,7 +29,7 @@ Write `.design/START-REPORT.md` for `/gdd:start`. The report is the single artif
 
 ## Required Reading
 
-- `.design/.start-context.json` — produced by `skills/start/SKILL.md` before spawning this agent. Contains detection result, interview answers, and the findings-engine output.
+- `.design/.start-context.json` - produced by `skills/start/SKILL.md` before spawning this agent. Contains detection result, interview answers, and the findings-engine output.
 
 ## Inputs
 
@@ -121,7 +121,7 @@ Write `.design/START-REPORT.md` exactly matching this shape. **All seven H2 sect
 | Figma | <…> | <`/gdd:connections figma` or "already configured"> |
 | Canvas (.canvas) | <…> | <…> |
 
-<one-line note if `interview.figma_workflow` picked a specific surface — nudge toward that one first.>
+<one-line note if `interview.figma_workflow` picked a specific surface - nudge toward that one first.>
 
 ## Full pipeline path
 
@@ -129,7 +129,7 @@ If you want more than a single fix, the full pipeline would do this on this proj
 
 ## Connections / writeback optional
 
-If you want to push design decisions back into Figma, paper.design, pencil.dev, or a Claude Design handoff bundle, run `/gdd:connections` to wire up the surfaces. Writeback is never required — the pipeline runs code-first by default.
+If you want to push design decisions back into Figma, paper.design, pencil.dev, or a Claude Design handoff bundle, run `/gdd:connections` to wire up the surfaces. Writeback is never required - the pipeline runs code-first by default.
 
 ---
 
@@ -205,7 +205,7 @@ The JSON block at the bottom is the contract future `/gdd:fast` / `/gdd:do` invo
 
 - Finding IDs stay stable `F1`..`F3`.
 - `text` is always a ready-to-run command, single-line.
-- All string values are JSON-safe — escape embedded quotes.
+- All string values are JSON-safe - escape embedded quotes.
 
 ---
 
@@ -213,10 +213,10 @@ The JSON block at the bottom is the contract future `/gdd:fast` / `/gdd:do` invo
 
 - Do not write `.design/STATE.md`, `.design/config.json`, or any source file.
 - Do not invent findings that are not in the context JSON.
-- Do not re-score or re-rank findings — the engine already picked `bestFirstProofId` deterministically.
+- Do not re-score or re-rank findings - the engine already picked `bestFirstProofId` deterministically.
 - Do not add marketing prose, emojis, or playful copy.
 - Do not emit more than three findings.
-- Do not omit any of the seven H2 sections — even empty, they must exist for downstream regression fixtures.
+- Do not omit any of the seven H2 sections - even empty, they must exist for downstream regression fixtures.
 
 ## START-WRITER COMPLETE
 

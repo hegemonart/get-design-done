@@ -3,7 +3,7 @@
 Last verified: 2026-04-24
 
 When a GDD skill references a Claude Code tool name, the Gemini runtime
-translates to the equivalent below. Skills do NOT need to branch — the tool
+translates to the equivalent below. Skills do NOT need to branch - the tool
 name in prose is authoritative; Gemini resolves via this map.
 
 ## Tool-name mapping
@@ -40,7 +40,7 @@ All 11 tools exposed by the server appear as `mcp__gdd_state__*` in Gemini.
 
 ## Known gaps
 
-- `Task` spawning: same as Codex — prefer `run_shell_command("npx gdd-sdk stage ...")`.
+- `Task` spawning: same as Codex - prefer `run_shell_command("npx gdd-sdk stage ...")`.
   See GEMINI.md for invocation details.
 - Gemini's `replace` has stricter uniqueness requirements than CC's Edit;
   when `old_string` appears more than once, Gemini requires context lines.
@@ -49,5 +49,5 @@ All 11 tools exposed by the server appear as `mcp__gdd_state__*` in Gemini.
 
 ---
 
-Last verified: 2026-04-24 — tool surface re-checked against Gemini CLI docs
+Last verified: 2026-04-24 - tool surface re-checked against Gemini CLI docs
 current to this date. Revisit whenever Gemini ships a tool-vocabulary change.

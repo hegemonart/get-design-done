@@ -13,11 +13,11 @@ Authority-monitoring only. Not trend-watching. See `reference/authority-feeds.md
 
 ## Steps
 
-1. **Parse args.** Extract optional flags: `--refresh`, `--since <date>`, `--feed <name>`, `--schedule <cadence>`. Anything that doesn't match one of these is an error — print `Unknown flag: <arg>. Valid flags: --refresh --since <date> --feed <name> --schedule <weekly|daily|monthly>.` and STOP.
+1. **Parse args.** Extract optional flags: `--refresh`, `--since <date>`, `--feed <name>`, `--schedule <cadence>`. Anything that doesn't match one of these is an error - print `Unknown flag: <arg>. Valid flags: --refresh --since <date> --feed <name> --schedule <weekly|daily|monthly>.` and STOP.
 
    Mutual exclusion rules:
-   - `--schedule` is handled entirely by this skill — it does not combine with the other three. If `--schedule` is present alongside any of `--refresh | --since | --feed`, print `--schedule cannot combine with other flags. Schedule registration runs this skill with no flags at the configured cadence.` and STOP.
-   - `--refresh` and `--since` are mutually exclusive — print `--refresh and --since are mutually exclusive. --refresh re-seeds the snapshot silently; --since surfaces a backlog from a boundary date. Pick one.` and STOP.
+   - `--schedule` is handled entirely by this skill - it does not combine with the other three. If `--schedule` is present alongside any of `--refresh | --since | --feed`, print `--schedule cannot combine with other flags. Schedule registration runs this skill with no flags at the configured cadence.` and STOP.
+   - `--refresh` and `--since` are mutually exclusive - print `--refresh and --since are mutually exclusive. --refresh re-seeds the snapshot silently; --since surfaces a backlog from a boundary date. Pick one.` and STOP.
 
 2. **Handle `--schedule <cadence>` branch** (early-return).
 
@@ -29,7 +29,7 @@ Authority-monitoring only. Not trend-watching. See `reference/authority-feeds.md
      ToolSearch({ query: "scheduled-tasks", max_results: 3 })
      ```
 
-   - If the probe returns an empty result set: print `scheduled-tasks MCP not connected. Install it with: claude mcp add scheduled-tasks ... then retry with --schedule.` — this is a documented fallback (not an error). Terminate with `## WATCH COMPLETE` and exit 0.
+   - If the probe returns an empty result set: print `scheduled-tasks MCP not connected. Install it with: claude mcp add scheduled-tasks ... then retry with --schedule.` - this is a documented fallback (not an error). Terminate with `## WATCH COMPLETE` and exit 0.
    - If the probe returns one or more `scheduled-tasks` tools: register the cron. Discover the MCP's registration tool name at runtime from the ToolSearch result and follow its schema. Target command: `{{command_prefix}}watch-authorities` with NO flags (the cron invokes the default diff-and-report behavior). Cadence → cron expression mapping:
      - `weekly`  → `0 9 * * 1` (Mondays 09:00 local)
      - `daily`   → `0 9 * * *` (every day 09:00 local)
@@ -64,12 +64,12 @@ Authority-monitoring only. Not trend-watching. See `reference/authority-feeds.md
    """)
    ```
 
-   `<joined flag list>` is the subset of `--refresh | --since <date> | --feed <name>` actually passed — e.g., `--refresh`, `--since 2026-03-01`, `--feed wai-aria-apg`, `--refresh --feed radix-ui-releases`, or literally `none` when no flags were supplied.
+   `<joined flag list>` is the subset of `--refresh | --since <date> | --feed <name>` actually passed - e.g., `--refresh`, `--since 2026-03-01`, `--feed wai-aria-apg`, `--refresh --feed radix-ui-releases`, or literally `none` when no flags were supplied.
 
 5. **Print summary.**
 
    After the agent returns:
-   - If STATE.md gained a `<blocker type="contract-violation">` on this run (snapshot version mismatch, hash-format violation, or over-200 entries per feed), surface the blocker verbatim and stop — do not print the default "review and reflect" line.
+   - If STATE.md gained a `<blocker type="contract-violation">` on this run (snapshot version mismatch, hash-format violation, or over-200 entries per feed), surface the blocker verbatim and stop - do not print the default "review and reflect" line.
    - Otherwise print the agent's one-line stdout summary (normal mode: `Surfaced N entries across M feeds. K skipped. See .design/authority-report.md.`; first-run / refresh mode: `Seeded snapshot for N feeds — next run will surface new entries.`) followed by: `Review and reflect: {{command_prefix}}reflect`.
 
 6. **Terminate with `## WATCH COMPLETE`.**
@@ -77,6 +77,6 @@ Authority-monitoring only. Not trend-watching. See `reference/authority-feeds.md
 ## Do Not
 
 - Do not modify `agents/design-authority-watcher.md`.
-- Do not modify `agents/design-reflector.md` — Phase 13.2 does not touch the reflector agent (CONTEXT.md D-25).
-- Do not write to `.design/authority-snapshot.json` or `.design/authority-report.md` directly — those are the agent's writes.
+- Do not modify `agents/design-reflector.md` - Phase 13.2 does not touch the reflector agent (CONTEXT.md D-25).
+- Do not write to `.design/authority-snapshot.json` or `.design/authority-report.md` directly - those are the agent's writes.
 - Do not fetch URLs outside `reference/authority-feeds.md`. The whitelist is the allow-list.

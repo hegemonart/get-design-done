@@ -7,13 +7,13 @@ tags: [adr, decision, project-scoped, architecture, offer-gate]
 last_updated: 2026-05-18
 ---
 
-Source: mattpocock/skills (MIT) — adapted with permission. See `../NOTICE` for the full attribution block.
+Source: mattpocock/skills (MIT) - adapted with permission. See `../NOTICE` for the full attribution block.
 
 # ADR Format
 
 An Architecture Decision Record (ADR) is a project-scoped record of a decision that
 outlives the current cycle. ADRs live at `docs/adr/NNNN-<slug>.md` (zero-padded sequence,
-kebab-case slug) and are offered SPARINGLY — only when all three criteria of the offer
+kebab-case slug) and are offered SPARINGLY - only when all three criteria of the offer
 gate hold (D-04). Most decisions stay in `STATE.md` and roll over with the cycle; ADRs
 are the rare exception. See `./context-md-format.md` for the lighter glossary form that
 shares the same project-scoped lifetime.
@@ -31,12 +31,12 @@ the decision in `STATE.md` instead.
   stated reasons. Decisions with no plausible alternative (e.g., "use HTTPS") do not
   qualify.
 
-Worked example — **qualifier:** "Switch from REST to GraphQL for the public API."
+Worked example - **qualifier:** "Switch from REST to GraphQL for the public API."
 Hard-to-reverse (clients integrate against the schema), surprising-without-context (most
 greenfield APIs default to REST), real-tradeoff (tRPC and gRPC were rejected for stated
 reasons). Ship an ADR.
 
-Worked example — **disqualifier:** "Rename the `users` table to `accounts`." Hard-to-reverse,
+Worked example - **disqualifier:** "Rename the `users` table to `accounts`." Hard-to-reverse,
 but the rationale is obvious from the rename and there is no real alternative once the
 domain has settled on the word. Log in `STATE.md`, not an ADR.
 
@@ -63,14 +63,14 @@ supersedes: <optional — ADR number this one replaces, e.g., "0042">
 ## Body structure
 
 The ADR body uses four `##` sections in the following order. Each section is a thin
-paragraph or short bullet list — ADRs are decision records, not design docs.
+paragraph or short bullet list - ADRs are decision records, not design docs.
 
-- `## Context` — what situation made this decision necessary; cite the originating
+- `## Context` - what situation made this decision necessary; cite the originating
   cycle's `BRIEF.md` or `STATE.md` if relevant.
-- `## Decision` — what was chosen, stated as an imperative.
-- `## Alternatives` — what was considered and rejected, with brief rationale per
+- `## Decision` - what was chosen, stated as an imperative.
+- `## Alternatives` - what was considered and rejected, with brief rationale per
   alternative.
-- `## Consequences` — what this enables, what it costs, what it constrains downstream.
+- `## Consequences` - what this enables, what it costs, what it constrains downstream.
 
 ## Status lifecycle
 
@@ -81,16 +81,16 @@ truth; transitions are explicit, never silent.
   does not cite Proposed ADRs.
 - **Accepted.** Decision active; downstream work cites this ADR by number.
 - **Superseded.** Replaced by a later ADR. The later ADR's `supersedes:` field points
-  here, and this ADR's status is flipped to Superseded. NEVER delete a Superseded ADR —
+  here, and this ADR's status is flipped to Superseded. NEVER delete a Superseded ADR -
   the audit trail is the point.
 - **Deprecated.** No longer relevant (e.g., the system the ADR governed was removed).
   Kept for history.
 
 ## Cross-references
 
-- Domain terms used in the ADR body should already appear in `CONTEXT.md` — see
+- Domain terms used in the ADR body should already appear in `CONTEXT.md` - see
   `./context-md-format.md`. If a term is missing, the writer adds it before referencing it.
-- Cycle-scoped decisions (most routine choices) stay in `STATE.md` — see
+- Cycle-scoped decisions (most routine choices) stay in `STATE.md` - see
   `./STATE-TEMPLATE.md`.
-- Skill structural rules (length cap, frontmatter, progressive disclosure) — see
+- Skill structural rules (length cap, frontmatter, progressive disclosure) - see
   `./skill-authoring-contract.md`.

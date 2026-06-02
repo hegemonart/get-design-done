@@ -1,4 +1,4 @@
-# Menu (Dropdown / Context Menu) — Benchmark Spec
+# Menu (Dropdown / Context Menu) - Benchmark Spec
 
 **Harvested from**: Radix UI, WAI-ARIA APG, Carbon, Atlassian, Material 3, Polaris
 **Wave**: 4 · **Category**: Navigation
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A menu presents a list of actions or options in a temporary overlay anchored to a trigger element. It differs from a Select/Combobox (which chooses a value) — a menu executes commands or navigates. Use a Dropdown Menu for trigger-button scenarios; use a Context Menu for right-click/long-press on an element. *(Radix DropdownMenu, Carbon OverflowMenu, Atlassian DropdownMenu, WAI-ARIA APG Menu agree: menus are action lists, not value selectors)*
+A menu presents a list of actions or options in a temporary overlay anchored to a trigger element. It differs from a Select/Combobox (which chooses a value) - a menu executes commands or navigates. Use a Dropdown Menu for trigger-button scenarios; use a Context Menu for right-click/long-press on an element. *(Radix DropdownMenu, Carbon OverflowMenu, Atlassian DropdownMenu, WAI-ARIA APG Menu agree: menus are action lists, not value selectors)*
 
 ---
 
@@ -29,7 +29,7 @@ A menu presents a list of actions or options in a temporary overlay anchored to 
 | Trigger | Yes | `<button>` with `aria-haspopup="menu"` + `aria-expanded` |
 | Menu container | Yes | `role="menu"` + `aria-labelledby` pointing to trigger |
 | Menu item | Yes | `role="menuitem"` on each action |
-| Separator | No | `role="separator"` — groups related items |
+| Separator | No | `role="separator"` - groups related items |
 | Checkbox item | No | `role="menuitemcheckbox"` + `aria-checked` |
 | Radio item | No | `role="menuitemradio"` + `aria-checked`; group in `role="group"` |
 | Sub-menu trigger | No | `role="menuitem"` + `aria-haspopup="menu"` + `aria-expanded` |
@@ -56,7 +56,7 @@ A menu presents a list of actions or options in a temporary overlay anchored to 
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| closed | — | Trigger visible; overlay hidden | `aria-expanded="false"` on trigger |
+| closed | - | Trigger visible; overlay hidden | `aria-expanded="false"` on trigger |
 | open | Click trigger | Overlay visible; first item focused | `aria-expanded="true"` on trigger |
 | item-hover / focus | Arrow keys or pointer | Item highlight (8% overlay) | `tabindex="-1"` managed via roving tabindex |
 | item-disabled | `disabled` prop | 38% opacity, cursor: default | `aria-disabled="true"` on item |
@@ -82,12 +82,12 @@ A menu presents a list of actions or options in a temporary overlay anchored to 
 
 ## Typography
 
-- Item label: body-sm (13–14px), weight 400 — not bold; action labels read as text, not controls
+- Item label: body-sm (13–14px), weight 400 - not bold; action labels read as text, not controls
 - Destructive items: same weight, color token `--color-text-danger`
 - Keyboard shortcut hints: body-xs (11–12px), muted color, right-aligned, `aria-hidden="true"`
 - Truncate item labels with `text-overflow: ellipsis`; never wrap item text
 
-Cross-link: `reference/typography.md` — body-sm scale
+Cross-link: `reference/typography.md` - body-sm scale
 
 ---
 
@@ -98,7 +98,7 @@ Cross-link: `reference/typography.md` — body-sm scale
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -115,14 +115,14 @@ Cross-link: `reference/typography.md` — body-sm scale
 
 ### Accessibility Rules
 
-- Menu MUST open on click only — never on hover for primary open (hover may preview sub-menus)
+- Menu MUST open on click only - never on hover for primary open (hover may preview sub-menus)
 - All items MUST be reachable by keyboard; no mouse-only items
 - Focus returns to the trigger element when the menu closes
-- Keyboard shortcut labels (e.g. "⌘K") are `aria-hidden="true"` — the shortcut must be registered separately
+- Keyboard shortcut labels (e.g. "⌘K") are `aria-hidden="true"` - the shortcut must be registered separately
 - `role="separator"` dividers are not focusable
 - Disabled items use `aria-disabled="true"` (keep focusable so AT users know the option exists)
 
-Cross-link: `reference/accessibility.md` — focus management, roving tabindex
+Cross-link: `reference/accessibility.md` - focus management, roving tabindex
 
 ---
 
@@ -135,9 +135,9 @@ Cross-link: `reference/accessibility.md` — focus management, roving tabindex
 | Item highlight | 80ms | ease-out | Background color transition only |
 | Sub-menu enter | 120ms | ease-out | Same as menu enter |
 
-**BAN**: `transition: all` on menu items — triggers layout thrash on width changes.
+**BAN**: `transition: all` on menu items - triggers layout thrash on width changes.
 
-Cross-link: `reference/motion.md` — overlay entry pattern, BAN-04
+Cross-link: `reference/motion.md` - overlay entry pattern, BAN-04
 
 ---
 
@@ -145,15 +145,15 @@ Cross-link: `reference/motion.md` — overlay entry pattern, BAN-04
 
 ### Do
 - Use `role="menu"` + `role="menuitem"` for all action menus *(WAI-ARIA APG)*
-- Group related items with `role="separator"` — keep groups ≤ 7 items *(Carbon, Atlassian)*
+- Group related items with `role="separator"` - keep groups ≤ 7 items *(Carbon, Atlassian)*
 - Return focus to the trigger on close *(WAI-ARIA APG)*
 - Use `role="menuitemcheckbox"` for persistent toggle states *(Radix, Material 3)*
 
 ### Don't
-- Don't open the menu on hover as the primary interaction — keyboard users can't discover hover *(WCAG 1.3.3)*
-- Don't exceed 2 levels of sub-menus — deeply nested menus are cognitively expensive *(Atlassian, Carbon)*
-- Don't put form controls (inputs, sliders) inside a menu — use a Popover instead *(WAI-ARIA APG)*
-- Don't use `<div>` items without `role="menuitem"` — invisible to screen readers *(WAI-ARIA)*
+- Don't open the menu on hover as the primary interaction - keyboard users can't discover hover *(WCAG 1.3.3)*
+- Don't exceed 2 levels of sub-menus - deeply nested menus are cognitively expensive *(Atlassian, Carbon)*
+- Don't put form controls (inputs, sliders) inside a menu - use a Popover instead *(WAI-ARIA APG)*
+- Don't use `<div>` items without `role="menuitem"` - invisible to screen readers *(WAI-ARIA)*
 
 ---
 
@@ -161,7 +161,7 @@ Cross-link: `reference/motion.md` — overlay entry pattern, BAN-04
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on interactive elements — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on interactive elements - `reference/anti-patterns.md#ban-04` |
 
 ---
 
@@ -207,6 +207,6 @@ grep -rn 'role="menu"' src/ | grep -v 'aria-labelledby\|aria-label'
 </div>
 ```
 
-**Why it fails**: No `role="menu"` or `role="menuitem"` — screen readers cannot announce this as a menu; items are not keyboard-navigable; no arrow-key navigation; trigger lacks `aria-haspopup` and `aria-expanded`.
+**Why it fails**: No `role="menu"` or `role="menuitem"` - screen readers cannot announce this as a menu; items are not keyboard-navigable; no arrow-key navigation; trigger lacks `aria-haspopup` and `aria-expanded`.
 **Grep detection**: `grep -rn '<div.*onclick\|<div.*onClick' src/ | grep -i 'menu\|dropdown'`
 **Fix**: Use `<ul role="menu">` with `<li role="menuitem" tabindex="-1">` items, or a headless menu primitive (Radix DropdownMenu, Downshift).

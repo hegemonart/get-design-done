@@ -6,11 +6,11 @@ user-invocable: true
 tools: Read, Bash, Grep, Write
 ---
 
-# {{command_prefix}}optimize — Optimization Advisor
+# {{command_prefix}}optimize - Optimization Advisor
 
 ## Role
 
-Read the telemetry ledger (`.design/telemetry/costs.jsonl`) and per-agent aggregate (`.design/agent-metrics.json`), apply a fixed set of rule-based heuristics, and emit recommendations to `.design/OPTIMIZE-RECOMMENDATIONS.md`. Never modify agent files, budget config, or cache state. Output is a markdown table of proposals the user reviews manually, mirroring Phase 11 `{{command_prefix}}apply-reflections`. **Advisory only**: never edits `agents/*.md`, `.design/budget.json`, `.design/cache-manifest.json`. Never makes model calls — every rule is deterministic. See `./reference/heuristics.md` §"Optimization rules" for the full rule catalog.
+Read the telemetry ledger (`.design/telemetry/costs.jsonl`) and per-agent aggregate (`.design/agent-metrics.json`), apply a fixed set of rule-based heuristics, and emit recommendations to `.design/OPTIMIZE-RECOMMENDATIONS.md`. Never modify agent files, budget config, or cache state. Output is a markdown table of proposals the user reviews manually, mirroring Phase 11 `{{command_prefix}}apply-reflections`. **Advisory only**: never edits `agents/*.md`, `.design/budget.json`, `.design/cache-manifest.json`. Never makes model calls - every rule is deterministic. See `./reference/heuristics.md` §"Optimization rules" for the full rule catalog.
 
 ## Refresh Step
 
@@ -24,24 +24,24 @@ Idempotent. If `--refresh` absent and `.design/agent-metrics.json` generated wit
 
 ## Inputs
 
-- `.design/telemetry/costs.jsonl` — append-only; tolerant of malformed lines.
-- `.design/agent-metrics.json` — per-agent aggregate; source of truth for `cache_hit_rate`, `lazy_skip_rate`, `total_cost_usd`, `total_spawns`.
-- `agents/*.md` — frontmatter cross-reference for tier override churn + typical-duration drift.
-- `.design/budget.json` — `tier_overrides` table (optional).
+- `.design/telemetry/costs.jsonl` - append-only; tolerant of malformed lines.
+- `.design/agent-metrics.json` - per-agent aggregate; source of truth for `cache_hit_rate`, `lazy_skip_rate`, `total_cost_usd`, `total_spawns`.
+- `agents/*.md` - frontmatter cross-reference for tier override churn + typical-duration drift.
+- `.design/budget.json` - `tier_overrides` table (optional).
 
 ## Optional Arguments
 
-- `--refresh` — force aggregator refresh even if metrics file is fresh.
-- `--min-spawns=N` — only emit recommendations for agents with ≥ N spawns (default 5).
+- `--refresh` - force aggregator refresh even if metrics file is fresh.
+- `--min-spawns=N` - only emit recommendations for agents with ≥ N spawns (default 5).
 
 ## Rules
 
 Rule-based analysis. Full thresholds + emission templates in `./reference/heuristics.md` §"Optimization rules"; here, the short rule catalog:
 
-- **R1 — Low cache hit rate.** IF `total_spawns >= --min-spawns` AND `cache_hit_rate < 0.20` → propose batching + investigate shared-preamble ordering.
-- **R2 — Expensive + rarely lazy-skipped.** IF `total_cost_usd > 0.50` AND `lazy_skip_rate < 0.10` → propose adding a lazy gate at `agents/{agent}-gate.md` (Plan 10.1-04 pattern).
-- **R3 — Tier override churn.** IF measured `tier` differs from frontmatter `default-tier` for multiple rows → propose updating frontmatter or removing budget.json override.
-- **R4 — Typical duration drift.** IF measured `typical_duration_seconds` differs from frontmatter by > 50% → propose frontmatter update. (v1 only computes wall-clock duration if both spawn + complete rows have matching correlation IDs; otherwise flag "insufficient data".)
+- **R1 - Low cache hit rate.** IF `total_spawns >= --min-spawns` AND `cache_hit_rate < 0.20` → propose batching + investigate shared-preamble ordering.
+- **R2 - Expensive + rarely lazy-skipped.** IF `total_cost_usd > 0.50` AND `lazy_skip_rate < 0.10` → propose adding a lazy gate at `agents/{agent}-gate.md` (Plan 10.1-04 pattern).
+- **R3 - Tier override churn.** IF measured `tier` differs from frontmatter `default-tier` for multiple rows → propose updating frontmatter or removing budget.json override.
+- **R4 - Typical duration drift.** IF measured `typical_duration_seconds` differs from frontmatter by > 50% → propose frontmatter update. (v1 only computes wall-clock duration if both spawn + complete rows have matching correlation IDs; otherwise flag "insufficient data".)
 
 ## Output Format
 
@@ -87,8 +87,8 @@ The Phase 11 reflector (`agents/design-reflector.md`) reads both `costs.jsonl` a
 
 - Does not make model calls (rule-based, deterministic).
 - Does not modify config.
-- Does not propose changes outside the four rules — future rules added by future phases.
-- Does not learn from history — Phase 11 reflector territory.
+- Does not propose changes outside the four rules - future rules added by future phases.
+- Does not learn from history - Phase 11 reflector territory.
 
 ## Failure Modes
 

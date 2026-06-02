@@ -1,11 +1,11 @@
-# Cline — Price Table (stub)
+# Cline - Price Table (stub)
 
 **Runtime:** `cline` (Cline)
-**Phase 26 D-08 sub-table — STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
+**Phase 26 D-08 sub-table - STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
 
-**Provenance:** `<TODO: confirm at https://docs.cline.bot>` — pending.
+**Provenance:** `<TODO: confirm at https://docs.cline.bot>` - pending.
 
-**Note:** Cline is a BYO-API-key runtime — actual pricing is determined by whichever provider key the user supplies. The `tier_to_model` row in `reference/runtime-models.md` chooses a default model per tier; this table prices that default. Users of other providers should override locally.
+**Note:** Cline is a BYO-API-key runtime - actual pricing is determined by whichever provider key the user supplies. The `tier_to_model` row in `reference/runtime-models.md` chooses a default model per tier; this table prices that default. Users of other providers should override locally.
 
 ## Pricing (USD per 1M tokens)
 

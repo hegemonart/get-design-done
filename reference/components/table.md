@@ -1,4 +1,4 @@
-# Table (Data Table / Data Grid) — Benchmark Spec
+# Table (Data Table / Data Grid) - Benchmark Spec
 
 **Harvested from**: Carbon DataTable, Polaris DataTable, Atlassian DynamicTable, Ant Design Table, UUPM (app-interface, MIT)
 **Wave**: 4 · **Category**: Navigation & Data
@@ -63,15 +63,15 @@ A data table presents structured, comparable information in rows and columns. It
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Alternating row colors or border separators | — |
-| row-hover | pointer over row | Subtle row highlight (4% overlay) | — |
+| default | - | Alternating row colors or border separators | - |
+| row-hover | pointer over row | Subtle row highlight (4% overlay) | - |
 | row-selected | checkbox checked | Row highlight; checkbox filled | `aria-selected="true"` on `<tr>` |
 | header-sort-asc | sort click | Arrow indicator up; column highlight | `aria-sort="ascending"` on `<th>` |
 | header-sort-desc | sort click again | Arrow indicator down | `aria-sort="descending"` on `<th>` |
 | header-sort-none | default or reset | No indicator | `aria-sort="none"` on sortable `<th>` |
-| header-focus | keyboard focus on sortable `<th>` | 2px focus-visible ring | — |
+| header-focus | keyboard focus on sortable `<th>` | 2px focus-visible ring | - |
 | loading | data fetch | Skeleton rows or spinner overlay | `aria-busy="true"` on table or container |
-| empty | no results | Empty state illustration + message | — |
+| empty | no results | Empty state illustration + message | - |
 
 ---
 
@@ -92,10 +92,10 @@ Virtualise rows when `rowCount > 200`; use TanStack Virtual or react-virtual.
 
 - Column header: body-sm or label-sm (12–13px), weight 600, `color: --text-secondary`
 - Cell text: body-sm (13–14px), weight 400
-- Numeric cells: `font-variant-numeric: tabular-nums` — column values align on decimal point
+- Numeric cells: `font-variant-numeric: tabular-nums` - column values align on decimal point
 - Truncation: `text-overflow: ellipsis` on cells with `max-width`; tooltip reveals full value on hover
 
-Cross-link: `reference/typography.md` — tabular-nums, body-sm
+Cross-link: `reference/typography.md` - tabular-nums, body-sm
 
 ---
 
@@ -106,7 +106,7 @@ Cross-link: `reference/typography.md` — tabular-nums, body-sm
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/grid/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/grid/ - W3C - 2024*
 
 | Key | Action (role="grid") |
 |-----|---------------------|
@@ -123,14 +123,14 @@ Cross-link: `reference/typography.md` — tabular-nums, body-sm
 
 ### Accessibility Rules
 
-- ALL `<th>` column headers MUST have `scope="col"` — missing scope breaks AT table navigation
+- ALL `<th>` column headers MUST have `scope="col"` - missing scope breaks AT table navigation
 - Sortable `<th>` elements MUST have `aria-sort` with value `ascending`, `descending`, or `none`
-- Selected rows MUST use `aria-selected="true"` on `<tr>` — CSS class alone is invisible to AT
+- Selected rows MUST use `aria-selected="true"` on `<tr>` - CSS class alone is invisible to AT
 - `<table>` MUST have a `<caption>` or `aria-label` to announce the table's purpose
 - The responsive scroll wrapper MUST have `tabindex="0"` so keyboard users can scroll horizontally
 - `role="grid"` enables cell-level arrow-key navigation; use only when cells contain interactive controls
 
-Cross-link: `reference/accessibility.md` — table semantics, grid pattern
+Cross-link: `reference/accessibility.md` - table semantics, grid pattern
 
 ---
 
@@ -144,25 +144,25 @@ Cross-link: `reference/accessibility.md` — table semantics, grid pattern
 | Expandable row open | 150ms | ease-out | Height expand |
 | Skeleton shimmer | 1500ms | linear loop | Loading placeholder |
 
-**BAN**: Do not animate `width` on table columns — causes full table relayout on every frame.
+**BAN**: Do not animate `width` on table columns - causes full table relayout on every frame.
 
-Cross-link: `reference/motion.md` — layout-affecting transitions, skeleton shimmer
+Cross-link: `reference/motion.md` - layout-affecting transitions, skeleton shimmer
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Add `scope="col"` to every `<th>` — screen readers use this to announce column context *(WAI-ARIA, Carbon)*
-- Use `aria-sort` on sortable headers — not just a visual arrow icon *(Carbon, Polaris, Atlassian)*
+- Add `scope="col"` to every `<th>` - screen readers use this to announce column context *(WAI-ARIA, Carbon)*
+- Use `aria-sort` on sortable headers - not just a visual arrow icon *(Carbon, Polaris, Atlassian)*
 - Use `tabindex="0"` on horizontal scroll wrapper for keyboard accessibility *(WCAG 2.1.1)*
-- Virtualise rows at > 200 items — prevents browser paint lag *(Carbon, Ant)*
+- Virtualise rows at > 200 items - prevents browser paint lag *(Carbon, Ant)*
 
 ### Don't
-- Don't build a "table" with `<div>` elements and no ARIA grid roles — invisible to AT *(WCAG 1.3.1)*
-- Don't use `aria-sort` on non-sortable columns — misleads users into clicking non-interactive headers *(WAI-ARIA)*
-- Don't place `overflow-x: auto` on `<table>` directly — wrap in a `<div>` with `tabindex="0"` *(WCAG 2.1.1)*
-- Don't use `display: contents` on `<thead>/<tbody>/<tr>` — breaks AT table parsing *(WCAG 1.3.1)*
+- Don't build a "table" with `<div>` elements and no ARIA grid roles - invisible to AT *(WCAG 1.3.1)*
+- Don't use `aria-sort` on non-sortable columns - misleads users into clicking non-interactive headers *(WAI-ARIA)*
+- Don't place `overflow-x: auto` on `<table>` directly - wrap in a `<div>` with `tabindex="0"` *(WCAG 2.1.1)*
+- Don't use `display: contents` on `<thead>/<tbody>/<tr>` - breaks AT table parsing *(WCAG 1.3.1)*
 
 ---
 
@@ -170,7 +170,7 @@ Cross-link: `reference/motion.md` — layout-affecting transitions, skeleton shi
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on table cells — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on table cells - `reference/anti-patterns.md#ban-04` |
 
 ---
 

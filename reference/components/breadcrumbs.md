@@ -1,4 +1,4 @@
-# Breadcrumbs — Benchmark Spec
+# Breadcrumbs - Benchmark Spec
 
 **Harvested from**: WAI-ARIA APG, Carbon, Polaris, Material 3, Atlassian
 **Wave**: 4 · **Category**: Navigation
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A breadcrumb trail shows a user's location within a hierarchical navigation structure, providing a supplemental path back to any ancestor page. It is not primary navigation — the current page is always the last item and is never a link. Breadcrumbs are most valuable in deep hierarchies (> 2 levels) and information-dense applications. *(WAI-ARIA APG breadcrumb pattern, Carbon, Polaris, Material 3, Atlassian all define breadcrumb as a supplemental location indicator)*
+A breadcrumb trail shows a user's location within a hierarchical navigation structure, providing a supplemental path back to any ancestor page. It is not primary navigation - the current page is always the last item and is never a link. Breadcrumbs are most valuable in deep hierarchies (> 2 levels) and information-dense applications. *(WAI-ARIA APG breadcrumb pattern, Carbon, Polaris, Material 3, Atlassian all define breadcrumb as a supplemental location indicator)*
 
 ---
 
@@ -26,7 +26,7 @@ A breadcrumb trail shows a user's location within a hierarchical navigation stru
 | Part | Required | Notes |
 |------|----------|-------|
 | `<nav>` container | Yes | `role="navigation"` + `aria-label="Breadcrumb"` |
-| `<ol>` list | Yes | Ordered list — sequence matters |
+| `<ol>` list | Yes | Ordered list - sequence matters |
 | `<li>` items | Yes | One per level in the path |
 | Ancestor links | Yes | `<a href>` pointing to each ancestor URL |
 | Current page | Yes | Plain text `<span>` (not a link) + `aria-current="page"` |
@@ -45,7 +45,7 @@ A breadcrumb trail shows a user's location within a hierarchical navigation stru
 | Large / heading-inline | Larger type, sits beside or below a page title | Polaris, Atlassian |
 
 **Norm** (≥4 systems agree): separator is `aria-hidden`; current page uses `aria-current="page"`; last item is never a link.
-**Diverge**: Polaris uses `>` as separator; Carbon uses `/`; Material 3 uses `›` (chevron). All are acceptable — choose to match your product's visual language.
+**Diverge**: Polaris uses `>` as separator; Carbon uses `/`; Material 3 uses `›` (chevron). All are acceptable - choose to match your product's visual language.
 
 ---
 
@@ -53,10 +53,10 @@ A breadcrumb trail shows a user's location within a hierarchical navigation stru
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Ancestor links + muted separator + current page text | — |
-| link-hover | pointer over ancestor | Underline or color shift | — |
-| link-focus | keyboard focus on ancestor | 2px focus-visible ring | — |
-| current | — | No underline; muted or bold treatment; not clickable | `aria-current="page"` |
+| default | - | Ancestor links + muted separator + current page text | - |
+| link-hover | pointer over ancestor | Underline or color shift | - |
+| link-focus | keyboard focus on ancestor | 2px focus-visible ring | - |
+| current | - | No underline; muted or bold treatment; not clickable | `aria-current="page"` |
 | truncated | path > 4 levels | Middle items hidden; "…" button shown | `aria-label="Show full path"` on ellipsis button |
 
 ---
@@ -80,9 +80,9 @@ A breadcrumb trail shows a user's location within a hierarchical navigation stru
 - Ancestor links: body-sm, weight 400, `color: --text-link`; underline on hover
 - Current page: body-sm, weight 500 or 600 (bold for emphasis), `color: --text-primary`; no underline
 - Separator: body-sm, `color: --text-subtle`, `aria-hidden="true"`
-- Do not use uppercase or letter-spacing on breadcrumb items — they should read as natural path segments
+- Do not use uppercase or letter-spacing on breadcrumb items - they should read as natural path segments
 
-Cross-link: `reference/typography.md` — body-sm, link color tokens
+Cross-link: `reference/typography.md` - body-sm, link color tokens
 
 ---
 
@@ -93,7 +93,7 @@ Cross-link: `reference/typography.md` — body-sm, link color tokens
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -103,13 +103,13 @@ Cross-link: `reference/typography.md` — body-sm, link color tokens
 
 ### Accessibility Rules
 
-- `aria-current="page"` MUST be on the last item (current page) — this is the primary AT signal
-- Separators MUST be `aria-hidden="true"` — screen readers should announce "Home, Products, Widget Pro" not "Home › Products › Widget Pro"
-- The current page item MUST NOT be a link — it is the user's current location
+- `aria-current="page"` MUST be on the last item (current page) - this is the primary AT signal
+- Separators MUST be `aria-hidden="true"` - screen readers should announce "Home, Products, Widget Pro" not "Home › Products › Widget Pro"
+- The current page item MUST NOT be a link - it is the user's current location
 - `<ol>` conveys that order matters; do not use `<ul>` or a `<div>` list
 - `aria-label="Breadcrumb"` distinguishes this nav from primary/secondary navigation landmarks
 
-Cross-link: `reference/accessibility.md` — aria-current, landmark labelling
+Cross-link: `reference/accessibility.md` - aria-current, landmark labelling
 
 ---
 
@@ -120,25 +120,25 @@ Cross-link: `reference/accessibility.md` — aria-current, landmark labelling
 | Ellipsis expand | 150ms | ease-out | Reveal hidden items inline |
 | Ellipsis collapse | 120ms | ease-in | Hide middle items |
 
-**BAN**: Do not animate the breadcrumb trail on route change — route transitions are the page's responsibility, not the breadcrumb's.
+**BAN**: Do not animate the breadcrumb trail on route change - route transitions are the page's responsibility, not the breadcrumb's.
 
-Cross-link: `reference/motion.md` — layout transitions
+Cross-link: `reference/motion.md` - layout transitions
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Use `<ol>` for the list — order is meaningful in a hierarchical path *(WAI-ARIA APG)*
-- Mark the current page with `aria-current="page"` — not just a CSS class *(WAI-ARIA APG, Atlassian)*
+- Use `<ol>` for the list - order is meaningful in a hierarchical path *(WAI-ARIA APG)*
+- Mark the current page with `aria-current="page"` - not just a CSS class *(WAI-ARIA APG, Atlassian)*
 - Hide separators with `aria-hidden="true"` *(WAI-ARIA APG, Carbon, Polaris)*
 - Truncate middle items (not first/last) when path exceeds 4 levels *(Carbon, Polaris, Atlassian)*
 
 ### Don't
-- Don't make the current page item a link — it creates a circular self-referential link *(WAI-ARIA APG)*
-- Don't include separator text inside link labels — `aria-hidden` the separator element, not the link *(WAI-ARIA APG)*
-- Don't use breadcrumbs as the only navigation method — they supplement; primary nav is required *(Material 3, Polaris)*
-- Don't truncate the root or current page items — users need anchoring context at both ends *(Carbon, Atlassian)*
+- Don't make the current page item a link - it creates a circular self-referential link *(WAI-ARIA APG)*
+- Don't include separator text inside link labels - `aria-hidden` the separator element, not the link *(WAI-ARIA APG)*
+- Don't use breadcrumbs as the only navigation method - they supplement; primary nav is required *(Material 3, Polaris)*
+- Don't truncate the root or current page items - users need anchoring context at both ends *(Carbon, Atlassian)*
 
 ---
 
@@ -146,7 +146,7 @@ Cross-link: `reference/motion.md` — layout transitions
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-07 | Missing `aria-current` on active navigation items — `reference/anti-patterns.md#ban-07` |
+| BAN-07 | Missing `aria-current` on active navigation items - `reference/anti-patterns.md#ban-07` |
 
 ---
 

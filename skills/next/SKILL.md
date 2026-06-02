@@ -5,7 +5,7 @@ tools: Read, Write, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list
 disable-model-invocation: true
 ---
 
-# Get Design Done — Next
+# Get Design Done - Next
 
 **Role:** Lightweight router. Read `.design/STATE.md` and recommend the next command.
 
@@ -13,7 +13,7 @@ disable-model-invocation: true
 
 ## Logic
 
-Two paths — MCP preferred when available, file-read fallback otherwise.
+Two paths - MCP preferred when available, file-read fallback otherwise.
 
 ### MCP path (preferred)
 
@@ -24,7 +24,7 @@ When `mcp__gdd_phase_current` is exposed (Phase 27.7+, registered via `npx @hege
 3. (Optional) Call `mcp__gdd_plans_list` (no args) → current phase plans + status, to identify the next incomplete plan and refine the recommendation.
 4. If `mcp__gdd_status` returns a "STATE.md missing" error, print: "No STATE.md found. Run `/gdd:new-project` to initialize, or `@get-design-done brief` to start the pipeline." and stop. Otherwise, skip to the routing table.
 
-Two to three MCP calls = full routing decision (~3s, ~32k tokens — Storybloq benchmark).
+Two to three MCP calls = full routing decision (~3s, ~32k tokens - Storybloq benchmark).
 
 ### File-read path (fallback)
 
@@ -34,7 +34,7 @@ When MCP tools are not available, fall back to the legacy flow:
    - **No STATE.md** → Print: "No STATE.md found. Run `/gdd:new-project` to initialize, or `@get-design-done brief` to start the pipeline."
 2. If STATE.md exists, parse frontmatter `stage:` field. Proceed to the routing table.
 
-This path loads the same context in 1–2 file reads (~20s, ~46.5k tokens — file-reading baseline).
+This path loads the same context in 1–2 file reads (~20s, ~46.5k tokens - file-reading baseline).
 
 ## Routing table
 
@@ -63,6 +63,6 @@ Status: <status>
 ## Do Not
 
 - Do not modify STATE.md.
-- Do not invoke the next stage automatically — only recommend.
+- Do not invoke the next stage automatically - only recommend.
 
 ## NEXT COMPLETE

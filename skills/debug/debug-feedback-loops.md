@@ -7,7 +7,7 @@ tags: [debug, feedback-loop, deterministic-signal, iterate-on-loop, mit-port, ma
 last_updated: 2026-05-18
 ---
 
-Source: mattpocock/skills (MIT) — engineering/diagnose Phase 1 — adapted with permission. See `../NOTICE` for the full attribution block.
+Source: mattpocock/skills (MIT) - engineering/diagnose Phase 1 - adapted with permission. See `../NOTICE` for the full attribution block.
 
 # Debug Feedback Loops
 
@@ -17,7 +17,7 @@ Build a feedback loop before any hypothesizing. A feedback loop is a determinist
 
 ## The 10 construction paths
 
-Listed in priority order — try the cheaper, faster paths first. Each entry: when to reach for it, the shape of the loop, and the verification snippet.
+Listed in priority order - try the cheaper, faster paths first. Each entry: when to reach for it, the shape of the loop, and the verification snippet.
 
 ### 1. Failing test
 
@@ -45,7 +45,7 @@ When to reach: the bug is visible only in a rendered browser context; DOM-level 
 
 ### 5. Trace replay
 
-For bugs reproducible from a captured execution trace, replay the trace deterministically. `rr` on Linux for native binaries, record-and-replay plugins for some browsers, Chrome DevTools recording for web, or a captured production trace for distributed systems. Replays are bit-for-bit reproducible — the gold standard for non-deterministic bugs that have been captured once.
+For bugs reproducible from a captured execution trace, replay the trace deterministically. `rr` on Linux for native binaries, record-and-replay plugins for some browsers, Chrome DevTools recording for web, or a captured production trace for distributed systems. Replays are bit-for-bit reproducible - the gold standard for non-deterministic bugs that have been captured once.
 
 When to reach: the bug is hard to reproduce live but you have a captured trace; the trace runtime is available; bit-identical replay is achievable.
 
@@ -75,7 +75,7 @@ When to reach: a known-good reference implementation exists; the buggy code is s
 
 ### 10. HITL bash (Human In The Loop)
 
-Last resort. A documented sequence of bash commands a human runs that produces a pass/fail signal. Slower (human in the path), but better than no loop. The agent reads stdout/stderr; the human reads the screen and reports. Use only when no automatable signal is available — physical hardware, vendor portals, manual eyeball checks.
+Last resort. A documented sequence of bash commands a human runs that produces a pass/fail signal. Slower (human in the path), but better than no loop. The agent reads stdout/stderr; the human reads the screen and reports. Use only when no automatable signal is available - physical hardware, vendor portals, manual eyeball checks.
 
 When to reach: every other path is blocked by an unautomatable surface; the human cost is acceptable for the duration of the investigation; the loop will be retired or upgraded the moment any earlier path becomes possible.
 
@@ -86,20 +86,20 @@ The loop is a first-class artifact. Iterate on it before iterating on hypotheses
 - **Cache setup**: hoist expensive setup (DB seed, fixture load, container start) out of the loop body. Run the loop only on the fast inner part. Use `--no-rebuild`, persistent containers, or test-runner watch modes.
 - **Narrow scope**: if the loop runs the full test suite to verify one bug, narrow to just the failing test/group. Fewer side-effects, faster iterations. `pytest -k`, `jest -t`, `vitest --testNamePattern`, `go test -run` are your friends.
 - **Pin time**: when the bug is time-dependent, freeze the clock (`sinon.useFakeTimers`, `jest.useFakeTimers`, `freezegun`, `time-machine`). Removes wallclock as a variable.
-- **Seed RNG**: every random source gets a fixed seed in the loop. `Math.random`, `crypto.randomBytes`, `random.seed(...)`, `rand::SeedableRng`. Determinism over coverage — the loop must be bit-identical given the same code state.
+- **Seed RNG**: every random source gets a fixed seed in the loop. `Math.random`, `crypto.randomBytes`, `random.seed(...)`, `rand::SeedableRng`. Determinism over coverage - the loop must be bit-identical given the same code state.
 - **Isolate filesystem**: run in a `tmpdir`; reset between iterations. Avoids "fixed on my machine" via stale state. Bind-mount or copy fixtures into the tmpdir per iteration.
 - **Freeze network**: mock or record/replay all outbound calls (`nock`, `vcr`, `polly.js`, `mitmproxy --replay`). Real-network loops are non-deterministic by definition.
 
-The discipline: every iteration of the loop should be bit-identical given the same code state. If two iterations differ without a code change, the loop has a hidden input — find it and pin it before continuing.
+The discipline: every iteration of the loop should be bit-identical given the same code state. If two iterations differ without a code change, the loop has a hidden input - find it and pin it before continuing.
 
 ## Non-deterministic bugs
 
-Some bugs surface only sometimes. The goal is NOT a clean repro — the goal is to raise the reproduction rate to debuggable.
+Some bugs surface only sometimes. The goal is NOT a clean repro - the goal is to raise the reproduction rate to debuggable.
 
 - **Measure baseline rate**: run the loop N=20 times. Note pass/fail count. Record the rate so you can tell whether later changes helped.
 - **Raise stressors**: add concurrency, contention, memory pressure, network jitter (use `tc qdisc add dev lo root netem delay 100ms 50ms` on Linux, `Network Link Conditioner` on macOS). Re-measure.
 - **Target the suspect axis**: if you suspect a race, add a deterministic sleep at the suspect point and measure. If reproduction jumps to 100% with sleep, the race is in that region. If it stays at baseline, the race is elsewhere.
-- **A 30% reproduction rate is debuggable.** A 5% rate isn't — keep raising stressors until you cross 30%. At 30% you can iterate; at 5% you're guessing whether your fix helped or you got lucky.
+- **A 30% reproduction rate is debuggable.** A 5% rate isn't - keep raising stressors until you cross 30%. At 30% you can iterate; at 5% you're guessing whether your fix helped or you got lucky.
 
 ## When the loop is good enough
 
@@ -107,13 +107,13 @@ The loop is good enough when:
 
 - It runs in under a minute (preferably under 10 seconds).
 - It's deterministic (or, for non-determinism, reproduces at least 30% of the time).
-- It's automatable — no human in the inner loop except by explicit choice (Path 10).
+- It's automatable - no human in the inner loop except by explicit choice (Path 10).
 - A fresh agent could pick up the loop and run it without context.
 
 Only after the loop is good enough should you proceed to hypothesizing the fix. The hypothesis cycle is governed by `./debugger-philosophy.md` (one variable at a time, do not stop at first plausible cause, the bug is where you didn't look).
 
 ## Cross-references
 
-- `./debugger-philosophy.md` — companion framing; the hypothesis-cycle discipline that runs in Phase 2 once the loop is in place.
-- `../skills/debug/SKILL.md` — Phase 1 of the debug skill mandates this catalog before any hypothesis generation.
-- `../NOTICE` — full mattpocock/skills MIT attribution.
+- `./debugger-philosophy.md` - companion framing; the hypothesis-cycle discipline that runs in Phase 2 once the loop is in place.
+- `../skills/debug/SKILL.md` - Phase 1 of the debug skill mandates this catalog before any hypothesis generation.
+- `../NOTICE` - full mattpocock/skills MIT attribution.

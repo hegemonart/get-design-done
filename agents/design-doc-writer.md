@@ -19,7 +19,7 @@ writes:
 
 # design-doc-writer
 
-Generates a per-component handoff spec at `.design/DESIGN-STYLE-[ComponentName].md`. This agent is stateless — zero session memory. One invocation = one component doc. It is the sole agent handling both post-pipeline and pre-pipeline modes, controlled by the `pipeline_complete` context field.
+Generates a per-component handoff spec at `.design/DESIGN-STYLE-[ComponentName].md`. This agent is stateless - zero session memory. One invocation = one component doc. It is the sole agent handling both post-pipeline and pre-pipeline modes, controlled by the `pipeline_complete` context field.
 
 This agent DOES NOT modify pipeline artifacts. DESIGN.md, DESIGN-SUMMARY.md, DESIGN-VERIFICATION.md, and DESIGN-CONTEXT.md are read-only from this agent's perspective.
 
@@ -38,13 +38,13 @@ This agent DOES NOT modify pipeline artifacts. DESIGN.md, DESIGN-SUMMARY.md, DES
 
 The orchestrating stage (style command) supplies a `<required_reading>` block in the prompt. Read every listed file before taking any action.
 
-**Post-pipeline mode (`pipeline_complete: true`) — stage supplies:**
+**Post-pipeline mode (`pipeline_complete: true`) - stage supplies:**
 - `.design/STATE.md`
 - `.design/DESIGN-SUMMARY.md`
 - `.design/DESIGN-CONTEXT.md`
 - `<component_source_path>` (the component source file)
 
-**Pre-pipeline mode (`pipeline_complete: false`) — stage supplies:**
+**Pre-pipeline mode (`pipeline_complete: false`) - stage supplies:**
 - `.design/DESIGN.md`
 - `<component_source_path>` (the component source file)
 - `reference/anti-patterns.md`
@@ -78,7 +78,7 @@ ls reference/components/<kebab-name>.md 2>/dev/null
 2. Pull the "Benchmark Citations" entry from the spec and include: `> Benchmarked against: [systems list]`
 3. Fill in project-specific values from DESIGN-CONTEXT.md on top of the scaffold (brand tokens, chosen variants, etc.)
 
-**If no spec exists**, generate the DESIGN-STYLE doc from scratch as before — no change to existing behaviour.
+**If no spec exists**, generate the DESIGN-STYLE doc from scratch as before - no change to existing behaviour.
 
 This step runs for both `pipeline_complete: true` and `pipeline_complete: false` modes.
 
@@ -86,7 +86,7 @@ This step runs for both `pipeline_complete: true` and `pipeline_complete: false`
 
 ## Work
 
-### Common Step 1 — Extract Design Tokens from Source File
+### Common Step 1 - Extract Design Tokens from Source File
 
 Read the file at `component_source_path`. Extract the following signals:
 
@@ -117,7 +117,7 @@ Count each category and record occurrences.
 
 ---
 
-### Common Step 2 — Compute Token Semantic Health Score
+### Common Step 2 - Compute Token Semantic Health Score
 
 Using counts from Step 1:
 
@@ -136,7 +136,7 @@ Record both the raw ratio value and the status label.
 
 ---
 
-### Common Step 3 — AI-Slop Detection
+### Common Step 3 - AI-Slop Detection
 
 Read `reference/anti-patterns.md`. Grep the component source file against BAN and SLOP patterns. For each match:
 
@@ -169,7 +169,7 @@ No decision annotations available in this mode.
 
 ---
 
-### Common Step 4 — Assemble and Write Output
+### Common Step 4 - Assemble and Write Output
 
 Assemble the output doc using all STYL-05 required sections. Write to `output_path`.
 
@@ -242,10 +242,10 @@ This agent MUST NOT:
 
 - MUST NOT modify `DESIGN.md`, `DESIGN-SUMMARY.md`, `DESIGN-VERIFICATION.md`, or `DESIGN-CONTEXT.md`
 - MUST NOT write to any pipeline-namespace artifact (anything in `.design/` with the `DESIGN-` prefix other than `DESIGN-STYLE-*.md`)
-- MUST NOT write to `.design/STATE.md` — this is a standalone command, not a pipeline stage
-- MUST NOT produce a flat single-file output — one doc per component, one file per invocation (per STYL-02)
-- MUST NOT invent token values absent from source — if the component uses hardcoded `#336699`, record the hex; do not fabricate a token name for it
-- MUST NOT batch multiple components in one invocation — the style command spawns one agent per component
+- MUST NOT write to `.design/STATE.md` - this is a standalone command, not a pipeline stage
+- MUST NOT produce a flat single-file output - one doc per component, one file per invocation (per STYL-02)
+- MUST NOT invent token values absent from source - if the component uses hardcoded `#336699`, record the hex; do not fabricate a token name for it
+- MUST NOT batch multiple components in one invocation - the style command spawns one agent per component
 
 ---
 

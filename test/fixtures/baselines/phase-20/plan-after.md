@@ -6,7 +6,7 @@ user-invocable: true
 tools: Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections
 ---
 
-# Get Design Done — Plan
+# Get Design Done - Plan
 
 **Stage 3 of 5** in the get-design-done pipeline. Thin orchestrator. All planning intelligence lives in `agents/design-planner.md`.
 
@@ -18,7 +18,7 @@ Full procedure detail: `./plan-procedure.md`.
 
 1. `mcp__gdd_state__transition_stage` with `to: "plan"`. Gate failure surfaces `error.context.blockers`; do not advance.
 2. `mcp__gdd_state__get` -> snapshot `state` for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>`. Do not re-read STATE.md directly.
-3. Abort only if `.design/DESIGN-CONTEXT.md` is missing — that is the true prerequisite, not STATE.md.
+3. Abort only if `.design/DESIGN-CONTEXT.md` is missing - that is the true prerequisite, not STATE.md.
 
 ---
 
@@ -36,19 +36,19 @@ When `chromatic: available`, run change-risk scoping before writing DESIGN-PLAN.
 
 ---
 
-## Step 1 — Optional Research (skip if `auto_mode`)
+## Step 1 - Optional Research (skip if `auto_mode`)
 
 Complexity heuristic: DESIGN-CONTEXT.md `<domain>` spans 3+ scopes OR `<decisions>` count > 6 -> spawn `design-phase-researcher` -> `.design/DESIGN-RESEARCH.md` (~100 lines, ~2 min). Wait for `## RESEARCH COMPLETE`, then `update_progress` `task_progress: "1/3"`. Full prompt: `./plan-procedure.md` §Step 1.
 
-## Step 1.5 — Pattern Mapping (mandatory, brownfield protection)
+## Step 1.5 - Pattern Mapping (mandatory, brownfield protection)
 
-Spawn `design-pattern-mapper` -> `.design/DESIGN-PATTERNS.md` (classify by design concern, not by code architecture — no controllers/services/middleware vocabulary). Wait for `## MAPPING COMPLETE`. Full prompt: `./plan-procedure.md` §Step 1.5.
+Spawn `design-pattern-mapper` -> `.design/DESIGN-PATTERNS.md` (classify by design concern, not by code architecture - no controllers/services/middleware vocabulary). Wait for `## MAPPING COMPLETE`. Full prompt: `./plan-procedure.md` §Step 1.5.
 
-## Step 1.6 — Assumptions Analysis (skip if `auto_mode`)
+## Step 1.6 - Assumptions Analysis (skip if `auto_mode`)
 
 If assumptions analysis is enabled: spawn `design-assumptions-analyzer` -> surfaces hidden design assumptions with confidence + evidence. Wait for `## ANALYSIS COMPLETE`. Full prompt: `./plan-procedure.md` §Step 1.6.
 
-## Step 1.7 — Synthesize pre-plan inputs (Plan 10.1-04, D-13/D-15)
+## Step 1.7 - Synthesize pre-plan inputs (Plan 10.1-04, D-13/D-15)
 
 If 2+ pre-plan agents ran (Step 1, 1.5, 1.6), invoke `Skill("synthesize", { outputs, directive, output_shape: "markdown" })` to merge their outputs into `.design/DESIGN-PREPLAN-BRIEF.md` (~150 lines, per-source headers preserved). Add the brief to the planner's `<required_reading>` in Step 2. If only one agent ran, skip. Full call signature + parallel-synthesizer note: `./plan-procedure.md` §Step 1.7.
 
@@ -56,11 +56,11 @@ If 2+ pre-plan agents ran (Step 1, 1.5, 1.6), invoke `Skill("synthesize", { outp
 
 ---
 
-## Step 2 — Plan
+## Step 2 - Plan
 
 Spawn `design-planner` with `<required_reading>` covering STATE.md, DESIGN-CONTEXT.md, DESIGN-PATTERNS.md, plus (conditionally) DESIGN-RESEARCH.md, DESIGN-ASSUMPTIONS.md, DESIGN-PREPLAN-BRIEF.md (preferred when 1.7 ran), all `.design/sketches/*/WINNER.md`, all `.design/spikes/*/FINDINGS.md`, and all `./.claude/skills/design-*-conventions.md` + `~/.claude/gdd/global-skills/*.md` (project-local D-XX overrides globals). Wait for `## PLANNING COMPLETE`, then `update_progress` `task_progress: "2/3"`. Full prompt + conditional include syntax: `./plan-procedure.md` §Step 2.
 
-## Step 3 — Check
+## Step 3 - Check
 
 Spawn `design-plan-checker` to validate DESIGN-PLAN.md against DESIGN-CONTEXT.md across 5 dimensions: requirement coverage, task completeness, wave ordering, must-have derivation, auto-mode compliance. Wait for `## PLAN CHECK COMPLETE`, then `update_progress` `task_progress: "3/3"`. On `## PLAN CHECK RESULT: ISSUES FOUND` + BLOCKER: offer revise/accept/abort (`auto_mode`: auto-accept WARN, abort on BLOCKER). Full prompt + branching: `./plan-procedure.md` §Step 3.
 
@@ -69,9 +69,9 @@ Spawn `design-plan-checker` to validate DESIGN-PLAN.md against DESIGN-CONTEXT.md
 ## Stage exit
 
 1. `mcp__gdd_state__set_status` -> `"plan_complete"`.
-2. `mcp__gdd_state__checkpoint` — stamps `last_checkpoint` and finalizes the plan stage.
+2. `mcp__gdd_state__checkpoint` - stamps `last_checkpoint` and finalizes the plan stage.
 
-The next stage (design) calls `mcp__gdd_state__transition_stage` on entry — this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline.
+The next stage (design) calls `mcp__gdd_state__transition_stage` on entry - this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline.
 
 ## After Completion
 
@@ -89,7 +89,7 @@ Run this final spec-quality pass over `.design/DESIGN-PLAN.md` before the plan�
 Do NOT transition to design (or invoke `/gdd:design`) until `.design/DESIGN-PLAN.md` is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>
 
-## Rationalizations — Thought to Reality
+## Rationalizations - Thought to Reality
 
 The reasons an agent gives to skip planning or rush DESIGN-PLAN.md, and what each one costs:
 
@@ -98,7 +98,7 @@ The reasons an agent gives to skip planning or rush DESIGN-PLAN.md, and what eac
 | "This change is small, I can design straight from DESIGN-CONTEXT.md." | Plan-skipped tasks blow scope per cycle telemetry; the plan gate is for the typical case, not the exception you think you're in. |
 | "Pattern mapping is brownfield ceremony, I'll skip it." | Step 1.5 is mandatory because an unmapped brownfield is where the executor silently re-implements an existing pattern. |
 | "The plan-checker will just rubber-stamp it, skip the spawn." | The checker's 5 dimensions (coverage, wave order, must-have derivation) catch the gaps you can't see in your own plan. |
-| "I'll let the planner infer wave ordering at design time." | Unordered waves serialize work that could parallelize — or worse, run dependent tasks concurrently and corrupt the tree. |
+| "I'll let the planner infer wave ordering at design time." | Unordered waves serialize work that could parallelize - or worse, run dependent tasks concurrently and corrupt the tree. |
 | "Research is overkill for this scope." | The complexity heuristic exists precisely because agents under-estimate scope; skipping research on a 3+-scope domain guarantees a mid-design surprise. |
 | "I can record decisions in DESIGN-PLAN.md prose instead of D-XX." | Prose decisions never reach STATE.md, so verify's integration-checker can't trace them and flags them orphaned. |
 

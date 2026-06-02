@@ -5,9 +5,9 @@ argument-hint: "[topic] [--variants N] [--quick]"
 tools: Read, Write, AskUserQuestion, Bash
 ---
 
-# Get Design Done — Sketch
+# Get Design Done - Sketch
 
-**Role:** Multi-variant HTML exploration. Answers "what could this look like?" by generating N standalone HTML variants from a topic prompt. Variants are browser-openable directly — no build step — and can be screenshot by Phase 8 Preview/Playwright tooling later.
+**Role:** Multi-variant HTML exploration. Answers "what could this look like?" by generating N standalone HTML variants from a topic prompt. Variants are browser-openable directly - no build step - and can be screenshot by Phase 8 Preview/Playwright tooling later.
 
 Unlike `{{command_prefix}}spike` (which tests feasibility), `{{command_prefix}}sketch` explores visual/directional variants.
 
@@ -18,7 +18,7 @@ Parse `$ARGUMENTS`:
 - `--variants N` → number of variants (default: 3)
 - `--quick` → skip intake, use DESIGN-CONTEXT.md tokens + sensible defaults
 
-## Step 1 — Intake (unless `--quick`)
+## Step 1 - Intake (unless `--quick`)
 
 AskUserQuestion, one at a time:
 1. "What are you sketching? (component, layout, page)"
@@ -27,12 +27,12 @@ AskUserQuestion, one at a time:
 
 If `--quick`: derive directions from topic + pull tokens from `.design/DESIGN-CONTEXT.md` if present, else defaults.
 
-## Step 2 — Create sketch directory
+## Step 2 - Create sketch directory
 
 - Derive `<slug>` from the topic (kebab-case).
 - `mkdir -p .design/sketches/<slug>/` via Bash.
 
-## Step 3 — Write INTAKE.md
+## Step 3 - Write INTAKE.md
 
 Write `.design/sketches/<slug>/INTAKE.md` with:
 - Topic
@@ -40,20 +40,20 @@ Write `.design/sketches/<slug>/INTAKE.md` with:
 - Token references (link to DESIGN-CONTEXT.md or inline list)
 - Timestamp
 
-## Step 4 — Generate N standalone HTML variants
+## Step 4 - Generate N standalone HTML variants
 
 For each of N variants (default 3), write `variant-<n>.html` as a **complete standalone HTML file**:
 - `<!DOCTYPE html>` + `<html>` + `<head>` + `<body>`
 - `<style>` block inline with CSS custom properties for tokens (`--color-*`, `--space-*`, `--font-*`)
 - Semantic HTML5 (`<header>`, `<main>`, `<nav>`, `<section>`, etc.)
-- No imports, no bundler, no JS framework — opens in a browser directly via `file://`
+- No imports, no bundler, no JS framework - opens in a browser directly via `file://`
 - Each variant explores a different direction from intake
 
-## Step 5 — Write README.md
+## Step 5 - Write README.md
 
 Write `.design/sketches/<slug>/README.md` with:
 - Topic + one-line summary
-- List of variants: `variant-1.html` — direction label — one-line description
+- List of variants: `variant-1.html` - direction label - one-line description
 - How to view: "Open each `variant-*.html` in a browser."
 - Next step: "Run `{{command_prefix}}sketch-wrap-up <slug>` when ready to pick a winner."
 
@@ -71,7 +71,7 @@ Next: {{command_prefix}}sketch-wrap-up <slug>
 
 ## Do Not
 
-- Do not write to `src/` — sketches live in `.design/sketches/` only.
+- Do not write to `src/` - sketches live in `.design/sketches/` only.
 - Do not use build-step syntax (JSX, TS, imports). Standalone HTML only.
 - Do not overwrite an existing sketch slug without asking.
 

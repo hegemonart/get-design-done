@@ -7,17 +7,17 @@ tags: [darkmode, dark-mode, contrast, audit, procedure, extracted]
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/darkmode/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
-The skill's load-bearing routing + decision tree stays in `../skills/darkmode/SKILL.md`; this
+Source: extracted from `skills/darkmode/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+The skill's essential routing + decision tree stays in `../skills/darkmode/SKILL.md`; this
 file holds the architecture-detection greps, contrast computation, anti-pattern grep
 snippets, and the `DARKMODE-AUDIT.md` report template.
 
 # Dark Mode Audit Procedure
 
-Detailed procedure for the `gdd-darkmode` standalone audit — companion to
+Detailed procedure for the `gdd-darkmode` standalone audit - companion to
 `../skills/darkmode/SKILL.md`. Read this file when executing a specific audit step
 (architecture detection, contrast computation, anti-pattern grep, report layout). The
-SKILL.md keeps the load-bearing pre-flight + step routing; this file holds the deep
+SKILL.md keeps the essential pre-flight + step routing; this file holds the deep
 methodology.
 
 For the perceptual layer (APCA / WCAG 3 draft) sitting on top of the WCAG 2.1 ratios used
@@ -50,7 +50,7 @@ arch3_count=$(grep -rEn "classList.*dark|setAttribute.*dark|document\.documentEl
 
 | Condition | Classification |
 |-----------|---------------|
-| All three counts < 3 | No dark mode — abort: "No dark mode implementation detected — nothing to audit." |
+| All three counts < 3 | No dark mode - abort: "No dark mode implementation detected - nothing to audit." |
 | Exactly one count ≥ 3 | Primary architecture = that one |
 | Two or more counts ≥ 5 | Hybrid (list all detected architectures) |
 | One count ≥ 3, others < 5 | Primary = highest count |
@@ -87,7 +87,7 @@ grep -rEn "\.dark[[:space:]]*\{" "$SRC_ROOT" \
 
 **WCAG contrast computation:**
 
-Use the linearized-sRGB formula from `agents/design-executor.md` Type: accessibility (pre-calibrated — do not re-derive):
+Use the linearized-sRGB formula from `agents/design-executor.md` Type: accessibility (pre-calibrated - do not re-derive):
 
 1. Convert each hex channel to linear light: `c_lin = (c/255 ≤ 0.04045) ? c/255/12.92 : ((c/255 + 0.055)/1.055)^2.4`
 2. Relative luminance: `L = 0.2126 * R_lin + 0.7152 * G_lin + 0.0722 * B_lin`
@@ -255,4 +255,4 @@ If a priority bucket has no issues, omit that section or write "None."
 
 ---
 
-*Imported by: `../skills/darkmode/SKILL.md`. Maintained as part of Phase 28.5 (Bucket 2 rework — D-10).*
+*Imported by: `../skills/darkmode/SKILL.md`. Maintained as part of Phase 28.5 (Bucket 2 rework - D-10).*

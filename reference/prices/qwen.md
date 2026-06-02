@@ -1,9 +1,9 @@
-# Alibaba — Qwen CLI Price Table
+# Alibaba - Qwen CLI Price Table
 
 **Runtime:** `qwen` (Alibaba Qwen CLI)
 **Phase 26 D-08 sub-table.** Pricing for the Qwen 3 tier referenced in `reference/runtime-models.md` under `id: "qwen"`.
 
-**Provenance:** `<TODO: confirm at https://www.alibabacloud.com/help/en/model-studio/billing-for-models>` — retrieved 2026-04-29 (placeholder — v1.26.0 ships with seed numbers; runtime adapter authors confirm and PR before v1.27).
+**Provenance:** `<TODO: confirm at https://www.alibabacloud.com/help/en/model-studio/billing-for-models>` - retrieved 2026-04-29 (placeholder - v1.26.0 ships with seed numbers; runtime adapter authors confirm and PR before v1.27).
 
 **Status:** placeholder values reflect public Model Studio tier positioning at v1.26.0 ship time. Cost-aggregator will surface drift if measured spend deviates from these figures by more than 20% after 10+ cycles.
 

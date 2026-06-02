@@ -6,7 +6,7 @@ user-invocable: true
 tools: mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_must_have, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections
 ---
 
-# Get Design Done — Verify
+# Get Design Done - Verify
 
 **Stage 5 of 5** in the get-design-done pipeline. Thin orchestrator. Verification intelligence lives in three agents: design-auditor, design-verifier, and design-integration-checker.
 
@@ -17,14 +17,14 @@ Full procedure detail: `./verify-procedure.md`.
 ## State Integration
 
 1. `mcp__gdd_state__transition_stage` with `to: "verify"`; on gate failure surface `error.context.blockers` to the user without advancing.
-2. `mcp__gdd_state__get` -> snapshot `state`. Read `state.must_haves` (verification checklist — each M-XX flips to `pass` or `fail`).
-3. **Quality-gate gate (D-08, D-09)** — inspect `state.quality_gate?.run?.status`:
+2. `mcp__gdd_state__get` -> snapshot `state`. Read `state.must_haves` (verification checklist - each M-XX flips to `pass` or `fail`).
+3. **Quality-gate gate (D-08, D-09)** - inspect `state.quality_gate?.run?.status`:
    - `"fail"` -> refuse to advance; call `mcp__gdd_state__add_blocker` with the iteration count + `commands_run`; exit. Do NOT open the stage.
    - `"timeout"` / `"skipped"` -> print one-line warning naming the status + `commands_run`, continue normally (signals, not walls).
    - `"pass"` / `null` -> continue silently.
    Full decision tree: `./verify-procedure.md` §Quality-gate gate.
-4. Resume detection — if `state.position.status==in_progress` and `.design/DESIGN-VERIFICATION.md` exists: RESUME to Step 2 (gap-response loop). Otherwise call `mcp__gdd_state__update_progress` with `task_progress: "0/3"`, `status: "in_progress"` and proceed.
-5. Missing STATE.md is a hard block — verify is never the entry point; upstream stages own bootstrap.
+4. Resume detection - if `state.position.status==in_progress` and `.design/DESIGN-VERIFICATION.md` exists: RESUME to Step 2 (gap-response loop). Otherwise call `mcp__gdd_state__update_progress` with `task_progress: "0/3"`, `status: "in_progress"` and proceed.
+5. Missing STATE.md is a hard block - verify is never the entry point; upstream stages own bootstrap.
 
 **Flipping a must-have status:** `mcp__gdd_state__add_must_have` with the SAME `id` updates in-place (no separate update tool). Detail: `./verify-procedure.md` §Flipping a must-have status.
 
@@ -45,7 +45,7 @@ Run preview / storybook / chromatic probes at stage entry, then issue ONE batche
 
 ---
 
-## Step 1 — Spawn Auditor + Verifier + Integration Checker
+## Step 1 - Spawn Auditor + Verifier + Integration Checker
 
 Initialize the fix-loop iteration counter to 0. Each full checker is preceded by a cheap Haiku gate that may return `{spawn: false}` to short-circuit (lazy-gate pattern from Plan 10.1-04 / D-21); skipped agents append `lazy_skipped: true` to `.design/telemetry/costs.jsonl`.
 
@@ -59,7 +59,7 @@ Full agent prompts, lazy-gate decision logic, and telemetry-row shapes: `./verif
 
 ---
 
-## Step 2 — Interpret Result
+## Step 2 - Interpret Result
 
 Consolidate gaps from both sources: verifier `## GAPS FOUND` (G-NN entries) and integration-checker (Orphaned -> MAJOR, Missing -> BLOCKER).
 
@@ -71,7 +71,7 @@ Detail: `./verify-procedure.md` §Step 2.
 
 ---
 
-## Step 3 — Gap Response Loop
+## Step 3 - Gap Response Loop
 
 Present the gap summary + 3-option menu (`[1] Fix now`, `[2] Save and exit`, `[3] Accept as-is`).
 
@@ -87,7 +87,7 @@ Full prompts + branching: `./verify-procedure.md` §Step 3.
 
 1. `mcp__gdd_state__update_progress` -> `task_progress: "<verified>/<total>"`, `status: "verify_complete"`.
 2. `mcp__gdd_state__set_status` -> `"pipeline_complete"` (all pass, no gaps) or `"verify_failed_requires_loop"` (gaps remain).
-3. `mcp__gdd_state__checkpoint` — stamps `last_checkpoint` and appends `verify_completed_at`. No direct STATE.md writes.
+3. `mcp__gdd_state__checkpoint` - stamps `last_checkpoint` and appends `verify_completed_at`. No direct STATE.md writes.
 
 ## After Completion
 
@@ -97,17 +97,17 @@ Print the `=== Verify complete ===` summary (status, gap counts, agent paths, ne
 Do NOT mark the cycle complete until the user has reviewed `.design/DESIGN-VERIFICATION.md`. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>
 
-## Rationalizations — Thought to Reality
+## Rationalizations - Thought to Reality
 
 The reasons an agent gives to skip or weaken verification, and what each one lets through:
 
 | Thought | Reality |
 |---------|---------|
 | "The implementation looks right, I can skip the verifier spawn." | Skipping verification ships unchecked must-haves; the 5-phase verifier exists to catch what "looks right" misses. |
-| "The integration-checker is redundant with the auditor." | The auditor scores quality; the integration-checker proves each D-XX is actually wired — an orphaned decision passes the audit but fails the product. |
+| "The integration-checker is redundant with the auditor." | The auditor scores quality; the integration-checker proves each D-XX is actually wired - an orphaned decision passes the audit but fails the product. |
 | "These gaps are minor, I'll accept-as-is without a blocker." | Accept-as-is without recording the unresolved gaps erases the trail; the next cycle re-discovers them from scratch. |
-| "The quality gate timed out, I'll treat that as a pass." | Timeout is a signal, not a pass — masking it lets a genuinely failing gate slip through to ship. |
-| "I'll loop the fixer a fourth time to clear the last gap." | The 3-iteration cap exists because a gap surviving three fixes is a design problem, not a code problem — save and escalate. |
+| "The quality gate timed out, I'll treat that as a pass." | Timeout is a signal, not a pass - masking it lets a genuinely failing gate slip through to ship. |
+| "I'll loop the fixer a fourth time to clear the last gap." | The 3-iteration cap exists because a gap surviving three fixes is a design problem, not a code problem - save and escalate. |
 | "Post-handoff bundles don't need the faithfulness check." | Skipping the handoff-faithfulness section means a divergence from the source design ships unflagged. |
 
 ## VERIFY COMPLETE

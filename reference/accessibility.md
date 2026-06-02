@@ -1,10 +1,10 @@
-# Accessibility — Thresholds and Requirements
+# Accessibility - Thresholds and Requirements
 
 These are concrete, measurable standards. WCAG 2.1 AA is the minimum baseline for all design work unless the client explicitly requires AAA or specifies otherwise.
 
 ---
 
-## WCAG 2.1 AA — Required Thresholds
+## WCAG 2.1 AA - Required Thresholds
 
 ### Color Contrast
 
@@ -12,20 +12,20 @@ These are concrete, measurable standards. WCAG 2.1 AA is the minimum baseline fo
 |---|---|---|
 | Normal text (< 18pt / < 14pt bold) | **4.5 : 1** | 7 : 1 |
 | Large text (≥ 18pt or ≥ 14pt bold) | **3 : 1** | 4.5 : 1 |
-| UI components and graphical objects | **3 : 1** | — |
-| Decorative elements | No requirement | — |
+| UI components and graphical objects | **3 : 1** | - |
+| Decorative elements | No requirement | - |
 
 **Calculate contrast**: `(L1 + 0.05) / (L2 + 0.05)` where L1 is the lighter luminance.
 
 Common pitfalls:
-- Placeholder text in inputs: must meet 4.5:1 (often doesn't — gray placeholders fail)
+- Placeholder text in inputs: must meet 4.5:1 (often doesn't - gray placeholders fail)
 - Disabled state text: WCAG exempts disabled elements, but aim for ≥ 3:1 anyway
 - Link color vs body text: must be distinguishable by more than color alone (underline or 3:1 ratio vs background)
 - Focus ring color vs its background: must meet 3:1
 
 Tools: Use browser DevTools > Accessibility tab, or pass hex values through contrast calculation.
 
-**See also:** [`./contrast-advanced.md`](./contrast-advanced.md) — APCA (WCAG 3 draft) for perceptual contrast when WCAG 2.1 4.5:1 misranks thin/large/colored text. Recommended dual-target pattern: enforce WCAG 2.1 AA as a floor + APCA Lc-thresholds (75 / 60 / 45 / 30) for perceptual accuracy.
+**See also:** [`./contrast-advanced.md`](./contrast-advanced.md) - APCA (WCAG 3 draft) for perceptual contrast when WCAG 2.1 4.5:1 misranks thin/large/colored text. Recommended dual-target pattern: enforce WCAG 2.1 AA as a floor + APCA Lc-thresholds (75 / 60 / 45 / 30) for perceptual accuracy.
 
 ### Touch Target Size
 
@@ -34,7 +34,7 @@ Tools: Use browser DevTools > Accessibility tab, or pass hex values through cont
 | iOS (Apple HIG) | **44 × 44 pt** |
 | Android (Material Design) | **48 × 48 dp** |
 | Web (WCAG 2.5.5 AAA) | **44 × 44 px** |
-| Web (WCAG 2.5.8 AA — WCAG 2.2) | **24 × 24 px** (minimum, with spacing) |
+| Web (WCAG 2.5.8 AA - WCAG 2.2) | **24 × 24 px** (minimum, with spacing) |
 
 Recommended target: 44 × 44 px on all platforms. Never smaller for primary actions.
 
@@ -49,7 +49,7 @@ hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
 
 All interactive elements must have a visible focus indicator.
 
-**Required for WCAG 2.4.11 (AA — WCAG 2.2):**
+**Required for WCAG 2.4.11 (AA - WCAG 2.2):**
 - Focus indicator at minimum: **2px solid** outline, encloses the component
 - Contrast between focused and unfocused: **3:1**
 - Focus indicator doesn't overlap component content
@@ -71,13 +71,13 @@ Recommended focus ring: **3px solid**, `2px offset`, brand primary or `#2563eb`.
 
 ### Semantic Structure
 
-- One `<h1>` per page. Headings are sequential: `h1` → `h2` → `h3` — never skip levels.
-- Interactive elements are focusable: use `<button>` for buttons, `<a href>` for links — never `<div onClick>`.
-- Form inputs have associated `<label for="id">` — not just placeholder text.
+- One `<h1>` per page. Headings are sequential: `h1` → `h2` → `h3` - never skip levels.
+- Interactive elements are focusable: use `<button>` for buttons, `<a href>` for links - never `<div onClick>`.
+- Form inputs have associated `<label for="id">` - not just placeholder text.
 - Images have descriptive `alt=""` for meaningful images; `alt=""` for decorative.
 - Icon-only buttons have `aria-label`: `<button aria-label="Close dialog">×</button>`.
 
-**See:** [`./i18n.md`](./i18n.md) §WCAG i18n for SC 3.1.1 (`<html lang>`) and SC 3.1.2 (`<span lang="…">` language-of-parts) patterns — screen readers select voice/pronunciation packs from these attributes; a missing or wrong `lang` value forces the user to hear French announced in an English accent.
+**See:** [`./i18n.md`](./i18n.md) §WCAG i18n for SC 3.1.1 (`<html lang>`) and SC 3.1.2 (`<span lang="…">` language-of-parts) patterns - screen readers select voice/pronunciation packs from these attributes; a missing or wrong `lang` value forces the user to hear French announced in an English accent.
 
 ### Color Must Not Be The Only Differentiator
 
@@ -154,7 +154,7 @@ font-size: 16px;
 
 All animations must respect `prefers-reduced-motion: reduce`. See `reference/motion.md`.
 
-The `prefers-reduced-motion` check is an accessibility requirement (WCAG 2.3.3 AAA; WCAG 2.2 reduces to recommendation — but implement it regardless).
+The `prefers-reduced-motion` check is an accessibility requirement (WCAG 2.3.3 AAA; WCAG 2.2 reduces to recommendation - but implement it regardless).
 
 ---
 

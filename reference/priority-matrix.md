@@ -1,4 +1,4 @@
-# Priority Matrix — 10 Categories, CRITICAL → LOW
+# Priority Matrix - 10 Categories, CRITICAL → LOW
 
 Adapted from `ui-ux-pro-max`. Use this to rank findings when auditing, critiquing, or deciding fix order.
 
@@ -27,5 +27,5 @@ Adapted from `ui-ux-pro-max`. Use this to rank findings when auditing, critiquin
 1. Run the discover stage audit or a manual grep pass using `reference/anti-patterns.md` patterns.
 2. For each finding, assign a category (1–10) from above.
 3. Sort by severity descending.
-4. Fix P0s before shipping — never ship with one open.
+4. Fix P0s before shipping - never ship with one open.
 5. Map each P0/P1 to a task type in the Design stage: color findings → `color` task, typography → `typography` task, accessibility → `accessibility` task.

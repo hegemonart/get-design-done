@@ -16,8 +16,8 @@ so the SKILLs stay under the 100-line cap.
 
 The two layers (D-08):
 
-- **Layer A** — Anthropic's 5-min prompt cache (owned by `warm-cache`). Keyed on shared-preamble-first prompt prefix. No project-local state.
-- **Layer B** — explicit `.design/cache-manifest.json` (owned by `gdd-cache-manager`). Keyed on deterministic SHA-256 of `(agent-path, sorted-input-file-paths, input-content-hashes)`. Per-repo state.
+- **Layer A** - Anthropic's 5-min prompt cache (owned by `warm-cache`). Keyed on shared-preamble-first prompt prefix. No project-local state.
+- **Layer B** - explicit `.design/cache-manifest.json` (owned by `gdd-cache-manager`). Keyed on deterministic SHA-256 of `(agent-path, sorted-input-file-paths, input-content-hashes)`. Per-repo state.
 
 ## Deterministic Input-Hash Algorithm (Layer B)
 
@@ -56,9 +56,9 @@ function computeInputHash(agentPath, inputFilePaths) {
 
 Notes for maintainers:
 
-- **Sorted-unique paths** — ordering must be stable; caller is expected to de-duplicate. If the same path appears twice the hash still matches as long as caller pre-dedupes before invoking.
-- **Missing file** — the string `MISSING` is used in place of the content hash so a missing dependency doesn't silently collide with an empty file (empty file's SHA-256 is `e3b0c44...`). Missing-file hashes naturally miss on the next read because the real file has a different content hash.
-- **Agent-path** — agents changing their own body (role, tools, output contract) invalidate all their cache entries automatically because the agent file's content is not hashed; but the `agent_path` string is concatenated. Upgrading agents between versions naturally busts the cache only when the path changes. Plan 10.1-04 (shared preamble extraction) is expected to slightly adjust agent bodies — consumers should treat the first post-10.1 run as a full cache miss, which is the intended behavior.
+- **Sorted-unique paths** - ordering must be stable; caller is expected to de-duplicate. If the same path appears twice the hash still matches as long as caller pre-dedupes before invoking.
+- **Missing file** - the string `MISSING` is used in place of the content hash so a missing dependency doesn't silently collide with an empty file (empty file's SHA-256 is `e3b0c44...`). Missing-file hashes naturally miss on the next read because the real file has a different content hash.
+- **Agent-path** - agents changing their own body (role, tools, output contract) invalidate all their cache entries automatically because the agent file's content is not hashed; but the `agent_path` string is concatenated. Upgrading agents between versions naturally busts the cache only when the path changes. Plan 10.1-04 (shared preamble extraction) is expected to slightly adjust agent bodies - consumers should treat the first post-10.1 run as a full cache miss, which is the intended behavior.
 
 ## Manifest Shape (Layer B)
 

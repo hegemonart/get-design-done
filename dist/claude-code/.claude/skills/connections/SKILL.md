@@ -29,21 +29,21 @@ For the 33 probe scripts (MCP + HTTP + CLI + file probes), bucket categorization
 
 ## State Integration
 
-1. Read `.design/STATE.md` — if missing, that's fine; this skill does not require a pipeline run.
-2. Read `.design/config.json` — if missing, use defaults. If `connections_onboarding` block is present with `pending_verification`, this is a resume — see Step 6.
-3. Read `connections.skip[]` from config — never re-prompt for skipped connections.
+1. Read `.design/STATE.md` - if missing, that's fine; this skill does not require a pipeline run.
+2. Read `.design/config.json` - if missing, use defaults. If `connections_onboarding` block is present with `pending_verification`, this is a resume - see Step 6.
+3. Read `connections.skip[]` from config - never re-prompt for skipped connections.
 4. Update `last_checkpoint` in STATE.md at skill exit if STATE.md exists.
 
 ---
 
 ## Workflow
 
-1. **Probe all 33 connections** — run every probe script per `./connections-onboarding.md#step-1--probe-all-33-connections`. MCP probes use `ToolSearch` first; HTTP / CLI / file probes follow non-MCP patterns. Merge results into `STATE.md <connections>` with the three-value schema (`available | unavailable | not_configured`) — never add new values.
-2. **Categorize + build summary** — bucket each probe result (available / recommended / optional / skipped / unavailable) using project-hint detection. Detail + recommendation mapping: `./connections-onboarding.md#step-2--bucket-categorization`.
-3. **Print summary table** — show buckets + value-prop one-liners (verbatim from `./connections-onboarding.md#step-3--summary-table`).
-4. **Route by mode** — `list` / `--auto` exits after summary; `<name>` jumps straight to Step 5; default mode opens an AskUserQuestion (configure recommended / pick one by one / configure all optional / re-check specific / exit). Routing detail: `./connections-onboarding.md#step-4--route-by-mode`.
-5. **Per-connection setup screen** — for each target: read `connections/<name>.md`, present the setup screen, AskUserQuestion (run now / copy-paste / skip / never ask). Auto-run only if reversible (see eligibility matrix). On success: append name to `connections_onboarding.pending_verification[]`. Detail: `./connections-onboarding.md#step-5--per-connection-setup-screen`.
-6. **Verification pass** — re-probe every name in `pending_verification[]`. Available → remove. `not_configured` → leave (needs session restart). `unavailable` → leave + note OAuth needed. Print "Setup complete" summary. Detail: `./connections-onboarding.md#step-6--verification-pass`.
+1. **Probe all 33 connections** - run every probe script per `./connections-onboarding.md#step-1--probe-all-33-connections`. MCP probes use `ToolSearch` first; HTTP / CLI / file probes follow non-MCP patterns. Merge results into `STATE.md <connections>` with the three-value schema (`available | unavailable | not_configured`) - never add new values.
+2. **Categorize + build summary** - bucket each probe result (available / recommended / optional / skipped / unavailable) using project-hint detection. Detail + recommendation mapping: `./connections-onboarding.md#step-2--bucket-categorization`.
+3. **Print summary table** - show buckets + value-prop one-liners (verbatim from `./connections-onboarding.md#step-3--summary-table`).
+4. **Route by mode** - `list` / `--auto` exits after summary; `<name>` jumps straight to Step 5; default mode opens an AskUserQuestion (configure recommended / pick one by one / configure all optional / re-check specific / exit). Routing detail: `./connections-onboarding.md#step-4--route-by-mode`.
+5. **Per-connection setup screen** - for each target: read `connections/<name>.md`, present the setup screen, AskUserQuestion (run now / copy-paste / skip / never ask). Auto-run only if reversible (see eligibility matrix). On success: append name to `connections_onboarding.pending_verification[]`. Detail: `./connections-onboarding.md#step-5--per-connection-setup-screen`.
+6. **Verification pass** - re-probe every name in `pending_verification[]`. Available → remove. `not_configured` → leave (needs session restart). `unavailable` → leave + note OAuth needed. Print "Setup complete" summary. Detail: `./connections-onboarding.md#step-6--verification-pass`.
 
 If `.design/config.json > connections_onboarding.pending_verification[]` is non-empty at entry → enter **resume flow**: run Step 6 immediately; if clean, exit; otherwise fall through to Step 3. Detail: `./connections-onboarding.md#resumability`.
 
@@ -58,7 +58,7 @@ Per `./connections-onboarding.md#do-not`:
 - Never run `claude mcp add` without explicit `"Run install command now"` confirmation.
 - Never auto-restart the Claude Code session.
 - Never re-prompt for names in `connections.skip[]`.
-- Never overwrite existing `<connections>` entries that this skill did not probe — merge only.
+- Never overwrite existing `<connections>` entries that this skill did not probe - merge only.
 
 ---
 

@@ -2,13 +2,13 @@
 
 These rules are framework-invariant across the GDD pipeline. They do not change between cycles, phases, or tasks. Every agent imports `reference/shared-preamble.md`, which aggregates `reference/meta-rules.md` first.
 
-**Tier: L0** (frozen prefix; stabilizes the Anthropic 5-min prompt-cache prefix across agent spawns — the churning L2 body below does NOT invalidate this).
+**Tier: L0** (frozen prefix; stabilizes the Anthropic 5-min prompt-cache prefix across agent spawns - the churning L2 body below does NOT invalidate this).
 
 ---
 
 ## Required Reading Discipline
 
-When the orchestrator's prompt contains a `<required_reading>` block, you MUST read every file it lists with the `Read` tool before taking any other action. Paths prefixed with `@` are file paths — pass them directly to `Read`. Skipping required reading is a hard violation: you will produce stale output that the downstream verifier catches, wasting a full spawn cycle.
+When the orchestrator's prompt contains a `<required_reading>` block, you MUST read every file it lists with the `Read` tool before taking any other action. Paths prefixed with `@` are file paths - pass them directly to `Read`. Skipping required reading is a hard violation: you will produce stale output that the downstream verifier catches, wasting a full spawn cycle.
 
 ## Writes Protocol
 
@@ -52,14 +52,14 @@ resume-hint: <one-sentence instruction for a resumption spawn>
 </context-exhaustion>
 ```
 
-…before your completion marker. The hook captures this into STATE.md so the orchestrator can re-spawn you with a narrower scope. Do not guess when you're near exhaustion — only emit when a concrete obstacle (file too large to read, required diff too wide) forced the call.
+…before your completion marker. The hook captures this into STATE.md so the orchestrator can re-spawn you with a narrower scope. Do not guess when you're near exhaustion - only emit when a concrete obstacle (file too large to read, required diff too wide) forced the call.
 
 A PreToolUse hook at `hooks/budget-enforcer.js` intercepts every `Task` spawn (including the one that invoked you). The hook may:
-- **Short-circuit** your spawn with a cached result from `.design/cache-manifest.json` (transparent — you never run).
+- **Short-circuit** your spawn with a cached result from `.design/cache-manifest.json` (transparent - you never run).
 - **Downgrade** your tier to Haiku at the 80% per-task cap soft-threshold, silently (`auto_downgrade_on_cap: true` in `.design/budget.json`, D-03).
 - **Hard-block** your spawn at the 100% per-task or per-phase cap with an actionable error (D-02).
 
-Implication for you as the agent: **do not assume a specific model tier is live.** Your output must be correct whether you run on Haiku, Sonnet, or Opus. If a task genuinely requires reasoning density beyond Haiku, the `size_budget` + `default-tier` combination should have been set at authoring time so the router routes it correctly — the remedy is a frontmatter update (a Phase 11 reflector proposal), not a mid-run assumption.
+Implication for you as the agent: **do not assume a specific model tier is live.** Your output must be correct whether you run on Haiku, Sonnet, or Opus. If a task genuinely requires reasoning density beyond Haiku, the `size_budget` + `default-tier` combination should have been set at authoring time so the router routes it correctly - the remedy is a frontmatter update (a Phase 11 reflector proposal), not a mid-run assumption.
 
 ---
 

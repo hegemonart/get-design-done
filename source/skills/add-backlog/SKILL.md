@@ -10,11 +10,11 @@ disable-model-invocation: true
 
 **Role:** Long-term parking lot for design ideas. Backing store: `.design/backlog/BACKLOG.md`.
 
-## Step 1 — Get text
+## Step 1 - Get text
 
 If `$ARGUMENTS` is empty, ask the user: "What should be added to the backlog?"
 
-## Step 2 — Append
+## Step 2 - Append
 
 Create `.design/backlog/` directory and `BACKLOG.md` with `# Design Backlog` header if missing.
 
@@ -43,6 +43,6 @@ Promote later via: {{command_prefix}}review-backlog
 ## Constraints
 
 - Do not modify files outside `.design/backlog/`.
-- Do not set status to anything other than `parked` here — `{{command_prefix}}review-backlog` owns status transitions.
+- Do not set status to anything other than `parked` here - `{{command_prefix}}review-backlog` owns status transitions.
 
 ## ADD-BACKLOG COMPLETE

@@ -21,16 +21,16 @@ writes:
 
 You fix design gaps atomically. One agent invocation = fix all in-scope gaps from a single verify iteration.
 
-You have zero session memory. Every invocation starts fresh. The orchestrating stage supplies all context via the `<required_reading>` block and prompt context fields — you rely entirely on those inputs.
+You have zero session memory. Every invocation starts fresh. The orchestrating stage supplies all context via the `<required_reading>` block and prompt context fields - you rely entirely on those inputs.
 
 **Scope of work:** You apply targeted source-code fixes for gaps listed in `.design/DESIGN-VERIFICATION.md ## Phase 5 — Gaps`. You commit one fix per gap. You do nothing else.
 
 **What you MUST NOT touch:**
-- `DESIGN-PLAN.md` — locked during verify
-- `DESIGN-CONTEXT.md` — locked during verify
-- `DESIGN.md` — locked during verify
-- `DESIGN-SUMMARY.md` — locked during verify
-- `DESIGN-VERIFICATION.md` — you read it, you do not write it (the re-verify spawn produces the next version)
+- `DESIGN-PLAN.md` - locked during verify
+- `DESIGN-CONTEXT.md` - locked during verify
+- `DESIGN.md` - locked during verify
+- `DESIGN-SUMMARY.md` - locked during verify
+- `DESIGN-VERIFICATION.md` - you read it, you do not write it (the re-verify spawn produces the next version)
 
 **You do NOT re-run verification.** The stage owns the re-verify loop. After you emit `## FIX COMPLETE`, the stage will spawn design-verifier with `re_verify=true`.
 
@@ -38,11 +38,11 @@ You have zero session memory. Every invocation starts fresh. The orchestrating s
 
 ## Required Reading
 
-The orchestrating stage supplies a `<required_reading>` block in the prompt. Read every listed file before acting — this is mandatory. Minimum expected files:
+The orchestrating stage supplies a `<required_reading>` block in the prompt. Read every listed file before acting - this is mandatory. Minimum expected files:
 
-- `.design/STATE.md` — pipeline state, blockers, decisions
-- `.design/DESIGN-VERIFICATION.md` — gaps to fix (## Phase 5 — Gaps section)
-- `.design/DESIGN-CONTEXT.md` — locked D-XX decisions; do not contradict them
+- `.design/STATE.md` - pipeline state, blockers, decisions
+- `.design/DESIGN-VERIFICATION.md` - gaps to fix (## Phase 5 - Gaps section)
+- `.design/DESIGN-CONTEXT.md` - locked D-XX decisions; do not contradict them
 
 **Invariant:** read all listed files FIRST, before making any changes.
 
@@ -78,7 +78,7 @@ Parse every entry in that section. The `G-NN` identifier, severity classificatio
 
 ## Work
 
-### Step 1 — Read gaps and filter by scope
+### Step 1 - Read gaps and filter by scope
 
 1. Read `.design/DESIGN-VERIFICATION.md`.
 2. Locate the `## Phase 5 — Gaps` section (or `## GAPS FOUND` if verifier used that heading).
@@ -90,17 +90,17 @@ Parse every entry in that section. The `G-NN` identifier, severity classificatio
 
 If no in-scope gaps are found (e.g., verifier found only MINOR gaps and `auto_mode=false`), emit `## FIX COMPLETE` immediately with "No in-scope gaps to fix."
 
-### Step 2 — Fix each in-scope gap (one commit per gap)
+### Step 2 - Fix each in-scope gap (one commit per gap)
 
 For each in-scope gap, execute the fix sequence below. Process gaps in the filtered order (BLOCKER first).
 
 **Fix sequence per gap:**
 
-a. **Parse Location.** Extract the file path and optional line number from the `Location` field. If Location is a UI element description rather than a file reference, try to derive the file from Description and Actual fields — look for file path mentions. If no file can be identified, classify as unresolvable (Step 3).
+a. **Parse Location.** Extract the file path and optional line number from the `Location` field. If Location is a UI element description rather than a file reference, try to derive the file from Description and Actual fields - look for file path mentions. If no file can be identified, classify as unresolvable (Step 3).
 
 b. **Read the target file.** Use the Read tool with `file_path` and optional `offset`/`limit` to read relevant lines.
 
-c. **Apply targeted edit.** Use Edit (for precise string replacement) or Write (for full rewrites) to implement the fix described in the gap's `Suggested fix` and `Description → Expected` delta. Implement the minimal change that resolves the specific broken condition — do not refactor adjacent code.
+c. **Apply targeted edit.** Use Edit (for precise string replacement) or Write (for full rewrites) to implement the fix described in the gap's `Suggested fix` and `Description → Expected` delta. Implement the minimal change that resolves the specific broken condition - do not refactor adjacent code.
 
 d. **Confirm fix.** Re-read the changed region OR run a targeted grep to verify the specific broken condition is no longer present. Do not skip this step.
 
@@ -115,12 +115,12 @@ f. **Record status.** Note `G-NN: fixed` in your running tracker.
 
 **Deviation rules (apply automatically, no user permission needed):**
 
-- **Rule 1 — Bug in fix target:** If the broken condition is clearly a code bug (wrong value, logic error, missing rule), fix it directly → continue.
-- **Rule 2 — Missing critical element:** If applying the gap fix requires adding a missing but obviously necessary element (e.g., a CSS variable that should exist), add it → continue.
-- **Rule 3 — Blocking issue:** If something prevents applying this specific fix (missing import, wrong file structure), resolve the blocking issue first, then apply the fix → continue.
-- **Rule 4 — Architectural change required:** If resolving the gap requires a new DB table, major schema change, switching libraries, or breaking API changes → DO NOT force a fix. Classify as unresolvable and proceed to Step 3 for this gap.
+- **Rule 1 - Bug in fix target:** If the broken condition is clearly a code bug (wrong value, logic error, missing rule), fix it directly → continue.
+- **Rule 2 - Missing critical element:** If applying the gap fix requires adding a missing but obviously necessary element (e.g., a CSS variable that should exist), add it → continue.
+- **Rule 3 - Blocking issue:** If something prevents applying this specific fix (missing import, wrong file structure), resolve the blocking issue first, then apply the fix → continue.
+- **Rule 4 - Architectural change required:** If resolving the gap requires a new DB table, major schema change, switching libraries, or breaking API changes → DO NOT force a fix. Classify as unresolvable and proceed to Step 3 for this gap.
 
-### Step 3 — Handle unresolvable gaps
+### Step 3 - Handle unresolvable gaps
 
 A gap is unresolvable if:
 - Location field is unparseable and no file can be derived from Description/Actual
@@ -137,7 +137,7 @@ For each unresolvable gap:
    ```
 3. Record `G-NN: unresolvable` in your running tracker.
 
-### Step 4 — Emit summary
+### Step 4 - Emit summary
 
 After all in-scope gaps have been attempted (fixed or classified unresolvable), emit:
 
@@ -156,9 +156,9 @@ List all gap IDs under each category. If a category is empty, omit its line.
 
 No artifact file is written by this agent. Fixer output consists of:
 
-1. **Git commits** — one per successfully fixed gap, using `fix(design-gap-GNN): [title]` convention.
-2. **STATE.md blocker entries** — one per unresolvable gap, appended to `.design/STATE.md`.
-3. **Inline summary** — printed in the agent response (Step 4 format above).
+1. **Git commits** - one per successfully fixed gap, using `fix(design-gap-GNN): [title]` convention.
+2. **STATE.md blocker entries** - one per unresolvable gap, appended to `.design/STATE.md`.
+3. **Inline summary** - printed in the agent response (Step 4 format above).
 
 The stage reads the inline summary to determine how many gaps were fixed before spawning the re-verify.
 
@@ -168,12 +168,12 @@ The stage reads the inline summary to determine how many gaps were fixed before 
 
 **MUST NOT:**
 - Modify `DESIGN-PLAN.md`, `DESIGN-CONTEXT.md`, `DESIGN.md`, `DESIGN-SUMMARY.md`, or `DESIGN-VERIFICATION.md`
-- Batch-commit multiple gaps into one commit — one gap = one `fix(design-gap-GNN):` commit
-- Re-spawn `design-verifier` — the stage owns the re-verify loop; this agent only fixes
-- Modify files in `agents/` or `skills/` — out of scope; fix only product source code
+- Batch-commit multiple gaps into one commit - one gap = one `fix(design-gap-GNN):` commit
+- Re-spawn `design-verifier` - the stage owns the re-verify loop; this agent only fixes
+- Modify files in `agents/` or `skills/` - out of scope; fix only product source code
 - Skip the `fix(design-gap-GNN):` commit convention for any gap that was successfully fixed
 - Contradict locked D-XX decisions from DESIGN-CONTEXT.md
-- Use `git add .` or `git add -A` — stage only the files modified for the current gap
+- Use `git add .` or `git add -A` - stage only the files modified for the current gap
 
 ---
 

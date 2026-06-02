@@ -1,6 +1,6 @@
-# Agents — Authoring Contract
+# Agents - Authoring Contract
 
-This directory contains the specialized agents that pipeline stages spawn to do focused work. Read this file before writing a new agent — it is the complete authoring contract. You do not need to read GSD source code.
+This directory contains the specialized agents that pipeline stages spawn to do focused work. Read this file before writing a new agent - it is the complete authoring contract. You do not need to read GSD source code.
 
 ## Overview
 
@@ -8,9 +8,9 @@ Pipeline stages are **thin orchestrators**. They read `.design/STATE.md`, decide
 
 This separation provides three concrete benefits:
 
-- **Context isolation** — each agent starts fresh with only what it needs, keeping token budgets tight and results deterministic.
-- **Reusability** — the same `design-verifier` agent can be called from the `design` stage and the `verify` stage without modification.
-- **Testability** — agents can be invoked directly against fixture inputs without running the full pipeline.
+- **Context isolation** - each agent starts fresh with only what it needs, keeping token budgets tight and results deterministic.
+- **Reusability** - the same `design-verifier` agent can be called from the `design` stage and the `verify` stage without modification.
+- **Testability** - agents can be invoked directly against fixture inputs without running the full pipeline.
 
 Agents live in `agents/` as individual markdown files. Each file contains YAML frontmatter (metadata consumed by the Claude Code `Task` tool) and a prose body (instructions the agent follows when invoked).
 
@@ -33,24 +33,24 @@ The `design-` prefix prevents name collisions with agents from other Claude Code
 
 ## Frontmatter Schema
 
-Every agent file begins with a YAML frontmatter block. All fields except `model` are required. The `default-tier` and `tier-rationale` fields were added in Phase 10.1 — see `reference/model-tiers.md` for the per-agent assignment rationale.
+Every agent file begins with a YAML frontmatter block. All fields except `model` are required. The `default-tier` and `tier-rationale` fields were added in Phase 10.1 - see `reference/model-tiers.md` for the per-agent assignment rationale.
 
 | Field | Type | Accepted values | Purpose |
 |-------|------|-----------------|---------|
-| `name` | kebab-case string | unique within plugin | Identifier passed to the `Task` tool — must match the filename without `.md` |
+| `name` | kebab-case string | unique within plugin | Identifier passed to the `Task` tool - must match the filename without `.md` |
 | `description` | string | free-form | One sentence: what the agent does + when it is spawned |
-| `description_i18n` | object | `{ <locale>: "<description>" }` | **Phase 40.5, opt-in.** Localized descriptions keyed by locale (en/ru/uk/de/fr/zh/ja). `scripts/lib/i18n/index.cjs` `descriptionFor(frontmatter, locale)` resolves it via the fallback chain and falls back to the English `description` when a locale is absent. Backward-compatible — omit it and nothing changes. |
-| `tools` | comma-separated list | `Read`, `Write`, `Edit`, `Bash`, `Grep`, `Glob`, `Task`, `WebFetch`, `TodoWrite`, `mcp__*` | Claude tools the agent may use — list only what is needed |
+| `description_i18n` | object | `{ <locale>: "<description>" }` | **Phase 40.5, opt-in.** Localized descriptions keyed by locale (en/ru/uk/de/fr/zh/ja). `scripts/lib/i18n/index.cjs` `descriptionFor(frontmatter, locale)` resolves it via the fallback chain and falls back to the English `description` when a locale is absent. Backward-compatible - omit it and nothing changes. |
+| `tools` | comma-separated list | `Read`, `Write`, `Edit`, `Bash`, `Grep`, `Glob`, `Task`, `WebFetch`, `TodoWrite`, `mcp__*` | Claude tools the agent may use - list only what is needed |
 | `color` | enum | `yellow`, `green`, `blue`, `red` | Terminal display color for the agent's output |
 | `model` | enum (optional) | `inherit`, `sonnet`, `haiku` | Omit to use the project's configured profile default. Use `inherit` to bypass the profile and use the highest available model (quality-tier work) |
-| `default-tier` | enum | `haiku`, `sonnet`, `opus` | **Phase 10.1.** The model tier the router + budget-enforcer hook select when `.design/budget.json.tier_overrides` has no entry for this agent. Paired with `reference/model-tiers.md` — the per-agent map in that file is the source of truth; this field is the per-agent replica the hook reads. Required on all agents. |
+| `default-tier` | enum | `haiku`, `sonnet`, `opus` | **Phase 10.1.** The model tier the router + budget-enforcer hook select when `.design/budget.json.tier_overrides` has no entry for this agent. Paired with `reference/model-tiers.md` - the per-agent map in that file is the source of truth; this field is the per-agent replica the hook reads. Required on all agents. |
 | `tier-rationale` | string | free-form, one line, quoted | **Phase 10.1.** One-sentence justification for the `default-tier` choice. Surfaces in `/gdd:optimize` output when the advisor suggests a tier move. Required on all agents. |
 | `parallel-safe` | enum | `always`, `never`, `conditional-on-touches`, `auto` | Whether stages may dispatch this agent in parallel with siblings. `conditional-on-touches` means safe only when `Touches:` do not overlap |
-| `typical-duration-seconds` | int | e.g. `30`, `60`, `120` | Expected wall-clock duration. Used by parallelism planner to decide whether savings clear `min_estimated_savings_seconds`. **Extensible** — Phase 10.1 adds `default-tier` override; Phase 11's `design-reflector` adds `measured-duration-seconds` from telemetry without replacing this field. |
+| `typical-duration-seconds` | int | e.g. `30`, `60`, `120` | Expected wall-clock duration. Used by parallelism planner to decide whether savings clear `min_estimated_savings_seconds`. **Extensible** - Phase 10.1 adds `default-tier` override; Phase 11's `design-reflector` adds `measured-duration-seconds` from telemetry without replacing this field. |
 | `reads-only` | bool | `true`/`false` | True when the agent never writes any file |
 | `writes` | list | e.g. `[".design/DESIGN-PLAN.md"]` | Files / globs the agent may write. `[]` for read-only agents |
 
-> **Frontmatter is extensible.** New fields can be added by downstream phases without removing existing ones. The `design-reflector` agent (Phase 11) may propose updates to `typical-duration-seconds` and `default-tier` based on measured telemetry — those proposals go through `/gdd:apply-reflections`, never auto-applied.
+> **Frontmatter is extensible.** New fields can be added by downstream phases without removing existing ones. The `design-reflector` agent (Phase 11) may propose updates to `typical-duration-seconds` and `default-tier` based on measured telemetry - those proposals go through `/gdd:apply-reflections`, never auto-applied.
 
 Example frontmatter block:
 
@@ -69,7 +69,7 @@ color: blue
 
 **Phase 26 (v1.26.0).** Agents may carry an optional `reasoning-class: high|medium|low` field as a runtime-neutral alias for `default-tier`. The alias exists because `default-tier`'s enum (`opus|sonnet|haiku`) hard-codes Anthropic model names, while the multi-runtime installer (Phase 24) ships agents to 14 runtimes whose authors do not all use those names. `reasoning-class` describes the *reasoning density* the agent needs without naming a vendor's model lineup.
 
-**This field is additive, not a replacement.** `default-tier: opus|sonnet|haiku` remains the authoritative, required field for v1.26 and is the source of truth that `hooks/budget-enforcer.ts`, `skills/router/SKILL.md`, and `agents/gdd-intel-updater.md` read. Both fields may coexist on the same agent during the transition window. The long-term winner — which field is canonical and which is deprecated — is data-gated per Phase 28+ measurement of adoption rates (CONTEXT D-10); no deprecation lands in v1.26.
+**This field is additive, not a replacement.** `default-tier: opus|sonnet|haiku` remains the authoritative, required field for v1.26 and is the source of truth that `hooks/budget-enforcer.ts`, `skills/router/SKILL.md`, and `agents/gdd-intel-updater.md` read. Both fields may coexist on the same agent during the transition window. The long-term winner - which field is canonical and which is deprecated - is data-gated per Phase 28+ measurement of adoption rates (CONTEXT D-10); no deprecation lands in v1.26.
 
 ### Frontmatter shape
 
@@ -85,7 +85,7 @@ color: blue
 | `medium`          | `sonnet`       | Researchers, mappers, doc-writers, executors, fixers. |
 | `low`             | `haiku`        | Verifiers and checkers with deterministic rubrics. |
 
-The mapping is bidirectional and exhaustive — there is no `reasoning-class` value without a `default-tier` equivalent and vice versa. See `reference/model-tiers.md` for the per-class role rationale (the tier-selection guide that `default-tier` is keyed against — `reasoning-class` inherits the same semantics through the equivalence above).
+The mapping is bidirectional and exhaustive - there is no `reasoning-class` value without a `default-tier` equivalent and vice versa. See `reference/model-tiers.md` for the per-class role rationale (the tier-selection guide that `default-tier` is keyed against - `reasoning-class` inherits the same semantics through the equivalence above).
 
 ### Coexistence rule
 
@@ -100,28 +100,28 @@ tier-rationale: "Authors DESIGN-PLAN.md — the contract every downstream agent 
 ---
 ```
 
-When both are present, the values MUST be equivalent per the table above. Mismatched dual annotations (e.g. `default-tier: opus` paired with `reasoning-class: medium`) are a validation error — `scripts/validate-frontmatter.ts` (extended in Plan 26-08) enforces equivalence at lint time. If only one of the two is present, the validator accepts it and downstream consumers use the equivalence table to derive the missing field.
+When both are present, the values MUST be equivalent per the table above. Mismatched dual annotations (e.g. `default-tier: opus` paired with `reasoning-class: medium`) are a validation error - `scripts/validate-frontmatter.ts` (extended in Plan 26-08) enforces equivalence at lint time. If only one of the two is present, the validator accepts it and downstream consumers use the equivalence table to derive the missing field.
 
 ### How runtime-aware tooling reads either field
 
 Downstream consumers (`skills/router/SKILL.md`, `hooks/budget-enforcer.ts`, `scripts/lib/budget-enforcer.cjs`, `agents/gdd-intel-updater.md`) accept either field individually and map between them via the equivalence table:
 
-- **`default-tier` only** — consumers read `default-tier` directly. This is the v1.26 baseline state for all 26 shipped agents.
-- **`reasoning-class` only** — consumers map `high → opus`, `medium → sonnet`, `low → haiku` and feed the resulting tier into `tier-resolver.cjs` (Plan 26-02) for runtime-correct model resolution. Consumers that have not yet been updated to read `reasoning-class` natively still see a valid `default-tier` semantically (via the alias), so no consumer breaks when an agent author chooses the runtime-neutral name.
-- **Both present** — consumers prefer `default-tier` for now (v1.26 canonical), with `reasoning-class` carried through to telemetry (`gdd-intel-updater` writes both fields to `.design/intel/agent-tiers.json` per Plan 26-08) so adoption can be measured for the Phase 28 deprecation gate.
+- **`default-tier` only** - consumers read `default-tier` directly. This is the v1.26 baseline state for all 26 shipped agents.
+- **`reasoning-class` only** - consumers map `high → opus`, `medium → sonnet`, `low → haiku` and feed the resulting tier into `tier-resolver.cjs` (Plan 26-02) for runtime-correct model resolution. Consumers that have not yet been updated to read `reasoning-class` natively still see a valid `default-tier` semantically (via the alias), so no consumer breaks when an agent author chooses the runtime-neutral name.
+- **Both present** - consumers prefer `default-tier` for now (v1.26 canonical), with `reasoning-class` carried through to telemetry (`gdd-intel-updater` writes both fields to `.design/intel/agent-tiers.json` per Plan 26-08) so adoption can be measured for the Phase 28 deprecation gate.
 
 ### Rollout policy for v1.26
 
-- The 26 existing agents continue to carry `default-tier` only — **no per-agent retrofit lands in v1.26**. New agents (added in Phase 27+) MAY carry `reasoning-class` instead of, or alongside, `default-tier`.
+- The 26 existing agents continue to carry `default-tier` only - **no per-agent retrofit lands in v1.26**. New agents (added in Phase 27+) MAY carry `reasoning-class` instead of, or alongside, `default-tier`.
 - Validators, intel-updater, router, and budget-enforcer accept either field starting in v1.26 (Plans 26-04, 26-05, 26-08).
 - Adoption is measured by `gdd-intel-updater` over `agents/*.md` changes; if alias adoption stays below 50% by Phase 28, `default-tier` remains canonical and the alias is deprecated. If alias wins majority share, the reverse. **No deprecation in v1.26.**
 
 ### Cross-references
 
-- `reference/model-tiers.md` — tier-selection guide and per-agent map for `default-tier`. The same role-class rationale applies to `reasoning-class` via the equivalence table.
-- `reference/runtime-models.md` (Plan 26-01) — per-runtime tier→model adapter that consumes the resolved tier (whether sourced from `default-tier` or via `reasoning-class` alias).
-- `scripts/validate-frontmatter.ts` (Plan 26-08) — validator extension that accepts the optional field and enforces equivalence when both are present.
-- `.planning/phases/26-headless-model-resolver/CONTEXT.md` D-10, D-11 — decision lineage for additive-alias and equivalence-enforced semantics.
+- `reference/model-tiers.md` - tier-selection guide and per-agent map for `default-tier`. The same role-class rationale applies to `reasoning-class` via the equivalence table.
+- `reference/runtime-models.md` (Plan 26-01) - per-runtime tier→model adapter that consumes the resolved tier (whether sourced from `default-tier` or via `reasoning-class` alias).
+- `scripts/validate-frontmatter.ts` (Plan 26-08) - validator extension that accepts the optional field and enforces equivalence when both are present.
+- `.planning/phases/26-headless-model-resolver/CONTEXT.md` D-10, D-11 - decision lineage for additive-alias and equivalence-enforced semantics.
 
 ---
 
@@ -132,25 +132,25 @@ Phase 27 introduces an **optional** frontmatter field `delegate_to:` that lets a
 | Property | Value |
 |----------|-------|
 | Field | `delegate_to: <peer>-<role> \| none` |
-| Required | NO — optional, additive |
+| Required | NO - optional, additive |
 | Default | absent = use local Anthropic call (existing behavior) |
 | Valid values | `gemini-research`, `gemini-exploration`, `codex-execute`, `cursor-debug`, `cursor-plan`, `copilot-review`, `copilot-research`, `qwen-write`, or `none` (explicit opt-out) |
-| Validator | `scripts/validate-frontmatter.ts` (Plan 27-06) — checks format + cross-references the capability matrix in `scripts/lib/peer-cli/registry.cjs`. Mismatched `<peer>-<role>` values that aren't in the matrix → validation error. |
+| Validator | `scripts/validate-frontmatter.ts` (Plan 27-06) - checks format + cross-references the capability matrix in `scripts/lib/peer-cli/registry.cjs`. Mismatched `<peer>-<role>` values that aren't in the matrix → validation error. |
 
 **Behavior at runtime:**
 - When session-runner spawns an agent with `delegate_to: gemini-research`, it tries `peer-cli/registry.dispatch('research', tier, prompt, opts)` first. On null result (peer absent OR peer error per D-07) it transparently falls back to the local Anthropic call. The skill never sees the peer failure.
 - `delegate_to: none` explicitly skips registry dispatch (security-sensitive agents).
 - Absent field = same as not setting it = local Anthropic call (unchanged behavior).
 
-**Opt-in gating:** Even with `delegate_to:` set on an agent, dispatch only fires if the peer is in `.design/config.json#peer_cli.enabled_peers` allowlist (populated by the install-time nudge in Plan 27-11; default empty). This keeps cost surprises off — users explicitly authorize each peer.
+**Opt-in gating:** Even with `delegate_to:` set on an agent, dispatch only fires if the peer is in `.design/config.json#peer_cli.enabled_peers` allowlist (populated by the install-time nudge in Plan 27-11; default empty). This keeps cost surprises off - users explicitly authorize each peer.
 
 **Telemetry:** Peer calls emit `peer_call_started` / `peer_call_complete` / `peer_call_failed` events in `events.jsonl`, tagged with `runtime_role: "peer"` and `peer_id` (Plan 27-08). Cost rows in `costs.jsonl` carry the same tags so reflector cross-runtime arbitrage (Phase 26) extends naturally.
 
 **Cross-references:**
-- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) — capability matrix + dispatch.
-- `scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs` (Plan 27-04) — per-peer thin adapters.
-- `reference/peer-cli-capabilities.md` (Plan 27-05) — full capability matrix doc.
-- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-06, D-07, D-11 — decision lineage.
+- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) - capability matrix + dispatch.
+- `scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs` (Plan 27-04) - per-peer thin adapters.
+- `reference/peer-cli-capabilities.md` (Plan 27-05) - full capability matrix doc.
+- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-06, D-07, D-11 - decision lineage.
 
 ---
 
@@ -165,7 +165,7 @@ When an agent must read specific files before acting, the orchestrating stage em
 </required_reading>
 ```
 
-**Invariant:** when a `<required_reading>` block is present in the prompt, the agent MUST `Read` every listed file before taking any other action. Paths starting with `@` are repo-relative (or absolute) file paths — pass them directly to the `Read` tool.
+**Invariant:** when a `<required_reading>` block is present in the prompt, the agent MUST `Read` every listed file before taking any other action. Paths starting with `@` are repo-relative (or absolute) file paths - pass them directly to the `Read` tool.
 
 Agents do not hard-code their required reading. Required reading is supplied by the stage at call time, so the same agent can be given different context for different invocations.
 
@@ -173,7 +173,7 @@ Agents do not hard-code their required reading. Required reading is supplied by 
 
 ## Completion Markers
 
-Every agent terminates its response with a completion marker — a specific `##` heading that the orchestrating stage checks to confirm the agent finished successfully.
+Every agent terminates its response with a completion marker - a specific `##` heading that the orchestrating stage checks to confirm the agent finished successfully.
 
 **GSD-style markers (used by research/planning/execution/verification agents):**
 
@@ -184,7 +184,7 @@ Every agent terminates its response with a completion marker — a specific `##`
 | Execution agent | `## EXECUTION COMPLETE` |
 | Verification agent | `## VERIFICATION COMPLETE` |
 
-**Design-pipeline-specific markers (proposed — confirm in Phase 2 when the first stage agent is written):**
+**Design-pipeline-specific markers (proposed - confirm in Phase 2 when the first stage agent is written):**
 
 | Stage | Proposed marker |
 |-------|-----------------|
@@ -206,7 +206,7 @@ Stages spawn agents using the Claude Code `Task` tool:
 Task("design-planner", prompt_string)
 ```
 
-The first argument is the agent's `name` field (must match exactly). The second argument is a **fully self-contained prompt string** — no session state, no previous tool call results, nothing from the orchestrator's context passes through automatically. Everything the agent needs must be in the prompt.
+The first argument is the agent's `name` field (must match exactly). The second argument is a **fully self-contained prompt string** - no session state, no previous tool call results, nothing from the orchestrator's context passes through automatically. Everything the agent needs must be in the prompt.
 
 This means: if the agent needs to know the current pipeline stage, the target component, or the path to an artifact, the stage must embed that information in the prompt.
 
@@ -216,18 +216,18 @@ This means: if the agent needs to know the current pipeline stage, the target co
 
 Use this checklist when writing the prompt string a stage passes to `Task`:
 
-- **Task specification** — what the agent must do, stated as a concrete imperative ("Extract all color tokens from the files listed in STATE.md `<source_roots>` and write them to `.design/DESIGN-TOKENS.md`.")
-- **Context block** — paths to relevant artifacts, the current pipeline position, prior stage outputs the agent should be aware of
-- **Required reading block** — `<required_reading>` listing files the agent must read before acting
-- **Acceptance criteria** — how the orchestrator (and the agent itself) will know the task succeeded; specific, checkable conditions
-- **Output format** — structured output required: which file to write, what sections to include, what the completion marker is
-- **Constraints** — what the agent must NOT do ("do not modify files outside `.design/`", "do not run shell commands")
+- **Task specification** - what the agent must do, stated as a concrete imperative ("Extract all color tokens from the files listed in STATE.md `<source_roots>` and write them to `.design/DESIGN-TOKENS.md`.")
+- **Context block** - paths to relevant artifacts, the current pipeline position, prior stage outputs the agent should be aware of
+- **Required reading block** - `<required_reading>` listing files the agent must read before acting
+- **Acceptance criteria** - how the orchestrator (and the agent itself) will know the task succeeded; specific, checkable conditions
+- **Output format** - structured output required: which file to write, what sections to include, what the completion marker is
+- **Constraints** - what the agent must NOT do ("do not modify files outside `.design/`", "do not run shell commands")
 
 ---
 
 ## Worked Example
 
-### Example agent file — `agents/design-example.md`
+### Example agent file - `agents/design-example.md`
 
 ```markdown
 ---
@@ -290,13 +290,13 @@ Every agent **must** end its run by appending one JSONL line to `.design/intel/i
 
 ### Schema
 
-`reference/schemas/insight-line.schema.json` — all six fields are required.
+`reference/schemas/insight-line.schema.json` - all six fields are required.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `ts` | ISO 8601 string | Current UTC time |
 | `agent` | string | Must match frontmatter `name` field |
-| `cycle` | string | From `STATE.md cycle:` — empty string if no active cycle |
+| `cycle` | string | From `STATE.md cycle:` - empty string if no active cycle |
 | `stage` | string | From `STATE.md stage:` |
 | `one_line_insight` | string ≤200 chars | Declarative fact: what was produced or learned |
 | `artifacts_written` | string[] | Relative paths written; `[]` for read-only agents |
@@ -333,7 +333,7 @@ Schema: `reference/schemas/insight-line.schema.json`.
 
 ## Size Budgets
 
-Agents should be kept small — long instruction bodies burn context at every spawn and drift from their single-responsibility role. Per-tier soft limits:
+Agents should be kept small - long instruction bodies burn context at every spawn and drift from their single-responsibility role. Per-tier soft limits:
 
 | Tier | Examples | Limit |
 |---|---|---|
@@ -349,21 +349,21 @@ Global ceiling: **no single agent file exceeds 600 lines** under any circumstanc
 
 Every agent body under `agents/*.md` is structured in this exact order so that Anthropic's 5-minute prompt cache (and the plugin's `/gdd:warm-cache` pre-warmer) can key on the longest possible identical prefix across spawns. The rule (from Phase 10.1 decision D-17):
 
-1. **Shared-preamble import** — the first non-blank line of the body MUST be `@reference/shared-preamble.md`. This pulls the framework identity, required-reading discipline, writes protocol, deviation handling, and hook awareness into the prompt. Identical bytes across all 26 agents → one cache entry warms them all.
-2. **Agent-specific role + tools contract + output format** — unique to the agent but stable across every invocation of that same agent. Cache hits on the per-agent tail after the first call of the session.
-3. **Dynamic content** — the orchestrator's `<required_reading>` block, per-invocation parameters, concrete task description. Different every call; never caches, but also never invalidates the earlier layers.
+1. **Shared-preamble import** - the first non-blank line of the body MUST be `@reference/shared-preamble.md`. This pulls the framework identity, required-reading discipline, writes protocol, deviation handling, and hook awareness into the prompt. Identical bytes across all 26 agents → one cache entry warms them all.
+2. **Agent-specific role + tools contract + output format** - unique to the agent but stable across every invocation of that same agent. Cache hits on the per-agent tail after the first call of the session.
+3. **Dynamic content** - the orchestrator's `<required_reading>` block, per-invocation parameters, concrete task description. Different every call; never caches, but also never invalidates the earlier layers.
 
 **Do not reorder these layers.** Splicing dynamic content (e.g., a `<context>` block) before the stable role description breaks the cache for everything after that splice. Inlining the preamble into the agent body (instead of importing) costs every spawn full-input rates on the preamble bytes.
 
 See `reference/shared-preamble.md` (the imported file) and `reference/model-tiers.md` (tier assignment + override precedence) for the two paired references.
 
 **Cross-references.**
-- `reference/shared-preamble.md` — the preamble file itself (Plan 10.1-03).
-- `reference/model-tiers.md` — tier-selection guide + per-agent map (Plan 10.1-03).
-- `skills/warm-cache/SKILL.md` — the command that primes Layer A cache across the roster (Plan 10.1-02).
-- `skills/cache-manager/SKILL.md` — Layer B (explicit manifest) cache; independent of this ordering rule (Plan 10.1-02).
-- `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` §D-08, §D-16, §D-17 — decision lineage.
+- `reference/shared-preamble.md` - the preamble file itself (Plan 10.1-03).
+- `reference/model-tiers.md` - tier-selection guide + per-agent map (Plan 10.1-03).
+- `skills/warm-cache/SKILL.md` - the command that primes Layer A cache across the roster (Plan 10.1-02).
+- `skills/cache-manager/SKILL.md` - Layer B (explicit manifest) cache; independent of this ordering rule (Plan 10.1-02).
+- `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` §D-08, §D-16, §D-17 - decision lineage.
 
 ---
 
-*Cross-reference: [Claude Code Task tool documentation](https://docs.anthropic.com/en/docs/claude-code/sub-agents) for deeper detail on agent invocation, tool permissions, and model selection. This README is the authoring contract — the documentation covers the runtime.*
+*Cross-reference: [Claude Code Task tool documentation](https://docs.anthropic.com/en/docs/claude-code/sub-agents) for deeper detail on agent invocation, tool permissions, and model selection. This README is the authoring contract - the documentation covers the runtime.*

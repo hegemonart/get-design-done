@@ -31,7 +31,7 @@ The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pip
 
 ## Do Not
 
-- Do not archive prior artifacts here — that's `{{command_prefix}}complete-cycle`.
-- Do not overwrite the existing CYCLES.md — append only.
+- Do not archive prior artifacts here - that's `{{command_prefix}}complete-cycle`.
+- Do not overwrite the existing CYCLES.md - append only.
 
 ## NEW-CYCLE COMPLETE

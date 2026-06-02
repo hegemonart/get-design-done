@@ -1,14 +1,14 @@
-# gdd-router — router_pick emitter (Phase 32-08 / D-02)
+# gdd-router - router_pick emitter (Phase 32-08 / D-02)
 
-Co-located reference for `skills/router/SKILL.md` — split out per the Phase 28.5
+Co-located reference for `skills/router/SKILL.md` - split out per the Phase 28.5
 contract (router SKILL ≤100 lines) and the Phase 28.6 co-location pattern (same
 convention as the sibling `./capability-gap-emitter.md`).
 
 ## When to emit
 
-When the router resolves an intent to a concrete pick — i.e. it has selected the
+When the router resolves an intent to a concrete pick - i.e. it has selected the
 `path` / `complexity_class` / `resolved_models` decision and is about to return
-its decision JSON — emit ONE `router_pick` event recording WHICH skill/agent it
+its decision JSON - emit ONE `router_pick` event recording WHICH skill/agent it
 auto-picked. Emit exactly once per resolved pick, as the LAST step before
 returning the decision JSON to the caller.
 
@@ -25,7 +25,7 @@ when it could not resolve the intent at all. They are disjoint surfaces.
 ## Synchronous emitter snippet
 
 Builds the 7-field `RouterPickPayload` and writes it via `appendChainEvent`.
-The intent is hashed — the raw prompt is NEVER stored (no PII). `picked_skill`,
+The intent is hashed - the raw prompt is NEVER stored (no PII). `picked_skill`,
 `rank`, and `alternatives` come from the router's resolved decision:
 
 ```bash
@@ -55,17 +55,17 @@ appendChainEvent({
 
 `GDD_PICKED_SKILL` is the resolved pick; `GDD_PICK_RANK` is its rank among
 candidates (0 = top pick); `GDD_ALTERNATIVES` is a comma-separated list of the
-OTHER candidate skill/agent names the router considered (names only — no scores,
+OTHER candidate skill/agent names the router considered (names only - no scores,
 no prompt text). `GDD_INTENT` is hashed in-process and is never written to disk.
 
 ## Notes
 
-- **No PII**: only `context_hash` (sha256 of the intent) is stored — never the
+- **No PII**: only `context_hash` (sha256 of the intent) is stored - never the
   raw prompt or intent string. The `RouterPickPayload` is
   `additionalProperties: false`, so a stray `raw_prompt` field would be rejected
   by `events.schema.json` validation. This mirrors `capability_gap`'s hash
   discipline.
-- **Router output JSON contract is UNCHANGED** — `router_pick` is a SIDE EFFECT,
+- **Router output JSON contract is UNCHANGED** - `router_pick` is a SIDE EFFECT,
   not a new output field. Back-compat is preserved exactly as the existing
   `## Output schema versioning` table in `SKILL.md` guarantees; the emitter runs
   AFTER the decision is computed and does not alter the returned blob.
@@ -74,5 +74,5 @@ no prompt text). `GDD_INTENT` is hashed in-process and is never written to disk.
   opaque extras and is projected back to the events-schema envelope by Phase 33
   aggregation (same projection the capability_gap aggregation uses).
 - Validated against the additive `RouterPickPayload` branch (allOf[2]) in
-  `reference/schemas/events.schema.json` — see
+  `reference/schemas/events.schema.json` - see
   `test/suite/router-pick-event.test.cjs`.

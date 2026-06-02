@@ -1,9 +1,9 @@
-# Augment Code — Price Table (stub)
+# Augment Code - Price Table (stub)
 
 **Runtime:** `augment` (Augment Code)
-**Phase 26 D-08 sub-table — STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
+**Phase 26 D-08 sub-table - STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
 
-**Provenance:** `<TODO: confirm at https://docs.augmentcode.com>` — pending.
+**Provenance:** `<TODO: confirm at https://docs.augmentcode.com>` - pending.
 
 ## Pricing (USD per 1M tokens)
 

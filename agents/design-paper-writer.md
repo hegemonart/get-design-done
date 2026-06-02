@@ -24,7 +24,7 @@ You are design-paper-writer. You write design decisions from `.design/DESIGN-CON
 
 ---
 
-## Step 0 — MCP Probe
+## Step 0 - MCP Probe
 
 ```
 ToolSearch({ query: "mcp__paper", max_results: 5 })
@@ -34,13 +34,13 @@ ToolSearch({ query: "mcp__paper", max_results: 5 })
 
 ---
 
-## Step 1 — Read State and Flags
+## Step 1 - Read State and Flags
 
 Read `.design/STATE.md` to confirm `paper-design: available`. If `not_configured` or `unavailable`, STOP with diagnostic.
 
 Parse flags:
-- `--dry-run` — emit proposal only, no writes
-- `mode` — one of `annotate | tokenize | roundtrip` (required)
+- `--dry-run` - emit proposal only, no writes
+- `mode` - one of `annotate | tokenize | roundtrip` (required)
 
 If mode absent:
 ```
@@ -56,25 +56,25 @@ STOP.
 
 ---
 
-## Step 2 — Read Context and Build Proposal
+## Step 2 - Read Context and Build Proposal
 
 Read `.design/DESIGN-CONTEXT.md`. Build a numbered operation list per mode. Do NOT execute yet.
 
-**annotate mode** — extract confirmed D-XX decisions, map to canvas nodes:
+**annotate mode** - extract confirmed D-XX decisions, map to canvas nodes:
 ```
 Proposed annotations (N operations):
 1. Node "Button/Primary" → add_comment: "bg: brand-primary-500 per D-03"
 2. Node "Typography/H1" → add_comment: "font: Inter 32/40 per D-07"
 ```
 
-**tokenize mode** — extract CSS literal values, map to paper.design style updates:
+**tokenize mode** - extract CSS literal values, map to paper.design style updates:
 ```
 Proposed token bindings (N operations):
 1. Node "Button/Primary" fill → update_styles: { background: "var(--color-primary-500)" }
 2. Node "Card" padding → update_styles: { padding: "16px" }
 ```
 
-**roundtrip mode** — write implementation status back as text/HTML:
+**roundtrip mode** - write implementation status back as text/HTML:
 ```
 Proposed write-backs (N operations):
 1. Node "Button" → set_text_content: "Status: built — verified 2026-04-19"
@@ -85,7 +85,7 @@ If DESIGN-CONTEXT.md has no applicable data: print "No operations to perform." S
 
 ---
 
-## Step 3 — Confirm or Dry-Run
+## Step 3 - Confirm or Dry-Run
 
 If `--dry-run`: print `[dry-run] Proposal emitted. N operations. Pass without --dry-run to apply.` STOP.
 
@@ -95,7 +95,7 @@ Wait for response. If not "yes": STOP with "Cancelled."
 
 ---
 
-## Step 4 — Execute Writes
+## Step 4 - Execute Writes
 
 For each operation, call the appropriate tool. Log each result.
 
@@ -120,7 +120,7 @@ After EVERY call: increment `budget_used` in STATE.md `<connections>`. Warn if b
 
 ---
 
-## Step 5 — Summary
+## Step 5 - Summary
 
 ```
 design-paper-writer complete.

@@ -1,4 +1,4 @@
-# Tree View (Hierarchical Navigation) — Benchmark Spec
+# Tree View (Hierarchical Navigation) - Benchmark Spec
 
 **Harvested from**: WAI-ARIA APG, Carbon, Atlassian, Radix, Material 3
 **Wave**: 4 · **Category**: Navigation & Data
@@ -65,8 +65,8 @@ A tree view displays hierarchical data in a collapsible structure of parent and 
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| node-default | — | Icon + label; indented by level | — |
-| node-hover | pointer over | 8% overlay on row | — |
+| node-default | - | Icon + label; indented by level | - |
+| node-hover | pointer over | 8% overlay on row | - |
 | node-focus | keyboard focus | 2px focus-visible ring on row | `tabindex="0"` on focused; `-1` on rest |
 | node-selected | click or Enter/Space | Filled row highlight | `aria-selected="true"` |
 | node-expanded | toggle click or ArrowRight | Children visible; icon rotated/open | `aria-expanded="true"` |
@@ -93,10 +93,10 @@ A tree view displays hierarchical data in a collapsible structure of parent and 
 ## Typography
 
 - Node label: body-sm (13–14px), weight 400; selected node weight 500
-- Level depth: visual indentation only — no font-size reduction per level
+- Level depth: visual indentation only - no font-size reduction per level
 - Disabled node: same font size, `color: --text-disabled`
 
-Cross-link: `reference/typography.md` — body-sm
+Cross-link: `reference/typography.md` - body-sm
 
 ---
 
@@ -107,7 +107,7 @@ Cross-link: `reference/typography.md` — body-sm
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/treeview/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/treeview/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -123,14 +123,14 @@ Cross-link: `reference/typography.md` — body-sm
 
 ### Accessibility Rules
 
-- ALL expandable nodes MUST have `aria-expanded` — CSS-only expand/collapse is invisible to AT
+- ALL expandable nodes MUST have `aria-expanded` - CSS-only expand/collapse is invisible to AT
 - `aria-level` must accurately reflect nesting depth (1-based) on every `role="treeitem"`
-- Child `<ul>` MUST have `role="group"` — without it, AT cannot perceive the parent-child relationship
+- Child `<ul>` MUST have `role="group"` - without it, AT cannot perceive the parent-child relationship
 - Focus management uses roving `tabindex`: only the active node has `tabindex="0"`; all others `tabindex="-1"`
 - Lazy-loaded nodes MUST set `aria-busy="true"` while fetching; remove when complete
 - Multi-select tree MUST set `aria-multiselectable="true"` on the `role="tree"` element
 
-Cross-link: `reference/accessibility.md` — tree pattern, roving tabindex, aria-busy
+Cross-link: `reference/accessibility.md` - tree pattern, roving tabindex, aria-busy
 
 ---
 
@@ -144,9 +144,9 @@ Cross-link: `reference/accessibility.md` — tree pattern, roving tabindex, aria
 | Node selection highlight | 100ms | ease-out | Background color only |
 | Lazy-load spinner | continuous | linear | Replace with content on load |
 
-**BAN**: Do not use CSS-only `display: none` / `display: block` to toggle children without updating `aria-expanded` — both changes must happen atomically.
+**BAN**: Do not use CSS-only `display: none` / `display: block` to toggle children without updating `aria-expanded` - both changes must happen atomically.
 
-Cross-link: `reference/motion.md` — disclosure animations
+Cross-link: `reference/motion.md` - disclosure animations
 
 ---
 
@@ -159,10 +159,10 @@ Cross-link: `reference/motion.md` — disclosure animations
 - Limit tree depth to 5–6 levels to prevent cognitive overload *(Carbon, Atlassian HIG)*
 
 ### Don't
-- Don't use `<ul>/<li>` tree without `role="tree"` + `role="treeitem"` — semantically invisible to AT *(WCAG 1.3.1)*
-- Don't forget `role="group"` on child `<ul>` — AT cannot infer parent-child structure without it *(WAI-ARIA APG)*
-- Don't manage expand/collapse with CSS only (no `aria-expanded`) — blind users cannot discover collapsed state *(WCAG 4.1.2)*
-- Don't indent via `aria-level` alone — also apply visual CSS indentation for sighted users *(Material 3, Carbon)*
+- Don't use `<ul>/<li>` tree without `role="tree"` + `role="treeitem"` - semantically invisible to AT *(WCAG 1.3.1)*
+- Don't forget `role="group"` on child `<ul>` - AT cannot infer parent-child structure without it *(WAI-ARIA APG)*
+- Don't manage expand/collapse with CSS only (no `aria-expanded`) - blind users cannot discover collapsed state *(WCAG 4.1.2)*
+- Don't indent via `aria-level` alone - also apply visual CSS indentation for sighted users *(Material 3, Carbon)*
 
 ---
 
@@ -170,7 +170,7 @@ Cross-link: `reference/motion.md` — disclosure animations
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on tree nodes — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on tree nodes - `reference/anti-patterns.md#ban-04` |
 
 ---
 
@@ -220,6 +220,6 @@ grep -rn 'role="tree"' src/ | grep -v 'aria-label\|aria-labelledby'
 </ul>
 ```
 
-**Why it fails**: No `role="tree"` or `role="treeitem"`; no `aria-expanded` — screen readers cannot tell if the node is open or closed; `role="group"` missing on child list; no `aria-level`; expand/collapse is click-only (no keyboard).
+**Why it fails**: No `role="tree"` or `role="treeitem"`; no `aria-expanded` - screen readers cannot tell if the node is open or closed; `role="group"` missing on child list; no `aria-level`; expand/collapse is click-only (no keyboard).
 **Grep detection**: `grep -rn 'class.*tree\|treeview' src/ | grep '<ul\|<li' | grep -v 'role='`
 **Fix**: Add `role="tree"` to root `<ul>`; `role="treeitem"` + `aria-expanded` + `aria-level` to each node; `role="group"` to child `<ul>`; implement arrow-key navigation with roving tabindex.

@@ -10,14 +10,14 @@ disable-model-invocation: true
 
 ## Role
 
-You are the deterministic cache-key computer and cache-manifest writer for the optimization layer. You do not spawn agents, and you do not make model calls. You read agent paths, input file paths, and input file contents; you compute a stable SHA-256 key; you look that key up in `.design/cache-manifest.json`; you return a hit (cached result + `cache_hit: true`) or a miss. On spawn completion, the orchestrator calls you again to persist the result. You are Layer B of the two-layer cache (D-08). Layer A — Anthropic's 5-min prompt cache — is not owned by you; it's owned by the shared-preamble ordering convention in `agents/README.md`.
+You are the deterministic cache-key computer and cache-manifest writer for the optimization layer. You do not spawn agents, and you do not make model calls. You read agent paths, input file paths, and input file contents; you compute a stable SHA-256 key; you look that key up in `.design/cache-manifest.json`; you return a hit (cached result + `cache_hit: true`) or a miss. On spawn completion, the orchestrator calls you again to persist the result. You are Layer B of the two-layer cache (D-08). Layer A - Anthropic's 5-min prompt cache - is not owned by you; it's owned by the shared-preamble ordering convention in `agents/README.md`.
 
 ## Invocation Contract
 
 ### Phase 1: compute-key
 
-- **Input**: `{agent_path: string, input_file_paths: string[]}` — `agent_path` is the absolute or repo-relative path to the `agents/<name>.md` file; `input_file_paths` is the sorted-unique list of files the agent will read.
-- **Output**: `{input_hash: string}` — 64-character lowercase SHA-256 hex.
+- **Input**: `{agent_path: string, input_file_paths: string[]}` - `agent_path` is the absolute or repo-relative path to the `agents/<name>.md` file; `input_file_paths` is the sorted-unique list of files the agent will read.
+- **Output**: `{input_hash: string}` - 64-character lowercase SHA-256 hex.
 - **Algorithm**: canonicalize inputs, concat with newline separators, SHA-256 (see Deterministic Input-Hash Algorithm below).
 
 ### Phase 2: lookup
@@ -33,18 +33,18 @@ You are the deterministic cache-key computer and cache-manifest writer for the o
 
 ### Phase 4: write-result-on-completion
 
-- **Input**: `{input_hash: string, agent: string, result: string, ttl_seconds: number}` — `ttl_seconds` defaults to `.design/budget.json.cache_ttl_seconds` (3600 if budget.json absent).
+- **Input**: `{input_hash: string, agent: string, result: string, ttl_seconds: number}` - `ttl_seconds` defaults to `.design/budget.json.cache_ttl_seconds` (3600 if budget.json absent).
 - **Behavior**: open `.design/cache-manifest.json` (create if missing), set key `input_hash` → `{agent, result, written_at, ttl_seconds, expires_at}`, write file. `written_at` is `new Date().toISOString()`. `expires_at` is `written_at + ttl_seconds` as ISO.
 
 ## Deterministic Input-Hash Algorithm
 
-The canonical reference implementation (single source of truth; `hooks/budget-enforcer.js` imports the same primitive via a shared helper) lives in `./cache-policy.md#deterministic-input-hash-algorithm-layer-b` — it documents the JS implementation, the maintainer notes (sorted-unique paths, MISSING-file sentinel, agent-path bust behavior), the manifest shape, and TTL semantics in one place. Conform to the algorithm exactly so the hook and any orchestrator agree byte-for-byte.
+The canonical reference implementation (single source of truth; `hooks/budget-enforcer.js` imports the same primitive via a shared helper) lives in `./cache-policy.md#deterministic-input-hash-algorithm-layer-b` - it documents the JS implementation, the maintainer notes (sorted-unique paths, MISSING-file sentinel, agent-path bust behavior), the manifest shape, and TTL semantics in one place. Conform to the algorithm exactly so the hook and any orchestrator agree byte-for-byte.
 
 ## Integration Points
 
 - **`hooks/budget-enforcer.js`** (Plan 10.1-01) reads the manifest on every Agent spawn. The hook already calls `cacheLookup(agent, inputHash)` against `.design/cache-manifest.json`. This skill is the authority on how `inputHash` is computed so the hook and any orchestrator agree byte-for-byte.
 - **Orchestrators** (e.g., `skills/map/`, `skills/discover/`, `skills/plan/`) invoke Phase 1 (compute-key) + Phase 4 (write-result-on-completion) around each Agent spawn they launch. Phase 2 + Phase 3 are executed by the hook.
-- **Warm-cache command** (`skills/warm-cache/SKILL.md`, Task 02) does not touch Layer B — it only primes Anthropic's 5-min prompt cache (Layer A). Do not confuse the two.
+- **Warm-cache command** (`skills/warm-cache/SKILL.md`, Task 02) does not touch Layer B - it only primes Anthropic's 5-min prompt cache (Layer A). Do not confuse the two.
 
 ## Failure Modes
 

@@ -12,9 +12,9 @@ Fast pipeline run. Skips optional-quality agents for speed while keeping the cor
 
 ## Default skipped agents
 
-- `design-phase-researcher` — no external research step
-- `design-assumptions-analyzer` — no assumption surfacing
-- `design-integration-checker` — skipped (verifier still runs)
+- `design-phase-researcher` - no external research step
+- `design-assumptions-analyzer` - no assumption surfacing
+- `design-integration-checker` - skipped (verifier still runs)
 
 ## Default kept agents
 
@@ -38,7 +38,7 @@ Fast pipeline run. Skips optional-quality agents for speed while keeping the cor
 
 ## Do Not Use When
 
-- First pipeline run in a new project — use the full pipeline.
-- Large or cross-cutting changes — skip risks are higher.
+- First pipeline run in a new project - use the full pipeline.
+- Large or cross-cutting changes - skip risks are higher.
 
 ## QUICK COMPLETE

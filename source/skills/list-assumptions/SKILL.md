@@ -10,11 +10,11 @@ disable-model-invocation: true
 
 **Role:** Surface implicit design assumptions that were never explicitly decided. Output a numbered list tagging each as `[EXPLICIT]` (found in STATE.md/DESIGN-CONTEXT.md decisions) or `[IMPLICIT]` (inferred from code patterns).
 
-## Step 1 — Read explicit decisions
+## Step 1 - Read explicit decisions
 
 Read `.design/STATE.md` `<decisions>` and `.design/DESIGN-CONTEXT.md` (if present). Collect every D-XX as `[EXPLICIT]` entries keyed by category.
 
-## Step 2 — Scan codebase for implicit patterns
+## Step 2 - Scan codebase for implicit patterns
 
 If `--area <name>` is given, restrict to that area. Otherwise scan all.
 
@@ -39,7 +39,7 @@ If `--area <name>` is given, restrict to that area. Otherwise scan all.
 
 For each hit, emit `Detected assumption: [pattern] at [file:line]` and flag as `[IMPLICIT]`.
 
-## Step 3 — Output
+## Step 3 - Output
 
 ```
 ━━━ Design assumptions ━━━

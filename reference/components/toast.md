@@ -1,4 +1,4 @@
-# Toast / Snackbar — Benchmark Spec
+# Toast / Snackbar - Benchmark Spec
 
 **Harvested from**: Radix UI Toast, Material 3 (Snackbar), Polaris (Toast), Carbon (Notification Toast)
 **Wave**: 3 · **Category**: Feedback
@@ -52,7 +52,7 @@ A toast (snackbar) is a transient, non-blocking notification that appears briefl
 |-------|---------|--------|------|
 | entering | mount | Slide-in from bottom-right + fade-in, 200ms ease-out | Live region populated |
 | visible | auto | Full opacity, static position | `role="status"` or `role="alert"` |
-| hover / focus | pointer/keyboard | Auto-dismiss timer paused | — |
+| hover / focus | pointer/keyboard | Auto-dismiss timer paused | - |
 | exiting | dismiss / timeout | Slide-out + fade-out, 150ms ease-in | Removed from DOM |
 | queued | >3 toasts active | Off-screen; waits for visible slot | Not yet in DOM |
 
@@ -75,11 +75,11 @@ A toast (snackbar) is a transient, non-blocking notification that appears briefl
 
 ## Typography
 
-- Message: body-sm (14px/400) — same as body to ensure readability at a glance
-- Action label: label-sm (13px/500) — slightly heavier to signal interactivity
-- No wrapping beyond 2 lines — if message exceeds 2 lines, use Alert instead
+- Message: body-sm (14px/400) - same as body to ensure readability at a glance
+- Action label: label-sm (13px/500) - slightly heavier to signal interactivity
+- No wrapping beyond 2 lines - if message exceeds 2 lines, use Alert instead
 
-Cross-link: `reference/typography.md` — body-sm, label-sm definitions
+Cross-link: `reference/typography.md` - body-sm, label-sm definitions
 
 ---
 
@@ -90,7 +90,7 @@ Cross-link: `reference/typography.md` — body-sm, label-sm definitions
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/alert/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/alert/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -102,14 +102,14 @@ Toast container itself is not focusable. Only interactive children (action, dism
 
 ### Accessibility Rules
 
-- `role="alert"` on warning/error toasts causes immediate announcement by screen readers — do NOT use for info/success (too noisy)
-- `role="status"` on info/success uses a polite live region — announced at next opportunity
-- The live region container MUST be present in the DOM before the toast text is injected — injecting `role="alert"` dynamically may not announce *(WCAG 4.1.3)*
-- Dismiss button MUST have `aria-label="Dismiss notification"` or similar — the ✕ icon alone is not an accessible name
-- Auto-dismiss timer MUST pause when the toast is hovered or focused *(WCAG 2.2.1 — Timing Adjustable)*
+- `role="alert"` on warning/error toasts causes immediate announcement by screen readers - do NOT use for info/success (too noisy)
+- `role="status"` on info/success uses a polite live region - announced at next opportunity
+- The live region container MUST be present in the DOM before the toast text is injected - injecting `role="alert"` dynamically may not announce *(WCAG 4.1.3)*
+- Dismiss button MUST have `aria-label="Dismiss notification"` or similar - the ✕ icon alone is not an accessible name
+- Auto-dismiss timer MUST pause when the toast is hovered or focused *(WCAG 2.2.1 - Timing Adjustable)*
 - Error toasts MUST either be persistent or have an explicit dismiss mechanism *(Polaris, Carbon)*
 
-Cross-link: `reference/accessibility.md` — live-regions section
+Cross-link: `reference/accessibility.md` - live-regions section
 
 ---
 
@@ -121,9 +121,9 @@ Cross-link: `reference/accessibility.md` — live-regions section
 | Exit (slide-out + fade) | 150ms | ease-in | Reverse direction on dismiss |
 | Stack reflow | 150ms | ease-out | Other toasts shift position when one exits |
 
-**BAN**: Bouncing or spring physics on enter — toast is informational, not celebratory. Avoid `transition: all` (catches layout shifts during stack reflow).
+**BAN**: Bouncing or spring physics on enter - toast is informational, not celebratory. Avoid `transition: all` (catches layout shifts during stack reflow).
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip slide, use fade-only at 100ms
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: skip slide, use fade-only at 100ms
 
 ---
 
@@ -136,10 +136,10 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip slide, use 
 - Keep message text ≤80 characters; use action button for follow-up *(Material 3, Polaris)*
 
 ### Don't
-- Don't use toast for errors that require user action — use a modal or alert *(Material 3, Carbon)*
-- Don't stack more than 3 toasts — queue the rest *(Radix, Polaris)*
-- Don't put more than one action in a toast — use a modal for complex decisions *(Material 3)*
-- Don't rely on toast alone for critical status — supplement with in-page feedback *(Carbon)*
+- Don't use toast for errors that require user action - use a modal or alert *(Material 3, Carbon)*
+- Don't stack more than 3 toasts - queue the rest *(Radix, Polaris)*
+- Don't put more than one action in a toast - use a modal for complex decisions *(Material 3)*
+- Don't rely on toast alone for critical status - supplement with in-page feedback *(Carbon)*
 
 ---
 

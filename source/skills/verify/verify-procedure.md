@@ -7,8 +7,8 @@ tags: [verify, procedure, extracted, pipeline-stage, gap-loop, must-have, qualit
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/verify/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
-The skill's load-bearing workflow stays in `../skills/verify/SKILL.md`; this file holds the
+Source: extracted from `skills/verify/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+The skill's essential workflow stays in `../skills/verify/SKILL.md`; this file holds the
 detail the agent reaches for when executing a specific step (state integration, quality-gate
 decision tree, agent spawn protocols, gap-response loop, must-have flipping).
 
@@ -16,7 +16,7 @@ decision tree, agent spawn protocols, gap-response loop, must-have flipping).
 
 Detailed procedure for the get-design-done `verify` Stage 5 orchestrator. Companion to
 `../skills/verify/SKILL.md`. Read this file when executing a specific verify step; the
-SKILL.md keeps the load-bearing workflow + decision tree, this file holds the deep
+SKILL.md keeps the essential workflow + decision tree, this file holds the deep
 methodology, agent prompts, and gap-loop semantics.
 
 ---
@@ -26,9 +26,9 @@ methodology, agent prompts, and gap-loop semantics.
 ### Stage entry
 
 1. `mcp__gdd_state__transition_stage` with `to: "verify"`.
-2. `mcp__gdd_state__get` → snapshot `state`. Read `state.must_haves` — this is the verification checklist; each M-XX starts at `status: pending` and will be flipped to `pass` or `fail` as verification concludes.
+2. `mcp__gdd_state__get` → snapshot `state`. Read `state.must_haves` - this is the verification checklist; each M-XX starts at `status: pending` and will be flipped to `pass` or `fail` as verification concludes.
 
-#### Step 2.5 — Quality-gate gate (D-08, D-09)
+#### Step 2.5 - Quality-gate gate (D-08, D-09)
 
 Before resume detection, inspect `state.quality_gate` from the same snapshot. The Stage 4.5 quality-gate skill (see `skills/quality-gate/SKILL.md`) writes a single `<run/>` element capturing the most recent run; this step is the verify-side consumer of that result. Three branches, evaluated in order:
 
@@ -45,14 +45,14 @@ Before resume detection, inspect `state.quality_gate` from the same snapshot. Th
 
 - **`state.quality_gate?.run?.status === "timeout"` OR `=== "skipped"`** → Print a one-line warning naming the status and the `commands_run` value, then continue normally. Per D-07 these are signals, not walls: a slow test suite must not hostage the pipeline, and a project with no detectable quality commands must not block verify entry. The warning surfaces the degraded state without halting.
 
-- **`state.quality_gate?.run?.status === "pass"` OR `state.quality_gate === null`** → Continue silently. `pass` is the happy path; `null` means the gate has never been run for this cycle (the user skipped Stage 4.5 entirely, which is permitted — verify only *checks* the gate result, never *runs* the gate itself, per the 25-07 out-of-scope clause).
+- **`state.quality_gate?.run?.status === "pass"` OR `state.quality_gate === null`** → Continue silently. `pass` is the happy path; `null` means the gate has never been run for this cycle (the user skipped Stage 4.5 entirely, which is permitted - verify only *checks* the gate result, never *runs* the gate itself, per the 25-07 out-of-scope clause).
 
-This step is a pure read against the snapshot already loaded in Step 2 — no extra MCP call is required.
+This step is a pure read against the snapshot already loaded in Step 2 - no extra MCP call is required.
 
 3. Resume detection (read `state.position.status` from the snapshot):
-   - If `status==in_progress` and `.design/DESIGN-VERIFICATION.md` exists: RESUME — skip re-spawning agents, go to Step 2 (gap-response loop).
+   - If `status==in_progress` and `.design/DESIGN-VERIFICATION.md` exists: RESUME - skip re-spawning agents, go to Step 2 (gap-response loop).
    - Otherwise: call `mcp__gdd_state__update_progress` with `task_progress: "0/3"`, `status: "in_progress"` to open the stage, then proceed to Step 1.
-4. If STATE.md is missing entirely (edge case — verify is never the entry point): block with "No STATE.md found — run /get-design-done:discover first." Do NOT attempt to create a skeleton from verify; upstream stages own bootstrap.
+4. If STATE.md is missing entirely (edge case - verify is never the entry point): block with "No STATE.md found - run /get-design-done:discover first." Do NOT attempt to create a skeleton from verify; upstream stages own bootstrap.
 
 ---
 
@@ -66,7 +66,7 @@ When verification concludes that M-XX is satisfied (or failed), record the resul
 { "id": "M-03", "text": "Dark mode toggle persists to localStorage", "status": "pass" }
 ```
 
-The gdd-state mutator treats an `add_must_have` with an existing id as an **update-in-place**, not a duplicate append. The entry's position in the `<must_haves>` block is preserved. This is intentional design — verify doesn't need a dedicated `update_must_have_status` tool because `add_must_have` handles both cases correctly.
+The gdd-state mutator treats an `add_must_have` with an existing id as an **update-in-place**, not a duplicate append. The entry's position in the `<must_haves>` block is preserved. This is intentional design - verify doesn't need a dedicated `update_must_have_status` tool because `add_must_have` handles both cases correctly.
 
 Pass the original `text` verbatim when you're only flipping the status; supplying a changed `text` overwrites the prose in-place as well (useful when the M-XX description was imprecise and the verifier can restate it). Omit `text` by passing the value from the earlier `mcp__gdd_state__get` snapshot.
 
@@ -93,18 +93,18 @@ Step P2 — Live tool call:
 Record the preview probe result via `mcp__gdd_state__probe_connections` (batched with the storybook and chromatic probes below — one call per stage, see "Batched connections write" at the end of this section).
 ```
 
-When `preview: available`, the design-verifier agent runs Phase 4B — Screenshot Evidence to resolve `? VISUAL` heuristic flags with real screenshot evidence. See `agents/design-verifier.md` Phase 4B for the screenshot evidence loop.
+When `preview: available`, the design-verifier agent runs Phase 4B - Screenshot Evidence to resolve `? VISUAL` heuristic flags with real screenshot evidence. See `agents/design-verifier.md` Phase 4B for the screenshot evidence loop.
 
 ### Probe Storybook connection
 
 Run at stage entry, after reading STATE.md:
 
-Step B1 — Project detection:
+Step B1 - Project detection:
   Bash: ls .storybook/ 2>/dev/null || grep -l '"storybook"' package.json 2>/dev/null
   -> Found -> storybook_project: true -> proceed to Step B2
   -> Not found -> storybook: not_configured (skip all Storybook steps)
 
-Step B2 — Dev server detection:
+Step B2 - Dev server detection:
   Bash: curl -sf http://localhost:6006/index.json 2>/dev/null | head -1
   -> Returns JSON -> storybook: available
   -> Fails -> Bash: curl -sf http://localhost:6006/stories.json 2>/dev/null | head -1
@@ -116,23 +116,23 @@ Record the storybook probe result for the batched `mcp__gdd_state__probe_connect
 ### Storybook A11y Loop (when storybook: available)
 
 If `state.connections.storybook === "available"` (from the earlier `mcp__gdd_state__get` snapshot):
-1. Run: Bash: npx storybook test --ci 2>&1 | tee .design/storybook-a11y-report.txt
-2. Read .design/storybook-a11y-report.txt — pass to design-verifier as additional a11y evidence
+1. Run: Bash: npx storybook test `--ci` 2>&1 | tee .design/storybook-a11y-report.txt
+2. Read .design/storybook-a11y-report.txt - pass to design-verifier as additional a11y evidence
 3. design-verifier reads this file in its a11y gap analysis section and annotates DESIGN-VERIFICATION.md with per-story violations
 
-If storybook: unavailable — skip this section; run standard WCAG grep-based a11y checks only.
-If storybook: not_configured — skip; emit no note (opt-in feature).
+If storybook: unavailable - skip this section; run standard WCAG grep-based a11y checks only.
+If storybook: not_configured - skip; emit no note (opt-in feature).
 
 ### Probe Chromatic connection
 
 Run at stage entry, after reading STATE.md:
 
-Step C1 — CLI presence:
-  Bash: command -v chromatic 2>/dev/null || npx chromatic --version 2>/dev/null
+Step C1 - CLI presence:
+  Bash: command -v chromatic 2>/dev/null || npx chromatic `--version` 2>/dev/null
   -> found -> proceed to Step C2
   -> not found -> chromatic: not_configured (skip all Chromatic steps)
 
-Step C2 — Token check:
+Step C2 - Token check:
   Bash: test -n "${CHROMATIC_PROJECT_TOKEN}"
   -> true -> chromatic: available
   -> false -> chromatic: unavailable
@@ -142,7 +142,7 @@ Record the chromatic probe result for the batched `mcp__gdd_state__probe_connect
 
 ### Batched connections write
 
-After all three probes (preview, storybook, chromatic) have a verdict, call `mcp__gdd_state__probe_connections` ONCE with `probe_results` = an array of `{ name, status }` entries — one per probed connection. Example:
+After all three probes (preview, storybook, chromatic) have a verdict, call `mcp__gdd_state__probe_connections` ONCE with `probe_results` = an array of `{ name, status }` entries - one per probed connection. Example:
 
 ```json
 [
@@ -152,12 +152,12 @@ After all three probes (preview, storybook, chromatic) have a verdict, call `mcp
 ]
 ```
 
-Unspecified connections keep their existing value. Do NOT issue multiple `probe_connections` calls — the tool is designed for a single batch write per stage.
+Unspecified connections keep their existing value. Do NOT issue multiple `probe_connections` calls - the tool is designed for a single batch write per stage.
 
 ### Chromatic Visual Delta (when chromatic: available)
 
 After design executor has run (when verifying post-design):
-1. Run: Bash: npx chromatic --project-token $CHROMATIC_PROJECT_TOKEN --output json 2>&1 | tee .design/chromatic-results.json
+1. Run: Bash: npx chromatic `--project-token` $CHROMATIC_PROJECT_TOKEN `--output` json 2>&1 | tee .design/chromatic-results.json
 2. Pass .design/chromatic-results.json to design-verifier for narration (see design-verifier.md Chromatic Delta Narration section)
 If chromatic: unavailable or not_configured: skip; note in DESIGN-VERIFICATION.md "visual regression check skipped".
 
@@ -167,7 +167,7 @@ If chromatic: unavailable or not_configured: skip; note in DESIGN-VERIFICATION.m
 
 **DESIGN-PLAN.md prerequisite check:**
 - **Normal mode:** Check that `.design/DESIGN-PLAN.md` exists. If missing, block with: "Verify requires DESIGN-PLAN.md. Run `{{command_prefix}}plan` first, or use `--post-handoff` if starting from a Claude Design handoff bundle."
-- **Post-handoff mode** (`post_handoff=true` OR STATE.md `status: handoff-sourced`): Skip the DESIGN-PLAN.md check entirely — handoff workflows have no DESIGN-PLAN.md.
+- **Post-handoff mode** (`post_handoff=true` OR STATE.md `status: handoff-sourced`): Skip the DESIGN-PLAN.md check entirely - handoff workflows have no DESIGN-PLAN.md.
 
 Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /get-design-done:discover first."
 
@@ -196,7 +196,7 @@ Also pass post-handoff context to design-auditor: auditor skips DESIGN-PLAN.md r
 
 ---
 
-## Step 1 — Spawn Auditor + Verifier + Integration Checker
+## Step 1 - Spawn Auditor + Verifier + Integration Checker
 
 Initialize iteration counter to 0 (used for fix loop limit in Step 3).
 
@@ -230,7 +230,7 @@ Emit `## AUDIT COMPLETE` when done.
 
 Wait for `## AUDIT COMPLETE` in the agent response. Once detected, call `mcp__gdd_state__update_progress` with `task_progress: "1/3"` and a short `status` summary (e.g., `status: "audit_done"`).
 
-### 1b-gate. Lazy gate — should design-verifier run?
+### 1b-gate. Lazy gate - should design-verifier run?
 
 Spawn the cheap Haiku gate before the expensive verifier:
 
@@ -292,7 +292,7 @@ by structured gap list, then `## VERIFICATION COMPLETE`. If no gaps, just emit `
 
 Wait for `## VERIFICATION COMPLETE` in the agent response. Once detected, call `mcp__gdd_state__update_progress` with `task_progress: "2/3"` and a short `status` summary (e.g., `status: "verifier_done"`).
 
-### 1c-gate. Lazy gate — should design-integration-checker run?
+### 1c-gate. Lazy gate - should design-integration-checker run?
 
 Same pattern as 1b-gate:
 
@@ -305,7 +305,7 @@ Same pattern as 1b-gate:
     design-integration-checker should spawn.
 
     Context:
-      diff_files: <git diff --name-only output>
+      diff_files: <git diff `--name-only` output>
       diff_body: <git diff output, truncated>
       baseline_sha: <from STATE.md or HEAD~1>
 
@@ -347,7 +347,7 @@ Wait for `## INTEGRATION CHECK COMPLETE` in the agent response. Once detected, c
 
 ---
 
-## Step 2 — Interpret Result
+## Step 2 - Interpret Result
 
 Check agent responses for gaps. Gaps come from two sources:
 - design-verifier: `## GAPS FOUND` marker in the verifier response (G-NN entries)
@@ -376,7 +376,7 @@ Merge verifier gaps (G-NN entries) and integration-checker gaps (Orphaned/Missin
 
 ---
 
-## Step 3 — Gap Response Loop
+## Step 3 - Gap Response Loop
 
 Present to the user:
 
@@ -432,7 +432,7 @@ Task("design-fixer", """
 @.design/DESIGN-CONTEXT.md
 </required_reading>
 
-Fix all BLOCKER and MAJOR gaps from ## Phase 5 — Gaps in DESIGN-VERIFICATION.md.
+Fix all BLOCKER and MAJOR gaps from ## Phase 5 - Gaps in DESIGN-VERIFICATION.md.
 For each gap: apply the targeted fix to the file/location in the gap's Location field.
 After each fix, make an atomic commit: fix(design-gap-GNN): [gap title].
 
@@ -480,9 +480,9 @@ Write updated .design/DESIGN-VERIFICATION.md. Emit ## GAPS FOUND (if any), then 
 
 1. Call `mcp__gdd_state__update_progress` with `task_progress: "<verified>/<total>"` (the total is `state.must_haves.length` from the entry snapshot; verified is the count set to `pass`) and `status: "verify_complete"`.
 2. Call `mcp__gdd_state__set_status` with one of:
-   - `status: "pipeline_complete"` — all must-haves passed and no outstanding gaps.
-   - `status: "verify_failed_requires_loop"` — gaps remain (save-and-exit, accept-as-is with fails, or auto-mode blocker).
-3. Call `mcp__gdd_state__checkpoint` — stamps `frontmatter.last_checkpoint` and appends a `verify_completed_at` timestamp entry. No direct STATE.md writes; the checkpoint tool owns the final persist.
+   - `status: "pipeline_complete"` - all must-haves passed and no outstanding gaps.
+   - `status: "verify_failed_requires_loop"` - gaps remain (save-and-exit, accept-as-is with fails, or auto-mode blocker).
+3. Call `mcp__gdd_state__checkpoint` - stamps `frontmatter.last_checkpoint` and appends a `verify_completed_at` timestamp entry. No direct STATE.md writes; the checkpoint tool owns the final persist.
 
 ---
 

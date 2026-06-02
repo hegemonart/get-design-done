@@ -19,7 +19,7 @@ writes:
 
 ## Role
 
-You produce a static accessibility inventory. You do NOT run a browser audit — that is Phase 8 work. You never modify source code and do not spawn agents.
+You produce a static accessibility inventory. You do NOT run a browser audit - that is Phase 8 work. You never modify source code and do not spawn agents.
 
 ## Required Reading
 
@@ -70,7 +70,7 @@ grep -rEn "<img\b[^>]*>" src/ | head -100
 
 Count how many include `alt=`.
 
-## Output Format — `.design/map/a11y.md`
+## Output Format - `.design/map/a11y.md`
 
 ```markdown
 ---

@@ -8,7 +8,7 @@ tools: Read, Write, Bash, Grep, Glob
 
 # {{command_prefix}}unlock-decision
 
-A `locked` decision is hard — it cannot be amended. This skill is the **only** way back, and it is
+A `locked` decision is hard - it cannot be amended. This skill is the **only** way back, and it is
 deliberately heavyweight: it requires a named approver and records an audit entry, so reopening a
 locked decision is always traceable. Contract: `../../reference/multi-author-model.md`.
 
@@ -27,7 +27,7 @@ locked decision is always traceable. Contract: `../../reference/multi-author-mod
 2. **Load the entry** from `.design/reviews/<decision-id>/state.json`. Not found → report it. Not in
    `locked` state → print `unlock-decision: <id> is not locked (state: <state>); nothing to unlock.`
 3. **Preview.** Show the audit entry that will be appended (`{ action: unlock, from: locked, to:
-   reviewing, approver, reason }`) and the resulting state. If `--dry-run`, stop here.
+   reviewing, approver, reason }`) and the resulting state. If ``--dry-run``, stop here.
 4. **Apply** via the pure helper:
 
    ```bash

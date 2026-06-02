@@ -5,16 +5,16 @@
  * Plan 20-08 regression check: `skills/explore/SKILL.md` routes every
  * STATE.md mutation through `gdd-state` MCP tools. Prose, synthesizer
  * contracts, connections-probe outputs, and the handoff to plan are
- * preserved verbatim — only the mutation surface changes.
+ * preserved verbatim - only the mutation surface changes.
  *
  * Assertions (static-analysis only; no MCP server is booted):
  *   - Frontmatter `tools:` lists all 7 required MCP tool names.
  *   - Exactly ONE `mcp__gdd_state__transition_stage` invocation in the body
  *     (Stage entry). The frontmatter listing is excluded from the count.
  *   - At most ONE `mcp__gdd_state__probe_connections` invocation in the body
- *     — the batch-commit pattern must not be re-expanded to N calls.
+ *     - the batch-commit pattern must not be re-expanded to N calls.
  *   - No prose directs an `Edit`, `Write`, or "update" action at STATE.md
- *     — every STATE.md mutation goes through an MCP tool.
+ *     - every STATE.md mutation goes through an MCP tool.
  *   - Mapper/synthesizer prose is preserved: the DESIGN-CONTEXT.md token
  *     count matches the pre-migration baseline.
  *   - Line count is within ±15% of the pre-migration baseline.
@@ -119,7 +119,7 @@ test('skill-explore-mcp-migration: no prose directs direct Edit/Write/update of 
     assert.doesNotMatch(
       body,
       pattern,
-      `body must not match ${pattern} — STATE.md mutations must go through MCP tools`
+      `body must not match ${pattern} - STATE.md mutations must go through MCP tools`
     );
   }
 });
@@ -128,7 +128,7 @@ test('skill-explore-mcp-migration: mapper/synthesizer prose preserved (DESIGN-CO
   // Re-anchored from BEFORE_FIXTURE to AFTER_FIXTURE (same pattern the
   // line-count test in this file adopted at Phase 28.5): Phase 32 (v1.32.0)
   // added a <HARD-GATE> block to explore that legitimately references
-  // .design/DESIGN-CONTEXT.md once more (D-05 — gates name the specific
+  // .design/DESIGN-CONTEXT.md once more (D-05 - gates name the specific
   // artifact path), so the live count now exceeds the pre-migration (Plan
   // 20-08) snapshot. That is a NEW gate reference, NOT an alteration of the
   // mapper/synthesizer prose this test guards. Comparing against the
@@ -147,7 +147,7 @@ test('skill-explore-mcp-migration: mapper/synthesizer prose preserved (DESIGN-CO
   assert.equal(
     liveCount,
     fixtureCount,
-    `DESIGN-CONTEXT.md count drifted — mapper/synthesizer prose was altered (fixture=${fixtureCount}, live=${liveCount})`
+    `DESIGN-CONTEXT.md count drifted - mapper/synthesizer prose was altered (fixture=${fixtureCount}, live=${liveCount})`
   );
 });
 

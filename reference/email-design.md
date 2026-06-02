@@ -1,7 +1,7 @@
-# Email Design — Constraint Catalogue
+# Email Design - Constraint Catalogue
 
 This reference is the **email-constraint catalogue**: the hard email-client rules an
-email template MUST honor. Email is a *constrained* HTML/CSS surface — the modern
+email template MUST honor. Email is a *constrained* HTML/CSS surface - the modern
 HTML/CSS the web executor emits (flexbox, grid, `<style>` sheets, `position`) is
 dropped or mis-rendered by most email clients. This file is the **authority** that the
 email-executor (Phase 34.2-02) generates against and the design-verifier's email branch
@@ -14,8 +14,8 @@ distinct jobs and must not be confused:
 
 | File | Job |
 | --- | --- |
-| `reference/platforms.md` (Phase 19) | Interaction **conventions** — navigation, safe areas, gestures, native typography, haptics. *Behavioral* knowledge for native/web screens. |
-| `reference/email-design.md` (Phase 34.2, this file) | The email **constraint catalogue** — table-based layout, inline styles, MSO conditional comments, dark-mode `color-scheme`, ~600px max-width, image/alt rules, and top-20-client quirks. *Structural* knowledge an email template implements. |
+| `reference/platforms.md` (Phase 19) | Interaction **conventions** - navigation, safe areas, gestures, native typography, haptics. *Behavioral* knowledge for native/web screens. |
+| `reference/email-design.md` (Phase 34.2, this file) | The email **constraint catalogue** - table-based layout, inline styles, MSO conditional comments, dark-mode `color-scheme`, ~600px max-width, image/alt rules, and top-20-client quirks. *Structural* knowledge an email template implements. |
 
 Per **D-02** there is **no `mjml` runtime dependency**: MJML source is the agent's
 canonical artifact and the HTML is derived by the agent, not a build step. Per **D-03**
@@ -44,7 +44,7 @@ kept to 2–3 lines. The implementation is `validate-email-html.cjs`.
 
 ---
 
-## 2. Layout — tables, not flexbox/grid/position
+## 2. Layout - tables, not flexbox/grid/position
 
 Email layout uses nested `role="presentation"` **tables**, never the modern CSS box
 primitives. `display:flex`, `display:grid`, and `position:absolute|fixed|sticky` are
@@ -53,11 +53,11 @@ collapsing a layout to a single column or off-screen elements.
 
 | Rule-id | Constraint |
 | --- | --- |
-| **EM-LAYOUT-01** | Layout is built from `role="presentation"` tables. The forbidden modern primitives — `display:flex`, `display:grid`, `position:absolute`, `position:fixed` (and `position:sticky`) — MUST NOT appear in any `style`. *(Statically checkable: their presence is flagged.)* |
+| **EM-LAYOUT-01** | Layout is built from `role="presentation"` tables. The forbidden modern primitives - `display:flex`, `display:grid`, `position:absolute`, `position:fixed` (and `position:sticky`) - MUST NOT appear in any `style`. *(Statically checkable: their presence is flagged.)* |
 | EM-LAYOUT-02 | Body content sits in a fixed-/max-width container of ~**600px** (the safe width across the desktop preview pane and most mobile clients). Wider tables clip in Outlook and force horizontal scroll on mobile. |
 | EM-LAYOUT-03 | Use `cellpadding="0" cellspacing="0" border="0"` on layout tables and prefer cell `padding` over margins (margins are inconsistently honored). |
 | EM-LAYOUT-04 | Single primary column on mobile; multi-column desktop layouts degrade to stacked rows. Do not rely on `float` for columns (use side-by-side `<td>`s or `align`). |
-| EM-LAYOUT-05 | Set explicit `width` on tables/cells; never assume an intrinsic content width. Outlook ignores CSS `max-width` on many elements — pair it with a `<!--[if mso]>` ghost table (see §4). |
+| EM-LAYOUT-05 | Set explicit `width` on tables/cells; never assume an intrinsic content width. Outlook ignores CSS `max-width` on many elements - pair it with a `<!--[if mso]>` ghost table (see §4). |
 
 ```html
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
@@ -114,7 +114,7 @@ overrides.
 
 | Rule-id | Constraint |
 | --- | --- |
-| **EM-DARK-01** | Declare a `color-scheme` signal: a `<meta name="color-scheme" content="light dark">` and/or a `color-scheme: light dark;` CSS declaration and/or a `@media (prefers-color-scheme: dark)` block. At least one MUST be present. *(Statically checkable: total absence of any color-scheme signal is flagged. A `<meta name="color-scheme">` alone satisfies it — decoupled from any `<style>` block.)* |
+| **EM-DARK-01** | Declare a `color-scheme` signal: a `<meta name="color-scheme" content="light dark">` and/or a `color-scheme: light dark;` CSS declaration and/or a `@media (prefers-color-scheme: dark)` block. At least one MUST be present. *(Statically checkable: total absence of any color-scheme signal is flagged. A `<meta name="color-scheme">` alone satisfies it - decoupled from any `<style>` block.)* |
 | EM-DARK-02 | Pair `color-scheme` with `supported-color-schemes` (meta) for Apple Mail / Outlook. |
 | EM-DARK-03 | Beware forced color inversion: set explicit `background-color` AND `color` on text containers so an inverting client cannot produce unreadable low-contrast pairs. |
 | EM-DARK-04 | Provide dark-mode-friendly logos (transparent PNG or a `prefers-color-scheme` image swap) so a dark background does not hide a dark logo. |
@@ -124,7 +124,7 @@ overrides.
 ## 6. Images & accessibility
 
 Images are often blocked by default and must degrade gracefully; accessibility rules
-prevent broken layouts and unreadable content. *(Guidance — not all statically
+prevent broken layouts and unreadable content. *(Guidance - not all statically
 asserted; see §8.)*
 
 | Rule-id | Constraint |
@@ -139,19 +139,19 @@ asserted; see §8.)*
 
 ## 7. Top-20 client quirks
 
-The top-20-by-market-share email clients and their headline quirks. *(Catalogue —
+The top-20-by-market-share email clients and their headline quirks. *(Catalogue -
 most are render-tested via the optional Litmus / Email-on-Acid connection (34.2-02),
 NOT statically checkable; see §8.)*
 
 | Rule-id | Client | Headline quirk |
 | --- | --- | --- |
-| EM-CLIENT-01 | Apple Mail (iOS) | Most standards-compliant; honors `<style>` + media queries; auto-scales text — set `meta viewport`. |
-| EM-CLIENT-02 | Apple Mail (macOS) | WebKit-based, robust; respects `prefers-color-scheme`; watch auto-link of dates/addresses. |
+| EM-CLIENT-01 | Apple Mail (iOS) | Most standards-compliant; honors `<style>` + media queries; auto-scales text - set `meta viewport`. |
+| EM-CLIENT-02 | Apple Mail (macOS) | WebKit-based, solid; respects `prefers-color-scheme`; watch auto-link of dates/addresses. |
 | EM-CLIENT-03 | Gmail (web) | **Strips `<head>` styles** beyond a limited `<style>`; clips messages over ~102KB ("[Message clipped]"); requires inline styles. |
 | EM-CLIENT-04 | Gmail (mobile app, default account) | Supports a `<style>` block + media queries; same ~102KB clip; no `:hover` reliability. |
-| EM-CLIENT-05 | Gmail (mobile, non-default / IMAP "GANGA") | **Strips `<style>` entirely** — only inline styles survive; the strictest Gmail mode. |
+| EM-CLIENT-05 | Gmail (mobile, non-default / IMAP "GANGA") | **Strips `<style>` entirely** - only inline styles survive; the strictest Gmail mode. |
 | EM-CLIENT-06 | Outlook 2016–2021 (Windows) | **Word engine**: no flexbox/grid/`position`, ignores `max-width`/`border-radius`/CSS `background-image`; needs ghost tables + VML + `mso-line-height-rule:exactly`. |
-| EM-CLIENT-07 | Outlook (Microsoft 365, Windows) | Word engine like 2016/2019; DPI scaling bugs — set explicit image `width`/`height`. |
+| EM-CLIENT-07 | Outlook (Microsoft 365, Windows) | Word engine like 2016/2019; DPI scaling bugs - set explicit image `width`/`height`. |
 | EM-CLIENT-08 | Outlook.com (web) | Different (better) engine than desktop; **aggressive dark-mode color inversion**; rewrites some colors. |
 | EM-CLIENT-09 | Outlook (macOS) | WebKit-based (unlike Windows); far more capable; still test buttons/spacing. |
 | EM-CLIENT-10 | Outlook (mobile, iOS/Android) | Largely fine; respects media queries; watch link color overrides. |
@@ -173,15 +173,15 @@ NOT statically checkable; see §8.)*
 This table is the **contract** the validator's `rule` ids map to. The four rule-ids
 below are the deterministic subset that `scripts/lib/email/validate-email-html.cjs`
 asserts via regex/string analysis of the supplied HTML string. Every other rule-id in
-this catalogue is **render-tested guidance** — verified by the optional Litmus /
+this catalogue is **render-tested guidance** - verified by the optional Litmus /
 Email-on-Acid render-test connection (34.2-02), never asserted by the static validator.
 
 | Rule-id | Check | Statically checked by the validator? | How verified otherwise |
 | --- | --- | --- | --- |
-| **EM-LAYOUT-01** | No `display:flex` / `display:grid` / `position:absolute\|fixed` in any `style` | **YES** — presence flagged | — |
-| **EM-STYLE-01** | No `<style>` block as the PRIMARY styling mechanism (non-`@media` rules / large sheet); inline styling expected | **YES** — a non-trivial `<style>` block flagged; a small `@media`-only block tolerated | — |
-| **EM-MSO-01** | An MSO conditional comment (`<!--[if mso]>` / `<!--[if !mso]>`) is present in a full-email document | **YES** — absence flagged | — |
-| **EM-DARK-01** | A `color-scheme` signal is present (meta `color-scheme` and/or CSS `color-scheme` and/or `prefers-color-scheme`) | **YES** — total absence flagged (a `<meta name="color-scheme">` alone satisfies it) | — |
+| **EM-LAYOUT-01** | No `display:flex` / `display:grid` / `position:absolute\|fixed` in any `style` | **YES** - presence flagged | - |
+| **EM-STYLE-01** | No `<style>` block as the PRIMARY styling mechanism (non-`@media` rules / large sheet); inline styling expected | **YES** - a non-trivial `<style>` block flagged; a small `@media`-only block tolerated | - |
+| **EM-MSO-01** | An MSO conditional comment (`<!--[if mso]>` / `<!--[if !mso]>`) is present in a full-email document | **YES** - absence flagged | - |
+| **EM-DARK-01** | A `color-scheme` signal is present (meta `color-scheme` and/or CSS `color-scheme` and/or `prefers-color-scheme`) | **YES** - total absence flagged (a `<meta name="color-scheme">` alone satisfies it) | - |
 | EM-LAYOUT-02..05 | ~600px width, cellpadding, single-column, explicit widths | No | Render test (Litmus) |
 | EM-STYLE-02..04 | Longhand props, no external CSS, tolerated `@media` | No | Render test |
 | EM-MSO-02..04 | Ghost tables, VML, DPI/namespace head | No | Render test (Outlook) |
@@ -207,13 +207,13 @@ Notes on the four statically-checked rules:
 
 ## 9. Cross-references
 
-- [`reference/platforms.md`](./platforms.md) — the interaction-conventions sibling
+- [`reference/platforms.md`](./platforms.md) - the interaction-conventions sibling
   (navigation, safe areas, gestures). The email-executor reads **this** file for the
   email constraints, that file for general platform behavior.
 - [`scripts/lib/email/validate-email-html.cjs`](../scripts/lib/email/validate-email-html.cjs)
-  — the deterministic static validator that asserts the §8 subset; its `rule` ids are
+  - the deterministic static validator that asserts the §8 subset; its `rule` ids are
   the constraint-ids defined here.
-- [`reference/registry.json`](./registry.json) — this catalogue is registered as the
+- [`reference/registry.json`](./registry.json) - this catalogue is registered as the
   `email-design` entry (type `heuristic`, phase `34.2`) so the registry round-trip test
   (`test/suite/reference-registry.test.cjs`) stays green (D-05, the 33.5-01 / 34.1-01
   lesson).

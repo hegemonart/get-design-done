@@ -1,4 +1,4 @@
-# Skeleton — Benchmark Spec
+# Skeleton - Benchmark Spec
 
 **Harvested from**: Polaris, Carbon, Atlassian, Mantine
 **Wave**: 3 · **Category**: Feedback
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A skeleton screen is a loading placeholder that mirrors the shape of the content it will replace — text lines, images, cards, avatars. It reduces perceived wait time by showing the structural layout before real data arrives, preventing the jarring reflow that occurs when content suddenly appears. Use skeleton when the content shape is known; use an indeterminate spinner or progress bar when shape is unknown. *(Polaris, Carbon, Atlassian, Mantine agree: skeleton = shape-matched placeholder, not generic spinner)*
+A skeleton screen is a loading placeholder that mirrors the shape of the content it will replace - text lines, images, cards, avatars. It reduces perceived wait time by showing the structural layout before real data arrives, preventing the jarring reflow that occurs when content suddenly appears. Use skeleton when the content shape is known; use an indeterminate spinner or progress bar when shape is unknown. *(Polaris, Carbon, Atlassian, Mantine agree: skeleton = shape-matched placeholder, not generic spinner)*
 
 ---
 
@@ -67,18 +67,18 @@ A skeleton screen is a loading placeholder that mirrors the shape of the content
 | Image block | Match target image aspect ratio | 16:9, 1:1, 4:3 common |
 | Gap between text lines | 8px | Matches body line-height rhythm |
 
-**Norm**: Match exact pixel dimensions of the content being replaced — layout shift score is zero when skeleton matches final content size *(Polaris, Mantine)*.
+**Norm**: Match exact pixel dimensions of the content being replaced - layout shift score is zero when skeleton matches final content size *(Polaris, Mantine)*.
 
 ---
 
 ## Typography
 
-Skeleton shapes are purely visual — no typography content. However:
+Skeleton shapes are purely visual - no typography content. However:
 - Text-line height should match the `line-height` of the real text it replaces
 - Heading skeleton height should match the heading's `font-size` + leading
-- Do NOT use placeholder text ("Loading…") inside skeleton shapes — use `aria-label` on the container instead
+- Do NOT use placeholder text ("Loading…") inside skeleton shapes - use `aria-label` on the container instead
 
-Cross-link: `reference/typography.md` — line-height scale for matching skeleton dimensions
+Cross-link: `reference/typography.md` - line-height scale for matching skeleton dimensions
 
 ---
 
@@ -89,7 +89,7 @@ Cross-link: `reference/typography.md` — line-height scale for matching skeleto
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -99,13 +99,13 @@ Skeleton elements must not receive focus. The container is not focusable unless 
 
 ### Accessibility Rules
 
-- Every skeleton shape element MUST have `aria-hidden="true"` — blank shapes announced by screen readers ("image", "text") confuse users *(Polaris, Carbon)*
+- Every skeleton shape element MUST have `aria-hidden="true"` - blank shapes announced by screen readers ("image", "text") confuse users *(Polaris, Carbon)*
 - The container MUST have `aria-busy="true"` while loading, set to `false` (or removed) when content appears *(WAI-ARIA APG)*
-- The container MUST have `aria-label="Loading…"` or equivalent — this is what screen readers announce while `aria-busy="true"` *(WAI-ARIA APG)*
-- Do NOT use skeleton as the only loading indicator for screen reader users — announce loading state via live region if the transition is programmatic *(Carbon)*
-- Shimmer animation MUST be suppressed under `prefers-reduced-motion` — use static fill instead *(WCAG 2.3.3)*
+- The container MUST have `aria-label="Loading…"` or equivalent - this is what screen readers announce while `aria-busy="true"` *(WAI-ARIA APG)*
+- Do NOT use skeleton as the only loading indicator for screen reader users - announce loading state via live region if the transition is programmatic *(Carbon)*
+- Shimmer animation MUST be suppressed under `prefers-reduced-motion` - use static fill instead *(WCAG 2.3.3)*
 
-Cross-link: `reference/accessibility.md` — `aria-busy`, `prefers-reduced-motion`
+Cross-link: `reference/accessibility.md` - `aria-busy`, `prefers-reduced-motion`
 
 ---
 
@@ -114,15 +114,15 @@ Cross-link: `reference/accessibility.md` — `aria-busy`, `prefers-reduced-motio
 | Transition | Duration | Easing | Notes |
 |------------|----------|--------|-------|
 | Shimmer sweep | 1.5s | ease-in-out | 130° gradient: transparent → surface-highlight → transparent |
-| Loop delay | 0.5s | — | Pause between sweeps to avoid strobing |
+| Loop delay | 0.5s | - | Pause between sweeps to avoid strobing |
 | Skeleton → content | 200ms | ease-out | Fade-in real content over skeleton |
 
-Shimmer gradient direction: 130 degrees (roughly top-left to bottom-right) — matches natural reading direction.
+Shimmer gradient direction: 130 degrees (roughly top-left to bottom-right) - matches natural reading direction.
 Background: `surface-variant` token (slightly darker than background surface, lighter than border).
 
-**BAN**: High-contrast shimmer (e.g. white → gray on dark) — too visually noisy. Do NOT use spinner animation inside a skeleton shape. Under `prefers-reduced-motion`, remove the sweep entirely and use static fill.
+**BAN**: High-contrast shimmer (e.g. white → gray on dark) - too visually noisy. Do NOT use spinner animation inside a skeleton shape. Under `prefers-reduced-motion`, remove the sweep entirely and use static fill.
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: static fill, no gradient sweep
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: static fill, no gradient sweep
 
 ---
 
@@ -135,10 +135,10 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion`: static fill, no 
 - Set `aria-busy="true"` + `aria-label="Loading…"` on the container *(WAI-ARIA APG)*
 
 ### Don't
-- Don't use a spinner when content shape is known — skeleton is always preferred for layout-bearing slots *(Carbon, Polaris)*
-- Don't use strong contrast for shimmer — use `surface-variant` (low contrast) *(Atlassian, Mantine)*
-- Don't animate shimmer under `prefers-reduced-motion` — use static fill *(WCAG 2.3.3)*
-- Don't add visible "Loading…" text inside skeleton shapes — put it on the container via `aria-label` *(Carbon)*
+- Don't use a spinner when content shape is known - skeleton is always preferred for layout-bearing slots *(Carbon, Polaris)*
+- Don't use strong contrast for shimmer - use `surface-variant` (low contrast) *(Atlassian, Mantine)*
+- Don't animate shimmer under `prefers-reduced-motion` - use static fill *(WCAG 2.3.3)*
+- Don't add visible "Loading…" text inside skeleton shapes - put it on the container via `aria-label` *(Carbon)*
 
 ---
 

@@ -1,4 +1,4 @@
-# /gdd:start — Locked 5-Question Interview
+# /gdd:start - Locked 5-Question Interview
 
 **Purpose:** collect the minimum signal needed to steer the findings engine without slowing first-run completion past 30 seconds of interview wall-clock. Autodetectable dimensions collapse to a one-key confirmation; genuinely non-derivable dimensions are asked explicitly.
 
@@ -6,7 +6,7 @@
 
 ---
 
-## Q1 — Pain point *(required, free text)*
+## Q1 - Pain point *(required, free text)*
 
 **Prompt:**
 
@@ -14,13 +14,13 @@
 
 **Default when `--skip-interview`:** empty string (pain hint disabled; scorer runs without boost).
 
-**Validation:** max 120 chars; trim leading/trailing whitespace. No charset restrictions — the hint is free text.
+**Validation:** max 120 chars; trim leading/trailing whitespace. No charset restrictions - the hint is free text.
 
 **Failure posture:** if the user aborts at Q1, abort the whole skill with a one-line pointer to `/gdd:scan`.
 
 ---
 
-## Q2 — Target area confirmation *(autodetected, single select)*
+## Q2 - Target area confirmation *(autodetected, single select)*
 
 **Prompt:**
 
@@ -34,7 +34,7 @@
 
 ---
 
-## Q3 — Budget / latency preference *(enum, default=balanced)*
+## Q3 - Budget / latency preference *(enum, default=balanced)*
 
 **Prompt:**
 
@@ -44,11 +44,11 @@
 
 **Validation:** must be one of `fast | balanced | thorough`. Any other input → re-prompt once, then default to `balanced`.
 
-**Failure posture:** n/a — this is non-blocking; defaulting is safe.
+**Failure posture:** n/a - this is non-blocking; defaulting is safe.
 
 ---
 
-## Q4 — Framework + design-system confirmation *(autodetected, combined)*
+## Q4 - Framework + design-system confirmation *(autodetected, combined)*
 
 **Prompt:**
 
@@ -58,11 +58,11 @@
 
 **Validation:** "override framework" → ask for a free-text label (`next | remix | vite | cra | svelte | vue | astro | solid | unknown`). "override design-system" → same, values (`tailwind | css-modules | vanilla-extract | styled | linaria | emotion | panda | unknown`). Invalid → default to `unknown`.
 
-**Failure posture:** n/a — detection output is always available even if the user skips.
+**Failure posture:** n/a - detection output is always available even if the user skips.
 
 ---
 
-## Q5 — Figma / canvas workflow *(enum, non-blocking)*
+## Q5 - Figma / canvas workflow *(enum, non-blocking)*
 
 **Prompt:**
 
@@ -72,7 +72,7 @@
 
 **Validation:** enum; any other → `skip`.
 
-**Effect:** result steers the `Visual Proof Readiness` section only — never gates the happy path or the findings engine. The writer uses this to decide whether to surface `/gdd:connections figma` or `.canvas` guidance.
+**Effect:** result steers the `Visual Proof Readiness` section only - never gates the happy path or the findings engine. The writer uses this to decide whether to surface `/gdd:connections figma` or `.canvas` guidance.
 
 ---
 

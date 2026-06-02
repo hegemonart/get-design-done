@@ -11,7 +11,7 @@ Closes the current cycle: marks CYCLES.md entry complete, archives pipeline arti
 
 ## Steps
 
-1. **Load state**: Read `.design/STATE.md` for the active `cycle:` ID. If empty/missing, error: "No active cycle — nothing to complete."
+1. **Load state**: Read `.design/STATE.md` for the active `cycle:` ID. If empty/missing, error: "No active cycle - nothing to complete."
 2. **Retrospective**: If no argument was passed, ask (AskUserQuestion): "Is cycle <N> complete? Briefly describe what was achieved." Capture for CYCLES.md.
 3. **Update CYCLES.md**: Find the current cycle entry, change `**Status**: active` to `**Status**: complete`, append a `**Retrospective**: <note>` line and `**Ended**: <date>`.
 4. **Archive artifacts**: Create `.design/archive/cycle-N/` via Bash `mkdir -p`. Copy these files into it (if present):
@@ -21,7 +21,7 @@ Closes the current cycle: marks CYCLES.md entry complete, archives pipeline arti
    - `DESIGN-VERIFICATION.md`
    - `DESIGN-AUDIT.md`
    - `DESIGN-SUMMARY.md`
-   Mark originals with a `<!-- archived to .design/archive/cycle-N/ -->` note at top (do not delete — next cycle will overwrite).
+   Mark originals with a `<!-- archived to .design/archive/cycle-N/ -->` note at top (do not delete - next cycle will overwrite).
 5. **Generate EXPERIENCE.md** (Haiku-tier writer step): Read cycle STATE decisions + `.design/DESIGN-VERIFICATION.md` (if present) + any `.design/reflections/*.md` from this cycle. Write `.design/archive/cycle-N/EXPERIENCE.md` using this structure (~100–200 lines, declarative-fact framing, prepend `reference/cycle-handoff-preamble.md` content):
 
    ```markdown
@@ -65,10 +65,10 @@ Closes the current cycle: marks CYCLES.md entry complete, archives pipeline arti
 
 ## Do Not
 
-- Do not delete source files in `src/` — only archive `.design/` artifacts.
-- Do not auto-start a new cycle — user invokes `{{command_prefix}}new-cycle` explicitly.
+- Do not delete source files in `src/` - only archive `.design/` artifacts.
+- Do not auto-start a new cycle - user invokes `{{command_prefix}}new-cycle` explicitly.
 
-## Step 6 — Update notice (post-closeout surface)
+## Step 6 - Update notice (post-closeout surface)
 
 After the archive has been written and STATE.md has been cleared for the next cycle, emit the plugin-update banner if one is present:
 

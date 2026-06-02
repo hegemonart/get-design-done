@@ -1,9 +1,9 @@
-# CodeBuddy — Price Table (stub)
+# CodeBuddy - Price Table (stub)
 
 **Runtime:** `codebuddy` (Tencent CodeBuddy)
-**Phase 26 D-08 sub-table — STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
+**Phase 26 D-08 sub-table - STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
 
-**Provenance:** `<TODO: confirm at https://copilot.tencent.com>` — pending.
+**Provenance:** `<TODO: confirm at https://copilot.tencent.com>` - pending.
 
 ## Pricing (USD per 1M tokens)
 

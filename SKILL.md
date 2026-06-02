@@ -6,7 +6,7 @@ argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|s
 user-invocable: true
 ---
 
-# Get Design Done — Pipeline Router
+# Get Design Done - Pipeline Router
 
 Entry point for the get-design-done toolkit. Establishes the `/gdd:` command namespace.
 
@@ -14,7 +14,7 @@ Entry point for the get-design-done toolkit. Establishes the `/gdd:` command nam
 Brief → Explore → Plan → Design → Verify  →  next
 ```
 
-The 5-stage pipeline. `scan` and `discover` are now merged into `explore` — their old aliases still route through for backward compatibility.
+The 5-stage pipeline. `scan` and `discover` are now merged into `explore` - their old aliases still route through for backward compatibility.
 
 Each stage produces artifacts in `.design/` inside the current project.
 
@@ -22,13 +22,13 @@ Each stage produces artifacts in `.design/` inside the current project.
 
 | Command | Skill | Purpose |
 |---|---|---|
-| `brief` | `get-design-done:gdd-brief` | Stage 1 of 5 — capture problem, audience, constraints, metrics, scope → BRIEF.md |
-| `explore` | `get-design-done:gdd-explore` | Stage 2 of 5 — inventory scan + design interview → DESIGN.md, DESIGN-DEBT.md, DESIGN-CONTEXT.md |
-| `plan` | `get-design-done:plan` | Stage 3 of 5 — decompose into tasks → DESIGN-PLAN.md |
-| `design` | `get-design-done:design` | Stage 4 of 5 — execute tasks → DESIGN-SUMMARY.md |
-| `verify` | `get-design-done:verify` | Stage 5 of 5 — score + audit → DESIGN-VERIFICATION.md |
+| `brief` | `get-design-done:gdd-brief` | Stage 1 of 5 - capture problem, audience, constraints, metrics, scope → BRIEF.md |
+| `explore` | `get-design-done:gdd-explore` | Stage 2 of 5 - inventory scan + design interview → DESIGN.md, DESIGN-DEBT.md, DESIGN-CONTEXT.md |
+| `plan` | `get-design-done:plan` | Stage 3 of 5 - decompose into tasks → DESIGN-PLAN.md |
+| `design` | `get-design-done:design` | Stage 4 of 5 - execute tasks → DESIGN-SUMMARY.md |
+| `verify` | `get-design-done:verify` | Stage 5 of 5 - score + audit → DESIGN-VERIFICATION.md |
 | `handoff <path>` | inline | Skip scan/discover/plan; initialize from Claude Design bundle; route to verify |
-| `map` | `get-design-done:gdd-map` | Parallel codebase mapping — spawns 5 mappers → `.design/map/*.md` + `.design/DESIGN-MAP.md` |
+| `map` | `get-design-done:gdd-map` | Parallel codebase mapping - spawns 5 mappers → `.design/map/*.md` + `.design/DESIGN-MAP.md` |
 | `next` | `get-design-done:gdd-next` | Route to the next pipeline stage based on STATE.md |
 | `help` | `get-design-done:gdd-help` | List all commands with one-line descriptions |
 | `style [ComponentName]` | `get-design-done:gdd-style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
@@ -37,11 +37,11 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `figma-write <mode>` | `get-design-done:gdd-figma-write` | Write design decisions to Figma (annotate/tokenize/mappings) |
 | `figma-extract <file-url-or-key>` | `get-design-done:gdd-figma-extract` | Off-context Figma design-system extraction → compact local digest (DESIGN.md + tokens.json + components.json), zero raw JSON in context |
 | `graphify <subcommand>` | `get-design-done:gdd-graphify` | Manage Graphify knowledge graph (build/query/status/diff) |
-| `discuss [topic] [--all] [--spec] [--cycle <name>]` | `get-design-done:gdd-discuss` | Adaptive design interview — spawns design-discussant; appends D-XX decisions to STATE.md |
+| `discuss [topic] [--all] [--spec] [--cycle <name>]` | `get-design-done:gdd-discuss` | Adaptive design interview - spawns design-discussant; appends D-XX decisions to STATE.md |
 | `list-assumptions [--area]` | `get-design-done:gdd-list-assumptions` | Surface implicit design assumptions baked into the codebase |
 | **Audit & Session** | | |
 | `audit [--retroactive] [--quick] [--no-reflect]` | `get-design-done:gdd-audit` | Wraps design-verifier + design-auditor + design-reflector; `--retroactive` audits full cycle scope |
-| `reflect [--dry-run] [--cycle <slug>]` | `get-design-done:gdd-reflect` | On-demand reflection — reads cycle data, produces improvement proposals → `.design/reflections/<slug>.md` |
+| `reflect [--dry-run] [--cycle <slug>]` | `get-design-done:gdd-reflect` | On-demand reflection - reads cycle data, produces improvement proposals → `.design/reflections/<slug>.md` |
 | `apply-reflections [--filter <type>] [--dry-run]` | `get-design-done:gdd-apply-reflections` | Review + selectively apply reflection proposals (FRONTMATTER/REFERENCE/BUDGET/QUESTION/GLOBAL-SKILL) |
 | `pause [context]` | `get-design-done:gdd-pause` | Write numbered checkpoint to `.design/checkpoints/NN-*.md` |
 | `resume [N]` | `get-design-done:gdd-resume` | Restore session from checkpoint N (or list checkpoints if no arg) |
@@ -49,26 +49,26 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `recall <query>` | `get-design-done:gdd-recall` | Search cross-cycle memory (decisions, learnings, experience archives) |
 | `timeline [N\|N-M\|all]` | `get-design-done:gdd-timeline` | Narrative retrospective across completed cycles |
 | **Lifecycle** | | |
-| `start [--budget <t>] [--skip-interview] [--dismiss-nudge]` | `get-design-done:start` | First-Run Proof Path — scans UI code, returns one concrete first fix. No STATE.md writes. |
-| `new-project [--name <n>]` | `get-design-done:gdd-new-project` | Initialize project — PROJECT.md + STATE.md + cycle-1 |
+| `start [--budget <t>] [--skip-interview] [--dismiss-nudge]` | `get-design-done:start` | First-Run Proof Path - scans UI code, returns one concrete first fix. No STATE.md writes. |
+| `new-project [--name <n>]` | `get-design-done:gdd-new-project` | Initialize project - PROJECT.md + STATE.md + cycle-1 |
 | `new-cycle [<goal>]` | `get-design-done:gdd-new-cycle` | Start a new design cycle; writes `.design/CYCLES.md` entry |
 | `complete-cycle [<note>]` | `get-design-done:gdd-complete-cycle` | Archive cycle artifacts to `.design/archive/cycle-N/`; reset STATE.md |
 | **Execution speed** | | |
 | `quick [--skip <agent>] [stage]` | `get-design-done:gdd-quick` | Run pipeline skipping optional agents for speed |
-| `fast <task>` | `get-design-done:gdd-fast` | Trivial inline task — no subagents, no pipeline, no artifacts |
+| `fast <task>` | `get-design-done:gdd-fast` | Trivial inline task - no subagents, no pipeline, no artifacts |
 | **Debug & Workflow** | | |
 | `debug [<symptom>]` | `get-design-done:gdd-debug` | Symptom-driven design investigation; persistent state in `.design/DEBUG.md` |
-| `do <natural language>` | `get-design-done:gdd-do` | Natural-language router — parses intent, confirms, dispatches |
-| `report-issue [<cmd>] [--force-report]` | `get-design-done:report-issue` | Consent-gated GitHub issue reporter — triage, pseudonymize, draft to disk, submit via `gh` (no auto-mode; hardcoded destination) |
+| `do <natural language>` | `get-design-done:gdd-do` | Natural-language router - parses intent, confirms, dispatches |
+| `report-issue [<cmd>] [--force-report]` | `get-design-done:report-issue` | Consent-gated GitHub issue reporter - triage, pseudonymize, draft to disk, submit via `gh` (no auto-mode; hardcoded destination) |
 | **Ship & Safety** | | |
-| `ship [--title <t>] [--draft]` | `get-design-done:gdd-ship` | Post-verify PR flow — clean branch + `gh pr create` |
+| `ship [--title <t>] [--draft]` | `get-design-done:gdd-ship` | Post-verify PR flow - clean branch + `gh pr create` |
 | `pr-branch [<base>]` | `get-design-done:gdd-pr-branch` | Strip `.design/` and `.planning/` commits for clean code-review branch |
 | `undo [<sha>]` | `get-design-done:gdd-undo` | Safe revert with dependency check |
 | **Ops** | | |
 | `progress [--forensic]` | `get-design-done:gdd-progress` | Pipeline position + recommended next action; `--forensic` runs 6-check integrity audit |
 | `health` | `get-design-done:gdd-health` | Artifact health report for `.design/` |
 | `todo <add\|list\|pick> [text]` | `get-design-done:gdd-todo` | Design todo list → `.design/TODO.md` |
-| `stats` | `get-design-done:gdd-stats` | Cycle metrics — decisions, commits, todos |
+| `stats` | `get-design-done:gdd-stats` | Cycle metrics - decisions, commits, todos |
 | **Idea capture** | | |
 | `note <add\|list\|promote> [text]` | `get-design-done:gdd-note` | Zero-friction notes → `.design/NOTES.md` |
 | `plant-seed [--trigger <cond>] [text]` | `get-design-done:gdd-plant-seed` | Forward-looking idea with trigger → `.design/SEEDS.md` |
@@ -79,39 +79,39 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `sketch-wrap-up [slug]` | `get-design-done:gdd-sketch-wrap-up` | Pick winner + rationale → writes `./.claude/skills/design-<area>-conventions.md` |
 | `spike [hypothesis] [--timebox N]` | `get-design-done:gdd-spike` | Timeboxed feasibility experiment → `.design/spikes/<slug>/` |
 | `spike-wrap-up [slug]` | `get-design-done:gdd-spike-wrap-up` | Capture findings + D-XX decision → `.design/spikes/<slug>/FINDINGS.md` |
-| `scan` *(deprecated)* | `get-design-done:scan` | Alias — use `explore` instead |
-| `discover` *(deprecated)* | `get-design-done:discover` | Alias — use `explore` instead |
+| `scan` *(deprecated)* | `get-design-done:scan` | Alias - use `explore` instead |
+| `discover` *(deprecated)* | `get-design-done:discover` | Alias - use `explore` instead |
 | **Configuration** | | |
-| `settings <profile\|parallelism\|cleanup\|show>` | `get-design-done:gdd-settings` | Manage `.design/config.json` — model profile, parallelism, cleanup |
+| `settings <profile\|parallelism\|cleanup\|show>` | `get-design-done:gdd-settings` | Manage `.design/config.json` - model profile, parallelism, cleanup |
 | **Maintenance** | | |
 | `update [--dry-run] [--version <tag>]` | `get-design-done:gdd-update` | Update plugin to latest release; preserves config + local skills |
 | `reapply-patches [--dry-run]` | `get-design-done:gdd-reapply-patches` | Reapply `reference/` customizations after an update |
-| `analyze-dependencies [--slice <name>]` | `get-design-done:analyze-dependencies` | Query the `.design/intel/` store — dependency slices, graph queries, phase-scoped reads |
+| `analyze-dependencies [--slice <name>]` | `get-design-done:analyze-dependencies` | Query the `.design/intel/` store - dependency slices, graph queries, phase-scoped reads |
 | `extract-learnings [--cycle <slug>]` | `get-design-done:extract-learnings` | Extract decisions, lessons, patterns, and surprises from a completed cycle → `.design/cycles/<slug>/LEARNINGS.md` |
 | `skill-manifest [--refresh]` | `get-design-done:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
-| `quality-gate` | `get-design-done:quality-gate` | Phase 25 — parallel lint/type/test/visual command runner; classifies failures via quality-gate-runner agent |
-| `turn-closeout` | `get-design-done:turn-closeout` | Phase 25 — Stop-hook mirror skill; finalizes per-turn STATE blocks and emits closeout events |
-| `bandit-status` | `get-design-done:bandit-status` | Phase 27.5 — read-only diagnostic surface for the bandit posterior; per-(agent, bin, delegate, tier) snapshots (alpha, beta, mean, stddev, count, last-used). Use `/gdd:bandit-reset` to mutate. |
-| `openrouter-status [--refresh]` | `get-design-done:gdd-openrouter-status` | Phase 33.6 — read-only OpenRouter catalog + tier-mapping diagnostic; surfaces catalog freshness (vs 24h TTL), last-fetch, resolved opus/sonnet/haiku → model mappings, per-tier preview. `--refresh` re-fetches (needs `OPENROUTER_API_KEY`). |
-| `peers` | `get-design-done:peers` | Phase 27 — `/gdd:peers` capability matrix command; shows installed peer-CLIs (codex/gemini/cursor/copilot/qwen), allowlist status, claimed roles, posterior delta vs local |
-| `peer-cli-customize` | `get-design-done:peer-cli-customize` | Phase 27 — rewire role→peer mappings on a per-agent basis (edits frontmatter `delegate_to:` directly) |
-| `peer-cli-add` | `get-design-done:peer-cli-add` | Phase 27 — guided ladder for adding a brand-new peer (verification ladder + adapter scaffolding + capability-matrix update) |
-| `watch-authorities [--refresh] [--since <date>] [--feed <name>] [--schedule <cadence>]` | `get-design-done:gdd-watch-authorities` | Run design-authority-watcher — fetch curated feeds, diff snapshot, classify new entries → `.design/authority-report.md` (consumed by `/gdd:reflect`) |
+| `quality-gate` | `get-design-done:quality-gate` | Phase 25 - parallel lint/type/test/visual command runner; classifies failures via quality-gate-runner agent |
+| `turn-closeout` | `get-design-done:turn-closeout` | Phase 25 - Stop-hook mirror skill; finalizes per-turn STATE blocks and emits closeout events |
+| `bandit-status` | `get-design-done:bandit-status` | Phase 27.5 - read-only diagnostic surface for the bandit posterior; per-(agent, bin, delegate, tier) snapshots (alpha, beta, mean, stddev, count, last-used). Use `/gdd:bandit-reset` to mutate. |
+| `openrouter-status [--refresh]` | `get-design-done:gdd-openrouter-status` | Phase 33.6 - read-only OpenRouter catalog + tier-mapping diagnostic; surfaces catalog freshness (vs 24h TTL), last-fetch, resolved opus/sonnet/haiku → model mappings, per-tier preview. `--refresh` re-fetches (needs `OPENROUTER_API_KEY`). |
+| `peers` | `get-design-done:peers` | Phase 27 - `/gdd:peers` capability matrix command; shows installed peer-CLIs (codex/gemini/cursor/copilot/qwen), allowlist status, claimed roles, posterior delta vs local |
+| `peer-cli-customize` | `get-design-done:peer-cli-customize` | Phase 27 - rewire role→peer mappings on a per-agent basis (edits frontmatter `delegate_to:` directly) |
+| `peer-cli-add` | `get-design-done:peer-cli-add` | Phase 27 - guided ladder for adding a brand-new peer (verification ladder + adapter scaffolding + capability-matrix update) |
+| `watch-authorities [--refresh] [--since <date>] [--feed <name>] [--schedule <cadence>]` | `get-design-done:gdd-watch-authorities` | Run design-authority-watcher - fetch curated feeds, diff snapshot, classify new entries → `.design/authority-report.md` (consumed by `/gdd:reflect`) |
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
 | `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
-| `export <cycle> --format html\|pdf\|notion [--pseudonymize] [--pr]` | `get-design-done:gdd-export` | Phase 35.5 — package a finished cycle's design output into a stakeholder-shareable artifact (self-contained HTML / Paged.js-print PDF / Notion page); redacts always, `--pseudonymize` masks identity for external sharing, `--pr` posts the HTML preview via pr-commenter |
-| `bootstrap-ds [--primary <color>] [--secondary <color>] [--tone <tags>] [--framework <t>]` | `get-design-done:gdd-bootstrap-ds` | Phase 37.2 — bootstrap a design system for a GREENFIELD project (no DS): brand input → OKLCH token system (color tints + modular type + 4pt/8pt spacing + radius/motion) in 3 variants to pick, then button/input/card proof scaffolding via `ds-generator` |
-| `rollout-status [<cycle>] [--all] [--stuck]` | `get-design-done:gdd-rollout-status` | Phase 38.5 — track a shipped cycle's production rollout (unrolled / staging-only / canary-N% / prod-100%) by reading the feature-flag service via `rollout-coordinator`; surfaces STUCK rollouts; feeds `design_arms` by deployed %. Read-only — never advances or rolls back |
-| `budget [--cycles N] [--scenario best\|typical\|worst]` | `get-design-done:gdd-budget` | Phase 39.2 — forecast design-cycle spend (best/typical/worst from telemetry variance) via `cost-forecaster`; "at the current rate you'll hit your $X project cap in Y cycles." Read-only — never spends, edits `budget.json`, or halts (the budget-enforcer hook halts) |
-| `roi [--since <date>] [--window-days 14]` | `get-design-done:gdd-roi` | Phase 39.2 — ROI table joining per-cycle cost with commits that shipped (survived ≥14d) vs reverted → cost-per-shipped-commit + stick rate. Read-only markdown report |
-| `migrate [--yes] [--dry-run]` | `get-design-done:gdd-migrate` | Phase 39.5 — migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
-| `review-decisions [<id>] [--pending]` | `get-design-done:gdd-review-decisions` | Phase 40 — surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
-| `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `get-design-done:gdd-unlock-decision` | Phase 40 — reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
-| `locale [<code>]` | `get-design-done:gdd-locale` | Phase 40.5 — inspect or set the GDD CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
+| `export <cycle> --format html\|pdf\|notion [--pseudonymize] [--pr]` | `get-design-done:gdd-export` | Phase 35.5 - package a finished cycle's design output into a stakeholder-shareable artifact (self-contained HTML / Paged.js-print PDF / Notion page); redacts always, `--pseudonymize` masks identity for external sharing, `--pr` posts the HTML preview via pr-commenter |
+| `bootstrap-ds [--primary <color>] [--secondary <color>] [--tone <tags>] [--framework <t>]` | `get-design-done:gdd-bootstrap-ds` | Phase 37.2 - bootstrap a design system for a GREENFIELD project (no DS): brand input → OKLCH token system (color tints + modular type + 4pt/8pt spacing + radius/motion) in 3 variants to pick, then button/input/card proof scaffolding via `ds-generator` |
+| `rollout-status [<cycle>] [--all] [--stuck]` | `get-design-done:gdd-rollout-status` | Phase 38.5 - track a shipped cycle's production rollout (unrolled / staging-only / canary-N% / prod-100%) by reading the feature-flag service via `rollout-coordinator`; surfaces STUCK rollouts; feeds `design_arms` by deployed %. Read-only - never advances or rolls back |
+| `budget [--cycles N] [--scenario best\|typical\|worst]` | `get-design-done:gdd-budget` | Phase 39.2 - forecast design-cycle spend (best/typical/worst from telemetry variance) via `cost-forecaster`; "at the current rate you'll hit your $X project cap in Y cycles." Read-only - never spends, edits `budget.json`, or halts (the budget-enforcer hook halts) |
+| `roi [--since <date>] [--window-days 14]` | `get-design-done:gdd-roi` | Phase 39.2 - ROI table joining per-cycle cost with commits that shipped (survived ≥14d) vs reverted → cost-per-shipped-commit + stick rate. Read-only markdown report |
+| `migrate [--yes] [--dry-run]` | `get-design-done:gdd-migrate` | Phase 39.5 - migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
+| `review-decisions [<id>] [--pending]` | `get-design-done:gdd-review-decisions` | Phase 40 - surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
+| `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `get-design-done:gdd-unlock-decision` | Phase 40 - reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
+| `locale [<code>]` | `get-design-done:gdd-locale` | Phase 40.5 - inspect or set the GDD CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
 
 ## Handoff Routing
 
-**Check FIRST** — before any other routing logic. If `$ARGUMENTS` starts with `handoff` OR contains `--from-handoff`:
+**Check FIRST** - before any other routing logic. If `$ARGUMENTS` starts with `handoff` OR contains `--from-handoff`:
 
 1. **Extract bundle path:**
    - `handoff <path>` → bundle path is the second argument
@@ -186,7 +186,7 @@ Use `[✓]` for complete, `[→]` for current, `[ ]` for pending, `[!]` for gaps
 
 ## Jump Mode
 
-If `$ARGUMENTS` is a stage or command name — invoke it directly, no state check:
+If `$ARGUMENTS` is a stage or command name - invoke it directly, no state check:
 
 ```
 /gdd:brief     → Skill("get-design-done:gdd-brief")
@@ -263,6 +263,6 @@ Pass remaining arguments through: `/gdd:explore --skip-interview` → `Skill("ge
 
 ## Do Not
 
-- Do not perform any design work yourself — route to the stage skill.
+- Do not perform any design work yourself - route to the stage skill.
 - Do not skip stages unless the user explicitly passes a stage argument.
-- Do not create or modify `.design/` files — the stage skills own their artifacts.
+- Do not create or modify `.design/` files - the stage skills own their artifacts.

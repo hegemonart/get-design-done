@@ -1,4 +1,4 @@
-# Command Palette — Benchmark Spec
+# Command Palette - Benchmark Spec
 
 **Harvested from**: Linear, Raycast, Radix CMDK, GitHub Primer, UUPM (app-interface, MIT)
 **Wave**: 4 · **Category**: Navigation & Data
@@ -64,7 +64,7 @@ A command palette is a keyboard-first global launcher that lets users search acr
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| closed | — | Dialog hidden | — |
+| closed | - | Dialog hidden | - |
 | open | Cmd/Ctrl+K | Dialog visible; input focused | `aria-expanded="true"` on combobox |
 | empty | no query | Placeholder or recent items | `aria-expanded="true"` |
 | searching | typing | Results update in real-time | `aria-live="polite"` on results region |
@@ -97,7 +97,7 @@ A command palette is a keyboard-first global launcher that lets users search acr
 - Section heading: label-xs (11px), uppercase, weight 600, `color: --text-subtle`, `aria-hidden="true"` if role="group" handles it
 - Keyboard shortcut hints: label-xs (11px), `color: --text-subtle`, right-aligned, `aria-hidden="true"`
 
-Cross-link: `reference/typography.md` — body-md, label scale
+Cross-link: `reference/typography.md` - body-md, label scale
 
 ---
 
@@ -108,7 +108,7 @@ Cross-link: `reference/typography.md` — body-md, label scale
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/combobox/ and https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/combobox/ and https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -123,14 +123,14 @@ Cross-link: `reference/typography.md` — body-md, label scale
 
 ### Accessibility Rules
 
-- Dialog MUST have `aria-modal="true"` — prevents AT from reading content outside the palette
+- Dialog MUST have `aria-modal="true"` - prevents AT from reading content outside the palette
 - `role="combobox"` input MUST have `aria-controls` pointing to the `role="listbox"` `id`
 - `aria-live="polite"` on the results region ensures AT announces result count changes and empty state
 - Focus MUST be trapped within the dialog while it is open (Tab/Shift+Tab cycle inside)
 - On close, focus MUST return to the element that triggered the palette (not body)
-- Keyboard shortcut hints (`⌘K`, `↵`) MUST be `aria-hidden="true"` — the shortcut must be registered separately
+- Keyboard shortcut hints (`⌘K`, `↵`) MUST be `aria-hidden="true"` - the shortcut must be registered separately
 
-Cross-link: `reference/accessibility.md` — dialog focus trap, combobox pattern, live regions
+Cross-link: `reference/accessibility.md` - dialog focus trap, combobox pattern, live regions
 
 ---
 
@@ -144,9 +144,9 @@ Cross-link: `reference/accessibility.md` — dialog focus trap, combobox pattern
 | Backdrop fade in | 150ms | ease-out | Opacity 0→0.5 |
 | Item selection flash | 80ms | ease-out | Brief fill before execute |
 
-**BAN**: Do not animate result item reordering as the user types — causes visual instability and is disorienting for AT users with animations enabled.
+**BAN**: Do not animate result item reordering as the user types - causes visual instability and is disorienting for AT users with animations enabled.
 
-Cross-link: `reference/motion.md` — dialog entry, BAN-04
+Cross-link: `reference/motion.md` - dialog entry, BAN-04
 
 ---
 
@@ -159,10 +159,10 @@ Cross-link: `reference/motion.md` — dialog entry, BAN-04
 - Use `role="group"` + `aria-label` for result sections *(WAI-ARIA APG, Linear, Raycast)*
 
 ### Don't
-- Don't build a custom overlay without `role="dialog"` + `aria-modal` — screen readers will read background content *(WCAG 1.3.1)*
-- Don't omit `aria-controls` on the combobox — AT cannot associate input with results *(WAI-ARIA APG combobox)*
-- Don't open on hover or auto-focus — Cmd/Ctrl+K is the expected trigger *(Linear, Raycast convention)*
-- Don't dismiss on every Escape keypress inside nested command flows — first Escape should exit sub-level, second closes palette *(Raycast, Linear)*
+- Don't build a custom overlay without `role="dialog"` + `aria-modal` - screen readers will read background content *(WCAG 1.3.1)*
+- Don't omit `aria-controls` on the combobox - AT cannot associate input with results *(WAI-ARIA APG combobox)*
+- Don't open on hover or auto-focus - Cmd/Ctrl+K is the expected trigger *(Linear, Raycast convention)*
+- Don't dismiss on every Escape keypress inside nested command flows - first Escape should exit sub-level, second closes palette *(Raycast, Linear)*
 
 ---
 
@@ -170,7 +170,7 @@ Cross-link: `reference/motion.md` — dialog entry, BAN-04
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on results list — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on results list - `reference/anti-patterns.md#ban-04` |
 
 ---
 
@@ -223,6 +223,6 @@ grep -rn 'command.*palette\|cmd.*results\|cmdk' src/ | grep 'results\|listbox' |
 </div>
 ```
 
-**Why it fails**: No `role="dialog"` — AT does not treat this as a modal, and screen readers continue reading background content; no focus trap; input lacks `role="combobox"` and `aria-controls`; results have no `role="listbox"`; items have no `role="option"` or `aria-selected`; no `aria-live` region for result updates.
+**Why it fails**: No `role="dialog"` - AT does not treat this as a modal, and screen readers continue reading background content; no focus trap; input lacks `role="combobox"` and `aria-controls`; results have no `role="listbox"`; items have no `role="option"` or `aria-selected`; no `aria-live` region for result updates.
 **Grep detection**: `grep -rn 'command.*palette\|cmdk\|command-menu' src/ | grep '<div' | grep -v 'role='`
 **Fix**: Use `role="dialog"` + `aria-modal="true"` on the overlay; implement focus trap; add `role="combobox"` + `aria-controls` to input; add `role="listbox"` to results container; add `role="option"` + `aria-selected` to each item; add `aria-live="polite"` to results region.

@@ -19,7 +19,7 @@ Thin command wrapper around the GSD graphify tools integration.
 ## Behavior
 
 1. Read `.design/STATE.md` to check `graphify` status in `<connections>`.
-2. Check `graphify.enabled` in `.design/config.json` via a direct file read (per D-09 — no `config-get` CLI subcommand):
+2. Check `graphify.enabled` in `.design/config.json` via a direct file read (per D-09 - no `config-get` CLI subcommand):
    ```
    node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
    ```
@@ -38,12 +38,12 @@ Thin command wrapper around the GSD graphify tools integration.
 
 ## Required Reading
 
-- `.design/STATE.md` — for graphify status in `<connections>`
-- `.design/config.json` — for `graphify.enabled` flag
+- `.design/STATE.md` - for graphify status in `<connections>`
+- `.design/config.json` - for `graphify.enabled` flag
 
 ## Notes
 
-- Graphify is optional. The native CLI ships in this repo at `bin/gdd-graph` (no external install — Node only).
+- Graphify is optional. The native CLI ships in this repo at `bin/gdd-graph` (no external install - Node only).
 - Graph is stored at `.design/graph/graph.json` (Ajv-validated against `scripts/lib/graph/schema.json`).
 - Graph covers source code (`src/`, `components/`). It does NOT index `.design/` artifacts by default.
 - Use `query` with node IDs from the graph schema: `component:<name>`, `token:color/<name>`, `decision:D-<nn>`, etc.

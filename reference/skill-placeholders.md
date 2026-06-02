@@ -1,4 +1,4 @@
-# Skill Placeholders — Multi-Harness Source Compilation
+# Skill Placeholders - Multi-Harness Source Compilation
 
 > Phase 42. Skills are authored once in `source/skills/` with placeholders and compiled per-harness into
 > `dist/<bundle>/<config-dir>/skills/...` by `scripts/build-skills.cjs` (the pure transform lives in
@@ -18,7 +18,7 @@
 Only `{{command_prefix}}` is currently woven through the migrated source (every literal `/gdd:` became
 `{{command_prefix}}`); the other three are documented + factory-supported for authors who need them.
 Because Claude's `command_prefix` is exactly `/gdd:`, `compile(source, claude)` reproduces `skills/`
-byte-for-byte — that pure-inverse property is what makes the drift gate safe.
+byte-for-byte - that pure-inverse property is what makes the drift gate safe.
 
 ## Per-harness substitution table
 
@@ -63,7 +63,7 @@ This sentence ships only in the Cursor and Codex bundles.
 
 The block body is kept iff the compiling harness's `id` appears in the comma list; otherwise it is removed
 entirely. Full per-harness content forking beyond placeholders and these blocks is intentionally out of
-scope (a maintenance trap) — see the Phase 42 CONTEXT.
+scope (a maintenance trap) - see the Phase 42 CONTEXT.
 
 ## Validation
 

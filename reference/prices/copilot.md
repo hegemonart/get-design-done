@@ -1,9 +1,9 @@
-# GitHub Copilot — Price Table (stub)
+# GitHub Copilot - Price Table (stub)
 
 **Runtime:** `copilot` (GitHub Copilot CLI)
-**Phase 26 D-08 sub-table — STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
+**Phase 26 D-08 sub-table - STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
 
-**Provenance:** `<TODO: confirm at https://docs.github.com/en/copilot/about-github-copilot/plans-for-github-copilot>` — pending.
+**Provenance:** `<TODO: confirm at https://docs.github.com/en/copilot/about-github-copilot/plans-for-github-copilot>` - pending.
 
 ## Pricing (USD per 1M tokens)
 

@@ -1,6 +1,6 @@
-# Model Prices — Router
+# Model Prices - Router
 
-**Phase 26 D-08 router.** This file used to carry a single Anthropic-only price table. As of v1.26.0 it links to per-runtime sub-tables — one file per runtime under `reference/prices/`. Budget-enforcer + cost-aggregator load the sub-table for the active runtime (resolved via `scripts/lib/runtime-detect.cjs`) and tag every `events.jsonl` cost row with the runtime ID.
+**Phase 26 D-08 router.** This file used to carry a single Anthropic-only price table. As of v1.26.0 it links to per-runtime sub-tables - one file per runtime under `reference/prices/`. Budget-enforcer + cost-aggregator load the sub-table for the active runtime (resolved via `scripts/lib/runtime-detect.cjs`) and tag every `events.jsonl` cost row with the runtime ID.
 
 For the model→tier mapping (which model name corresponds to opus/sonnet/haiku per runtime), see `reference/runtime-models.md`.
 
@@ -45,7 +45,7 @@ When `cache_hit: true`, the formula re-runs with `cached_input_per_1m` in place 
 
 When a cost lookup misses (model not present in the runtime's sub-table, or runtime sub-table is a stub), `scripts/lib/budget-enforcer.cjs` falls back to `reference/prices/claude.md` and emits a `cost_lookup_fallback` event. This keeps the pipeline running on stub runtimes while authority-watcher (Phase 13.2) flags drift for follow-up.
 
-If `claude.md` ALSO misses the model, the spawn proceeds with `cost_usd: null` and a `cost_lookup_failed` event — the existing fail-open contract from Phase 20-13.
+If `claude.md` ALSO misses the model, the spawn proceeds with `cost_usd: null` and a `cost_lookup_failed` event - the existing fail-open contract from Phase 20-13.
 
 ## Transitional fallback (v1.25 and earlier)
 

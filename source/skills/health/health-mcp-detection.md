@@ -19,11 +19,11 @@ than crashing the skill.
 
 1. Read `.design/config.json` (if present). Parse JSON inside a try/catch.
 2. If `config.mcp_nudge === false`, SKIP this step entirely (render nothing).
-3. On parse failure: default to `mcp_nudge=true` (show the row) — fail-safe per threat T-27.7-04-05.
+3. On parse failure: default to `mcp_nudge=true` (show the row) - fail-safe per threat T-27.7-04-05.
 
 ## Detection
 
-1. Read `.claude/settings.local.json` (or equivalent harness settings file) and inspect its `mcpServers` object — alternatively run `claude mcp list` / `codex mcp list` if a CLI is available (see fallback below).
+1. Read `.claude/settings.local.json` (or equivalent harness settings file) and inspect its `mcpServers` object - alternatively run `claude mcp list` / `codex mcp list` if a CLI is available (see fallback below).
 2. Preferred invocation via the install-lib: call `detectMcpRegistration()` from `scripts/lib/install/mcp-register.cjs`. Returns `{harnesses: [{harness, present, registered}], summary}`.
 
 ## Row rendering
@@ -41,4 +41,4 @@ Based on the detection result, render exactly ONE of these row strings:
 
 ## Fallback (if `mcp-register.cjs` not yet shipped)
 
-Skip this step silently with status `MCP server: unknown`. This step is non-blocking — failures here MUST NOT crash the SKILL.
+Skip this step silently with status `MCP server: unknown`. This step is non-blocking - failures here MUST NOT crash the SKILL.

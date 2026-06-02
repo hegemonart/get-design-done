@@ -57,7 +57,7 @@ grep -rEn "(justify-content|align-items|grid-template|flex-direction)" src/ --in
 
 Look for F-pattern (left-aligned start), Z-pattern (hero then CTA), and centered-column patterns.
 
-## Output Format — `.design/map/visual-hierarchy.md`
+## Output Format - `.design/map/visual-hierarchy.md`
 
 ```markdown
 ---

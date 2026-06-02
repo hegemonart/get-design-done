@@ -4,7 +4,7 @@ Use this during Discover (identifying real problems), Plan (determining what to 
 
 ---
 
-## Nielsen Norman Group — 10 Usability Heuristics
+## Nielsen Norman Group - 10 Usability Heuristics
 
 The baseline evaluation framework. Score each 0–4 (0=violation, 4=excellent). Include in audit output.
 
@@ -56,7 +56,7 @@ Minimize the user's memory load by making objects, actions, and options visible.
 - **Fail cases**: Users must remember previous step's data, keyboard shortcuts only without visual hints
 
 ### H-07: Flexibility and Efficiency of Use
-Accelerators — unseen by the novice user — allow experts to speed up interaction.
+Accelerators - unseen by the novice user - allow experts to speed up interaction.
 - Keyboard shortcuts for power users
 - Bulk actions for lists
 - Saved searches/filters
@@ -93,19 +93,19 @@ Even though it is better if the system can be used without documentation, it may
 
 Use during layout and visual hierarchy decisions.
 
-**Proximity** — Elements close together are perceived as related. Use: group related controls (8–16px between group members, 32–64px between groups).
+**Proximity** - Elements close together are perceived as related. Use: group related controls (8–16px between group members, 32–64px between groups).
 
-**Similarity** — Elements looking alike are perceived as the same type. Use: consistent styling for all links, all CTAs, all destructive actions.
+**Similarity** - Elements looking alike are perceived as the same type. Use: consistent styling for all links, all CTAs, all destructive actions.
 
-**Continuity** — The eye follows lines and curves. Use: align elements to create reading flow (left-to-right, top-to-bottom).
+**Continuity** - The eye follows lines and curves. Use: align elements to create reading flow (left-to-right, top-to-bottom).
 
-**Closure** — The mind fills in incomplete shapes. Use: card borders can be implied by spacing and background difference alone.
+**Closure** - The mind fills in incomplete shapes. Use: card borders can be implied by spacing and background difference alone.
 
-**Figure/Ground** — Foreground vs background differentiation. Use: modals and overlays need clear depth separation (shadow, blur, dimming).
+**Figure/Ground** - Foreground vs background differentiation. Use: modals and overlays need clear depth separation (shadow, blur, dimming).
 
-**Common Fate** — Elements moving together are perceived as a group. Use: animation groups related elements together — stagger within groups, not across.
+**Common Fate** - Elements moving together are perceived as a group. Use: animation groups related elements together - stagger within groups, not across.
 
-**Prägnanz (Simplicity)** — The mind perceives the simplest possible interpretation. Use: reduce visual complexity. If 2 elements can do the job of 5, use 2.
+**Prägnanz (Simplicity)** - The mind perceives the simplest possible interpretation. Use: reduce visual complexity. If 2 elements can do the job of 5, use 2.
 
 ---
 
@@ -115,8 +115,8 @@ Use during layout and visual hierarchy decisions.
 
 Time to click = function of distance / target size. Implications:
 - Minimum touch target: **44×44pt** (iOS), **48×48dp** (Android). Never smaller.
-- Destructive actions (Delete, Cancel) must be **physically far** from primary actions OR significantly smaller — not adjacent at the same size.
-- Screen edges and corners are fast (infinite size in that direction) — use for primary navigation (iOS bottom bar, macOS menu bar).
+- Destructive actions (Delete, Cancel) must be **physically far** from primary actions OR significantly smaller - not adjacent at the same size.
+- Screen edges and corners are fast (infinite size in that direction) - use for primary navigation (iOS bottom bar, macOS menu bar).
 - Dense interfaces that require clicking small targets = high error rate + user frustration.
 
 ---
@@ -148,7 +148,7 @@ Working memory holds approximately **5–9 items**. Implications:
 Users remember the **first** and **last** items in a list best (primacy and recency). Implications:
 - Put most important actions first and last in navigation.
 - In long forms, critical fields go near the top or after a clear section break.
-- CTAs at the bottom of long pages work (recency) — but add one above the fold too (primacy).
+- CTAs at the bottom of long pages work (recency) - but add one above the fold too (primacy).
 
 ---
 
@@ -156,8 +156,8 @@ Users remember the **first** and **last** items in a list best (primacy and rece
 
 The item that **differs** from its group is most memorable. Implications:
 - One primary CTA per screen (contrast makes it memorable).
-- Don't use "primary" styling on 3 different buttons — only one stands out.
-- Highlight key data points in tables (bold, color accent) — but only the truly key ones.
+- Don't use "primary" styling on 3 different buttons - only one stands out.
+- Highlight key data points in tables (bold, color accent) - but only the truly key ones.
 - Overuse of emphasis = no emphasis. Use it for 1–2 items per view maximum.
 
 ---
@@ -183,10 +183,10 @@ People **remember incomplete tasks** better than completed ones. Implications:
 
 ## Peak-End Rule
 
-Users judge an experience primarily by how it felt at its most intense moment (the **peak**) and how it ended — not by the average across the whole session. Implications:
+Users judge an experience primarily by how it felt at its most intense moment (the **peak**) and how it ended - not by the average across the whole session. Implications:
 - Design a deliberate positive peak in every primary flow (e.g., a celebratory completion screen, an instant result, a delightful empty state).
 - The **end state** of a flow matters disproportionately: the last screen the user sees shapes their memory of the whole interaction.
-- Reduce negative peaks first (error states, loading hangs) — they weigh heavier than neutral moments.
+- Reduce negative peaks first (error states, loading hangs) - they weigh heavier than neutral moments.
 - A long frustrating form followed by a satisfying completion screen is remembered more positively than a mildly annoying end to an otherwise smooth flow.
 
 ---
@@ -195,7 +195,7 @@ Users judge an experience primarily by how it felt at its most intense moment (t
 
 Users feel the pain of loss approximately **twice as strongly** as the pleasure of an equivalent gain (Kahneman & Tversky). Implications:
 - Frame CTAs around what users keep/save, not what they gain: "Don't lose your progress" over "Save your work."
-- Subscription cancellation flows that show what the user will lose (features, data, streak) leverage loss aversion ethically to reduce churn — but only if the stated losses are real.
+- Subscription cancellation flows that show what the user will lose (features, data, streak) use loss aversion ethically to reduce churn - but only if the stated losses are real.
 - Free trial countdowns ("3 days left") trigger loss aversion more effectively than benefit reminders.
 - Destructive action confirmations should name what is lost: "Delete this project and all 47 files?" not just "Are you sure?"
 
@@ -212,7 +212,7 @@ Working memory is limited to approximately **7 ± 2 chunks** simultaneously (Mil
 | **Germane** | Load that builds understanding (learning, pattern recognition) | Preserve and support |
 
 Practical rules:
-- Every element of visual noise is extraneous load — remove it.
+- Every element of visual noise is extraneous load - remove it.
 - New UI patterns create extraneous load (Jakob's Law); use platform conventions.
 - Chunk complex tasks into steps of ≤3 decisions each.
 - Error messages that require decoding ("Error 422") create extraneous load; plain language removes it.
@@ -221,11 +221,11 @@ Practical rules:
 
 ## Aesthetic-Usability Effect
 
-Users perceive **aesthetically pleasing designs as more usable**, even when functionality is identical — and this perception persists through initial usability problems. Implications:
+Users perceive **aesthetically pleasing designs as more usable**, even when functionality is identical - and this perception persists through initial usability problems. Implications:
 - A polished visual appearance buys tolerance for minor UX rough edges in early releases.
 - This effect is strongest on first impression; it degrades over time as behavioral friction compounds.
 - The effect can mask genuine usability problems in user testing if participants rate overall satisfaction rather than task completion.
-- Do NOT use the aesthetic-usability effect as a reason to defer fixing usability problems — it explains tolerance, not satisfaction.
+- Do NOT use the aesthetic-usability effect as a reason to defer fixing usability problems - it explains tolerance, not satisfaction.
 
 ---
 
@@ -242,7 +242,7 @@ A system that responds within **400ms** keeps users in a state of flow. Response
 
 ## Flow (Csikszentmihalyi)
 
-Users enter a **flow state** when task difficulty matches their skill level exactly — high enough to engage, low enough to feel achievable. Flow is characterized by complete absorption, loss of time awareness, and intrinsic motivation. Implications:
+Users enter a **flow state** when task difficulty matches their skill level exactly - high enough to engage, low enough to feel achievable. Flow is characterized by complete absorption, loss of time awareness, and intrinsic motivation. Implications:
 - Progressive difficulty: onboarding tasks should be trivially easy; expert tasks should provide just enough challenge.
 - Interruptions break flow permanently for that session; avoid modal interruptions in high-focus workflows.
 - Clear goals + immediate feedback are the two design levers for inducing flow (H-01, H-05).
@@ -257,11 +257,11 @@ For each NNG heuristic (H-01 through H-10), rate 0–4:
 
 | Score | Meaning |
 |---|---|
-| 4 | Excellent — actively exemplifies the heuristic |
-| 3 | Passes — meets the heuristic requirement |
-| 2 | Minor violation — notable issue but not blocking |
-| 1 | Major violation — users will notice and be impacted |
-| 0 | Critical violation — breaks the interface |
+| 4 | Excellent - actively exemplifies the heuristic |
+| 3 | Passes - meets the heuristic requirement |
+| 2 | Minor violation - notable issue but not blocking |
+| 1 | Major violation - users will notice and be impacted |
+| 0 | Critical violation - breaks the interface |
 
 **Overall Heuristic Score** = (sum / 40) × 100
 
@@ -297,7 +297,7 @@ function dfs(node):
 **Bias notes:** the DFS visits each node at most once per traversal, so duplicate cycles
 across multiple entry points are deduped by the `visited` guard. The `path.index(node)`
 slice captures only the cycle suffix; nodes before the entry point are not part of the
-cycle. Pre-existing acyclic chains stay invisible — only back-edges surface.
+cycle. Pre-existing acyclic chains stay invisible - only back-edges surface.
 
 ---
 
@@ -321,7 +321,7 @@ minor bumps. They register via `OFF_CADENCE_VERSIONS.add('<version>')` in
 `tests/semver-compare.test.cjs`. The semver-compare test treats them as if they had a
 canonical predecessor (`v1.28.5` after `v1.28.0`, not `v1.28.4`).
 
-**Preview-suffix trap:** model IDs with `-preview` (`gpt-5-preview` vs `gpt-5`) drift — today's
+**Preview-suffix trap:** model IDs with `-preview` (`gpt-5-preview` vs `gpt-5`) drift - today's
 preview is tomorrow's GA. Tooling MUST store the parent name in `provider_model_id` and treat
 the suffix as decorative. See `./peer-cli-protocol.md` for the peer-CLI-side context.
 
@@ -333,22 +333,22 @@ Reference catalog for `skills/optimize/SKILL.md`. Four deterministic rules; rule
 analysis applied in order. Each rule inspects per-agent aggregates from
 `.design/agent-metrics.json` and emits zero or more rows to the recommendations table.
 
-**R1 — Low cache hit rate.**
+**R1 - Low cache hit rate.**
 - *Condition:* `total_spawns >= --min-spawns` AND `cache_hit_rate < 0.20`.
 - *Emit:* `"Consider batching tasks for agent {agent} — cache hit rate is {rate*100}%. Investigate cache-aligned ordering (see reference/shared-preamble.md) and whether input paths can be normalized."`
 - *Proposed action:* Batch similar tasks; confirm shared-preamble import ordering.
 
-**R2 — Expensive and rarely lazy-skipped.**
+**R2 - Expensive and rarely lazy-skipped.**
 - *Condition:* `total_cost_usd > 0.50` AND `lazy_skip_rate < 0.10`.
 - *Emit:* `"Agent {agent} is expensive (${cost}) and rarely skipped ({rate*100}% lazy-skip). Consider adding a lazy gate heuristic at agents/{agent}-gate.md (see plan 10.1-04 pattern)."`
 - *Proposed action:* Add lazy-gate agent.
 
-**R3 — Tier override churn.**
+**R3 - Tier override churn.**
 - *Condition:* Multiple telemetry rows show recorded `tier` differing from frontmatter `default-tier` (e.g., frontmatter `opus` but measured rows consistently `haiku` from budget.json override or soft-threshold downgrade).
 - *Emit:* `"Tier override churn detected for {agent}: frontmatter says {frontmatter-tier} but measured tier is {measured-tier} in {N} of last {M} rows. Consider updating frontmatter default-tier or removing the budget.json override."`
 - *Proposed action:* Update frontmatter default-tier OR prune budget.json `tier_overrides` entry.
 
-**R4 — Typical duration drift.**
+**R4 - Typical duration drift.**
 - *Condition:* Measured `typical_duration_seconds` (computed as avg wall-clock between paired spawn/complete rows; fall back to frontmatter when pairing unavailable) differs from frontmatter `typical-duration-seconds` by more than 50%.
 - *Emit:* `"Typical duration for {agent} has drifted: frontmatter {old}s vs measured {new}s ({delta_pct}% drift). Update frontmatter typical-duration-seconds: {new}."`
 - *Proposed action:* Edit `agents/{agent}.md` frontmatter.

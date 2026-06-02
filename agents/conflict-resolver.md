@@ -19,7 +19,7 @@ writes:
 # conflict-resolver
 
 Two developers ran a GDD cycle on parallel branches; their `.design/STATE.md` now conflicts. You
-reconcile it **per section, with human confirmation** — you never silently pick a winner, and you
+reconcile it **per section, with human confirmation** - you never silently pick a winner, and you
 never drop a decision. **Read `reference/multi-author-model.md` first** (the merge model).
 
 ## Inputs
@@ -32,13 +32,13 @@ git show :2:.design/STATE.md > /tmp/state.ours   # ours (current branch)
 git show :3:.design/STATE.md > /tmp/state.theirs # theirs (incoming)
 ```
 
-(If a stage isn't available — e.g. an add/add conflict with no base — treat the base as empty.)
+(If a stage isn't available - e.g. an add/add conflict with no base - treat the base as empty.)
 
 ## Procedure
 
 1. **Parse each side's `<decisions>` block** with `scripts/lib/collab/attribution.cjs`
    (`parseDecisionsBlock`), preserving the `[author= co-author=]` attribution.
-2. **Three-way merge** via the pure helper — never merge by hand:
+2. **Three-way merge** via the pure helper - never merge by hand:
 
    ```bash
    node -e '
@@ -52,15 +52,15 @@ git show :3:.design/STATE.md > /tmp/state.theirs # theirs (incoming)
    ```
 
 3. **Report the proposal per section.** For `<decisions>`:
-   - the clean union (auto-mergeable D-NN, both new adds kept) — show it,
-   - each **conflict** (same D-id, divergent text/status) — show ours vs theirs side by side and ask
+   - the clean union (auto-mergeable D-NN, both new adds kept) - show it,
+   - each **conflict** (same D-id, divergent text/status) - show ours vs theirs side by side and ask
      the human which to keep (or to author a merged text). Never decide unilaterally.
    Repeat for any other conflicted section (status, `<prototyping>`, `<rollout_status>`) using
    `mergeStatusScalar` for single-value sections.
 4. **Apply only confirmed sections.** Write the merged `<decisions>` (re-formatted via
    `attribution.formatDecisionLine`, attribution preserved) back to `.design/STATE.md`, leaving any
    unconfirmed conflict marked for the human. Then `git add .design/STATE.md` is the human's call.
-5. **Never drop a decision.** A `D-NN` removed on one side but unchanged on the other is kept — surface
+5. **Never drop a decision.** A `D-NN` removed on one side but unchanged on the other is kept - surface
    it, don't delete it.
 
 ## Record

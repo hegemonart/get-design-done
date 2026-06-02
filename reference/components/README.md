@@ -3,16 +3,16 @@
 Per-component design specifications harvested from 18 major design systems.
 Each spec is ≤350 lines, greppable, diff-friendly, and agent-consumable.
 
-**Spec shape**: `TEMPLATE.md` — Purpose · Anatomy · Variants · States · Sizing ·
+**Spec shape**: `TEMPLATE.md` - Purpose · Anatomy · Variants · States · Sizing ·
 Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations · Grep signatures
 
 **Harvest source list**: `connections/design-corpora.md` (18 systems)
 **Tooling**: `agents/component-benchmark-harvester.md` → `agents/component-benchmark-synthesizer.md`
-**CLI**: `/gdd:benchmark <component>` — see `skills/benchmark/SKILL.md`
+**CLI**: `/gdd:benchmark <component>` - see `skills/benchmark/SKILL.md`
 
 ---
 
-## Wave 1 — Inputs (foundational)
+## Wave 1 - Inputs (foundational)
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
@@ -27,7 +27,7 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 ---
 
-## Wave 2 — Containers
+## Wave 2 - Containers
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
@@ -41,7 +41,7 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 ---
 
-## Wave 3 — Feedback
+## Wave 3 - Feedback
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
@@ -54,7 +54,7 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 ---
 
-## Wave 4 — Navigation & Data *(v1.17.0 · plan 17-02)*
+## Wave 4 - Navigation & Data *(v1.17.0 · plan 17-02)*
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
@@ -70,7 +70,7 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 ---
 
-## Wave 5 — Data & Advanced
+## Wave 5 - Data & Advanced
 
 | Component | Spec | Purpose |
 |-----------|------|---------|
@@ -86,9 +86,9 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 | Wave | Specs | Status |
 |------|-------|--------|
-| Wave 1 — Inputs | 8 | v1.16.0 |
-| Wave 2 — Containers | 7 | v1.16.0 |
-| Wave 3 — Feedback | 6 | v1.17.0 |
-| Wave 4 — Navigation & Data | 9 | v1.17.0 |
-| Wave 5 — Data & Advanced | 5 | v1.17.0 |
-| **Total** | **35** | — |
+| Wave 1 - Inputs | 8 | v1.16.0 |
+| Wave 2 - Containers | 7 | v1.16.0 |
+| Wave 3 - Feedback | 6 | v1.17.0 |
+| Wave 4 - Navigation & Data | 9 | v1.17.0 |
+| Wave 5 - Data & Advanced | 5 | v1.17.0 |
+| **Total** | **35** | - |

@@ -4,25 +4,25 @@ The decision engine reads these rules at every stage spawn point and writes its 
 
 ---
 
-## Hard Rules — Always Serial (override everything)
+## Hard Rules - Always Serial (override everything)
 
-1. **Sequential dependency** — Agent B requires output from Agent A → serial.
-2. **Shared write conflict** — Two agents write to the same file path (intersecting `writes:` fields) → serial.
-3. **Interactive agent** — Agent requires `AskUserQuestion` during execution → serial. Interactive agents cannot be parallelized.
-4. **Single task** — Only 1 candidate in the wave → serial (nothing to parallelize).
-5. **Overlapping Touches** — Two tasks have overlapping `Touches:` fields (same file paths) → serial.
-6. **Schema migrations** — Any agent altering database schema (migrations, `ALTER TABLE`, index changes) → serial within its wave.
-7. **Rate-limited external API** — Agents calling an external API with shared rate limits (same auth token, same quota) → serial.
+1. **Sequential dependency** - Agent B requires output from Agent A → serial.
+2. **Shared write conflict** - Two agents write to the same file path (intersecting `writes:` fields) → serial.
+3. **Interactive agent** - Agent requires `AskUserQuestion` during execution → serial. Interactive agents cannot be parallelized.
+4. **Single task** - Only 1 candidate in the wave → serial (nothing to parallelize).
+5. **Overlapping Touches** - Two tasks have overlapping `Touches:` fields (same file paths) → serial.
+6. **Schema migrations** - Any agent altering database schema (migrations, `ALTER TABLE`, index changes) → serial within its wave.
+7. **Rate-limited external API** - Agents calling an external API with shared rate limits (same auth token, same quota) → serial.
 
-## Soft Rules — Prefer Serial (yield to config overrides)
+## Soft Rules - Prefer Serial (yield to config overrides)
 
-8. **Below savings threshold** — `sum(typical-duration-seconds) - max(typical-duration-seconds) < config.min_estimated_savings_seconds` (default 30s) → prefer serial.
-9. **All candidates fast** — Every candidate has `typical-duration-seconds < 10` → parallel overhead may exceed savings → prefer serial.
-10. **Beyond max_parallel_agents cap** — N candidates > `config.max_parallel_agents` → split into sequential waves of `max_parallel_agents` each.
-11. **Worktree isolation unavailable** — `worktree_isolation: true` in config but git worktrees not available → fall back to serial.
-12. **Below min_tasks_to_parallelize** — Fewer than `config.min_tasks_to_parallelize` (default 2) eligible → serial.
-13. **Large context** — Any candidate's `<required_reading>` total is >100K tokens — risk of context bloat in concurrent dispatch → prefer serial.
-14. **Token-costly agents** — Agents tagged `model: opus` with `typical-duration-seconds > 120s` — prefer serial to avoid bursty spend unless explicitly opted in.
+8. **Below savings threshold** - `sum(typical-duration-seconds) - max(typical-duration-seconds) < config.min_estimated_savings_seconds` (default 30s) → prefer serial.
+9. **All candidates fast** - Every candidate has `typical-duration-seconds < 10` → parallel overhead may exceed savings → prefer serial.
+10. **Beyond max_parallel_agents cap** - N candidates > `config.max_parallel_agents` → split into sequential waves of `max_parallel_agents` each.
+11. **Worktree isolation unavailable** - `worktree_isolation: true` in config but git worktrees not available → fall back to serial.
+12. **Below min_tasks_to_parallelize** - Fewer than `config.min_tasks_to_parallelize` (default 2) eligible → serial.
+13. **Large context** - Any candidate's `<required_reading>` total is >100K tokens - risk of context bloat in concurrent dispatch → prefer serial.
+14. **Token-costly agents** - Agents tagged `model: opus` with `typical-duration-seconds > 120s` - prefer serial to avoid bursty spend unless explicitly opted in.
 
 ---
 
@@ -105,4 +105,4 @@ WRITE verdict to STATE.md <parallelism_decision>
 
 ## Why this is a first-class primitive
 
-"Why didn't it parallelize?" becomes a one-file STATE.md read — not a guess. Every stage orchestrator computes and writes a verdict before any multi-agent spawn. Operators can audit the decision without rerunning.
+"Why didn't it parallelize?" becomes a one-file STATE.md read - not a guess. Every stage orchestrator computes and writes a verdict before any multi-agent spawn. Operators can audit the decision without rerunning.

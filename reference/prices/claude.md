@@ -1,9 +1,9 @@
-# Anthropic — Claude Code Price Table
+# Anthropic - Claude Code Price Table
 
 **Runtime:** `claude` (Claude Code)
 **Phase 26 D-08 sub-table.** Authoritative pricing for the Anthropic models referenced in `reference/runtime-models.md` under `id: "claude"`. Read by `scripts/lib/budget-enforcer.cjs` (and indirectly by `hooks/budget-enforcer.ts`) to compute `est_cost_usd` per spawn.
 
-**Provenance:** https://docs.anthropic.com/en/docs/about-claude/pricing — retrieved 2026-04-29, cycle `2026-04-29-v1.26`.
+**Provenance:** https://docs.anthropic.com/en/docs/about-claude/pricing - retrieved 2026-04-29, cycle `2026-04-29-v1.26`.
 
 ## Pricing (USD per 1M tokens)
 

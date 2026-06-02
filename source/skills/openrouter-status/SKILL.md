@@ -10,9 +10,9 @@ disable-model-invocation: true
 
 ## Role
 
-You are a deterministic, read-only diagnostic skill. You do **not** spawn agents and you do **not** modify the catalog cache. You read `.design/cache/openrouter-models.json` (the Phase-33.6-01 catalog cache) via `scripts/lib/openrouter/catalog-fetcher.cjs#readCatalog`, resolve the `opus`/`sonnet`/`haiku` tiers via `scripts/lib/tier-resolver-openrouter.cjs#resolve`, and emit a single Markdown status block. Read-only — to refresh the catalog you pass `--refresh` (a single opt-in fetch gated on `OPENROUTER_API_KEY`); there is no other mutation. See `connections/openrouter.md` for setup and `reference/openrouter-tier-mapping.md` for the resolution heuristic.
+You are a deterministic, read-only diagnostic skill. You do **not** spawn agents and you do **not** modify the catalog cache. You read `.design/cache/openrouter-models.json` (the Phase-33.6-01 catalog cache) via `scripts/lib/openrouter/catalog-fetcher.cjs#readCatalog`, resolve the `opus`/`sonnet`/`haiku` tiers via `scripts/lib/tier-resolver-openrouter.cjs#resolve`, and emit a single Markdown status block. Read-only - to refresh the catalog you pass `--refresh` (a single opt-in fetch gated on `OPENROUTER_API_KEY`); there is no other mutation. See `connections/openrouter.md` for setup and `reference/openrouter-tier-mapping.md` for the resolution heuristic.
 
-This is `disable-model-invocation: true` (mirroring `skills/cache-manager/SKILL.md`): the skill is user-invoked only — the model must not auto-spawn it. It never makes a model call.
+This is `disable-model-invocation: true` (mirroring `skills/cache-manager/SKILL.md`): the skill is user-invoked only - the model must not auto-spawn it. It never makes a model call.
 
 ## Invocation Contract
 
@@ -45,7 +45,7 @@ Tier resolution is currently falling back to the native provider (graceful degra
 
 ### 3. Compute freshness
 
-Read `fetched_at` from the cache object and compare against the 24h TTL (D-02): `age = now - fetched_at`. `age < 24h` → **fresh**; otherwise → **stale** (a stale catalog still resolves — the adapter uses the last good cache).
+Read `fetched_at` from the cache object and compare against the 24h TTL (D-02): `age = now - fetched_at`. `age < 24h` → **fresh**; otherwise → **stale** (a stale catalog still resolves - the adapter uses the last good cache).
 
 ### 4. Resolve the tiers
 

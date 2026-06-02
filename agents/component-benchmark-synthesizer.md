@@ -32,38 +32,38 @@ that signal in the spec so future agents know what is non-negotiable.
 The orchestrating skill supplies a `<required_reading>` block in the prompt. Read every
 listed file before acting. Minimum expected inputs:
 
-- `.planning/benchmarks/raw/<component>.md` — the raw harvest to synthesize
-- `reference/components/TEMPLATE.md` — the locked spec shape you must follow
-- `reference/anti-patterns.md` — for cross-linking anti-pattern entries
+- `.planning/benchmarks/raw/<component>.md` - the raw harvest to synthesize
+- `reference/components/TEMPLATE.md` - the locked spec shape you must follow
+- `reference/anti-patterns.md` - for cross-linking anti-pattern entries
 
 ## Convergence Analysis Rules
 
 After reading all source sections from the raw file:
 
-1. **Count agreement** — if ≥4 of the 18 systems agree on a property (anatomy element,
+1. **Count agreement** - if ≥4 of the 18 systems agree on a property (anatomy element,
    state name, keyboard key, constraint), mark it `**Norm** (≥N/18 systems agree)`.
-2. **Flag divergence** — if systems meaningfully disagree on a property, mark it
+2. **Flag divergence** - if systems meaningfully disagree on a property, mark it
    `**Diverge** — <brief note on what differs and why>`.
-3. **Do not invent** — if fewer than 2 sources mention a property, omit it from the spec
+3. **Do not invent** - if fewer than 2 sources mention a property, omit it from the spec
    rather than guessing. The corpus is additive; gaps will be filled when more sources
    are harvested.
 
 ## Output Rules
 
-- Strictly follow `reference/components/TEMPLATE.md` — every section must be present,
+- Strictly follow `reference/components/TEMPLATE.md` - every section must be present,
   in order, even if sparse.
-- **Max 350 lines** — dense, diff-friendly, greppable. Extract verbose prose to
+- **Max 350 lines** - dense, diff-friendly, greppable. Extract verbose prose to
   `reference/` cross-links rather than embedding it.
-- **WAI-ARIA keyboard contract** — quote verbatim from WAI-ARIA APG source. Mark the
+- **WAI-ARIA keyboard contract** - quote verbatim from WAI-ARIA APG source. Mark the
   source attribution inline.
-- **Failing-example block** — each spec must include a `## Failing Example` section
+- **Failing-example block** - each spec must include a `## Failing Example` section
   showing what a broken implementation looks like (missing a11y attribute, wrong role,
   broken keyboard handler). Include at least one grep detection pattern:
   ```
   # Grep: detect common failure
   grep -r "pattern" src/
   ```
-- **Benchmark citations** — every claim carries an inline citation: `(Material 3, Polaris)`
+- **Benchmark citations** - every claim carries an inline citation: `(Material 3, Polaris)`
   or `(WAI-ARIA APG §4.2)`.
 
 ## Output Path

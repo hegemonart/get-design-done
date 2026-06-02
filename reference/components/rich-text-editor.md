@@ -1,4 +1,4 @@
-# Rich-Text Editor — Benchmark Spec
+# Rich-Text Editor - Benchmark Spec
 
 **Harvested from**: Tiptap/ProseMirror, Lexical (Meta), Slate.js, Atlassian Fabric Editor
 **Wave**: 5 · **Category**: Advanced
@@ -30,7 +30,7 @@ A Rich-Text Editor (RTE) provides WYSIWYG content authoring with inline formatti
 | Editable area | Yes | `contenteditable="true"` + `role="textbox"` + `aria-multiline="true"` |
 | Toolbar | Yes (for formatting) | `role="toolbar"` + `aria-label`; groups via `role="group"` |
 | Toolbar buttons | Yes | `role="button"`; toggle buttons add `aria-pressed` |
-| Placeholder | No | CSS `[data-placeholder]::before` — NOT HTML attribute |
+| Placeholder | No | CSS `[data-placeholder]::before` - NOT HTML attribute |
 | Mention list | No | `role="listbox"` floating suggestion list triggered by `@` |
 | Character count | No | `aria-live="polite"` updated region |
 | Read-only overlay | No | `contenteditable="false"` + `aria-readonly="true"` |
@@ -56,10 +56,10 @@ A Rich-Text Editor (RTE) provides WYSIWYG content authoring with inline formatti
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Cursor; toolbar buttons at rest | — |
-| focused | Click or Tab into editable area | Focus ring on editable container | — |
+| default | - | Cursor; toolbar buttons at rest | - |
+| focused | Click or Tab into editable area | Focus ring on editable container | - |
 | toolbar button active | Text with formatting selected | `aria-pressed="true"` on toggle button | `aria-pressed="true"` |
-| placeholder | No content in editable area | Placeholder text via CSS ::before | — |
+| placeholder | No content in editable area | Placeholder text via CSS ::before | - |
 | read-only | `readOnly` prop | No cursor change; grayed toolbar | `aria-readonly="true"`, `contenteditable="false"` |
 | disabled | `disabled` prop | 38% opacity; no interaction | `aria-disabled="true"` |
 | mention-open | `@` typed | Floating listbox appears | `role="listbox"` visible |
@@ -77,18 +77,18 @@ A Rich-Text Editor (RTE) provides WYSIWYG content authoring with inline formatti
 
 **Norm**: Editor area grows with content (auto-height); enforce max-height with overflow scroll if needed. Toolbar buttons follow button-sm/md sizing with 8px gaps between groups *(Atlassian, Tiptap)*.
 
-Cross-link: `reference/surfaces.md` — toolbar button hit targets.
+Cross-link: `reference/surfaces.md` - toolbar button hit targets.
 
 ---
 
 ## Typography
 
 - Editor content: body-md, line-height 1.6 for readable long-form text
-- Heading 1: 2em; Heading 2: 1.5em; Heading 3: 1.25em — relative to editor base font
+- Heading 1: 2em; Heading 2: 1.5em; Heading 3: 1.25em - relative to editor base font
 - Code blocks: monospace, 0.9em, background token surface-code
 - Placeholder text: same size/font as body, secondary color via CSS
 
-Cross-link: `reference/typography.md` — heading scale, code font stack.
+Cross-link: `reference/typography.md` - heading scale, code font stack.
 
 ---
 
@@ -99,7 +99,7 @@ Cross-link: `reference/typography.md` — heading scale, code font stack.
 
 ### Keyboard Contract
 
-*Derived from WAI-ARIA APG toolbar pattern — https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/ — W3C — 2024, and standard contenteditable browser behavior*
+*Derived from WAI-ARIA APG toolbar pattern - https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/ - W3C - 2024, and standard contenteditable browser behavior*
 
 | Key | Action |
 |-----|--------|
@@ -120,15 +120,15 @@ Cross-link: `reference/typography.md` — heading scale, code font stack.
 
 ### Accessibility Rules
 
-- Editable area MUST have `role="textbox"` — bare `contenteditable` is announced as a generic region by most AT
-- `aria-multiline="true"` MUST be set — announces correct Enter-key behavior to screen readers
+- Editable area MUST have `role="textbox"` - bare `contenteditable` is announced as a generic region by most AT
+- `aria-multiline="true"` MUST be set - announces correct Enter-key behavior to screen readers
 - Toolbar toggle buttons (bold, italic, lists) MUST use `aria-pressed="true/false"` to reflect current selection state
-- Placeholder MUST use CSS `[data-placeholder]::before` content — not a `placeholder` HTML attribute on contenteditable (screen readers read it incorrectly or not at all)
-- Keyboard shortcuts MUST be documented in a tooltip or help section — not assumed
-- Read-only: set both `contenteditable="false"` AND `aria-readonly="true"` — contenteditable="false" alone is insufficient for AT
+- Placeholder MUST use CSS `[data-placeholder]::before` content - not a `placeholder` HTML attribute on contenteditable (screen readers read it incorrectly or not at all)
+- Keyboard shortcuts MUST be documented in a tooltip or help section - not assumed
+- Read-only: set both `contenteditable="false"` AND `aria-readonly="true"` - contenteditable="false" alone is insufficient for AT
 - Mention listbox MUST use `role="listbox"` with `role="option"` items; focused option uses `aria-selected="true"`
 
-Cross-link: `reference/accessibility.md` — contenteditable accessibility, toolbar pattern.
+Cross-link: `reference/accessibility.md` - contenteditable accessibility, toolbar pattern.
 
 ---
 
@@ -142,9 +142,9 @@ Cross-link: `reference/accessibility.md` — contenteditable accessibility, tool
 | Bubble toolbar appear | 150ms | ease-out | Fade in above selection |
 | Bubble toolbar dismiss | 80ms | ease-in | Fade out on deselect |
 
-**BAN**: Do not animate text reflow on formatting changes — typing performance is critical; any CSS transition on editor content causes visual jitter.
+**BAN**: Do not animate text reflow on formatting changes - typing performance is critical; any CSS transition on editor content causes visual jitter.
 
-Cross-link: `reference/motion.md` — reduced-motion: remove mention list slide; keep instant formatting toggle.
+Cross-link: `reference/motion.md` - reduced-motion: remove mention list slide; keep instant formatting toggle.
 
 ---
 
@@ -157,9 +157,9 @@ Cross-link: `reference/motion.md` — reduced-motion: remove mention list slide;
 - Document keyboard shortcuts in a tooltip or accessible help dialog *(Atlassian Fabric Editor)*
 
 ### Don't
-- Don't use bare `contenteditable` without `role="textbox"` — AT announces it as a generic landmark *(diverges from all 4 systems)*
-- Don't omit `aria-pressed` on toggle buttons — AT users cannot determine current formatting state *(WAI-ARIA APG)*
-- Don't use a `placeholder` HTML attribute on contenteditable — it is not a valid attribute and screen reader behavior is undefined *(MDN, Tiptap docs)*
+- Don't use bare `contenteditable` without `role="textbox"` - AT announces it as a generic landmark *(diverges from all 4 systems)*
+- Don't omit `aria-pressed` on toggle buttons - AT users cannot determine current formatting state *(WAI-ARIA APG)*
+- Don't use a `placeholder` HTML attribute on contenteditable - it is not a valid attribute and screen reader behavior is undefined *(MDN, Tiptap docs)*
 - Don't suppress `outline` on the editable area without a custom focus-visible ring *(WCAG 2.4.7)*
 
 ---
@@ -168,8 +168,8 @@ Cross-link: `reference/motion.md` — reduced-motion: remove mention list slide;
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-06 | contenteditable without role="textbox" — `reference/anti-patterns.md#ban-06` |
-| BAN-04 | transition: all on editor content causing reflow jank — `reference/anti-patterns.md#ban-04` |
+| BAN-06 | contenteditable without role="textbox" - `reference/anti-patterns.md#ban-06` |
+| BAN-04 | transition: all on editor content causing reflow jank - `reference/anti-patterns.md#ban-04` |
 
 ---
 
@@ -181,7 +181,7 @@ Cross-link: `reference/motion.md` — reduced-motion: remove mention list slide;
 | Toolbar toggle buttons need aria-pressed | WAI-ARIA APG toolbar pattern |
 | Placeholder via CSS ::before, not HTML attribute | Tiptap docs, Atlassian Fabric Editor |
 | Mention list uses role="listbox" + role="option" | Tiptap mention extension, Lexical mention plugin |
-| Ctrl/Cmd+B/I/U keyboard shortcuts are standard | Lexical, Tiptap, Slate — all implement these |
+| Ctrl/Cmd+B/I/U keyboard shortcuts are standard | Lexical, Tiptap, Slate - all implement these |
 
 Full system URLs: `connections/design-corpora.md`
 
@@ -221,6 +221,6 @@ grep -rn 'mention\|@mention\|MentionList' src/ | grep -v 'role="listbox"'
 </div>
 ```
 
-**Why it fails**: (1) Bare `contenteditable` is announced by most AT as a generic region, not a text input — users do not know they can type. (2) `placeholder` is not a valid HTML attribute on `<div>` — screen readers do not announce it. (3) Toolbar buttons have no `aria-pressed` — AT cannot determine if bold/italic is currently active. (4) `document.execCommand` is deprecated.
+**Why it fails**: (1) Bare `contenteditable` is announced by most AT as a generic region, not a text input - users do not know they can type. (2) `placeholder` is not a valid HTML attribute on `<div>` - screen readers do not announce it. (3) Toolbar buttons have no `aria-pressed` - AT cannot determine if bold/italic is currently active. (4) `document.execCommand` is deprecated.
 **Grep detection**: `grep -rn 'contenteditable="true"' src/ | grep -v 'role="textbox"'`
 **Fix**: Add `role="textbox"` + `aria-multiline="true"` + `aria-label="Post body"` to the editable div; implement placeholder via CSS `[data-empty]::before { content: attr(data-placeholder) }`; add `aria-pressed="true/false"` to toolbar toggle buttons; use a modern editor library (Tiptap, Lexical) instead of execCommand.

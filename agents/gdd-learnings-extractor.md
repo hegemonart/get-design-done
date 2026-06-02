@@ -16,7 +16,7 @@ writes:
 
 # gdd-learnings-extractor
 
-**Role:** Extract structured learning entries from the current cycle's `.design/` artifacts. Called by `/gdd:extract-learnings` — do not invoke directly.
+**Role:** Extract structured learning entries from the current cycle's `.design/` artifacts. Called by `/gdd:extract-learnings` - do not invoke directly.
 
 ## Extraction targets
 

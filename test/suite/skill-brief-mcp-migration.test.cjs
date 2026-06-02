@@ -12,9 +12,9 @@
  * server and is deferred to Plan 20-15's end-to-end suite.
  *
  * Baselines:
- *   - test/fixtures/baselines/phase-20/brief-before.md — pre-migration
+ *   - test/fixtures/baselines/phase-20/brief-before.md - pre-migration
  *     snapshot used to anchor interview prose + line-count tolerance.
- *   - test/fixtures/baselines/phase-20/brief-after.md — post-migration
+ *   - test/fixtures/baselines/phase-20/brief-after.md - post-migration
  *     snapshot (human review aid; not asserted against runtime SKILL.md).
  */
 
@@ -81,7 +81,7 @@ function frontmatter(body) {
  */
 function bodyWithoutBootstrap(body) {
   return body.replace(
-    /## Step 4 — Bootstrap STATE\.md[\s\S]*?(?=\n## Step 5 —)/,
+    /## Step 4 - Bootstrap STATE\.md[\s\S]*?(?=\n## Step 5 -)/,
     '',
   );
 }
@@ -143,8 +143,8 @@ test('skill-brief-mcp-migration: no direct STATE.md mutation outside bootstrap',
 test('skill-brief-mcp-migration: Step 5 calls mcp__gdd_state__update_progress', () => {
   const body = readSkill();
   // Extract Step 5 block (heading through end-of-file or next `##` at root).
-  const match = body.match(/## Step 5 —[\s\S]*?(?=\n## |$)/);
-  assert.ok(match, 'SKILL.md must have a "## Step 5 —" heading');
+  const match = body.match(/## Step 5 -[\s\S]*?(?=\n## |$)/);
+  assert.ok(match, 'SKILL.md must have a "## Step 5 -" heading');
   assert.match(
     match[0],
     /mcp__gdd_state__update_progress/,
@@ -202,7 +202,7 @@ test('skill-brief-mcp-migration: line count within ±15% of pre-migration', () =
 });
 
 test('skill-brief-mcp-migration: post-migration baseline matches current SKILL.md', () => {
-  // brief-after.md is a human-readable snapshot — it should match the
+  // brief-after.md is a human-readable snapshot - it should match the
   // live file. If this fails, either the snapshot is stale (update the
   // fixture) or the live file drifted (intentional? run plan 20-07
   // again or document the delta).

@@ -82,7 +82,7 @@ h1 {
 ```
 
 **Do:** Set `font-variation-settings` on a parent and let children inherit.
-**Don't:** Override `font-variation-settings` on a child while expecting inherited axes to persist — the property does not merge; it replaces entirely.
+**Don't:** Override `font-variation-settings` on a child while expecting inherited axes to persist - the property does not merge; it replaces entirely.
 
 ```css
 /* WRONG — child loses 'wght' axis set on parent */
@@ -151,9 +151,9 @@ body { font-optical-sizing: auto; }
 
 | Value | Block period | Swap period | Best for |
 |-------|-------------|-------------|----------|
-| `auto` | Browser default (usually same as `block`) | Varies | Avoid — unpredictable |
+| `auto` | Browser default (usually same as `block`) | Varies | Avoid - unpredictable |
 | `block` | ~3s invisible | Infinite swap | Icon fonts where letters must match |
-| `swap` | ~0ms invisible | Infinite swap | Body copy, headings — text visible immediately |
+| `swap` | ~0ms invisible | Infinite swap | Body copy, headings - text visible immediately |
 | `fallback` | ~100ms invisible | ~3s swap | Performance-sensitive text; graceful if font is slow |
 | `optional` | ~100ms invisible | 0s (no swap) | Decorative fonts, hero text; skip swap if font not cached |
 
@@ -224,7 +224,7 @@ Preload only the subset(s) used above the fold. Preloading unused fonts wastes b
 - **1–2 font files maximum** as a general rule. More preloads compete with images, scripts, and CSS.
 - Preload the **regular weight** (400) of the primary typeface first.
 - Preload a **bold weight** (700) only if it appears above the fold in a critical heading.
-- Never preload fonts with `font-display: optional` — the browser will skip the swap anyway on slow connections.
+- Never preload fonts with `font-display: optional` - the browser will skip the swap anyway on slow connections.
 
 ```html
 <!-- Minimal correct preload for a typical site -->
@@ -278,7 +278,7 @@ Preload only the subset(s) used above the fold. Preloading unused fonts wastes b
 
 ### Subsetting Tools
 
-**pyftsubset** (part of fonttools — Python):
+**pyftsubset** (part of fonttools - Python):
 
 ```bash
 # Install
@@ -300,7 +300,7 @@ pyftsubset inter-variable.ttf \
   --retain-gids
 ```
 
-**glyphhanger** (Node.js — analyzes a live URL and generates subset):
+**glyphhanger** (Node.js - analyzes a live URL and generates subset):
 
 ```bash
 # Install
@@ -379,8 +379,8 @@ print(f"descent-override: {descent:.0f}%")
 print(f"line-gap-override: {line_gap:.0f}%")
 ```
 
-**Do:** Tune `size-adjust` first — it has the largest visual impact. Then fine-tune ascent/descent.
-**Don't:** Use `ascent-override: 100%` blindly — 100% is the fallback default; only override when you have real metric data.
+**Do:** Tune `size-adjust` first - it has the largest visual impact. Then fine-tune ascent/descent.
+**Don't:** Use `ascent-override: 100%` blindly - 100% is the fallback default; only override when you have real metric data.
 
 ---
 
@@ -388,7 +388,7 @@ print(f"line-gap-override: {line_gap:.0f}%")
 
 ### GRAD Axis (Grade)
 
-The Grade axis (`GRAD`) adjusts apparent weight without changing the advance widths of any glyphs. This means **no layout reflow** when switching between light and dark modes — unlike changing `font-weight`, which can alter character widths.
+The Grade axis (`GRAD`) adjusts apparent weight without changing the advance widths of any glyphs. This means **no layout reflow** when switching between light and dark modes - unlike changing `font-weight`, which can alter character widths.
 
 In dark mode, light text on dark backgrounds appears heavier due to irradiation/halation. Lowering `GRAD` compensates for this optical effect.
 
@@ -427,7 +427,7 @@ body {
 
 ### Fonts with a GRAD Axis
 
-Notable typefaces: Roboto Flex, Google Fonts variable fonts from 2022+, Amstelvar. Check if a font has `GRAD` using `font-variation-settings: 'GRAD' 0` — if it has no effect the font lacks the axis.
+Notable typefaces: Roboto Flex, Google Fonts variable fonts from 2022+, Amstelvar. Check if a font has `GRAD` using `font-variation-settings: 'GRAD' 0` - if it has no effect the font lacks the axis.
 
 ---
 
@@ -446,8 +446,8 @@ System fonts load instantly (zero network request) and match the platform's nati
 | Windows 10+ | Segoe UI | 2006 |
 | Windows 11 | Segoe UI Variable | 2021 |
 | Android 4.0+ | Roboto | 2011 |
-| Linux (GNOME) | Cantarell | — |
-| Linux (KDE) | Noto Sans | — |
+| Linux (GNOME) | Cantarell | - |
+| Linux (KDE) | Noto Sans | - |
 
 ### Modern System Font Stack
 
@@ -523,9 +523,9 @@ For maximum compatibility with older browsers and to ensure San Francisco on mac
 | Mistake | Fix |
 |---------|-----|
 | `font-variation-settings` on child loses parent axes | Use CSS custom properties to compose all axes in one declaration |
-| Preloading without `crossorigin` attribute | Always add `crossorigin` — font fetches are CORS requests |
-| Using `font-display: block` on body text | Use `swap` — block causes FOIT, text invisible for up to 3s |
-| Changing `font-weight` between light/dark modes | Use `GRAD` axis — changes weight appearance without layout shift |
+| Preloading without `crossorigin` attribute | Always add `crossorigin` - font fetches are CORS requests |
+| Using `font-display: block` on body text | Use `swap` - block causes FOIT, text invisible for up to 3s |
+| Changing `font-weight` between light/dark modes | Use `GRAD` axis - changes weight appearance without layout shift |
 | Missing `font-weight` range in `@font-face` for variable font | Declare `font-weight: 100 900` so browser knows full range |
 | Subsetting variable font without `--retain-gids` | Add `--retain-gids` to pyftsubset to preserve axis interpolation |
 | Setting `font-optical-sizing: auto` alongside manual `opsz` in `font-variation-settings` | Set `font-optical-sizing: none` first, then set `'opsz'` manually |

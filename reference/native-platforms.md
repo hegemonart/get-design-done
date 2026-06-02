@@ -1,9 +1,9 @@
-# Native Platforms — Token-Bridge Spec
+# Native Platforms - Token-Bridge Spec
 
 This reference is the **token→native-code bridge**: it specifies how the canonical
 CSS-token form produced by the Phase-23 token engine
-(`scripts/lib/design-tokens/`) maps onto the three native theme systems —
-SwiftUI, Jetpack Compose, and Flutter — and pins down the **precision contract**
+(`scripts/lib/design-tokens/`) maps onto the three native theme systems -
+SwiftUI, Jetpack Compose, and Flutter - and pins down the **precision contract**
 that defines what "token identity preserved" means for the deterministic
 round-trip (`reference/native-platforms.md` is the authority that
 `test/suite/native-token-bridge.test.cjs` asserts against).
@@ -13,15 +13,15 @@ have distinct jobs and must not be confused:
 
 | File | Job |
 | --- | --- |
-| `reference/platforms.md` (Phase 19) | Interaction **conventions** — navigation, safe areas, gestures, native typography, haptics. *Behavioral* knowledge the executors reference when laying out a screen. |
-| `reference/native-platforms.md` (Phase 34.1, this file) | The token→theme **bridge** — how a design token (`#3B82F6`, `16px`, `Inter`) becomes a SwiftUI `Color` / Compose `Color(0x…)` / Flutter `Color(0x…)`, plus the precision contract for the round-trip. *Structural* knowledge the emitters implement. |
+| `reference/platforms.md` (Phase 19) | Interaction **conventions** - navigation, safe areas, gestures, native typography, haptics. *Behavioral* knowledge the executors reference when laying out a screen. |
+| `reference/native-platforms.md` (Phase 34.1, this file) | The token→theme **bridge** - how a design token (`#3B82F6`, `16px`, `Inter`) becomes a SwiftUI `Color` / Compose `Color(0x…)` / Flutter `Color(0x…)`, plus the precision contract for the round-trip. *Structural* knowledge the emitters implement. |
 
 Per **D-02** the bridge **extends** the Phase-23 engine with three new emitters
 (`scripts/lib/design-tokens/{swift,compose,flutter}.cjs`) rather than forking a
 separate native IR. There is one canonical token form (below) and one set of
 readers; the native emitters are additional *sinks* on the same facade. Per
-**D-10** the round-trip operates at the **token level** — deterministic emit +
-re-extract with documented precision — never full-view parsing and never a live
+**D-10** the round-trip operates at the **token level** - deterministic emit +
+re-extract with documented precision - never full-view parsing and never a live
 simulator, so the default `npm test` stays green on any machine.
 
 ---
@@ -55,7 +55,7 @@ whose values are the raw token values as strings.
 ```
 
 Each emitter accepts either the full Phase-23 `TokenSet`
-(`{ tokens, source?, format? }`) **or** a bare `{ tokens }` object — it reads
+(`{ tokens, source?, format? }`) **or** a bare `{ tokens }` object - it reads
 `tokenSet.tokens` and throws a `TypeError` only when no `.tokens` object is
 present.
 
@@ -77,20 +77,20 @@ to decide whether a value is a color, a dimension, or a string:
 A value is **always** re-sniffed regardless of prefix, so a `#…` value under a
 non-color prefix is still emitted as a color and a `Npx` value under a non-space
 prefix is still emitted as a dimension. The prefix is the hint; the value is the
-authority. This keeps the bridge robust against arbitrary token-naming schemes.
+authority. This keeps the bridge solid against arbitrary token-naming schemes.
 
 ---
 
 ## 3. SwiftUI mapping
 
 Target: a Swift source string exposing an `enum` of static theme constants
-(`enum GDDTheme { … }`) — colors as `Color`, dimensions as `CGFloat` points,
+(`enum GDDTheme { … }`) - colors as `Color`, dimensions as `CGFloat` points,
 typography families as `String` (and an optional `Font` helper).
 
 | Token | SwiftUI form |
 | --- | --- |
 | color `#RRGGBB` | `Color(red: R/255.0, green: G/255.0, blue: B/255.0, opacity: A/255.0)` from the 8-bit channels |
-| dimension `Npx` | `CGFloat` point literal — integer `N` (pt) |
+| dimension `Npx` | `CGFloat` point literal - integer `N` (pt) |
 | font-family | `String` literal (`"Inter, system-ui"`) |
 
 Illustrative (2-line) snippet:
@@ -102,7 +102,7 @@ static let space4: CGFloat = 16
 
 SwiftUI uses normalized `0.0…1.0` channel fractions; to keep the round-trip
 **exact** the emitter writes each channel as the 8-bit numerator over `255.0`
-(e.g. `59.0/255.0`) rather than a pre-divided decimal — the re-extractor reads
+(e.g. `59.0/255.0`) rather than a pre-divided decimal - the re-extractor reads
 the numerator back as the integer channel, avoiding float drift. The `Color` /
 `Font` / `ViewModifier` consumption pattern (applying the constants to views) is
 the executor's job; this emitter produces the *constants*.
@@ -144,7 +144,7 @@ carries the typography tokens, plus a constants class
 | Token | Flutter form |
 | --- | --- |
 | color `#RRGGBB` | `Color(0xAARRGGBB)` (alpha-first, 8 hex digits) |
-| dimension `Npx` | logical-px **double** — `N.0` |
+| dimension `Npx` | logical-px **double** - `N.0` |
 | typography family | `String` (`fontFamily: 'Inter'`) |
 
 Illustrative (2-line) snippet:
@@ -155,7 +155,7 @@ static const space4 = 16.0;
 ```
 
 Flutter measures in logical pixels and keeps the value as a `double` (`16.0`),
-so — unlike pt/dp — Flutter dimensions are **not** rounded to integers; the
+so - unlike pt/dp - Flutter dimensions are **not** rounded to integers; the
 fractional part survives.
 
 ---
@@ -164,29 +164,29 @@ fractional part survives.
 
 This section is the crux. It defines, per value category, exactly what
 information the emit → re-extract round-trip preserves. The test asserts token
-identity **within this precision** — not bit-exact floats, not lossy
+identity **within this precision** - not bit-exact floats, not lossy
 approximation. An emitter is correct **iff** `reextract(emit({tokens}))`
 reproduces every token in the identity set under these rules.
 
-### COLOR — 8-bit-per-channel, EXACT
+### COLOR - 8-bit-per-channel, EXACT
 
 - Accepted input forms: `#RGB`, `#RRGGBB`, `#RGBA`, `#RRGGBBAA` (case-insensitive).
 - `#RGB` / `#RGBA` shorthand **expands** to `#RRGGBB` / `#RRGGBBAA` by
   duplicating each nibble (`#3af` → `#33aaff`). This expansion is part of the
   contract: the re-extractor recovers the **expanded** `#RRGGBB(AA)` form, so
   `#3af` round-trips to `#33aaff` (canonically equal, the documented identity).
-- Each channel is an 8-bit integer (0–255) and is preserved **exactly** — no
+- Each channel is an 8-bit integer (0–255) and is preserved **exactly** - no
   channel may be off by one. SwiftUI stores channels as `N.0/255.0` numerators;
   Compose/Flutter store them in a `0xAARRGGBB` literal. Both forms recover the
   identical 8-bit channels.
 - **Alpha:** when the input has no alpha (`#RGB`/`#RRGGBB`) the emitted color is
-  **opaque** — alpha byte `0xFF` (Compose/Flutter) / `opacity: 255.0/255.0`
+  **opaque** - alpha byte `0xFF` (Compose/Flutter) / `opacity: 255.0/255.0`
   (SwiftUI). The re-extractor emits an alpha channel **only when the original
   had one**: a 6-digit input round-trips to a 6-digit `#RRGGBB` (the implied
   opaque alpha is dropped on the way back); an 8-digit input round-trips to the
   8-digit `#RRGGBBAA`. This keeps `#3B82F6 → #3B82F6` an exact identity.
 
-### DIMENSION — integer pt/dp, logical-px double
+### DIMENSION - integer pt/dp, logical-px double
 
 - Accepted input: `Npx` or a bare unit-less number (`16px`, `16`). The unit is
   normalised to `px` on the canonical side.
@@ -200,7 +200,7 @@ reproduces every token in the identity set under these rules.
 - The re-extractor always recovers the canonical `Npx` string form, so the
   emit→re-extract identity for an integer dimension is `"16px" === "16px"`.
 
-### `rem` / `em` — passed through verbatim (non-mappable)
+### `rem` / `em` - passed through verbatim (non-mappable)
 
 `rem`/`em` values depend on a root/element font-size that the token map does not
 carry, so they are **not** converted. They are treated as **non-mappable**
@@ -208,18 +208,18 @@ carry, so they are **not** converted. They are treated as **non-mappable**
 identity set. (A future plan may add an explicit base-size option; until then,
 verbatim pass-through is the stated, deterministic behavior.)
 
-### TYPOGRAPHY / NAMED VALUES — string pass-through
+### TYPOGRAPHY / NAMED VALUES - string pass-through
 
 `font-family`, `font-weight`, named sizes, and any other string token are
 emitted **verbatim** as a string literal and recovered **string-equal**
 (`"Inter, system-ui" → "Inter, system-ui"`). No normalisation, no quoting
 changes that alter the recovered string.
 
-### NON-MAPPABLE — verbatim, EXCLUDED from the identity set
+### NON-MAPPABLE - verbatim, EXCLUDED from the identity set
 
-Values the emitter cannot represent as a native primitive — CSS `var(--x)`
+Values the emitter cannot represent as a native primitive - CSS `var(--x)`
 references, `calc(…)` expressions, gradients (`linear-gradient(…)`), and `rem`/
-`em` dimensions — are **passed through verbatim** into a raw-string slot
+`em` dimensions - are **passed through verbatim** into a raw-string slot
 (a trailing comment such as `// non-mappable: <name> = <value>` or the language
 equivalent) so no information is lost, and are **explicitly excluded** from the
 round-trip identity assertion. The contract documents them as
@@ -256,18 +256,18 @@ regression baseline.
 This reference is registered in
 [`reference/registry.json`](./registry.json) as the `native-platforms` entry
 (type `heuristic`, phase `34.1`) so the registry round-trip test
-(`test/suite/reference-registry.test.cjs`) stays green — every `reference/*.md`
+(`test/suite/reference-registry.test.cjs`) stays green - every `reference/*.md`
 must be registered and resolve (D-05, the 33.5-01 lesson).
 
 ---
 
 ## 9. Cross-references
 
-- [`reference/platforms.md`](./platforms.md) — the interaction-conventions
+- [`reference/platforms.md`](./platforms.md) - the interaction-conventions
   sibling (navigation, safe areas, gestures, native typography). Executors read
   **both**: this file for the token→theme bridge, that file for layout/behavior.
-- `scripts/lib/design-tokens/` — the Phase-23 token engine this bridge extends
+- `scripts/lib/design-tokens/` - the Phase-23 token engine this bridge extends
   (`index.cjs` facade + `css-vars` / `js-const` / `tailwind` / `figma` readers +
   the new `swift` / `compose` / `flutter` emitters).
-- `test/fixtures/mapper-outputs/tokens.json` — the canonical token fixture the
+- `test/fixtures/mapper-outputs/tokens.json` - the canonical token fixture the
   round-trip test derives its map from.

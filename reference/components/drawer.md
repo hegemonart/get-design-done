@@ -1,4 +1,4 @@
-# Drawer / Sheet — Benchmark Spec
+# Drawer / Sheet - Benchmark Spec
 
 **Harvested from**: Material 3, Polaris (Sheet), Carbon, Atlassian, Mantine, shadcn/ui, Headless UI, Apple HIG
 **Wave**: 2 · **Category**: Containers
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A drawer (or sheet) is a panel that slides in from an edge of the viewport. It is less disruptive than a modal for workflows that benefit from co-existing with the background — detail panels, navigation menus, filter sidebars, multi-step flows. Like a modal, it traps focus and requires Escape to close. Unlike a modal, the backdrop is optional and can be semi-transparent. *(Material 3, Carbon, Polaris all position drawer as less disruptive than modal)*
+A drawer (or sheet) is a panel that slides in from an edge of the viewport. It is less disruptive than a modal for workflows that benefit from co-existing with the background - detail panels, navigation menus, filter sidebars, multi-step flows. Like a modal, it traps focus and requires Escape to close. Unlike a modal, the backdrop is optional and can be semi-transparent. *(Material 3, Carbon, Polaris all position drawer as less disruptive than modal)*
 
 ---
 
@@ -55,13 +55,13 @@ Bottom sheet (mobile):
 | Partial height | 60–80vh, overlays | Mobile bottom sheet | Apple HIG, Material 3 |
 
 **Norm** (≥5/18): right-side is default; bottom sheet for mobile.
-**Diverge**: backdrop-click-to-close — same debate as modal; for navigation drawers, backdrop click should close; for form/detail drawers, configurable.
+**Diverge**: backdrop-click-to-close - same debate as modal; for navigation drawers, backdrop click should close; for form/detail drawers, configurable.
 
 ---
 
 ## States
 
-Same as Modal/Dialog — see `modal-dialog.md`. Key differences:
+Same as Modal/Dialog - see `modal-dialog.md`. Key differences:
 
 | State | Drawer-specific |
 |-------|-----------------|
@@ -80,7 +80,7 @@ Same as Modal/Dialog — see `modal-dialog.md`. Key differences:
 | Bottom sheet | 60–100vh | Drag handle at 12px × 36px |
 | Padding | 20–24px | Match modal padding |
 
-Cross-link: `reference/surfaces.md` — shadow on drawer edge (unilateral shadow)
+Cross-link: `reference/surfaces.md` - shadow on drawer edge (unilateral shadow)
 
 ---
 
@@ -94,21 +94,21 @@ Cross-link: `reference/surfaces.md` — shadow on drawer edge (unilateral shadow
 
 ## Keyboard & Accessibility
 
-> **WAI-ARIA role**: `dialog` (same as modal — drawer is a type of dialog)
+> **WAI-ARIA role**: `dialog` (same as modal - drawer is a type of dialog)
 > **Required attributes**: `aria-modal="true"`, `aria-labelledby` (title id)
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ - W3C - 2024*
 
 Same Tab/Shift+Tab/Escape contract as modal (see `modal-dialog.md`).
 
 ### Drawer-specific Accessibility Rules
 
-- Focus trap: MUST trap focus inside the drawer while open — same as modal
+- Focus trap: MUST trap focus inside the drawer while open - same as modal
 - On open: focus moves to first focusable element (or close button if no primary action)
 - On close: focus MUST return to the element that triggered the drawer open
-- Navigation drawer (`role="navigation"`): if the drawer IS the main nav, use `role="navigation"` + `aria-label="Main"` instead of `role="dialog"`; different keyboard contract (no focus trap — it IS a landmark)
+- Navigation drawer (`role="navigation"`): if the drawer IS the main nav, use `role="navigation"` + `aria-label="Main"` instead of `role="dialog"`; different keyboard contract (no focus trap - it IS a landmark)
 - Background `inert`: set `inert` attribute (or equivalent) on background content when drawer is open
 
 ---
@@ -123,23 +123,23 @@ Same Tab/Shift+Tab/Escape contract as modal (see `modal-dialog.md`).
 | Backdrop fade | 200ms | ease | opacity 0→0.4 |
 
 Swipe-to-close (bottom sheet): detect `pointerup` with velocity + displacement threshold.
-Cross-link: `reference/motion.md` — spring bounce=0, `prefers-reduced-motion` (disable slide, instant toggle)
+Cross-link: `reference/motion.md` - spring bounce=0, `prefers-reduced-motion` (disable slide, instant toggle)
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Trap focus inside the drawer when open — same rule as modal *(WAI-ARIA APG)*
+- Trap focus inside the drawer when open - same rule as modal *(WAI-ARIA APG)*
 - Return focus to the trigger element on close *(WAI-ARIA APG, Radix, Mantine)*
 - Use right-side drawer for content-detail panels; left-side for navigation *(Material 3, Carbon)*
 - Support swipe-to-close on bottom sheets for mobile *(Apple HIG, Material 3)*
 
 ### Don't
-- Don't use `role="navigation"` for content drawers — only for navigation-purpose drawers *(WAI-ARIA APG)*
+- Don't use `role="navigation"` for content drawers - only for navigation-purpose drawers *(WAI-ARIA APG)*
 - Don't let Tab escape the drawer while it's open *(WAI-ARIA APG)*
 - Don't disable background scroll without setting `overflow:hidden` on body *(all systems)*
-- Don't slide from top for content — top drawers conflict with browser UI and notifications *(Material 3)*
+- Don't slide from top for content - top drawers conflict with browser UI and notifications *(Material 3)*
 
 ---
 

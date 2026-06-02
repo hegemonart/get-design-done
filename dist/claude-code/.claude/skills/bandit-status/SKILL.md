@@ -9,7 +9,7 @@ tools: Read, Bash
 
 ## Role
 
-You are a deterministic, read-only diagnostic skill. You do not spawn agents and do not modify the posterior. You read `.design/telemetry/posterior.json` (path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), aggregate per-`(agent, bin, delegate, tier)` arm state, and emit a single Markdown table. Read-only per Phase 27.5 D-11 — to reset, use `/gdd:bandit-reset` (Phase 23.5). See `./reference/bandit-integration.md` for setup, interpretation, and convergence guidance.
+You are a deterministic, read-only diagnostic skill. You do not spawn agents and do not modify the posterior. You read `.design/telemetry/posterior.json` (path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), aggregate per-`(agent, bin, delegate, tier)` arm state, and emit a single Markdown table. Read-only per Phase 27.5 D-11 - to reset, use `/gdd:bandit-reset` (Phase 23.5). See `./reference/bandit-integration.md` for setup, interpretation, and convergence guidance.
 
 ## Invocation Contract
 
@@ -51,7 +51,7 @@ Schema:
 }
 ```
 
-The `delegate` field is optional — absent = Phase 23.5 legacy slice (rendered as `-` in the table).
+The `delegate` field is optional - absent = Phase 23.5 legacy slice (rendered as `-` in the table).
 
 ### 3. Render the table
 
@@ -81,7 +81,7 @@ Total arms: <count>
 
 Precision: alpha/beta 2 decimals; mean/stddev 3 decimals; count integer; `last_used` truncated to minute (`YYYY-MM-DDTHH:MM`); null `last_used` renders `-`.
 
-After the table, surface a per-`(agent, bin)` best-arm summary: for each unique pair, identify highest-mean arm (tie-broken by `count` DESC) — answers "why did the bandit pick tier X?" at a glance.
+After the table, surface a per-`(agent, bin)` best-arm summary: for each unique pair, identify highest-mean arm (tie-broken by `count` DESC) - answers "why did the bandit pick tier X?" at a glance.
 
 ### 4. Record
 
@@ -89,6 +89,6 @@ Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-st
 
 ## Cross-references
 
-- `./reference/bandit-integration.md` — operator guide; interpretation patterns.
-- `scripts/lib/bandit-router.cjs` (Phase 23.5) — posterior shape, `DEFAULT_POSTERIOR_PATH`, `loadPosterior()`.
-- `scripts/lib/bandit-router/integration.cjs` (27.5-01), `hooks/budget-enforcer.ts` (27.5-02), `scripts/lib/session-runner/index.ts` (27.5-03), `scripts/lib/bandit-arbitrage.cjs` (27.5-04), `/gdd:bandit-reset` (Phase 23.5) — only surface that mutates the posterior.
+- `./reference/bandit-integration.md` - operator guide; interpretation patterns.
+- `scripts/lib/bandit-router.cjs` (Phase 23.5) - posterior shape, `DEFAULT_POSTERIOR_PATH`, `loadPosterior()`.
+- `scripts/lib/bandit-router/integration.cjs` (27.5-01), `hooks/budget-enforcer.ts` (27.5-02), `scripts/lib/session-runner/index.ts` (27.5-03), `scripts/lib/bandit-arbitrage.cjs` (27.5-04), `/gdd:bandit-reset` (Phase 23.5) - only surface that mutates the posterior.

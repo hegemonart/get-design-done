@@ -1,9 +1,9 @@
-# Google — Gemini CLI Price Table
+# Google - Gemini CLI Price Table
 
 **Runtime:** `gemini` (Google Gemini CLI)
 **Phase 26 D-08 sub-table.** Pricing for the Gemini 2.5 tier referenced in `reference/runtime-models.md` under `id: "gemini"`.
 
-**Provenance:** `<TODO: confirm at https://ai.google.dev/pricing>` — retrieved 2026-04-29 (placeholder — v1.26.0 ships with seed numbers; runtime adapter authors confirm and PR before v1.27).
+**Provenance:** `<TODO: confirm at https://ai.google.dev/pricing>` - retrieved 2026-04-29 (placeholder - v1.26.0 ships with seed numbers; runtime adapter authors confirm and PR before v1.27).
 
 **Status:** placeholder values reflect public Gemini 2.5 tier positioning at v1.26.0 ship time. Cost-aggregator will surface drift if measured spend deviates from these figures by more than 20% after 10+ cycles.
 

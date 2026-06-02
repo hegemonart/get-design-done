@@ -10,7 +10,7 @@ tools: Read, Bash, Grep, Glob
 
 Closes the async-review gap for team mode: design decisions move through an explicit review queue
 instead of being decided in a single operator's head. This skill reports where each decision is.
-**Read-only** — it surfaces state; advancing a decision is a reviewer's explicit action. Contract:
+**Read-only** - it surfaces state; advancing a decision is a reviewer's explicit action. Contract:
 `../../reference/multi-author-model.md`.
 
 ## Invocation
@@ -30,7 +30,7 @@ instead of being decided in a single operator's head. This skill reports where e
 3. **Render** grouped by state: `proposed` / `reviewing` / `approved` / `locked`, each listing the
    decision id + a one-line summary. For `--pending`, use `review-queue.pending(entries)` to show only
    non-locked ones. For a single `<decision-id>`, also print its audit trail (transitions + approvers).
-4. **Do not advance.** Reporting only — moving a decision forward (or `/gdd:unlock-decision`) is the
+4. **Do not advance.** Reporting only - moving a decision forward (or `/gdd:unlock-decision`) is the
    reviewer's explicit call.
 
 ## Output

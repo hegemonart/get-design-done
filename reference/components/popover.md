@@ -1,4 +1,4 @@
-# Popover — Benchmark Spec
+# Popover - Benchmark Spec
 
 **Harvested from**: Radix UI Popover, Floating UI, Mantine, Atlassian, WAI-ARIA APG, shadcn/ui, Carbon, Material 3
 **Wave**: 2 · **Category**: Containers
@@ -48,7 +48,7 @@ A popover is an anchored overlay that appears beside a trigger element, containi
 | Inline picker | Date, color, emoji picker | Material 3, Mantine |
 
 **Norm** (≥5/18): Escape closes; outside-click closes; arrow pointer indicates anchor.
-**Diverge**: focus trap — Radix Popover does NOT trap focus (non-modal); Radix Dialog DOES. Use Dialog-pattern when content isolation is required.
+**Diverge**: focus trap - Radix Popover does NOT trap focus (non-modal); Radix Dialog DOES. Use Dialog-pattern when content isolation is required.
 
 ---
 
@@ -64,7 +64,7 @@ A popover is an anchored overlay that appears beside a trigger element, containi
 
 ## Positioning
 
-*Per Floating UI — https://floating-ui.com — MIT — 2024*
+*Per Floating UI - https://floating-ui.com - MIT - 2024*
 
 | Property | Recommended Value | Notes |
 |----------|-------------------|-------|
@@ -97,7 +97,7 @@ Positioning must update on scroll and resize (`autoUpdate` from Floating UI).
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/ (non-modal variant) — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/ (non-modal variant) - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -112,7 +112,7 @@ Positioning must update on scroll and resize (`autoUpdate` from Floating UI).
 - When popover is dismissed, focus MUST return to the trigger element
 - Non-modal popover: Tab MAY leave the popover (focus is not trapped)
 - Modal popover (form isolation): add `role="dialog"` + `aria-modal="true"` + focus trap
-- Popover with interactive content: do NOT use `role="tooltip"` — tooltip cannot contain interactive elements
+- Popover with interactive content: do NOT use `role="tooltip"` - tooltip cannot contain interactive elements
 
 ---
 
@@ -122,25 +122,25 @@ Positioning must update on scroll and resize (`autoUpdate` from Floating UI).
 |------------|----------|--------|-------|
 | Open | 120ms | ease-out | scale 0.95→1 + fade; origin at trigger |
 | Close | 80ms | ease-in | fade only |
-| Position update | 0ms | — | No animation on reposition (prevents jank on scroll) |
+| Position update | 0ms | - | No animation on reposition (prevents jank on scroll) |
 
-Cross-link: `reference/motion.md` — `AnimatePresence`, `data-state` trigger for CSS transitions
+Cross-link: `reference/motion.md` - `AnimatePresence`, `data-state` trigger for CSS transitions
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Use Floating UI or equivalent for positioning — manual positioning breaks on scroll and viewport edge *(Radix, Mantine, shadcn)*
+- Use Floating UI or equivalent for positioning - manual positioning breaks on scroll and viewport edge *(Radix, Mantine, shadcn)*
 - Dismiss on outside-click AND Escape *(WAI-ARIA APG, Radix, all systems)*
 - Return focus to trigger on close *(WAI-ARIA APG)*
 - Auto-flip and auto-shift so popover stays in viewport *(Floating UI)*
 
 ### Don't
-- Don't use `role="tooltip"` for popovers with interactive content — tooltip has a different contract *(WAI-ARIA APG)*
-- Don't position with `position: absolute` without a Floating UI — it will misalign on scroll *(Floating UI docs)*
-- Don't make popovers wider than 360px — use a modal for complex content *(Atlassian, Carbon)*
-- Don't auto-open popovers on hover — use tooltip for hover-triggered content *(Radix, WAI-ARIA APG)*
+- Don't use `role="tooltip"` for popovers with interactive content - tooltip has a different contract *(WAI-ARIA APG)*
+- Don't position with `position: absolute` without a Floating UI - it will misalign on scroll *(Floating UI docs)*
+- Don't make popovers wider than 360px - use a modal for complex content *(Atlassian, Carbon)*
+- Don't auto-open popovers on hover - use tooltip for hover-triggered content *(Radix, WAI-ARIA APG)*
 
 ---
 

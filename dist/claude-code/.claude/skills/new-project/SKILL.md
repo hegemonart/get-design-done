@@ -48,6 +48,6 @@ One-time project initialization. Replaces "run scan cold" by gathering context u
 ## Do Not
 
 - Do not delete or overwrite existing `.design/` artifacts if re-initializing.
-- Do not run any pipeline stage automatically — this is init only.
+- Do not run any pipeline stage automatically - this is init only.
 
 ## NEW-PROJECT COMPLETE

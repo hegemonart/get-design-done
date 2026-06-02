@@ -11,7 +11,7 @@ tools: Read, Edit, Bash, Grep
 
 ## Role
 
-You help the user rewire which peer-CLI delegate handles which agent's calls. The mechanism is direct file-edits to agent frontmatter (`delegate_to:` field added in Plan 27-06) — there is no runtime config layer. Your job is to make this safe and validatable. The rewire discipline (per-edit validation, three frontmatter cases, validator gate) lives in `./../peer-cli-add/peer-cli-protocol.md` §"Rewire discipline" so the procedure stays canonical across consumers.
+You help the user rewire which peer-CLI delegate handles which agent's calls. The mechanism is direct file-edits to agent frontmatter (`delegate_to:` field added in Plan 27-06) - there is no runtime config layer. Your job is to make this safe and validatable. The rewire discipline (per-edit validation, three frontmatter cases, validator gate) lives in `./../peer-cli-add/peer-cli-protocol.md` §"Rewire discipline" so the procedure stays canonical across consumers.
 
 ## Invocation Contract
 
@@ -20,21 +20,21 @@ You help the user rewire which peer-CLI delegate handles which agent's calls. Th
 
 ## Procedure
 
-### Step 1 — Show current state
+### Step 1 - Show current state
 
 Read the capability matrix from `scripts/lib/peer-cli/registry.cjs#describeCapabilities()`. Surface the 5 peers and their claimed roles to the user. Then scan `agents/*.md` and grep for `delegate_to:` frontmatter values. Render a two-column table (`Agent | delegate_to (current)`) listing every agent's current setting (or `(unset)` for absent fields).
 
-### Step 2 — Confirm rewire intent
+### Step 2 - Confirm rewire intent
 
 Accept the user's explicit `<agent-name> <new-delegate-target>` arguments OR ask: "Which agent do you want to rewire? What should `delegate_to:` become?"
 
 Valid `<new-delegate-target>` values:
 
 - `<peer>-<role>` from the capability matrix (e.g., `gemini-research`, `codex-execute`, `cursor-debug`, `cursor-plan`, `copilot-review`, `copilot-research`, `qwen-write`).
-- `none` — explicit opt-out.
-- Empty / `(unset)` — remove the field entirely; revert to default behavior.
+- `none` - explicit opt-out.
+- Empty / `(unset)` - remove the field entirely; revert to default behavior.
 
-### Step 3 — Validate the proposed rewire
+### Step 3 - Validate the proposed rewire
 
 Cross-check against the capability matrix per `./../peer-cli-add/peer-cli-protocol.md` §"Rewire discipline":
 
@@ -44,7 +44,7 @@ Cross-check against the capability matrix per `./../peer-cli-add/peer-cli-protoc
 
 If validation fails, surface the error and stop. Do not edit the file.
 
-### Step 4 — Apply the edit
+### Step 4 - Apply the edit
 
 Use the `Edit` tool. Three cases (per `./../peer-cli-add/peer-cli-protocol.md` §"Rewire discipline"):
 
@@ -52,11 +52,11 @@ Use the `Edit` tool. Three cases (per `./../peer-cli-add/peer-cli-protocol.md` �
 - **Field present, user wants to change:** replace the value; preserve indentation.
 - **Field present, user wants to remove:** delete the entire `delegate_to:` line.
 
-### Step 5 — Re-validate
+### Step 5 - Re-validate
 
 Run `npm run validate:frontmatter`. Confirm the modified agent passes. If validation fails, surface the error and offer to revert (re-run `Edit` with inverse old/new strings).
 
-### Step 6 — Surface a diff summary
+### Step 6 - Surface a diff summary
 
 ```
 ## Rewire summary
@@ -75,11 +75,11 @@ See `./../peer-cli-add/peer-cli-protocol.md` §"Edge cases" for: rewire-to-unmat
 
 ## Cross-references
 
-- `./../peer-cli-add/peer-cli-protocol.md` — rewire discipline, three frontmatter cases, edge cases.
-- `scripts/validate-frontmatter.ts` (Plan 27-06) — `delegate_to` validation.
-- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) — capability matrix.
-- `skills/peer-cli-add/SKILL.md` — for adding a NEW peer (this skill rewires among existing peers).
-- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-06 — decision lineage.
+- `./../peer-cli-add/peer-cli-protocol.md` - rewire discipline, three frontmatter cases, edge cases.
+- `scripts/validate-frontmatter.ts` (Plan 27-06) - `delegate_to` validation.
+- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) - capability matrix.
+- `skills/peer-cli-add/SKILL.md` - for adding a NEW peer (this skill rewires among existing peers).
+- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-06 - decision lineage.
 
 ## Record
 

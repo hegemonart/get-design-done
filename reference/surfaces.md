@@ -1,11 +1,11 @@
 # Surfaces
-Source: jakubkrehel/make-interfaces-feel-better (MIT) — surfaces.md
+Source: jakubkrehel/make-interfaces-feel-better (MIT) - surfaces.md
 
 Rules for nested surfaces, optical alignment, shadow systems, image outlines, and hit areas.
 
 ## Concentric Radius Formula
 
-When nesting interactive elements inside a container (e.g., a card with a button, or a modal with an input), the inner radius must be SMALLER than the outer radius — by exactly the padding between them:
+When nesting interactive elements inside a container (e.g., a card with a button, or a modal with an input), the inner radius must be SMALLER than the outer radius - by exactly the padding between them:
 
 ```
 outerRadius = innerRadius + padding
@@ -20,14 +20,14 @@ Example: card with `border-radius: 16px` and `padding: 16px` → inner elements 
 
 **Exception:** when `padding > 24px`, treat the inner element as a visually separate surface and apply its own standard radius (4/8/12px depending on its type).
 
-Why this matters: same radius on nested surfaces creates a visual disconnect — the inner element appears to "float" without belonging to the outer surface. The concentric formula creates perceptual depth and containment.
+Why this matters: same radius on nested surfaces creates a visual disconnect - the inner element appears to "float" without belonging to the outer surface. The concentric formula creates perceptual depth and containment.
 
 ## Optical Alignment
 
 Mathematical centering ≠ optical centering for asymmetric elements:
 
 - **Icon with text:** `padding-inline-start` for the icon side should be 2px less than `padding-inline-end` for the text side. This corrects for the visual weight imbalance.
-- **Play/chevron triangles:** shift right by 2px from mathematical center — triangles have more visual mass on their left side (the flat edge).
+- **Play/chevron triangles:** shift right by 2px from mathematical center - triangles have more visual mass on their left side (the flat edge).
 - **SVG icons with irregular bounding box:** inspect the actual glyph bounds, not the viewBox. Add `padding` to compensate for asymmetric whitespace within the SVG.
 
 ## 3-Layer Shadow System

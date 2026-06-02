@@ -1,4 +1,4 @@
-# RTL, CJK, and Cultural Localization — Reference Guide
+# RTL, CJK, and Cultural Localization - Reference Guide
 
 > For engineering primitives (CSS logical properties, Intl.\* family, bidi isolation, ICU MessageFormat, text-expansion budgets, multi-script font stacks, Unicode hygiene), see [`./i18n.md`](./i18n.md). This file owns cultural context (greeting forms, color symbolism, CJK family-name conventions, imagery norms).
 
@@ -8,7 +8,7 @@ Designing for a global audience is not a matter of translating strings and calli
 
 ## 1. RTL Layout Mirroring
 
-Right-to-left scripts — Arabic, Hebrew, Persian (Farsi), Urdu, and others — do not merely reverse the direction of text. They reverse the entire spatial logic of the interface. In an LTR layout, the reading eye enters from the left, proceeds to the right, and interprets "start" as left and "end" as right. In an RTL layout, "start" is right and "end" is left, and every directional affordance must be reconsidered accordingly.
+Right-to-left scripts - Arabic, Hebrew, Persian (Farsi), Urdu, and others - do not merely reverse the direction of text. They reverse the entire spatial logic of the interface. In an LTR layout, the reading eye enters from the left, proceeds to the right, and interprets "start" as left and "end" as right. In an RTL layout, "start" is right and "end" is left, and every directional affordance must be reconsidered accordingly.
 
 ### Use CSS Logical Properties
 
@@ -33,7 +33,7 @@ Browser support for CSS logical properties is excellent across all modern browse
 
 ### Set `dir="rtl"` at the Document Root
 
-The `dir` attribute on `<html>` propagates directionality through the entire DOM. When a user's locale is an RTL language, set `<html dir="rtl" lang="ar">` (or the appropriate lang code). Never apply `dir="rtl"` on a per-element basis to work around missing logical properties — this creates brittle, partially mirrored layouts that fail in unpredictable ways as components are reused. The single root-level `dir` attribute, combined with logical CSS properties throughout, produces a fully mirrored layout with zero per-element overrides.
+The `dir` attribute on `<html>` propagates directionality through the entire DOM. When a user's locale is an RTL language, set `<html dir="rtl" lang="ar">` (or the appropriate lang code). Never apply `dir="rtl"` on a per-element basis to work around missing logical properties - this creates brittle, partially mirrored layouts that fail in unpredictable ways as components are reused. The single root-level `dir` attribute, combined with logical CSS properties throughout, produces a fully mirrored layout with zero per-element overrides.
 
 If a product serves both LTR and RTL users from the same codebase, control the direction via a class or data attribute on `<html>` that is set at runtime based on the user's locale: `<html class="rtl">` with a CSS rule `html.rtl { direction: rtl; }`.
 
@@ -41,27 +41,27 @@ If a product serves both LTR and RTL users from the same codebase, control the d
 
 The following elements must mirror their visual position and directional meaning in RTL layouts:
 
-- **Navigation arrows and chevrons** — a "next" chevron that points right in LTR must point left in RTL, because the reading direction of "forward" is reversed. A back-navigation arrow that points left in LTR must point right in RTL.
-- **Layout flow** — the primary content column in LTR occupies the left portion of a sidebar layout; in RTL it occupies the right. Sidebars swap sides.
-- **Text alignment** — body copy, labels, and headings should be `text-align: start`, not hardcoded left.
-- **Form label position** — labels that appear to the left of form inputs in LTR should appear to the right in RTL.
-- **Breadcrumbs** — the separating chevrons between breadcrumb items point in the direction of reading progression. In LTR this is rightward; in RTL it is leftward.
-- **Progress bars** — the fill of a progress bar represents progression from start to finish. In LTR the fill grows from left to right; in RTL it grows from right to left. Use `direction: rtl` or `transform: scaleX(-1)` on the fill container, not hardcoded positional values.
-- **Sliders and range inputs** — same rationale as progress bars.
-- **Ordered lists** — numbering should still render left-to-right within the numeral, but the list item content begins from the right margin.
+- **Navigation arrows and chevrons** - a "next" chevron that points right in LTR must point left in RTL, because the reading direction of "forward" is reversed. A back-navigation arrow that points left in LTR must point right in RTL.
+- **Layout flow** - the primary content column in LTR occupies the left portion of a sidebar layout; in RTL it occupies the right. Sidebars swap sides.
+- **Text alignment** - body copy, labels, and headings should be `text-align: start`, not hardcoded left.
+- **Form label position** - labels that appear to the left of form inputs in LTR should appear to the right in RTL.
+- **Breadcrumbs** - the separating chevrons between breadcrumb items point in the direction of reading progression. In LTR this is rightward; in RTL it is leftward.
+- **Progress bars** - the fill of a progress bar represents progression from start to finish. In LTR the fill grows from left to right; in RTL it grows from right to left. Use `direction: rtl` or `transform: scaleX(-1)` on the fill container, not hardcoded positional values.
+- **Sliders and range inputs** - same rationale as progress bars.
+- **Ordered lists** - numbering should still render left-to-right within the numeral, but the list item content begins from the right margin.
 
 ### What NOT to Mirror
 
 Not everything in an RTL layout should be physically reversed. The following elements retain their LTR or universal orientation regardless of document direction:
 
-- **Numerals** — digits (0–9) are universally rendered left-to-right, even within Arabic text. A price of ١٢٣٤ is rendered with the most-significant digit on the left. Never reverse digit order.
-- **Media player controls** — play, pause, rewind, and fast-forward icons on a video player represent time-based operations on a fixed universal timeline, not reading direction. A play button always points right; a rewind button always points left. These are not mirrored.
-- **Phone numbers** — telephone numbers are always rendered in their conventional digit sequence, which is LTR. Wrapping a phone number in `<bdi>` ensures it is never accidentally reversed by the Unicode bidirectional algorithm.
-- **Prices and currency** — numeric amounts are LTR. Currency symbol position relative to the number is locale-determined (see Section 6), but the number itself reads left-to-right.
-- **Logos and wordmarks** — brand assets are not mirrored.
-- **Non-directional icons** — a star, a heart, a close (×) icon, a settings gear, or a user avatar carries no inherent directional meaning and must never be flipped.
-- **Maps and geographic imagery** — compass orientation is universal.
-- **Mathematical and scientific notation** — equations, formulas, and scientific symbols always render LTR.
+- **Numerals** - digits (0–9) are universally rendered left-to-right, even within Arabic text. A price of ١٢٣٤ is rendered with the most-significant digit on the left. Never reverse digit order.
+- **Media player controls** - play, pause, rewind, and fast-forward icons on a video player represent time-based operations on a fixed universal timeline, not reading direction. A play button always points right; a rewind button always points left. These are not mirrored.
+- **Phone numbers** - telephone numbers are always rendered in their conventional digit sequence, which is LTR. Wrapping a phone number in `<bdi>` ensures it is never accidentally reversed by the Unicode bidirectional algorithm.
+- **Prices and currency** - numeric amounts are LTR. Currency symbol position relative to the number is locale-determined (see Section 6), but the number itself reads left-to-right.
+- **Logos and wordmarks** - brand assets are not mirrored.
+- **Non-directional icons** - a star, a heart, a close (×) icon, a settings gear, or a user avatar carries no inherent directional meaning and must never be flipped.
+- **Maps and geographic imagery** - compass orientation is universal.
+- **Mathematical and scientific notation** - equations, formulas, and scientific symbols always render LTR.
 
 ### Mirroring Icons with CSS
 
@@ -77,7 +77,7 @@ This approach means a single SVG asset handles both directions. The `scaleX(-1)`
 
 ### `writing-mode` for Vertical Text
 
-CSS `writing-mode: vertical-rl` or `writing-mode: vertical-lr` enables vertical text layout, which is a feature of CJK typographic tradition — Chinese, Japanese, and Korean texts are often composed in vertical columns reading top-to-bottom, right-to-left. This property must never be applied to Arabic, Hebrew, or other RTL scripts. RTL scripts run horizontally; vertical RTL text is not a standard typographic form and will produce illegible results.
+CSS `writing-mode: vertical-rl` or `writing-mode: vertical-lr` enables vertical text layout, which is a feature of CJK typographic tradition - Chinese, Japanese, and Korean texts are often composed in vertical columns reading top-to-bottom, right-to-left. This property must never be applied to Arabic, Hebrew, or other RTL scripts. RTL scripts run horizontally; vertical RTL text is not a standard typographic form and will produce illegible results.
 
 ---
 
@@ -89,7 +89,7 @@ Chinese, Japanese, and Korean scripts have typographic properties that differ su
 
 CJK body text requires a line height of 1.5–1.8 times the font size. This range is tighter than the commonly cited 1.4–1.6 recommendation for Western Latin text, but the reason is different: CJK glyphs occupy a larger proportion of the em square, and their visual density is higher. Without adequate line height, the visual "color" of a CJK text block becomes oppressively dark and the vertical rhythm collapses.
 
-The practical implication is that a product which sets `line-height: 1.4` globally — a common default for English body copy — will produce overly tight CJK text that readers find fatiguing. Set the line height per locale or per language in the CSS, either using lang-based selectors or by applying a CSS class that is added to `<html>` alongside the lang attribute:
+The practical implication is that a product which sets `line-height: 1.4` globally - a common default for English body copy - will produce overly tight CJK text that readers find fatiguing. Set the line height per locale or per language in the CSS, either using lang-based selectors or by applying a CSS class that is added to `<html>` alongside the lang attribute:
 
 ```css
 :lang(zh), :lang(ja), :lang(ko) {
@@ -99,7 +99,7 @@ The practical implication is that a product which sets `line-height: 1.4` global
 
 ### Text Justification
 
-Never apply `text-align: justify` to CJK text without a CJK-aware justification engine. Standard CSS justification distributes whitespace between words. In Latin text, this adds space at word boundaries. In CJK text, there are no word boundaries in the typographic sense — each character is individually spaced — so browsers that lack CJK justification awareness either do nothing (most browsers) or distribute space in ways that create rivers of whitespace and uneven optical density. The correct CJK text alignment is `text-align: start` (which resolves to right-aligned in RTL contexts) or explicit `text-align: left` for horizontally presented CJK.
+Never apply `text-align: justify` to CJK text without a CJK-aware justification engine. Standard CSS justification distributes whitespace between words. In Latin text, this adds space at word boundaries. In CJK text, there are no word boundaries in the typographic sense - each character is individually spaced - so browsers that lack CJK justification awareness either do nothing (most browsers) or distribute space in ways that create rivers of whitespace and uneven optical density. The correct CJK text alignment is `text-align: start` (which resolves to right-aligned in RTL contexts) or explicit `text-align: left` for horizontally presented CJK.
 
 CSS Text Level 4 introduces `text-justify: inter-character`, which does handle CJK justification correctly, but browser support is still partial. Until it is universally available, avoid justified CJK text entirely.
 
@@ -131,13 +131,13 @@ PingFang (SC and TC variants) ships on macOS and iOS. Microsoft YaHei and JhengH
 
 ### Font Size Floor
 
-Never render CJK body text below 14px. CJK glyphs have a high stroke complexity — a single character may contain dozens of strokes at different angles. At sizes below 14px, strokes begin to merge or disappear on non-retina displays, turning legible characters into ambiguous blobs. This is a more severe legibility failure than occurs with Latin text at small sizes, because a misread Latin letter rarely causes complete meaning loss; a misread CJK character can change the meaning of an entire sentence.
+Never render CJK body text below 14px. CJK glyphs have a high stroke complexity - a single character may contain dozens of strokes at different angles. At sizes below 14px, strokes begin to merge or disappear on non-retina displays, turning legible characters into ambiguous blobs. This is a more severe legibility failure than occurs with Latin text at small sizes, because a misread Latin letter rarely causes complete meaning loss; a misread CJK character can change the meaning of an entire sentence.
 
 The minimum of 14px applies specifically to body text. Labels, captions, and supplementary text in dense interfaces may go as low as 12px only on retina displays where sub-pixel rendering provides adequate stroke clarity. Never go below 12px regardless of display density.
 
 ### Word Breaking
 
-Use `word-break: break-all` for CJK text. Because CJK scripts have no inter-word spaces, the browser has no natural break opportunities within a continuous run of characters. Without `word-break: break-all`, a long CJK string will overflow its container rather than wrapping. The `overflow-wrap: break-word` property alone is insufficient — it only breaks at word boundaries, which do not exist in CJK.
+Use `word-break: break-all` for CJK text. Because CJK scripts have no inter-word spaces, the browser has no natural break opportunities within a continuous run of characters. Without `word-break: break-all`, a long CJK string will overflow its container rather than wrapping. The `overflow-wrap: break-word` property alone is insufficient - it only breaks at word boundaries, which do not exist in CJK.
 
 ```css
 :lang(zh), :lang(ja), :lang(ko) {
@@ -155,7 +155,7 @@ Arabic and Hebrew are both right-to-left scripts, but they have different typogr
 
 ### Arabic
 
-Arabic is a connected script — letters in a word join to their neighbors, changing form based on their position (initial, medial, final, isolated). This means that inserting visual space between letters by manipulating `letter-spacing` does not merely change the tracking; it breaks the word by separating letterforms that are designed to connect. Never apply positive `letter-spacing` to Arabic text. The visual result is not "spaced Arabic" — it is unreadable fragments.
+Arabic is a connected script - letters in a word join to their neighbors, changing form based on their position (initial, medial, final, isolated). This means that inserting visual space between letters by manipulating `letter-spacing` does not merely change the tracking; it breaks the word by separating letterforms that are designed to connect. Never apply positive `letter-spacing` to Arabic text. The visual result is not "spaced Arabic" - it is unreadable fragments.
 
 Within an RTL context established by `dir="rtl"`, Arabic text should be aligned with `text-align: right` (or the logical equivalent `text-align: start`). Arabic text never uses `text-align: justify` for the same reasons as CJK, with the additional complication that letter connection makes justification even less reliable.
 
@@ -163,13 +163,13 @@ Font selection for Arabic requires fonts that include the full range of Arabic l
 
 ### Hebrew
 
-Hebrew is a right-to-left script with standalone glyphs — letters do not connect to their neighbors. This means `letter-spacing` is safe to use for Hebrew text and can be used for aesthetic and readability purposes in the same way as Latin. This is a meaningful practical difference from Arabic, where the same property causes rendering failures.
+Hebrew is a right-to-left script with standalone glyphs - letters do not connect to their neighbors. This means `letter-spacing` is safe to use for Hebrew text and can be used for aesthetic and readability purposes in the same way as Latin. This is a meaningful practical difference from Arabic, where the same property causes rendering failures.
 
 Hebrew text uses `text-align: right` (or `text-align: start`) within RTL context. Nikud (vowel diacritic marks) are used in some Hebrew contexts (children's books, prayer texts, poetry) but are absent in most digital UI text. Font stacks for Hebrew should include "David", "Arial Hebrew", or "Noto Sans Hebrew" as fallbacks.
 
 ### Bidirectional Text
 
-Mixed RTL and LTR content — common when Arabic or Hebrew text includes embedded product names, URLs, user-entered numbers, or quoted Latin strings — is handled by the Unicode Bidirectional Algorithm (UBA). The UBA resolves most cases correctly, but several scenarios require explicit markup:
+Mixed RTL and LTR content - common when Arabic or Hebrew text includes embedded product names, URLs, user-entered numbers, or quoted Latin strings - is handled by the Unicode Bidirectional Algorithm (UBA). The UBA resolves most cases correctly, but several scenarios require explicit markup:
 
 **Use `<bdi>` for user-generated text** embedded within a known-direction sentence. If an Arabic interface displays a username that may be Latin, Hebrew, or Arabic, wrapping the username in `<bdi>` (bidirectional isolation) tells the browser to determine the username's direction independently rather than inheriting the surrounding RTL context. Without `<bdi>`, a Latin username in the middle of an Arabic sentence can cause the surrounding text to reflow incorrectly.
 
@@ -178,14 +178,14 @@ Mixed RTL and LTR content — common when Arabic or Hebrew text includes embedde
 <p dir="rtl">مرحباً <bdi>John_123</bdi>، كيف حالك؟</p>
 ```
 
-**Use Unicode control characters as a last resort** — the LRE (U+202A), RLE (U+202B), LRO (U+202D), RLO (U+202E), and PDF (U+202C) marks can be embedded in plain-text strings where HTML markup is unavailable. However, these invisible characters can cause accessibility issues (screen readers may announce them) and complicate string manipulation. Prefer `<bdi>` and CSS `unicode-bidi` where markup is possible.
+**Use Unicode control characters as a last resort** - the LRE (U+202A), RLE (U+202B), LRO (U+202D), RLO (U+202E), and PDF (U+202C) marks can be embedded in plain-text strings where HTML markup is unavailable. However, these invisible characters can cause accessibility issues (screen readers may announce them) and complicate string manipulation. Prefer `<bdi>` and CSS `unicode-bidi` where markup is possible.
 
 ### Quotation Marks
 
 Quotation conventions differ between Arabic and Hebrew:
 
 - **Arabic:** Uses guillemets `«»` (French-style double angle brackets) or decorative quotation marks `❝❞`. The simple `""` ASCII quotation marks are understood but considered informal.
-- **Hebrew:** Uses low-high marks `„"` — the opening mark is low (double low-9 quotation mark, U+201E) and the closing mark is high (right double quotation mark, U+201C). This convention mirrors German usage.
+- **Hebrew:** Uses low-high marks `„"` - the opening mark is low (double low-9 quotation mark, U+201E) and the closing mark is high (right double quotation mark, U+201C). This convention mirrors German usage.
 
 These distinctions matter for interfaces that generate quoted content programmatically, such as pull-quote components, testimonial blocks, or inline citation formatting.
 
@@ -203,11 +203,11 @@ Font recommendations for Devanagari include "Noto Sans Devanagari", "Mangal" (Wi
 
 ### Tamil
 
-Tamil is an abugida with complex conjunct characters and independent vowel signs. Compound characters can extend significantly above and below the typographic baseline, much like Devanagari. The same line-height minimum of 1.6 applies, and the same `overflow: hidden` caution holds. Tamil is used primarily in Tamil Nadu (India) and Sri Lanka, and its script is distinct from Hindi/Devanagari — they are not related visually or phonologically. Font support for Tamil requires fonts including the Tamil Unicode block (U+0B80–U+0BFF), such as "Noto Sans Tamil" or the system font "Tamil Sangam MN" on Apple platforms.
+Tamil is an abugida with complex conjunct characters and independent vowel signs. Compound characters can extend significantly above and below the typographic baseline, much like Devanagari. The same line-height minimum of 1.6 applies, and the same `overflow: hidden` caution holds. Tamil is used primarily in Tamil Nadu (India) and Sri Lanka, and its script is distinct from Hindi/Devanagari - they are not related visually or phonologically. Font support for Tamil requires fonts including the Tamil Unicode block (U+0B80–U+0BFF), such as "Noto Sans Tamil" or the system font "Tamil Sangam MN" on Apple platforms.
 
 ### Thai
 
-Thai uses a complex system of tonal marks and vowel signs that stack both above and below consonants. A single syllable may be represented by a consonant with a vowel above it and a tonal mark above that — a three-layer vertical stack. This requires a minimum line height of 1.7 for Thai body text. Tighter line heights cause tonal marks from one line to overlap with the top of descenders from the line above, making the text visually inseparable.
+Thai uses a complex system of tonal marks and vowel signs that stack both above and below consonants. A single syllable may be represented by a consonant with a vowel above it and a tonal mark above that - a three-layer vertical stack. This requires a minimum line height of 1.7 for Thai body text. Tighter line heights cause tonal marks from one line to overlap with the top of descenders from the line above, making the text visually inseparable.
 
 Thai text must never be converted to uppercase. While the CSS property `text-transform: uppercase` is sometimes applied globally (for example, to all navigation labels or button labels), Thai has no uppercase/lowercase distinction. Applying `text-transform: uppercase` to Thai text has no visible effect in some browsers and produces garbled output in others. If uppercase is applied globally, suppress it for Thai with a lang selector:
 
@@ -223,7 +223,7 @@ Font recommendations for Thai include "Thonburi" (Apple platforms), "Tahoma" and
 
 ## 5. Cultural Color Meanings
 
-Color carries cultural meaning that varies substantially across regions and traditions. A color that signals celebration and good fortune in one culture may signal mourning or danger in another. Design decisions that use color to communicate meaning — success, warning, premium status, pricing — must account for these associations, particularly in contexts where the product is being localized rather than merely translated.
+Color carries cultural meaning that varies substantially across regions and traditions. A color that signals celebration and good fortune in one culture may signal mourning or danger in another. Design decisions that use color to communicate meaning - success, warning, premium status, pricing - must account for these associations, particularly in contexts where the product is being localized rather than merely translated.
 
 The table below documents the primary cultural associations for six key colors across major global markets. These are dominant conventional associations, not universal truths; individual variation always exists within any culture.
 
@@ -240,17 +240,17 @@ The table below documents the primary cultural associations for six key colors a
 
 These associations have direct implications for product design decisions. A "success" state that uses green with white text works well in Western European markets but is potentially jarring in contexts where white signals mourning. A premium tier that uses gold/yellow resonates strongly in Chinese, Indian, and Islamic contexts. Red as a primary brand color is highly positive in China but primarily reads as warning or danger in Western UI conventions.
 
-When localizing a design system, audit the semantic color tokens (success, warning, error, premium, notification) and verify that the chosen colors do not carry strongly negative associations in the target market. This does not always require changing the color — it may require pairing the color with additional typographic or iconographic signals that reinforce the intended meaning independently of the color.
+When localizing a design system, audit the semantic color tokens (success, warning, error, premium, notification) and verify that the chosen colors do not carry strongly negative associations in the target market. This does not always require changing the color - it may require pairing the color with additional typographic or iconographic signals that reinforce the intended meaning independently of the color.
 
 ---
 
 ## 6. Number, Date, and Currency Formatting
 
-Number and date formatting is one of the most frequently implemented incorrectly. The temptation to format numbers manually — a `.toFixed(2)` here, a `.replace('.', ',')` there — produces fragile code that breaks for edge cases (negative numbers, very large numbers, non-standard locales) and requires constant maintenance as markets are added. The correct approach uses the browser's `Intl` API universally and unconditionally.
+Number and date formatting is one of the most frequently implemented incorrectly. The temptation to format numbers manually - a `.toFixed(2)` here, a `.replace('.', ',')` there - produces fragile code that breaks for edge cases (negative numbers, very large numbers, non-standard locales) and requires constant maintenance as markets are added. The correct approach uses the browser's `Intl` API universally and unconditionally.
 
 ### Number Formatting with `Intl.NumberFormat`
 
-The `Intl.NumberFormat` constructor accepts a locale string and an options object and handles all locale-specific separators, decimal marks, and digit systems:
+The `Intl.NumberFormat` function Object() { [native code] } accepts a locale string and an options object and handles all locale-specific separators, decimal marks, and digit systems:
 
 ```js
 // US: "1,234,567.89"
@@ -316,7 +316,7 @@ Do not attempt to replicate this logic manually. The `Intl` API encodes the corr
 
 ## 7. Inclusive Imagery
 
-Visual imagery in products communicates assumptions about who the product is for. When all human figures in a product's illustration system share the same skin tone, body type, and cultural presentation, the implicit message is that other users are outside the intended audience. Inclusive imagery is not a cosmetic concern — it is a fundamental signal about who the product treats as a default person.
+Visual imagery in products communicates assumptions about who the product is for. When all human figures in a product's illustration system share the same skin tone, body type, and cultural presentation, the implicit message is that other users are outside the intended audience. Inclusive imagery is not a cosmetic concern - it is a fundamental signal about who the product treats as a default person.
 
 ### Skin Tone Representation
 
@@ -336,15 +336,15 @@ Avoid the common workaround of representing gender neutrality solely through an 
 
 ### Ability and Assistive Technology
 
-People who use wheelchairs, prosthetic limbs, hearing aids, white canes, and other assistive devices are users, not exceptions. An illustration system that never depicts assistive technology is implicitly representing a world in which all users are non-disabled — an inaccurate and exclusionary representation.
+People who use wheelchairs, prosthetic limbs, hearing aids, white canes, and other assistive devices are users, not exceptions. An illustration system that never depicts assistive technology is implicitly representing a world in which all users are non-disabled - an inaccurate and exclusionary representation.
 
 Include assistive devices in diverse illustration sets at a proportion that reflects their real-world prevalence. This means that not every illustration must include a wheelchair user, but across the full illustration library, multiple instances should naturally appear. The presence of assistive technology in product imagery sends a clear signal to disabled users that the product has considered their existence. The absence sends the opposite signal.
 
-When depicting wheelchair users, hearing aid users, or prosthetic users, represent them as doing the same things as other users in the illustration — completing tasks, experiencing success states, using the product in its intended context. Avoid representations that isolate disability as a subject of the illustration rather than incidental to the depicted activity.
+When depicting wheelchair users, hearing aid users, or prosthetic users, represent them as doing the same things as other users in the illustration - completing tasks, experiencing success states, using the product in its intended context. Avoid representations that isolate disability as a subject of the illustration rather than incidental to the depicted activity.
 
 ### Cultural Dress and Representation
 
-Technical and professional product imagery should default to contemporary clothing that reflects the actual dress of people who work in modern professional contexts, which is globally diverse. Reducing cultural representation to traditional or ceremonial dress — the turban as a shorthand for South Asian identity, the kimono as a shorthand for Japanese identity — reduces rich cultural identities to costume.
+Technical and professional product imagery should default to contemporary clothing that reflects the actual dress of people who work in modern professional contexts, which is globally diverse. Reducing cultural representation to traditional or ceremonial dress - the turban as a shorthand for South Asian identity, the kimono as a shorthand for Japanese identity - reduces rich cultural identities to costume.
 
 When contemporary clothing is depicted, it should reflect the actual diversity of how people dress globally: headscarves and hijabs worn by Muslim women are contemporary professional dress, not traditional costume. Saris worn in professional contexts are contemporary professional dress. The standard should be that each depicted person is dressed in a way that is accurate to how a person from their apparent background might actually dress in the context being depicted, not in a way that telegraphs their cultural identity as a distinguishing marker.
 

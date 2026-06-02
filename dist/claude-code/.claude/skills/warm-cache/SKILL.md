@@ -15,9 +15,9 @@ You are the Layer A cache primer. You enumerate the agent roster by scanning `ag
 
 ## Invocation Contract
 
-- **Command form**: `/gdd:warm-cache` — warms all agents that import the shared preamble.
-- **With filter**: `/gdd:warm-cache --agents design-verifier,design-planner,design-integration-checker` — warms only the named agents (comma-separated, no spaces, matches agent file basename without `.md`).
-- **Output**: a single markdown summary to stdout —
+- **Command form**: `/gdd:warm-cache` - warms all agents that import the shared preamble.
+- **With filter**: `/gdd:warm-cache --agents design-verifier,design-planner,design-integration-checker` - warms only the named agents (comma-separated, no spaces, matches agent file basename without `.md`).
+- **Output**: a single markdown summary to stdout -
   ```
   ## Warm-cache complete
   - Agents warmed: 14
@@ -25,7 +25,7 @@ You are the Layer A cache primer. You enumerate the agent roster by scanning `ag
   - Duration: 4.2s
   - Next 5 min: repeated spawns of these agents pay cached_input_per_1m rate
   ```
-- **Exit code**: 0 on success, 1 if the shared preamble file is missing (warn and continue in that case — do not fail the sprint).
+- **Exit code**: 0 on success, 1 if the shared preamble file is missing (warn and continue in that case - do not fail the sprint).
 
 ## Step-by-step Flow
 
@@ -48,7 +48,7 @@ For each kept agent, spawn the agent at tier `haiku` with an input payload desig
 No-op warm: acknowledge and return "ok". Do not read files. Do not write files. Do not emit anything beyond the two characters "ok".
 ```
 
-Spawns run serially — parallelism buys nothing here because Anthropic's prompt cache keys on prompt prefix, not on concurrent calls. Swallow spawn errors per agent (log and continue) — a single broken agent must not abort the sprint.
+Spawns run serially - parallelism buys nothing here because Anthropic's prompt cache keys on prompt prefix, not on concurrent calls. Swallow spawn errors per agent (log and continue) - a single broken agent must not abort the sprint.
 
 ### Step 4: emit summary
 
@@ -61,8 +61,8 @@ Full + filtered command-output examples live in `./../cache-manager/cache-policy
 ## Integration Points
 
 - **Pre-sprint**: `/gdd:warm-cache` is the recommended first line of a `/gdd:discover`, `/gdd:plan`, or `/gdd:verify` sprint. Users type it before the real command, or an orchestrator-level wrapper runs it automatically if `agent-metrics.json` (Plan 10.1-05) indicates the last sprint was > 5 min ago.
-- **`reference/shared-preamble.md`** (authored in Plan 10.1-04) is the load-bearing file for this command — agents import it first per D-17, which makes the first N tokens of every agent's rendered system prompt identical, which is what Anthropic's prompt cache keys on.
-- **No interaction with `hooks/budget-enforcer.js`** — the hook is a PreToolUse gate; warm-cache runs as an ordinary Agent tool call itself and is subject to the hook (each no-op Haiku ping is budgeted and logged like any other spawn). This is intentional: warm-cache's own telemetry rows in `.design/telemetry/costs.jsonl` are the evidence that cache priming happened.
+- **`reference/shared-preamble.md`** (authored in Plan 10.1-04) is the essential file for this command - agents import it first per D-17, which makes the first N tokens of every agent's rendered system prompt identical, which is what Anthropic's prompt cache keys on.
+- **No interaction with `hooks/budget-enforcer.js`** - the hook is a PreToolUse gate; warm-cache runs as an ordinary Agent tool call itself and is subject to the hook (each no-op Haiku ping is budgeted and logged like any other spawn). This is intentional: warm-cache's own telemetry rows in `.design/telemetry/costs.jsonl` are the evidence that cache priming happened.
 
 ## Cost Model
 
@@ -72,7 +72,7 @@ Full per-ping math, total-cost arithmetic for a 14-agent warm, and payback calcu
 
 - Shared preamble missing → print warning, exit 0. Sprint continues without Layer A priming.
 - Individual agent spawn fails → log, continue to next agent.
-- Budget cap hit during warm-cache (hypothetical — the total cost is trivial) → hook blocks per D-02, warm-cache surfaces the error in the summary and exits 0. User can raise cap or proceed without priming.
+- Budget cap hit during warm-cache (hypothetical - the total cost is trivial) → hook blocks per D-02, warm-cache surfaces the error in the summary and exits 0. User can raise cap or proceed without priming.
 
 ## Non-Goals
 

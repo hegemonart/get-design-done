@@ -16,14 +16,14 @@ Generates a narrative retrospective across one or more completed cycles by readi
 ## Steps
 
 1. **Parse argument**: accepted forms:
-   - `cycle-N` or `N` — single cycle
-   - `N-M` — inclusive range
-   - `all` or no argument — all archived cycles
+   - `cycle-N` or `N` - single cycle
+   - `N-M` - inclusive range
+   - `all` or no argument - all archived cycles
 
 2. **Discover archives**: glob `.design/archive/cycle-*/EXPERIENCE.md`. Sort by cycle number. Filter to requested range.
 
 3. **For each cycle archive**:
-   a. Read `EXPERIENCE.md` — extract sections: Goal, Decisions made, Learnings graduated, What died, Handoff to next cycle.
+   a. Read `EXPERIENCE.md` - extract sections: Goal, Decisions made, Learnings graduated, What died, Handoff to next cycle.
    b. Read `DESIGN-SUMMARY.md` (if present) for shipped artifacts list.
    c. Run:
       ```bash

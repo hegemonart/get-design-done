@@ -9,13 +9,13 @@ disable-model-invocation: true
 
 **Role:** Print cycle metrics.
 
-## Step 1 — Read state
+## Step 1 - Read state
 
 Read `.design/STATE.md`. Extract:
 - `cycle:` and `started_at` (or per-cycle start date if present in CYCLES.md)
 - D-XX count under `<decisions>`
 
-## Step 2 — Collect git metrics
+## Step 2 - Collect git metrics
 
 Let `<since>` = cycle start date (fallback to STATE.md `started_at`).
 
@@ -26,7 +26,7 @@ git diff --stat HEAD~N HEAD                          # files changed since cycle
 
 If git unavailable, print `git: unavailable` and skip git metrics.
 
-## Step 3 — Count todos
+## Step 3 - Count todos
 
 Read `.design/TODO.md` if present:
 - pending: count `- [ ]`
@@ -34,7 +34,7 @@ Read `.design/TODO.md` if present:
 - done: count `- [x]`
 - group pending by P0/P1/P2/P3 section
 
-## Step 4 — Output
+## Step 4 - Output
 
 ```
 ━━━ Cycle stats ━━━
