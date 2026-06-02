@@ -3,6 +3,7 @@ bandit-arbitrage.cjs
 bandit-router.cjs
 blast-radius.cjs
 budget-enforcer.cjs
+confidence-route.cjs
 cost-arbitrage.cjs
 dangerous-patterns.cjs
 deprecation-registry.cjs
@@ -35,3 +36,4 @@ start-findings-engine.cjs
 tier-resolver-openrouter.cjs
 tier-resolver.cjs
 touches-pattern-miner.cjs
+worktree-resolve.cjs

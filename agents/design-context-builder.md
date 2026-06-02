@@ -561,6 +561,8 @@ Iterate until the user confirms. Then write the artifact.
 
 ## Output: .design/DESIGN-CONTEXT.md
 
+Before writing any `.design/` artifact, resolve the main repo root via `scripts/lib/worktree-resolve.cjs` (`resolveDesignRoot`) so a worktree run writes to the main checkout and does not leak.
+
 Create `.design/` directory if needed. Write `.design/DESIGN-CONTEXT.md`:
 
 ```markdown

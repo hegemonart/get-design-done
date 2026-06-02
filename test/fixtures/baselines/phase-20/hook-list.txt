@@ -5,6 +5,7 @@ first-run-nudge.sh
 gdd-a11y-gate.js
 gdd-bash-guard.js
 gdd-decision-injector.js
+gdd-design-quality-check.js
 gdd-mcp-circuit-breaker.js
 gdd-precompact-snapshot.js
 gdd-protected-paths.js

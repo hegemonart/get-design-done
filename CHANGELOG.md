@@ -4,6 +4,50 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.49.0] - 2026-06-03
+
+### Phase 49 - Quick Anti-Slop Floor
+
+Three small, atomic safety and policy primitives identified in the cross-repo synthesis, each low-risk and
+high-signal: a worktree redirect that ends the recurring `.planning/` leak, a free anti-slop regex pass on every
+front-end file write, and a reviewer confidence gate that stops severity inflation. Planned and executed via the
+GSD pipeline (3 parallel executor subagents). No new runtime dependency, no new egress.
+
+### Breaking changes
+
+- **`.design/` and `.planning/` writes redirect to the main repo root inside a git worktree.** `scripts/lib/worktree-resolve.cjs`
+  detects a worktree (`git rev-parse --git-dir` vs `--git-common-dir`) and the gdd-state write path (`resolveStatePath`,
+  used by all 11 state tools) now resolves STATE there, with a one-line stderr notice. Outside a worktree, behavior is
+  unchanged. Tooling that assumed `.design/` always lived under `process.cwd()` should resolve through the helper.
+- **Findings now carry a `confidence` field and design-fixer filters on it.** design-auditor, design-verifier, and
+  design-debt-crawler emit `confidence: 0.0-1.0` per finding; design-fixer drops `## Tentative` findings and routes
+  BLOCKER/MAJOR findings below 0.8 confidence to user review instead of auto-fix. Consumers of these findings should
+  read the new field.
+
+### Added
+
+- **`scripts/lib/worktree-resolve.cjs`** (resolveRepoRoot / isWorktree / resolveDesignRoot / resolvePlanningRoot;
+  graceful fallback, injectable exec) wired into the state write path + a one-line worktree note in the 7
+  artifact-writer agents.
+- **`hooks/gdd-design-quality-check.js`**: an advisory PostToolUse hook scanning `Write`/`Edit`/`MultiEdit` to
+  `.tsx`/`.vue`/`.svelte`/`.astro` for 8 default-AI-aesthetic tells (gradient spam, generic CTAs, centered-everything,
+  font-inter default, purple/violet default, glassmorphism spam, isometric fallback, decorative motion). WARN-only,
+  emits a `design_quality_warn` event. Catalogued in **`reference/visual-tells.md`** (8 named categories with diagnostic
+  regex + remediation).
+- **Reviewer confidence gate**: a 4-question Pre-Report Gate + the `confidence` field across the three audit agents,
+  a `scripts/lib/confidence-route.cjs` routing helper (`fix` / `user-review` / `drop`), and
+  **`reference/reviewer-confidence-gate.md`** (template + rationale + 4 before/after examples).
+
+### Notes
+
+- 6-manifest lockstep at **v1.49.0** + `OFF_CADENCE_VERSIONS.add('1.49.0')` + 37 `manifests-version.txt` baselines +
+  plugin keywords (`worktree-safe`, `anti-slop`, `confidence-gate`). Baselines re-locked: hook-list (19),
+  resilience-primitives (39 `scripts/lib/*.cjs`), registry (173), tarball golden 902 -> 907 (+5).
+- WARN-only hook (never blocks); auto-fix of matched tells is out of scope (proposal-only); the verb-based anti-slop
+  rubric and a wider tell catalog are deferred to Phase 50.
+
+---
+
 ## [1.48.0] - 2026-06-03
 
 ### Phase 48 - Audit & Pillar Expansion

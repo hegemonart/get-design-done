@@ -47,6 +47,7 @@ Minimum expected files:
 - `.design/tasks/` - what was actually done (glob all task files)
 - **Domain-index navigation (Phase 45):** the 7 entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` index every fragment below. For a pillar, load the relevant domain index first, then drill into the specific fragments it lists only as the pillar needs them - this is the cheap navigation layer over the detailed fragments.
 - `reference/audit-scoring.md` - existing 7-category scoring rubric (understand, do not duplicate)
+- `reference/reviewer-confidence-gate.md` - Pre-Report Gate, the `confidence` field, and the routing rule applied to every finding
 - `reference/brand-voice.md` - voice axes, archetype library, and tone-by-context table (use when auditing Pillar 1: Copy)
 - `reference/gestalt.md` - 8 Gestalt principles with scoring rubrics (use when auditing Pillar 2: Visual Hierarchy)
 - `reference/visual-hierarchy-layout.md` - Z-order, whitespace, grids, and reading-order patterns (use when auditing Pillar 2: Visual Hierarchy)
@@ -357,6 +358,10 @@ For each of the 7 pillars:
 3. Assign a score (1–4) with specific evidence
 4. Identify the top gap for this pillar (one concrete, actionable finding)
 
+### Step 3.5: Pre-Report Gate + confidence
+
+Before writing any finding into the Priority Fix List or Detailed Findings, run the four-question Pre-Report Gate from `reference/reviewer-confidence-gate.md`: (a) can you cite `file:line`, (b) can you state the failure mode in one sentence, (c) did you read context beyond the matched line, (d) is the implied severity defensible? Stamp every priority-fix finding with a `confidence` value (`0.0-1.0`): `>= 0.8` when all four pass, `0.5-0.8` for partial evidence, `< 0.5` for an unconfirmed pattern match (common for the code-only Visual Hierarchy and Color pillars, where runtime cannot be seen). Move every `< 0.5` finding into a `## Tentative` section instead of the Priority Fix List, so a low-confidence guess never escalates to remediation. Confidence is independent of the 1-4 pillar scores and does not change them.
+
 ### Step 4: Write DESIGN-AUDIT.md
 
 Write `.design/DESIGN-AUDIT.md` using the output format below.
@@ -414,11 +419,19 @@ supplement_note: "Supplements 7-category 0-10 system in reference/audit-scoring.
 
 ## Priority Fix List
 
-Listed by impact. Top 3 fixes the verifier should weight heavily.
+Listed by impact. Top 3 fixes the verifier should weight heavily. Each finding carries a `confidence` value (see `reference/reviewer-confidence-gate.md`); findings below `0.5` go in `## Tentative`, not here.
 
-1. **[Pillar N — specific issue]** — [user impact] — [concrete fix with file reference]
-2. **[Pillar N — specific issue]** — [user impact] — [concrete fix with file reference]
-3. **[Pillar N — specific issue]** — [user impact] — [concrete fix with file reference]
+1. **[Pillar N: specific issue]** (confidence: [0.0-1.0]) [user impact] [concrete fix with file reference]
+2. **[Pillar N: specific issue]** (confidence: [0.0-1.0]) [user impact] [concrete fix with file reference]
+3. **[Pillar N: specific issue]** (confidence: [0.0-1.0]) [user impact] [concrete fix with file reference]
+
+---
+
+## Tentative
+
+Low-confidence findings (`confidence < 0.5`, per `reference/reviewer-confidence-gate.md`): pattern matches not confirmed by reading context, or runtime-only concerns the code-only pass cannot verify. Surfaced for human review; never auto-escalated to design-fixer.
+
+- [Pillar N: finding] (confidence: [N], unconfirmed because [reason])
 
 ---
 

@@ -395,6 +395,8 @@ Apply these rules automatically during execution. Track all deviations in the ta
 
 ## Task Output - .design/tasks/task-NN.md
 
+Before writing any `.design/` artifact, resolve the main repo root via `scripts/lib/worktree-resolve.cjs` (`resolveDesignRoot`) so a worktree run writes to the main checkout and does not leak.
+
 After completing the task's implementation work, write `.design/tasks/task-NN.md` (where NN = task_id from prompt context). Create `.design/tasks/` directory first if it does not exist.
 
 Format (locked - do not alter structure):

@@ -60,6 +60,7 @@ listed file before acting. Minimum expected files:
 
 - @reference/debt-categories.md
 - @reference/anti-patterns.md
+- @reference/reviewer-confidence-gate.md
 
 `reference/debt-categories.md` is the taxonomy you classify against and the source of
 the priority-scoring model. `reference/anti-patterns.md` is the BAN-NN and SLOP-NN
@@ -157,6 +158,19 @@ grep -rEn "No data|No results|Nothing here|went wrong|error occurred" src/ \
 Flag meaningful images without `alt`, icon-only controls without an accessible name,
 placeholder used as the only label, and generic empty or error copy.
 
+### Step 2.5: Pre-Report Gate + confidence
+
+Before cataloging any finding, run the four-question Pre-Report Gate from
+`reference/reviewer-confidence-gate.md`: (a) can you cite `file:line`, (b) can you state the
+failure mode in one sentence, (c) did you read context beyond the matched line (the token
+definition, the call site), and (d) is the class assignment defensible? Stamp every catalog
+row with a `confidence` value (`0.0-1.0`): `>= 0.8` when all four pass, `0.5-0.8` when evidence
+is partial, `< 0.5` for a pattern match you could not confirm (for example an unresolved
+contrast pair or a literal that may be inside a token definition). Move every `< 0.5` finding
+into a `## Tentative` section instead of the ranked findings table, so a low-confidence guess
+never escalates to remediation. Confidence is independent of priority: a high-priority debt
+item can still be low confidence and belongs in `## Tentative` until confirmed.
+
 ### Step 3: Group and score
 
 Group findings by the seven debt classes. For each finding, assign the three priority
@@ -217,12 +231,21 @@ note: "Project-scoped retroactive debt catalog. Does NOT read STATE.md completed
 
 ## Findings (ranked by priority)
 
-| Priority | Class | Location | Finding | V × E × P | Suggested command |
-|----------|-------|----------|---------|-----------|-------------------|
-| 18 | color-literal | src/Card.tsx:42 | Raw #1a73e8 instead of token | 3×3×2 | `/gdd:fast "replace #1a73e8 with semantic token in Card.tsx"` |
-| 12 | anti-pattern | src/Hero.tsx:8 | BAN-02 gradient text on heading | 3×2×2 | `/gdd:fast "remove BAN-02 gradient text in Hero.tsx"` |
+| Priority | Class | Location | Finding | V × E × P | Confidence | Suggested command |
+|----------|-------|----------|---------|-----------|------------|-------------------|
+| 18 | color-literal | src/Card.tsx:42 | Raw #1a73e8 instead of token | 3×3×2 | 0.9 | `/gdd:fast "replace #1a73e8 with semantic token in Card.tsx"` |
+| 12 | anti-pattern | src/Hero.tsx:8 | BAN-02 gradient text on heading | 3×2×2 | 0.85 | `/gdd:fast "remove BAN-02 gradient text in Hero.tsx"` |
 
-(One row per finding. The Suggested command column always carries a `/gdd:fast "<finding>"` string.)
+(One row per finding with `confidence >= 0.5`. The Suggested command column always carries a `/gdd:fast "<finding>"` string. Findings below `0.5` go in `## Tentative` below, not in this table.)
+
+---
+
+## Tentative
+
+Findings with `confidence < 0.5` (pattern matches not confirmed by reading context, per
+`reference/reviewer-confidence-gate.md`). Listed for human review; never auto-escalated.
+
+- [class] [location]: [finding] (confidence: [N], unconfirmed because [reason])
 
 ---
 

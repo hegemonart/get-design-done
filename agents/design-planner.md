@@ -227,6 +227,8 @@ Before finalizing task list:
 
 ## Output Format
 
+Before writing any `.design/` artifact, resolve the main repo root via `scripts/lib/worktree-resolve.cjs` (`resolveDesignRoot`) so a worktree run writes to the main checkout and does not leak.
+
 Write `.design/DESIGN-PLAN.md` with this exact structure:
 
 ```markdown

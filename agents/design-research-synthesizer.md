@@ -161,6 +161,8 @@ Read .design/STATE.md
 
 ## Output
 
+Before writing any `.design/` artifact, resolve the main repo root via `scripts/lib/worktree-resolve.cjs` (`resolveDesignRoot`) so a worktree run writes to the main checkout and does not leak.
+
 Single file: `.design/DESIGN-CONTEXT.md`.
 
 ## Record

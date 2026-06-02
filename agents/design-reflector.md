@@ -62,6 +62,8 @@ Minimum expected inputs (skip gracefully if absent, note what's missing):
 
 ## Output
 
+Before writing any `.design/` artifact, resolve the main repo root via `scripts/lib/worktree-resolve.cjs` (`resolveDesignRoot`) so a worktree run writes to the main checkout and does not leak.
+
 Write `.design/reflections/<cycle-slug>.md`. If `--dry-run` is set in the spawning prompt, print proposals to stdout only - do not write the file.
 
 If the capability-gap pattern scan emitted any events during this run, include a `## Capability gaps emitted` heading listing each `event_id` with the source signal kind (`intel` | `posterior` | `trajectory`) and the `suggested_kind` (`agent` | `skill`) per event. Plan 29-03 reads these events from `.design/gep/events.jsonl` to cluster recurring `capability_gap` events for `/gdd:apply-reflections`.
