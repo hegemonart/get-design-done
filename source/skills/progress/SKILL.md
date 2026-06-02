@@ -1,0 +1,95 @@
+---
+name: gdd-progress
+description: "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit."
+argument-hint: "[--forensic]"
+tools: Read, Bash, Grep, Glob, mcp__gdd_state__get, mcp__gdd_status, mcp__gdd_phase_current
+---
+
+@reference/retrieval-contract.md
+
+# {{command_prefix}}progress
+
+**Role:** Show current position in the pipeline and recommend the next action. With `--forensic`, run a 6-check integrity audit.
+
+## Step 1 — Read state
+
+Two paths — MCP preferred when available, file-read fallback otherwise.
+
+### MCP path (preferred)
+
+When the harness exposes `mcp__gdd_status` (Phase 27.7+, registered via `npx @hegemonart/get-design-done --register-mcp`):
+
+1. Call `mcp__gdd_status` (no args). Returns `{phase, branch, last_decisions, last_completed_plans, blocker_count}` in one call.
+2. If you need `stage` / `task_progress` for the output line, call `mcp__gdd_phase_current` (no args). Returns `{phase, stage, task_progress, status}`.
+3. Skip to Step 2.
+
+This path loads the full priming context in 1–2 MCP calls (~3s, ~32k tokens — Storybloq benchmark).
+
+### File-read path (fallback)
+
+When MCP tools are not available, fall back to the legacy flow:
+
+1. Call `mcp__gdd_state__get` if exposed (Phase 20 STATE.md mutator MCP) → parsed state object. Otherwise, `Read .design/STATE.md` and parse the frontmatter + `<position>`, `<decisions>`, `<plans>` sections.
+2. Extract: `stage`, `cycle`, `last_checkpoint`, `task_progress`, `status`, `decisions.length`, open todos from `.design/TODO.md` (count unchecked `- [ ]` — outside the MCP catalog, so `Read` is still used).
+3. If STATE.md is missing, print: "No pipeline state. Run `{{command_prefix}}brief` first." and stop.
+
+This path loads the same context in 5–10 file reads (~100s, ~46.5k tokens — file-reading baseline).
+
+## Step 2 — Default output
+
+```
+━━━ Pipeline state ━━━
+Stage: <stage>   Cycle: <cycle or "default">   Wave: <wave>
+Last checkpoint: <timestamp>
+Decisions: <N>   Open todos: <N>
+Next: {{command_prefix}}<next-stage>
+━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Recommend next stage via the same logic as `{{command_prefix}}next` (route by which artifacts exist).
+
+### First-run connection nudge
+
+After the pipeline state block, if every `<connections>` entry from the snapshot is `not_configured` AND `.design/config.json > connections_onboarding` is absent, append once per session (transient marker `.design/.connections-nudge-shown`): `Tip: run {{command_prefix}}connections to see what integrations can plug in (Figma, Storybook, Chromatic, etc.).`
+
+## Step 3 — Forensic audit (only if `--forensic`)
+
+Run these six checks and print PASS/WARN/FAIL per check:
+
+1. **Stale artifacts** — compare mtime of `.design/DESIGN.md` against most recent file under `src/` via `ls -lt`. WARN if DESIGN.md is older by >7 days.
+2. **Missing transitions** — `stage` from the `mcp__gdd_state__get` snapshot vs artifacts present. e.g. stage=`plan` requires DESIGN-CONTEXT.md. FAIL if expected artifact missing.
+3. **Token drift** — `wc -c .design/DESIGN.md .design/DESIGN-CONTEXT.md`; tokens ≈ bytes/4. WARN if combined >50000 tokens.
+4. **Aged DESIGN-DEBT** — read `.design/DESIGN-DEBT.md`; any item whose line predates HEAD by >14 days (check `git blame` or file mtime fallback) → WARN.
+5. **Cycle alignment** — if `cycle` from the snapshot is set but `.design/CYCLES.md` has no matching heading → FAIL.
+6. **Connection status** — re-probe figma/refero via ToolSearch; compare to the `<connections>` field in the snapshot. WARN on mismatch.
+
+Also scan `.design/SEEDS.md` (if present) for seeds whose trigger keywords match the snapshot or CYCLES.md content; list them as "Seed ready to germinate: <text>".
+
+Print:
+```
+━━━ Forensic audit ━━━
+[PASS] Stale artifacts
+[WARN] Token drift — 53,400 tokens combined
+[PASS] Missing transitions
+[PASS] Aged DESIGN-DEBT
+[PASS] Cycle alignment
+[WARN] Connection status — figma now unavailable
+Seeds ready: 0
+━━━━━━━━━━━━━━━━━━━━━━
+```
+
+## Step 4 — Update notice (safe-window surface)
+
+After printing the pipeline state, emit the plugin-update banner if one is present. This file is written by `hooks/update-check.sh` subject to the state-machine guard (mid-pipeline stages suppress it) and per-version dismissal.
+
+```bash
+[ -f .design/update-available.md ] && cat .design/update-available.md
+```
+
+No-op when: no new release exists, state-machine guard is active (stage in plan|design|verify), or the latest tag has been dismissed via `{{command_prefix}}check-update --dismiss`.
+
+## Do Not
+
+- Do not mutate STATE.md — this skill is read-only. Only `mcp__gdd_state__get` is permitted.
+
+## PROGRESS COMPLETE
