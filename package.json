@@ -33,6 +33,7 @@
     "NOTICE"
   ],
   "bin": {
+    "gdd-detect": "./bin/gdd-detect",
     "gdd-events": "./scripts/cli/gdd-events.mjs",
     "gdd-graph": "./bin/gdd-graph",
     "gdd-mcp": "./bin/gdd-mcp",
