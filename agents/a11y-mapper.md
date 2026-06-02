@@ -1,6 +1,6 @@
 ---
 name: a11y-mapper
-description: "Maps static accessibility signals — ARIA usage, keyboard nav, focus states, skip links, semantic markup — to .design/map/a11y.md. Static-only; no live browser audit."
+description: "Maps static accessibility signals - ARIA usage, keyboard nav, focus states, skip links, semantic markup - to .design/map/a11y.md. Static-only; no live browser audit."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit

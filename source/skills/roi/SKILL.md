@@ -1,6 +1,6 @@
 ---
 name: gdd-roi
-description: "Shows whether GDD spend actually shipped anything. Joins per-cycle cost (.design/telemetry/costs.jsonl) with what each cycle shipped — commits that SURVIVED in main vs commits that were reverted — and reports cost-per-shipped-commit + a stick rate per cycle. 'Shipped' = a commit surviving >= the window (default 14 days), which catches revert-after-bug-discovery. Markdown table, not a GUI. Read-only — it reads git log + cost telemetry and reports. Use to see which cycles were worth their spend."
+description: "Shows whether GDD spend actually shipped anything. Joins per-cycle cost (.design/telemetry/costs.jsonl) with what each cycle shipped - commits that SURVIVED in main vs commits that were reverted - and reports cost-per-shipped-commit + a stick rate per cycle. 'Shipped' = a commit surviving >= the window (default 14 days), which catches revert-after-bug-discovery. Markdown table, not a GUI. Read-only - it reads git log + cost telemetry and reports. Use to see which cycles were worth their spend."
 argument-hint: "[--since <date>] [--window-days 14]"
 user-invocable: true
 tools: Read, Bash, Grep, Glob

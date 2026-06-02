@@ -1,6 +1,6 @@
 ---
 name: gdd-darkmode
-description: "Audit a project's dark mode implementation — detects architecture (CSS custom props, Tailwind `dark:` prefix, or JS class toggle), runs architecture-specific contrast / token-override / anti-pattern / meta-property checks, and writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`. Use when the user wants to verify dark mode quality without re-running the full design pipeline. Read-only — no score writeback to `DESIGN.md`."
+description: "Audit a project's dark mode implementation - detects architecture (CSS custom props, Tailwind `dark:` prefix, or JS class toggle), runs architecture-specific contrast / token-override / anti-pattern / meta-property checks, and writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`. Use when the user wants to verify dark mode quality without re-running the full design pipeline. Read-only - no score writeback to `DESIGN.md`."
 argument-hint: ""
 user-invocable: true
 ---

@@ -4,9 +4,9 @@ description: Bidirectional Linear/Jira ticket sync (Team Surfaces). Reads a link
 tools: Read, Bash, Grep, Glob, ToolSearch
 color: green
 default-tier: sonnet
-tier-rationale: "Mechanical sync of an already-linked ticket via MCP tools; no design judgment — sonnet-tier, not an Opus plan."
+tier-rationale: "Mechanical sync of an already-linked ticket via MCP tools; no design judgment - sonnet-tier, not an Opus plan."
 size_budget: M
-size_budget_rationale: "Honest tier sized to the ~150-line body (M cap 300). The agent states the read/write/STATE contract — surface ticket comments, maintain <ticket_links>, transition + summarize on completion, redact, kill-switch, degrade-to-noop — and DELEGATES the <ticket_links> schema + per-system MCP-tool detail to reference/ticket-sync.md + connections/{linear,jira}.md (the email-executor→email-design.md precedent)."
+size_budget_rationale: "Honest tier sized to the ~150-line body (M cap 300). The agent states the read/write/STATE contract - surface ticket comments, maintain <ticket_links>, transition + summarize on completion, redact, kill-switch, degrade-to-noop - and DELEGATES the <ticket_links> schema + per-system MCP-tool detail to reference/ticket-sync.md + connections/{linear,jira}.md (the email-executor→email-design.md precedent)."
 parallel-safe: false
 typical-duration-seconds: 45
 reads-only: false

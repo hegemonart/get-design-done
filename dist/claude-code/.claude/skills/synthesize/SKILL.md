@@ -1,6 +1,6 @@
 ---
 name: synthesize
-description: "Streaming synthesizer — collapses N parallel-agent markdown outputs into one compact merged summary via a single Haiku 4.5 call. Invoked inline by orchestrators (skills/map/, skills/discover/, skills/plan/) after parallel spawns return. Not user-invocable."
+description: "Streaming synthesizer - collapses N parallel-agent markdown outputs into one compact merged summary via a single Haiku 4.5 call. Invoked inline by orchestrators (skills/map/, skills/discover/, skills/plan/) after parallel spawns return. Not user-invocable."
 tools: Read, Task
 user-invocable: false
 disable-model-invocation: true

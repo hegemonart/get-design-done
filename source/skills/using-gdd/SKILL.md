@@ -1,6 +1,6 @@
 ---
 name: using-gdd
-description: "Use when starting any GDD session — establishes how to find and apply GDD skills."
+description: "Use when starting any GDD session - establishes how to find and apply GDD skills."
 disable-model-invocation: true
 ---
 <SUBAGENT-STOP>

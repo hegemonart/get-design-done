@@ -3,7 +3,7 @@ name: bandit-integration
 phase: 27.5
 version: 1.0.0
 type: meta-rules
-description: Bandit posterior + production-integration shim cheat sheet — signatures, reward function semantics, adaptive_mode gate, posterior path conventions.
+description: Bandit posterior + production-integration shim cheat sheet - signatures, reward function semantics, adaptive_mode gate, posterior path conventions.
 ---
 
 # Bandit Integration - Developer Cheat Sheet

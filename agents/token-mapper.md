@@ -1,6 +1,6 @@
 ---
 name: token-mapper
-description: "Maps design tokens — colors, spacing, typography, shadows — from codebase to .design/map/tokens.md. Reads CSS variables, Tailwind config, and Figma variables if available."
+description: "Maps design tokens - colors, spacing, typography, shadows - from codebase to .design/map/tokens.md. Reads CSS variables, Tailwind config, and Figma variables if available."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit

@@ -1,17 +1,17 @@
 ---
 name: design-figma-writer
-description: Writes design decisions back to Figma — annotations, token bindings, Code Connect mappings, and implementation-status write-back. Operates in proposal→confirm mode by default. Accepts --dry-run (emit proposal without executing) and --confirm-shared (required for writes to team library components).
+description: Writes design decisions back to Figma - annotations, token bindings, Code Connect mappings, and implementation-status write-back. Operates in proposal→confirm mode by default. Accepts --dry-run (emit proposal without executing) and --confirm-shared (required for writes to team library components).
 tools: Read, Write, Bash, Grep, Glob, {P}use_figma, mcp__figma__get_variable_defs, mcp__figma__get_metadata, mcp__Figma__use_figma, mcp__Figma__get_variable_defs, mcp__Figma__get_metadata
 color: purple
 model: inherit
 default-tier: sonnet
-tier-rationale: "Writer proposes + executes Figma write-backs — Sonnet handles structured proposal synthesis well"
+tier-rationale: "Writer proposes + executes Figma write-backs - Sonnet handles structured proposal synthesis well"
 size_budget: XL
 parallel-safe: never
 typical-duration-seconds: 120
 reads-only: false
 writes:
-  - "Figma file (via {resolved_prefix}use_figma — remote MCP only) — annotations, token bindings, Code Connect mappings"
+  - "Figma file (via {resolved_prefix}use_figma - remote MCP only) - annotations, token bindings, Code Connect mappings"
 ---
 
 @reference/shared-preamble.md

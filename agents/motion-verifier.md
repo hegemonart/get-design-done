@@ -1,10 +1,10 @@
 ---
 name: motion-verifier
-description: Verify-time check for Lottie + Rive motion exports. Discovers exported animations, runs the pure scripts/lib/motion/validate-motion.cjs on Lottie (frame-rate / duration / embedded-asset / perf-budget), checks size + the RIVE magic header on .riv, and surfaces state-machine concerns (unreachable states, no-exit loops) when the Rive runtime is present. WARNs — never blocks (motion is creative, not contractually broken). Degrades to the static validator + a manual-review advisory when no player/runtime is configured.
+description: Verify-time check for Lottie + Rive motion exports. Discovers exported animations, runs the pure scripts/lib/motion/validate-motion.cjs on Lottie (frame-rate / duration / embedded-asset / perf-budget), checks size + the RIVE magic header on .riv, and surfaces state-machine concerns (unreachable states, no-exit loops) when the Rive runtime is present. WARNs - never blocks (motion is creative, not contractually broken). Degrades to the static validator + a manual-review advisory when no player/runtime is configured.
 tools: Read, Bash, Grep, Glob
 color: green
 default-tier: sonnet
-tier-rationale: "Mechanical validation of exported animation artifacts via a deterministic pure helper + file checks; no design judgment — sonnet-tier, not an Opus plan."
+tier-rationale: "Mechanical validation of exported animation artifacts via a deterministic pure helper + file checks; no design judgment - sonnet-tier, not an Opus plan."
 size_budget: M
 size_budget_rationale: "Honest tier sized to the ~130-line body (M cap 300). The agent states the discover → validate-Lottie → check-Rive → perf-budget → WARN flow and DELEGATES per-tool probe + degrade detail to connections/lottie.md + connections/rive.md and the rule semantics to scripts/lib/motion/validate-motion.cjs (the print-renderer→validate-print-css precedent)."
 parallel-safe: true

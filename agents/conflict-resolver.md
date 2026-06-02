@@ -1,10 +1,10 @@
 ---
 name: conflict-resolver
-description: Resolves design-artifact merge conflicts when two developers worked a cycle on parallel branches. Reads the conflicted STATE.md from both sides (ours/theirs) plus the merge base, runs the pure scripts/lib/collab/section-merge.cjs per-section semantic merge (union the <decisions> by D-id; a real conflict is only a same-id divergence), and proposes a resolution PER SECTION for explicit human confirmation. Never auto-commits a conflicted section — decisions are durable. Spawned during a team-mode merge.
+description: Resolves design-artifact merge conflicts when two developers worked a cycle on parallel branches. Reads the conflicted STATE.md from both sides (ours/theirs) plus the merge base, runs the pure scripts/lib/collab/section-merge.cjs per-section semantic merge (union the <decisions> by D-id; a real conflict is only a same-id divergence), and proposes a resolution PER SECTION for explicit human confirmation. Never auto-commits a conflicted section - decisions are durable. Spawned during a team-mode merge.
 tools: Read, Bash, Grep, Glob
 color: green
 default-tier: sonnet
-tier-rationale: "Three-way semantic merge of a structured STATE.md via a pure helper + a human-confirmed per-section proposal; bounded reconciliation, not open design judgment — sonnet-tier."
+tier-rationale: "Three-way semantic merge of a structured STATE.md via a pure helper + a human-confirmed per-section proposal; bounded reconciliation, not open design judgment - sonnet-tier."
 size_budget: M
 size_budget_rationale: "Honest tier sized to the ~95-line body. DELEGATES the merge math to scripts/lib/collab/section-merge.cjs + the attribution parse to scripts/lib/collab/attribution.cjs, and the model to reference/multi-author-model.md."
 parallel-safe: false

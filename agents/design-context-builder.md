@@ -7,7 +7,7 @@ required_reading:
 color: blue
 model: inherit
 default-tier: sonnet
-tier-rationale: "Builder runs discovery interview and writes canonical DESIGN-CONTEXT.md — Sonnet balances quality and budget"
+tier-rationale: "Builder runs discovery interview and writes canonical DESIGN-CONTEXT.md - Sonnet balances quality and budget"
 size_budget: XXL
 parallel-safe: never
 typical-duration-seconds: 180

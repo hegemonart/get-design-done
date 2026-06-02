@@ -5,14 +5,14 @@ tools: Read, Write, Bash, Grep, Glob
 color: blue
 model: inherit
 default-tier: sonnet
-tier-rationale: "Component generation + DS adaptation requires synthesis quality — Sonnet"
+tier-rationale: "Component generation + DS adaptation requires synthesis quality - Sonnet"
 size_budget: LARGE
 parallel-safe: never
 typical-duration-seconds: 120
 reads-only: false
 writes:
-  - "src/components/**/*.tsx — generated component code adapted to project DS"
-  - ".design/STATE.md — <generator> block with adopted component attribution"
+  - "src/components/**/*.tsx - generated component code adapted to project DS"
+  - ".design/STATE.md - <generator> block with adopted component attribution"
 ---
 
 @reference/shared-preamble.md

@@ -5,13 +5,13 @@ tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit
 default-tier: sonnet
-tier-rationale: "File-based writer with git commits — Sonnet handles structured spec synthesis"
+tier-rationale: "File-based writer with git commits - Sonnet handles structured spec synthesis"
 size_budget: LARGE
 parallel-safe: never
 typical-duration-seconds: 60
 reads-only: false
 writes:
-  - "*.pen files — comments and design-token spec updates"
+  - "*.pen files - comments and design-token spec updates"
 ---
 
 @reference/shared-preamble.md

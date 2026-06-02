@@ -1,6 +1,6 @@
 ---
 name: gdd-review-decisions
-description: "Surfaces the async decision-review queue for team mode. Reads .design/reviews/<decision-id>/ entries and reports each decision's state in the proposed → reviewing → approved → locked machine (via scripts/lib/collab/review-queue.cjs), so a team can see what's awaiting review, what's approved, and what's locked. --pending shows only decisions still needing action. Read-only — it reports the queue; it never advances a decision (that's a reviewer's explicit call). Use to run an async design-decision review without a meeting."
+description: "Surfaces the async decision-review queue for team mode. Reads .design/reviews/<decision-id>/ entries and reports each decision's state in the proposed → reviewing → approved → locked machine (via scripts/lib/collab/review-queue.cjs), so a team can see what's awaiting review, what's approved, and what's locked. --pending shows only decisions still needing action. Read-only - it reports the queue; it never advances a decision (that's a reviewer's explicit call). Use to run an async design-decision review without a meeting."
 argument-hint: "[<decision-id>] [--pending]"
 user-invocable: true
 tools: Read, Bash, Grep, Glob

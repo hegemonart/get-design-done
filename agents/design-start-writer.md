@@ -1,6 +1,6 @@
 ---
 name: design-start-writer
-description: "Writes .design/START-REPORT.md — 7 fixed sections plus a machine-readable JSON block. Consumes the findings-engine output, interview answers, and detection result from .design/.start-context.json. Never writes STATE.md. Parameter-free: reads the context JSON path from the prompt and emits the report."
+description: "Writes .design/START-REPORT.md - 7 fixed sections plus a machine-readable JSON block. Consumes the findings-engine output, interview answers, and detection result from .design/.start-context.json. Never writes STATE.md. Parameter-free: reads the context JSON path from the prompt and emits the report."
 tools: Read, Write, Grep, Glob
 color: green
 

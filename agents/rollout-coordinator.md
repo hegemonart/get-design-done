@@ -1,10 +1,10 @@
 ---
 name: rollout-coordinator
-description: Tracks a design cycle from "PR merged" to "live for 100% of users". Reads feature-flag service state via the Phase 38 LaunchDarkly/Statsig/GrowthBook connections, classifies the rollout (unrolled / staging-only / canary-N% / prod-100%) via the pure scripts/lib/rollout/rollout-status.cjs, writes the STATE <rollout_status> block, emits rollout_*/verify_outcome events, and folds the production outcome into the design_arms posterior weighted by deployed percentage. Read-only — notifies on stuck/rollback, never drives the rollout.
+description: Tracks a design cycle from "PR merged" to "live for 100% of users". Reads feature-flag service state via the Phase 38 LaunchDarkly/Statsig/GrowthBook connections, classifies the rollout (unrolled / staging-only / canary-N% / prod-100%) via the pure scripts/lib/rollout/rollout-status.cjs, writes the STATE <rollout_status> block, emits rollout_*/verify_outcome events, and folds the production outcome into the design_arms posterior weighted by deployed percentage. Read-only - notifies on stuck/rollback, never drives the rollout.
 tools: Read, Bash, Grep, Glob, ToolSearch
 color: green
 default-tier: sonnet
-tier-rationale: "Mechanical classification of flag-service state + a weighted posterior update via pure helpers; no design judgment — sonnet-tier."
+tier-rationale: "Mechanical classification of flag-service state + a weighted posterior update via pure helpers; no design judgment - sonnet-tier."
 size_budget: M
 size_budget_rationale: "Honest tier sized to the ~100-line body. DELEGATES the classification math to scripts/lib/rollout/rollout-status.cjs, the posterior to scripts/lib/ds-arms/design-arms-store.cjs, the per-service probe to connections/{launchdarkly,statsig,growthbook}.md, and the contract to reference/rollout-coordination.md."
 parallel-safe: false

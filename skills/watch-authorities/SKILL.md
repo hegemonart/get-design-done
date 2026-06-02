@@ -1,6 +1,6 @@
 ---
 name: gdd-watch-authorities
-description: "Fetches the design-authority feed whitelist, diffs against .design/authority-snapshot.json, and writes .design/authority-report.md (consumed by /gdd:reflect). Authority monitoring only — no trend-watching."
+description: "Fetches the design-authority feed whitelist, diffs against .design/authority-snapshot.json, and writes .design/authority-report.md (consumed by /gdd:reflect). Authority monitoring only - no trend-watching."
 argument-hint: "[--refresh] [--since <date>] [--feed <name>] [--schedule <weekly|daily|monthly>]"
 tools: Read, Write, Task, Bash
 ---

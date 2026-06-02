@@ -1,6 +1,6 @@
 ---
 name: design-discussant
-description: "Adaptive design interview agent — asks one question at a time, adapts to answers, writes D-XX decisions to STATE.md <decisions> block. Supports --all (batch gray areas) and --spec (ambiguity scoring) modes. Spawned by explore stage and /gdd:discuss command."
+description: "Adaptive design interview agent - asks one question at a time, adapts to answers, writes D-XX decisions to STATE.md <decisions> block. Supports --all (batch gray areas) and --spec (ambiguity scoring) modes. Spawned by explore stage and /gdd:discuss command."
 tools: Read, Write, AskUserQuestion
 color: blue
 model: inherit

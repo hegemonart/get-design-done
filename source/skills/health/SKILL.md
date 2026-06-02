@@ -1,6 +1,6 @@
 ---
 name: gdd-health
-description: "Reports .design/ artifact health — staleness, missing files, token drift, broken state transitions."
+description: "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions."
 tools: Read, Bash, Glob, Grep, mcp__gdd_state__get
 disable-model-invocation: true
 ---

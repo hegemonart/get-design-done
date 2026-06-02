@@ -4,7 +4,7 @@ description: Synthesizes inbound user-research signals (UserTesting / Maze / Hot
 tools: Read, Bash, Grep, Glob, ToolSearch
 color: green
 default-tier: sonnet
-tier-rationale: "Synthesis of pre-collected research reports into ranked findings; bounded extraction, not open design judgment — sonnet-tier."
+tier-rationale: "Synthesis of pre-collected research reports into ranked findings; bounded extraction, not open design judgment - sonnet-tier."
 size_budget: M
 size_budget_rationale: "Honest tier sized to the ~105-line body. The agent states the read→pseudonymize→synthesize→write-<prior-research> flow and DELEGATES the PII transform to scripts/lib/pseudonymize.cjs and per-platform detail to connections/{usertesting,maze,hotjar}.md."
 parallel-safe: false

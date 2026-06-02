@@ -1,10 +1,10 @@
 ---
 name: ds-migration-planner
-description: Plans a design-system version migration (shadcn v1→v2, Tailwind v3→v4, MUI v5→v6, Material token migration). Detects the DS + version from package.json, consults the matching reference/migrations/<ds>.md rule library, proposes an impact-scored per-component plan (visual-delta × usage-frequency × tests-affected), and emits jscodeshift/ast-grep codemod templates via scripts/lib/migration/codemod-gen.cjs. Proposal-only — the user reviews + runs each codemod; GDD never auto-applies.
+description: Plans a design-system version migration (shadcn v1→v2, Tailwind v3→v4, MUI v5→v6, Material token migration). Detects the DS + version from package.json, consults the matching reference/migrations/<ds>.md rule library, proposes an impact-scored per-component plan (visual-delta × usage-frequency × tests-affected), and emits jscodeshift/ast-grep codemod templates via scripts/lib/migration/codemod-gen.cjs. Proposal-only - the user reviews + runs each codemod; GDD never auto-applies.
 tools: Read, Bash, Grep, Glob
 color: green
 default-tier: sonnet
-tier-rationale: "Consults a rule library + scores impact + emits codemod scaffolds via a pure helper; bounded planning, not open design judgment — sonnet-tier."
+tier-rationale: "Consults a rule library + scores impact + emits codemod scaffolds via a pure helper; bounded planning, not open design judgment - sonnet-tier."
 size_budget: M
 size_budget_rationale: "Honest tier sized to the ~105-line body. DELEGATES the rules to reference/migrations/<ds>.md and the codemod templating to scripts/lib/migration/codemod-gen.cjs (the pdf-executor→validate-print-css precedent)."
 parallel-safe: false

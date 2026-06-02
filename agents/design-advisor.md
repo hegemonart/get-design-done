@@ -1,6 +1,6 @@
 ---
 name: design-advisor
-description: Researches a single gray area and produces a 5-column comparison table with rationale. Spawned by design-context-builder when a gray area exceeds judgment threshold. Returns inline text — no file output.
+description: Researches a single gray area and produces a 5-column comparison table with rationale. Spawned by design-context-builder when a gray area exceeds judgment threshold. Returns inline text - no file output.
 tools: Read, Grep, Glob, WebSearch
 color: blue
 model: sonnet

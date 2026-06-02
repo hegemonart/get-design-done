@@ -1,6 +1,6 @@
 ---
 name: gdd-budget
-description: "Forecasts GDD design-cycle spend before the bill arrives. Reads .design/telemetry/costs.jsonl (cost per cycle) + .design/budget.json (the project_cap), runs the pure cost-forecast model via agents/cost-forecaster.md, and projects the next N cycles — surfacing 'at the current rate you'll hit your $X project cap in Y cycles.' Supports --scenario best|typical|worst and --cycles N. Read-only — it forecasts and warns; it never spends, edits budget.json, or halts (the budget-enforcer hook halts). Use to sanity-check spend trajectory before a long run."
+description: "Forecasts GDD design-cycle spend before the bill arrives. Reads .design/telemetry/costs.jsonl (cost per cycle) + .design/budget.json (the project_cap), runs the pure cost-forecast model via agents/cost-forecaster.md, and projects the next N cycles - surfacing 'at the current rate you'll hit your $X project cap in Y cycles.' Supports --scenario best|typical|worst and --cycles N. Read-only - it forecasts and warns; it never spends, edits budget.json, or halts (the budget-enforcer hook halts). Use to sanity-check spend trajectory before a long run."
 argument-hint: "[--cycles N] [--scenario best|typical|worst]"
 user-invocable: true
 tools: Read, Bash, Grep, Glob, ToolSearch, Task

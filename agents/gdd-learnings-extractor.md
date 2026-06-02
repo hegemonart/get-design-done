@@ -4,7 +4,7 @@ description: "Extracts structured learning entries from .design/ artifacts (DESI
 tools: Read, Write, Bash, Glob, Grep
 color: blue
 default-tier: sonnet
-tier-rationale: "Learnings extraction mines structured signals from artifacts — Sonnet is the right fit for pattern recognition"
+tier-rationale: "Learnings extraction mines structured signals from artifacts - Sonnet is the right fit for pattern recognition"
 parallel-safe: false
 typical-duration-seconds: 45
 reads-only: false

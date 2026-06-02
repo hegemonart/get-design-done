@@ -1,6 +1,6 @@
 ---
 name: gdd-continue
-description: "Alias for {{command_prefix}}resume — restore session context from the most recent checkpoint."
+description: "Alias for {{command_prefix}}resume - restore session context from the most recent checkpoint."
 argument-hint: "[<checkpoint-N>]"
 tools: Read, Write, Bash, Glob
 disable-model-invocation: true

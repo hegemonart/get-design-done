@@ -1,6 +1,6 @@
 ---
 name: email-executor
-description: Executes one plan task by generating an email template — MJML source (canonical) + the derived HTML — honoring reference/email-design.md constraints, validated by the static email-HTML checker. Single-shot; mirrors design-executor.
+description: Executes one plan task by generating an email template - MJML source (canonical) + the derived HTML - honoring reference/email-design.md constraints, validated by the static email-HTML checker. Single-shot; mirrors design-executor.
 tools: Read, Write, Edit, Bash, Grep, Glob
 color: magenta
 default-tier: sonnet

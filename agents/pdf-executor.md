@@ -1,12 +1,12 @@
 ---
 name: pdf-executor
-description: Executes one plan task by generating print-ready output — Paged.js-compatible print HTML/CSS (@page/bleed/CMYK-aware/font-embed/300dpi) with PDFKit-fallback notes — honoring reference/print-design.md constraints, validated by the static print-CSS checker. Single-shot; mirrors design-executor.
+description: Executes one plan task by generating print-ready output - Paged.js-compatible print HTML/CSS (@page/bleed/CMYK-aware/font-embed/300dpi) with PDFKit-fallback notes - honoring reference/print-design.md constraints, validated by the static print-CSS checker. Single-shot; mirrors design-executor.
 tools: Read, Write, Edit, Bash, Grep, Glob
 color: pink
 default-tier: sonnet
 tier-rationale: "Follows an Opus-authored plan; executes print codegen rather than plans it"
 size_budget: M
-size_budget_rationale: "Honest tier sized to the actual ~150-line body (M cap 300), NOT inflated to the design-family XXL default. Print carries a single-artifact generation contract (Paged.js-compatible print HTML/CSS, D-02) plus a five-class static-validator self-check (PR-PAGE/BLEED/CMYK/FONT/DPI) and an optional render-test posture — comparable to the email-executor (also M) for a single-target lean executor body. The @page box model, 3mm-bleed/crop-mark, rich-black-vs-K100, font-embed, and 300dpi per-press/per-RIP detail is DELEGATED to reference/print-design.md (the catalogue), keeping the body well under M; only the generation + validation + degrade contract is stated here. Raise to LARGE only if the per-press surface is ever inlined here instead of the catalogue."
+size_budget_rationale: "Honest tier sized to the actual ~150-line body (M cap 300), NOT inflated to the design-family XXL default. Print carries a single-artifact generation contract (Paged.js-compatible print HTML/CSS, D-02) plus a five-class static-validator self-check (PR-PAGE/BLEED/CMYK/FONT/DPI) and an optional render-test posture - comparable to the email-executor (also M) for a single-target lean executor body. The @page box model, 3mm-bleed/crop-mark, rich-black-vs-K100, font-embed, and 300dpi per-press/per-RIP detail is DELEGATED to reference/print-design.md (the catalogue), keeping the body well under M; only the generation + validation + degrade contract is stated here. Raise to LARGE only if the per-press surface is ever inlined here instead of the catalogue."
 parallel-safe: conditional-on-touches
 typical-duration-seconds: 60
 reads-only: false

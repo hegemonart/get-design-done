@@ -1,6 +1,6 @@
 ---
 name: gdd-bandit-status
-description: "Surface read-only per-(agent, bin, delegate) bandit posterior snapshot — alpha/beta/mean/stddev/count/last-used per arm. Phase 27.5 (v1.27.5) diagnostic. Use when investigating 'why did the bandit pick tier X for agent Y?' or when verifying posterior convergence after enabling adaptive_mode: full."
+description: "Surface read-only per-(agent, bin, delegate) bandit posterior snapshot - alpha/beta/mean/stddev/count/last-used per arm. Phase 27.5 (v1.27.5) diagnostic. Use when investigating 'why did the bandit pick tier X for agent Y?' or when verifying posterior convergence after enabling adaptive_mode: full."
 argument-hint: ""
 tools: Read, Bash
 ---

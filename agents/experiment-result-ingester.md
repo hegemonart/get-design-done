@@ -1,10 +1,10 @@
 ---
 name: experiment-result-ingester
-description: Ingests A/B experiment results (LaunchDarkly / Statsig / GrowthBook) and folds them into the design_arms posterior. Reads a finished experiment's payload, maps each variant to a win/lose by the primary metric + significance, calls observe() on scripts/lib/ds-arms/design-arms-store.cjs, and emits an experiment_result typed event. Read-only against the platform (never runs/creates experiments). Injectable fetch — hermetic. Degrades to a noop when no experiment-source is configured.
+description: Ingests A/B experiment results (LaunchDarkly / Statsig / GrowthBook) and folds them into the design_arms posterior. Reads a finished experiment's payload, maps each variant to a win/lose by the primary metric + significance, calls observe() on scripts/lib/ds-arms/design-arms-store.cjs, and emits an experiment_result typed event. Read-only against the platform (never runs/creates experiments). Injectable fetch - hermetic. Degrades to a noop when no experiment-source is configured.
 tools: Read, Bash, Grep, Glob, ToolSearch
 color: green
 default-tier: sonnet
-tier-rationale: "Mechanical mapping of an experiment payload to win/lose + a posterior update via a pure store; no design judgment — sonnet-tier."
+tier-rationale: "Mechanical mapping of an experiment payload to win/lose + a posterior update via a pure store; no design judgment - sonnet-tier."
 size_budget: M
 size_budget_rationale: "Honest tier sized to the ~95-line body. The agent states the read→map→observe→emit flow and DELEGATES the posterior math to scripts/lib/ds-arms/design-arms-store.cjs and the per-platform probe to connections/{launchdarkly,statsig,growthbook}.md (the ticket-sync-agent→reference precedent)."
 parallel-safe: false

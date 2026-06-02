@@ -1,7 +1,7 @@
 ---
 name: gdd-turn-closeout
 description: "Portable mirror of the gdd-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills (/gdd:next, /gdd:design, /gdd:verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical."
-argument-hint: "(none — reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)"
+argument-hint: "(none - reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)"
 tools: Read, Bash
 ---
 

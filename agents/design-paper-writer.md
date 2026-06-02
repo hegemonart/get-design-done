@@ -1,17 +1,17 @@
 ---
 name: design-paper-writer
-description: Writes design decisions back to the paper.design canvas — annotate, tokenize, and roundtrip modes. Proposal→confirm, dry-run, budget-aware (free tier: 100 calls/week). Follows the design-figma-writer pattern.
+description: Writes design decisions back to the paper.design canvas - annotate, tokenize, and roundtrip modes. Proposal→confirm, dry-run, budget-aware (free tier: 100 calls/week). Follows the design-figma-writer pattern.
 tools: Read, Write, Bash, Grep, Glob
 color: green
 model: inherit
 default-tier: sonnet
-tier-rationale: "Writer proposes + executes canvas write-backs — Sonnet handles structured proposal synthesis well"
+tier-rationale: "Writer proposes + executes canvas write-backs - Sonnet handles structured proposal synthesis well"
 size_budget: LARGE
 parallel-safe: never
 typical-duration-seconds: 90
 reads-only: false
 writes:
-  - "paper.design canvas (via mcp__paper-design__* tools) — annotations, style updates, text/HTML layers"
+  - "paper.design canvas (via mcp__paper-design__* tools) - annotations, style updates, text/HTML layers"
 ---
 
 @reference/shared-preamble.md

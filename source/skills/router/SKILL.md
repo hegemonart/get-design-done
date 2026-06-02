@@ -1,6 +1,6 @@
 ---
 name: gdd-router
-description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic — no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.js."
+description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic - no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.js."
 argument-hint: "<intent-string> [<target-artifacts-csv>]"
 tools: Read, Bash, Grep
 ---

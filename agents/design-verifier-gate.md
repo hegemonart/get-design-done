@@ -5,7 +5,7 @@ tools: Read, Bash, Grep
 color: green
 model: inherit
 default-tier: haiku
-tier-rationale: "Cheap diff-scan gate — expensive verifier spawned only on heuristic hit"
+tier-rationale: "Cheap diff-scan gate - expensive verifier spawned only on heuristic hit"
 size_budget: S
 parallel-safe: always
 typical-duration-seconds: 10

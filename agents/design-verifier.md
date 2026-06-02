@@ -5,7 +5,7 @@ tools: Read, Write, Bash, Grep, Glob, mcp__Claude_Preview__preview_list, mcp__Cl
 color: green
 model: inherit
 default-tier: haiku
-tier-rationale: "Verifier runs structured goal-backward checks — cheap Haiku is sufficient and fast"
+tier-rationale: "Verifier runs structured goal-backward checks - cheap Haiku is sufficient and fast"
 size_budget: XXL
 parallel-safe: never
 typical-duration-seconds: 90

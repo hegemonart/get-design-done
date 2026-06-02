@@ -5,7 +5,7 @@ tools: Read, Bash, Grep
 color: yellow
 model: inherit
 default-tier: haiku
-tier-rationale: "Signal-counting rubric over a few small inputs — no synthesis, no writes, no agent spawning. Belongs on Haiku to keep gate latency cheap (≤ 2 s typical)."
+tier-rationale: "Signal-counting rubric over a few small inputs - no synthesis, no writes, no agent spawning. Belongs on Haiku to keep gate latency cheap (≤ 2 s typical)."
 size_budget: S
 parallel-safe: always
 typical-duration-seconds: 5

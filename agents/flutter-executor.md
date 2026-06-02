@@ -1,12 +1,12 @@
 ---
 name: flutter-executor
-description: Executes one plan task by generating Flutter widgets (Dart) with multi-target theme adaptation — Material 3 + Cupertino across web/iOS/Android — from the plan task plus the token-bridge (emitFlutter). Single-shot; mirrors design-executor.
+description: Executes one plan task by generating Flutter widgets (Dart) with multi-target theme adaptation - Material 3 + Cupertino across web/iOS/Android - from the plan task plus the token-bridge (emitFlutter). Single-shot; mirrors design-executor.
 tools: Read, Write, Edit, Bash, Grep, Glob
 color: cyan
 default-tier: sonnet
 tier-rationale: "Follows an Opus-authored plan; executes Flutter codegen rather than plans it"
 size_budget: XXL
-size_budget_rationale: "Flutter is the one cross-platform executor: a single Dart codebase rendering to web, iOS, and Android, so it carries BOTH the Material 3 (ThemeData/ColorScheme/TextTheme) AND the Cupertino (CupertinoThemeData) adaptation contract plus token-bridge consumption — roughly double the per-target surface of swift/compose. Per-platform convention detail is delegated to reference/platforms.md and the token mapping to reference/native-platforms.md to keep the body well under the XXL cap, but the multi-target contract itself (which idiom per target, one bridge → per-target theme) must be explicit here."
+size_budget_rationale: "Flutter is the one cross-platform executor: a single Dart codebase rendering to web, iOS, and Android, so it carries BOTH the Material 3 (ThemeData/ColorScheme/TextTheme) AND the Cupertino (CupertinoThemeData) adaptation contract plus token-bridge consumption - roughly double the per-target surface of swift/compose. Per-platform convention detail is delegated to reference/platforms.md and the token mapping to reference/native-platforms.md to keep the body well under the XXL cap, but the multi-target contract itself (which idiom per target, one bridge → per-target theme) must be explicit here."
 parallel-safe: conditional-on-touches
 typical-duration-seconds: 60
 reads-only: false

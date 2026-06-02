@@ -5,7 +5,7 @@ tools: Read, Bash, Grep
 color: cyan
 model: inherit
 default-tier: haiku
-tier-rationale: "Cheap diff-scan gate — context checker only runs when DESIGN-CONTEXT.md changed"
+tier-rationale: "Cheap diff-scan gate - context checker only runs when DESIGN-CONTEXT.md changed"
 size_budget: S
 parallel-safe: always
 typical-duration-seconds: 10

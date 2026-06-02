@@ -1,6 +1,6 @@
 ---
 name: gdd-unlock-decision
-description: "Reopens a LOCKED design decision — the only escape hatch from the hard lock. Requires an explicit --approver and writes an audit entry, then moves the decision locked → reviewing (via scripts/lib/collab/review-queue.cjs). Previews the audit record before writing; never unlocks silently. Use when a locked decision genuinely must change (a later constraint invalidated it) and a reviewer has signed off."
+description: "Reopens a LOCKED design decision - the only escape hatch from the hard lock. Requires an explicit --approver and writes an audit entry, then moves the decision locked → reviewing (via scripts/lib/collab/review-queue.cjs). Previews the audit record before writing; never unlocks silently. Use when a locked decision genuinely must change (a later constraint invalidated it) and a reviewer has signed off."
 argument-hint: "<decision-id> --approver <who> [--reason <text>] [--dry-run]"
 user-invocable: true
 tools: Read, Write, Bash, Grep, Glob

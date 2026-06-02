@@ -5,7 +5,7 @@ tools: Read, Write, Bash, Grep, Glob
 color: yellow
 model: inherit
 default-tier: opus
-tier-rationale: "Phase 27.6 reflector — analyzes cross-cycle telemetry, proposes pipeline-level perf improvements; opus matches design-reflector tier per D-04"
+tier-rationale: "Phase 27.6 reflector - analyzes cross-cycle telemetry, proposes pipeline-level perf improvements; opus matches design-reflector tier per D-04"
 size_budget: XL
 parallel-safe: never
 typical-duration-seconds: 45

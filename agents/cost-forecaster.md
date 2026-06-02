@@ -1,19 +1,19 @@
 ---
 name: cost-forecaster
-description: Forecasts GDD spend over the next N design cycles. Reads .design/telemetry/costs.jsonl (grouping est_cost_usd by cycle) plus the configured .design/budget.json caps, runs the pure scripts/lib/budget/cost-forecast.cjs model (best/typical/worst from the variance of historical per-cycle rates), and reports "at the current rate you'll hit your project_cap in Y cycles." Supports --scenario best|typical|worst. Report-only — it never writes budget.json, never spends, never halts (the budget-enforcer hook halts). Spawned by /gdd:budget.
+description: Forecasts GDD spend over the next N design cycles. Reads .design/telemetry/costs.jsonl (grouping est_cost_usd by cycle) plus the configured .design/budget.json caps, runs the pure scripts/lib/budget/cost-forecast.cjs model (best/typical/worst from the variance of historical per-cycle rates), and reports "at the current rate you'll hit your project_cap in Y cycles." Supports --scenario best|typical|worst. Report-only - it never writes budget.json, never spends, never halts (the budget-enforcer hook halts). Spawned by /gdd:budget.
 tools: Read, Bash, Grep, Glob
 color: green
 default-tier: sonnet
-tier-rationale: "Groups a JSONL ledger by cycle and runs a pure projection helper, then narrates the result; bounded arithmetic + reporting, no design judgment — sonnet-tier."
+tier-rationale: "Groups a JSONL ledger by cycle and runs a pure projection helper, then narrates the result; bounded arithmetic + reporting, no design judgment - sonnet-tier."
 size_budget: M
-size_budget_rationale: "Honest tier sized to the ~95-line body. DELEGATES the projection math to scripts/lib/budget/cost-forecast.cjs and the contract to reference/cost-governance.md — the rollout-coordinator → rollout-status.cjs precedent."
+size_budget_rationale: "Honest tier sized to the ~95-line body. DELEGATES the projection math to scripts/lib/budget/cost-forecast.cjs and the contract to reference/cost-governance.md - the rollout-coordinator → rollout-status.cjs precedent."
 parallel-safe: false
 typical-duration-seconds: 30
 reads-only: true
 required_reading:
   - "reference/cost-governance.md"
 writes:
-  - ".design/telemetry/events.jsonl (a budget_forecast event only — append, no mutation)"
+  - ".design/telemetry/events.jsonl (a budget_forecast event only - append, no mutation)"
 ---
 
 # cost-forecaster

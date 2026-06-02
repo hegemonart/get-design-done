@@ -4,7 +4,7 @@ description: "Refreshes the knowledge graph at .design/graph/graph.json from .de
 tools: Bash, Read, Write
 color: green
 default-tier: haiku
-tier-rationale: "Refresh is a deterministic file-walk + atomic write — cheap Haiku is enough"
+tier-rationale: "Refresh is a deterministic file-walk + atomic write - cheap Haiku is enough"
 parallel-safe: false
 typical-duration-seconds: 20
 reads-only: false

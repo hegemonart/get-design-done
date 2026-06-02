@@ -1,12 +1,12 @@
 ---
 name: pr-commenter
-description: Posts GDD verify/audit output inline on a pull request — selector-specific findings as inline review comments via gh api, Preview/Chromatic before-after screenshot pairs, and a gdd/design-review check-run carrying audit/verify/a11y results. Outbound bodies redacted; degrades to noop when gh is absent or disabled. Spawned by /gdd:ship after PR creation.
+description: Posts GDD verify/audit output inline on a pull request - selector-specific findings as inline review comments via gh api, Preview/Chromatic before-after screenshot pairs, and a gdd/design-review check-run carrying audit/verify/a11y results. Outbound bodies redacted; degrades to noop when gh is absent or disabled. Spawned by /gdd:ship after PR creation.
 tools: Read, Bash, Grep, Glob
 color: cyan
 default-tier: sonnet
-tier-rationale: "Maps already-computed verify/audit findings onto PR surfaces via gh; no design judgment — a sonnet-tier mechanical post, not an Opus plan."
+tier-rationale: "Maps already-computed verify/audit findings onto PR surfaces via gh; no design judgment - a sonnet-tier mechanical post, not an Opus plan."
 size_budget: M
-size_budget_rationale: "Honest tier sized to the ~180-line body (M cap 300). The agent states the posting contract — inline comments, the gdd/design-review check-run, screenshot-pair attach, redact, kill-switch, degrade-to-noop — and DELEGATES the verbatim gh-api JSON shapes (pulls/comments payload, check-runs payload, branch-protection setup) to reference/pr-review-integration.md (the email-executor→email-design.md precedent). Raise to LARGE only if those API shapes are ever inlined here."
+size_budget_rationale: "Honest tier sized to the ~180-line body (M cap 300). The agent states the posting contract - inline comments, the gdd/design-review check-run, screenshot-pair attach, redact, kill-switch, degrade-to-noop - and DELEGATES the verbatim gh-api JSON shapes (pulls/comments payload, check-runs payload, branch-protection setup) to reference/pr-review-integration.md (the email-executor→email-design.md precedent). Raise to LARGE only if those API shapes are ever inlined here."
 parallel-safe: false
 typical-duration-seconds: 45
 reads-only: false

@@ -1,6 +1,6 @@
 ---
 name: component-taxonomy-mapper
-description: "Maps the component inventory — React/Vue/Svelte components, design patterns, reuse opportunities — to .design/map/components.md."
+description: "Maps the component inventory - React/Vue/Svelte components, design patterns, reuse opportunities - to .design/map/components.md."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit

@@ -1,6 +1,6 @@
 ---
 name: gdd-spike-wrap-up
-description: "Close a spike — capture findings, write decision to STATE.md, update SUMMARY.md."
+description: "Close a spike - capture findings, write decision to STATE.md, update SUMMARY.md."
 argument-hint: "[slug]"
 tools: Read, Write, Glob, AskUserQuestion
 ---

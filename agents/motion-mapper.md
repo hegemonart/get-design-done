@@ -1,6 +1,6 @@
 ---
 name: motion-mapper
-description: "Maps motion and animation patterns — CSS transitions, framer-motion, GSAP, prefers-reduced-motion — to .design/map/motion.md."
+description: "Maps motion and animation patterns - CSS transitions, framer-motion, GSAP, prefers-reduced-motion - to .design/map/motion.md."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit

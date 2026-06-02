@@ -148,10 +148,36 @@ function scan(text, denylist) {
   return findings;
 }
 
+/** Extract the frontmatter `description` value (single-line or folded continuation). */
+function extractDescription(text) {
+  const fm = text.match(/^---\n([\s\S]*?)\n---/);
+  if (!fm) return null;
+  const d = fm[1].match(/^description:[ \t]*(.*(?:\n[ \t]+.*)*)$/m);
+  return d ? d[1].replace(/\n[ \t]+/g, ' ').trim() : null;
+}
+
+/** SC#7: apply the denylist to a skill/agent `description` — em dash + AI-tells, but NOT the `--` token
+ *  (a description legitimately names CLI flags like --dry-run, and YAML values cannot use code spans). */
+function scanDescription(text, denylist) {
+  const desc = extractDescription(text);
+  if (!desc) return [];
+  const dl = denylist.filter((t) => !(t.kind === 'token' && t.pattern === '--'));
+  const findings = [];
+  for (const entry of dl) {
+    const re = buildMatcher(entry);
+    let m;
+    while ((m = re.exec(desc)) !== null) {
+      findings.push({ pattern: entry.pattern, kind: entry.kind, match: m[0] });
+      if (m.index === re.lastIndex) re.lastIndex++;
+    }
+  }
+  return findings;
+}
+
 function lintFile(rel, denylist) {
   const text = fs.readFileSync(path.join(ROOT, rel), 'utf8');
-  if (isCyrillicMajority(text)) return { rel, skipped: 'cyrillic', findings: [] };
-  return { rel, findings: scan(text, denylist) };
+  if (isCyrillicMajority(text)) return { rel, skipped: 'cyrillic', findings: [], descFindings: [] };
+  return { rel, findings: scan(text, denylist), descFindings: scanDescription(text, denylist) };
 }
 
 function main(argv, io = {}) {
@@ -174,18 +200,20 @@ function main(argv, io = {}) {
     let r;
     try { r = lintFile(rel, denylist); } catch (e) { err.write(`lint-prose: cannot read ${rel}: ${e.message}\n`); return 1; }
     results.push(r);
-    total += r.findings.length;
+    total += r.findings.length + r.descFindings.length;
   }
 
+  const labelOf = (f) => {
+    const tok = f.kind === 'token' ? decodeUnicodeEscapes(f.pattern) : f.pattern;
+    return f.kind === 'token' ? (tok === '—' ? 'em-dash' : tok === '--' ? 'double-hyphen' : tok) : `tell:${f.pattern}`;
+  };
+
   if (json) {
-    out.write(JSON.stringify({ total, results: results.filter((r) => r.findings.length || r.skipped) }, null, 2) + '\n');
+    out.write(JSON.stringify({ total, results: results.filter((r) => r.findings.length || r.descFindings.length || r.skipped) }, null, 2) + '\n');
   } else {
     for (const r of results) {
-      for (const f of r.findings) {
-        const tok = f.kind === 'token' ? decodeUnicodeEscapes(f.pattern) : f.pattern;
-        const label = f.kind === 'token' ? (tok === '—' ? 'em-dash' : tok === '--' ? 'double-hyphen' : tok) : `tell:${f.pattern}`;
-        out.write(`${r.rel}:${f.line}:${f.col}  ${label}\n`);
-      }
+      for (const f of r.findings) out.write(`${r.rel}:${f.line}:${f.col}  ${labelOf(f)}\n`);
+      for (const f of r.descFindings) out.write(`${r.rel}: (description)  ${labelOf(f)}\n`);
     }
     out.write(`lint-prose: ${files.length} file(s) scanned, ${total} violation(s)\n`);
   }
@@ -193,4 +221,4 @@ function main(argv, io = {}) {
 }
 
 if (require.main === module) process.exit(main(process.argv.slice(2)));
-module.exports = { main, scan, maskNonProse, buildMatcher, defaultFiles, isCyrillicMajority };
+module.exports = { main, scan, scanDescription, extractDescription, maskNonProse, buildMatcher, defaultFiles, isCyrillicMajority };

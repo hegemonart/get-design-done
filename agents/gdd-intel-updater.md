@@ -4,7 +4,7 @@ description: "Incremental intel store updater. Runs build-intel.cjs for changed 
 tools: Bash, Read, Write, Glob
 color: purple
 default-tier: sonnet
-tier-rationale: "Incremental intel updater re-derives slices from changed files — Sonnet handles structured JSON munging"
+tier-rationale: "Incremental intel updater re-derives slices from changed files - Sonnet handles structured JSON munging"
 parallel-safe: false
 typical-duration-seconds: 15
 reads-only: false

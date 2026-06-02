@@ -64,6 +64,16 @@ test('43-prose-10: full repo scope is CLEAN (the green gate)', () => {
   assert.equal(code, 0, 'lint:prose must be 0 across the project after the Phase 43 corpus purge');
 });
 
+test('43-prose-12: scanDescription flags em-dash + tells but EXEMPTS the -- flag token (SC#7)', () => {
+  const emFm = '---\nname: x\ndescription: A clause — another.\n---\nbody';
+  const flagFm = '---\nname: x\ndescription: Accepts --dry-run and --confirm-shared.\n---\nbody';
+  const tellFm = '---\nname: x\ndescription: A robust pipeline.\n---\nbody';
+  assert.ok(lp.scanDescription(emFm, DENY).some((f) => f.match === '—'), 'em dash in description flagged');
+  assert.equal(lp.scanDescription(flagFm, DENY).length, 0, '-- flag token exempt in descriptions');
+  assert.ok(lp.scanDescription(tellFm, DENY).some((f) => /robust/i.test(f.pattern)), 'tell in description flagged');
+  assert.equal(lp.extractDescription(emFm), 'A clause — another.');
+});
+
 test('43-prose-11: STYLE.md is generated from the denylist and is current (drift gate)', () => {
   assert.equal(gs.main(['--check']), 0, 'STYLE.md must equal `npm run build:style` output');
   const md = gs.render();

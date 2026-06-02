@@ -1,6 +1,6 @@
 ---
 name: optimize
-description: "Reads .design/telemetry/costs.jsonl + .design/agent-metrics.json, runs rule-based analysis, writes .design/OPTIMIZE-RECOMMENDATIONS.md. Pure advisory — no auto-apply. User reviews + decides."
+description: "Reads .design/telemetry/costs.jsonl + .design/agent-metrics.json, runs rule-based analysis, writes .design/OPTIMIZE-RECOMMENDATIONS.md. Pure advisory - no auto-apply. User reviews + decides."
 argument-hint: "[--refresh] [--min-spawns=N]"
 user-invocable: true
 tools: Read, Bash, Grep, Write

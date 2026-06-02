@@ -1,6 +1,6 @@
 ---
 name: swift-executor
-description: Executes one plan task by generating compilable SwiftUI views for a native-iOS brief — following reference/platforms.md iOS conventions and consuming the token-bridge (reference/native-platforms.md / emitSwift) for Color/Font/ViewModifier. Single-shot; writes the Swift source, makes an atomic commit. The Xcode simulator is OPTIONAL (D-03).
+description: Executes one plan task by generating compilable SwiftUI views for a native-iOS brief - following reference/platforms.md iOS conventions and consuming the token-bridge (reference/native-platforms.md / emitSwift) for Color/Font/ViewModifier. Single-shot; writes the Swift source, makes an atomic commit. The Xcode simulator is OPTIONAL (D-03).
 tools: Read, Write, Edit, Bash, Grep, Glob
 color: orange
 default-tier: sonnet

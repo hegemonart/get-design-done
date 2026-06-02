@@ -4,7 +4,7 @@ description: Exports a cycle's design decisions to a read-only shared journal (N
 tools: Read, Write, Bash, Grep, Glob, ToolSearch
 color: green
 default-tier: sonnet
-tier-rationale: "Reads a STATE block, redacts via a pure helper, and renders a page through an existing connection; bounded transform + publish, no design judgment — sonnet-tier."
+tier-rationale: "Reads a STATE block, redacts via a pure helper, and renders a page through an existing connection; bounded transform + publish, no design judgment - sonnet-tier."
 size_budget: M
 size_budget_rationale: "Honest tier sized to the ~90-line body. DELEGATES redaction to scripts/lib/pseudonymize.cjs, the Notion write to connections/notion.md, and the contract to reference/multi-author-model.md."
 parallel-safe: false
