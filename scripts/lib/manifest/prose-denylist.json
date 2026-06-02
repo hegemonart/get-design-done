@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "note": "AI-tell denylist SoT (Phase 41.5 seed). Phase 43 (lint-prose.cjs) + Phase 44 read this. Case-insensitive phrase match in the project's OWN user-facing prose only.",
+  "tells": [
+    {
+      "pattern": "load-bearing",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "highest-leverage",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "delve",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "delves",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "seamless",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "seamlessly",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "robust",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "elevate",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "empower",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "underscore",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "underscores",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "in today's",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "let's dive in",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "moreover",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "furthermore",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "tapestry",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "a testament to",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "navigating the",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "in the realm of",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "unlock the power",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "game-changer",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "leverage",
+      "kind": "phrase",
+      "note": "AI-prose tell (training-set monoculture)."
+    },
+    {
+      "pattern": "\\u2014",
+      "kind": "token",
+      "note": "Em dash — banned in the project's own user-facing prose (Phase 43)."
+    },
+    {
+      "pattern": "--",
+      "kind": "token",
+      "note": "Double hyphen (often an em-dash surrogate)."
+    }
+  ]
+}

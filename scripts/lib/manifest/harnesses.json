@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "generated_at": null,
+  "note": "Canonical cross-phase harness record (Phase 41.5 SoT root). Phase 42 adds build/compile config; Phase 45 adds the capability matrix — both as views of this one record. Model tiers live in reference/runtime-models.md.",
+  "harnesses": [
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "config_dir": ".claude",
+      "runtime_models_ref": "reference/runtime-models.md#claude"
+    },
+    {
+      "id": "codex",
+      "name": "OpenAI Codex CLI",
+      "config_dir": ".codex",
+      "runtime_models_ref": "reference/runtime-models.md#codex"
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini CLI",
+      "config_dir": ".gemini",
+      "runtime_models_ref": "reference/runtime-models.md#gemini"
+    },
+    {
+      "id": "qwen",
+      "name": "Qwen Code",
+      "config_dir": ".qwen",
+      "runtime_models_ref": "reference/runtime-models.md#qwen"
+    },
+    {
+      "id": "kilo",
+      "name": "Kilo Code",
+      "config_dir": ".kilo",
+      "runtime_models_ref": "reference/runtime-models.md#kilo"
+    },
+    {
+      "id": "copilot",
+      "name": "GitHub Copilot CLI",
+      "config_dir": ".copilot",
+      "runtime_models_ref": "reference/runtime-models.md#copilot"
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "config_dir": ".cursor",
+      "runtime_models_ref": "reference/runtime-models.md#cursor"
+    },
+    {
+      "id": "windsurf",
+      "name": "Windsurf (Cascade)",
+      "config_dir": ".windsurf",
+      "runtime_models_ref": "reference/runtime-models.md#windsurf"
+    },
+    {
+      "id": "antigravity",
+      "name": "Antigravity",
+      "config_dir": ".antigravity",
+      "runtime_models_ref": "reference/runtime-models.md#antigravity"
+    },
+    {
+      "id": "augment",
+      "name": "Augment",
+      "config_dir": ".augment",
+      "runtime_models_ref": "reference/runtime-models.md#augment"
+    },
+    {
+      "id": "trae",
+      "name": "Trae",
+      "config_dir": ".trae",
+      "runtime_models_ref": "reference/runtime-models.md#trae"
+    },
+    {
+      "id": "codebuddy",
+      "name": "CodeBuddy",
+      "config_dir": ".codebuddy",
+      "runtime_models_ref": "reference/runtime-models.md#codebuddy"
+    },
+    {
+      "id": "cline",
+      "name": "Cline",
+      "config_dir": ".cline",
+      "runtime_models_ref": "reference/runtime-models.md#cline"
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode",
+      "config_dir": ".opencode",
+      "runtime_models_ref": "reference/runtime-models.md#opencode"
+    }
+  ]
+}

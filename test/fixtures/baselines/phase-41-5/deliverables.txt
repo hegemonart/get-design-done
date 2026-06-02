@@ -1,0 +1,7 @@
+scripts/lib/manifest/loader.cjs
+scripts/lib/manifest/index.cjs
+scripts/lib/manifest/harnesses.json
+scripts/lib/manifest/skills.json
+scripts/lib/manifest/prose-denylist.json
+scripts/lib/manifest/README.md
+scripts/validate-manifest.cjs
