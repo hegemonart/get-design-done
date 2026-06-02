@@ -158,3 +158,4 @@ material-3-to-4: reference/migrations/material-3-to-4.md
 cost-governance: reference/cost-governance.md
 multi-author-model: reference/multi-author-model.md
 cli-localization: reference/cli-localization.md
+skill-placeholders: reference/skill-placeholders.md

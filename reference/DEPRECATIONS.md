@@ -28,6 +28,20 @@ the scanner pattern list in lockstep.
 - **`scan`** (stage name) → merged/renamed into `explore` in Phase 3. Migration: references to the `scan` stage in shipped skills and agents were replaced with `explore`.
 - **`discover`** (stage name) → merged/renamed into `explore` in Phase 3. Migration: references to the `discover` stage in shipped skills and agents were replaced with `explore`.
 
+## Authoring surfaces
+
+- **`skills/` as the authoring source** → **`source/skills/`** — deprecated in Phase 42 (multi-harness
+  source compilation). Skills are now authored once in `source/skills/` with placeholders
+  (`{{command_prefix}}` et al.; see `reference/skill-placeholders.md`) and compiled per-harness by
+  `scripts/build-skills.cjs`. The committed `skills/` tree is now a **generated artifact** (the Claude-Code
+  compile target) — CI's `npm run build:skills:check` drift-gates `committed === generated`.
+
+  Migration for contributors: **edit `source/skills/`, never `skills/` directly**, then run
+  `npm run build:skills` (or `gdd-sdk build skills`) and commit the regenerated `skills/` +
+  `dist/claude-code/`. `.claude-plugin/plugin.json`'s `"skills": ["./skills/"]` is unchanged — the plugin
+  still loads `skills/`, now produced from `source/skills/`. This is a path/authoring move only; no
+  stale-ref token is emitted (both paths are live), so the `detect-stale-refs.cjs` list is not extended.
+
 ## Scanner scope
 
 `scripts/detect-stale-refs.cjs` flags these tokens (line-granular match):

@@ -21,6 +21,7 @@ import { stageCommand } from './commands/stage.ts';
 import { queryCommand } from './commands/query.ts';
 import { auditCommand } from './commands/audit.ts';
 import { initCommand } from './commands/init.ts';
+import { buildCommand } from './commands/build.ts';
 
 // ---------------------------------------------------------------------------
 // Top-level USAGE.
@@ -34,6 +35,7 @@ Commands:
   query <op>       Typed STATE.md read operations.
   audit            Probe connections + dry-run verify.
   init             Bootstrap a new project.
+  build skills     Compile per-harness skill bundles from source/skills/.
 
 Use 'gdd-sdk <command> -h' for command-specific flags.
 
@@ -57,6 +59,7 @@ export interface DispatcherDeps {
     readonly query?: typeof queryCommand;
     readonly audit?: typeof auditCommand;
     readonly init?: typeof initCommand;
+    readonly build?: typeof buildCommand;
   };
 }
 
@@ -81,6 +84,7 @@ export async function dispatch(
     query: deps.commands?.query ?? queryCommand,
     audit: deps.commands?.audit ?? auditCommand,
     init: deps.commands?.init ?? initCommand,
+    build: deps.commands?.build ?? buildCommand,
   };
 
   // Bare invocation or top-level help → USAGE.
@@ -111,6 +115,8 @@ export async function dispatch(
       return await commands.audit(parsed, { stdout, stderr });
     case 'init':
       return await commands.init(parsed, { stdout, stderr });
+    case 'build':
+      return await commands.build(parsed, { stdout, stderr });
     default:
       stderr.write(
         `gdd-sdk: unknown subcommand "${parsed.subcommand}"\n${USAGE}`,
@@ -125,6 +131,7 @@ const KNOWN_SUBCOMMANDS: ReadonlySet<string> = new Set([
   'query',
   'audit',
   'init',
+  'build',
 ]);
 
 // ---------------------------------------------------------------------------

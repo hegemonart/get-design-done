@@ -97,6 +97,9 @@ jobs:
       - name: Validate JSON schemas
         run: npm run validate:schemas
 
+      - name: Skill build drift gate (committed skills/ + dist/claude-code/ == source/skills/)
+        run: npm run build:skills:check
+
       - name: Plugin validate (schema-only fallback)
         run: |
           # D-09: run `claude plugin validate .` if the CLI is on the runner;

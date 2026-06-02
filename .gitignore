@@ -43,7 +43,12 @@ REVIEW.md
 # Phase 28.8 (Plan 28-8-X1): Tier-2 distribution bundle output —
 # built from skills/ via scripts/build-distribution-bundles.cjs.
 # Not committed: it's a deterministic build artifact, rebuilt on demand.
-dist/
+# Phase 42: dist/claude-code/ IS committed + shipped (the default Claude-Code skill bundle,
+# regenerated from source/skills/ by scripts/build-skills.cjs; CI drift-gates it). All other
+# per-harness bundles + the .tgz packages stay build-only artifacts.
+dist/*
+!dist/claude-code/
+dist/*.tgz
 
 # Phase 30 (Plan 30-04): /gdd:report-issue payload drafts.
 # Already covered by `.design/` above, but called out explicitly so

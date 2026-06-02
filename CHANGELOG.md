@@ -4,6 +4,55 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.42.0] - 2026-06-02
+
+### Phase 42 — Multi-Harness Source Compilation
+
+One skill source, N provider bundles. The README advertised 14 harnesses but every skill hard-coded
+Claude syntax (`/gdd:`…). Phase 42 authors each skill **once** in `source/skills/` with placeholders and
+compiles per-harness bundles via a pure transformer factory that reads the Phase 41.5 manifest SoT.
+**No new runtime dependency, no new egress.**
+
+### Breaking changes
+
+- **`skills/` is now a generated artifact, not the authoring source.** Skills are authored in
+  **`source/skills/`** (with `{{command_prefix}}` and the other placeholders); the committed `skills/`
+  tree is regenerated from it for the Claude-Code default, and CI's `npm run build:skills:check` fails on
+  any drift. **Contributors must edit `source/skills/`, never `skills/` directly**, then run
+  `npm run build:skills` and commit the regenerated `skills/` + `dist/claude-code/`. The plugin contract is
+  unchanged — `.claude-plugin/plugin.json` still loads `./skills/`, now produced from `source/skills/`.
+  See `reference/DEPRECATIONS.md` → Authoring surfaces and `reference/skill-placeholders.md`.
+
+### Added
+
+- **`source/skills/`** — all 83 skills (107 `.md`) authored once with placeholders. `/gdd:` →
+  `{{command_prefix}}` is a pure string inverse, so the Claude compile reproduces `skills/` byte-for-byte.
+- **`scripts/lib/build/factory.cjs`** — the pure `compile(text, config)` transformer (no I/O): the four
+  placeholders, `<!-- harness-only: a,b -->` blocks, and `\{{…}}` escapes.
+- **`scripts/lib/build/harness-configs.cjs`** — per-harness substitutions layered over
+  `scripts/lib/manifest/harnesses.json` (41.5). 14 records; `codex` is the flat-prefix (`/gdd-`) outlier.
+  Adding a 15th harness = one manifest entry plus an optional override row.
+- **`scripts/build-skills.cjs`** (`npm run build:skills`, `build:skills:check`) — orchestrator with
+  `--harness`, `--check` (drift gate), and `--zip`. Writes `dist/<bundle>/<configDir>/skills/…` and
+  regenerates `skills/` in place. Idempotent + byte-stable.
+- **`dist/claude-code/`** — the default Claude-Code bundle, committed + shipped in the npm tarball (other
+  per-harness bundles stay build-only artifacts; `--zip` packages them for releases).
+- **`gdd-sdk build skills [--harness <id>] [--zip] [--check]`** — SDK CLI surface (operates in a repo clone
+  where `source/skills/` is present; the orchestrator + source are dev-only, not shipped).
+- **`reference/skill-placeholders.md`** — the placeholder catalogue + per-harness substitution table +
+  escape and harness-only rules.
+
+### Notes
+
+- 6-manifest lockstep at **v1.42.0** + `OFF_CADENCE_VERSIONS.add('1.42.0')` + the 37 live-pinned
+  `manifests-version.txt` baselines forward-propagated 1.41.5 → 1.42.0.
+- CI gains a `build:skills:check` drift step in the validate job; a per-harness compile smoke + a 14-harness
+  golden baseline (`test/fixtures/baselines/phase-42/`) pin the compile output.
+- Inventory: tarball golden 757 → 868 (+111: `dist/claude-code/**` 107, `scripts/lib/build/**` 2,
+  `reference/skill-placeholders.md`, `sdk/cli/commands/build.ts`). `source/skills/` is dev-only (not shipped).
+
+---
+
 ## [1.41.5] - 2026-06-02
 
 ### Phase 41.5 — SoT Manifest Consolidation

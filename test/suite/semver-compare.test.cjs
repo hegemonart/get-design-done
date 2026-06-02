@@ -535,6 +535,14 @@ OFF_CADENCE_VERSIONS.add('1.41.0');
 // No new runtime dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.41.5');
 
+// 1.42.0 → Phase 42 (Multi-Harness Source Compilation). Minor on 1.41.5. Authors each skill once in
+// source/skills/ with placeholders ({{command_prefix}} et al.) and compiles per-harness bundles via a
+// pure transformer factory (scripts/lib/build/) reading the 41.5 manifest SoT; the committed skills/ tree
+// becomes a generated artifact drift-gated by build:skills:check; dist/claude-code/ ships in the tarball;
+// gdd-sdk build skills exposes the CLI. Authoring-surface move (skills/ -> source/skills/) is the
+// `### Breaking changes` declared in the 1.42.0 CHANGELOG entry. No new runtime dependency, no new egress.
+OFF_CADENCE_VERSIONS.add('1.42.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
