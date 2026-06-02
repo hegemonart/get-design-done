@@ -4,6 +4,48 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.43.0] - 2026-06-02
+
+### Phase 43 - Editorial Quality Floor
+
+Get Design Done audits design quality but never held its own prose to the same bar. Phase 43 ships a
+build-time editorial lint that fails CI on em dashes, prose double hyphens, and AI-prose tells in the
+project's own documentation. No new runtime dependency, no new egress.
+
+### Breaking changes
+
+- **Contributors must keep prose clean of em dashes, prose double hyphens, and the AI-tell denylist.**
+  `npm run lint:prose` is now a CI gate over `README.md`, `README.*.md`, `SKILL.md`, `source/skills/**`,
+  `agents/**`, `CHANGELOG.md`, and `reference/**` (bodies AND frontmatter `description` fields). Put CLI
+  flags in code spans; replace an em dash with a comma, colon, parentheses, or a spaced hyphen; wrap a
+  genuine quote in a `prose-lint-disable` block. See `STYLE.md` and `CONTRIBUTING.md`. The one-time purge
+  rewrote roughly 6700 em dashes plus tells across the existing corpus, so CI starts green.
+
+### Added
+
+- **`scripts/lint-prose.cjs`** (maintainer, `npm run lint:prose`) - dep-free editorial linter reading the
+  shared denylist at `scripts/lib/manifest/prose-denylist.json` (the Phase 41.5 SoT). Skips fenced code
+  (any indent, nested), inline code (per-line, stray-tick-safe), frontmatter, HTML comments,
+  `prose-lint-disable` blocks, and Cyrillic-majority files. The double-hyphen rule uses an exactly-two
+  guard so structural `---` (tables, rules, frontmatter) never trips.
+- **`STYLE.md`** at repo root, generated from the denylist by `scripts/generate-style-md.cjs`
+  (`npm run build:style`; CI drift-gated via `build:style:check`).
+- **Frontmatter description denylist** (SC#7): `lint:prose` also checks skill and agent `description`
+  fields for em dashes and tells (the `--` flag token is exempt there, since descriptions name flags).
+- **`CONTRIBUTING.md`** editorial-style section; regression fixtures at `test/fixtures/baselines/phase-43/`
+  (clean, violations, Cyrillic-skip).
+
+### Notes
+
+- 6-manifest lockstep at **v1.43.0** + `OFF_CADENCE_VERSIONS.add('1.43.0')` + 37 `manifests-version.txt`
+  baselines forward-propagated 1.42.0 -> 1.43.0.
+- The purge changed skill/agent prose, so 18 snapshot/assertion fixtures were reconciled (regenerated
+  byte-for-byte SKILL.md baselines + hyphenated em-dash literals in 7 baseline tests). `lint-prose.cjs`
+  and `generate-style-md.cjs` are maintainer-only (not shipped); `STYLE.md` is contributor-facing (not in
+  the npm tarball). Tarball file list unchanged.
+
+---
+
 ## [1.42.0] - 2026-06-02
 
 ### Phase 42 - Multi-Harness Source Compilation

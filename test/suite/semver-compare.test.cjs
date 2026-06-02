@@ -543,6 +543,12 @@ OFF_CADENCE_VERSIONS.add('1.41.5');
 // `### Breaking changes` declared in the 1.42.0 CHANGELOG entry. No new runtime dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.42.0');
 
+// 1.43.0 -> Phase 43 (Editorial Quality Floor). Minor on 1.42.0. STYLE.md + scripts/lint-prose.cjs
+// (maintainer-only) gate GDD's own prose on em dashes / double hyphens / AI-tells, reading the 41.5
+// manifest denylist SoT; full corpus purge (~6700 em-dashes) + frontmatter description denylist. The
+// editorial floor is the `### Breaking changes` of the 1.43.0 CHANGELOG entry. No new runtime dependency.
+OFF_CADENCE_VERSIONS.add('1.43.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

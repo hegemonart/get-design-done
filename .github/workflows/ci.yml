@@ -56,6 +56,12 @@ jobs:
       - name: Validate agent frontmatter
         run: npm run validate:frontmatter
 
+      - name: Editorial prose lint (em dashes + AI-tells in GDD's own prose + descriptions)
+        run: npm run lint:prose
+
+      - name: STYLE.md drift gate (generated from the manifest denylist)
+        run: npm run build:style:check
+
       - name: Detect stale references
         run: node scripts/detect-stale-refs.cjs
 
