@@ -198,6 +198,10 @@ GDD's single-operator baseline now extends to **teams** — git-native + advisor
 
 GDD's README is multilingual — now its **CLI** is too. [`/gdd:locale <code>`](skills/locale/SKILL.md) sets the language of `--help`, common error messages, and skill prompt headers, resolved by [`scripts/lib/i18n`](scripts/lib/i18n/index.cjs) (precedence: `config.locale` > env `LANG` > `en`; fallback chain `locale → base → en`). Flat-JSON message tables ship for **en** (complete source), **ru** (full), and **uk/de/fr/zh/ja** placeholders — a missing key always falls back to English, so a partial locale never breaks the CLI. Skills + agents can carry an opt-in `description_i18n` map. Adding a locale is a PR: translate the table, add a `NOTICE` credit (the contribution path is in [`reference/cli-localization.md`](reference/cli-localization.md)). Completeness is **warn-only**. **No new runtime dependency.**
 
+### Deterministic anti-pattern CLI — `gdd-detect` (v1.41.0)
+
+GDD's BAN-NN anti-pattern catalogue is now executable. [`gdd-detect`](bin/gdd-detect) is a **dep-free, offline** Node CLI that scans HTML/CSS/JSX for the 11 statically-detectable BAN rules ([`scripts/lib/detect/rules/`](scripts/lib/detect/)) — `transition: all`, `will-change: all`, gradient text, bounce easing, `scale(0)` entry, naked `outline: none`, pure-black dark mode, disabled zoom, tinted image outline — each finding linked to its [`reference/anti-patterns.md`](reference/anti-patterns.md) paragraph. `gdd-detect <path> [--json] [--fast] [--rule BAN-NN]` exits `0` clean / `2` findings / `1` error. The rule files are the canonical executable; the markdown stays canonical prose; [`sync-rule-catalogue`](scripts/sync-rule-catalogue.cjs) keeps them in parity. `npm run lint:design` is the CI gate; an opt-in pre-commit scaffold ships too. `design-auditor` and the Phase-25 quality-gate consume it; `jsdom`/`puppeteer` are soft-optional (regex-fast is the default). **No new runtime dependency.**
+
 ### Previous releases
 
 - **v1.26.0** — Headless Model Resolver (per-runtime tier→model map, `resolved_models` router field, per-runtime price tables, `reasoning-class` runtime-neutral alias).

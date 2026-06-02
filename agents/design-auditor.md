@@ -277,12 +277,11 @@ grep -rEn "confirm\b|Confirm\b|areYouSure|destructive|danger" src/ --include="*.
 Collect findings from the micro-polish sections of the mapper outputs (`.design/map/motion.md`, `.design/map/tokens.md`, `.design/map/visual-hierarchy.md`, `.design/map/a11y.md`). If those files are not yet available, run targeted grep passes:
 
 ```bash
-# transition:all violations
-grep -rEn "transition:\s*all|transition-property:\s*all" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -10
-grep -rEn 'className="[^"]*\btransition\b[^-]' src/ --include="*.tsx" --include="*.jsx" 2>/dev/null | head -10
-
-# will-change:all violations
-grep -rEn "will-change:\s*all" src/ --include="*.css" --include="*.scss" 2>/dev/null | head -5
+# BAN-NN anti-patterns — Phase 41: run the deterministic detector instead of hand-grepping each
+# rule. One pass, --json, every BAN rule (transition:all, will-change:all, gradient text, bounce
+# easing, scale(0), naked outline:none, pure-black dark mode, disabled zoom, tinted image outline),
+# each finding linked to its reference/anti-patterns.md paragraph. Offline + zero-LLM.
+node "${CLAUDE_PLUGIN_ROOT:-.}/bin/gdd-detect" src/ --json 2>/dev/null || true
 
 # Missing AnimatePresence initial={false}
 grep -rEn "<AnimatePresence" src/ --include="*.tsx" --include="*.jsx" 2>/dev/null | grep -v "initial={false}" | head -10

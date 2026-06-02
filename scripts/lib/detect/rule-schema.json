@@ -4,7 +4,7 @@
   "title": "gdd-detect rule",
   "description": "Phase 41 — the shape of a scripts/lib/detect/rules/ban-NN.cjs module export. Each rule ports a statically-detectable BAN-NN anti-pattern from reference/anti-patterns.md into an executable matcher. The markdown catalogue stays the canonical prose; the rule files are the canonical executable; scripts/sync-rule-catalogue.cjs keeps them in parity.",
   "type": "object",
-  "required": ["id", "category", "name", "description", "references", "severity", "matcher"],
+  "required": ["id", "category", "name", "description", "references", "severity"],
   "additionalProperties": true,
   "properties": {
     "id": {

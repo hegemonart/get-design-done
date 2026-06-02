@@ -522,6 +522,13 @@ OFF_CADENCE_VERSIONS.add('1.40.0');
 // no new egress. The final phase of the directed 38.5->40.5 sequence.
 OFF_CADENCE_VERSIONS.add('1.40.5');
 
+// 1.41.0 → Phase 41 (Deterministic Anti-Pattern CLI gdd-detect). A MINOR bump. Ships bin/gdd-detect +
+// scripts/lib/detect/ (dep-free regex-fast engine + 11 BAN rule matchers ported from the catalogue's
+// own **Grep**; jsdom/puppeteer are soft try-require optionals, no package.json dep), the
+// sync-rule-catalogue parity gate, lint:design, and a pre-commit scaffold. First minor since the 39.5
+// lint-changelog floor — its CHANGELOG entry declares a `### Breaking changes` section. No new runtime dependency.
+OFF_CADENCE_VERSIONS.add('1.41.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
