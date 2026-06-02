@@ -33,6 +33,11 @@ const { spawnSync, spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+// Serialize `npm pack` against the other pack-invoking test files (parallel
+// child processes under `node --test`) — a concurrent pack's `postpack --clean`
+// otherwise strips the compiled SDK bins out of this tarball mid-stream.
+// See test/helpers/sdk-pack-lock.cjs.
+const { withPackLock } = require('../helpers/sdk-pack-lock.cjs');
 
 const IS_WINDOWS = process.platform === 'win32';
 const SKIP_REASON_WIN = 'skipped on Windows: npm pack symlink handling may produce false-negatives (Blocker #2 acceptance)';
@@ -60,7 +65,9 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
     '27.7-07: headless E2E — npm pack produces tarball',
     { skip: IS_WINDOWS ? SKIP_REASON_WIN : false },
     () => {
-      const result = spawnSync('npm', ['pack', '--silent'], { encoding: 'utf8' });
+      const result = withPackLock(() =>
+        spawnSync('npm', ['pack', '--silent'], { encoding: 'utf8' }),
+      );
       assert.equal(result.status, 0, 'npm pack failed: ' + (result.stderr || ''));
       const out = (result.stdout || '').trim().split('\n');
       const tarballName = out[out.length - 1];

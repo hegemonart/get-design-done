@@ -24,6 +24,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { execSync } = require('node:child_process');
+// `npm pack --dry-run` still runs prepack/postpack (build:sdk + --clean), so this
+// test both mutates AND reads the shared sdk/cli/index.js artifact. Serialize it
+// against the other parallel pack tests. See test/helpers/sdk-pack-lock.cjs.
+const { withPackLock } = require('../helpers/sdk-pack-lock.cjs');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const MANIFEST_PATH = path.join(
@@ -45,13 +49,15 @@ const PACK_TIMEOUT_MS = 120000;
  * the first (this repo publishes a single package).
  */
 function packPaths() {
-  const stdout = execSync('npm pack --dry-run --json', {
-    cwd: REPO_ROOT,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'ignore'],
-    timeout: PACK_TIMEOUT_MS,
-    maxBuffer: 64 * 1024 * 1024,
-  });
+  const stdout = withPackLock(() =>
+    execSync('npm pack --dry-run --json', {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      timeout: PACK_TIMEOUT_MS,
+      maxBuffer: 64 * 1024 * 1024,
+    }),
+  );
   const parsed = JSON.parse(stdout);
   const result = Array.isArray(parsed) ? parsed[0] : parsed;
   assert.ok(

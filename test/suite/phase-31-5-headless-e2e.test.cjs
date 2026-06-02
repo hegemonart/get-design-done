@@ -51,6 +51,11 @@ const { spawnSync, spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
+// Serialize this pack against the other pack-invoking test files (which run in
+// parallel child processes under `node --test`) so a concurrent pack's
+// `postpack --clean` can't strip sdk/cli/index.js out of THIS tarball mid-stream.
+// See test/helpers/sdk-pack-lock.cjs for the full race writeup.
+const { withPackLock } = require('../helpers/sdk-pack-lock.cjs');
 
 const IS_WINDOWS = process.platform === 'win32';
 const IS_CI = !!process.env.CI;
@@ -100,10 +105,12 @@ function ensureInstall() {
   //    leave a .tgz in the repo root (which would dirty git status + risk a
   //    stray `git add`). `npm pack --pack-destination <dir>` lands it there.
   state.workDir = tmp('gdd-31-5-09-pack');
-  const packed = spawnSync(
-    'npm',
-    ['pack', '--silent', '--pack-destination', state.workDir],
-    { cwd: REPO_ROOT, encoding: 'utf8' },
+  const packed = withPackLock(() =>
+    spawnSync(
+      'npm',
+      ['pack', '--silent', '--pack-destination', state.workDir],
+      { cwd: REPO_ROOT, encoding: 'utf8' },
+    ),
   );
   assert.equal(
     packed.status,
@@ -200,7 +207,9 @@ describe('31-5-09: headless E2E install verification (pack → install → run)'
     () => {
       ensureInstall();
     },
-    { timeout: 180000 },
+    // Headroom for the pack-serialization lock: worst-case the pack waits behind
+    // the other pack tests before its own pack + install runs.
+    { timeout: 300000 },
   );
 
   after(() => {
