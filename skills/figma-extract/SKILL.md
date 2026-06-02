@@ -1,6 +1,6 @@
 ---
 name: gdd-figma-extract
-description: Off-context Figma design-system extraction into a compact local digest (DESIGN.md + tokens.json + components.json). Pulls the file via the Figma REST API and digests it without the raw JSON ever entering the model context.
+description: "Off-context Figma design-system extraction into a compact local digest (DESIGN.md + tokens.json + components.json). Pulls the file via the Figma REST API and digests it without the raw JSON ever entering the model context."
 ---
 
 # gdd-figma-extract

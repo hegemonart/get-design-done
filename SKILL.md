@@ -2,7 +2,7 @@
 name: get-design-done
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
-argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark|recall|timeline|continue|zoom-out]"
+argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|pin|unpin|list-pins|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark|recall|timeline|continue|zoom-out]"
 user-invocable: true
 ---
 
@@ -89,6 +89,9 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `analyze-dependencies [--slice <name>]` | `get-design-done:analyze-dependencies` | Query the `.design/intel/` store - dependency slices, graph queries, phase-scoped reads |
 | `extract-learnings [--cycle <slug>]` | `get-design-done:extract-learnings` | Extract decisions, lessons, patterns, and surprises from a completed cycle → `.design/cycles/<slug>/LEARNINGS.md` |
 | `skill-manifest [--refresh]` | `get-design-done:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
+| `pin <skill>` | `get-design-done:gdd-pin` | Phase 46 - write standalone shortcut aliases for a gdd skill across every installed harness dir (so `/audit` resolves alongside `/gdd:audit`); metadata comes from the skills.json catalogue |
+| `unpin <skill>` | `get-design-done:gdd-unpin` | Phase 46 - remove pinned aliases for a skill (only files carrying the gdd-pinned-skill marker) |
+| `list-pins` | `get-design-done:gdd-list-pins` | Phase 46 - show pinned aliases per harness with their source skill and last-pinned timestamp |
 | `quality-gate` | `get-design-done:quality-gate` | Phase 25 - parallel lint/type/test/visual command runner; classifies failures via quality-gate-runner agent |
 | `turn-closeout` | `get-design-done:turn-closeout` | Phase 25 - Stop-hook mirror skill; finalizes per-turn STATE blocks and emits closeout events |
 | `bandit-status` | `get-design-done:bandit-status` | Phase 27.5 - read-only diagnostic surface for the bandit posterior; per-(agent, bin, delegate, tier) snapshots (alpha, beta, mean, stddev, count, last-used). Use `/gdd:bandit-reset` to mutate. |

@@ -24,7 +24,48 @@
         "properties": {
           "name": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "Skill id = source/skills/<name>/ directory name."
+          },
+          "frontmatter_name": {
+            "type": "string",
+            "description": "Frontmatter name: value when it is not the default gdd-<name>."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 1024,
+            "description": "Skill description (Phase 28.5 budget: 20..1024 chars)."
+          },
+          "argument_hint": {
+            "type": "string"
+          },
+          "tools": {
+            "type": "string",
+            "description": "Comma-separated allow-list emitted as the frontmatter tools: line."
+          },
+          "user_invocable": {
+            "type": "boolean"
+          },
+          "disable_model_invocation": {
+            "type": "boolean"
+          },
+          "registered_in_phase": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Reserved for pin shortcuts; honored by the pin metadata catalogue."
+          },
+          "extra_frontmatter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Non-managed frontmatter lines preserved verbatim (color, model, writes:, ...)."
           }
         }
       }

@@ -130,6 +130,7 @@ adr-format: reference/adr-format.md
 architecture-vocabulary: reference/architecture-vocabulary.md
 context-md-format: reference/context-md-format.md
 skill-authoring-contract: reference/skill-authoring-contract.md
+skill-metadata: reference/skill-metadata.md
 capability-gap-stage-gate: reference/capability-gap-stage-gate.md
 known-failure-modes: reference/known-failure-modes.md
 gdd-threat-model: reference/gdd-threat-model.md

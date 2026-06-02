@@ -3,253 +3,577 @@
   "note": "Skill metadata SoT (Phase 41.5 seed = the live skills/ dir names). Phase 47 enriches each record (aliases, pin, description budget).",
   "skills": [
     {
-      "name": "add-backlog"
+      "name": "add-backlog",
+      "description": "Park a design idea for a future cycle. Writes to .design/backlog/BACKLOG.md.",
+      "argument_hint": "[text]",
+      "tools": "Read, Write, AskUserQuestion",
+      "disable_model_invocation": true
     },
     {
-      "name": "analyze-dependencies"
+      "name": "analyze-dependencies",
+      "description": "Queries the intel store to surface token fan-out, component call-graphs, decision traceability, and circular dependency detection. Requires .design/intel/ to exist (run build-intel.cjs first).",
+      "tools": "Bash, Read, Glob, Grep"
     },
     {
-      "name": "apply-reflections"
+      "name": "apply-reflections",
+      "description": "Review and selectively apply proposals from .design/reflections/<cycle-slug>.md. Diffs each proposal, prompts user to accept/skip/edit, then writes changes.",
+      "argument_hint": "[--cycle <slug>] [--filter <FRONTMATTER|REFERENCE|BUDGET|QUESTION|GLOBAL-SKILL>] [--dry-run]",
+      "tools": "Read, Write, Edit, Bash, Glob"
     },
     {
-      "name": "audit"
+      "name": "audit",
+      "description": "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 6-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix.",
+      "argument_hint": "[--retroactive] [--quick] [--no-reflect]",
+      "tools": "Read, Write, Task, Glob, Bash"
     },
     {
-      "name": "bandit-status"
+      "name": "bandit-status",
+      "description": "Surface read-only per-(agent, bin, delegate) bandit posterior snapshot - alpha/beta/mean/stddev/count/last-used per arm. Phase 27.5 (v1.27.5) diagnostic. Use when investigating 'why did the bandit pick tier X for agent Y?' or when verifying posterior convergence after enabling adaptive_mode: full.",
+      "argument_hint": "",
+      "tools": "Read, Bash"
     },
     {
-      "name": "benchmark"
+      "name": "benchmark",
+      "description": "Harvest and synthesize per-component design benchmarks from 18 design systems and produce canonical component specs at `reference/components/<name>.md`. Use when adding a new component spec, running a benchmark wave, listing corpus coverage, or refreshing a spec after a design-system version bump.",
+      "argument_hint": "<component> | --wave <N> | --list | --refresh <component>",
+      "tools": "Read, Write, Bash, Grep, Glob, Task, WebFetch"
     },
     {
-      "name": "bootstrap-ds"
+      "name": "bootstrap-ds",
+      "description": "Bootstraps a design system for a GREENFIELD project that has none - no Figma, no tokens, no component library. Takes a brand input (primary color + optional secondary + tone tags + target framework) and emits a coherent OKLCH token system (color tints, modular type scale, 4pt/8pt spacing, radius + motion defaults) in 3 variants to pick from, then scaffolds proof components (button/input/card). Use at the start of a brand-new project, or when {{command_prefix}}discover finds no existing design system. Never invents a brand; never overwrites an existing DS.",
+      "argument_hint": "[--primary <color>] [--secondary <color>] [--tone <tags>] [--framework web|native-ios|native-android|flutter]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Glob, Grep, AskUserQuestion, Task"
     },
     {
-      "name": "brief"
+      "name": "brief",
+      "description": "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before {{command_prefix}}explore.",
+      "argument_hint": "[--re-brief to redo intake on existing project]",
+      "tools": "Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get"
     },
     {
-      "name": "budget"
+      "name": "budget",
+      "description": "Forecasts GDD design-cycle spend before the bill arrives. Reads .design/telemetry/costs.jsonl (cost per cycle) + .design/budget.json (the project_cap), runs the pure cost-forecast model via agents/cost-forecaster.md, and projects the next N cycles - surfacing 'at the current rate you'll hit your $X project cap in Y cycles.' Supports --scenario best|typical|worst and --cycles N. Read-only - it forecasts and warns; it never spends, edits budget.json, or halts (the budget-enforcer hook halts). Use to sanity-check spend trajectory before a long run.",
+      "argument_hint": "[--cycles N] [--scenario best|typical|worst]",
+      "user_invocable": true,
+      "tools": "Read, Bash, Grep, Glob, ToolSearch, Task"
     },
     {
-      "name": "cache-manager"
+      "name": "cache-manager",
+      "description": "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.js before every Agent spawn.",
+      "user_invocable": false,
+      "tools": "Read, Bash, Write",
+      "disable_model_invocation": true
     },
     {
-      "name": "check-update"
+      "name": "check-update",
+      "description": "Manual plugin-update check. Shows cached state by default; --refresh bypasses the 24h TTL; --dismiss hides the nudge until a newer release ships; --prompt spawns design-update-checker for a richer summary.",
+      "argument_hint": "[--refresh] [--dismiss] [--prompt]",
+      "tools": "Read, Write, Bash, Task"
     },
     {
-      "name": "compare"
+      "name": "compare",
+      "description": "Compute the delta between the `DESIGN.md` baseline (from scan) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`.",
+      "argument_hint": "",
+      "user_invocable": true
     },
     {
-      "name": "complete-cycle"
+      "name": "complete-cycle",
+      "description": "Cycle closeout command that marks CYCLES.md entry complete, archives pipeline artifacts to .design/archive/cycle-N/, generates EXPERIENCE.md, rebuilds the search index, and resets STATE.md. Use when a design cycle has shipped and you're ready to start the next one.",
+      "argument_hint": "[<retrospective note>]",
+      "tools": "Read, Write, Bash, AskUserQuestion"
     },
     {
-      "name": "connections"
+      "name": "connections",
+      "description": "Interactive onboarding wizard for the 33 external integrations the pipeline supports - probes all (`figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`, `pinterest`, `claude-design`, `paper-design`, `pencil-dev`, `21st-dev`, `magic-patterns`, `lazyweb`, `mobbin`, `slack`, `discord`, `linear`, `jira`, `notion`, `lottie`, `rive`, `framer`, `penpot`, `webflow`, `v0-dev`, `plasmic`, `builder-io`, `launchdarkly`, `statsig`, `growthbook`, `usertesting`, `maze`, `hotjar`), recommends based on project type, walks the user through setup (auto-run MCP install or copy-command fallback), writes results to `STATE.md <connections>`. Use after `{{command_prefix}}new-project` or whenever the user wants to add, inspect, or skip a connection. Re-runnable anytime.",
+      "argument_hint": "[list | <connection-name> | --auto]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Glob, Grep, AskUserQuestion, ToolSearch"
     },
     {
-      "name": "continue"
+      "name": "continue",
+      "description": "Alias for {{command_prefix}}resume - restore session context from the most recent checkpoint.",
+      "argument_hint": "[<checkpoint-N>]",
+      "tools": "Read, Write, Bash, Glob",
+      "disable_model_invocation": true
     },
     {
-      "name": "darkmode"
+      "name": "darkmode",
+      "description": "Audit a project's dark mode implementation - detects architecture (CSS custom props, Tailwind `dark:` prefix, or JS class toggle), runs architecture-specific contrast / token-override / anti-pattern / meta-property checks, and writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`. Use when the user wants to verify dark mode quality without re-running the full design pipeline. Read-only - no score writeback to `DESIGN.md`.",
+      "argument_hint": "",
+      "user_invocable": true
     },
     {
-      "name": "debug"
+      "name": "debug",
+      "description": "Symptom-driven design debugger with persistent state. Phase 1 builds a feedback loop; Phase 2 hypothesizes. Writes findings to .design/DEBUG.md. Use when a symptom needs systematic, one-variable-at-a-time tracking.",
+      "argument_hint": "[<symptom description>]",
+      "tools": "Read, Write, Grep, Glob, AskUserQuestion, Task"
     },
     {
-      "name": "design"
+      "name": "design",
+      "frontmatter_name": "design",
+      "description": "Stage 4 of 5 orchestrator that reads DESIGN-PLAN.md, partitions tasks by wave + parallel-safe flag, and spawns design-executor agents with the appropriate isolation (worktree for parallel batches, in-place for sequential tail). Use when DESIGN-PLAN.md is approved and ready for implementation.",
+      "argument_hint": "[--auto] [--parallel] [--variants N]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint"
     },
     {
-      "name": "discover"
+      "name": "discover",
+      "frontmatter_name": "discover",
+      "description": "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after {{command_prefix}}scan when a fast-path context build is wanted instead of the full {{command_prefix}}explore.",
+      "argument_hint": "[--auto]",
+      "user_invocable": true
     },
     {
-      "name": "discuss"
+      "name": "discuss",
+      "description": "Adaptive design interview command that spawns design-discussant in normal / --all / --spec mode to gather decisions via one-question-at-a-time AskUserQuestion, writing D-XX entries to STATE.md <decisions>. Use when locking design decisions outside the main pipeline or backfilling missing context.",
+      "argument_hint": "[topic] [--all] [--spec] [--cycle <name>]",
+      "tools": "Read, Write, Task"
     },
     {
-      "name": "do"
+      "name": "do",
+      "description": "Natural-language design task router. Parses your intent, maps to the right gdd command(s), confirms before executing.",
+      "argument_hint": "<natural language description>",
+      "tools": "Read, Write, AskUserQuestion"
     },
     {
-      "name": "explore"
+      "name": "explore",
+      "description": "Stage 2 of 5 - unified exploration merging inventory grep + design interview. Probes 6 connections, scans the codebase, conducts the AskUserQuestion interview, and writes .design/DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md. Use after {{command_prefix}}brief to map the existing system and lock decisions before planning.",
+      "argument_hint": "[--skip-interview] [--skip-scan]",
+      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__probe_connections, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__add_decision"
     },
     {
-      "name": "export"
+      "name": "export",
+      "description": "Packages a completed design cycle (.design artifacts + decisions + screenshots) into a stakeholder-shareable artifact - self-contained HTML, print-styled PDF (Paged.js-compatible), or a Notion page. Redacts secrets; --pseudonymize masks identity for external sharing; --pr posts the HTML preview as a PR comment. Use to hand a design-review packet to PMs/execs/brand who aren't in the repo.",
+      "argument_hint": "<cycle-id> --format html|pdf|notion [--pseudonymize] [--pr]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Glob, Grep, ToolSearch, Task"
     },
     {
-      "name": "extract-learnings"
+      "name": "extract-learnings",
+      "description": "Extracts project-specific design patterns and decisions from .design/ artifacts and writes them to .design/learnings/. Optionally proposes updates to reference/ files for user review.",
+      "tools": "Bash, Read, Write, Glob, Grep"
     },
     {
-      "name": "fast"
+      "name": "fast",
+      "description": "Trivial inline design task. No subagents, no planning documents, no pipeline stages. Just do the thing described.",
+      "argument_hint": "<task description>",
+      "tools": "Read, Write, Edit, Bash, Grep, Glob",
+      "disable_model_invocation": true
     },
     {
-      "name": "figma-extract"
+      "name": "figma-extract",
+      "description": "Off-context Figma design-system extraction into a compact local digest (DESIGN.md + tokens.json + components.json). Pulls the file via the Figma REST API and digests it without the raw JSON ever entering the model context."
     },
     {
-      "name": "figma-write"
+      "name": "figma-write",
+      "description": "Write design decisions from `.design/DESIGN-CONTEXT.md` back into the active Figma file by dispatching the `design-figma-writer` agent in one of three modes (annotate / tokenize / mappings). Use when the user has completed a design pipeline cycle and wants the decisions (layer comments, variable bindings, or Code Connect mappings) reflected in Figma. Operates proposal→confirm with `--dry-run` and `--confirm-shared` flags."
     },
     {
-      "name": "graphify"
+      "name": "graphify",
+      "description": "Manage the Graphify knowledge graph for the current project. Build, query, status, diff. When available, design-planner and design-integration-checker use the graph for pre-search consultation."
     },
     {
-      "name": "health"
+      "name": "health",
+      "description": "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions.",
+      "tools": "Read, Bash, Glob, Grep, mcp__gdd_state__get",
+      "disable_model_invocation": true
     },
     {
-      "name": "help"
+      "name": "help",
+      "description": "Lists all available get-design-done commands with one-line descriptions",
+      "tools": "Read",
+      "disable_model_invocation": true
     },
     {
-      "name": "list-assumptions"
+      "name": "list-assumptions",
+      "description": "Surfaces hidden design assumptions baked into the codebase before planning - pattern-based detection plus user-surfaced items.",
+      "argument_hint": "[--area typography|color|layout|motion|a11y]",
+      "tools": "Read, Grep, Glob",
+      "disable_model_invocation": true
     },
     {
-      "name": "locale"
+      "name": "list-pins",
+      "description": "Lists pinned skill aliases per harness with their source skill and pin timestamp. Use when you want to see which gdd skills have been pinned as standalone shortcuts and where.",
+      "tools": "Read, Bash",
+      "registered_in_phase": "46"
     },
     {
-      "name": "map"
+      "name": "locale",
+      "description": "Inspects or sets the GDD CLI locale for this project. With no argument, reports the resolved locale (config.locale > env LANG > en), the fallback chain, and per-locale coverage (which message tables are complete vs placeholder). With a <code> (en/ru/uk/de/fr/zh/ja), sets .design/config.json#locale after previewing the change. Localizes --help, common error messages, and skill prompt headers via scripts/lib/i18n/; missing keys fall back to English, so a partial locale never breaks the CLI. Use to switch GDD's own output language.",
+      "argument_hint": "[<code>]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Grep, Glob"
     },
     {
-      "name": "migrate"
+      "name": "map",
+      "description": "Dispatches 5 specialist codebase mappers in parallel. Produces .design/map/*.md files consumed by the explore stage.",
+      "argument_hint": "[--only tokens|components|visual-hierarchy|a11y|motion]",
+      "tools": "Read, Write, Bash, Task",
+      "user_invocable": true
     },
     {
-      "name": "new-cycle"
+      "name": "migrate",
+      "description": "Migrates a project off GDD's own deprecated paths after an upgrade. Reads the machine-readable registry in reference/DEPRECATIONS.md (via scripts/lib/deprecation-registry.cjs), scans the project's .design/config.json + any local skill/agent references for paths that are now deprecated or removed at the installed version, and PREVIEWS a diff before changing anything. Interactive by default (confirm per change); --yes auto-applies; --dry-run previews only. Read-first, never silent. Use after {{command_prefix}}update flags a breaking change.",
+      "argument_hint": "[--yes] [--dry-run]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Grep, Glob"
     },
     {
-      "name": "new-project"
+      "name": "new-cycle",
+      "description": "Start a new design cycle. Creates cycle scope in STATE.md, initializes .design/CYCLES.md entry. Each cycle has its own goal and tracks its own decisions/tasks/pipeline runs.",
+      "argument_hint": "[<goal>]",
+      "tools": "Read, Write, AskUserQuestion"
     },
     {
-      "name": "next"
+      "name": "new-project",
+      "description": "Initialize a new get-design-done project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage.",
+      "argument_hint": "[--name <project-name>]",
+      "tools": "Read, Write, AskUserQuestion, Bash, Glob"
     },
     {
-      "name": "note"
+      "name": "next",
+      "description": "Routes to the next pipeline stage based on current STATE.md position",
+      "tools": "Read, Write, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list",
+      "disable_model_invocation": true
     },
     {
-      "name": "openrouter-status"
+      "name": "note",
+      "description": "Zero-friction idea capture during any stage. Appends to .design/NOTES.md. Subcommands: add, list, promote.",
+      "argument_hint": "<add|list|promote> [text|line-number]",
+      "tools": "Read, Write",
+      "disable_model_invocation": true
     },
     {
-      "name": "optimize"
+      "name": "openrouter-status",
+      "description": "Read-only OpenRouter catalog + tier-mapping diagnostic - surfaces catalog freshness (fetched_at vs the 24h TTL), the last-fetch timestamp, the resolved opus/sonnet/haiku → model mappings (via the Phase-33.6 adapter), and a per-tier preview. Use when investigating which OpenRouter model a tier resolves to, or whether the catalog cache is fresh/stale. Phase 33.6 (v1.33.6) diagnostic - {{command_prefix}}openrouter-status.",
+      "argument_hint": "[--refresh]",
+      "tools": "Read, Bash",
+      "disable_model_invocation": true
     },
     {
-      "name": "pause"
+      "name": "optimize",
+      "frontmatter_name": "optimize",
+      "description": "Reads .design/telemetry/costs.jsonl + .design/agent-metrics.json, runs rule-based analysis, writes .design/OPTIMIZE-RECOMMENDATIONS.md. Pure advisory - no auto-apply. User reviews + decides.",
+      "argument_hint": "[--refresh] [--min-spawns=N]",
+      "user_invocable": true,
+      "tools": "Read, Bash, Grep, Write"
     },
     {
-      "name": "peer-cli-add"
+      "name": "pause",
+      "description": "Write a numbered checkpoint so work can resume in a new session without re-running completed stages.",
+      "argument_hint": "[context note]",
+      "tools": "Read, Write, Bash, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint",
+      "disable_model_invocation": true
     },
     {
-      "name": "peer-cli-customize"
+      "name": "peer-cli-add",
+      "frontmatter_name": "peer-cli-add",
+      "description": "Guided ladder for adding a brand-new peer (not in the v1.27 capability matrix) to gdd's peer-CLI delegation layer. Walks the verification ladder, scaffolds an adapter, updates the capability matrix, and handles Windows quirks. Run when you discover a new peer CLI you want gdd to delegate to.",
+      "argument_hint": "<new-peer-id> <peer-binary> <protocol: acp|asp>",
+      "tools": "Read, Edit, Write, Bash, Grep"
     },
     {
-      "name": "peers"
+      "name": "peer-cli-customize",
+      "frontmatter_name": "peer-cli-customize",
+      "description": "Rewire role->peer mappings on a per-agent basis. File-edit-driven (touches frontmatter delegate_to: per agent), no runtime config layer. Run when you want a specific agent to delegate to a different peer than the default capability-matrix mapping suggests.",
+      "argument_hint": "[<agent-name>] [<new-delegate-target>]",
+      "tools": "Read, Edit, Bash, Grep"
     },
     {
-      "name": "plan"
+      "name": "peers",
+      "description": "Discover peer-CLI capability matrix - which of {codex, gemini, cursor, copilot, qwen} are installed, allowlisted in .design/config.json, and (if Phase 23.5 has data) their cost/quality delta vs local. Single command, no flags. Read by users investigating delegation setup.",
+      "argument_hint": "",
+      "tools": "Read, Bash"
     },
     {
-      "name": "plant-seed"
+      "name": "pin",
+      "description": "Writes standalone shortcut aliases for a gdd skill across installed harness skill dirs. Use when you want a skill directly discoverable as its own command in every installed runtime.",
+      "argument_hint": "<skill-name>",
+      "tools": "Read, Bash",
+      "registered_in_phase": "46"
     },
     {
-      "name": "pr-branch"
+      "name": "plan",
+      "frontmatter_name": "plan",
+      "description": "Stage 3 of 5 orchestrator that reads DESIGN-CONTEXT.md, runs optional research (phase-researcher / pattern-mapper / assumptions-analyzer / synthesizer), spawns design-planner + design-plan-checker, and writes DESIGN-PLAN.md. Use when DESIGN-CONTEXT.md is locked and you need a wave-ordered execution plan.",
+      "argument_hint": "[--auto] [--parallel]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections"
     },
     {
-      "name": "progress"
+      "name": "plant-seed",
+      "description": "Forward-looking design idea with a trigger condition. Seeds surface automatically when trigger is met. Writes to .design/SEEDS.md.",
+      "argument_hint": "[--trigger <condition>] [text]",
+      "tools": "Read, Write, AskUserQuestion",
+      "disable_model_invocation": true
     },
     {
-      "name": "quality-gate"
+      "name": "pr-branch",
+      "description": "Create a clean PR branch by filtering out .design/ and .planning/ commits. Code-review-ready branch for the design implementation work.",
+      "argument_hint": "[<base-branch>]",
+      "tools": "Read, Write, Bash",
+      "disable_model_invocation": true
     },
     {
-      "name": "quick"
+      "name": "progress",
+      "description": "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit.",
+      "argument_hint": "[--forensic]",
+      "tools": "Read, Bash, Grep, Glob, mcp__gdd_state__get, mcp__gdd_status, mcp__gdd_phase_current"
     },
     {
-      "name": "reapply-patches"
+      "name": "quality-gate",
+      "frontmatter_name": "quality-gate",
+      "description": "Stage 4.5 of the pipeline. Detects, runs, and classifies project quality commands (lint / typecheck / test / visual-regression) between {{command_prefix}}design and {{command_prefix}}verify; writes the most recent run to STATE.md <quality_gate>. Non-blocking on timeout (warn + proceed); failures spawn design-fixer until the loop converges or max_iters is reached.",
+      "tools": "Read, Write, Edit, Bash, Grep, Glob, Task",
+      "extra_frontmatter": [
+        "color: amber",
+        "model: inherit",
+        "default-tier: haiku",
+        "size_budget: M",
+        "parallel-safe: conditional-on-touches",
+        "typical-duration-seconds: 180",
+        "reads-only: false",
+        "writes:",
+        "  - \".design/STATE.md\"",
+        "  - \".design/events.jsonl\""
+      ]
     },
     {
-      "name": "recall"
+      "name": "quick",
+      "description": "Run the pipeline with optional agents skipped for speed. Skips: phase-researcher, design-assumptions-analyzer, design-integration-checker. Keeps: planner, executor, verifier, auditor.",
+      "argument_hint": "[--skip <agent-name>] [stage]",
+      "tools": "Read, Task",
+      "disable_model_invocation": true
     },
     {
-      "name": "reflect"
+      "name": "reapply-patches",
+      "description": "Reapply user modifications to reference/ files after a plugin update. Detects customizations via git diff against pristine baseline.",
+      "argument_hint": "[--dry-run]",
+      "tools": "Read, Write, Bash",
+      "disable_model_invocation": true
     },
     {
-      "name": "report-issue"
+      "name": "recall",
+      "description": "Search cross-cycle memory: decisions, learnings, experience archives. Returns ranked matches.",
+      "argument_hint": "<query> [--reindex]",
+      "tools": "Read, Write, Bash",
+      "disable_model_invocation": true
     },
     {
-      "name": "resume"
+      "name": "reflect",
+      "description": "Run design-reflector on demand - produces .design/reflections/<cycle-slug>.md with improvement proposals. Review proposals with {{command_prefix}}apply-reflections.",
+      "argument_hint": "[--dry-run] [--cycle <slug>]",
+      "tools": "Read, Write, Task"
     },
     {
-      "name": "review-backlog"
+      "name": "report-issue",
+      "frontmatter_name": "report-issue",
+      "description": "Consent-gated GitHub issue reporter for /gdd. Triages locally against `reference/known-failure-modes.md`, layers Phase 22 secret-redaction with Phase 30 pseudonymization, drafts the payload to `.design/issue-drafts/`, opens `$EDITOR` for inspection, and submits via the user's `gh` CLI to a hardcoded repo only after explicit per-issue consent. Use when the user runs `{{command_prefix}}report-issue`, hits a failure on a whitelisted command with the `--report` flag, or asks to file a bug against get-design-done.",
+      "argument_hint": "[<command-name>] [--force-report]",
+      "tools": "Read, Write, Grep, Bash"
     },
     {
-      "name": "review-decisions"
+      "name": "resume",
+      "description": "Restore session context from a numbered checkpoint. Lists available checkpoints when no argument given.",
+      "argument_hint": "[<N>]",
+      "tools": "Read, Write, Bash, Glob, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list, mcp__gdd_decisions_list",
+      "disable_model_invocation": true
     },
     {
-      "name": "roi"
+      "name": "review-backlog",
+      "description": "Review parked backlog items and promote any to active cycle todo.",
+      "tools": "Read, Write, AskUserQuestion",
+      "disable_model_invocation": true
     },
     {
-      "name": "rollout-status"
+      "name": "review-decisions",
+      "description": "Surfaces the async decision-review queue for team mode. Reads .design/reviews/<decision-id>/ entries and reports each decision's state in the proposed → reviewing → approved → locked machine (via scripts/lib/collab/review-queue.cjs), so a team can see what's awaiting review, what's approved, and what's locked. --pending shows only decisions still needing action. Read-only - it reports the queue; it never advances a decision (that's a reviewer's explicit call). Use to run an async design-decision review without a meeting.",
+      "argument_hint": "[<decision-id>] [--pending]",
+      "user_invocable": true,
+      "tools": "Read, Bash, Grep, Glob"
     },
     {
-      "name": "router"
+      "name": "roi",
+      "description": "Shows whether GDD spend actually shipped anything. Joins per-cycle cost (.design/telemetry/costs.jsonl) with what each cycle shipped - commits that SURVIVED in main vs commits that were reverted - and reports cost-per-shipped-commit + a stick rate per cycle. 'Shipped' = a commit surviving >= the window (default 14 days), which catches revert-after-bug-discovery. Markdown table, not a GUI. Read-only - it reads git log + cost telemetry and reports. Use to see which cycles were worth their spend.",
+      "argument_hint": "[--since <date>] [--window-days 14]",
+      "user_invocable": true,
+      "tools": "Read, Bash, Grep, Glob"
     },
     {
-      "name": "scan"
+      "name": "rollout-status",
+      "description": "Shows where a finished design cycle actually is in production rollout - unrolled / staging-only / canary-N% / prod-100% - by reading the feature-flag service (LaunchDarkly/Statsig/GrowthBook) via the rollout-coordinator. Surfaces STUCK rollouts (a canary that hasn't advanced for N days) and the design_arms outcome weighting. Read-only - GDD never advances or rolls back; it reports and notifies. Use after {{command_prefix}}ship to track the post-merge journey.",
+      "argument_hint": "[<cycle>] [--all] [--stuck]",
+      "user_invocable": true,
+      "tools": "Read, Bash, Grep, Glob, ToolSearch, Task"
     },
     {
-      "name": "settings"
+      "name": "router",
+      "description": "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic - no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.js.",
+      "argument_hint": "<intent-string> [<target-artifacts-csv>]",
+      "tools": "Read, Bash, Grep"
     },
     {
-      "name": "ship"
+      "name": "scan",
+      "frontmatter_name": "scan",
+      "description": "Pre-pipeline initializer that maps an existing repo's design system (colors, typography, spacing, components, tokens), runs the anti-pattern audit, scores the 7 weighted categories, and writes DESIGN.md + .design/DESIGN-DEBT.md. Use when starting work in any new or existing repo before {{command_prefix}}discover.",
+      "argument_hint": "[--quick] [--full]",
+      "user_invocable": true
     },
     {
-      "name": "sketch"
+      "name": "settings",
+      "description": "Manage .design/config.json settings. Subcommands: profile, parallelism, cleanup, show.",
+      "argument_hint": "<profile <name>|parallelism <key> <value>|cleanup|show>",
+      "tools": "Read, Write, AskUserQuestion, Bash, mcp__gdd_state__get, mcp__gdd_state__frontmatter_update",
+      "disable_model_invocation": true
     },
     {
-      "name": "sketch-wrap-up"
+      "name": "ship",
+      "description": "Post-verify PR flow - creates a clean PR branch, invokes code review check, and prepares the PR for merge.",
+      "argument_hint": "[--title <PR title>] [--draft]",
+      "tools": "Read, Write, Bash, AskUserQuestion, Task",
+      "disable_model_invocation": true
     },
     {
-      "name": "skill-manifest"
+      "name": "sketch",
+      "description": "Multi-variant HTML design exploration that creates .design/sketches/<slug>/ with N standalone variants (default 3), browser-openable directly via file:// without a build step. Use when answering 'what could this look like?' before committing to a direction.",
+      "argument_hint": "[topic] [--variants N] [--quick]",
+      "tools": "Read, Write, AskUserQuestion, Bash"
     },
     {
-      "name": "spike"
+      "name": "sketch-wrap-up",
+      "description": "Walk through sketches, pick winner + rationale, group by design area, write project skills to ./.claude/skills/design-<area>-conventions.md.",
+      "argument_hint": "[slug]",
+      "tools": "Read, Write, Glob, AskUserQuestion"
     },
     {
-      "name": "spike-wrap-up"
+      "name": "skill-manifest",
+      "description": "Lists all registered GDD skills and agents, with descriptions, from the intel store. Falls back to directory scan if intel store not present.",
+      "tools": "Bash, Read, Glob"
     },
     {
-      "name": "start"
+      "name": "spike",
+      "description": "Timeboxed feasibility experiment that creates .design/spikes/<slug>/ with HYPOTHESIS.md, success/failure criteria, scratch/ subdirectory, and a default 60-minute timebox. Use when answering 'can this work?' before betting design or implementation effort on a risky approach.",
+      "argument_hint": "[hypothesis] [--timebox <minutes>]",
+      "tools": "Read, Write, Bash, AskUserQuestion"
     },
     {
-      "name": "stats"
+      "name": "spike-wrap-up",
+      "description": "Close a spike - capture findings, write decision to STATE.md, update SUMMARY.md.",
+      "argument_hint": "[slug]",
+      "tools": "Read, Write, Glob, AskUserQuestion"
     },
     {
-      "name": "style"
+      "name": "start",
+      "frontmatter_name": "start",
+      "description": "First-Run Proof Path - one command that scans your UI code and returns one concrete first fix. Leaf command, no STATE.md writes, no pipeline entry. Writes .design/START-REPORT.md and exits.",
+      "argument_hint": "[--budget <fast|balanced|thorough>] [--skip-interview] [--dismiss-nudge]",
+      "tools": "Read, Grep, Glob, Bash, Write, Task",
+      "disable_model_invocation": true
     },
     {
-      "name": "synthesize"
+      "name": "stats",
+      "description": "Cycle stats - decisions made, tasks completed, commits, timeline, git metrics.",
+      "tools": "Read, Bash",
+      "disable_model_invocation": true
     },
     {
-      "name": "timeline"
+      "name": "style",
+      "description": "Generate a component handoff doc at `.design/DESIGN-STYLE-<ComponentName>.md` by dispatching the `design-doc-writer` agent in one of two modes: post-pipeline (uses `DESIGN-SUMMARY.md`) or pre-pipeline fallback (uses `DESIGN.md` + source). Use when the user wants a single-component spec covering tokens, states, and AI-slop detection. Invoke with a ComponentName, or with no argument to list available components.",
+      "argument_hint": "[ComponentName]",
+      "user_invocable": true
     },
     {
-      "name": "todo"
+      "name": "synthesize",
+      "frontmatter_name": "synthesize",
+      "description": "Streaming synthesizer - collapses N parallel-agent markdown outputs into one compact merged summary via a single Haiku 4.5 call. Invoked inline by orchestrators (skills/map/, skills/discover/, skills/plan/) after parallel spawns return. Not user-invocable.",
+      "tools": "Read, Task",
+      "user_invocable": false,
+      "disable_model_invocation": true
     },
     {
-      "name": "turn-closeout"
+      "name": "timeline",
+      "description": "Narrative retrospective across cycles: reads EXPERIENCE.md files and git log to produce a timeline view.",
+      "argument_hint": "[<cycle-N> | <from>-<to> | all]",
+      "tools": "Read, Bash, Glob",
+      "disable_model_invocation": true
     },
     {
-      "name": "undo"
+      "name": "todo",
+      "description": "Design backlog - add/list/pick design tasks. Writes to .design/TODO.md.",
+      "argument_hint": "<add|list|pick> [text]",
+      "tools": "Read, Write, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have",
+      "disable_model_invocation": true
     },
     {
-      "name": "unlock-decision"
+      "name": "turn-closeout",
+      "description": "Portable mirror of the gdd-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills ({{command_prefix}}next, {{command_prefix}}design, {{command_prefix}}verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical.",
+      "argument_hint": "(none - reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)",
+      "tools": "Read, Bash"
     },
     {
-      "name": "update"
+      "name": "undo",
+      "description": "Safe design change revert. Uses git log to find design commits, checks dependencies, reverts safely.",
+      "argument_hint": "[<commit SHA>]",
+      "tools": "Read, Write, Bash, AskUserQuestion",
+      "disable_model_invocation": true
     },
     {
-      "name": "using-gdd"
+      "name": "unlock-decision",
+      "description": "Reopens a LOCKED design decision - the only escape hatch from the hard lock. Requires an explicit --approver and writes an audit entry, then moves the decision locked → reviewing (via scripts/lib/collab/review-queue.cjs). Previews the audit record before writing; never unlocks silently. Use when a locked decision genuinely must change (a later constraint invalidated it) and a reviewer has signed off.",
+      "argument_hint": "<decision-id> --approver <who> [--reason <text>] [--dry-run]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Grep, Glob"
     },
     {
-      "name": "verify"
+      "name": "unpin",
+      "description": "Removes pinned skill aliases across harness dirs, deleting only stubs that carry the gdd pin marker. Use when you no longer want a pinned shortcut and want hand-written skills left untouched.",
+      "argument_hint": "<skill-name>",
+      "tools": "Read, Bash",
+      "registered_in_phase": "46"
     },
     {
-      "name": "warm-cache"
+      "name": "update",
+      "description": "Update get-design-done to the latest release. Preserves .design/config.json and ./.claude/skills/.",
+      "argument_hint": "[--dry-run] [--version <tag>] [--show-privacy-diff]",
+      "tools": "Read, Write, Bash",
+      "disable_model_invocation": true
     },
     {
-      "name": "watch-authorities"
+      "name": "using-gdd",
+      "frontmatter_name": "using-gdd",
+      "description": "Use when starting any GDD session - establishes how to find and apply GDD skills.",
+      "disable_model_invocation": true
     },
     {
-      "name": "zoom-out"
+      "name": "verify",
+      "frontmatter_name": "verify",
+      "description": "Stage 5 of 5 orchestrator that spawns design-auditor, design-verifier, and design-integration-checker in sequence, interprets pass/gap result, and drives the gap-response loop (inline fix, save-and-exit, or accept-as-is). Use when implementation is complete and ready for final pre-ship verification.",
+      "argument_hint": "[--auto] [--post-handoff]",
+      "user_invocable": true,
+      "tools": "mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_must_have, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections"
+    },
+    {
+      "name": "warm-cache",
+      "frontmatter_name": "warm-cache",
+      "description": "Pre-warms Anthropic's 5-min prompt cache across all agents that import reference/shared-preamble.md. Issues one no-op Haiku ping per agent so the identical preamble-first prefix lives in Anthropic's cache before a design sprint starts. Layer A of the D-08 two-layer cache. Run this once at the start of a {{command_prefix}}* sprint for ~90% input-cost savings on the first repeated spawn.",
+      "user_invocable": true,
+      "argument_hint": "[--agents <comma-list>]",
+      "tools": "Read, Bash, Grep",
+      "disable_model_invocation": true
+    },
+    {
+      "name": "watch-authorities",
+      "description": "Fetches the design-authority feed whitelist, diffs against .design/authority-snapshot.json, and writes .design/authority-report.md (consumed by {{command_prefix}}reflect). Authority monitoring only - no trend-watching.",
+      "argument_hint": "[--refresh] [--since <date>] [--feed <name>] [--schedule <weekly|daily|monthly>]",
+      "tools": "Read, Write, Task, Bash"
+    },
+    {
+      "name": "zoom-out",
+      "frontmatter_name": "zoom-out",
+      "description": "Asks the agent to go up a layer of abstraction and map the relevant modules and callers using the project's CONTEXT.md vocabulary. Use when the user is working in an unfamiliar area of code and needs orientation before deep work.",
+      "disable_model_invocation": true,
+      "argument_hint": "[scope]"
     }
   ]
 }

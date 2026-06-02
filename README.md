@@ -251,6 +251,8 @@ All 14 runtimes receive their native artifact layout (`skills/`, `command/`, `ag
 
 **Domain reference index (v1.45.0).** The 38+ reference docs are now navigated through 7 canonical entry-points - `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` - each indexing its subordinate fragments with a "use this when" pointer plus a handful of rules-of-thumb. Design skills load the relevant domain index first and drill into a fragment only when needed (motion-mapper dropped roughly 89% of its up-front reference tokens this way). The indexes link, never copy: `check:domain-links` fails CI on a broken cross-link and `check:no-duplication` fails on large copy-paste. The detailed fragments stay in place as the drill-in targets. **No new runtime dependency.**
 
+**Skill UX polish (v1.46.0).** Skill frontmatter now has a single source of truth at `scripts/lib/manifest/skills.json` (description, argument hint, tools allow-list per skill); `scripts/generate-skill-frontmatter.cjs` regenerates each `source/skills/<id>/SKILL.md` from it, and `generate:skill-frontmatter:check` drift-gates the two in CI. The generator is order-preserving, so the committed tree stays a byte-for-byte fixed point and existing snapshots never churn. Power users get `/gdd:pin <skill>`, which writes standalone shortcut aliases (for example `/audit` alongside `/gdd:audit`) across every installed harness dir, each carrying a `gdd-pinned-skill` marker, plus `/gdd:unpin` and `/gdd:list-pins`. The 1024-character description budget (in place since the skill-authoring contract) is now an explicit `lint:agentskills` CI gate. **No new runtime dependency.**
+
 Verify with:
 
 ```
