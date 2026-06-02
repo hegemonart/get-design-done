@@ -46,9 +46,9 @@ no new egress.
 
 ### Notes
 
-- 6-manifest lockstep at **v1.46.0** + `OFF_CADENCE_VERSIONS.add('1.46.0')` + 37 `manifests-version.txt`
-  baselines + tarball golden 874 -> 884 (3 pin skills x {source is not shipped} skills/+dist + 3 `scripts/lib/pin`
-  + `reference/skill-metadata.md`). The maintainer-only generator is correctly not shipped.
+- 6-manifest lockstep at **v1.46.0**, `OFF_CADENCE_VERSIONS.add('1.46.0')`, 37 `manifests-version.txt`
+  baselines, tarball golden 874 -> 884 (the 3 pin skills land in `skills/` and `dist/claude-code/`, plus 3
+  `scripts/lib/pin/*.cjs` and `reference/skill-metadata.md`). The maintainer-only generator is correctly not shipped.
 - Description budget (SC#5): already enforced since Phase 28.5 (`validate-skill-length.cjs` + `lint-agentskills-spec.cjs`,
   both cap at 1024); Phase 46 hardens it into an explicit CI gate and a SoT-layer regression test. No skill needed trimming.
 
