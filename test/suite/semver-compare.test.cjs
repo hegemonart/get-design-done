@@ -589,6 +589,15 @@ OFF_CADENCE_VERSIONS.add('1.47.0');
 // bucket). 3 new agents, 3 new reference docs, 1 hook. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.48.0');
 
+// 1.49.0 -> Phase 49 (Quick Anti-Slop Floor). Minor on 1.48.0. Three atomic safety/policy primitives:
+// scripts/lib/worktree-resolve.cjs redirects .design/.planning writes to the main repo root when run inside a git
+// worktree (wired into the gdd-state resolveStatePath + 7 writer agents; fixes the recurring .planning leak);
+// hooks/gdd-design-quality-check.js (advisory PostToolUse, 8 visual-tell regex rules over .tsx/.vue/.svelte/.astro,
+// design_quality_warn event) + reference/visual-tells.md; a reviewer confidence gate (4-question Pre-Report Gate +
+// confidence 0.0-1.0 field on design-auditor/verifier/debt-crawler findings, design-fixer drops Tentative + sub-0.8
+// HIGH/CRITICAL via scripts/lib/confidence-route.cjs) + reference/reviewer-confidence-gate.md. Parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.49.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

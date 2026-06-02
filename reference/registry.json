@@ -1121,6 +1121,20 @@
       "type": "output-contract",
       "phase": 48,
       "description": "Phase 48 brief-quality rubric: 5 anti-patterns (vague verbs, missing audience, immeasurable success criteria, scope creep, missing anti-goals) the brief-auditor surfaces."
+    },
+    {
+      "name": "visual-tells",
+      "path": "reference/visual-tells.md",
+      "type": "heuristic",
+      "phase": 49,
+      "description": "Phase 49 visual-tells catalog: 8 default-AI-aesthetic categories (default-AI-hero, gradient-spam, isometric-illustration-fallback, centered-everything-syndrome, inter-everything, purple-violet-default, glassmorphism-spam, decorative-motion-without-intent) with diagnostic regex + remediation; backs the gdd-design-quality-check hook."
+    },
+    {
+      "name": "reviewer-confidence-gate",
+      "path": "reference/reviewer-confidence-gate.md",
+      "type": "meta-rules",
+      "phase": 49,
+      "description": "Phase 49 reviewer confidence gate: 4-question Pre-Report Gate + confidence 0.0-1.0 field; HIGH/CRITICAL require >=0.8 + cited proof, <0.5 stays Tentative and never reaches design-fixer."
     }
   ]
 }

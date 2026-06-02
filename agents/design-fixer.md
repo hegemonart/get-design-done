@@ -48,6 +48,8 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 
 **Invariant:** read all listed files FIRST, before making any changes.
 
+**Worktree-root invariant:** before writing any `.design/` artifact (for example a `<blocker>` entry to `.design/STATE.md`), resolve the main repo root via `scripts/lib/worktree-resolve.cjs` so a worktree run writes to the canonical `.design/` and does not leak artifacts into the worktree checkout.
+
 ---
 
 ## Prompt Context Fields
@@ -88,7 +90,8 @@ Parse every entry in that section. The `G-NN` identifier, severity classificatio
 4. Filter by severity based on `auto_mode`:
    - Always include: `BLOCKER`, `MAJOR`
    - Include only if `auto_mode=true`: `MINOR`, `COSMETIC`
-5. Build an ordered list: BLOCKER first, then MAJOR, then (if included) MINOR, COSMETIC.
+5. **Confidence routing filter (Phase 49, see `reference/reviewer-confidence-gate.md`).** Drop any gap that sits under a `## Tentative` heading: those never reach you. Then drop any `BLOCKER` or `MAJOR` gap whose `confidence` field is below `0.8` and route it to user review instead of auto-fix, since a high-severity gap without strong evidence is exactly the inflated-severity case the gate exists to catch. A gap missing its `confidence` field is treated as below the floor. The shared decision lives in `scripts/lib/confidence-route.cjs` (`route({ severity, confidence, tentative })` returns `'fix' | 'user-review' | 'drop'`); fix only the gaps it routes to `'fix'`.
+6. Build an ordered list: BLOCKER first, then MAJOR, then (if included) MINOR, COSMETIC.
 
 If no in-scope gaps are found (e.g., verifier found only MINOR gaps and `auto_mode=false`), emit `## FIX COMPLETE` immediately with "No in-scope gaps to fix."
 

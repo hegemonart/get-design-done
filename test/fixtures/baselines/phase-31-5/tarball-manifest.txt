@@ -235,6 +235,7 @@ hooks/first-run-nudge.sh
 hooks/gdd-a11y-gate.js
 hooks/gdd-bash-guard.js
 hooks/gdd-decision-injector.js
+hooks/gdd-design-quality-check.js
 hooks/gdd-mcp-circuit-breaker.js
 hooks/gdd-precompact-snapshot.js
 hooks/gdd-protected-paths.js
@@ -405,6 +406,7 @@ reference/registry.schema.json
 reference/responsive.md
 reference/retrieval-contract.md
 reference/review-format.md
+reference/reviewer-confidence-gate.md
 reference/rollout-coordination.md
 reference/rtl-cjk-cultural.md
 reference/runtime-models.md
@@ -442,6 +444,7 @@ reference/user-research.md
 reference/ux-writing.md
 reference/variable-fonts-loading.md
 reference/visual-hierarchy-layout.md
+reference/visual-tells.md
 scripts/cli/gdd-events.mjs
 scripts/install.cjs
 scripts/lib/adaptive-mode.cjs
@@ -466,6 +469,7 @@ scripts/lib/collab/permissions.cjs
 scripts/lib/collab/review-queue.cjs
 scripts/lib/collab/section-merge.cjs
 scripts/lib/collab/sync-backend.cjs
+scripts/lib/confidence-route.cjs
 scripts/lib/connection-probe/index.cjs
 scripts/lib/context-engine/index.ts
 scripts/lib/context-engine/manifest.ts
@@ -702,6 +706,7 @@ scripts/lib/trajectory/index.cjs
 scripts/lib/transports/ws.cjs
 scripts/lib/visual-baseline/diff.cjs
 scripts/lib/visual-baseline/index.cjs
+scripts/lib/worktree-resolve.cjs
 sdk/README.md
 sdk/cli/commands/audit.ts
 sdk/cli/commands/build.ts

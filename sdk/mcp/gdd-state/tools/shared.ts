@@ -12,6 +12,8 @@
 // {success:false, error} — handlers never propagate exceptions."
 
 import path from 'node:path';
+import { existsSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import {
   ValidationError,
   OperationFailedError,
@@ -51,6 +53,49 @@ export function getSessionId(): string {
 }
 
 /**
+ * Worktree redirect (Phase 49). When GDD runs inside a git WORKTREE, a naive
+ * `process.cwd()`-relative `.design/STATE.md` write lands in the ephemeral
+ * worktree and is lost when it is removed. `scripts/lib/worktree-resolve.cjs`
+ * resolves the MAIN repo root and points STATE writes there.
+ *
+ * Soft-loaded via createRequire (mirrors sdk/event-stream/writer.ts): tsc's
+ * Node16 module mode classifies this .ts as CJS output, so `import.meta` is
+ * unavailable — we anchor createRequire on the repo-root package.json found by
+ * walking up from cwd. If the helper is unreachable (a test subprocess running
+ * far above the plugin tree), every resolver degrades to a null shim and the
+ * default falls back to the legacy relative path. Production callers always run
+ * inside the plugin tree.
+ */
+interface WorktreeResolver {
+  resolveDesignRoot: (cwd?: string) => string;
+  isWorktree: (cwd?: string) => boolean;
+  noticeOnce: (targetRoot: string) => boolean;
+}
+
+function _findRepoRoot(): string {
+  let dir = process.cwd();
+  for (let i = 0; i < 8; i++) {
+    if (existsSync(path.join(dir, 'package.json'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return process.cwd();
+}
+
+const _worktree: WorktreeResolver | null = (() => {
+  try {
+    const root = _findRepoRoot();
+    const candidate = path.resolve(root, 'scripts/lib/worktree-resolve.cjs');
+    if (!existsSync(candidate)) return null;
+    const req = createRequire(path.join(root, 'package.json'));
+    return req(candidate) as WorktreeResolver;
+  } catch {
+    return null;
+  }
+})();
+
+/**
  * Resolve the target STATE.md path from the environment, with a
  * PATH-TRAVERSAL guard (Plan 33.5-03, D-08).
  *
@@ -69,6 +114,22 @@ export function getSessionId(): string {
 export function resolveStatePath(): string {
   const override = process.env['GDD_STATE_PATH'];
   if (typeof override !== 'string' || override.length === 0) {
+    // No override: resolve STATE.md under the worktree-aware `.design` root
+    // (Phase 49). Outside a worktree this equals the legacy `<cwd>/.design`
+    // (when cwd is the repo root) so behavior is unchanged; inside a worktree
+    // the design root points at the MAIN repo so state is not lost. The notice
+    // fires at most once per process, only on an actual worktree redirect.
+    if (_worktree !== null) {
+      try {
+        const designRoot = _worktree.resolveDesignRoot();
+        if (_worktree.isWorktree()) {
+          _worktree.noticeOnce(path.dirname(designRoot));
+        }
+        return path.join(designRoot, 'STATE.md');
+      } catch {
+        // Fall through to the legacy relative default on any resolver fault.
+      }
+    }
     return '.design/STATE.md';
   }
 

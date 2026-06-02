@@ -33,12 +33,15 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 - `.design/DESIGN-CONTEXT.md` - goals, must-haves, brand direction, references
 - `.design/tasks/` - what was actually done (glob all task files)
 - `reference/audit-scoring.md` - scoring rubric for category weights
+- `reference/reviewer-confidence-gate.md` - Pre-Report Gate, the `confidence` field, and the gap routing rule
 - `reference/heuristics.md` - NNG heuristics H-01..H-10 scoring guide
 - `reference/review-format.md` - visual UAT presentation format
 - `reference/accessibility.md` - WCAG checklist for accessibility scoring
 - `connections/preview.md` - Preview MCP connection spec (probe, screenshot mode, interaction mode, fallback)
 - `connections/chromatic.md` - Chromatic CLI connection spec (probe, baseline management, fallback)
 - `connections/storybook.md` - Storybook HTTP probe and a11y integration details
+
+**Worktree-root invariant:** before writing `.design/DESIGN-VERIFICATION.md` (or any `.design/` artifact), resolve the main repo root via `scripts/lib/worktree-resolve.cjs` so a worktree run writes to the canonical `.design/` and does not leak artifacts into the worktree checkout.
 
 ## Prompt Context Fields
 
@@ -440,6 +443,8 @@ Classify each gap:
 - `MINOR` - noticeable issue; fix if time allows
 - `COSMETIC` - polish only; defer to later
 
+**Pre-Report Gate (Phase 49, see `reference/reviewer-confidence-gate.md`).** Before emitting each gap, answer the four questions: (a) can you cite `file:line`, (b) can you state the failure mode in one sentence, (c) did you read context beyond the modified file, (d) is the severity defensible? Stamp every gap with a `confidence` field (`0.0-1.0`): `>= 0.8` when all four pass, `0.5-0.8` when evidence is partial, `< 0.5` for an unconfirmed hunch. A BLOCKER or MAJOR requires `confidence >= 0.8` plus a `file:line` citation plus a one-sentence failure mode; below that, lower the severity or move it to `## Tentative`. Confidence is independent of severity. Move every `< 0.5` gap into a `## Tentative` section so it is surfaced but never reaches `design-fixer`.
+
 For each gap, emit an entry in the locked gap format:
 
 ```
@@ -452,6 +457,7 @@ For each gap, emit an entry in the locked gap format:
 - Actual: [what is true]
 - Location: [file:line or UI element]
 - Suggested fix: [one-line hint]
+- confidence: [0.0-1.0]
 ```
 
 Order gaps: BLOCKER first, then MAJOR, MINOR, COSMETIC. Number sequentially (G-01, G-02, ...).
@@ -464,21 +470,7 @@ If zero gaps found: skip this section entirely - do NOT emit `## GAPS FOUND`.
 
 **Skip if `chromatic` is `not_configured` or `unavailable` in STATE.md `<connections>`.**
 
-If `.design/chromatic-results.json` exists:
-1. Read .design/chromatic-results.json
-2. Check if this is a first run (all entries have status: "new"):
-   → First run: emit "Baseline established - no regressions detected (first run creates baseline)."
-3. For subsequent runs, narrate changes:
-   For each story entry in results:
-     - status "unchanged" → PASS <StoryTitle>:<StoryName>
-     - status "changed" → CHANGED <StoryTitle>:<StoryName> (visual change detected - review on chromatic.com)
-     - status "new" → NEW <StoryTitle>:<StoryName> (first snapshot - not a regression)
-     - status "error" → ERROR <StoryTitle>:<StoryName> - investigate
-4. Emit summary: "Total: N stories. X unchanged. Y changed. Z new. W errors."
-5. If Y > 0 (changed stories): flag as "VISUAL REGRESSION CANDIDATES - review required on chromatic.com before merging"
-6. Append narration to DESIGN-VERIFICATION.md ## Visual Regression section (create section if absent)
-
-If .design/chromatic-results.json does not exist: skip; emit no note.
+If `.design/chromatic-results.json` exists, read it and narrate. First run (all entries `status: "new"`): emit "Baseline established - no regressions detected (first run creates baseline)." Subsequent runs, per story entry: `unchanged` → PASS, `changed` → CHANGED (review on chromatic.com), `new` → NEW (first snapshot, not a regression), `error` → ERROR (investigate). Emit summary "Total: N stories. X unchanged. Y changed. Z new. W errors." If any changed (Y > 0), flag "VISUAL REGRESSION CANDIDATES - review required on chromatic.com before merging". Append the narration to the DESIGN-VERIFICATION.md `## Visual Regression` section (create it if absent). If the file does not exist: skip; emit no note.
 
 ---
 
