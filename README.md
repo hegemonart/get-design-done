@@ -249,6 +249,8 @@ All 14 runtimes receive their native artifact layout (`skills/`, `command/`, `ag
 
 **Harness capability matrix (v1.44.0).** The full per-harness support matrix (skill discovery, command syntax, MCP, install path, status) lives in **[`HARNESSES.md`](HARNESSES.md)** at the repo root, generated from `scripts/lib/manifest/harnesses.json` (the single source of truth; CI drift-gates it). Each harness carries an honest status (`tested` / `experimental` / `untested`) and a `last_verified` stamp; a freshness gate warns at 60 days and fails at 180 for `tested` harnesses, surfaced in `/gdd:health`. The 14-harness count above is the same SoT the matrix reads, so it cannot drift. The five deep-dive reference files (`reference/codex-tools.md`, `reference/gemini-tools.md`, `reference/peer-cli-capabilities.md`, `reference/peer-protocols.md`, `reference/runtime-models.md`) remain as appendices linked from the matrix. **No new runtime dependency.**
 
+**Domain reference index (v1.45.0).** The 38+ reference docs are now navigated through 7 canonical entry-points - `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` - each indexing its subordinate fragments with a "use this when" pointer plus a handful of rules-of-thumb. Design skills load the relevant domain index first and drill into a fragment only when needed (motion-mapper dropped roughly 89% of its up-front reference tokens this way). The indexes link, never copy: `check:domain-links` fails CI on a broken cross-link and `check:no-duplication` fails on large copy-paste. The detailed fragments stay in place as the drill-in targets. **No new runtime dependency.**
+
 Verify with:
 
 ```

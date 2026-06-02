@@ -1,5 +1,34 @@
 # Typography - Scale, Pairing, and Hierarchy
 
+This file is the domain index for typography. It covers type-scale construction,
+weight hierarchy, font pairing, and micro-typography. Read `variable-fonts-loading.md`
+when web fonts are in scope. Read `proportion-systems.md` when the full UI grid is
+in scope. Does not cover text-contrast (see `color.md`) or locale text expansion
+(see `responsive.md`, which indexes [`./i18n.md`](./i18n.md) for the per-locale expansion budgets).
+
+## Fragment Index
+
+| Fragment | When to load |
+|---|---|
+| This file (below) | type scale ratios, sizing tokens, weight hierarchy, font pairings, micro-typography |
+| [`./variable-fonts-loading.md`](./variable-fonts-loading.md) | web fonts, `@font-face`, `font-display`, FOIT/FOUT, variable font axes, subsetting, fallback metrics |
+| [`./proportion-systems.md`](./proportion-systems.md) | 4pt/8pt/sqrt(2) baseline grid, spacing ladder, icon sizing, corner radius derivation |
+
+## Rules of Thumb
+
+1. A 1.25 (Major Third) or 1.333 (Perfect Fourth) ratio fits 95% of SaaS products; only reach for 1.618 when visual drama is the explicit brief.
+2. Never author `line-height` as a pixel value - always use a unitless multiplier (1.4-1.6 for body, 1.1-1.2 for headings); unitless values scale with user font-size overrides.
+3. Font weight on the web has only 7 meaningful stops (100-700 in 100-steps); any weight not in the font file rounds to the nearest available - check the variable font `wght` range before specifying 450 or 600.
+4. Baseline-grid lock: every spacing and sizing token should be a multiple of the chosen baseline unit; `padding: 12px` next to body at `16/24` on an 8pt grid is a silent proportion break.
+5. For localized UIs, size type containers for +40% expansion (Russian/Finnish worst-case); top-aligned labels are the only label position that absorbs expansion without layout breakage.
+
+## See Also
+
+- Text contrast and color-blindness checks: [`./color.md`](./color.md)
+- Text expansion in localized UIs: [`./responsive.md`](./responsive.md)
+- Proportion systems tie type to spatial grid: [`./spatial.md`](./spatial.md)
+- Finance number formatting (tabular-nums): [`./domains/finance-patterns.md`](./domains/finance-patterns.md)
+
 ---
 
 ## Type Scale Systems
@@ -35,7 +64,7 @@ Choose a ratio and base size. Common ratios:
 
 Never create a scale ad-hoc. Pick one ratio, generate the scale, use only values in the scale.
 
-**See:** [`./proportion-systems.md`](./proportion-systems.md) §Modular Relationships for how the type scale ties to spacing / sizing / radius scales - when one ratio drives all four scales the whole UI gains a single rhythm rather than four independently-tuned progressions.
+**See:** [`./proportion-systems.md`](./proportion-systems.md) for how the type scale ties to spacing / sizing / radius scales.
 
 ---
 
@@ -43,11 +72,11 @@ Never create a scale ad-hoc. Pick one ratio, generate the scale, use only values
 
 | Context | Line height | Notes |
 |---|---|---|
-| Body text | **1.5 – 1.75** | More generous = more readable |
-| Headings | **1.1 – 1.3** | Tight heading stacks look intentional |
+| Body text | **1.5 - 1.75** | More generous = more readable |
+| Headings | **1.1 - 1.3** | Tight heading stacks look intentional |
 | Captions / small text | **1.4** | Smaller text needs more breathing room |
-| Code blocks | **1.6 – 1.8** | Line scanning for code |
-| Display / hero | **0.9 – 1.1** | Can go very tight for dramatic effect |
+| Code blocks | **1.6 - 1.8** | Line scanning for code |
+| Display / hero | **0.9 - 1.1** | Can go very tight for dramatic effect |
 
 ---
 
@@ -55,9 +84,9 @@ Never create a scale ad-hoc. Pick one ratio, generate the scale, use only values
 
 | Context | Characters per line | Notes |
 |---|---|---|
-| Desktop body | **65 – 75 chars** | Optimal reading comfort |
-| Mobile body | **35 – 55 chars** | Narrower viewport forces shorter |
-| Hero/display | **35 – 55 chars** | Headings should never wrap awkwardly |
+| Desktop body | **65 - 75 chars** | Optimal reading comfort |
+| Mobile body | **35 - 55 chars** | Narrower viewport forces shorter |
+| Hero/display | **35 - 55 chars** | Headings should never wrap awkwardly |
 | Data/tables | No limit | Tables have own structure |
 
 Enforce with `max-width`: `65ch` for body containers works with any font size.
@@ -68,13 +97,13 @@ Enforce with `max-width`: `65ch` for body containers works with any font size.
 
 | Role | Weight | Notes |
 |---|---|---|
-| Display headings | **700 – 900** | Bold commands attention |
-| Page headings | **600 – 700** | Strong but not display-level |
-| Section headings | **500 – 600** | Distinguish from body |
+| Display headings | **700 - 900** | Bold commands attention |
+| Page headings | **600 - 700** | Strong but not display-level |
+| Section headings | **500 - 600** | Distinguish from body |
 | Body text | **400** | Regular - no emphasis weight |
 | UI labels | **500** | Slightly heavier than body |
 | Captions | **400** | Regular - size reduces emphasis |
-| Monospace code | **400 – 500** | |
+| Monospace code | **400 - 500** | |
 
 **Rule**: Never use `font-weight: 300` (light) on small text. It becomes illegible below 16px.
 
@@ -127,7 +156,7 @@ Enforce with `max-width`: `65ch` for body containers works with any font size.
 
 **All caps body text** - reserved for: labels, badges, category markers, short UI labels only. Never for sentences or paragraphs.
 
-**Inconsistent tracking** - only use `letter-spacing` intentionally. Positive tracking on uppercase labels is fine. Negative tracking on small body text reduces readability. Random tracking changes across components signal lack of system.
+**Inconsistent tracking** - only use `letter-spacing` intentionally. Positive tracking on uppercase labels is fine. Negative tracking on small body text reduces readability.
 
 ---
 
@@ -136,8 +165,8 @@ Enforce with `max-width`: `65ch` for body containers works with any font size.
 | Use case | letter-spacing |
 |---|---|
 | Body text | `0` (default) |
-| Uppercase labels / badges | `0.05em – 0.1em` |
-| Display headings | `−0.02em – 0.01em` |
+| Uppercase labels / badges | `0.05em - 0.1em` |
+| Display headings | `-0.02em - 0.01em` |
 | Monospace code | `0` or slight positive |
 
 ---
@@ -174,68 +203,19 @@ Test: Can you tell which element is a heading just from the weight/family, witho
 
 ## Brand Archetype Quick Guide
 
-Pick the archetype closest to the project brief; use the recommended pairing
-as a starting point (adjust for specific constraints).
-
 | Archetype | Character | Recommended Pairing |
 |-----------|-----------|---------------------|
 | SaaS / productivity | clear, neutral, utilitarian | Inter (UI) + Inter (body) - single family |
 | Consumer / editorial | warm, opinionated, expressive | Fraunces or GT Sectra (display) + Inter (body) |
 | Enterprise / finance | authoritative, conservative | IBM Plex Sans (UI) + IBM Plex Serif (body) |
 | Developer tools | technical, efficient | Geist (UI) + Geist Mono (code) |
-| Bold / expressive | high-energy, distinctive | Söhne or Mona Sans (display) + Inter (body) |
+| Bold / expressive | high-energy, distinctive | Sohne or Mona Sans (display) + Inter (body) |
 
-**Selection heuristic:** If the brief uses words like "professional", "trustworthy", "clean" → SaaS or Enterprise. If "warm", "editorial", "narrative" → Consumer. If "bold", "energetic", "distinctive" → Bold. If "technical", "efficient", "fast" → Dev tools.
-
----
-
-## Variable Fonts
-
-Variable fonts expose typographic axes that can be animated or set per-context
-via `font-variation-settings`. Prefer variable fonts over static family fallbacks
-when available - one file covers all weights and widths.
-
-### Common axes
-
-| Axis | Range | Purpose |
-|------|-------|---------|
-| wght | 100–900 | Weight (Thin → Black) |
-| wdth | 50%–150% | Width (Condensed → Extended) |
-| ital | 0 / 1 | Italic toggle (discrete in most) |
-| opsz | font-size value | Optical size (auto-applies when `font-optical-sizing: auto`) |
-
-### @font-face format
-
-```css
-@font-face {
-  font-family: 'InterVariable';
-  src: url('/fonts/InterVariable.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-style: normal;
-}
-```
-
-### Usage via font-variation-settings
-
-```css
-.heading { font-variation-settings: "wght" 700, "opsz" 32; }
-.body    { font-variation-settings: "wght" 400; }
-```
-
-### Fallback strategy
-
-Always include a non-variable fallback of the same family in the font stack:
-
-```css
-font-family: 'InterVariable', 'Inter', -apple-system, system-ui, sans-serif;
-```
-
-**See:** [`./i18n.md`](./i18n.md) §Multi-Script Font Stacks for when a multi-script project should ship weighted-static fonts rather than a single variable font (some scripts ship as static-only families; mixing scripts in a single variable file is rarely viable).
+**Selection heuristic:** If the brief uses words like "professional", "trustworthy", "clean" use SaaS or Enterprise. If "warm", "editorial", "narrative" use Consumer. If "bold", "energetic", "distinctive" use Bold. If "technical", "efficient", "fast" use Dev tools.
 
 ---
 
 ## Micro-Typography
-Source: jakubkrehel/make-interfaces-feel-better (MIT) - typography.md
 
 ### text-wrap
 
@@ -254,7 +234,7 @@ Apply antialiasing at root level only:
   -moz-osx-font-smoothing: grayscale;
 }
 ```
-Never apply per-element - this creates inconsistency within a single text block and is one of the most common micro-typography mistakes. The antialiased value makes text appear slightly thinner/lighter, which is generally preferred for UI type at modern screen densities.
+Never apply per-element - this creates inconsistency within a single text block.
 
 ### Tabular numerals
 
@@ -262,52 +242,4 @@ Use tabular-nums on any surface where numbers change dynamically or need to alig
 ```css
 .counter, .price, .timer, .table-cell { font-variant-numeric: tabular-nums; }
 ```
-Proportional numerals (the default) cause text to shift width when numbers change, creating a distracting jitter in timers and prices. Exception: Inter's `1` character widens slightly with tabular-nums - test at your numeric composition before committing.
-
-## Font Pairings Catalog
-Source: nextlevelbuilder/ui-ux-pro-max-skill (MIT) - data/typography.csv
-
-57 professionally curated pairings grouped by use-case vertical. For font loading, see `reference/data/google-fonts.csv` for the full 1923-font reference.
-
-### SaaS / Productivity
-- **Inter + Inter** (mono weight hierarchy) - The "safe default" for app UIs. Use regular (400) for body, medium (500) for labels, semibold (600) for headings. Consistent x-height, excellent at small sizes.
-- **Inter + JetBrains Mono** - For dev tools and dashboards with code display. JetBrains Mono has excellent legibility at 12-14px.
-- **Geist Sans + Geist Mono** - Vercel's pair; clean, modern, designed together.
-- **Outfit + DM Mono** - Friendly SaaS feel with clear code fallback.
-
-### Consumer / Marketing
-- **Satoshi + Cabinet Grotesk** - High-energy, modern consumer feel.
-- **Plus Jakarta Sans + Syne** - Playful but legible; works for creative consumer apps.
-- **DM Sans + DM Serif Display** - Classic pairing; editorial headers, clean body.
-- **Nunito + Source Code Pro** - Approachable and friendly.
-
-### Finance / Enterprise
-- **IBM Plex Sans + IBM Plex Mono** - Authoritative, systematic, designed for data-heavy interfaces.
-- **Source Sans 3 + Source Code Pro** - Adobe's workhorse pair; widely trusted.
-- **Lato + Roboto Mono** - Clean, neutral enterprise pair.
-
-### Editorial / Publishing
-- **Playfair Display + Source Serif 4** - High contrast serif headers with readable body serif.
-- **Cormorant Garamond + Proza Libre** - Elegant luxury/editorial tone.
-- **Libre Baskerville + Libre Franklin** - Free-license editorial pair.
-- **EB Garamond + Lato** - Classic print feel with modern body.
-
-### Wellness / Health
-- **Nunito + Nunito Sans** - Soft, approachable, consistent x-height.
-- **Quicksand + Work Sans** - Rounded, friendly, healthcare-appropriate.
-- **Raleway + Open Sans** - Clean and welcoming.
-
-### Dev Tools
-- **JetBrains Mono + Inter** - Code-first, UI-second; natural for developer tools.
-- **Fira Code + Fira Sans** - Cohesive family; ligatures available.
-- **Cascadia Code + Segoe UI** - Microsoft's modern dev pair.
-
-### Luxury / Fashion
-- **Cormorant + Montserrat** - High contrast serif + geometric sans; classic luxury.
-- **Bodoni Moda + Jost** - Fashion editorial feel.
-- **Playfair Display + Raleway** - Elegant header + clean body.
-
-### Gaming / Entertainment
-- **Syne + DM Sans** - Bold, energetic headers; clean readable body.
-- **Bebas Neue + Open Sans** - Impact headlines; neutral body.
-- **Exo 2 + Roboto** - Futuristic but readable.
+Proportional numerals (the default) cause text to shift width when numbers change, creating jitter in timers and prices. Exception: Inter's `1` character widens slightly with tabular-nums - test at your numeric composition before committing.

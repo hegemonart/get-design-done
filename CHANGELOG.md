@@ -4,6 +4,47 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.45.0] - 2026-06-02
+
+### Phase 45 - Canonical Domain Reference Index
+
+GDD has 38+ reference docs with flat indexing - agents loaded fragments by name and missed the rest, or
+loaded all 5 motion files and wasted tokens. Phase 45 ships 7 navigation entry-points over the existing
+content (it indexes, never re-authors). Planned and executed via the GSD pipeline (parallel research +
+parallel authoring subagents). No new runtime dependency, no new egress.
+
+### Breaking changes
+
+- **Two CI gates now guard the domain indexes.** `npm run check:domain-links` fails if any cross-link in
+  the 7 entry-points points at a missing file or anchor; `npm run check:no-duplication` fails if an index
+  copies large blocks from the fragment it should only link. Contributors editing the 7
+  `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` entries must keep
+  links resolving and keep entries link-only.
+
+### Added
+
+- **7 domain-index entry-points** at `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md`,
+  each <=300 lines: a mission, a "use this when" index of the subordinate fragments, 3-5 rules-of-thumb, and
+  cross-domain see-also links. `motion.md` and `typography.md` were transformed in place; the other five are new.
+- **Registry `domain-index` kind**: `reference/registry.schema.json` gains the type; the 7 entries register
+  as `domain-index` so skills can query indexes first and drill into detail second.
+- **`scripts/check-domain-cross-links.cjs`** + **`scripts/check-no-duplication.cjs`** (maintainer-only) + the
+  two CI steps.
+- **Consumer migration**: `motion-mapper` now loads `motion.md` (the index) and drills into a fragment only
+  when classifying against it (an 89% token cut versus loading all four motion fragments up front);
+  `design-auditor` and `design-executor` lead their reference reading with the domain indexes. Token-load
+  baseline at `test/fixtures/baselines/phase-45/token-load.json`.
+
+### Notes
+
+- 6-manifest lockstep at **v1.45.0** + `OFF_CADENCE_VERSIONS.add('1.45.0')` + 37 `manifests-version.txt`
+  baselines forward-propagated 1.44.0 -> 1.45.0. Tarball golden 869 -> 874 (+5 new shipped `reference/*.md`;
+  the two CI scripts are maintainer-only, not shipped).
+- SC#9 (Phase 41 rule `references[]` migration to canonical entries) is deferred to a follow-up; the rule
+  links to `anti-patterns.md` still resolve, so the migration is a nice-to-have rather than a blocker.
+
+---
+
 ## [1.44.0] - 2026-06-02
 
 ### Phase 44 - Harness Capability Matrix

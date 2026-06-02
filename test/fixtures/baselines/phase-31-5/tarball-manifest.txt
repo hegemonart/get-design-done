@@ -256,6 +256,7 @@ reference/checklists.md
 reference/cli-localization.md
 reference/codex-tools.md
 reference/color-theory.md
+reference/color.md
 reference/component-authoring.md
 reference/components/README.md
 reference/components/TEMPLATE.md
@@ -334,6 +335,7 @@ reference/iconography.md
 reference/image-optimization.md
 reference/information-architecture.md
 reference/intel-schema.md
+reference/interaction.md
 reference/known-failure-modes.md
 reference/mcp-budget.default.json
 reference/meta-rules.md
@@ -388,6 +390,7 @@ reference/protected-paths.default.json
 reference/pseudonymization-rules.md
 reference/registry.json
 reference/registry.schema.json
+reference/responsive.md
 reference/retrieval-contract.md
 reference/review-format.md
 reference/rollout-coordination.md
@@ -415,12 +418,14 @@ reference/schemas/runtime-models.schema.json
 reference/shared-preamble.md
 reference/skill-authoring-contract.md
 reference/skill-placeholders.md
+reference/spatial.md
 reference/start-interview.md
 reference/style-vocabulary.md
 reference/surfaces.md
 reference/ticket-sync.md
 reference/typography.md
 reference/user-research.md
+reference/ux-writing.md
 reference/variable-fonts-loading.md
 reference/visual-hierarchy-layout.md
 scripts/cli/gdd-events.mjs

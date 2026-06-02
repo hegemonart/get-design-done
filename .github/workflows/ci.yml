@@ -71,6 +71,12 @@ jobs:
       - name: Harness freshness check (tested harnesses warn 60d / fail 180d)
         run: npm run check:harness-freshness
 
+      - name: Domain-index cross-links resolve (7 entry-points)
+        run: npm run check:domain-links
+
+      - name: Domain-index no-duplication (entries link, never copy)
+        run: npm run check:no-duplication
+
       - name: Detect stale references
         run: node scripts/detect-stale-refs.cjs
 

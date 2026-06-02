@@ -34,7 +34,7 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 - `.design/STATE.md` - pipeline state (decisions, blockers, must-haves)
 - `.design/DESIGN-PLAN.md` - full task list (your task is identified by task_id)
 - `.design/DESIGN-CONTEXT.md` - brand decisions, constraints, locked choices
-- The reference file(s) relevant to the task type (e.g., `reference/typography.md` for a typography task)
+- The reference file(s) relevant to the task type (e.g., `reference/typography.md` for a typography task). The 7 domain-index entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` (Phase 45) are the navigation start: load the index, drill into the fragments it lists only as the task needs them.
 
 **Invariant:** read all listed files FIRST, before making any changes.
 
