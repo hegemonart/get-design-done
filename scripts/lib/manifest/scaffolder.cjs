@@ -74,8 +74,12 @@ function normalizeTools(tools) {
   const cleaned = parts.map((t) => String(t).trim()).filter(Boolean);
   if (cleaned.length === 0) fail('tools, when provided, must name at least one tool');
   // Each token: a Tool name or an mcp__* identifier. No commas, no empty.
+  // `\w` already includes `_`, so a single `[\w-]*` class matches plain names
+  // (Read) AND mcp__* identifiers (mcp__gdd_state__get) in linear time. The old
+  // `(__[\w-]+)*` suffix overlapped `[\w-]*` and caused exponential backtracking
+  // (CodeQL js/redos) on inputs like `A__-__-__...`; it was redundant. Removed.
   for (const t of cleaned) {
-    if (!/^[A-Za-z][\w-]*(__[\w-]+)*$/.test(t)) {
+    if (!/^[A-Za-z][\w-]*$/.test(t)) {
       fail(`tools entry "${t}" is not a valid tool identifier`);
     }
   }
