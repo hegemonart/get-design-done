@@ -1,0 +1,43 @@
+{
+  "description": "Phase 47 deterministic session replay. A fixed sequence of session-store inputs (session_start -> pick -> generate -> accept -> session_end) that test/suite/phase-47-session.test.cjs replays to assert the resulting .design/live-sessions/<id>.json is reproducible. All timestamps + ids are literal so the replay is hermetic (no clock/RNG).",
+  "session_start": {
+    "sessionId": "replay-fixture-001",
+    "now": "2026-06-03T10:00:00.000Z",
+    "url": "http://localhost:5173/pricing",
+    "devServer": { "url": "http://localhost:5173", "port": 5173, "command": "npm run dev" }
+  },
+  "events": [
+    {
+      "kind": "pick",
+      "at": "2026-06-03T10:00:05.000Z",
+      "selector": "section.pricing > div.card:nth-child(2)",
+      "implicated": ["src/components/PricingCard.tsx", "src/styles/pricing.css"]
+    },
+    {
+      "kind": "generate",
+      "at": "2026-06-03T10:00:20.000Z",
+      "variant_count": 3,
+      "variants": ["v-a", "v-b", "v-c"]
+    },
+    {
+      "kind": "accept",
+      "at": "2026-06-03T10:00:45.000Z",
+      "variant": "v-b"
+    }
+  ],
+  "session_end": {
+    "now": "2026-06-03T10:01:00.000Z",
+    "status": "completed"
+  },
+  "expected": {
+    "schema_version": "47.0",
+    "session_id": "replay-fixture-001",
+    "status": "completed",
+    "started_at": "2026-06-03T10:00:00.000Z",
+    "ended_at": "2026-06-03T10:01:00.000Z",
+    "url": "http://localhost:5173/pricing",
+    "event_count": 3,
+    "event_kinds": ["pick", "generate", "accept"],
+    "accepted_variant": "v-b"
+  }
+}

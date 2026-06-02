@@ -151,6 +151,7 @@ dist/claude-code/.claude/skills/health/health-skill-length-report.md
 dist/claude-code/.claude/skills/help/SKILL.md
 dist/claude-code/.claude/skills/list-assumptions/SKILL.md
 dist/claude-code/.claude/skills/list-pins/SKILL.md
+dist/claude-code/.claude/skills/live/SKILL.md
 dist/claude-code/.claude/skills/locale/SKILL.md
 dist/claude-code/.claude/skills/map/SKILL.md
 dist/claude-code/.claude/skills/migrate/SKILL.md
@@ -340,6 +341,7 @@ reference/information-architecture.md
 reference/intel-schema.md
 reference/interaction.md
 reference/known-failure-modes.md
+reference/live-mode-integration.md
 reference/mcp-budget.default.json
 reference/meta-rules.md
 reference/migrations/material-3-to-4.md
@@ -408,6 +410,7 @@ reference/schemas/hooks.schema.json
 reference/schemas/insight-line.schema.json
 reference/schemas/intel.schema.json
 reference/schemas/iteration-budget.schema.json
+reference/schemas/live-session.schema.json
 reference/schemas/marketplace.schema.json
 reference/schemas/mcp-budget.schema.json
 reference/schemas/mcp-gdd-state-tools.schema.json
@@ -594,6 +597,13 @@ scripts/lib/issue-reporter/payload-assembly.cjs
 scripts/lib/issue-reporter/privacy-diff.cjs
 scripts/lib/issue-reporter/report-flow.cjs
 scripts/lib/issue-reporter/triage-matcher.cjs
+scripts/lib/live/bandit-feed.cjs
+scripts/lib/live/events.cjs
+scripts/lib/live/harness-mode.cjs
+scripts/lib/live/postcheck.cjs
+scripts/lib/live/runtime.cjs
+scripts/lib/live/scope-guard.cjs
+scripts/lib/live/session-store.cjs
 scripts/lib/logger/index.ts
 scripts/lib/logger/sinks.ts
 scripts/lib/logger/types.ts
@@ -815,6 +825,7 @@ skills/health/health-skill-length-report.md
 skills/help/SKILL.md
 skills/list-assumptions/SKILL.md
 skills/list-pins/SKILL.md
+skills/live/SKILL.md
 skills/locale/SKILL.md
 skills/map/SKILL.md
 skills/migrate/SKILL.md

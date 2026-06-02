@@ -30,6 +30,7 @@ health
 help
 list-assumptions
 list-pins
+live
 locale
 map
 migrate

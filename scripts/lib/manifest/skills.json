@@ -199,6 +199,14 @@
       "registered_in_phase": "46"
     },
     {
+      "name": "live",
+      "description": "Live in-browser design mode. The user picks a DOM element on a running dev server (via the Claude Preview MCP), the agent generates N design variants in one batch, they hot-swap in place through HMR or preview_eval using a data-gdd-variant marker, the user accepts or discards, and the whole pick-generate-accept loop persists to .design/live-sessions so it survives a crash or resume. Use when the user wants to iterate on the look of a live component against a real running server, asks to try variants on a page, or runs the live command with a url; falls back to a screenshot-only degraded mode on harnesses without MCP support.",
+      "argument_hint": "[--variants N] [--resume <session-id>] [url]",
+      "tools": "Read, Write, Edit, Bash, Glob, Grep, Task",
+      "user_invocable": true,
+      "registered_in_phase": "47"
+    },
+    {
       "name": "locale",
       "description": "Inspects or sets the GDD CLI locale for this project. With no argument, reports the resolved locale (config.locale > env LANG > en), the fallback chain, and per-locale coverage (which message tables are complete vs placeholder). With a <code> (en/ru/uk/de/fr/zh/ja), sets .design/config.json#locale after previewing the change. Localizes --help, common error messages, and skill prompt headers via scripts/lib/i18n/; missing keys fall back to English, so a partial locale never breaks the CLI. Use to switch GDD's own output language.",
       "argument_hint": "[<code>]",
