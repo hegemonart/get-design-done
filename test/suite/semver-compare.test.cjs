@@ -529,6 +529,12 @@ OFF_CADENCE_VERSIONS.add('1.40.5');
 // lint-changelog floor — its CHANGELOG entry declares a `### Breaking changes` section. No new runtime dependency.
 OFF_CADENCE_VERSIONS.add('1.41.0');
 
+// 1.41.5 → Phase 41.5 (SoT Manifest Consolidation). Decimal on 1.41.0. Adds scripts/lib/manifest/
+// (loader + index typed readers + harnesses/skills/prose-denylist seed data + schemas) + the single
+// scripts/validate-manifest.cjs ajv CI gate — landing the cross-phase SoT root before 42/44/45/47.
+// No new runtime dependency, no new egress.
+OFF_CADENCE_VERSIONS.add('1.41.5');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

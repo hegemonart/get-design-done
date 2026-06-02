@@ -477,6 +477,16 @@ scripts/lib/issue-reporter/triage-matcher.cjs
 scripts/lib/logger/index.ts
 scripts/lib/logger/sinks.ts
 scripts/lib/logger/types.ts
+scripts/lib/manifest/README.md
+scripts/lib/manifest/harnesses.cjs
+scripts/lib/manifest/harnesses.json
+scripts/lib/manifest/index.cjs
+scripts/lib/manifest/loader.cjs
+scripts/lib/manifest/prose-denylist.json
+scripts/lib/manifest/schemas/harnesses.schema.json
+scripts/lib/manifest/schemas/prose-denylist.schema.json
+scripts/lib/manifest/schemas/skills.schema.json
+scripts/lib/manifest/skills.json
 scripts/lib/mcp-tools-lint/index.cjs
 scripts/lib/mcp-tools-lint/index.d.cts
 scripts/lib/migration/codemod-gen.cjs

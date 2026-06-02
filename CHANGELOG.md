@@ -4,6 +4,38 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.41.5] - 2026-06-02
+
+### Phase 41.5 — SoT Manifest Consolidation
+
+A 2026-05-16 audit found Phase 42/44/45/47 each scoping its own "single source of truth" in a different
+corner — four formats, four schemas, four CI drift gates. 41.5 lands **one** root, **one** schema
+directory, **one** validator, **before** those phases plan their work. **No new runtime dependency, no
+new egress.**
+
+### Added
+
+- **`scripts/lib/manifest/`** — the cross-phase SoT root:
+  - `loader.cjs` — the one shared reader; a missing/unparseable file returns an empty fallback + a
+    one-line warning (never throws), with a file-mtime cache. Dep-free.
+  - `index.cjs` — typed readers `readHarnesses()` / `readSkills()` / `readProseDenylist()`.
+  - `harnesses.json` (+ `.cjs` view) — the 14 canonical runtimes (Phase 42 adds build config, Phase 45
+    the capability matrix, as views of this one record). `skills.json` — the 83 live skill names (Phase
+    47 enriches). `prose-denylist.json` — the AI-tell denylist + em-dash/`--` markers (Phase 43/44 consume).
+  - `schemas/*.schema.json` — one JSON Schema per manifest. `README.md` — the contract + migration note.
+- **`scripts/validate-manifest.cjs`** (`npm run validate:manifest`) — the single ajv CI gate that
+  replaces the four per-file drift gates 43/44/45/47 would each have shipped.
+
+### Notes
+
+- **No new runtime dependency** — the shipped `loader.cjs`/`index.cjs` are dep-free; `validate-manifest.cjs`
+  uses the already-present `ajv` and is maintainer-only (not shipped, like `lint-changelog.cjs`).
+- 6-manifest lockstep at **v1.41.5** + `OFF_CADENCE_VERSIONS.add('1.41.5')` + the 36 live-pinned
+  `manifests-version.txt` baselines forward-propagated 1.41.0 → 1.41.5.
+- Inventory: tarball golden 747 → 757 (+10: `scripts/lib/manifest/**`). No skill/agent/registry deltas.
+
+---
+
 ## [1.41.0] - 2026-06-02
 
 ### Phase 41 — Deterministic Anti-Pattern CLI (`gdd-detect`)
