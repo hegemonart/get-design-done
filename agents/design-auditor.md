@@ -47,6 +47,8 @@ Minimum expected files:
 - `.design/tasks/` - what was actually done (glob all task files)
 - **Domain-index navigation (Phase 45):** the 7 entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` index every fragment below. For a pillar, load the relevant domain index first, then drill into the specific fragments it lists only as the pillar needs them - this is the cheap navigation layer over the detailed fragments.
 - `reference/audit-scoring.md` - existing 7-category scoring rubric (understand, do not duplicate)
+- `reference/anti-slop-rubric.md` - the five verb axes scored after the pillar pass (see Anti-slop scoring section)
+- `reference/visual-tells.md` - default-AI tell catalog; each tell names the verb axis it degrades
 - `reference/reviewer-confidence-gate.md` - Pre-Report Gate, the `confidence` field, and the routing rule applied to every finding
 - `reference/brand-voice.md` - voice axes, archetype library, and tone-by-context table (use when auditing Pillar 1: Copy)
 - `reference/gestalt.md` - 8 Gestalt principles with scoring rubrics (use when auditing Pillar 2: Visual Hierarchy)
@@ -319,6 +321,24 @@ grep -rEn "w-4 h-4|w-5 h-5|w-6 h-6" src/ --include="*.tsx" --include="*.jsx" 2>/
 ### Pillar 8: Content Internationalization Integrity (reserved, unscored)
 
 **Status: reserved slot - do NOT score.** This is a named placeholder for a future eighth pillar covering localization integrity beyond what the Copy pillar's i18n lens already checks (ICU message correctness, plural and gender rules, locale-aware date/number/currency formatting, RTL mirroring completeness, multi-script font coverage). It is documented here so the slot has a stable name, but it carries no score, no audit method, and no entry in the Pillar Scores table. The audit total stays **/28 (7 pillars × 4)**. When a future phase activates this pillar, the scoring contract version increments and the total moves to /32; until then, treat this section as informational only. The internationalization checks that the current audit performs live inside Pillar 1 (Copy) per `reference/copy-quality.md`.
+
+---
+
+## Anti-slop scoring
+
+After the 7-pillar pass, apply the verb-axis lens from `reference/anti-slop-rubric.md`. This is **orthogonal** and **v2-compatible additive** under `scoring_contract_version: v2` (see the contract note above): it adds NO eighth scored pillar, leaves the reserved Pillar 8 unscored, and changes neither the /28 total here nor the weighted 0-100 score in `reference/audit-scoring.md`.
+
+Score five axes 1-10 each per the rubric (do not inline the scales or examples; the rubric is the source of truth):
+
+- **Directness** - does copy and CTA name the specific product, verb, and outcome?
+- **Distinctness** - is the palette and type a recorded brand decision, not the default reach?
+- **Hierarchy** - one focal point and an obvious reading order, not flat competing weight?
+- **Authenticity** - real product and shipped copy, not stock scenes, lorem, or badge spam?
+- **Density** - density chosen for the content, not inflated to fill space?
+
+Emit the result as a lens-tag on the relevant finding: `verb_axes_scored: {directness, distinctness, hierarchy, authenticity, density}`. Record which `reference/visual-tells.md` categories matched as evidence. The lens-tag is registered in `reference/audit-scoring.md` under Lens-Tags (Orthogonal).
+
+When `directness + distinctness + hierarchy + authenticity + density < 35` (of 50), the work reads as generically AI-default even if pillars pass: flag an `aesthetic-slop` debt item for `agents/design-debt-crawler.md` (per `reference/debt-categories.md`) and note it in the Priority Fix List with the per-axis scores. A sum at or above 35 is not a pillar pass; it only means no aesthetic-slop routing.
 
 ---
 

@@ -36,6 +36,7 @@ map
 migrate
 new-cycle
 new-project
+new-skill
 next
 note
 openrouter-status

@@ -1,6 +1,6 @@
 ---
 name: gdd-quick
-description: "Run the pipeline with optional agents skipped for speed. Skips: phase-researcher, design-assumptions-analyzer, design-integration-checker. Keeps: planner, executor, verifier, auditor."
+description: "Run the pipeline with optional agents skipped for speed. Skips: phase-researcher, design-assumptions-analyzer, design-integration-checker. Keeps: planner, executor, verifier, auditor. Activates for requests involving a lightweight design pass, a fast iteration, or a quick low-ceremony change."
 argument-hint: "[--skip <agent-name>] [stage]"
 tools: Read, Task
 disable-model-invocation: true

@@ -1,6 +1,6 @@
 ---
 name: scan
-description: "Pre-pipeline initializer that maps an existing repo's design system (colors, typography, spacing, components, tokens), runs the anti-pattern audit, scores the 7 weighted categories, and writes DESIGN.md + .design/DESIGN-DEBT.md. Use when starting work in any new or existing repo before {{command_prefix}}discover."
+description: "Pre-pipeline initializer that maps an existing repo's design system (colors, typography, spacing, components, tokens), runs the anti-pattern audit, scores the 7 weighted categories, and writes DESIGN.md + .design/DESIGN-DEBT.md. Use when starting work in any new or existing repo before {{command_prefix}}discover. Activates for requests involving a fast read-only anti-pattern sweep, a quick design lint, or spotting slop without a full audit."
 argument-hint: "[--quick] [--full]"
 user-invocable: true
 ---

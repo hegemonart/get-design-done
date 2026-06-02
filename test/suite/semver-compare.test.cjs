@@ -598,6 +598,16 @@ OFF_CADENCE_VERSIONS.add('1.48.0');
 // HIGH/CRITICAL via scripts/lib/confidence-route.cjs) + reference/reviewer-confidence-gate.md. Parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.49.0');
 
+// 1.50.0 -> Phase 50 (Authoring Contract v3). Minor on 1.49.0. Two cross-repo-validated additions: a verb-based
+// anti-slop rubric (reference/anti-slop-rubric.md, 5 orthogonal axes Directness/Distinctness/Hierarchy/Authenticity/
+// Density, sum<35/50 -> design-debt-crawler aesthetic-slop; emitted by design-auditor as a verb_axes_scored lens-tag,
+// no pillar change) + visual-tells.md v2 (13 categories); and a machine-parseable skill-composition manifest
+// (composes_with/next_skills frontmatter + scripts/validate-composition-graph.cjs DAG gate + auto-generated
+// reference/skill-graph.md) plus the skill-authoring-contract v3 multi-paragraph description form (transition window),
+// a boilerplate-cohort lint (scripts/validate-skill-frontmatter.cjs), a /gdd:new-skill scaffolder, and the migration
+// of 18 high-traffic skill descriptions to the v3 form. Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.50.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

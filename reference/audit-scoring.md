@@ -248,3 +248,7 @@ Attach to findings under the Visual Hierarchy pillar that relate to compositiona
 ### `i18n_readiness`
 
 Attach to findings under the Accessibility pillar (for WCAG 3.1.1 / 3.1.2 violations) or under the Anti-Pattern Compliance pillar (for hardcoded-string / overflow-at-+40% defects). Emitted by the `agents/design-verifier.md` §i18n probes section (Phase 28-06). See [`./i18n.md`](./i18n.md) §WCAG i18n + §Verifier Integration Spec. Does NOT change pillar weights or scores.
+
+### `verb_axes` (anti-slop)
+
+Attach to any finding to record how generically AI-default the work reads, orthogonal to whether the pillar itself fails. Emitted by the `agents/design-auditor.md` §Anti-slop scoring section (Phase 50). It attaches `verb_axes_scored: {directness, distinctness, hierarchy, authenticity, density}` (each 1-10) to the finding, per the rubric in [`./anti-slop-rubric.md`](./anti-slop-rubric.md). When the five scores sum below 35 of 50, the finding also routes to `agents/design-debt-crawler.md` with `category: aesthetic-slop` (see [`./debt-categories.md`](./debt-categories.md)). Does NOT add a pillar and does NOT change pillar weights or scores.

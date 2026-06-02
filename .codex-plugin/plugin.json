@@ -1,6 +1,6 @@
 {
   "name": "get-design-done",
-  "version": "1.49.0",
+  "version": "1.50.0",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": {
     "name": "hegemonart",
@@ -24,7 +24,10 @@
     "design-system-sync",
     "worktree-safe",
     "anti-slop",
-    "confidence-gate"
+    "confidence-gate",
+    "anti-slop-rubric",
+    "skill-composition",
+    "skill-graph"
   ],
   "skills": "./skills/",
   "mcpServers": {

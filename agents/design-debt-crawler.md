@@ -60,6 +60,7 @@ listed file before acting. Minimum expected files:
 
 - @reference/debt-categories.md
 - @reference/anti-patterns.md
+- @reference/anti-slop-rubric.md
 - @reference/reviewer-confidence-gate.md
 
 `reference/debt-categories.md` is the taxonomy you classify against and the source of
@@ -158,6 +159,12 @@ grep -rEn "No data|No results|Nothing here|went wrong|error occurred" src/ \
 Flag meaningful images without `alt`, icon-only controls without an accessible name,
 placeholder used as the only label, and generic empty or error copy.
 
+**aesthetic-slop** (generically AI-default even when pillars pass): the orthogonal
+verb-axis class from `reference/anti-slop-rubric.md`. `agents/design-auditor.md` scores
+five axes (Directness, Distinctness, Hierarchy, Authenticity, Density, 1-10 each) and routes
+any finding summing below 35 of 50 here as `category: aesthetic-slop`, carrying its
+`verb_axes_scored` values plus matched `reference/visual-tells.md` categories as evidence.
+
 ### Step 2.5: Pre-Report Gate + confidence
 
 Before cataloging any finding, run the four-question Pre-Report Gate from
@@ -226,6 +233,7 @@ note: "Project-scoped retroactive debt catalog. Does NOT read STATE.md completed
 | density-spacing | N | P |
 | typography-drift | N | P |
 | a11y-text | N | P |
+| aesthetic-slop | N | P |
 
 ---
 

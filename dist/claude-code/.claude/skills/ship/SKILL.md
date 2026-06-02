@@ -1,6 +1,6 @@
 ---
 name: gdd-ship
-description: "Post-verify PR flow - creates a clean PR branch, invokes code review check, and prepares the PR for merge."
+description: "Post-verify PR flow - creates a clean PR branch, invokes code review check, and prepares the PR for merge. Activates for requests involving finishing a cycle, packaging design output, or moving work to a pull request."
 argument-hint: "[--title <PR title>] [--draft]"
 tools: Read, Write, Bash, AskUserQuestion, Task
 disable-model-invocation: true

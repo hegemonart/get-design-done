@@ -36,6 +36,7 @@ map: 89
 migrate: 70
 new-cycle: 37
 new-project: 53
+new-skill: 90
 next: 68
 note: 48
 openrouter-status: 86
@@ -48,7 +49,7 @@ pin: 37
 plan: 105
 plant-seed: 48
 pr-branch: 32
-progress: 95
+progress: 103
 quality-gate: 90
 quick: 44
 reapply-patches: 32

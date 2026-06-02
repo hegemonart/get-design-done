@@ -3,7 +3,7 @@ name: debt-categories
 type: reference
 version: 1.0.0
 phase: 48
-tags: [debt, taxonomy, audit, crawler, priority-scoring, retroactive]
+tags: [debt, taxonomy, audit, crawler, priority-scoring, retroactive, aesthetic-slop, anti-slop]
 last_updated: 2026-06-03
 ---
 
@@ -104,6 +104,25 @@ empty-state strings such as "No data" or raw error codes.
 
 **Fix shape:** Add the accessible name or label; rewrite generic copy to be specific
 and actionable. Copy-quality detail lives in `reference/copy-quality.md`.
+
+### aesthetic-slop
+
+**Definition:** Work that reads as generically AI-default even when the pillar audit
+passes: template copy, the default palette and typeface used without a decision, stock
+scenes and placeholder content, flat competing hierarchy, and density inflated to fill
+space. This is the orthogonal verb-axis lens from `reference/anti-slop-rubric.md`, not a
+pillar failure. A surface can clear contrast, typography, and spacing and still be
+aesthetic-slop because nothing about it is chosen.
+**Detection signal:** The five verb axes (Directness, Distinctness, Hierarchy,
+Authenticity, Density) scored 1-10 each by `agents/design-auditor.md`, with the sum
+`< 35` of 50, corroborated by matches in `reference/visual-tells.md` (for example
+`stock-photo-people`, `badge-spam`, `oversized-single-word`,
+`motion-without-content-intent`, `narrator-from-a-distance-UI`, or the v1 tells). Record
+the per-axis `verb_axes_scored` values and the matched tell categories as evidence.
+**Fix shape:** Address the lowest axes first: write specific copy, route color and type
+through documented tokens, establish one focal point, replace stock and placeholder with
+real content, and size density to the content. This is usually a redesign-leaning effort,
+not a one-line swap, so it scores low on the effort factor below.
 
 ---
 

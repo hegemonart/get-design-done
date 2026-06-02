@@ -22,7 +22,7 @@
     },
     {
       "name": "audit",
-      "description": "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 6-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix.",
+      "description": "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 6-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix. Activates for requests involving scoring an existing design, retroactively reviewing quality, or re-checking after a fix.",
       "argument_hint": "[--retroactive] [--quick] [--no-reflect]",
       "tools": "Read, Write, Task, Glob, Bash"
     },
@@ -47,7 +47,7 @@
     },
     {
       "name": "brief",
-      "description": "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before {{command_prefix}}explore.",
+      "description": "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before {{command_prefix}}explore. Activates for requests involving capturing a problem statement, defining audience and constraints, or starting a new design brief.",
       "argument_hint": "[--re-brief to redo intake on existing project]",
       "tools": "Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get"
     },
@@ -73,7 +73,7 @@
     },
     {
       "name": "compare",
-      "description": "Compute the delta between the `DESIGN.md` baseline (from scan) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`.",
+      "description": "Compute the delta between the `DESIGN.md` baseline (from scan) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`. Activates for requests involving diffing a design baseline against verification output, or a before-after design delta.",
       "argument_hint": "",
       "user_invocable": true
     },
@@ -85,7 +85,7 @@
     },
     {
       "name": "connections",
-      "description": "Interactive onboarding wizard for the 33 external integrations the pipeline supports - probes all (`figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`, `pinterest`, `claude-design`, `paper-design`, `pencil-dev`, `21st-dev`, `magic-patterns`, `lazyweb`, `mobbin`, `slack`, `discord`, `linear`, `jira`, `notion`, `lottie`, `rive`, `framer`, `penpot`, `webflow`, `v0-dev`, `plasmic`, `builder-io`, `launchdarkly`, `statsig`, `growthbook`, `usertesting`, `maze`, `hotjar`), recommends based on project type, walks the user through setup (auto-run MCP install or copy-command fallback), writes results to `STATE.md <connections>`. Use after `{{command_prefix}}new-project` or whenever the user wants to add, inspect, or skip a connection. Re-runnable anytime.",
+      "description": "Interactive onboarding wizard for the 33 external integrations the pipeline supports - probes all (`figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`, `pinterest`, `claude-design`, `paper-design`, `pencil-dev`, `21st-dev`, `magic-patterns`, `lazyweb`, `mobbin`, `slack`, `discord`, `linear`, `jira`, `notion`, `lottie`, `rive`, `framer`, `penpot`, `webflow`, `v0-dev`, `plasmic`, `builder-io`, `launchdarkly`, `statsig`, `growthbook`, `usertesting`, `maze`, `hotjar`), recommends based on project type, walks the user through setup (auto-run MCP install or copy-command fallback), writes results to `STATE.md <connections>`. Use after `{{command_prefix}}new-project` or whenever the user wants to add, inspect, or skip a connection. Re-runnable anytime. Activates for requests involving setting up external integrations, probing Figma or preview or storybook, or onboarding tools.",
       "argument_hint": "[list | <connection-name> | --auto]",
       "user_invocable": true,
       "tools": "Read, Write, Bash, Glob, Grep, AskUserQuestion, ToolSearch"
@@ -99,7 +99,7 @@
     },
     {
       "name": "darkmode",
-      "description": "Audit a project's dark mode implementation - detects architecture (CSS custom props, Tailwind `dark:` prefix, or JS class toggle), runs architecture-specific contrast / token-override / anti-pattern / meta-property checks, and writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`. Use when the user wants to verify dark mode quality without re-running the full design pipeline. Read-only - no score writeback to `DESIGN.md`.",
+      "description": "Audit a project's dark mode implementation - detects architecture (CSS custom props, Tailwind `dark:` prefix, or JS class toggle), runs architecture-specific contrast / token-override / anti-pattern / meta-property checks, and writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`. Use when the user wants to verify dark mode quality without re-running the full design pipeline. Read-only - no score writeback to `DESIGN.md`. Activates for requests involving auditing dark mode, checking dark-theme contrast, or dark-mode anti-patterns.",
       "argument_hint": "",
       "user_invocable": true
     },
@@ -112,7 +112,7 @@
     {
       "name": "design",
       "frontmatter_name": "design",
-      "description": "Stage 4 of 5 orchestrator that reads DESIGN-PLAN.md, partitions tasks by wave + parallel-safe flag, and spawns design-executor agents with the appropriate isolation (worktree for parallel batches, in-place for sequential tail). Use when DESIGN-PLAN.md is approved and ready for implementation.",
+      "description": "Stage 4 of 5 orchestrator that reads DESIGN-PLAN.md, partitions tasks by wave + parallel-safe flag, and spawns design-executor agents with the appropriate isolation (worktree for parallel batches, in-place for sequential tail). Use when DESIGN-PLAN.md is approved and ready for implementation. Activates for requests involving implementing UI, building components, or turning a plan into working interface code.",
       "argument_hint": "[--auto] [--parallel] [--variants N]",
       "user_invocable": true,
       "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint"
@@ -120,7 +120,7 @@
     {
       "name": "discover",
       "frontmatter_name": "discover",
-      "description": "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after {{command_prefix}}scan when a fast-path context build is wanted instead of the full {{command_prefix}}explore.",
+      "description": "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after {{command_prefix}}scan when a fast-path context build is wanted instead of the full {{command_prefix}}explore. Activates for requests involving detecting an existing design system, inventorying tokens and components, or onboarding a brownfield repo.",
       "argument_hint": "[--auto]",
       "user_invocable": true
     },
@@ -132,13 +132,13 @@
     },
     {
       "name": "do",
-      "description": "Natural-language design task router. Parses your intent, maps to the right gdd command(s), confirms before executing.",
+      "description": "Natural-language design task router. Parses your intent, maps to the right gdd command(s), confirms before executing. Activates for requests involving a natural-language design request, routing intent to the right command, or not knowing which skill to use.",
       "argument_hint": "<natural language description>",
       "tools": "Read, Write, AskUserQuestion"
     },
     {
       "name": "explore",
-      "description": "Stage 2 of 5 - unified exploration merging inventory grep + design interview. Probes 6 connections, scans the codebase, conducts the AskUserQuestion interview, and writes .design/DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md. Use after {{command_prefix}}brief to map the existing system and lock decisions before planning.",
+      "description": "Stage 2 of 5 - unified exploration merging inventory grep + design interview. Probes 6 connections, scans the codebase, conducts the AskUserQuestion interview, and writes .design/DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md. Use after {{command_prefix}}brief to map the existing system and lock decisions before planning. Activates for requests involving researching design direction, gathering references, or exploring visual options.",
       "argument_hint": "[--skip-interview] [--skip-scan]",
       "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__probe_connections, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__add_decision"
     },
@@ -156,7 +156,7 @@
     },
     {
       "name": "fast",
-      "description": "Trivial inline design task. No subagents, no planning documents, no pipeline stages. Just do the thing described.",
+      "description": "Trivial inline design task. No subagents, no planning documents, no pipeline stages. Just do the thing described. Activates for requests involving a single quick design fix, a one-shot change, or a fast targeted edit.",
       "argument_hint": "<task description>",
       "tools": "Read, Write, Edit, Bash, Grep, Glob",
       "disable_model_invocation": true
@@ -175,7 +175,7 @@
     },
     {
       "name": "health",
-      "description": "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions.",
+      "description": "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions. Activates for requests involving checking .design artifact health, staleness, token drift, or broken state transitions.",
       "tools": "Read, Bash, Glob, Grep, mcp__gdd_state__get",
       "disable_model_invocation": true
     },
@@ -200,7 +200,7 @@
     },
     {
       "name": "live",
-      "description": "Live in-browser design mode. The user picks a DOM element on a running dev server (via the Claude Preview MCP), the agent generates N design variants in one batch, they hot-swap in place through HMR or preview_eval using a data-gdd-variant marker, the user accepts or discards, and the whole pick-generate-accept loop persists to .design/live-sessions so it survives a crash or resume. Use when the user wants to iterate on the look of a live component against a real running server, asks to try variants on a page, or runs the live command with a url; falls back to a screenshot-only degraded mode on harnesses without MCP support.",
+      "description": "Live in-browser design mode. The user picks a DOM element on a running dev server (via the Claude Preview MCP), the agent generates N design variants in one batch, they hot-swap in place through HMR or preview_eval using a data-gdd-variant marker, the user accepts or discards, and the whole pick-generate-accept loop persists to .design/live-sessions so it survives a crash or resume. Use when the user wants to iterate on the look of a live component against a real running server, asks to try variants on a page, or runs the live command with a url; falls back to a screenshot-only degraded mode on harnesses without MCP support. Activates for requests involving in-browser design iteration, picking an element on a dev server, or generating variants with hot-swap.",
       "argument_hint": "[--variants N] [--resume <session-id>] [url]",
       "tools": "Read, Write, Edit, Bash, Glob, Grep, Task",
       "user_invocable": true,
@@ -238,6 +238,14 @@
       "description": "Initialize a new get-design-done project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage.",
       "argument_hint": "[--name <project-name>]",
       "tools": "Read, Write, AskUserQuestion, Bash, Glob"
+    },
+    {
+      "name": "new-skill",
+      "description": "Scaffolds a new Phase-28.5 + Phase-50-compliant skill: gathers a name, a multi-paragraph v3 description, a lifecycle stage, an allowed-tools list, and optional composes_with neighbours, then writes source/skills/<name>/SKILL.md from the pure generator. Use when adding a brand-new gdd skill and you want the frontmatter, length cap, and v3 description form correct from the first commit. Activates for requests involving authoring a skill, scaffolding a command, creating a new SKILL.md, or adding a slash command.",
+      "argument_hint": "<skill-name>",
+      "tools": "Read, Write, Bash, AskUserQuestion",
+      "user_invocable": true,
+      "registered_in_phase": "50"
     },
     {
       "name": "next",
@@ -304,7 +312,7 @@
     {
       "name": "plan",
       "frontmatter_name": "plan",
-      "description": "Stage 3 of 5 orchestrator that reads DESIGN-CONTEXT.md, runs optional research (phase-researcher / pattern-mapper / assumptions-analyzer / synthesizer), spawns design-planner + design-plan-checker, and writes DESIGN-PLAN.md. Use when DESIGN-CONTEXT.md is locked and you need a wave-ordered execution plan.",
+      "description": "Stage 3 of 5 orchestrator that reads DESIGN-CONTEXT.md, runs optional research (phase-researcher / pattern-mapper / assumptions-analyzer / synthesizer), spawns design-planner + design-plan-checker, and writes DESIGN-PLAN.md. Use when DESIGN-CONTEXT.md is locked and you need a wave-ordered execution plan. Activates for requests involving breaking design work into steps, sequencing implementation, or planning a build.",
       "argument_hint": "[--auto] [--parallel]",
       "user_invocable": true,
       "tools": "Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections"
@@ -325,7 +333,7 @@
     },
     {
       "name": "progress",
-      "description": "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit.",
+      "description": "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit. Activates for requests involving showing current project state, routing to the next action, or a status check.",
       "argument_hint": "[--forensic]",
       "tools": "Read, Bash, Grep, Glob, mcp__gdd_state__get, mcp__gdd_status, mcp__gdd_phase_current"
     },
@@ -349,7 +357,7 @@
     },
     {
       "name": "quick",
-      "description": "Run the pipeline with optional agents skipped for speed. Skips: phase-researcher, design-assumptions-analyzer, design-integration-checker. Keeps: planner, executor, verifier, auditor.",
+      "description": "Run the pipeline with optional agents skipped for speed. Skips: phase-researcher, design-assumptions-analyzer, design-integration-checker. Keeps: planner, executor, verifier, auditor. Activates for requests involving a lightweight design pass, a fast iteration, or a quick low-ceremony change.",
       "argument_hint": "[--skip <agent-name>] [stage]",
       "tools": "Read, Task",
       "disable_model_invocation": true
@@ -424,7 +432,7 @@
     {
       "name": "scan",
       "frontmatter_name": "scan",
-      "description": "Pre-pipeline initializer that maps an existing repo's design system (colors, typography, spacing, components, tokens), runs the anti-pattern audit, scores the 7 weighted categories, and writes DESIGN.md + .design/DESIGN-DEBT.md. Use when starting work in any new or existing repo before {{command_prefix}}discover.",
+      "description": "Pre-pipeline initializer that maps an existing repo's design system (colors, typography, spacing, components, tokens), runs the anti-pattern audit, scores the 7 weighted categories, and writes DESIGN.md + .design/DESIGN-DEBT.md. Use when starting work in any new or existing repo before {{command_prefix}}discover. Activates for requests involving a fast read-only anti-pattern sweep, a quick design lint, or spotting slop without a full audit.",
       "argument_hint": "[--quick] [--full]",
       "user_invocable": true
     },
@@ -437,7 +445,7 @@
     },
     {
       "name": "ship",
-      "description": "Post-verify PR flow - creates a clean PR branch, invokes code review check, and prepares the PR for merge.",
+      "description": "Post-verify PR flow - creates a clean PR branch, invokes code review check, and prepares the PR for merge. Activates for requests involving finishing a cycle, packaging design output, or moving work to a pull request.",
       "argument_hint": "[--title <PR title>] [--draft]",
       "tools": "Read, Write, Bash, AskUserQuestion, Task",
       "disable_model_invocation": true
@@ -556,7 +564,7 @@
     {
       "name": "verify",
       "frontmatter_name": "verify",
-      "description": "Stage 5 of 5 orchestrator that spawns design-auditor, design-verifier, and design-integration-checker in sequence, interprets pass/gap result, and drives the gap-response loop (inline fix, save-and-exit, or accept-as-is). Use when implementation is complete and ready for final pre-ship verification.",
+      "description": "Stage 5 of 5 orchestrator that spawns design-auditor, design-verifier, and design-integration-checker in sequence, interprets pass/gap result, and drives the gap-response loop (inline fix, save-and-exit, or accept-as-is). Use when implementation is complete and ready for final pre-ship verification. Activates for requests involving checking finished UI against the design system, running a pre-ship review, or final verification.",
       "argument_hint": "[--auto] [--post-handoff]",
       "user_invocable": true,
       "tools": "mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_must_have, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections"

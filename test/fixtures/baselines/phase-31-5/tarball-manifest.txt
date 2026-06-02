@@ -161,6 +161,7 @@ dist/claude-code/.claude/skills/migrate/SKILL.md
 dist/claude-code/.claude/skills/new-cycle/SKILL.md
 dist/claude-code/.claude/skills/new-cycle/milestone-completeness-rubric.md
 dist/claude-code/.claude/skills/new-project/SKILL.md
+dist/claude-code/.claude/skills/new-skill/SKILL.md
 dist/claude-code/.claude/skills/next/SKILL.md
 dist/claude-code/.claude/skills/note/SKILL.md
 dist/claude-code/.claude/skills/openrouter-status/SKILL.md
@@ -255,6 +256,7 @@ reference/accessibility.md
 reference/adr-format.md
 reference/ai-native-tool-interface.md
 reference/anti-patterns.md
+reference/anti-slop-rubric.md
 reference/architecture-vocabulary.md
 reference/audit-scoring.md
 reference/authority-feeds.md
@@ -432,6 +434,7 @@ reference/schemas/recipe.schema.json
 reference/schemas/runtime-models.schema.json
 reference/shared-preamble.md
 reference/skill-authoring-contract.md
+reference/skill-graph.md
 reference/skill-metadata.md
 reference/skill-placeholders.md
 reference/spatial.md
@@ -624,6 +627,7 @@ scripts/lib/manifest/harnesses.json
 scripts/lib/manifest/index.cjs
 scripts/lib/manifest/loader.cjs
 scripts/lib/manifest/prose-denylist.json
+scripts/lib/manifest/scaffolder.cjs
 scripts/lib/manifest/schemas/harnesses.schema.json
 scripts/lib/manifest/schemas/prose-denylist.schema.json
 scripts/lib/manifest/schemas/skills.schema.json
@@ -844,6 +848,7 @@ skills/migrate/SKILL.md
 skills/new-cycle/SKILL.md
 skills/new-cycle/milestone-completeness-rubric.md
 skills/new-project/SKILL.md
+skills/new-skill/SKILL.md
 skills/next/SKILL.md
 skills/note/SKILL.md
 skills/openrouter-status/SKILL.md

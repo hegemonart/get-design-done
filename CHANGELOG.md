@@ -4,6 +4,55 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.50.0] - 2026-06-03
+
+### Phase 50 - Authoring Contract v3
+
+Two cross-repo-validated additions to the authoring contract. A verb-based anti-slop rubric catches a different
+class of failure than the noun-based 7-pillar audit (the pillars ask "is the typography wrong?", the verb axes ask
+"is it generically AI-default?"). And a machine-parseable skill-composition manifest fills the "no skill calls
+another skill" gap with a DAG validator and an auto-generated skill graph. Planned and executed via the GSD pipeline
+(3 parallel executor subagents). No new runtime dependency, no new egress. This closes the 45-to-50 release run.
+
+### Breaking changes
+
+- **Skill descriptions move to a multi-paragraph v3 form** (`<what>. Use when <triggers>. Activates for requests
+  involving <kw1>, <kw2>, <kw3>.`). Both the v2 and v3 forms are accepted for one minor version (transition window);
+  `/gdd:health` reports adoption ("Skills: N/88 in v3 form"). The 1024-char cap is unchanged. A new boilerplate-cohort
+  lint (`validate:skill-frontmatter`) fails CI if three or more skills share an identical opening sentence.
+- **Two new CI gates guard the composition graph.** `validate:composition-graph` fails on a cycle or a dangling
+  `composes_with`/`next_skills` reference; `build:skill-graph:check` fails if `reference/skill-graph.md` drifts from
+  `skills.json`. Authors adding composition edges must keep the graph acyclic and the generated graph current.
+
+### Added
+
+- **`reference/anti-slop-rubric.md`**: 5 orthogonal verb axes (Directness, Distinctness, Hierarchy, Authenticity,
+  Density), 1-10 each; `sum < 35/50` routes a finding to `design-debt-crawler` as `category: aesthetic-slop`.
+  `design-auditor` emits `verb_axes_scored` as a lens-tag (no pillar change, mirrors `emotion_levels`).
+- **`reference/visual-tells.md` v2**: the 8 Phase-49 categories plus 5 more (stock-photo-people, badge-spam,
+  oversized-single-word, motion-without-content-intent, narrator-from-a-distance-UI), each cross-linked to its
+  primary verb axis.
+- **Skill composition manifest**: optional `composes_with`/`next_skills` frontmatter (documented in the skills
+  schema), `scripts/validate-composition-graph.cjs` (cycle + dangling-ref detection), and an auto-generated
+  `reference/skill-graph.md` (mermaid, grouped by lifecycle stage) via `scripts/generate-skill-graph.cjs`.
+- **`reference/skill-authoring-contract.md` v3** (description form + transition window + composition fields) +
+  **`/gdd:new-skill`** scaffolder (`scripts/lib/manifest/scaffolder.cjs`, @clack/prompts) that emits a v3-compliant
+  skill, with `composes_with` suggestions by lifecycle stage.
+- **Description migration**: 18 high-traffic skills (brief, explore, plan, design, verify, audit, scan, discover, do,
+  ship, health, progress, live, connections, darkmode, compare, fast, quick) moved to the v3 form; the rest follow
+  gradually under the transition window. `/gdd:health` + `/gdd:progress` surface adoption and composition-graph readiness.
+
+### Notes
+
+- 6-manifest lockstep at **v1.50.0** + `OFF_CADENCE_VERSIONS.add('1.50.0')` + 37 `manifests-version.txt` baselines +
+  plugin keywords (`anti-slop-rubric`, `skill-composition`, `skill-graph`). Re-locked: skill-list (88), registry (175),
+  registry-diff, phase-42 count (112), 6 `*-after.md` byte snapshots (brief/design/explore/verify + health/progress),
+  the phase-28.5 distribution + warn count (4 -> 5, progress crossed 100 lines), tarball golden 907 -> 912 (+5).
+- The verb axes are an orthogonal lens (no new pillar, no scoring-math change). `composes_with`/`next_skills` are
+  optional in v3 (mandatory deferred to v4). Out of scope: rubric auto-fix, LLM-judge of axes, skill body migration.
+
+---
+
 ## [1.49.0] - 2026-06-03
 
 ### Phase 49 - Quick Anti-Slop Floor

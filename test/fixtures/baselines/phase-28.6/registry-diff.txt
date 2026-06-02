@@ -171,3 +171,5 @@ debt-categories: reference/debt-categories.md
 brief-quality-rubric: reference/brief-quality-rubric.md
 visual-tells: reference/visual-tells.md
 reviewer-confidence-gate: reference/reviewer-confidence-gate.md
+anti-slop-rubric: reference/anti-slop-rubric.md
+skill-graph: reference/skill-graph.md

@@ -88,12 +88,14 @@ test('28.5-11 baseline: summary records 0 blockers (D-12 success criterion; warn
   // + self-review discipline blocks to the 5 stage-transition skills, pushing
   // 4 of them (brief/explore/plan/verify) into the validator's advisory WARN
   // band (>=100 lines, well under the BLOCK threshold of 250) — accepted by
-  // design per the Phase 32 Wave-A/B summaries ("warn, not block"). The
+  // design per the Phase 32 Wave-A/B summaries ("warn, not block"). Phase 50
+  // (v1.50.0) added a composition-graph-readiness step to progress, pushing it
+  // (103 lines) into the same advisory WARN band, so the count is now 5. The
   // ZERO-BLOCKERS invariant is the hard contract and remains enforced; the
-  // warn count is now re-locked to the post-Phase-32 distribution snapshot
+  // warn count is re-locked to the post-Phase-50 distribution snapshot
   // (see the "current run matches baseline summary" test below).
   assert.equal(summary.blockers, 0, `baseline records blockers=${summary.blockers}; expected 0 (hard contract)`);
-  assert.equal(summary.warnings, 4, `baseline records warnings=${summary.warnings}; expected 4 post-Phase-32 (brief/explore/plan/verify discipline blocks)`);
+  assert.equal(summary.warnings, 5, `baseline records warnings=${summary.warnings}; expected 5 post-Phase-50 (brief/explore/plan/verify discipline blocks + progress composition-graph step)`);
 });
 
 test('28.5-11 baseline: current validator run matches baseline summary (zero regression in blockers/warnings)', () => {
