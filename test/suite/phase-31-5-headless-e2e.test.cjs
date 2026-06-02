@@ -207,12 +207,13 @@ describe('31-5-09: headless E2E install verification (pack → install → run)'
     cleanup();
   });
 
-  // -- Test 1: all 6 bins resolve from the installed tarball ----------------
+  // -- Test 1: all 7 bins resolve from the installed tarball ----------------
   // Read package.json#bin FROM THE INSTALL (not the repo) and assert every
   // mapped path exists under installRoot. This is the core "tarball ships
-  // what bin advertises" assertion — offline, runs on CI.
+  // what bin advertises" assertion — offline, runs on CI. (Phase 41 added
+  // gdd-detect — the deterministic anti-pattern CLI — as the 7th bin.)
   test(
-    '31-5-09: all 6 bins resolve from the installed tarball',
+    '31-5-09: all 7 bins resolve from the installed tarball',
     { skip: IS_WINDOWS ? SKIP_REASON_WIN : false },
     () => {
       const st = ensureInstall();
@@ -221,6 +222,7 @@ describe('31-5-09: headless E2E install verification (pack → install → run)'
         fs.readFileSync(path.join(st.installRoot, 'package.json'), 'utf8'),
       );
       const EXPECTED_BINS = [
+        'gdd-detect',
         'gdd-events',
         'gdd-graph',
         'gdd-mcp',
@@ -239,7 +241,7 @@ describe('31-5-09: headless E2E install verification (pack → install → run)'
           `bin '${name}' maps to ${pkg.bin[name]} which is absent from the install: ${mapped}`,
         );
       }
-      // Sanity: exactly the 6 documented bins, no more no less.
+      // Sanity: exactly the 7 documented bins, no more no less.
       assert.deepEqual(
         Object.keys(pkg.bin).sort(),
         EXPECTED_BINS.slice().sort(),

@@ -1,0 +1,93 @@
+[
+  {
+    "ruleId": "BAN-11",
+    "file": "test/fixtures/detect/positive/avatar.jsx",
+    "line": 2,
+    "column": 39,
+    "match": "outline-slate-200"
+  },
+  {
+    "ruleId": "BAN-01",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 5,
+    "column": 3,
+    "match": "border-left: 4px"
+  },
+  {
+    "ruleId": "BAN-02",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 9,
+    "column": 3,
+    "match": "background-clip: text"
+  },
+  {
+    "ruleId": "BAN-02",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 10,
+    "column": 11,
+    "match": "text-fill-color: transparent"
+  },
+  {
+    "ruleId": "BAN-03",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 14,
+    "column": 31,
+    "match": "cubic-bezier(0.68, -0.55, 0.27, 1.55); /* BAN-0"
+  },
+  {
+    "ruleId": "BAN-05",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 18,
+    "column": 3,
+    "match": "background: #000000"
+  },
+  {
+    "ruleId": "BAN-07",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 21,
+    "column": 5,
+    "match": ":focus { outline: none"
+  },
+  {
+    "ruleId": "BAN-08",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 24,
+    "column": 3,
+    "match": "transition: all "
+  },
+  {
+    "ruleId": "BAN-12",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 24,
+    "column": 3,
+    "match": "transition: all"
+  },
+  {
+    "ruleId": "BAN-09",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 27,
+    "column": 27,
+    "match": "transform: scale(0)"
+  },
+  {
+    "ruleId": "BAN-13",
+    "file": "test/fixtures/detect/positive/ban.css",
+    "line": 32,
+    "column": 3,
+    "match": "will-change: all"
+  },
+  {
+    "ruleId": "BAN-06",
+    "file": "test/fixtures/detect/positive/viewport.html",
+    "line": 4,
+    "column": 69,
+    "match": "maximum-scale=1"
+  },
+  {
+    "ruleId": "BAN-06",
+    "file": "test/fixtures/detect/positive/viewport.html",
+    "line": 4,
+    "column": 86,
+    "match": "user-scalable=no"
+  }
+]

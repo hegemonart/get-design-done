@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://get-design-done.example/schemas/gdd-detect-rule.schema.json",
+  "title": "gdd-detect rule",
+  "description": "Phase 41 — the shape of a scripts/lib/detect/rules/ban-NN.cjs module export. Each rule ports a statically-detectable BAN-NN anti-pattern from reference/anti-patterns.md into an executable matcher. The markdown catalogue stays the canonical prose; the rule files are the canonical executable; scripts/sync-rule-catalogue.cjs keeps them in parity.",
+  "type": "object",
+  "required": ["id", "category", "name", "description", "references", "severity"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^BAN-[0-9]{2}$",
+      "description": "The BAN-NN id — matches a `### BAN-NN:` heading + a `bdId: BAN-NN` marker in reference/anti-patterns.md."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["decoration", "motion", "color", "accessibility", "performance", "layout", "typography"],
+      "description": "Coarse grouping for report sectioning."
+    },
+    "name": { "type": "string", "minLength": 1, "description": "Human title (the BAN heading text after the id)." },
+    "description": { "type": "string", "minLength": 1, "description": "One-line explanation of what the rule flags + why." },
+    "references": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^reference/.+#" },
+      "description": "Bidirectional links to the catalogue paragraph(s) that explain the alternative (e.g. reference/anti-patterns.md#BAN-04)."
+    },
+    "severity": { "type": "string", "enum": ["error", "warn"], "description": "error fails a strict gate; warn is advisory (open-Q default: error|warn)." },
+    "pattern": { "type": "string", "description": "The regex source ported from the catalogue's **Grep** (regex-fast path)." }
+  }
+}

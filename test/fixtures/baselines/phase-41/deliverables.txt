@@ -1,0 +1,7 @@
+bin/gdd-detect
+scripts/lib/detect/engine.cjs
+scripts/lib/detect/cli.cjs
+scripts/lib/detect/rule-schema.json
+scripts/lib/detect/rules/index.cjs
+scripts/sync-rule-catalogue.cjs
+scripts/hooks/pre-commit-detect.sh

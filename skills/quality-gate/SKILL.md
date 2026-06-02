@@ -39,7 +39,7 @@ Read once at start from `.design/config.json` (all optional; defaults in parens)
 Stop at the first tier that produces ≥ 1 command:
 
 1. **Authoritative config.** If `.design/config.json` has `quality_gate.commands` non-empty, use verbatim.
-2. **Auto-detect from `package.json#scripts`** — match against allowlist: `lint`, `typecheck`, `tsc` (only if `typecheck` absent), `test`, `chromatic`, `test:visual`. Exclude by name: `test:e2e`, `test:integration` (if separate `test`), anything starting `dev:`, `build:`, `start:`. Run via `npm run <name>` unless `quality_gate.package_manager` overrides.
+2. **Auto-detect from `package.json#scripts`** — match against allowlist: `lint`, `typecheck`, `tsc` (only if `typecheck` absent), `test`, `chromatic`, `test:visual`, `lint:design` (Phase 41 — the `gdd-detect` deterministic anti-pattern gate, alongside `axe`/`pa11y`/`lighthouse`). Exclude by name: `test:e2e`, `test:integration` (if separate `test`), anything starting `dev:`, `build:`, `start:`. Run via `npm run <name>` unless `quality_gate.package_manager` overrides.
 3. **Skip with notice.** Emit `quality_gate_skipped` (Step 6) and write a `<run/>` with `status="skipped"`. Verify treats skipped as non-blocking.
 
 ## Step 2 — Parallel run

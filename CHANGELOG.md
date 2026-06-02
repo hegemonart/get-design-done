@@ -4,6 +4,54 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.41.0] - 2026-06-02
+
+### Phase 41 — Deterministic Anti-Pattern CLI (`gdd-detect`)
+
+GDD's BAN-NN anti-pattern catalogue was consumable only by spawning a Claude session through
+`design-auditor` — no fast CI gate, no pre-commit hook, no zero-LLM regression check. 41 ships
+**`gdd-detect`**: a **dep-free, offline** Node CLI that scans HTML/CSS/JSX for the 11 statically-
+detectable BAN rules and emits JSON or human findings, each linked to its catalogue paragraph.
+(Inspired by `pbakaus/impeccable`.) **No new runtime dependency, no new egress.**
+
+### Breaking changes
+
+**None.** `gdd-detect` is purely additive — a new `bin` entry + a new `lint:design` script + new
+`scripts/lib/detect/` modules. Nothing existing changes behavior; `design-auditor` swaps its inline
+BAN greps for a `gdd-detect --json` call (same findings, deterministic). Upgrading from v1.40.5 is a no-op for existing workflows.
+
+### Added
+
+- **`bin/gdd-detect`** (`gdd-detect <path> [--json] [--fast] [--rule BAN-NN] [--puppeteer]`) — exit
+  `0` clean / `2` findings / `1` invocation error. Recursive scan of HTML/CSS/JSX/TSX.
+- **`scripts/lib/detect/`** — a pure, dep-free engine + `rule-schema.json` + 11 per-rule matchers
+  (`rules/ban-NN.cjs`) ported verbatim from the catalogue's own `**Grep**` patterns
+  (BAN-01/02/03/05/06/07/08/09/11/12/13). BAN-04 + BAN-10 are subjective (matcher-exempt).
+- **`scripts/sync-rule-catalogue.cjs`** — bidirectional parity gate: every rule ↔ a `### BAN-NN:`
+  heading + a `bdId: BAN-NN` marker; no orphans; no un-ported detectable rule.
+- **`scripts/hooks/pre-commit-detect.sh`** — opt-in pre-commit scaffold.
+- **`lint:design`** npm script + `sync:rule-catalogue` npm script.
+
+### Changed
+
+- **`reference/anti-patterns.md`** — `bdId: BAN-NN` markers under every BAN heading.
+- **`agents/design-auditor.md`** — Pillar-7 inline BAN greps replaced by one `gdd-detect --json` call.
+- **`skills/quality-gate/SKILL.md`** — `lint:design` added to the Phase-25 auto-detect linter allowlist.
+
+### Notes
+
+- **Two execution paths**: regex-fast (the dep-free default) and DOM-aware (`jsdom`, a soft
+  `try-require` optional — **not** a `package.json` dependency); `--fast` forces regex; absent jsdom
+  falls back with a one-line warning. A `http(s)://` path needs `--puppeteer` (also soft-optional) and
+  prints a clear install message otherwise — never a stack trace. The CLI is **offline by default** (a
+  static network-isolation test fails the build on any network primitive in the detect tree).
+- 6-manifest lockstep at **v1.41.0** + `OFF_CADENCE_VERSIONS.add('1.41.0')` (minor) + the 35 live-pinned
+  `manifests-version.txt` baselines forward-propagated 1.40.5 → 1.41.0.
+- Inventory: tarball golden 731 → 747 (+16: `bin/gdd-detect` + `scripts/lib/detect/**`). No
+  skill/agent/registry deltas (`sync-rule-catalogue.cjs` + the pre-commit scaffold are maintainer-only).
+
+---
+
 ## [1.40.5] - 2026-06-01
 
 ### Phase 40.5 — GDD CLI Localization
