@@ -7,85 +7,351 @@
       "id": "claude",
       "name": "Claude Code",
       "config_dir": ".claude",
-      "runtime_models_ref": "reference/runtime-models.md#claude"
+      "runtime_models_ref": "reference/runtime-models.md#claude",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "argument-hint",
+          "tools",
+          "disable-model-invocation"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": true,
+        "placeholder_substitution": true,
+        "install_path": "dist/claude-code/.claude/skills/",
+        "status": "tested"
+      },
+      "last_verified": "2026-06-02",
+      "capability_notes": "Host runtime. Marketplace-registered, end-to-end documented, Phase 42 golden baseline.",
+      "fragment_links": [
+        "reference/runtime-models.md#claude---claude-code"
+      ]
     },
     {
       "id": "codex",
       "name": "OpenAI Codex CLI",
       "config_dir": ".codex",
-      "runtime_models_ref": "reference/runtime-models.md#codex"
+      "runtime_models_ref": "reference/runtime-models.md#codex",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd-<skill>",
+        "mcp_support": true,
+        "placeholder_substitution": true,
+        "install_path": "dist/codex/.codex/skills/",
+        "status": "experimental"
+      },
+      "last_verified": null,
+      "capability_notes": "Peer-CLI delegation target (ASP). Flat /gdd- command namespace. MCP auto-registered.",
+      "fragment_links": [
+        "reference/runtime-models.md#codex---openai-codex-cli",
+        "reference/codex-tools.md#tool-name-mapping",
+        "reference/peer-cli-capabilities.md#codex-asp",
+        "reference/peer-protocols.md#asp---app-server-protocol-codex"
+      ]
     },
     {
       "id": "gemini",
       "name": "Gemini CLI",
       "config_dir": ".gemini",
-      "runtime_models_ref": "reference/runtime-models.md#gemini"
+      "runtime_models_ref": "reference/runtime-models.md#gemini",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": true,
+        "placeholder_substitution": true,
+        "install_path": "dist/gemini/.gemini/skills/",
+        "status": "experimental"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#gemini---gemini-cli",
+        "reference/gemini-tools.md#tool-name-mapping",
+        "reference/peer-cli-capabilities.md#gemini-acp",
+        "reference/peer-protocols.md#acp---agent-client-protocol"
+      ]
     },
     {
       "id": "qwen",
       "name": "Qwen Code",
       "config_dir": ".qwen",
-      "runtime_models_ref": "reference/runtime-models.md#qwen"
+      "runtime_models_ref": "reference/runtime-models.md#qwen",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/qwen/.qwen/skills/",
+        "status": "experimental"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#qwen---qwen-code",
+        "reference/peer-cli-capabilities.md#qwen-acp",
+        "reference/peer-protocols.md#acp---agent-client-protocol"
+      ]
     },
     {
       "id": "kilo",
       "name": "Kilo Code",
       "config_dir": ".kilo",
-      "runtime_models_ref": "reference/runtime-models.md#kilo"
+      "runtime_models_ref": "reference/runtime-models.md#kilo",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/kilo/.kilo/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#kilo---kilo-code"
+      ]
     },
     {
       "id": "copilot",
       "name": "GitHub Copilot CLI",
       "config_dir": ".copilot",
-      "runtime_models_ref": "reference/runtime-models.md#copilot"
+      "runtime_models_ref": "reference/runtime-models.md#copilot",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/copilot/.copilot/skills/",
+        "status": "experimental"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#copilot---github-copilot-cli",
+        "reference/peer-cli-capabilities.md#copilot-acp",
+        "reference/peer-protocols.md#acp---agent-client-protocol"
+      ]
     },
     {
       "id": "cursor",
       "name": "Cursor",
       "config_dir": ".cursor",
-      "runtime_models_ref": "reference/runtime-models.md#cursor"
+      "runtime_models_ref": "reference/runtime-models.md#cursor",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/cursor/.cursor/skills/",
+        "status": "experimental"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#cursor---cursor",
+        "reference/peer-cli-capabilities.md#cursor-acp",
+        "reference/peer-protocols.md#acp---agent-client-protocol"
+      ]
     },
     {
       "id": "windsurf",
       "name": "Windsurf (Cascade)",
       "config_dir": ".windsurf",
-      "runtime_models_ref": "reference/runtime-models.md#windsurf"
+      "runtime_models_ref": "reference/runtime-models.md#windsurf",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/windsurf/.windsurf/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#windsurf---windsurf"
+      ]
     },
     {
       "id": "antigravity",
       "name": "Antigravity",
       "config_dir": ".antigravity",
-      "runtime_models_ref": "reference/runtime-models.md#antigravity"
+      "runtime_models_ref": "reference/runtime-models.md#antigravity",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/antigravity/.antigravity/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#antigravity---antigravity"
+      ]
     },
     {
       "id": "augment",
       "name": "Augment",
       "config_dir": ".augment",
-      "runtime_models_ref": "reference/runtime-models.md#augment"
+      "runtime_models_ref": "reference/runtime-models.md#augment",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/augment/.augment/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#augment---augment"
+      ]
     },
     {
       "id": "trae",
       "name": "Trae",
       "config_dir": ".trae",
-      "runtime_models_ref": "reference/runtime-models.md#trae"
+      "runtime_models_ref": "reference/runtime-models.md#trae",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/trae/.trae/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#trae---trae"
+      ]
     },
     {
       "id": "codebuddy",
       "name": "CodeBuddy",
       "config_dir": ".codebuddy",
-      "runtime_models_ref": "reference/runtime-models.md#codebuddy"
+      "runtime_models_ref": "reference/runtime-models.md#codebuddy",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/codebuddy/.codebuddy/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#codebuddy---codebuddy"
+      ]
     },
     {
       "id": "cline",
       "name": "Cline",
       "config_dir": ".cline",
-      "runtime_models_ref": "reference/runtime-models.md#cline"
+      "runtime_models_ref": "reference/runtime-models.md#cline",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/cline/.cline/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "Installs into .clinerules at install time (clinerules-embed special case); dist/cline/ is the compile artifact only.",
+      "fragment_links": [
+        "reference/runtime-models.md#cline---cline"
+      ]
     },
     {
       "id": "opencode",
       "name": "OpenCode",
       "config_dir": ".opencode",
-      "runtime_models_ref": "reference/runtime-models.md#opencode"
+      "runtime_models_ref": "reference/runtime-models.md#opencode",
+      "capability_matrix": {
+        "skill_discovery": true,
+        "frontmatter_fields_supported": [
+          "name",
+          "description",
+          "tools"
+        ],
+        "command_syntax": "/gdd:<skill>",
+        "mcp_support": false,
+        "placeholder_substitution": true,
+        "install_path": "dist/opencode/.opencode/skills/",
+        "status": "untested"
+      },
+      "last_verified": null,
+      "capability_notes": "",
+      "fragment_links": [
+        "reference/runtime-models.md#opencode---opencode"
+      ]
     }
   ]
 }

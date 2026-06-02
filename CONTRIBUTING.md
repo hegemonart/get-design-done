@@ -153,3 +153,24 @@ contain a banned token, wrap it in `<!-- prose-lint-disable -->` ... `<!-- prose
 
 Replace an em dash with a comma, a colon, parentheses, or a spaced hyphen. Do not edit `skills/` or
 `dist/` by hand (Phase 42 makes them generated); edit `source/skills/` and run `npm run build:skills`.
+
+## Updating a harness (Phase 44)
+
+Harness support is described by one source of truth: `scripts/lib/manifest/harnesses.json` (each record's
+`capability_matrix` + `last_verified` + `status`). `HARNESSES.md` at the repo root is GENERATED from it
+(`npm run build:harnesses`; CI drift-gates `committed === generated` via `build:harnesses:check`).
+
+To add or update a harness:
+
+1. Edit the record in `scripts/lib/manifest/harnesses.json` (id, name, config_dir, capability_matrix,
+   fragment_links). Keep `harness-configs.cjs` (Phase 42) in agreement - the `phase-44-harness-agreement`
+   test fails on any ID or command-syntax mismatch.
+2. Run `npm run build:harnesses` and commit the regenerated `HARNESSES.md`.
+3. Verify the compile + smoke and stamp freshness: `npm run verify:harness <id>` (runs the Phase 42
+   compile, then writes `last_verified` and regenerates `HARNESSES.md`). Commit both.
+4. `npm run validate:manifest` (schema) and `npm run check:harness-freshness` (warn 60d / fail 180d on
+   `tested` harnesses) must pass.
+
+Status taxonomy: `tested` (regression baseline + verified within 60 days), `experimental` (compiles +
+confirmed once), `untested` (config compiles, never run end-to-end), `known-broken` (open issues). Only
+`tested` harnesses carry a freshness promise; the others report `n/a` and never fail the freshness gate.

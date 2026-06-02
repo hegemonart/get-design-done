@@ -62,6 +62,15 @@ jobs:
       - name: STYLE.md drift gate (generated from the manifest denylist)
         run: npm run build:style:check
 
+      - name: HARNESSES.md drift gate (generated from harnesses.json)
+        run: npm run build:harnesses:check
+
+      - name: Manifest validation (harnesses + skills + prose-denylist schemas)
+        run: npm run validate:manifest
+
+      - name: Harness freshness check (tested harnesses warn 60d / fail 180d)
+        run: npm run check:harness-freshness
+
       - name: Detect stale references
         run: node scripts/detect-stale-refs.cjs
 

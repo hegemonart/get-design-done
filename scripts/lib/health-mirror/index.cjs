@@ -51,6 +51,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { getDisableReason } = require('../issue-reporter/kill-switch.cjs');
+const { checkFreshness, WARN_DAYS, FAIL_DAYS } = require('../harness-freshness.cjs');
 
 function fileExists(p) {
   try {
@@ -209,6 +210,32 @@ async function getHealthChecks(rootDir) {
       status = 'ok';
     }
     checks.push({ name: 'skill_discipline', status, detail });
+  }
+
+  // 8. harness_freshness — per-harness last_verified age (Phase 44). PURE: reads the manifest SoT via the
+  // shippable harness-freshness module; status-aware (only `tested` harnesses can warn/fail). NEVER throws.
+  {
+    let status = 'ok';
+    let detail;
+    try {
+      const results = checkFreshness();
+      const failing = results.filter((r) => r.freshness === 'fail');
+      const warning = results.filter((r) => r.freshness === 'warn');
+      const tested = results.filter((r) => r.status === 'tested');
+      if (failing.length) {
+        status = 'fail';
+        detail = `harness freshness: ${failing.length} stale (>${FAIL_DAYS}d): ${failing.map((r) => r.id).join(', ')}`;
+      } else if (warning.length) {
+        status = 'warn';
+        detail = `harness freshness: ${warning.length} aging (>${WARN_DAYS}d): ${warning.map((r) => r.id).join(', ')}`;
+      } else {
+        detail = `harness freshness: ${tested.length} tested harness(es) current`;
+      }
+    } catch {
+      status = 'warn';
+      detail = 'harness freshness: unavailable';
+    }
+    checks.push({ name: 'harness_freshness', status, detail });
   }
 
   return { checks };

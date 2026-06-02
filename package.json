@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.43.0",
+  "version": "1.44.0",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -65,6 +65,10 @@
     "lint:design": "node bin/gdd-detect test/fixtures/detect/negative --json",
     "build:style": "node scripts/generate-style-md.cjs",
     "build:style:check": "node scripts/generate-style-md.cjs --check",
+    "build:harnesses": "node scripts/generate-harnesses-md.cjs",
+    "build:harnesses:check": "node scripts/generate-harnesses-md.cjs --check",
+    "check:harness-freshness": "node scripts/check-harness-freshness.cjs",
+    "verify:harness": "node scripts/verify-harness.cjs",
     "sync:rule-catalogue": "node scripts/sync-rule-catalogue.cjs --check",
     "validate:manifest": "node scripts/validate-manifest.cjs --check",
     "validate:schemas": "node --experimental-strip-types scripts/validate-schemas.ts",
