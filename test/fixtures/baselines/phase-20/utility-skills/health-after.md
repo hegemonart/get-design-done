@@ -67,7 +67,7 @@ Token PRESENCE only is detected (D-10) - the token value is never read, logged, 
 
 The `gdd_health` MCP surface also reports a `skill_discipline` check (Phase 32) confirming the using-gdd SessionStart bootstrap is live - detail is one of three exact strings:
 - `skill-discipline: ready` - `skills/using-gdd/SKILL.md` exists AND `hooks/hooks.json` SessionStart wires `inject-using-gdd.sh` (status `ok`).
-- `skill-discipline: missing using-gdd` (skill absent) or `skill-discipline: hook not wired` (skill present, no SessionStart inject) - both `warn`.
+- `skill-discipline: missing using-gdd` (skill absent) or `skill-discipline: hook not wired` (skill present, no SessionStart inject) - both `warn`. The MCP surface also reports a `harness_freshness` check (Phase 44): per-harness `last_verified` age, status-aware (only `tested` harnesses warn at 60d / fail at 180d; others `n/a`). Full taxonomy in `HARNESSES.md`; refresh with `npm run verify:harness <id>`.
 
 ## Check MCP registration (gdd-mcp)
 

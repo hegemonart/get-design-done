@@ -30,6 +30,38 @@
           "name": {
             "type": "string",
             "minLength": 1
+          },
+          "last_verified": {
+            "type": ["string", "null"],
+            "description": "YYYY-MM-DD of the last verify-harness run; null if never verified (Phase 44)."
+          },
+          "capability_notes": {
+            "type": "string"
+          },
+          "fragment_links": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "capability_matrix": {
+            "type": "object",
+            "description": "Phase 44 harness capability matrix (a view of this SoT; HARNESSES.md is generated from it).",
+            "additionalProperties": true,
+            "required": ["status", "command_syntax", "install_path"],
+            "properties": {
+              "skill_discovery": { "type": "boolean" },
+              "frontmatter_fields_supported": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "command_syntax": { "type": "string", "minLength": 1 },
+              "mcp_support": { "type": "boolean" },
+              "placeholder_substitution": { "type": "boolean" },
+              "install_path": { "type": "string", "minLength": 1 },
+              "status": {
+                "type": "string",
+                "enum": ["tested", "experimental", "untested", "known-broken"]
+              }
+            }
           }
         }
       }

@@ -1,0 +1,10 @@
+{
+  "note": "Phase 44 freshness fixture. nowMs anchor = 2026-06-02. Tested harnesses at three age thresholds + one untested-null. Drives phase-44-baseline.test.cjs freshness assertions.",
+  "nowMs_date": "2026-06-02",
+  "harnesses": [
+    { "id": "recent", "capability_matrix": { "status": "tested" }, "last_verified": "2026-05-20" },
+    { "id": "aging", "capability_matrix": { "status": "tested" }, "last_verified": "2026-03-15" },
+    { "id": "stale", "capability_matrix": { "status": "tested" }, "last_verified": "2025-11-01" },
+    { "id": "untested-null", "capability_matrix": { "status": "untested" }, "last_verified": null }
+  ]
+}

@@ -241,6 +241,7 @@ test('31-09: getHealthChecks returns the original 5 checks in order + figma_extr
         'issue_reporter',
         'figma_extract',
         'skill_discipline',
+        'harness_freshness',
       ]);
       // Every check has a valid status enum.
       for (const c of result.checks) {

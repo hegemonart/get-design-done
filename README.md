@@ -247,6 +247,8 @@ All 14 runtimes receive their native artifact layout (`skills/`, `command/`, `ag
 
 **Editorial quality floor (v1.43.0).** A tool that audits design quality should hold its own prose to the same bar. `npm run lint:prose` is a CI gate that fails on em dashes, prose double hyphens, and AI-prose tells (`load-bearing`, `leverage`, `robust`, `seamless`, ...) across the README, `SKILL.md`, `source/skills/`, `agents/`, `CHANGELOG.md`, and `reference/` (bodies and frontmatter descriptions). Fenced/inline code, HTML comments, and Cyrillic-majority files are skipped. The ruleset lives in `STYLE.md`, generated from the shared denylist at `scripts/lib/manifest/prose-denylist.json`. See `CONTRIBUTING.md`. **No new runtime dependency.**
 
+**Harness capability matrix (v1.44.0).** The full per-harness support matrix (skill discovery, command syntax, MCP, install path, status) lives in **[`HARNESSES.md`](HARNESSES.md)** at the repo root, generated from `scripts/lib/manifest/harnesses.json` (the single source of truth; CI drift-gates it). Each harness carries an honest status (`tested` / `experimental` / `untested`) and a `last_verified` stamp; a freshness gate warns at 60 days and fails at 180 for `tested` harnesses, surfaced in `/gdd:health`. The 14-harness count above is the same SoT the matrix reads, so it cannot drift. The five deep-dive reference files (`reference/codex-tools.md`, `reference/gemini-tools.md`, `reference/peer-cli-capabilities.md`, `reference/peer-protocols.md`, `reference/runtime-models.md`) remain as appendices linked from the matrix. **No new runtime dependency.**
+
 Verify with:
 
 ```

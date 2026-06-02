@@ -12,6 +12,7 @@ easings.cjs
 event-chain.cjs
 failure-mode-matcher.cjs
 glob-match.cjs
+harness-freshness.cjs
 hedge-ensemble.cjs
 incubator-author.cjs
 mmr-rerank.cjs

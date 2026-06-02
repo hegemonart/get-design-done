@@ -520,6 +520,7 @@ scripts/lib/graph/schema.mjs
 scripts/lib/graph/status.mjs
 scripts/lib/graph/token-estimate.mjs
 scripts/lib/graph/upsert.mjs
+scripts/lib/harness-freshness.cjs
 scripts/lib/harness/detect.ts
 scripts/lib/harness/index.ts
 scripts/lib/harness/tool-map.ts

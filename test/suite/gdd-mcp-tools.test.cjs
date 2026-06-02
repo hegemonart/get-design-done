@@ -441,7 +441,8 @@ test('27.7-02: gdd_health — returns 4 checks with valid statuses', async () =>
     // Plan 30-06 added 5th check (issue_reporter); was 4 in Plan 27.7-02.
     // Plan 31-09 added 6th check (figma_extract) — figma-extract readiness.
     // Plan 32-07 added 7th check (skill_discipline) — using-gdd bootstrap.
-    assert.equal(res.data.checks.length, 7);
+    // Phase 44 added 8th check (harness_freshness) — per-harness last_verified age.
+    assert.equal(res.data.checks.length, 8);
     for (const c of res.data.checks) {
       assert.ok(['ok', 'warn', 'fail'].includes(c.status));
     }

@@ -549,6 +549,13 @@ OFF_CADENCE_VERSIONS.add('1.42.0');
 // editorial floor is the `### Breaking changes` of the 1.43.0 CHANGELOG entry. No new runtime dependency.
 OFF_CADENCE_VERSIONS.add('1.43.0');
 
+// 1.44.0 -> Phase 44 (Harness Capability Matrix). Minor on 1.43.0. Generated HARNESSES.md from the
+// 41.5 manifest SoT (harnesses.json extended with a per-harness capability_matrix + last_verified +
+// status), drift-gated; scripts/lib/harness-freshness.cjs (shippable, status-aware warn 60d/fail 180d) +
+// gdd:health check #8 + verify-harness + the Phase-42 agreement gate. Planned/executed via parallel GSD
+// subagents. The harness-freshness CI gate is the `### Breaking changes`. No new runtime dependency.
+OFF_CADENCE_VERSIONS.add('1.44.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
