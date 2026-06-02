@@ -150,6 +150,7 @@ dist/claude-code/.claude/skills/health/health-mcp-detection.md
 dist/claude-code/.claude/skills/health/health-skill-length-report.md
 dist/claude-code/.claude/skills/help/SKILL.md
 dist/claude-code/.claude/skills/list-assumptions/SKILL.md
+dist/claude-code/.claude/skills/list-pins/SKILL.md
 dist/claude-code/.claude/skills/locale/SKILL.md
 dist/claude-code/.claude/skills/map/SKILL.md
 dist/claude-code/.claude/skills/migrate/SKILL.md
@@ -165,6 +166,7 @@ dist/claude-code/.claude/skills/peer-cli-add/SKILL.md
 dist/claude-code/.claude/skills/peer-cli-add/peer-cli-protocol.md
 dist/claude-code/.claude/skills/peer-cli-customize/SKILL.md
 dist/claude-code/.claude/skills/peers/SKILL.md
+dist/claude-code/.claude/skills/pin/SKILL.md
 dist/claude-code/.claude/skills/plan/SKILL.md
 dist/claude-code/.claude/skills/plan/plan-procedure.md
 dist/claude-code/.claude/skills/plant-seed/SKILL.md
@@ -208,6 +210,7 @@ dist/claude-code/.claude/skills/todo/SKILL.md
 dist/claude-code/.claude/skills/turn-closeout/SKILL.md
 dist/claude-code/.claude/skills/undo/SKILL.md
 dist/claude-code/.claude/skills/unlock-decision/SKILL.md
+dist/claude-code/.claude/skills/unpin/SKILL.md
 dist/claude-code/.claude/skills/update/SKILL.md
 dist/claude-code/.claude/skills/using-gdd/SKILL.md
 dist/claude-code/.claude/skills/verify/SKILL.md
@@ -417,6 +420,7 @@ reference/schemas/recipe.schema.json
 reference/schemas/runtime-models.schema.json
 reference/shared-preamble.md
 reference/skill-authoring-contract.md
+reference/skill-metadata.md
 reference/skill-placeholders.md
 reference/spatial.md
 reference/start-interview.md
@@ -626,6 +630,9 @@ scripts/lib/peer-cli/sanitize-env.cjs
 scripts/lib/peer-cli/spawn-cmd.cjs
 scripts/lib/perf-analyzer/cost-regression.cjs
 scripts/lib/perf-analyzer/index.cjs
+scripts/lib/pin/cli.cjs
+scripts/lib/pin/harness-detect.cjs
+scripts/lib/pin/store.cjs
 scripts/lib/pipeline-runner/human-gate.ts
 scripts/lib/pipeline-runner/index.ts
 scripts/lib/pipeline-runner/stage-handlers.ts
@@ -807,6 +814,7 @@ skills/health/health-mcp-detection.md
 skills/health/health-skill-length-report.md
 skills/help/SKILL.md
 skills/list-assumptions/SKILL.md
+skills/list-pins/SKILL.md
 skills/locale/SKILL.md
 skills/map/SKILL.md
 skills/migrate/SKILL.md
@@ -822,6 +830,7 @@ skills/peer-cli-add/SKILL.md
 skills/peer-cli-add/peer-cli-protocol.md
 skills/peer-cli-customize/SKILL.md
 skills/peers/SKILL.md
+skills/pin/SKILL.md
 skills/plan/SKILL.md
 skills/plan/plan-procedure.md
 skills/plant-seed/SKILL.md
@@ -865,6 +874,7 @@ skills/todo/SKILL.md
 skills/turn-closeout/SKILL.md
 skills/undo/SKILL.md
 skills/unlock-decision/SKILL.md
+skills/unpin/SKILL.md
 skills/update/SKILL.md
 skills/using-gdd/SKILL.md
 skills/verify/SKILL.md

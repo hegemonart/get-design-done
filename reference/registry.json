@@ -850,6 +850,13 @@
       "description": "Phase 28.5 skill-authoring contract — adapted from mattpocock/skills (MIT). SKILL.md <=100-line cap (warn >=100, block >=250 in CI), 1024-char description cap, <what>. Use when <triggers>. form (lax-mode default per Phase 33 A/B pending), frontmatter required fields, progressive-disclosure one-level-deep rule. Validator at scripts/validate-skill-length.cjs."
     },
     {
+      "name": "skill-metadata",
+      "path": "reference/skill-metadata.md",
+      "type": "meta-rules",
+      "phase": 46,
+      "description": "Phase 46 skill-metadata single source of truth: scripts/lib/manifest/skills.json record shape, the generate-skill-frontmatter.cjs forward/extract/check modes, the skills.json to generator to build:skills to skills/+dist build chain, the six managed frontmatter keys (canonical order, always-quoted strings) vs extra_frontmatter passthrough, the 20..1024 description budget (validate-skill-length.cjs + lint-agentskills-spec.cjs R4, lint:agentskills CI gate), and the pin metadata catalogue consumer."
+    },
+    {
       "name": "capability-gap-stage-gate",
       "path": "reference/capability-gap-stage-gate.md",
       "type": "meta-rules",

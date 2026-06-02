@@ -68,6 +68,9 @@ jobs:
       - name: Manifest validation (harnesses + skills + prose-denylist schemas)
         run: npm run validate:manifest
 
+      - name: Skill frontmatter drift gate (source/skills/*/SKILL.md == manifest/skills.json)
+        run: npm run generate:skill-frontmatter:check
+
       - name: Harness freshness check (tested harnesses warn 60d / fail 180d)
         run: npm run check:harness-freshness
 
@@ -96,6 +99,11 @@ jobs:
           if [ "$EXIT" = "2" ]; then echo "::error::Skill-authoring contract blockers present (exit 2)"; exit 2; fi
           if [ "$EXIT" = "1" ]; then echo "::warning::Skill-authoring contract warnings present (advisory; exit 1)"; fi
           exit 0
+
+      - name: agentskills.io spec gate (description <=1024 hard cap + body <=500 lines; FAIL rows block)
+        # Phase 46 SC#5: the >=1024-char description budget is enforced here as a
+        # hard FAIL (R4). WARN rows (advisory >200 chars) do not block.
+        run: npm run lint:agentskills
 
   validate:
     name: "Validate (schemas + plugin + shellcheck)"

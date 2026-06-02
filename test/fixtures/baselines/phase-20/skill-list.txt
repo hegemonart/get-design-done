@@ -29,6 +29,7 @@ graphify
 health
 help
 list-assumptions
+list-pins
 locale
 map
 migrate
@@ -42,6 +43,7 @@ pause
 peer-cli-add
 peer-cli-customize
 peers
+pin
 plan
 plant-seed
 pr-branch
@@ -75,6 +77,7 @@ todo
 turn-closeout
 undo
 unlock-decision
+unpin
 update
 using-gdd
 verify

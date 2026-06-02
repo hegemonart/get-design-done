@@ -4,6 +4,56 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.46.0] - 2026-06-03
+
+### Phase 46 - Skill UX Polish
+
+70+ skills under one `/gdd:` namespace had three friction points at one surface (skill frontmatter): no
+shortcut for power users, 83 frontmatter blocks as 83 places to edit a description, and a description budget
+that was enforced but not gated explicitly. Phase 46 ships a metadata single source of truth, an
+order-preserving frontmatter generator, three pin shortcut skills, and an explicit budget gate. Planned and
+executed via the GSD pipeline (parallel research + three parallel executor subagents). No new runtime dependency,
+no new egress.
+
+### Breaking changes
+
+- **A new CI drift gate guards skill frontmatter.** `npm run generate:skill-frontmatter:check` fails if any
+  `source/skills/<id>/SKILL.md` frontmatter no longer matches `scripts/lib/manifest/skills.json`. Edit the
+  description, argument hint, or tools allow-list in `skills.json`, then run `npm run generate:skill-frontmatter`
+  and `npm run build:skills` to regenerate. Hand-editing the managed frontmatter keys directly now fails CI.
+- **The skill description budget is now an explicit blocking gate.** `npm run lint:agentskills` runs in CI and
+  fails (R4) on any description over 1024 characters. The cap existed since Phase 28.5; it is now a first-class
+  gate rather than an in-process check.
+
+### Added
+
+- **`scripts/lib/manifest/skills.json` as the skill-metadata single source of truth.** All 86 skills carry
+  `{description, argument_hint?, tools?, user_invocable?, disable_model_invocation?, ...}`; the JSON Schema
+  (`scripts/lib/manifest/schemas/skills.schema.json`) documents the enriched fields and is validated by
+  `npm run validate:manifest`.
+- **`scripts/generate-skill-frontmatter.cjs`** (maintainer-only): forward mode regenerates each skill's
+  frontmatter from `skills.json`; `--extract` reseeds the manifest from current frontmatter; `--check` is the CI
+  drift gate. It is **order-preserving** (each skill keeps its own frontmatter key order; only `name` leads and
+  non-managed lines like `quality-gate`'s `writes:` block are carried verbatim), so the committed tree is a
+  byte-for-byte fixed point and existing frontmatter-snapshot baselines never churn.
+- **`/gdd:pin <skill>`, `/gdd:unpin <skill>`, `/gdd:list-pins`** power-user shortcut skills. `pin` writes
+  standalone alias stubs across every installed harness skills dir (so `/audit` resolves alongside
+  `/gdd:audit`), each carrying a `<!-- gdd-pinned-skill source=<id> -->` marker; descriptions and tools come
+  from the `skills.json` catalogue, never a live frontmatter scrape. `unpin` removes only marked stubs.
+  `list-pins` shows pinned aliases per harness with source and timestamp. Backed by `scripts/lib/pin/`
+  (harness discovery via `scripts/lib/manifest/harnesses.cjs`, atomic `.tmp`+rename writes, cross-platform).
+- **`reference/skill-metadata.md`** documents the SoT, the generator, the build chain, and the budget.
+
+### Notes
+
+- 6-manifest lockstep at **v1.46.0**, `OFF_CADENCE_VERSIONS.add('1.46.0')`, 37 `manifests-version.txt`
+  baselines, tarball golden 874 -> 884 (the 3 pin skills land in `skills/` and `dist/claude-code/`, plus 3
+  `scripts/lib/pin/*.cjs` and `reference/skill-metadata.md`). The maintainer-only generator is correctly not shipped.
+- Description budget (SC#5): already enforced since Phase 28.5 (`validate-skill-length.cjs` + `lint-agentskills-spec.cjs`,
+  both cap at 1024); Phase 46 hardens it into an explicit CI gate and a SoT-layer regression test. No skill needed trimming.
+
+---
+
 ## [1.45.0] - 2026-06-02
 
 ### Phase 45 - Canonical Domain Reference Index

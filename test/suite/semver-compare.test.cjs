@@ -563,6 +563,14 @@ OFF_CADENCE_VERSIONS.add('1.44.0');
 // executed via parallel GSD subagents. New CI gates = the `### Breaking changes`. No new runtime dependency.
 OFF_CADENCE_VERSIONS.add('1.45.0');
 
+// 1.46.0 -> Phase 46 (Skill UX Polish). Minor on 1.45.0. scripts/lib/manifest/skills.json becomes the
+// skill-metadata single source of truth + scripts/generate-skill-frontmatter.cjs (order-preserving forward
+// generator) + generate:skill-frontmatter:check CI drift gate; /gdd:pin + /gdd:unpin + /gdd:list-pins
+// power-user shortcut skills (scripts/lib/pin/, atomic write, gdd-pinned-skill marker, harness discovery via
+// manifest/harnesses.cjs); the >=1024 description budget (Phase 28.5) hardened with an explicit lint:agentskills
+// CI gate. Two new CI gates = the `### Breaking changes`. Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.46.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
