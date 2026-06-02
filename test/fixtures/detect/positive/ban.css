@@ -1,0 +1,33 @@
+/* Phase 41 positive fixture. Each declaration trips exactly one BAN rule. */
+/* Comments here avoid the literal trigger strings so the golden stays one-finding-per-line. */
+
+.card {
+  border-left: 4px solid #6366f1;            /* BAN-01 */
+}
+
+.hero-title {
+  background-clip: text;                       /* BAN-02 */
+  -webkit-text-fill-color: transparent;
+}
+
+.modal {
+  transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55); /* BAN-03 */
+}
+
+body.dark {
+  background: #000000;                         /* BAN-05 */
+}
+
+.btn:focus { outline: none; }                  /* BAN-07 */
+
+.row {
+  transition: all 200ms ease;                  /* BAN-08 + BAN-12 */
+}
+
+@keyframes enter { from { transform: scale(0); } } /* BAN-09 */
+
+img.framed { outline: 2px solid #334155; }     /* BAN-11 CSS form */
+
+.layer {
+  will-change: all;                            /* BAN-13 */
+}

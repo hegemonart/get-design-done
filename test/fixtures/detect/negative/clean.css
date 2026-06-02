@@ -1,0 +1,33 @@
+/* Phase 41 negative fixture — the compliant equivalents; gdd-detect must find NOTHING here. */
+
+.card {
+  border-left: 1px solid rgba(0, 0, 0, 0.08);   /* thin hairline, not a side-stripe */
+}
+
+.hero-title {
+  color: #1a1a2e;                                /* solid text color */
+}
+
+.modal {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* standard ease */
+}
+
+body.dark {
+  background: #0b0b0f;                            /* near-black, not pure #000 */
+}
+
+.btn:focus-visible {
+  outline: 2px solid #4f46e5;                     /* a real focus ring */
+}
+
+.row {
+  transition: background-color 150ms, color 150ms; /* named properties */
+}
+
+@keyframes enter { from { transform: scale(0.96); opacity: 0; } } /* 0.96, not 0 */
+
+img.framed { outline: 1px solid rgba(0, 0, 0, 0.08); } /* low-opacity black, not tinted */
+
+.layer {
+  will-change: transform;                         /* a single named property */
+}

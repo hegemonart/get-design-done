@@ -18,6 +18,8 @@ Zero tolerance. Each violation = −3 points from Anti-Pattern score. Rewrite ra
 
 ### BAN-01: Side-Stripe Borders
 
+bdId: BAN-01
+
 ```css
 /* BANNED — AI-generated card tell, regardless of color */
 border-left: 4px solid var(--color-primary);
@@ -31,6 +33,8 @@ border-right: 3px solid #6366f1;
 **Grep**: `border-left:\s*[2-9][0-9]*px|border-right:\s*[2-9][0-9]*px`
 
 ### BAN-02: Gradient Text
+
+bdId: BAN-02
 
 ```css
 /* BANNED */
@@ -48,6 +52,8 @@ background-clip: text;
 
 ### BAN-03: Bounce/Elastic Easing
 
+bdId: BAN-03
+
 ```css
 /* BANNED */
 transition: all 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -63,6 +69,8 @@ animation-timing-function: spring(1, 80, 10, 0);
 
 ### BAN-04: Animating Keyboard Actions
 
+bdId: BAN-04
+
 No animation on: command palette open/close, keyboard shortcuts, tab switching, filter/sort toggles, navigation item expand/collapse.
 
 **Why**: These repeat 100+ times per day. Every millisecond of animation accumulates into felt sluggishness.
@@ -70,6 +78,8 @@ No animation on: command palette open/close, keyboard shortcuts, tab switching, 
 **Fix**: Instant state change. Zero transition duration.
 
 ### BAN-05: Pure Black Dark Mode
+
+bdId: BAN-05
 
 ```css
 /* BANNED */
@@ -85,6 +95,8 @@ background: rgb(0, 0, 0);
 
 ### BAN-06: Disabling Zoom
 
+bdId: BAN-06
+
 ```html
 <!-- BANNED -->
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -96,6 +108,8 @@ background: rgb(0, 0, 0);
 **Grep**: `user-scalable=no|maximum-scale=1`
 
 ### BAN-07: Naked `outline: none`
+
+bdId: BAN-07
 
 ```css
 /* BANNED — unless a custom focus indicator replaces it */
@@ -111,6 +125,8 @@ button:focus { outline: 0; }
 
 ### BAN-08: `transition: all`
 
+bdId: BAN-08
+
 ```css
 /* BANNED */
 transition: all 300ms ease;
@@ -123,6 +139,8 @@ transition: all 300ms ease;
 **Grep**: `transition:\s*all\s`
 
 ### BAN-09: `scale(0)` Animation Entry
+
+bdId: BAN-09
 
 ```css
 /* BANNED — nothing in the real world materializes from nothing */
@@ -339,6 +357,8 @@ If YES to any → rewrite that element before proceeding.
 
 ### BAN-10: Same Border-Radius on Nested Surfaces
 
+bdId: BAN-10
+
 Applying the same `border-radius` to a container and an element inside it (when the element is separated by padding) makes the inner element appear to "float" — the radii should be concentric, not equal.
 
 **Grep (Tailwind):**
@@ -354,6 +374,8 @@ Source: jakubkrehel/make-interfaces-feel-better (MIT)
 ---
 
 ### BAN-11: Tinted Image Outline
+
+bdId: BAN-11
 
 Using a colored outline on images (e.g., `outline-slate-200`, `outline-gray-300`, or a hex-value outline color) competes visually with the image content and creates color contamination.
 
@@ -376,6 +398,8 @@ Source: jakubkrehel/make-interfaces-feel-better (MIT)
 
 ### BAN-12: `transition: all`
 
+bdId: BAN-12
+
 `transition: all` animates every animatable CSS property on the element, including layout-triggering properties (width, height, padding, margin). This causes layout recalculation on EVERY transition, creating jank and unexpected visual effects (e.g., a hover transition that also animates the element's size if any dimensions change).
 
 **Grep (CSS):**
@@ -392,6 +416,8 @@ Source: jakubkrehel/make-interfaces-feel-better (MIT)
 ---
 
 ### BAN-13: `will-change: all`
+
+bdId: BAN-13
 
 `will-change: all` promotes every animatable property to its own GPU compositor layer, consuming GPU memory for each property. On complex components this can allocate hundreds of MB of texture memory per instance, causing performance degradation and potential crashes on mobile.
 
