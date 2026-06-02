@@ -7,8 +7,8 @@ tags: [plan, procedure, extracted, pipeline-stage, research, planner, checker]
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/plan/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
-The skill's load-bearing workflow stays in `../skills/plan/SKILL.md`; this file holds the
+Source: extracted from `skills/plan/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+The skill's essential workflow stays in `../skills/plan/SKILL.md`; this file holds the
 detail the agent reaches for when executing a specific step (agent spawn prompts, chromatic
 scoping, synthesizer wiring, research-synthesis persistence, exploration artifact globbing).
 
@@ -16,7 +16,7 @@ scoping, synthesizer wiring, research-synthesis persistence, exploration artifac
 
 Detailed procedure for the get-design-done `plan` Stage 3 orchestrator. Companion to
 `../skills/plan/SKILL.md`. Read this file when executing a specific plan step; the
-SKILL.md keeps the load-bearing workflow + decision tree, this file holds the deep
+SKILL.md keeps the essential workflow + decision tree, this file holds the deep
 agent prompts and pre-plan research wiring.
 
 ---
@@ -27,7 +27,7 @@ agent prompts and pre-plan research wiring.
    - Gate failure surfaces `error.context.blockers` to the user; do not advance.
 2. `mcp__gdd_state__get` -> snapshot `state`. Use this snapshot for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>` in the current stage; do not re-read STATE.md directly.
 
-Abort with a clear error only if the user is trying to plan without DESIGN-CONTEXT.md — that is the true prerequisite, not STATE.md.
+Abort with a clear error only if the user is trying to plan without DESIGN-CONTEXT.md - that is the true prerequisite, not STATE.md.
 
 ## Flag Parsing
 
@@ -50,32 +50,32 @@ After the parallelism decision is made:
 
 Run at stage entry, after reading STATE.md:
 
-Step C1 — CLI presence:
-  Bash: command -v chromatic 2>/dev/null || npx chromatic --version 2>/dev/null
+Step C1 - CLI presence:
+  Bash: command -v chromatic 2>/dev/null || npx chromatic `--version` 2>/dev/null
   -> found -> proceed to Step C2
   -> not found -> chromatic: not_configured (skip all Chromatic steps)
 
-Step C2 — Token check:
+Step C2 - Token check:
   Bash: test -n "${CHROMATIC_PROJECT_TOKEN}"
   -> true -> chromatic: available
   -> false -> chromatic: unavailable
 
 Also check: if storybook: not_configured -> chromatic effectively unavailable (emit note, do not run).
 
-Write chromatic status to STATE.md `<connections>` via `mcp__gdd_state__probe_connections` — pass the single-entry probe result (`[{ name: "chromatic", status: "<verdict>" }]`). Do not edit `<connections>` directly.
+Write chromatic status to STATE.md `<connections>` via `mcp__gdd_state__probe_connections` - pass the single-entry probe result (`[{ name: "chromatic", status: "<verdict>" }]`). Do not edit `<connections>` directly.
 
 ## Chromatic Change-Risk Scoping (when chromatic: available)
 
 Before writing DESIGN-PLAN.md, if chromatic: available:
 1. Identify token/component files to be changed (from DESIGN-CONTEXT.md scope)
-2. Run: Bash: npx chromatic --project-token $CHROMATIC_PROJECT_TOKEN --trace-changed=expanded --dry-run 2>&1
-3. Parse output — count story files that depend on changed source files
+2. Run: Bash: npx chromatic `--project-token` $CHROMATIC_PROJECT_TOKEN `--trace-changed=expanded` `--dry-run` 2>&1
+3. Parse output - count story files that depend on changed source files
 4. Pass story count to design-planner.md (see design-planner.md Chromatic Change-Risk section)
 If unavailable: design-planner proceeds without story-count annotation.
 
 ---
 
-## Step 1 — Optional Research (skip if auto_mode)
+## Step 1 - Optional Research (skip if auto_mode)
 
 Complexity heuristic: if DESIGN-CONTEXT.md `<domain>` spans 3+ scopes OR `<decisions>` count > 6 -> spawn design-phase-researcher. Otherwise skip.
 
@@ -100,7 +100,7 @@ Emit `## RESEARCH COMPLETE` when done.
 
 Wait for `## RESEARCH COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
 
-## Step 1.5 — Pattern Mapping (mandatory, brownfield protection)
+## Step 1.5 - Pattern Mapping (mandatory, brownfield protection)
 
 ```
 Task("design-pattern-mapper", """
@@ -122,7 +122,7 @@ Emit `## MAPPING COMPLETE` when done.
 
 Wait for `## MAPPING COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
 
-## Step 1.6 — Assumptions Analysis (optional, same flag as research)
+## Step 1.6 - Assumptions Analysis (optional, same flag as research)
 
 If assumptions analysis enabled (skip if auto_mode):
 
@@ -143,7 +143,7 @@ Emit `## ANALYSIS COMPLETE` when done.
 
 Wait for `## ANALYSIS COMPLETE`.
 
-## Step 1.7 — Synthesize pre-plan research inputs (Plan 10.1-04, D-13/D-15)
+## Step 1.7 - Synthesize pre-plan research inputs (Plan 10.1-04, D-13/D-15)
 
 If 2+ of the pre-plan research agents ran (`design-phase-researcher` Step 1, `design-pattern-mapper` Step 1.5, `design-assumptions-analyzer` Step 1.6), invoke synthesize to merge their outputs into a single compact brief. If only one ran, skip this step.
 
@@ -157,7 +157,7 @@ If 2+ of the pre-plan research agents ran (`design-phase-researcher` Step 1, `de
       output_shape: "markdown"
     })
 
-Wait for `## SYNTHESIS COMPLETE`. Write to `.design/DESIGN-PREPLAN-BRIEF.md` (overwrite if present). Add `@.design/DESIGN-PREPLAN-BRIEF.md` to the planner's `<required_reading>` in Step 2 — individual files remain on disk for drill-down.
+Wait for `## SYNTHESIS COMPLETE`. Write to `.design/DESIGN-PREPLAN-BRIEF.md` (overwrite if present). Add `@.design/DESIGN-PREPLAN-BRIEF.md` to the planner's `<required_reading>` in Step 2 - individual files remain on disk for drill-down.
 
 **Parallel synthesizer note (future):** if a future plan variant spawns N parallel phase-researchers (e.g., one per project-type family), wire synthesize the same way as `skills/map/` Step 3.5.
 
@@ -173,7 +173,7 @@ For each M-XX must-have the synthesizer produces:
 
 Issue these sequentially. Each call is event-emitting and lockfile-safe. Parallel issuance would serialize on the STATE.md lockfile with no throughput gain.
 
-## Step 2 — Plan
+## Step 2 - Plan
 
 ```
 Task("design-planner", """
@@ -208,7 +208,7 @@ Emit `## PLANNING COMPLETE` when done.
 
 Wait for `## PLANNING COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "2/3"` and a short `status` summary.
 
-## Step 3 — Check
+## Step 3 - Check
 
 ```
 Task("design-plan-checker", """
@@ -235,7 +235,7 @@ Emit `## PLAN CHECK COMPLETE` when done.
 Wait for `## PLAN CHECK COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "3/3"` and a short `status` summary.
 
 If `## PLAN CHECK RESULT: ISSUES FOUND` and any BLOCKER issues:
-- Present issues to user and offer: (a) revise plan now — re-spawn design-planner with issue list, (b) accept and proceed, (c) abort.
+- Present issues to user and offer: (a) revise plan now - re-spawn design-planner with issue list, (b) accept and proceed, (c) abort.
 - If auto_mode: auto-accept WARNING issues, abort on BLOCKER issues.
 
 ## Stage exit
@@ -243,7 +243,7 @@ If `## PLAN CHECK RESULT: ISSUES FOUND` and any BLOCKER issues:
 1. Call `mcp__gdd_state__set_status` with `status: "plan_complete"`.
 2. Call `mcp__gdd_state__checkpoint` to stamp `last_checkpoint` and finalize the plan stage.
 
-The next stage (design) calls `mcp__gdd_state__transition_stage` on entry — this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline established by brief->explore and explore->plan.
+The next stage (design) calls `mcp__gdd_state__transition_stage` on entry - this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline established by brief->explore and explore->plan.
 
 ## After Completion
 
@@ -257,13 +257,13 @@ Print user-facing summary:
 ## Exploration artifacts & project-local conventions
 
 When building the planner spawn prompt, also glob for:
-- `.design/sketches/*/WINNER.md` — winning sketch rationale (informs directional tasks)
-- `.design/spikes/*/FINDINGS.md` — spike verdicts (inform task feasibility)
-- `./.claude/skills/design-*-conventions.md` — project-local design conventions
+- `.design/sketches/*/WINNER.md` - winning sketch rationale (informs directional tasks)
+- `.design/spikes/*/FINDINGS.md` - spike verdicts (inform task feasibility)
+- `./.claude/skills/design-*-conventions.md` - project-local design conventions
 
 Include each matching file in `<files_to_read>` / `<required_reading>` so the planner sees them when creating tasks. Spike findings from `.design/spikes/` inform task feasibility; sketch winners inform directional choice; project-local conventions override defaults.
 
-## --research mode (removed)
+## `--research` mode (removed)
 
 V2-04 deferred the `--research` flag. Rationale: complexity of an additional
 agent spawn + Context7 integration outweighs the benefit of discover-stage
@@ -274,5 +274,5 @@ The optional research step that already exists (Step 1, triggered by complexity
 heuristic: 3+ domain scopes OR 6+ decisions) covers the core use case without
 a separate CLI flag.
 
-If --research is reintroduced in a future version, define its scope in
+If `--research` is reintroduced in a future version, define its scope in
 ROADMAP.md V2+ and update this section.

@@ -1,10 +1,10 @@
-# Peer-CLI Protocols — ACP + ASP Cheat Sheet
+# Peer-CLI Protocols - ACP + ASP Cheat Sheet
 
 **Phase 27 (v1.27.0).** This file is the protocol-level reference for gdd's peer-CLI delegation layer. If you're authoring a new peer adapter or debugging a protocol-level issue, start here.
 
 For ops-level guidance (when delegation fires, how to enable/disable, fallback diagnostics), see `docs/PEER-DELEGATION.md`.
 
-Protocol shapes are adapted from [`greenpolo/cc-multi-cli-plugin`](https://github.com/greenpolo/cc-multi-cli-plugin) under Apache 2.0 — see `NOTICE` for full attribution.
+Protocol shapes are adapted from [`greenpolo/cc-multi-cli-plugin`](https://github.com/greenpolo/cc-multi-cli-plugin) under Apache 2.0 - see `NOTICE` for full attribution.
 
 ---
 
@@ -21,7 +21,7 @@ Line-buffer overflow guard: 16 MiB per line (both clients reject lines longer th
 
 ---
 
-## ACP — Agent Client Protocol
+## ACP - Agent Client Protocol
 
 ### Initialize handshake
 
@@ -99,7 +99,7 @@ Verify via the `peer-cli-add` skill's verification ladder (Step 1) before adding
 
 ---
 
-## ASP — App Server Protocol (Codex)
+## ASP - App Server Protocol (Codex)
 
 ### Service identification
 
@@ -144,7 +144,7 @@ Server → client:
 
 #### threadResume
 
-Useful for cross-cycle conversation continuity (out of scope for v1.27.0 — gdd always creates fresh threads per delegated call — but the API surface exists):
+Useful for cross-cycle conversation continuity (out of scope for v1.27.0 - gdd always creates fresh threads per delegated call - but the API surface exists):
 
 ```json
 {
@@ -191,7 +191,7 @@ Server streams turn-progress notifications, ends with a structured result:
 }
 ```
 
-**Error path** (does NOT throw on the client side — resolves with the error structure):
+**Error path** (does NOT throw on the client side - resolves with the error structure):
 
 ```json
 {
@@ -209,7 +209,7 @@ Server streams turn-progress notifications, ends with a structured result:
 }
 ```
 
-The caller decides retry vs fallback per session-runner contract — gdd's session-runner falls back to local Anthropic on `status: "error"` per D-07.
+The caller decides retry vs fallback per session-runner contract - gdd's session-runner falls back to local Anthropic on `status: "error"` per D-07.
 
 ### Codex ASP entry point
 
@@ -230,12 +230,12 @@ The caller decides retry vs fallback per session-runner contract — gdd's sessi
 
 - Requests carry `id` (monotonic integer per session).
 - Responses carry the same `id` in `result` or `error`.
-- Notifications have no `id` and no `result` — they are routed to the active request's `onNotification` callback (each protocol allows only one "active" request at a time per session — half-duplex).
+- Notifications have no `id` and no `result` - they are routed to the active request's `onNotification` callback (each protocol allows only one "active" request at a time per session - half-duplex).
 
 ### Process lifecycle
 
 - The peer process is spawned via `scripts/lib/peer-cli/spawn-cmd.cjs` (handles Windows `.cmd` EINVAL workaround per D-04).
-- The client connects directly OR through gdd's broker (`broker-lifecycle.cjs`) — both surfaces present the same `{initialize, prompt, close}` (ACP) or `{threadStart, threadResume, turn, close}` (ASP) API.
+- The client connects directly OR through gdd's broker (`broker-lifecycle.cjs`) - both surfaces present the same `{initialize, prompt, close}` (ACP) or `{threadStart, threadResume, turn, close}` (ASP) API.
 - On process death mid-request, the client rejects the in-flight promise with a structured `{error_class: "process_exited"}` event for telemetry.
 
 ---
@@ -245,8 +245,8 @@ The caller decides retry vs fallback per session-runner contract — gdd's sessi
 gdd v1.27.0 ships only ACP and ASP. If a new peer speaks neither (e.g., a future REST-only or HTTP/2-streaming protocol), the path forward is:
 
 1. Document the gap in `.design/RESEARCH.md` for a future phase to scope a new protocol layer.
-2. Do **not** stretch ACP/ASP to fit — they're documented contracts, not generalist multiplexers.
-3. The `peer-cli-add` skill (Step 1's verification ladder) refuses to scaffold a peer that doesn't speak ACP or ASP — by design.
+2. Do **not** stretch ACP/ASP to fit - they're documented contracts, not generalist multiplexers.
+3. The `peer-cli-add` skill (Step 1's verification ladder) refuses to scaffold a peer that doesn't speak ACP or ASP - by design.
 
 A future phase may add a new `scripts/lib/peer-cli/<protocol>-client.cjs` mirror following the same shape (line-buffer + JSON-RPC framing if applicable, or whatever the new protocol natively uses).
 
@@ -254,13 +254,13 @@ A future phase may add a new `scripts/lib/peer-cli/<protocol>-client.cjs` mirror
 
 ## Cross-references
 
-- `scripts/lib/peer-cli/acp-client.cjs` — ACP client implementation.
-- `scripts/lib/peer-cli/asp-client.cjs` — ASP client implementation.
-- `scripts/lib/peer-cli/spawn-cmd.cjs` — Windows `.cmd` EINVAL workaround.
-- `scripts/lib/peer-cli/broker-lifecycle.cjs` — long-lived broker.
-- `scripts/lib/peer-cli/adapters/*.cjs` — per-peer thin wrappers.
-- `scripts/lib/peer-cli/registry.cjs` — central dispatch.
-- `tests/peer-cli-{acp,asp,spawn,registry,adapters}.test.cjs` — protocol-level tests.
-- `docs/PEER-DELEGATION.md` — ops guide.
-- `NOTICE` — Apache 2.0 attribution for cc-multi-cli.
-- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` — decision lineage (D-01, D-02, D-03, D-04).
+- `scripts/lib/peer-cli/acp-client.cjs` - ACP client implementation.
+- `scripts/lib/peer-cli/asp-client.cjs` - ASP client implementation.
+- `scripts/lib/peer-cli/spawn-cmd.cjs` - Windows `.cmd` EINVAL workaround.
+- `scripts/lib/peer-cli/broker-lifecycle.cjs` - long-lived broker.
+- `scripts/lib/peer-cli/adapters/*.cjs` - per-peer thin wrappers.
+- `scripts/lib/peer-cli/registry.cjs` - central dispatch.
+- `tests/peer-cli-{acp,asp,spawn,registry,adapters}.test.cjs` - protocol-level tests.
+- `docs/PEER-DELEGATION.md` - ops guide.
+- `NOTICE` - Apache 2.0 attribution for cc-multi-cli.
+- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` - decision lineage (D-01, D-02, D-03, D-04).

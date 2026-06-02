@@ -3,7 +3,7 @@
 > Phase 29 reference doc. Specifies the deterministic gate that decides when
 > the reflector has gathered enough `capability_gap` signal to surface a
 > one-time opt-in prompt for Stage-1 (incubator authoring of new agents /
-> skills). **No code path in this repository auto-flips the stage** —
+> skills). **No code path in this repository auto-flips the stage** -
 > D-01 is the discipline.
 
 ---
@@ -23,7 +23,7 @@ date or a release. The reflector aggregates events into per-cycle
 clusters (`scripts/lib/reflector-capability-gap-aggregator.cjs`) and
 evaluates a deterministic stability function against the project's
 cycle history. When the gate is crossed, `/gdd:apply-reflections`
-emits a **one-time user-facing prompt** in the cycle markdown — never
+emits a **one-time user-facing prompt** in the cycle markdown - never
 an auto-stage-flip. The user opting in is a separate explicit action,
 out of scope for this gate spec.
 
@@ -72,7 +72,7 @@ A cluster `c` is **stable** iff both conditions hold:
 
 1. **Consecutive presence.** `c` appears in `≥ M` consecutive cycles
    somewhere within the observed history. (The most recent unbroken
-   run is what matters — if a cluster missed a cycle, the run resets
+   run is what matters - if a cluster missed a cycle, the run resets
    and only the longest streak counts.)
 2. **Narrow posterior.** The closed-form posterior standard deviation
    of the Beta distribution satisfies:
@@ -129,7 +129,7 @@ Inputs:
 
 The evaluation is **deterministic** (no randomness), **idempotent**
 (no side-effects in the evaluator), and **read-only** with respect to
-`.design/config.json` — that file is only updated by the user's
+`.design/config.json` - that file is only updated by the user's
 explicit opt-in action, never by the reflector.
 
 ---
@@ -140,11 +140,11 @@ When the gate crosses for the first time, `/gdd:apply-reflections`
 appends the following verbatim block to the cycle markdown:
 
 > ```markdown
-> ## Stage-0 → Stage-1 gate crossed — opt-in required
+> ## Stage-0 → Stage-1 gate crossed - opt-in required
 >
 > Capability-gap detection has accumulated enough signal across recent
 > cycles to consider enabling Stage-1 (incubator authoring of new
-> agents / skills). The gate is informational only — **nothing has
+> agents / skills). The gate is informational only - **nothing has
 > changed in the runtime**, and Stage-1 will NOT auto-enable. Per
 > Phase 29 CONTEXT.md decision D-01, the user opts in explicitly.
 >
@@ -174,8 +174,8 @@ appends the following verbatim block to the cycle markdown:
 > `capability_gap_gate.user_prompted_at` from `.design/config.json`.
 > ```
 
-The wiring side of this — actually writing the `user_prompted_at`
-timestamp and routing the opt-in confirmation — is deferred to
+The wiring side of this - actually writing the `user_prompted_at`
+timestamp and routing the opt-in confirmation - is deferred to
 **Plan 29-05** (`/gdd:apply-reflections` extension). This document
 specifies the prompt text and behavior; 29-05 implements the
 state-machine that consumes it.
@@ -204,7 +204,7 @@ Two timestamps in `.design/config.json` track the project's gate state:
 - **`opted_in_at`** is set when the user explicitly opts into Stage-1.
   Stage-1 incubator authoring (Plans 29-04+) becomes active once this
   timestamp is present. **Stage 1 is NEVER enabled by the reflector
-  setting this timestamp itself** — D-01 lock.
+  setting this timestamp itself** - D-01 lock.
 
 Once `opted_in_at` is set, the gate stops emitting prompts entirely
 (it's a one-shot mechanism, not a continuous nudge).
@@ -222,7 +222,7 @@ Operators can manually reset the gate by editing `.design/config.json`:
 | Tighten / loosen thresholds | Edit `K` / `M` / `stddev_threshold` directly. Out-of-range values silently fall back to defaults (§ 2). |
 
 Reset is **explicit** and **idempotent**. The reflector never writes
-to these fields on its own — the only writers are (a) the
+to these fields on its own - the only writers are (a) the
 `/gdd:apply-reflections` opt-in path (Plan 29-05) and (b) the human
 operator editing the file by hand.
 
@@ -233,32 +233,32 @@ operator editing the file by hand.
 Executable examples that exercise the gate live in
 `tests/reflector-capability-gap-aggregation.test.cjs`:
 
-- **T3** — 30 cycles × 3 always-present clusters → gate crosses with
+- **T3** - 30 cycles × 3 always-present clusters → gate crosses with
   default K=3 / M=10 / stddev_threshold=0.05.
-- **T3b** — 10 cycles × 1 always-present cluster → gate does NOT
+- **T3b** - 10 cycles × 1 always-present cluster → gate does NOT
   cross (posterior stddev ≈ 0.077 with α=11, β=1 is above the 0.05
   threshold; M=10 is the lower bound on observations, not a
   sufficient condition for stability).
-- **T4** — 30 cycles, 2 always-present clusters + 1 "noisy" cluster
+- **T4** - 30 cycles, 2 always-present clusters + 1 "noisy" cluster
   present in only the first 4 cycles → gate does NOT cross
   (`stable_cluster_ids.length === 2 < K=3`).
-- **T4b** — 5 cycles total → gate does NOT cross (`cycles_observed < M`).
-- **T7** — Confirms `K` and `stddev_threshold` overrides flow through
+- **T4b** - 5 cycles total → gate does NOT cross (`cycles_observed < M`).
+- **T7** - Confirms `K` and `stddev_threshold` overrides flow through
   `normalizeConfig` and reach the evaluation.
 
 These fixtures are synthetic and inline (D-11). The gate evaluator
-never reads `.design/gep/events.jsonl` directly in CI — fixtures
+never reads `.design/gep/events.jsonl` directly in CI - fixtures
 seed the cluster lists by hand.
 
 ---
 
 ## Decisions referenced
 
-- **D-01** — Two-stage approach: Stage 0 telemetry-only ships first;
+- **D-01** - Two-stage approach: Stage 0 telemetry-only ships first;
   Stage 1 authoring gated on data; user opts in per a one-time prompt;
   no auto-flip.
-- **D-03** — Default `K=3` / `M=10` / `stddev_threshold=0.05`,
+- **D-03** - Default `K=3` / `M=10` / `stddev_threshold=0.05`,
   overridable via `.design/config.json`.
-- **D-11** — Tests use synthetic fixtures (no live event chain reads).
-- **Phase 23.5** — Posterior `stddev(Beta(α, β))` closed form and
+- **D-11** - Tests use synthetic fixtures (no live event chain reads).
+- **Phase 23.5** - Posterior `stddev(Beta(α, β))` closed form and
   Laplace prior convention reused here.

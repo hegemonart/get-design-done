@@ -7,8 +7,8 @@ tags: [scan, procedure, extracted, pipeline-stage, design-system, audit]
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/scan/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
-The skill's load-bearing workflow stays in `../skills/scan/SKILL.md`; this file holds the
+Source: extracted from `skills/scan/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+The skill's essential workflow stays in `../skills/scan/SKILL.md`; this file holds the
 detail the agent reaches for when executing a specific step (STATE integration, connection
 probes, extraction grep commands, scoring, output contracts).
 
@@ -16,7 +16,7 @@ probes, extraction grep commands, scoring, output contracts).
 
 Detailed procedure for the get-design-done `scan` pre-pipeline initializer. Companion to
 `../skills/scan/SKILL.md`. Read this file when executing a specific scan step; the SKILL.md
-keeps the load-bearing workflow + decision tree, this file holds the deep methodology.
+keeps the essential workflow + decision tree, this file holds the deep methodology.
 
 ---
 
@@ -28,18 +28,18 @@ At scan entry, before running any step:
 
 1. Check for `.design/STATE.md`.
    - **If missing:** create it from `../reference/STATE-TEMPLATE.md`. Set the following fields:
-     - `started_at` = now (ISO 8601) — **set once; never overwrite on subsequent runs**
+     - `started_at` = now (ISO 8601) - **set once; never overwrite on subsequent runs**
      - `last_checkpoint` = now
      - frontmatter `stage` = `scan`
      - `<position>` `stage` = `scan`, `status` = `in_progress`, `task_progress` = `0/8`
-   - **If present and `stage == scan` and `status == in_progress`:** RESUME — skip already-complete steps using `task_progress` as offset. Do not reset `started_at`.
+   - **If present and `stage == scan` and `status == in_progress`:** RESUME - skip already-complete steps using `task_progress` as offset. Do not reset `started_at`.
    - **Otherwise (normal transition):** set frontmatter `stage = scan`, `<position>` `stage = scan`, `status = in_progress`, `task_progress = 0/8`. Do not overwrite `started_at`.
 
 ### Probe connection availability
 
-Run both probes below. MCP tools may be in the deferred tool set — **always call ToolSearch first**; without it, a deferred tool invocation fails silently.
+Run both probes below. MCP tools may be in the deferred tool set - **always call ToolSearch first**; without it, a deferred tool invocation fails silently.
 
-**Figma probe (variant-agnostic — resolves any server prefix matching `/figma/i`):**
+**Figma probe (variant-agnostic - resolves any server prefix matching `/figma/i`):**
 
 ```
 Step A1 — Keyword ToolSearch:
@@ -80,7 +80,7 @@ Note: scan probes **both** connections because the State Integration block is th
 
 Run all 4 Phase 8 probes at scan entry. Results are written to STATE.md `<connections>` so downstream stages (verify, compare, darkmode, plan, design) do not re-probe unless needed.
 
-Note: as of v1.0.7.1, Figma is a single connection (`figma:` key) covering reads + writes — no separate `figma_writer:` probe. The Wave A Figma probe above is the sole Figma availability check.
+Note: as of v1.0.7.1, Figma is a single connection (`figma:` key) covering reads + writes - no separate `figma_writer:` probe. The Wave A Figma probe above is the sole Figma availability check.
 
 **preview:**
 
@@ -178,7 +178,7 @@ Update `last_checkpoint` to now. Write `.design/STATE.md` to disk before proceed
 
 ---
 
-## Step 1 — Orient
+## Step 1 - Orient
 
 Identify the project structure before scanning:
 
@@ -204,7 +204,7 @@ Record: framework, CSS approach, component count, style file count, token system
 `src/` -> `app/` -> `pages/` -> `lib/`. Substitute the detected source root (the matched
 directory name) into every subsequent grep command in this SKILL.md that currently references
 `src/` as the primary component root. If none of these directories exist, log
-"No standard source directory found — manual audit required" and proceed with the unchanged
+"No standard source directory found - manual audit required" and proceed with the unchanged
 command (the `2>/dev/null` guards will suppress the no-match output).
 
 Log the detected source root in DESIGN.md frontmatter as:
@@ -212,7 +212,7 @@ Log the detected source root in DESIGN.md frontmatter as:
 
 ---
 
-## Step 2 — Extract Color System
+## Step 2 - Extract Color System
 
 ```bash
 # All hex colors used
@@ -243,13 +243,13 @@ Produce a color inventory table:
 
 ---
 
-## Step 2A — Figma Token Augmentation
+## Step 2A - Figma Token Augmentation
 
-**Skip this step if `figma` is `not_configured` or `unavailable` in `.design/STATE.md` `<connections>`.** Fall back to the grep-based token extraction from Step 2 alone — no error, no warning. Scan continues normally.
+**Skip this step if `figma` is `not_configured` or `unavailable` in `.design/STATE.md` `<connections>`.** Fall back to the grep-based token extraction from Step 2 alone - no error, no warning. Scan continues normally.
 
 ### If `figma: available`
 
-Read the resolved prefix from STATE.md `<connections>` (e.g., `prefix=mcp__figma__` or `prefix=mcp__figma-desktop__`) and call `{prefix}get_variable_defs` (no arguments — returns all variables in the active Figma file).
+Read the resolved prefix from STATE.md `<connections>` (e.g., `prefix=mcp__figma__` or `prefix=mcp__figma-desktop__`) and call `{prefix}get_variable_defs` (no arguments - returns all variables in the active Figma file).
 
 > If no Figma file is open, the call errors. Treat any error as a graceful skip: update STATE.md `<connections>` to `figma: unavailable` and continue with Step 2 results only.
 
@@ -261,7 +261,7 @@ Read the resolved prefix from STATE.md `<connections>` (e.g., `prefix=mcp__figma
 | `FLOAT` | `spacing/*` | Add row to spacing system |
 | `FLOAT` | `font-size/*` or `typography/*` | Add row to typography system |
 
-Record both the variable **NAME** and resolved value — not just the value. `get_variable_defs` returns resolved values only (no alias chains); the name often carries semantic meaning the value cannot.
+Record both the variable **NAME** and resolved value - not just the value. `get_variable_defs` returns resolved values only (no alias chains); the name often carries semantic meaning the value cannot.
 
 **Multi-mode (Light/Dark):** when `valuesByMode` has multiple entries, extract all values and note dark-mode existence in the DESIGN.md color section.
 
@@ -284,13 +284,13 @@ When this step runs successfully:
 
 ### Caveats
 
-- `get_variable_defs` returns **resolved values only** — no alias chains. Always record the variable NAME alongside the value; the name carries semantic meaning not present in the hex/float alone.
+- `get_variable_defs` returns **resolved values only** - no alias chains. Always record the variable NAME alongside the value; the name carries semantic meaning not present in the hex/float alone.
 - **Multi-mode:** when Light and Dark mode values differ, record both. Note dark-mode variable presence in the DESIGN.md color section.
 - **No file open:** if `get_variable_defs` errors (most commonly because no Figma file is open), skip this step entirely and update STATE.md `<connections>` to `figma: unavailable`. Do not error the scan stage.
 
 ---
 
-## Step 3 — Extract Typography System
+## Step 3 - Extract Typography System
 
 ```bash
 # Font families
@@ -310,9 +310,9 @@ grep -rEoh "line-height:\s*[0-9.]*|leading-[a-z0-9]*" src/ styles/ --include="*.
 
 1. How many font families? (> 2 = violation unless one is monospace)
 2. Are font sizes from a defined scale or arbitrary px?
-3. Map found sizes to nearest modular scale — identify outliers
+3. Map found sizes to nearest modular scale - identify outliers
 4. Are weights following hierarchy? (body 400, headings 600-700, never 300 on small text)
-5. Line-height on body text — is it 1.5–1.75?
+5. Line-height on body text - is it 1.5–1.75?
 6. Any of the reflex fonts without apparent brand reason? (Inter, DM Sans, Space Grotesk, Plus Jakarta Sans)
 
 Read `${CLAUDE_PLUGIN_ROOT}/reference/typography.md` for comparison criteria.
@@ -321,7 +321,7 @@ Produce a typography inventory table.
 
 ---
 
-## Step 4 — Extract Spacing System
+## Step 4 - Extract Spacing System
 
 ```bash
 # All CSS spacing values
@@ -340,7 +340,7 @@ Grid compliance: are spacing values in the 4/8/12/16/24/32/48/64 series? Flag an
 
 ---
 
-## Step 5 — Anti-Pattern Audit
+## Step 5 - Anti-Pattern Audit
 
 Read `${CLAUDE_PLUGIN_ROOT}/reference/anti-patterns.md`. Run all grep commands.
 
@@ -369,13 +369,13 @@ For each finding: record the count, a sample file:line, and severity (BAN = P0, 
 
 ---
 
-## Step 6 — Component Inventory
+## Step 6 - Component Inventory
 
 If `--quick`, skip this step.
 
 ### Component pattern indicators
 
-A bare `grep -rln "className" src/` produces false positives on type-only files, test files, utility helpers, and server-only modules — none of which are components. Instead, use a three-pass multi-signal filter. A file qualifies as a component only when **all three indicators** match:
+A bare `grep -rln "className" src/` produces false positives on type-only files, test files, utility helpers, and server-only modules - none of which are components. Instead, use a three-pass multi-signal filter. A file qualifies as a component only when **all three indicators** match:
 
 1. Has a JSX-like return: `grep -lE "return\s*\(" <file>`
 2. Has className or class attribute usage: `grep -lE "className=|class=" <file>`
@@ -415,13 +415,13 @@ Identify:
 - Which have design system-level implementation vs. one-off styles
 - Which are candidates for design system extraction
 
-### --full mode per-file output
+### `--full` mode per-file output
 
 If `--full` flag is set, emit one row per file in the component inventory:
 
 | File | Component Count | Styling Approach | Token Usage | Issues |
 |------|-----------------|------------------|-------------|--------|
-| src/components/Button.tsx | 1 | Tailwind | var(--primary), p-4, gap-2 | heading weight dup |
+| src/components/Button.tsx | 1 | Tailwind | `var(--primary)`, p-4, gap-2 | heading weight dup |
 | src/components/Card.tsx | 1 | CSS Module | styles.card, rgb(...) | hardcoded color |
 
 Columns:
@@ -435,7 +435,7 @@ Without `--full`, the component inventory is a summary count only (not per-file)
 
 ---
 
-## Step 7 — Score All 7 Categories
+## Step 7 - Score All 7 Categories
 
 Read `${CLAUDE_PLUGIN_ROOT}/reference/audit-scoring.md`. Score each category 0–10 based on what you found in Steps 1–6.
 
@@ -449,7 +449,7 @@ Calculate grade (A=90–100, B=75–89, C=60–74, D=45–59, F=0–44).
 
 ---
 
-## Step 8 — Generate Design Debt Roadmap
+## Step 8 - Generate Design Debt Roadmap
 
 Collect all findings from Steps 1–6. Classify each:
 
@@ -462,27 +462,27 @@ Collect all findings from Steps 1–6. Classify each:
 
 Group into **debt themes**:
 
-1. **Foundation** — token layer, design system architecture
-2. **Typography** — scale, hierarchy, families
-3. **Color** — palette, semantics, dark mode
-4. **Accessibility** — contrast, focus, semantics, motion
-5. **Anti-Patterns** — BAN + SLOP removals
-6. **Components** — inconsistency, missing primitives
-7. **Motion** — easing, duration, reduced-motion
+1. **Foundation** - token layer, design system architecture
+2. **Typography** - scale, hierarchy, families
+3. **Color** - palette, semantics, dark mode
+4. **Accessibility** - contrast, focus, semantics, motion
+5. **Anti-Patterns** - BAN + SLOP removals
+6. **Components** - inconsistency, missing primitives
+7. **Motion** - easing, duration, reduced-motion
 
 For each debt item, estimate effort:
-- `XS` — single-line grep-and-replace (< 30 min)
-- `S` — localized fix in 1–3 files (< 2h)
-- `M` — affects 5–15 files, requires testing (2–8h)
-- `L` — architectural change, touches 15+ files (1–3 days)
-- `XL` — design system rebuild (3+ days)
+- `XS` - single-line grep-and-replace (< 30 min)
+- `S` - localized fix in 1–3 files (< 2h)
+- `M` - affects 5–15 files, requires testing (2–8h)
+- `L` - architectural change, touches 15+ files (1–3 days)
+- `XL` - design system rebuild (3+ days)
 
 ### Priority score for ordering DESIGN-DEBT.md entries
 
 Each debt item gets three scores:
 
 - **severity_weight**: `{ P0: 4, P1: 3, P2: 2, P3: 1 }`
-- **effort_weight**: `{ XS: 5, S: 4, M: 3, L: 2, XL: 1 }` — high effort = lower priority
+- **effort_weight**: `{ XS: 5, S: 4, M: 3, L: 2, XL: 1 }` - high effort = lower priority
 - **dependency_depth**: count of other debt items this fix unblocks
 
 Formula:
@@ -498,7 +498,7 @@ Ordering rules:
 
 Example: A P1 issue (`severity_weight = 3`) with S effort (`effort_weight = 4`) that unblocks 2 other items (`dependency_depth = 2`) scores: `(3 * 4) + (2 * 2) = 16`. A P0 issue (`4`) with XL effort (`1`) with no dependencies scores: `(4 * 1) + 0 = 4`. The P1 ranks above the P0 despite lower severity because its XL effort makes the P0 low ROI.
 
-Identify **quick wins**: P1 issues with XS/S effort — these have the best ROI.
+Identify **quick wins**: P1 issues with XS/S effort - these have the best ROI.
 Identify **blocking dependencies**: fixes that must happen before others (e.g., token layer before dark mode).
 
 ---
@@ -686,7 +686,7 @@ Given the scan results:
 
 ```
 Suggested first pipeline run:
-  /get-design-done:discover --auto
+  /get-design-done:discover `--auto`
     -> Will use DESIGN.md as baseline context
   /get-design-done:plan
     -> Scope: address all P0s + top 5 P1s

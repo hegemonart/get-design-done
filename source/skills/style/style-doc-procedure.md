@@ -7,17 +7,17 @@ tags: [style, handoff, component-spec, doc-writer, procedure, extracted]
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/style/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
-The skill's load-bearing routing + mode-detection stays in `../skills/style/SKILL.md`; this file
+Source: extracted from `skills/style/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+The skill's essential routing + mode-detection stays in `../skills/style/SKILL.md`; this file
 holds the agent-spawn payload, source-resolution paths, and the per-section spec the
 `design-doc-writer` agent produces. See `./shared-preamble.md#output-contract-reminders` for
 the cross-skill output discipline.
 
 # Style Doc Procedure
 
-Detailed procedure for the `gdd-style` standalone command — companion to
+Detailed procedure for the `gdd-style` standalone command - companion to
 `../skills/style/SKILL.md`. Read this file when executing the agent-spawn step (Step 4 in the
-skill) or when wiring the source-resolution fallback chain. The SKILL.md keeps the load-bearing
+skill) or when wiring the source-resolution fallback chain. The SKILL.md keeps the essential
 mode detection + decision tree; this file holds the deep methodology.
 
 ---
@@ -60,7 +60,7 @@ Search for a source file matching the provided ComponentName (case-insensitive):
 
 **If zero matches found:** Abort with: "Component [ComponentName] not found in expected paths. Verify the name matches a file in src/components/ or components/."
 
-When `$ARGUMENTS` is empty, the skill enters **list mode** — glob the same source roots, also list task names from `.design/tasks/*.md` (if directory exists), display the list, and prompt the user to specify a ComponentName. Exit without generating any file.
+When `$ARGUMENTS` is empty, the skill enters **list mode** - glob the same source roots, also list task names from `.design/tasks/*.md` (if directory exists), display the list, and prompt the user to specify a ComponentName. Exit without generating any file.
 
 ---
 
@@ -113,13 +113,13 @@ After the agent emits `## DOC COMPLETE`, confirm the file exists at `output_path
 
 Each generated `.design/DESIGN-STYLE-[ComponentName].md` SHOULD contain (in this order):
 
-1. **Spacing Tokens** — every spacing token the component uses (paddings, gaps, margins). Cross-reference `./composition.md` for the 4 px / 8 px modular scale discipline.
-2. **Color Tokens** — every color token the component uses (background, foreground, border, focus ring, state-overlays). Cross-reference `./palette-catalog.md` for naming convention and `./shared-preamble.md#token-first-reasoning` for the raw-hex audit threshold.
-3. **Typography Scale** — type ramps the component reaches into (label, body, code, etc.) with size + line-height + weight. Cross-reference `./typography.md`.
-4. **Component States** — default, hover, focus, active, disabled, loading, error. Each row: token diff vs default.
-5. **Token Semantic Health Score** — raw-hex ratio = `raw_hex_count / total_color_uses`. Healthy < 5 %.
-6. **AI-Slop Detection** — apply `./anti-patterns.md` `BAN-*` and `SLOP-*` patterns to the component source. List violations.
-7. **Decisions Applied** (post-pipeline only) — D-XX entries from `DESIGN-SUMMARY.md` that name or describe this component.
+1. **Spacing Tokens** - every spacing token the component uses (paddings, gaps, margins). Cross-reference `./composition.md` for the 4 px / 8 px modular scale discipline.
+2. **Color Tokens** - every color token the component uses (background, foreground, border, focus ring, state-overlays). Cross-reference `./palette-catalog.md` for naming convention and `./shared-preamble.md#token-first-reasoning` for the raw-hex audit threshold.
+3. **Typography Scale** - type ramps the component reaches into (label, body, code, etc.) with size + line-height + weight. Cross-reference `./typography.md`.
+4. **Component States** - default, hover, focus, active, disabled, loading, error. Each row: token diff vs default.
+5. **Token Semantic Health Score** - raw-hex ratio = `raw_hex_count / total_color_uses`. Healthy < 5 %.
+6. **AI-Slop Detection** - apply `./anti-patterns.md` `BAN-*` and `SLOP-*` patterns to the component source. List violations.
+7. **Decisions Applied** (post-pipeline only) - D-XX entries from `DESIGN-SUMMARY.md` that name or describe this component.
 
 ---
 

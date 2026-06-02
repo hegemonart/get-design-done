@@ -1,4 +1,4 @@
-# Navbar (Top Navigation Bar) — Benchmark Spec
+# Navbar (Top Navigation Bar) - Benchmark Spec
 
 **Harvested from**: Material 3, Carbon, Polaris, Atlassian, Primer, UUPM (app-interface, MIT)
 **Wave**: 4 · **Category**: Navigation
@@ -22,7 +22,7 @@ A navbar is the primary horizontal navigation surface at the top of an applicati
 
 | Part | Required | Notes |
 |------|----------|-------|
-| `<header>` wrapper | Yes | `role="banner"` — one per page |
+| `<header>` wrapper | Yes | `role="banner"` - one per page |
 | `<nav>` | Yes | `role="navigation"` + `aria-label="Primary"` |
 | Skip-to-main link | Yes | First focusable element; `href="#main-content"`; visible on focus |
 | Logo / home link | Yes | `<a href="/">` with `aria-label="[App name] home"` |
@@ -53,10 +53,10 @@ A navbar is the primary horizontal navigation surface at the top of an applicati
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Full nav visible, no shadow | — |
-| scrolled | scroll > 0 | `box-shadow` bottom border appears | — |
-| nav-item-hover | pointer over item | underline or bg highlight | — |
-| nav-item-focus | keyboard focus | 2px focus-visible ring | — |
+| default | - | Full nav visible, no shadow | - |
+| scrolled | scroll > 0 | `box-shadow` bottom border appears | - |
+| nav-item-hover | pointer over item | underline or bg highlight | - |
+| nav-item-focus | keyboard focus | 2px focus-visible ring | - |
 | nav-item-active | current route | `font-weight: 600` + indicator underline or pill | `aria-current="page"` |
 | mobile-collapsed | viewport < breakpoint | Nav items hidden; hamburger visible | `aria-expanded="false"` on hamburger |
 | mobile-expanded | hamburger activated | Nav items shown as vertical list | `aria-expanded="true"` on hamburger |
@@ -81,9 +81,9 @@ Mobile breakpoint: collapse at ≤768px (Carbon, Polaris); ≤960px for complex 
 - Nav item labels: body-sm to body-md (13–15px), weight 500 for active, 400 for inactive
 - Active item visual distinction must not rely on color alone (add font-weight or underline indicator)
 - Secondary action icons: 20px, with `aria-label` on each button
-- Skip link text: `body-sm`, matches surrounding text — it only needs to be visible on focus
+- Skip link text: `body-sm`, matches surrounding text - it only needs to be visible on focus
 
-Cross-link: `reference/typography.md` — body scale, weight tokens
+Cross-link: `reference/typography.md` - body scale, weight tokens
 
 ---
 
@@ -94,7 +94,7 @@ Cross-link: `reference/typography.md` — body scale, weight tokens
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/landmark-regions/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/landmark-regions/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -105,13 +105,13 @@ Cross-link: `reference/typography.md` — body scale, weight tokens
 
 ### Accessibility Rules
 
-- `<nav>` MUST have `aria-label="Primary"` — multiple `<nav>` landmarks on a page must all be distinctly labelled
-- Skip-to-main link MUST be the first focusable element on the page — keyboard users need to bypass repetitive nav
-- Active nav item MUST use `aria-current="page"` — color alone is insufficient for AT users
-- Hamburger button MUST have `aria-expanded` and `aria-controls` — AT users need to know the nav state
+- `<nav>` MUST have `aria-label="Primary"` - multiple `<nav>` landmarks on a page must all be distinctly labelled
+- Skip-to-main link MUST be the first focusable element on the page - keyboard users need to bypass repetitive nav
+- Active nav item MUST use `aria-current="page"` - color alone is insufficient for AT users
+- Hamburger button MUST have `aria-expanded` and `aria-controls` - AT users need to know the nav state
 - `role="banner"` MUST appear only once per page (one `<header>` at page level)
 
-Cross-link: `reference/accessibility.md` — landmark regions, skip navigation
+Cross-link: `reference/accessibility.md` - landmark regions, skip navigation
 
 ---
 
@@ -124,9 +124,9 @@ Cross-link: `reference/accessibility.md` — landmark regions, skip navigation
 | Mobile menu close | 150ms | ease-in | Collapse |
 | Transparent → opaque on scroll | 200ms | ease-out | Background-color transition |
 
-**BAN**: Animating navbar height on scroll — causes layout reflow and jank on every scroll event.
+**BAN**: Animating navbar height on scroll - causes layout reflow and jank on every scroll event.
 
-Cross-link: `reference/motion.md` — layout-affecting transitions
+Cross-link: `reference/motion.md` - layout-affecting transitions
 
 ---
 
@@ -139,9 +139,9 @@ Cross-link: `reference/motion.md` — layout-affecting transitions
 - Manage z-index explicitly on sticky navbars to prevent overlap issues *(Material 3, Carbon)*
 
 ### Don't
-- Don't use multiple unlabelled `<nav>` landmarks — screen reader users can't distinguish them *(WCAG 4.1.2)*
+- Don't use multiple unlabelled `<nav>` landmarks - screen reader users can't distinguish them *(WCAG 4.1.2)*
 - Don't rely on color alone to indicate the active nav item *(WCAG 1.4.1)*
-- Don't put more than 7 primary nav items — overwhelming and hard to scan *(Carbon, Polaris HIG)*
+- Don't put more than 7 primary nav items - overwhelming and hard to scan *(Carbon, Polaris HIG)*
 - Don't use `position: fixed` on mobile without accounting for virtual keyboard displacement
 
 ---
@@ -150,7 +150,7 @@ Cross-link: `reference/motion.md` — layout-affecting transitions
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on interactive elements — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on interactive elements - `reference/anti-patterns.md#ban-04` |
 
 ---
 

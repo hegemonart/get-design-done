@@ -8,7 +8,7 @@ A design bug is a gap between what the design says (DESIGN-PLAN.md goals, D-XX d
 
 2. **One variable at a time.** Change one thing, re-measure. Multiple simultaneous changes make causation impossible to determine and usually bury the true culprit.
 
-3. **Persistent state.** Write findings to `.design/DEBUG.md` after each investigation step. A killed debug session resumes from the last checkpoint — your future self should be able to read the file and pick up mid-thought.
+3. **Persistent state.** Write findings to `.design/DEBUG.md` after each investigation step. A killed debug session resumes from the last checkpoint - your future self should be able to read the file and pick up mid-thought.
 
 4. **Design decisions are ground truth.** If D-XX says "primary = #3B82F6" and the rendered color is #000, that is a bug regardless of intent, aesthetics, or taste. The decision trail is the spec.
 
@@ -26,7 +26,7 @@ Written to `.design/DEBUG.md` with one `##` section per session. Each section co
 
 ## Red Flags
 
-- "It works for me" without a measurement — no. Measure.
-- Fixing a symptom without isolating the cause — the bug will return somewhere else.
-- Editing a global token to fix one component — blast radius.
-- Skipping the DEBUG.md write-up because "it's obvious now" — future-you will disagree.
+- "It works for me" without a measurement - no. Measure.
+- Fixing a symptom without isolating the cause - the bug will return somewhere else.
+- Editing a global token to fix one component - blast radius.
+- Skipping the DEBUG.md write-up because "it's obvious now" - future-you will disagree.

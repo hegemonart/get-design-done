@@ -1,9 +1,9 @@
-# Trae — Price Table (stub)
+# Trae - Price Table (stub)
 
 **Runtime:** `trae` (Trae)
-**Phase 26 D-08 sub-table — STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
+**Phase 26 D-08 sub-table - STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
 
-**Provenance:** `<TODO: confirm at https://trae.ai/docs>` — pending.
+**Provenance:** `<TODO: confirm at https://trae.ai/docs>` - pending.
 
 **Note:** Trae may be a `single_tier` runtime (one model maps to all three tiers). When confirming pricing, populate all three rows with the same numbers and the same model name; mark `single_tier: true` in the corresponding `reference/runtime-models.md` row.
 

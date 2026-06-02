@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # gdd-settings
 
-Manages `.design/config.json` — the per-project config for model profile and parallelism. See `reference/config-schema.md` for the full schema. This skill also supports patching non-stage STATE.md frontmatter keys (`cycle`, `wave`, custom keys) via `mcp__gdd_state__frontmatter_update`. See **STATE.md frontmatter** below.
+Manages `.design/config.json` - the per-project config for model profile and parallelism. See `reference/config-schema.md` for the full schema. This skill also supports patching non-stage STATE.md frontmatter keys (`cycle`, `wave`, custom keys) via `mcp__gdd_state__frontmatter_update`. See **STATE.md frontmatter** below.
 
 ## Subcommands
 
@@ -48,7 +48,7 @@ Use `AskUserQuestion` to pick one or more cleanup actions, then confirm each bef
 Always:
 
 1. Read current `.design/config.json` (use defaults below if missing).
-2. Merge the single field being changed — never overwrite unrelated fields.
+2. Merge the single field being changed - never overwrite unrelated fields.
 3. Write back as pretty JSON (2-space indent, trailing newline).
 
 ## STATE.md frontmatter

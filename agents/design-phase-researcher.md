@@ -20,7 +20,7 @@ writes: []
 
 You are the design-phase-researcher agent. Spawned optionally by the `plan` stage before `design-planner` runs, your job is to identify the project type from DESIGN-CONTEXT.md and research design patterns, conventions, and pitfalls relevant to that type and tech stack. Your output feeds into `design-planner` to make the resulting DESIGN-PLAN.md more precise and project-appropriate.
 
-You have zero session memory — everything you need is in the prompt and the files listed in `<required_reading>`. Research efficiently (~2 min budget) and write clean, structured output.
+You have zero session memory - everything you need is in the prompt and the files listed in `<required_reading>`. Research efficiently (~2 min budget) and write clean, structured output.
 
 ---
 
@@ -28,8 +28,8 @@ You have zero session memory — everything you need is in the prompt and the fi
 
 The orchestrating stage supplies a `<required_reading>` block in the prompt. It contains at minimum:
 
-- `.design/STATE.md` — current pipeline position and project metadata
-- `.design/DESIGN-CONTEXT.md` — domain, scopes, tech stack references, goals, decisions
+- `.design/STATE.md` - current pipeline position and project metadata
+- `.design/DESIGN-CONTEXT.md` - domain, scopes, tech stack references, goals, decisions
 
 **Invariant:** Read every file in the `<required_reading>` block before taking any other action.
 
@@ -37,7 +37,7 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. It 
 
 ## Research Scope
 
-Conduct research across these four areas. Infer all inputs from DESIGN-CONTEXT.md — do not ask the user for clarification.
+Conduct research across these four areas. Infer all inputs from DESIGN-CONTEXT.md - do not ask the user for clarification.
 
 ### (a) Project-Type Patterns
 
@@ -57,10 +57,10 @@ Research: typical component patterns for the identified type, common UX conventi
 
 Infer tech stack from DESIGN-CONTEXT.md references (file paths, `<canonical_refs>`, `<decisions>` mentioning frameworks/libraries). Common stacks:
 
-- **Next.js App Router** — RSC vs. client component boundaries, server-side font loading, image optimization patterns, layout nesting conventions
-- **Tailwind CSS** — token organization (CSS custom properties vs. Tailwind config), JIT mode gotchas, responsive utility ordering conventions
-- **shadcn/ui** — component customization via `cn()`, variant definition patterns, theming via CSS variables, what NOT to override in base components
-- **Radix UI primitives** — accessibility patterns built-in, composition patterns, when to use vs. custom implementations
+- **Next.js App Router** - RSC vs. client component boundaries, server-side font loading, image optimization patterns, layout nesting conventions
+- **Tailwind CSS** - token organization (CSS custom properties vs. Tailwind config), JIT mode gotchas, responsive utility ordering conventions
+- **shadcn/ui** - component customization via `cn()`, variant definition patterns, theming via CSS variables, what NOT to override in base components
+- **Radix UI primitives** - accessibility patterns built-in, composition patterns, when to use vs. custom implementations
 
 Research stack-specific patterns that affect the design task list (e.g., if Tailwind is used, token tasks will touch `tailwind.config.js` not a separate CSS file).
 
@@ -87,10 +87,10 @@ Research loading and rendering performance norms for the project type:
 Target ~2 minutes of research time:
 
 - Use `WebSearch` for: industry design conventions, published pattern libraries, WCAG guidance, framework-specific design docs
-- Use `Read` for: in-repo reference files (`reference/heuristics.md`, `reference/accessibility.md`, `reference/anti-patterns.md`, `reference/user-research.md`, `reference/platforms.md`) when they exist — `user-research.md` informs which evaluation methods fit the project type; `platforms.md` informs platform-appropriate patterns when the project targets mobile, native, or cross-platform
+- Use `Read` for: in-repo reference files (`reference/heuristics.md`, `reference/accessibility.md`, `reference/anti-patterns.md`, `reference/user-research.md`, `reference/platforms.md`) when they exist - `user-research.md` informs which evaluation methods fit the project type; `platforms.md` informs platform-appropriate patterns when the project targets mobile, native, or cross-platform
 - Use `Glob`/`Grep` for: identifying the actual tech stack from project files when DESIGN-CONTEXT.md is ambiguous
 
-Prioritize in-repo reference files over web search — they are already project-calibrated.
+Prioritize in-repo reference files over web search - they are already project-calibrated.
 
 ---
 
@@ -170,11 +170,11 @@ The researcher MUST add an `## Architectural Responsibility Map` section to DESI
 | reference | Static knowledge base read by agents |
 | connection | External integration contract doc |
 | infrastructure | Script, hook, or config consumed by the pipeline |
-| test | Test file — validates other layers |
+| test | Test file - validates other layers |
 
 **Population rules:**
 1. Include every file in `skills/`, `agents/`, `reference/`, `connections/`, `scripts/`, `hooks/`
-2. Skip test files if there are more than 10 (summarise as "tests/ — test layer")
+2. Skip test files if there are more than 10 (summarise as "tests/ - test layer")
 3. One row per file. For agents with many small files, one row per directory is acceptable.
 4. Responsibility column: one sentence, verb-first (Orchestrates, Validates, Provides, Writes, Reads, Builds, Connects)
 
@@ -210,11 +210,11 @@ flowchart TD
 
 **Diagram rules:**
 1. Use `flowchart TD` (top-down). Do not use `graph` syntax.
-2. Each node represents a command or agent invocation — not an implementation file.
+2. Each node represents a command or agent invocation - not an implementation file.
 3. Show the primary happy path. Add a single retry/failure edge where meaningful.
 4. Maximum 12 nodes. If the workflow has more stages, show only the main trunk and annotate branches with a comment.
 5. Node labels: commands in `/gdd:name` format, agents in `agent-name\n(one-line purpose)` format.
-6. The researcher adapts the diagram to reflect the actual project workflow observed during its research — the example above is the default GDD pipeline. If the project has custom commands or a different stage order, update accordingly.
+6. The researcher adapts the diagram to reflect the actual project workflow observed during its research - the example above is the default GDD pipeline. If the project has custom commands or a different stage order, update accordingly.
 
 ---
 

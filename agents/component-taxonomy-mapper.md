@@ -1,6 +1,6 @@
 ---
 name: component-taxonomy-mapper
-description: "Maps the component inventory — React/Vue/Svelte components, design patterns, reuse opportunities — to .design/map/components.md."
+description: "Maps the component inventory - React/Vue/Svelte components, design patterns, reuse opportunities - to .design/map/components.md."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit
@@ -46,15 +46,15 @@ For each file:
 
 ### Pattern classification (atomic design)
 
-- **Atom** — 0 child components, single responsibility (Button, Input, Icon)
-- **Molecule** — 2-5 child components (FormField, Card, SearchBar)
-- **Organism** — 6+ children or routable (Header, Sidebar, ProductList)
+- **Atom** - 0 child components, single responsibility (Button, Input, Icon)
+- **Molecule** - 2-5 child components (FormField, Card, SearchBar)
+- **Organism** - 6+ children or routable (Header, Sidebar, ProductList)
 
 ### Reuse opportunities
 
 Grep for near-duplicate component names and file-size clusters. Flag components with 3+ near-identical siblings.
 
-## Output Format — `.design/map/components.md`
+## Output Format - `.design/map/components.md`
 
 ```markdown
 ---

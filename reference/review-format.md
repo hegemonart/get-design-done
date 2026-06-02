@@ -1,4 +1,4 @@
-# Review Format — The Before/After Table
+# Review Format - The Before/After Table
 
 Adopted from `emil-design-eng` and enforced across `get-design-done`. **Every design review uses this format.** No exceptions.
 
@@ -23,7 +23,7 @@ Adopted from `emil-design-eng` and enforced across `get-design-done`. **Every de
 - **Non-redundant.** No repeating "Before:" / "After:" labels every time.
 - **The "Why" column is required.** It forces reasoning instead of taste-asserting. Future you also forgets why; the column documents the decision.
 
-## Wrong format — never produce this
+## Wrong format - never produce this
 
 ```
 Before: transition: all 300ms
@@ -42,15 +42,15 @@ Also wrong:
 
 ## When to use this format
 
-- **Any review of existing code or design.** `design:design-critique`, `design:accessibility-review` — all produce outputs that can be rendered as this table.
+- **Any review of existing code or design.** `design:design-critique`, `design:accessibility-review` - all produce outputs that can be rendered as this table.
 - **Responding to "review this" / "what do you think of this."**
-- **After `/gdd:fast` or `/gdd:design` applies a polish pass** — present the diff as a table.
+- **After `/gdd:fast` or `/gdd:design` applies a polish pass** - present the diff as a table.
 - **Documenting design-system migrations** (old token → new token, with why).
 
 ## When NOT to use this format
 
-- **Greenfield design.** No "Before" exists — that's a design proposal, not a review.
-- **Strategic direction critiques.** ("Should we commit to dark mode?") — that's a decision, not a diff.
+- **Greenfield design.** No "Before" exists - that's a design proposal, not a review.
+- **Strategic direction critiques.** ("Should we commit to dark mode?") - that's a decision, not a diff.
 - **Presentation to stakeholders.** Use `anthropic-skills:design-storytelling`'s narrative spine instead.
 
 ## Variations by domain
@@ -102,6 +102,6 @@ Use the 10 priority-matrix categories (see `priority-matrix.md`) as the dimensio
 
 Always precede the table with one sentence stating the scope:
 
-> Reviewed: Settings page modal, `components/Settings.tsx`. 7 changes proposed — 2 P0 accessibility, 3 P1 motion, 2 P2 polish.
+> Reviewed: Settings page modal, `components/Settings.tsx`. 7 changes proposed - 2 P0 accessibility, 3 P1 motion, 2 P2 polish.
 
 Then the table. Then nothing. The reader decides whether to apply.

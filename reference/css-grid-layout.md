@@ -1,6 +1,6 @@
 <!-- Source: Phase 18 — get-design-done -->
 
-# CSS Grid Layout — Advanced Craft Reference
+# CSS Grid Layout - Advanced Craft Reference
 
 ## 1. CSS Grid Template Patterns
 
@@ -27,7 +27,7 @@ Classic five-area layout: header, nav, main, aside, footer.
 .footer { grid-area: footer; }
 ```
 
-Responsive collapse — stack columns below 768px:
+Responsive collapse - stack columns below 768px:
 
 ```css
 @media (max-width: 768px) {
@@ -86,7 +86,7 @@ Auto-fit bento with minimum card size:
 
 ### Masonry via `grid-template-rows: masonry`
 
-Native CSS masonry — items pack into shortest column, no JavaScript.
+Native CSS masonry - items pack into shortest column, no JavaScript.
 
 ```css
 .masonry {
@@ -125,7 +125,7 @@ Native CSS masonry — items pack into shortest column, no JavaScript.
 
 ### What It Is
 
-`subgrid` lets a nested grid inherit track definitions from its parent grid. Without subgrid, inner grids define their own tracks independently — card headers and footers cannot align across sibling cards.
+`subgrid` lets a nested grid inherit track definitions from its parent grid. Without subgrid, inner grids define their own tracks independently - card headers and footers cannot align across sibling cards.
 
 ```css
 /* Parent defines the tracks */
@@ -293,7 +293,7 @@ R = f_min - V × (v_min / 100)   (convert back to rem ÷ 16)
 
 ### Real Examples
 
-**Body text — 16px at 320px viewport → 20px at 1440px:**
+**Body text - 16px at 320px viewport → 20px at 1440px:**
 
 ```
 V = (20 - 16) / (1440 - 320) × 100 = 0.357
@@ -306,7 +306,7 @@ body {
 }
 ```
 
-**Display heading — 32px at 320px → 72px at 1440px:**
+**Display heading - 32px at 320px → 72px at 1440px:**
 
 ```css
 h1 {
@@ -706,7 +706,7 @@ When grid items have different sizes (some spanning multiple columns), gaps appe
 
 ### What It Is
 
-CSS Anchor Positioning (`anchor()`, `position-anchor`) allows an absolutely positioned element to tether its position to a named anchor element — without JavaScript. Replaces Popper.js / Floating UI for tooltips, dropdowns, popovers.
+CSS Anchor Positioning (`anchor()`, `position-anchor`) allows an absolutely positioned element to tether its position to a named anchor element - without JavaScript. Replaces Popper.js / Floating UI for tooltips, dropdowns, popovers.
 
 ### Core Syntax
 
@@ -744,7 +744,7 @@ CSS Anchor Positioning (`anchor()`, `position-anchor`) allows an absolutely posi
 }
 ```
 
-### `@position-try` — Automatic Flip
+### `@position-try` - Automatic Flip
 
 Define fallback positions if primary placement goes off-screen:
 

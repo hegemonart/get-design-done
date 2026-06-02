@@ -23,7 +23,7 @@ You are the harvesting agent for the component benchmark corpus. Given a compone
 18 design systems catalogued in `connections/design-corpora.md` and emit a consolidated
 raw harvest file at `.planning/benchmarks/raw/<component>.md`.
 
-The raw harvest is **input to `component-benchmark-synthesizer`** — it is not the final
+The raw harvest is **input to `component-benchmark-synthesizer`** - it is not the final
 spec. Focus on breadth and attribution; the synthesizer does convergence analysis.
 
 ## Required Reading
@@ -31,15 +31,15 @@ spec. Focus on breadth and attribution; the synthesizer does convergence analysi
 The orchestrating skill supplies a `<required_reading>` block in the prompt. Read every
 listed file before acting. Minimum expected inputs:
 
-- `connections/design-corpora.md` — system catalog with URLs, licenses, fallback chain
-- `.planning/research/impeccable-salvage/` — any files relevant to the target component
+- `connections/design-corpora.md` - system catalog with URLs, licenses, fallback chain
+- `.planning/research/impeccable-salvage/` - any files relevant to the target component
 
-## Step 1 — Check impeccable salvage
+## Step 1 - Check impeccable salvage
 
 Before any network fetch, `Grep` the impeccable salvage directory for the component name
 (case-insensitive). Extract any relevant prose as the first source in the raw file.
 
-## Step 2 — Fetch each design system
+## Step 2 - Fetch each design system
 
 For each of the 18 systems in `design-corpora.md`:
 
@@ -52,7 +52,7 @@ For each of the 18 systems in `design-corpora.md`:
 **Prioritise signal over volume.** One precise quoted sentence beats three paraphrased
 paragraphs. For WAI-ARIA APG keyboard contracts, quote verbatim.
 
-## Step 3 — Write raw harvest file
+## Step 3 - Write raw harvest file
 
 Write `.planning/benchmarks/raw/<component>.md` with this structure:
 
@@ -83,9 +83,9 @@ _Fill in patterns you noticed while harvesting — what ≥4 systems agree on._
 ```
 
 One `###` section per source. Omit a source only if the fallback chain is fully
-exhausted — document the failure with `**Status: unreachable**`.
+exhausted - document the failure with `**Status: unreachable**`.
 
-## Step 4 — Convergence pre-analysis
+## Step 4 - Convergence pre-analysis
 
 After all sources, add a `## Convergence Notes (pre-synthesis)` summary identifying:
 - What the majority of systems (≥4) agree on → mark `NORM`

@@ -1,4 +1,4 @@
-# Chip / Tag — Benchmark Spec
+# Chip / Tag - Benchmark Spec
 
 **Harvested from**: Material 3, Carbon, Atlassian, Mantine
 **Wave**: 3 · **Category**: Feedback
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A chip (or tag) is a compact, interactive label that represents an attribute, filter, or selection. It is commonly used for multi-select filter interfaces, tag-input fields (user-generated labels), one-time suggestion prompts, and static display labels. Each variant has distinct interaction semantics — filter chips toggle on/off, input chips are removable, suggestion chips trigger a one-time action, and display chips are static. *(Material 3, Carbon, Atlassian, Mantine agree on the four-variant taxonomy)*
+A chip (or tag) is a compact, interactive label that represents an attribute, filter, or selection. It is commonly used for multi-select filter interfaces, tag-input fields (user-generated labels), one-time suggestion prompts, and static display labels. Each variant has distinct interaction semantics - filter chips toggle on/off, input chips are removable, suggestion chips trigger a one-time action, and display chips are static. *(Material 3, Carbon, Atlassian, Mantine agree on the four-variant taxonomy)*
 
 *UUPM app-interface: filter chips in search/filter UIs and tag input patterns (MIT attribution)*
 
@@ -51,13 +51,13 @@ A chip (or tag) is a compact, interactive label that represents an attribute, fi
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Rest fill + label | — |
-| hover | pointer over chip | Background tint (+8%) | — |
-| focus | keyboard focus on chip | focus-visible ring (2px) | — |
+| default | - | Rest fill + label | - |
+| hover | pointer over chip | Background tint (+8%) | - |
+| focus | keyboard focus on chip | focus-visible ring (2px) | - |
 | selected (filter) | click / Enter / Space | Filled background; checkmark icon | `aria-pressed="true"` |
 | unselected (filter) | click / Enter / Space | Outline style | `aria-pressed="false"` |
 | disabled | `disabled` / `aria-disabled` | 38% opacity; cursor not-allowed | `aria-disabled="true"` |
-| remove focus | Tab to × button | Focus ring on × | — |
+| remove focus | Tab to × button | Focus ring on × | - |
 
 ---
 
@@ -79,11 +79,11 @@ A chip (or tag) is a compact, interactive label that represents an attribute, fi
 
 ## Typography
 
-- Label: body-sm (13–14px/400) — same scale as form labels
-- No bold weight — chip label is a tag, not a heading or CTA
+- Label: body-sm (13–14px/400) - same scale as form labels
+- No bold weight - chip label is a tag, not a heading or CTA
 - Truncate with ellipsis only when chip is in a fixed-width container; prefer wrapping chip set to natural width
 
-Cross-link: `reference/typography.md` — body-sm definition
+Cross-link: `reference/typography.md` - body-sm definition
 
 ---
 
@@ -94,7 +94,7 @@ Cross-link: `reference/typography.md` — body-sm definition
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/listbox/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/listbox/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -106,14 +106,14 @@ Cross-link: `reference/typography.md` — body-sm definition
 
 ### Accessibility Rules
 
-- Filter chip used as standalone toggle MUST have `aria-pressed="true|false"` — absence means screen readers cannot report toggle state *(WAI-ARIA APG)*
+- Filter chip used as standalone toggle MUST have `aria-pressed="true|false"` - absence means screen readers cannot report toggle state *(WAI-ARIA APG)*
 - Filter chips inside a multi-select group SHOULD use `role="option"` inside `role="listbox"` with `aria-multiselectable="true"` *(WAI-ARIA APG)*
-- Remove button MUST have an independent `aria-label` describing what it removes: `aria-label="Remove Python tag"` — the × glyph alone is not an accessible name *(WAI-ARIA APG, Material 3)*
+- Remove button MUST have an independent `aria-label` describing what it removes: `aria-label="Remove Python tag"` - the × glyph alone is not an accessible name *(WAI-ARIA APG, Material 3)*
 - Remove button MUST be a separate focusable element, NOT a click handler on the chip label *(Carbon, Atlassian)*
 - Touch target for remove button MUST be ≥ 32×32px via padding even if the visual × is 16–20px *(WCAG 2.5.5)*
-- Display chips have no role — they are presentational; if they carry meaningful status, use `role="status"` or integrate into an Alert *(Atlassian Lozenge guidance)*
+- Display chips have no role - they are presentational; if they carry meaningful status, use `role="status"` or integrate into an Alert *(Atlassian Lozenge guidance)*
 
-Cross-link: `reference/accessibility.md` — `aria-pressed`, `listbox`, touch targets
+Cross-link: `reference/accessibility.md` - `aria-pressed`, `listbox`, touch targets
 
 ---
 
@@ -126,9 +126,9 @@ Cross-link: `reference/accessibility.md` — `aria-pressed`, `listbox`, touch ta
 | Chip add (expand width) | 150ms | ease-out | Width expands from 0 |
 | Hover background | 80ms | ease-out | Subtle tint only |
 
-**BAN**: Full-page reflow animation when removing a chip — collapse width inline; do not shift unrelated page sections. Do not use `transition: all` (catches unintended border/shadow changes).
+**BAN**: Full-page reflow animation when removing a chip - collapse width inline; do not shift unrelated page sections. Do not use `transition: all` (catches unintended border/shadow changes).
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip width animation, instant add/remove
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: skip width animation, instant add/remove
 
 ---
 
@@ -141,10 +141,10 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip width anima
 - Ensure touch target ≥ 32px height; extend remove button via padding *(WCAG 2.5.5)*
 
 ### Don't
-- Don't put filter chips without `aria-pressed` — screen readers cannot report selected state *(WAI-ARIA APG)*
-- Don't use the same click handler for chip label and remove — remove must be independently focusable *(Carbon, Atlassian)*
-- Don't truncate chip label in narrow containers without a tooltip — truncated tags lose meaning *(Polaris, Mantine)*
-- Don't use display chips for dynamic statuses that change — use Alert or Badge instead *(Atlassian)*
+- Don't put filter chips without `aria-pressed` - screen readers cannot report selected state *(WAI-ARIA APG)*
+- Don't use the same click handler for chip label and remove - remove must be independently focusable *(Carbon, Atlassian)*
+- Don't truncate chip label in narrow containers without a tooltip - truncated tags lose meaning *(Polaris, Mantine)*
+- Don't use display chips for dynamic statuses that change - use Alert or Badge instead *(Atlassian)*
 
 ---
 

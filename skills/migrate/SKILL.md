@@ -10,7 +10,7 @@ tools: Read, Write, Bash, Grep, Glob
 
 Closes the GDD-on-GDD gap: when GDD moves or removes its own paths (e.g. the Phase 31.5
 `scripts/lib/**` → `sdk/**` reorg), a project that referenced the old paths needs updating. This skill
-consults the deprecation registry, finds the stale references **in this project**, and rewrites them —
+consults the deprecation registry, finds the stale references **in this project**, and rewrites them -
 **after showing you the diff**. It never edits silently. Contract: `../../reference/DEPRECATIONS.md`.
 
 ## Invocation
@@ -18,7 +18,7 @@ consults the deprecation registry, finds the stale references **in this project*
 | Command | Behavior |
 |---|---|
 | `/gdd:migrate` | Scan + preview every applicable migration, then confirm each before applying. |
-| `/gdd:migrate --dry-run` | Preview only — print the diff, change nothing. |
+| `/gdd:migrate --dry-run` | Preview only - print the diff, change nothing. |
 | `/gdd:migrate --yes` | Apply every applicable migration without the per-change prompt (still prints what changed). |
 
 ## Steps
@@ -43,19 +43,19 @@ consults the deprecation registry, finds the stale references **in this project*
    - project-local skill/agent references (`grep` the repo, excluding `.git/`, `node_modules/`, and
      GDD's own `reference/DEPRECATIONS.md`),
    - any `require(...)`/import of a removed SDK path.
-   For a code rewrite, scaffold the edit with `scripts/lib/migration/codemod-gen.cjs` (Phase 39.1) —
+   For a code rewrite, scaffold the edit with `scripts/lib/migration/codemod-gen.cjs` (Phase 39.1) -
    you emit the change as a reviewable patch, you do not run a codemod engine.
 4. **Preview.** Print a unified-diff-style preview per file: `Old → New`, the registry status
    (`deprecated` vs `removed`), and the migration hint. If `--dry-run`, stop here.
 5. **Confirm + apply.** Without `--yes`, ask per change. With `--yes`, apply all. Use `Write` to make
    the edits; never touch a file the user didn't consent to.
 6. **Report.** Summarize: files changed, references rewritten, and any `removed`-status reference that
-   still has no replacement wired (flag it loudly — that one breaks at the installed version).
+   still has no replacement wired (flag it loudly - that one breaks at the installed version).
 
 ## Boundaries
 
 - **Preview-first.** Nothing changes before you've shown the diff (or `--yes` was passed).
-- Migrates **this project's references** to GDD paths — it does not rewrite GDD's own source, and it
+- Migrates **this project's references** to GDD paths - it does not rewrite GDD's own source, and it
   never performs a downgrade (reverse migrations are out of scope).
 - Read the registry; never invent a migration that isn't in `reference/DEPRECATIONS.md`.
 

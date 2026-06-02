@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # {{command_prefix}}note
 
-**Role:** Ephemeral design notes. Zero ceremony — no priority, no due date. Backing store: `.design/NOTES.md`.
+**Role:** Ephemeral design notes. Zero ceremony - no priority, no due date. Backing store: `.design/NOTES.md`.
 
 ## File format
 

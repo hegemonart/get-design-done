@@ -6,7 +6,7 @@ tools: Bash, Read, Glob, Grep
 
 # {{command_prefix}}analyze-dependencies
 
-**Role:** Surface dependency relationships, token usage spread, component graphs, and decision traceability using `.design/intel/`. All queries are O(1) reads against pre-built JSON slices — no file greps. See `./reference/heuristics.md` for the underlying dependency-analysis heuristics (fan-out thresholds, orphan-token criteria, cycle-detection bias).
+**Role:** Surface dependency relationships, token usage spread, component graphs, and decision traceability using `.design/intel/`. All queries are O(1) reads against pre-built JSON slices - no file greps. See `./reference/heuristics.md` for the underlying dependency-analysis heuristics (fan-out thresholds, orphan-token criteria, cycle-detection bias).
 
 ## Pre-flight
 
@@ -26,13 +26,13 @@ Then re-run {{command_prefix}}analyze-dependencies.
 
 ## Usage modes
 
-- `{{command_prefix}}analyze-dependencies` — run all four analyses and print a combined report
-- `{{command_prefix}}analyze-dependencies tokens` — token fan-out only
-- `{{command_prefix}}analyze-dependencies components` — component call-graph only
-- `{{command_prefix}}analyze-dependencies decisions` — decision traceability only
-- `{{command_prefix}}analyze-dependencies circular` — circular dependency detection only
+- `{{command_prefix}}analyze-dependencies` - run all four analyses and print a combined report
+- `{{command_prefix}}analyze-dependencies tokens` - token fan-out only
+- `{{command_prefix}}analyze-dependencies components` - component call-graph only
+- `{{command_prefix}}analyze-dependencies decisions` - decision traceability only
+- `{{command_prefix}}analyze-dependencies circular` - circular dependency detection only
 
-## Analysis 1 — Token fan-out
+## Analysis 1 - Token fan-out
 
 Surfaces tokens referenced in many files + orphans (referenced exactly once).
 
@@ -42,7 +42,7 @@ Surfaces tokens referenced in many files + orphans (referenced exactly once).
 
 Header: `━━━ Token fan-out ━━━` … `(top 20 shown)` … `Orphaned tokens (referenced in exactly 1 file):` … footer rule.
 
-## Analysis 2 — Component call-graph
+## Analysis 2 - Component call-graph
 
 Surfaces widely-referenced components and the files referencing each.
 
@@ -52,7 +52,7 @@ Surfaces widely-referenced components and the files referencing each.
 
 Header: `━━━ Component call-graph ━━━` … footer rule.
 
-## Analysis 3 — Decision traceability
+## Analysis 3 - Decision traceability
 
 Maps decisions to skill/agent files that cite them.
 
@@ -64,7 +64,7 @@ Maps decisions to skill/agent files that cite them.
 
 Empty-state: `No decisions indexed. Run node scripts/build-intel.cjs after creating .design/DESIGN-CONTEXT.md.`
 
-## Analysis 4 — Circular dependency detection
+## Analysis 4 - Circular dependency detection
 
 Detects cycles in the `@`-reference graph (File A → File B → File A). DFS with path-tracking detects back-edges; algorithm + adjacency-map shape detailed in `./reference/heuristics.md` §"Dependency-cycle detection".
 

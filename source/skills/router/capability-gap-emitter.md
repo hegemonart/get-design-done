@@ -1,6 +1,6 @@
-# gdd-router — capability_gap emitter (Phase 29 / D-02 / D-08)
+# gdd-router - capability_gap emitter (Phase 29 / D-02 / D-08)
 
-Co-located reference for `skills/router/SKILL.md` — split out per Phase 28.5
+Co-located reference for `skills/router/SKILL.md` - split out per Phase 28.5
 contract (router SKILL ≤100 lines) and the Phase 28.6 co-location pattern.
 
 ## When to emit
@@ -10,7 +10,7 @@ If the router cannot resolve `intent-string` to a known agent (no agent's
 path-selection table returns nothing meaningful), emit ONE `capability_gap`
 event before returning the conservative-fallback JSON output to the caller.
 
-This feeds Phase 29 Stage-0 telemetry — the reflector pattern-detection pass
+This feeds Phase 29 Stage-0 telemetry - the reflector pattern-detection pass
 (Plan 29-02) and aggregation (Plan 29-03) read these events from the chain
 file (`.design/gep/events.jsonl`) to surface recurring router-unmatched
 intents as candidate agents in `{{command_prefix}}apply-reflections`.
@@ -50,16 +50,16 @@ appendChainEvent({
   describe multi-step workflows (the unit the router resolves).
 - Router-unmatched is NOT the same as MCP-probe failure (per D-08). If
   gdd-router returns a fallback because a peer-CLI connection is down, do
-  NOT emit capability_gap — that's a Phase 22 connection-status concern.
+  NOT emit capability_gap - that's a Phase 22 connection-status concern.
 - The emitter is the LAST step before returning the fallback JSON. Router
   output is unchanged (back-compat per the existing `## Output schema
   versioning` table in `SKILL.md`); the event is a SIDE EFFECT, not a
   payload addition.
-- Router output JSON contract is UNCHANGED — back-compat preserved.
+- Router output JSON contract is UNCHANGED - back-compat preserved.
 - The 7-field payload flows through `appendChainEvent`'s opaque-extras
   pattern verbatim; the chain row carries `type`, `timestamp`, `sessionId`,
   `payload` as opaque extras and is projected back to the events-schema
   envelope by Plan 29-03 aggregation.
 
 MCP-probe failures (connection down, transport-layer errors) do NOT emit
-`capability_gap` — those are Phase 22 connection-status concerns (D-08).
+`capability_gap` - those are Phase 22 connection-status concerns (D-08).

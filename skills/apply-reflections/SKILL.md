@@ -45,14 +45,14 @@ Change: ...
 If `--dry-run`: print `[dry-run — would prompt here]` and continue to next proposal without prompting.
 
 Based on user choice:
-- **a** — apply (see Apply Logic below)
-- **s** — mark proposal as `**Reviewed: skipped**` in the reflections file; continue
-- **e** — show the Change text, ask user to provide edited version, then apply the edited version
-- **q** — stop processing; print "Stopped at proposal N. Resume with `/gdd:apply-reflections --cycle <slug>`."
+- **a** - apply (see Apply Logic below)
+- **s** - mark proposal as `**Reviewed: skipped**` in the reflections file; continue
+- **e** - show the Change text, ask user to provide edited version, then apply the edited version
+- **q** - stop processing; print "Stopped at proposal N. Resume with `/gdd:apply-reflections --cycle <slug>`."
 
 ### 4. Apply Logic by Proposal Type
 
-After the user chooses `a` (apply) or `e` (edit-then-apply), branch on the proposal's bracketed type tag and follow the per-type apply procedure in `./apply-reflections-procedure.md` — one numbered procedure each for `[FRONTMATTER]`, `[REFERENCE]`, `[BUDGET]`, `[QUESTION]`, `[GLOBAL-SKILL]`. All branches end with `**Applied**: <date>` appended to the proposal block in the reflections file.
+After the user chooses `a` (apply) or `e` (edit-then-apply), branch on the proposal's bracketed type tag and follow the per-type apply procedure in `./apply-reflections-procedure.md` - one numbered procedure each for `[FRONTMATTER]`, `[REFERENCE]`, `[BUDGET]`, `[QUESTION]`, `[GLOBAL-SKILL]`. All branches end with `**Applied**: <date>` appended to the proposal block in the reflections file.
 
 ### 5. Summary
 
@@ -73,12 +73,12 @@ Incubator drafts authored by `scripts/lib/incubator-author.cjs` (Phase 29-04) ap
 1. `discoverIncubatorDrafts()` → list pending drafts.
 2. `renderProposal(draft)` → show full body + diff + origin signals.
 3. User chooses **accept** | **reject** | **defer** | **edit**.
-4. **accept** — scope-guard runs FIRST (`validateScope` from `scripts/validate-incubator-scope.cjs`); `applyAccept` then promotes draft → `agents/<slug>.md` or `skills/<slug>/SKILL.md` and appends a registry entry. Single-step per D-04.
-5. **reject** — `applyReject` removes the incubator subdir.
-6. **defer** — no-op; draft re-surfaces next run.
-7. **edit** — `applyEdit` opens `$EDITOR`; re-prompt user on close.
+4. **accept** - scope-guard runs FIRST (`validateScope` from `scripts/validate-incubator-scope.cjs`); `applyAccept` then promotes draft → `agents/<slug>.md` or `skills/<slug>/SKILL.md` and appends a registry entry. Single-step per D-04.
+5. **reject** - `applyReject` removes the incubator subdir.
+6. **defer** - no-op; draft re-surfaces next run.
+7. **edit** - `applyEdit` opens `$EDITOR`; re-prompt user on close.
 
-**Stage-1 gate.** At session start, call `checkStage1Gate()`. If `thresholdMet && !optInRecorded`, display the opt-in prompt once. NEVER auto-flip per D-01 — recording opt-in requires explicit user confirmation via `recordOptIn()`. Full procedure: `./apply-reflections-procedure.md` §[INCUBATOR].
+**Stage-1 gate.** At session start, call `checkStage1Gate()`. If `thresholdMet && !optInRecorded`, display the opt-in prompt once. NEVER auto-flip per D-01 - recording opt-in requires explicit user confirmation via `recordOptIn()`. Full procedure: `./apply-reflections-procedure.md` §[INCUBATOR].
 
 ## [KFM-CANDIDATE]
 
@@ -87,6 +87,6 @@ KFM-catalogue proposals authored by `scripts/lib/reflector-kfm-proposer.cjs` (Ph
 ## Do Not
 
 - Do not apply any proposal without the user explicitly choosing `a` or `e`.
-- Do not modify source code files (`.ts`, `.tsx`, `.css`, `.js`) — only agent files, reference files, budget.json, discussant questions, global skills, and incubator drafts.
-- Do not re-run the reflector — this skill only applies existing proposals.
-- Do not bypass the scope guard or auto-flip Stage-1 — both are non-negotiable per D-05 / D-01.
+- Do not modify source code files (`.ts`, `.tsx`, `.css`, `.js`) - only agent files, reference files, budget.json, discussant questions, global skills, and incubator drafts.
+- Do not re-run the reflector - this skill only applies existing proposals.
+- Do not bypass the scope guard or auto-flip Stage-1 - both are non-negotiable per D-05 / D-01.

@@ -1,4 +1,4 @@
-# Radio — Benchmark Spec
+# Radio - Benchmark Spec
 
 **Harvested from**: Material 3, Carbon, Fluent 2, Mantine, WAI-ARIA APG, Polaris, Ant Design, Chakra UI
 **Wave**: 1 · **Category**: Inputs
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A radio button represents one option within a mutually exclusive group. Selecting one radio button deselects all others in the same group. Always wrap radio buttons in a `<fieldset>` + `<legend>` and group them with the same `name` attribute. Never use a single radio button — it creates an unresettable state. Use a checkbox for binary choices.
+A radio button represents one option within a mutually exclusive group. Selecting one radio button deselects all others in the same group. Always wrap radio buttons in a `<fieldset>` + `<legend>` and group them with the same `name` attribute. Never use a single radio button - it creates an unresettable state. Use a checkbox for binary choices.
 
 ---
 
@@ -44,7 +44,7 @@ A radio button represents one option within a mutually exclusive group. Selectin
 | Button group | Segmented-control appearance | Material 3, Fluent 2, Carbon |
 
 **Norm** (≥6/18): vertical stacking default; horizontal allowed for ≤3 short labels.
-**Diverge**: button-group vs. radio-card — visual styling differs but keyboard contract is identical.
+**Diverge**: button-group vs. radio-card - visual styling differs but keyboard contract is identical.
 
 ---
 
@@ -52,10 +52,10 @@ A radio button represents one option within a mutually exclusive group. Selectin
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| unselected | default | Empty circle | — |
+| unselected | default | Empty circle | - |
 | selected | user interaction / programmatic | Filled dot | `checked` attr |
-| hover | pointer over | Circle border darkens | — |
-| focus | keyboard (Tab into group) | 2px focus ring on currently selected / first | — |
+| hover | pointer over | Circle border darkens | - |
+| focus | keyboard (Tab into group) | 2px focus ring on currently selected / first | - |
 | disabled | `disabled` attr | 38% opacity | `aria-disabled="true"` |
 | error | group-level | Red border on legend/container | `aria-describedby` on `<fieldset>` |
 
@@ -71,14 +71,14 @@ A radio button represents one option within a mutually exclusive group. Selectin
 | Item spacing (vertical) | 8–12px | *(Carbon: 8px, Material 3: 8px)* |
 | Touch target | 44×44px via pseudo-element | `reference/surfaces.md` |
 
-Cross-link: `reference/surfaces.md` — hit-area pseudo-element pattern
+Cross-link: `reference/surfaces.md` - hit-area pseudo-element pattern
 
 ---
 
 ## Typography
 
-- Label: 14px/400 — same as body; option is a choice, not a heading
-- Legend: 14px/500 or 12px/600 uppercase — distinct from option labels
+- Label: 14px/400 - same as body; option is a choice, not a heading
+- Legend: 14px/500 or 12px/600 uppercase - distinct from option labels
 - Helper/error: 12px/400
 
 ---
@@ -91,7 +91,7 @@ Cross-link: `reference/surfaces.md` — hit-area pseudo-element pattern
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/radio/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/radio/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -105,10 +105,10 @@ Cross-link: `reference/surfaces.md` — hit-area pseudo-element pattern
 
 ### Accessibility Rules
 
-- `<fieldset>` + `<legend>` MUST wrap the entire group — legend text is prepended to each option announcement
+- `<fieldset>` + `<legend>` MUST wrap the entire group - legend text is prepended to each option announcement
 - All radios in a group MUST share the same `name` attribute
-- Tab focuses the selected radio (or first, if none selected) — arrow keys navigate within the group
-- Never use a single radio button — it creates a state the user cannot unset; use a checkbox
+- Tab focuses the selected radio (or first, if none selected) - arrow keys navigate within the group
+- Never use a single radio button - it creates a state the user cannot unset; use a checkbox
 - Error state applies to the group: `aria-describedby` on the `<fieldset>` or `role="radiogroup"` container
 - `required`: apply to all radios in the group or use `aria-required` on the group container
 
@@ -122,7 +122,7 @@ Cross-link: `reference/surfaces.md` — hit-area pseudo-element pattern
 | Deselect | 80ms | ease | Dot scale 1→0 |
 | Hover border | 80ms | ease | Border colour only |
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip dot animation, show fill instantly
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: skip dot animation, show fill instantly
 
 ---
 
@@ -132,11 +132,11 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip dot animati
 - Always use `<fieldset>` + `<legend>` for the group *(WAI-ARIA APG, Carbon, Polaris)*
 - Use the same `name` attribute for all radios in a group *(HTML spec, all systems)*
 - Pre-select a default option where appropriate to reduce cognitive load *(Material 3, Polaris)*
-- Use arrow keys to navigate within a group — Tab moves to the group, not each item *(WAI-ARIA APG)*
+- Use arrow keys to navigate within a group - Tab moves to the group, not each item *(WAI-ARIA APG)*
 
 ### Don't
-- Don't use a single radio button — use a checkbox instead *(Material 3, Carbon, WAI-ARIA APG)*
-- Don't use radio buttons for mutually exclusive options that require confirmation — use a select *(Polaris)*
+- Don't use a single radio button - use a checkbox instead *(Material 3, Carbon, WAI-ARIA APG)*
+- Don't use radio buttons for mutually exclusive options that require confirmation - use a select *(Polaris)*
 - Don't mix radio and checkbox styles in the same group *(Carbon, Polaris)*
 - Don't require the user to make a selection before seeing other page content (premature required state) *(Polaris)*
 

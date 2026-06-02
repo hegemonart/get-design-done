@@ -1,6 +1,6 @@
 # Motion & Animation Framework
 
-Based on Emil Kowalski's design engineering philosophy. Apply these rules in order — do not skip to "how should this animate" before answering "should this animate."
+Based on Emil Kowalski's design engineering philosophy. Apply these rules in order - do not skip to "how should this animate" before answering "should this animate."
 
 ---
 
@@ -10,11 +10,11 @@ Based on Emil Kowalski's design engineering philosophy. Apply these rules in ord
 
 | Action frequency | Decision |
 |---|---|
-| 100+/day — keyboard shortcuts, command palette, list navigation | **No animation. Ever.** |
-| Tens/day — hover states, toggles, tab switching | Remove or keep to <80ms. No delay. |
-| Occasional — modals opening, drawers, toasts | Standard animation (150–300ms) |
-| Rare — onboarding, celebrations, first-time flows | Can add personality and delight |
-| Once — loading splash, page transitions | Full animation budget |
+| 100+/day - keyboard shortcuts, command palette, list navigation | **No animation. Ever.** |
+| Tens/day - hover states, toggles, tab switching | Remove or keep to <80ms. No delay. |
+| Occasional - modals opening, drawers, toasts | Standard animation (150–300ms) |
+| Rare - onboarding, celebrations, first-time flows | Can add personality and delight |
+| Once - loading splash, page transitions | Full animation budget |
 
 **Critical rule**: Never animate keyboard-initiated actions. They repeat hundreds of times daily. Every ms of animation is felt.
 
@@ -26,7 +26,7 @@ Valid animation purposes only. If it doesn't serve one of these, remove it.
 |---|---|
 | **Spatial consistency** | Toast enters/exits same edge each time |
 | **State indication** | Button morphs to show loading → success |
-| **Cause-effect explanation** | Item deletion — item flies to trash |
+| **Cause-effect explanation** | Item deletion - item flies to trash |
 | **Feedback** | Button scales 0.97 on press |
 | **Prevent jarring changes** | Content appearing/disappearing needs transition |
 
@@ -36,9 +36,9 @@ Invalid purposes: "It looks cool", "It feels modern", "Other apps do it."
 
 | Element state | Easing | Rationale |
 |---|---|---|
-| **Entering** | `ease-out` (fast start, slow end) | Feels responsive — starts immediately |
-| **Exiting** | `ease-in` (slow start, fast end) | Gets out of the way — doesn't linger |
-| **State transition** (same element) | `ease-in-out` | Natural — neither abrupt start nor end |
+| **Entering** | `ease-out` (fast start, slow end) | Feels responsive - starts immediately |
+| **Exiting** | `ease-in` (slow start, fast end) | Gets out of the way - doesn't linger |
+| **State transition** (same element) | `ease-in-out` | Natural - neither abrupt start nor end |
 | **Interactive/draggable** | Spring physics | Follows finger/cursor naturally |
 | **Bounce/elastic** | **Never** | Feels toy-like and dated |
 
@@ -92,7 +92,7 @@ Exception: `filter` (blur) is GPU-accelerated in modern browsers but battery-exp
 When animating a list of items entering:
 - Stagger delay: **30–50ms** per item
 - Maximum stagger depth: **6–8 items** (items beyond that appear simultaneously)
-- Direction: top-to-bottom OR left-to-right — never random
+- Direction: top-to-bottom OR left-to-right - never random
 
 ```css
 .item:nth-child(1) { animation-delay: 0ms; }
@@ -121,7 +121,7 @@ button:not(:active) {
 ```
 
 Scale range: **0.95–0.98** for buttons. **0.97** is the safest default.
-Never scale below 0.90 — it looks broken.
+Never scale below 0.90 - it looks broken.
 
 ---
 
@@ -169,7 +169,7 @@ The best animations are ones users cannot describe but notice when absent. Signs
 - Removing the animation makes the UI feel broken
 - Users say "it feels premium" but can't point to any specific feature
 
-This is the goal. Not "look at this animation" — "why does this feel so good to use?"
+This is the goal. Not "look at this animation" - "why does this feel so good to use?"
 
 ---
 
@@ -238,7 +238,7 @@ Rule of thumb: for UI micro-interactions use stiffness 150–250, damping 20–3
 
 ## Scroll-Triggered Animations
 
-Use IntersectionObserver for scroll-reveal effects — it replaces scroll-event
+Use IntersectionObserver for scroll-reveal effects - it replaces scroll-event
 listeners with a throttled browser-native API.
 
 ### Basic pattern
@@ -271,15 +271,15 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 ### Once vs repeat
 
-- **Once** — call `observer.unobserve(entry.target)` after first intersection.
+- **Once** - call `observer.unobserve(entry.target)` after first intersection.
   Use for: hero reveals, one-shot entrance animations, stat counters.
-- **Repeat** — leave observer active. Use for: progress indicators, parallax effects,
+- **Repeat** - leave observer active. Use for: progress indicators, parallax effects,
   sticky nav state changes.
 
 ### Performance rules
 
 1. Animate only `transform` and `opacity` (GPU-accelerated). Avoid `top`, `left`, `width`, `height`.
-2. No debounce/throttle needed — IntersectionObserver is already throttled by the browser.
+2. No debounce/throttle needed - IntersectionObserver is already throttled by the browser.
 3. For many elements, share a single observer instance and call `observe()` once per element.
 4. Prefer CSS transitions triggered by a class toggle over requestAnimationFrame loops.
 5. Use `will-change: transform, opacity` sparingly (only on elements that animate repeatedly).
@@ -287,11 +287,11 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 ---
 
 ## MIFB Micro-Motion Extensions
-Source: jakubkrehel/make-interfaces-feel-better (MIT) — motion.md
+Source: jakubkrehel/make-interfaces-feel-better (MIT) - motion.md
 
 ### Interruptible Animations
 
-Use CSS transitions for interactive elements because transitions retarget mid-animation — when a user moves their cursor away before a hover animation completes, the transition reverses smoothly from wherever it currently is. Keyframe animations restart from the beginning, creating a jarring jump.
+Use CSS transitions for interactive elements because transitions retarget mid-animation - when a user moves their cursor away before a hover animation completes, the transition reverses smoothly from wherever it currently is. Keyframe animations restart from the beginning, creating a jarring jump.
 
 **Decision rule:**
 - Interactive states (hover, focus, active, pressed): always CSS transitions
@@ -314,11 +314,11 @@ For multi-element entrances (card grids, lists, feature sections):
 - Entrance transform: `opacity: 0 → 1` + `translateY(12px → 0)` + `blur(4px → 0)`
 - Entrance duration: 300ms, `ease-out`
 - Exit transform: `opacity: 1 → 0` + `translateY(0 → -12px)` (opposite direction, smaller offset)
-- Exit duration: 150ms (half the entrance duration — exits should be faster)
+- Exit duration: 150ms (half the entrance duration - exits should be faster)
 
-The blur component adds a depth cue that makes entrances feel less flat. Keep blur modest (4px) — the goal is a subtle focus effect, not a visible blur.
+The blur component adds a depth cue that makes entrances feel less flat. Keep blur modest (4px) - the goal is a subtle focus effect, not a visible blur.
 
-### Contextual Icon Animations — Cross-Fade Pattern
+### Contextual Icon Animations - Cross-Fade Pattern
 
 When swapping two icons (e.g., play ↔ pause, chevron-up ↔ chevron-down, bookmark ↔ bookmarked), use this exact cross-fade spec:
 
@@ -326,7 +326,7 @@ When swapping two icons (e.g., play ↔ pause, chevron-up ↔ chevron-down, book
 - `scale: 0.25 → 1` (entering), `scale: 1 → 0.25` (exiting)
 - `opacity: 0 → 1` (entering), `opacity: 1 → 0` (exiting)
 - `filter: blur(4px) → blur(0)` (entering), `blur(0) → blur(4px)` (exiting)
-- `transition: { type: "spring", duration: 0.3, bounce: 0 }` — **bounce MUST be 0**
+- `transition: { type: "spring", duration: 0.3, bounce: 0 }` - **bounce MUST be 0**
 
 **CSS fallback (no Framer):**
 - Keep both icons in the DOM, one `position: absolute`
@@ -335,14 +335,14 @@ When swapping two icons (e.g., play ↔ pause, chevron-up ↔ chevron-down, book
 
 The scale + blur combination creates a focus-snap effect that feels intentional rather than mechanical. The `bounce: 0` hard constraint exists because any bounce on a 0.25-scale origin point makes icons appear to "pop" invasively.
 
-### Scale on Press — Canonical Value
+### Scale on Press - Canonical Value
 
 The canonical scale value for press feedback is **`0.96`**.
 
 Rules:
-- Never use `scale(0.95)` — too large, feels unresponsive
-- Never use `scale(0.97)` — too subtle at high DPI, not perceived as feedback
-- Never use `scale(0.98)` or higher — imperceptible
+- Never use `scale(0.95)` - too large, feels unresponsive
+- Never use `scale(0.97)` - too subtle at high DPI, not perceived as feedback
+- Never use `scale(0.98)` or higher - imperceptible
 - `0.96` is the ONLY correct value for standard interactive elements
 
 Tailwind: `active:scale-[0.96]`
@@ -363,13 +363,13 @@ When `AnimatePresence` wraps UI that exists in the DOM before it enters the anim
 </AnimatePresence>
 ```
 
-Without `initial={false}`, Framer will animate the FIRST render of children — meaning UI that's immediately visible on page load will "fade in" unnecessarily. This creates a flash/flicker that signals poor craftsmanship.
+Without `initial={false}`, Framer will animate the FIRST render of children - meaning UI that's immediately visible on page load will "fade in" unnecessarily. This creates a flash/flicker that signals poor craftsmanship.
 
 **Rule:** Any `AnimatePresence` wrapping persistent UI should have `initial={false}`.
 
-### will-change — GPU Property Table
+### will-change - GPU Property Table
 
-Only add `will-change` when you observe first-frame stutter on lower-end hardware. Do NOT add it preemptively — it consumes GPU memory continuously for every element that has it.
+Only add `will-change` when you observe first-frame stutter on lower-end hardware. Do NOT add it preemptively - it consumes GPU memory continuously for every element that has it.
 
 GPU-compositable properties (safe with will-change):
 | Property | will-change value |
@@ -379,7 +379,7 @@ GPU-compositable properties (safe with will-change):
 | filter (blur, brightness, contrast) | `filter` |
 | clip-path | `clip-path` |
 
-Never use `will-change: all` or `will-change: contents` — this forces the entire element and its subtree onto a new compositor layer, thrashing memory.
+Never use `will-change: all` or `will-change: contents` - this forces the entire element and its subtree onto a new compositor layer, thrashing memory.
 
 Remove `will-change` after the animation completes if applied dynamically:
 ```js

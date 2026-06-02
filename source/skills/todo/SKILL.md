@@ -1,6 +1,6 @@
 ---
 name: gdd-todo
-description: "Design backlog — add/list/pick design tasks. Writes to .design/TODO.md."
+description: "Design backlog - add/list/pick design tasks. Writes to .design/TODO.md."
 argument-hint: "<add|list|pick> [text]"
 tools: Read, Write, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have
 disable-model-invocation: true
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # {{command_prefix}}todo
 
-**Role:** Design todo list. Three subcommands: `add`, `list`, `pick`. Backing store: `.design/TODO.md`. For items that are pipeline-level decisions or must-haves (not free-form backlog), route through the `gdd-state` MCP tools instead — see **Pipeline-linked items** below.
+**Role:** Design todo list. Three subcommands: `add`, `list`, `pick`. Backing store: `.design/TODO.md`. For items that are pipeline-level decisions or must-haves (not free-form backlog), route through the `gdd-state` MCP tools instead - see **Pipeline-linked items** below.
 
 ## File format
 
@@ -59,6 +59,6 @@ When the user promotes a todo to a pipeline decision or must-have, route through
 
 - Do not modify files outside `.design/`.
 - Preserve existing sections and ordering on write.
-- Do not mutate STATE.md directly — use the MCP tools above.
+- Do not mutate STATE.md directly - use the MCP tools above.
 
 ## TODO COMPLETE

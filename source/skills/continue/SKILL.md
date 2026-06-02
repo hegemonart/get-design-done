@@ -1,6 +1,6 @@
 ---
 name: gdd-continue
-description: "Alias for {{command_prefix}}resume — restore session context from the most recent checkpoint."
+description: "Alias for {{command_prefix}}resume - restore session context from the most recent checkpoint."
 argument-hint: "[<checkpoint-N>]"
 tools: Read, Write, Bash, Glob
 disable-model-invocation: true
@@ -12,7 +12,7 @@ disable-model-invocation: true
 
 Alias for `{{command_prefix}}resume`. Delegates immediately to the resume skill with the same argument.
 
-This alias exists for discoverability — users familiar with `git continue` or similar conventions find `{{command_prefix}}continue` more intuitive than `{{command_prefix}}resume` after a pause.
+This alias exists for discoverability - users familiar with `git continue` or similar conventions find `{{command_prefix}}continue` more intuitive than `{{command_prefix}}resume` after a pause.
 
 ## Steps
 

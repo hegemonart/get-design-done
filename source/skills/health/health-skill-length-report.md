@@ -1,4 +1,4 @@
-# Health skill — skill-length report subsection
+# Health skill - skill-length report subsection
 
 Phase 28.5-11 / D-11 reference. Read by `skills/health/SKILL.md` to render the
 "Skill-length report" subsection after the standard health checks.
@@ -50,9 +50,9 @@ Skill-length: 70 total | 67 clean | 2 warn (>=100) | 1 block (>=250)
 
 ## Thresholds (D-01)
 
-- `warn >=100` — skill flagged as advisory; CI emits `::warning::` annotation
+- `warn >=100` - skill flagged as advisory; CI emits `::warning::` annotation
   but does not fail the build.
-- `block >=250` — skill flagged as blocker; CI emits `::error::` and fails
+- `block >=250` - skill flagged as blocker; CI emits `::error::` and fails
   the build via exit code 2.
 
 ## Strict description-format (D-02)
@@ -64,6 +64,6 @@ to hard-block based on A/B evidence at
 
 ## Cross-link from health
 
-- `skills/health/SKILL.md` — emits the report after the main checks table.
-- `scripts/validate-skill-length.cjs` — provides the JSON.
-- `tests/phase-28.5-baseline.test.cjs` — locks the post-rework distribution.
+- `skills/health/SKILL.md` - emits the report after the main checks table.
+- `scripts/validate-skill-length.cjs` - provides the JSON.
+- `tests/phase-28.5-baseline.test.cjs` - locks the post-rework distribution.

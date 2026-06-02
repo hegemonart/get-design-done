@@ -40,6 +40,6 @@ Takes a free-form description, maps it to a `{{command_prefix}}*` command, confi
 ## Do Not
 
 - Do not execute the target command without confirmation.
-- Do not invent new commands — if no intent matches, say so and list the closest options.
+- Do not invent new commands - if no intent matches, say so and list the closest options.
 
 ## DO COMPLETE

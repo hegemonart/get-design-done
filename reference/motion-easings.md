@@ -9,23 +9,23 @@ Canonical easing curve presets derived from React Native's `Easing` module, adap
 
 | Token | CSS `cubic-bezier` | Character | Settle (spring/bounce) |
 |---|---|---|---|
-| `--ease-linear` | `cubic-bezier(0,0,1,1)` | Constant rate | — |
-| `--ease-quad-in` | `cubic-bezier(0.55,0,1,1)` | Slow start | — |
-| `--ease-quad-out` | `cubic-bezier(0,0,0.45,1)` | Slow end | — |
-| `--ease-quad-in-out` | `cubic-bezier(0.455,0.03,0.515,0.955)` | Slow both | — |
-| `--ease-cubic-in` | `cubic-bezier(0.55,0.055,0.675,0.19)` | Aggressive start | — |
-| `--ease-cubic-out` | `cubic-bezier(0.215,0.61,0.355,1)` | Aggressive end | — |
-| `--ease-cubic-in-out` | `cubic-bezier(0.645,0.045,0.355,1)` | Strong S-curve | — |
-| `--ease-sin-in` | `cubic-bezier(0.47,0,0.745,0.715)` | Gentle start | — |
-| `--ease-sin-out` | `cubic-bezier(0.39,0.575,0.565,1)` | Gentle end | — |
-| `--ease-sin-in-out` | `cubic-bezier(0.445,0.05,0.55,0.95)` | Smooth S-curve | — |
-| `--ease-circle-in` | `cubic-bezier(0.6,0.04,0.98,0.335)` | Circular arc start | — |
-| `--ease-circle-out` | `cubic-bezier(0.075,0.82,0.165,1)` | Circular arc end | — |
-| `--ease-exp-in` | `cubic-bezier(0.95,0.05,0.795,0.035)` | Explosive start | — |
-| `--ease-exp-out` | `cubic-bezier(0.19,1,0.22,1)` | Explosive end | — |
+| `--ease-linear` | `cubic-bezier(0,0,1,1)` | Constant rate | - |
+| `--ease-quad-in` | `cubic-bezier(0.55,0,1,1)` | Slow start | - |
+| `--ease-quad-out` | `cubic-bezier(0,0,0.45,1)` | Slow end | - |
+| `--ease-quad-in-out` | `cubic-bezier(0.455,0.03,0.515,0.955)` | Slow both | - |
+| `--ease-cubic-in` | `cubic-bezier(0.55,0.055,0.675,0.19)` | Aggressive start | - |
+| `--ease-cubic-out` | `cubic-bezier(0.215,0.61,0.355,1)` | Aggressive end | - |
+| `--ease-cubic-in-out` | `cubic-bezier(0.645,0.045,0.355,1)` | Strong S-curve | - |
+| `--ease-sin-in` | `cubic-bezier(0.47,0,0.745,0.715)` | Gentle start | - |
+| `--ease-sin-out` | `cubic-bezier(0.39,0.575,0.565,1)` | Gentle end | - |
+| `--ease-sin-in-out` | `cubic-bezier(0.445,0.05,0.55,0.95)` | Smooth S-curve | - |
+| `--ease-circle-in` | `cubic-bezier(0.6,0.04,0.98,0.335)` | Circular arc start | - |
+| `--ease-circle-out` | `cubic-bezier(0.075,0.82,0.165,1)` | Circular arc end | - |
+| `--ease-exp-in` | `cubic-bezier(0.95,0.05,0.795,0.035)` | Explosive start | - |
+| `--ease-exp-out` | `cubic-bezier(0.19,1,0.22,1)` | Explosive end | - |
 | `--ease-elastic` | `linear(...)` baked | Overshoot + settle | ~500ms |
-| `--ease-back-in` | `cubic-bezier(0.6,-0.28,0.735,0.045)` | Anticipation | — |
-| `--ease-back-out` | `cubic-bezier(0.175,0.885,0.32,1.275)` | Overshoot | — |
+| `--ease-back-in` | `cubic-bezier(0.6,-0.28,0.735,0.045)` | Anticipation | - |
+| `--ease-back-out` | `cubic-bezier(0.175,0.885,0.32,1.275)` | Overshoot | - |
 | `--ease-bounce-out` | `linear(...)` baked | Bounces at end | ~420ms |
 
 ---
@@ -60,7 +60,7 @@ Easing.linear
 
 ### `quad`
 
-Quadratic — acceleration proportional to `t²`.
+Quadratic - acceleration proportional to `t²`.
 
 - **Human name:** Quad (ease-in-out)
 - **Character:** Subtle, polished. Most common choice for UI transitions.
@@ -85,7 +85,7 @@ Easing.inOut(Easing.quad)
 
 ### `cubic`
 
-Cubic — acceleration proportional to `t³`. More pronounced than quad.
+Cubic - acceleration proportional to `t³`. More pronounced than quad.
 
 - **Human name:** Cubic (ease-in-out)
 - **Character:** Snappy, decisive. Good for panels, drawers, menus.
@@ -109,7 +109,7 @@ Easing.inOut(Easing.cubic)
 
 ### `poly(n)`
 
-Generalised polynomial — `t^n`. Quad is `poly(2)`, cubic is `poly(3)`.
+Generalised polynomial - `t^n`. Quad is `poly(2)`, cubic is `poly(3)`.
 
 - **Human name:** Poly-n
 - **Character:** Tunable. Higher `n` = harder snap.
@@ -121,13 +121,13 @@ Easing.poly(5)   // quintic
 Easing.in(Easing.poly(4))
 ```
 
-No direct CSS equivalent — approximate with a `cubic-bezier` or bake to `linear()`.
+No direct CSS equivalent - approximate with a `cubic-bezier` or bake to `linear()`.
 
 ---
 
 ### `sin`
 
-Sinusoidal — easing shaped by the sine function. Smooth and natural.
+Sinusoidal - easing shaped by the sine function. Smooth and natural.
 
 - **Human name:** Sine
 - **Character:** Organic, gentle. Works well for ambient or breathing animations.
@@ -150,7 +150,7 @@ Easing.sin
 
 ### `circle`
 
-Circular arc — based on `sqrt(1 - t²)`. Sharp acceleration at the end of its range.
+Circular arc - based on `sqrt(1 - t²)`. Sharp acceleration at the end of its range.
 
 - **Human name:** Circ
 - **Character:** Abrupt, dramatic. Use sparingly for emphasis.
@@ -172,7 +172,7 @@ Easing.circle
 
 ### `exp`
 
-Exponential — `2^(10 * (t - 1))`. Starts near-zero, ends explosively.
+Exponential - `2^(10 * (t - 1))`. Starts near-zero, ends explosively.
 
 - **Human name:** Expo
 - **Character:** High-impact. Good for reveal animations, hero entrances.
@@ -226,7 +226,7 @@ Easing.out(Easing.elastic(1, 1))
 
 ### `back(s)`
 
-Anticipation curve — slightly retracts before moving forward (or overshoots then settles).
+Anticipation curve - slightly retracts before moving forward (or overshoots then settles).
 
 - **Human name:** Back
 - **Character:** Mechanical delight. Communicates intentionality.
@@ -250,7 +250,7 @@ Easing.out(Easing.back(2.5))   // stronger overshoot
 
 ### `bounce`
 
-Simulates a physical bounce — the value bounces off the endpoint.
+Simulates a physical bounce - the value bounces off the endpoint.
 
 - **Human name:** Bounce
 - **Character:** Playful, energetic. Use for game-like or informal UIs.
@@ -278,7 +278,7 @@ Easing.bounce
 
 ### `bezier(x1, y1, x2, y2)`
 
-Raw cubic Bézier — the same primitive that powers all CSS `cubic-bezier()` calls.
+Raw cubic Bézier - the same primitive that powers all CSS `cubic-bezier()` calls.
 
 - **Human name:** Custom Bézier
 - **Character:** Whatever you specify.
@@ -307,8 +307,8 @@ Given a base easing function `f(t)` where `t ∈ [0, 1]`:
 
 | Wrapper | Formula | Effect |
 |---|---|---|
-| `in(f)` | `f(t)` | Acceleration at start — slow → fast |
-| `out(f)` | `1 - f(1 - t)` | Deceleration at end — fast → slow |
+| `in(f)` | `f(t)` | Acceleration at start - slow → fast |
+| `out(f)` | `1 - f(1 - t)` | Deceleration at end - fast → slow |
 | `inOut(f)` | `t < 0.5 ? f(2t)/2 : 1 - f(2(1-t))/2` | Slow start and end |
 
 ### Examples
@@ -340,7 +340,7 @@ const easeInElastic = easeIn(elastic(1, 1));
 
 ---
 
-## CSS Custom Properties — Full Token Set
+## CSS Custom Properties - Full Token Set
 
 ```css
 :root {

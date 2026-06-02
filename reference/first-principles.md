@@ -1,4 +1,4 @@
-# First Principles — Invariant Design Constraints
+# First Principles - Invariant Design Constraints
 
 > These are the three invariants that no design decision can override. They are facts about human biology and cognition, not preferences or conventions. Every design choice is downstream of these three constraints.
 
@@ -53,7 +53,7 @@ Working memory holds approximately 7 items and degrades rapidly within seconds. 
 | Recognition over recall (H-06) | Visible navigation labels, not icon-only; breadcrumbs on deep paths |
 | Context must be preserved | Multi-step forms: prior-step summary visible; form state not cleared on back-navigate |
 | Error memory fades fast | Inline validation: errors adjacent to the field that caused them |
-| Completion status reduces anxiety | Progress indicators: `Step 2 of 4`; Zeigarnik Effect — show percentage done |
+| Completion status reduces anxiety | Progress indicators: `Step 2 of 4`; Zeigarnik Effect - show percentage done |
 | Last action should be reversible | Undo available for destructive/irreversible actions within 5 seconds |
 
 **Reducibility check:** Does this screen require the user to remember something from a previous screen? If yes, surface that context inline.
@@ -64,11 +64,11 @@ Working memory holds approximately 7 items and degrades rapidly within seconds. 
 
 For any proposed design element, apply in order:
 
-1. **Body test** — Is this element reachable by a person with limited motor precision on a small screen?
-2. **Attention test** — Does this element earn its place by directly supporting the primary task?
-3. **Memory test** — Does this element surface context the user would otherwise need to remember?
+1. **Body test** - Is this element reachable by a person with limited motor precision on a small screen?
+2. **Attention test** - Does this element earn its place by directly supporting the primary task?
+3. **Memory test** - Does this element surface context the user would otherwise need to remember?
 
-If an element fails all three tests, it is purely decorative. Decorative elements are not forbidden — but they are not invariant-justified, and they are the first candidates for removal when performance or clarity is at risk.
+If an element fails all three tests, it is purely decorative. Decorative elements are not forbidden - but they are not invariant-justified, and they are the first candidates for removal when performance or clarity is at risk.
 
 ---
 
@@ -76,7 +76,7 @@ If an element fails all three tests, it is purely decorative. Decorative element
 
 When `design-discussant` runs the brief stage, it prepends this invariants question before the main interview:
 
-> "Before we discuss the design direction, let me confirm three constraints: (1) Are there any accessibility requirements for motor-impaired users? (2) Is the primary use case on mobile or desktop — or both? (3) Are there any multi-step flows where the user must carry context between screens?"
+> "Before we discuss the design direction, let me confirm three constraints: (1) Are there any accessibility requirements for motor-impaired users? (2) Is the primary use case on mobile or desktop - or both? (3) Are there any multi-step flows where the user must carry context between screens?"
 
 Answers are recorded as D-XX decisions prefixed `[Invariant]` in STATE.md.
 
@@ -84,6 +84,6 @@ Answers are recorded as D-XX decisions prefixed `[Invariant]` in STATE.md.
 
 ## Relationship to Other References
 
-- `reference/heuristics.md` — H-01 through H-10 are the behavioral-level expression of Invariants 2 and 3
-- `reference/emotional-design.md` — Invariant 1 (Body) maps to the Visceral level; Invariants 2–3 map to the Behavioral level
-- `reference/component-authoring.md` — P-01 through P-06 are the component-level expression of all three invariants
+- `reference/heuristics.md` - H-01 through H-10 are the behavioral-level expression of Invariants 2 and 3
+- `reference/emotional-design.md` - Invariant 1 (Body) maps to the Visceral level; Invariants 2–3 map to the Behavioral level
+- `reference/component-authoring.md` - P-01 through P-06 are the component-level expression of all three invariants

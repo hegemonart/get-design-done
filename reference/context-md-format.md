@@ -7,7 +7,7 @@ tags: [context-md, glossary, ubiquitous-language, ddd, project-scoped]
 last_updated: 2026-05-18
 ---
 
-Source: mattpocock/skills (MIT) — adapted with permission. See `../NOTICE` for the full attribution block.
+Source: mattpocock/skills (MIT) - adapted with permission. See `../NOTICE` for the full attribution block.
 
 # CONTEXT.md Format
 
@@ -15,7 +15,7 @@ Source: mattpocock/skills (MIT) — adapted with permission. See `../NOTICE` for
 It captures domain terms the user and the agent have agreed upon so the next session does
 not re-litigate naming. `STATE.md` is cycle-scoped and rotates per pipeline run; `CONTEXT.md`
 outlives the cycle and compounds across runs. The `discuss` and `brief` skills write to it
-inline during interviews (no batching) — see Phase 28.5 plan `28.5-08` for the writer
+inline during interviews (no batching) - see Phase 28.5 plan `28.5-08` for the writer
 behavior. See `./adr-format.md` for the heavier project-scoped artifact (decisions that meet
 the 3-criteria gate).
 
@@ -41,26 +41,26 @@ definitions).>
 ```
 
 - **Required fields.** The heading (term name) and the definition paragraph.
-- **Optional fields.** `**First seen:**`, `**Aliases:**`, `**Examples:**` — added by
+- **Optional fields.** `**First seen:**`, `**Aliases:**`, `**Examples:**` - added by
   `discuss` / `brief` skills as ergonomic. `first-seen` ties the term to an originating
   cycle's `STATE.md`; `aliases` enables term-merging; examples concretize usage.
 
 ## Lazy creation
 
 `CONTEXT.md` is created on the FIRST term resolution and never batched. The writing skill
-just appends — no precondition prompts, no "should we create CONTEXT.md?" question (D-04).
+just appends - no precondition prompts, no "should we create CONTEXT.md?" question (D-04).
 
 - **Trigger.** A fuzzy phrase becomes a sharpened term (e.g., "thingy" → "materialization
   cascade"), a new noun gets named, or two phrases collapse to one.
 - **Location.** Project root: `./CONTEXT.md`. Repos that span multiple bounded contexts use
-  `CONTEXT-MAP.md` plus per-area `<area>/CONTEXT.md` — see `## Multi-context`.
+  `CONTEXT-MAP.md` plus per-area `<area>/CONTEXT.md` - see `## Multi-context`.
 - **No batching.** Do NOT wait to gather "enough" terms. Each resolved term lands
   immediately so the file reflects the conversation at every checkpoint.
 
 ## Aliases
 
 When two terms collapse to one canonical name, the loser becomes an entry in the winner's
-`**Aliases:**` line. The agent never silently drops a term — the alias preserves the prior
+`**Aliases:**` line. The agent never silently drops a term - the alias preserves the prior
 vocabulary for grep, for the `decision-injector` hook, and for the user's mental model.
 
 ```markdown
@@ -100,7 +100,7 @@ paths in the conversation against the map. When no map exists, the single-file d
 ## Cross-references
 
 - Decisions that outlive the cycle AND meet the 3-criteria gate (hard-to-reverse AND
-  surprising-without-context AND real-tradeoff) become ADRs — see `./adr-format.md`.
-- Cycle-scoped decisions stay in `STATE.md` — see `./STATE-TEMPLATE.md`.
-- Skill structural rules (length cap, frontmatter, progressive disclosure) — see
+  surprising-without-context AND real-tradeoff) become ADRs - see `./adr-format.md`.
+- Cycle-scoped decisions stay in `STATE.md` - see `./STATE-TEMPLATE.md`.
+- Skill structural rules (length cap, frontmatter, progressive disclosure) - see
   `./skill-authoring-contract.md`.

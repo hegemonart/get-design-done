@@ -11,23 +11,23 @@ gate but still requires consent (D-11).
 
 Each entry is a single fenced ```yaml block with this flat key:value shape.
 
-### Schema v1 (Phase 30, matcher-consumed) — original 6 fields
+### Schema v1 (Phase 30, matcher-consumed) - original 6 fields
 
 These six fields are consumed by `scripts/lib/issue-reporter/triage-matcher.cjs`
 (`matchKnownFailure(errorContext)`). The matcher reads ONLY these fields and
 ignores everything else gracefully (D-04 backward-compat).
 
-- `id` — stable identifier (kebab-case or `KFM-NNN` numeric). Required.
-- `pattern` — JavaScript regex string. Matched against
+- `id` - stable identifier (kebab-case or `KFM-NNN` numeric). Required.
+- `pattern` - JavaScript regex string. Matched against
   `[error.message, error.stack].filter(Boolean).join("\n")`. Required.
-- `diagnosis` — one-sentence plain-English root cause. Required.
-- `remedy` — one-sentence user-runnable action. Required.
-- `severity` — advisory only, one of `low` / `medium` / `high`. Required.
-- `propose_report` — boolean. If `true`, this mode is on the D-11
+- `diagnosis` - one-sentence plain-English root cause. Required.
+- `remedy` - one-sentence user-runnable action. Required.
+- `severity` - advisory only, one of `low` / `medium` / `high`. Required.
+- `propose_report` - boolean. If `true`, this mode is on the D-11
   whitelist: 30-04 may *propose* `--report` at error time for this
   class. Defaults to `false`. Advisory; the matcher does not act on it.
 
-### Schema v2 (Phase 30.5 D-02) — additive fields
+### Schema v2 (Phase 30.5 D-02) - additive fields
 
 These five fields are required on every entry from Phase 30.5 onward.
 They are NOT consumed by the Phase 30 matcher (D-04 backward-compat
@@ -36,22 +36,22 @@ future tooling (e.g. the Phase 30.5-02 fuzzy matcher, the Phase 30.5-03
 reflector incubator). Adding them does not change the matcher's
 behaviour for the original 6 fields.
 
-- `symptom` — string, 1–3 sentences. Plain-English description of what
+- `symptom` - string, 1–3 sentences. Plain-English description of what
   the user sees when this failure mode hits. Required.
   *Example:* `'Build fails with EUSAGE about a missing or stale lockfile after a package.json edit.'`
-- `root_cause` — string, 1–2 sentences. Technical explanation of why
+- `root_cause` - string, 1–2 sentences. Technical explanation of why
   the failure happens. Required.
   *Example:* `'npm ci enforces lockfile parity with package.json; manually editing one without the other breaks parity.'`
-- `fix` — string (single line; multi-step encoded as `1) … 2) … 3) …`).
+- `fix` - string (single line; multi-step encoded as `1) … 2) … 3) …`).
   Step-by-step user-runnable remedy. The original `remedy` field stays
   as the short matcher-consumed one-liner; `fix` is the fuller version
   with prerequisites and verification steps. The two MAY differ. Required.
   *Example:* `1) Run npm install once locally. 2) Stage the updated package-lock.json. 3) Commit and re-run npm ci.`
-- `related_phases` — number[] (YAML flow style: `[12, 24]`). Phase numbers
+- `related_phases` - number[] (YAML flow style: `[12, 24]`). Phase numbers
   this mode touches. Empty array `[]` is allowed when the mode is
   cross-cutting and not tied to a specific phase. Required.
   *Example:* `[12, 14.6, 24]`
-- `first_observed_cycle` — string. Cycle slug like `cycle-2026-05`, or
+- `first_observed_cycle` - string. Cycle slug like `cycle-2026-05`, or
   `pre-30.5` for entries harvested from before this catalogue formalised
   the schema. Required.
   *Example:* `'cycle-2026-05'`
@@ -77,7 +77,7 @@ Consumed by `scripts/lib/issue-reporter/triage-matcher.cjs`
 
 ## Entries
 
-### KFM-001 — EACCES on `.design/` write
+### KFM-001 - EACCES on `.design/` write
 
 Permission failure when the plugin writes into `.design/`. Common after
 `sudo`-cloning a repo or running CI as a user without write access to
@@ -97,7 +97,7 @@ related_phases: [11, 22, 29]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-002 — `gh` CLI not on PATH
+### KFM-002 - `gh` CLI not on PATH
 
 The Phase 30 outbound submission path requires the user's `gh` CLI
 (D-05). If it's missing, Plan 30-06 falls back to clipboard + URL.
@@ -117,7 +117,7 @@ related_phases: [30]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-003 — Node.js version mismatch
+### KFM-003 - Node.js version mismatch
 
 `package.json` declares `engines.node: ">=22"`. Older Node versions
 crash on the `--experimental-strip-types` test runner, or fail subtle
@@ -137,7 +137,7 @@ related_phases: [12, 14.6, 24]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-004 — Figma token missing
+### KFM-004 - Figma token missing
 
 Figma-aware flows expect `FIGMA_TOKEN` (or the documented env-var alias)
 to be present. The 401/missing-env error class is recognisable.
@@ -156,7 +156,7 @@ related_phases: [13.2, 18, 19.6]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-005 — Git working tree dirty
+### KFM-005 - Git working tree dirty
 
 Several phase-tooling commands assume a clean working tree (clean
 checkpoints between cycles). A dirty tree surfaces as a stderr line
@@ -176,7 +176,7 @@ related_phases: [22, 23.5, 25]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-006 — `.planning/` directory missing
+### KFM-006 - `.planning/` directory missing
 
 GSD/GDD project commands assume `.planning/` has been initialised by
 `/gsd:new-project`. A bare ENOENT on that path is a clear self-fix.
@@ -195,7 +195,7 @@ related_phases: [22, 23.5]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-007 — `reference/registry.json` invalid JSON
+### KFM-007 - `reference/registry.json` invalid JSON
 
 The Phase 14.5 registry is hand-edited; a stray trailing comma or
 unquoted key surfaces here. Self-fixable, not a maintainer issue.
@@ -214,7 +214,7 @@ related_phases: [14.5, 25]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-008 — MCP server unreachable
+### KFM-008 - MCP server unreachable
 
 When the Figma / GDD MCP servers are not running, commands depending
 on them fail with a clear connection-refused class of error.
@@ -233,10 +233,10 @@ related_phases: [27.7, 33.6]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-009 — Plugin file accidentally deleted
+### KFM-009 - Plugin file accidentally deleted
 
 A user-side `git clean -fdx` or aggressive editor refactor can remove
-plugin files. This is a re-install path, not a bug report path — but
+plugin files. This is a re-install path, not a bug report path - but
 it's on the whitelist because users typically can't tell it apart from
 an upstream regression.
 
@@ -254,7 +254,7 @@ related_phases: [24, 25]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-010 — Disk full / ENOSPC
+### KFM-010 - Disk full / ENOSPC
 
 Out-of-space failures masquerade as obscure write errors. Self-fixable
 by freeing space; not a maintainer report path.
@@ -273,7 +273,7 @@ related_phases: [22, 24, 29]
 first_observed_cycle: 'pre-30.5'
 ```
 
-### KFM-011 — `validate-skill-length` pre-commit hook fails
+### KFM-011 - `validate-skill-length` pre-commit hook fails
 
 The local pre-commit hook `scripts/validate-skill-length.cjs` rejects
 SKILL.md files exceeding the agentskills.io length budget. A commit is
@@ -294,7 +294,7 @@ related_phases: [28.5, 28.6]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-012 — `npm ci` lockfile drift
+### KFM-012 - `npm ci` lockfile drift
 
 `npm ci` enforces strict parity between `package.json` and
 `package-lock.json`. A manual edit to one without the other surfaces as
@@ -314,7 +314,7 @@ related_phases: [25]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-013 — lychee transient SSL failure on whitelisted hosts
+### KFM-013 - lychee transient SSL failure on whitelisted hosts
 
 The link-check job (lychee) reports intermittent TLS errors on a small
 set of well-known authority hosts (`heydonworks.com`,
@@ -335,7 +335,7 @@ related_phases: [13.2, 18]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-014 — `gh pr merge` fast-forward warning (cosmetic)
+### KFM-014 - `gh pr merge` fast-forward warning (cosmetic)
 
 GitHub's CLI surfaces a "Not possible to fast-forward" warning after a
 successful server-side merge in some workflow combinations. The merge
@@ -355,7 +355,7 @@ related_phases: [25]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-015 — CodeQL `js/incomplete-sanitization` false positive
+### KFM-015 - CodeQL `js/incomplete-sanitization` false positive
 
 CodeQL flags `js/incomplete-sanitization` on regex-based input that
 operates on an enum-constrained value. The alert is a false positive in
@@ -375,7 +375,7 @@ related_phases: [25, 27.5]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-016 — `gitleaks` false positive on documentation examples
+### KFM-016 - `gitleaks` false positive on documentation examples
 
 `gitleaks` flags literal example tokens (`ghp_…`, `sk-ant-…`) in
 `reference/*.md` documentation. These are educational examples, not real
@@ -395,7 +395,7 @@ related_phases: [25]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-017 — `release.yml` version mismatch with `plugin.json`
+### KFM-017 - `release.yml` version mismatch with `plugin.json`
 
 The Phase 25 release safeguard rejects a `workflow_dispatch` invocation
 whose input version doesn't match the version declared in `plugin.json`.
@@ -415,7 +415,7 @@ related_phases: [25]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-018 — `npm publish` 404 after `NPM_TOKEN` rotation
+### KFM-018 - `npm publish` 404 after `NPM_TOKEN` rotation
 
 `npm publish` returns `404 Not Found` from the registry when the
 `NPM_TOKEN` secret has been rotated upstream but the GitHub repo secret
@@ -436,7 +436,7 @@ related_phases: [25]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-019 — macOS symlinked tmpdir comparison failure
+### KFM-019 - macOS symlinked tmpdir comparison failure
 
 Tests that compare a tmpdir-derived path against an expected absolute
 path fail on macOS because `/var/folders/...` is a symlink to
@@ -457,7 +457,7 @@ related_phases: [12, 14.6]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-020 — Windows CRLF vs LF byte-comparison mismatch
+### KFM-020 - Windows CRLF vs LF byte-comparison mismatch
 
 Tests that byte-compare file contents fail on Windows because
 `git show HEAD:<file>` returns LF line endings while
@@ -478,7 +478,7 @@ related_phases: [12, 14.6, 24]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-021 — Skill name contains colon (agentskills.io slug regex)
+### KFM-021 - Skill name contains colon (agentskills.io slug regex)
 
 Skills named with a colon (e.g. `get-design-done:foo`) fail the
 agentskills.io spec validator. The spec reserves colons for namespace
@@ -499,12 +499,12 @@ related_phases: [28.5, 28.6]
 first_observed_cycle: 'cycle-2026-05'
 ```
 
-### KFM-022 — Dependabot alert on transitive optional peer not in resolved tree
+### KFM-022 - Dependabot alert on transitive optional peer not in resolved tree
 
 Dependabot opens an alert for a vulnerable transitive dependency that is
 declared as an optional or peer dep upstream and is NOT actually
 installed (`npm ls <dep>` shows nothing). The alert is dismissible with
-"not vulnerable — not in resolved tree".
+"not vulnerable - not in resolved tree".
 
 ```yaml
 id: KFM-022

@@ -1,4 +1,4 @@
-# Card — Benchmark Spec
+# Card - Benchmark Spec
 
 **Harvested from**: Material 3, Polaris, Carbon, Atlassian, Mantine, shadcn/ui, Ant Design, Fluent 2
 **Wave**: 2 · **Category**: Containers
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A card is a contained surface that groups related information and actions. It is a visual container, not a navigation element by default — only make the entire card clickable when the primary action is navigation and there is a single dominant action. Mixed-content cards with multiple actions should not be entirely clickable. *(Material 3, Polaris, Carbon all agree on this boundary)*
+A card is a contained surface that groups related information and actions. It is a visual container, not a navigation element by default - only make the entire card clickable when the primary action is navigation and there is a single dominant action. Mixed-content cards with multiple actions should not be entirely clickable. *(Material 3, Polaris, Carbon all agree on this boundary)*
 
 ---
 
@@ -48,7 +48,7 @@ A card is a contained surface that groups related information and actions. It is
 | Compact | Dense layout; no media | Carbon, Fluent |
 
 **Norm** (≥5/18): outlined or elevated; ≤2 actions per card.
-**Diverge**: elevation vs. outline — both are valid; use elevated for content that needs to float (dashboards), outlined for dense lists (tables of cards).
+**Diverge**: elevation vs. outline - both are valid; use elevated for content that needs to float (dashboards), outlined for dense lists (tables of cards).
 
 ---
 
@@ -56,10 +56,10 @@ A card is a contained surface that groups related information and actions. It is
 
 | State | Trigger | Visual | ARIA/HTML |
 |-------|---------|--------|-----------|
-| default | — | Resting surface | — |
-| hover (clickable) | pointer | Shadow deepens or border darkens | — |
-| focus (clickable) | keyboard | 2px focus ring on outer card | — |
-| active (clickable) | mousedown | Scale 0.99 | — |
+| default | - | Resting surface | - |
+| hover (clickable) | pointer | Shadow deepens or border darkens | - |
+| focus (clickable) | keyboard | 2px focus ring on outer card | - |
+| active (clickable) | mousedown | Scale 0.99 | - |
 | selected | programmatic | Border + background tint | `aria-selected="true"` |
 | loading | async content | Skeleton placeholder | `aria-busy="true"` |
 | disabled | programmatic | 38% opacity | `aria-disabled="true"` |
@@ -77,7 +77,7 @@ A card is a contained surface that groups related information and actions. It is
 | Max width | 480px (typical) | Grid controls actual width; max-width is a guideline |
 | Gap between cards | 16px (sm grid), 24px (md grid) | |
 
-Cross-link: `reference/surfaces.md` — concentric radius, 3-layer shadow formula, elevation tokens
+Cross-link: `reference/surfaces.md` - concentric radius, 3-layer shadow formula, elevation tokens
 
 ---
 
@@ -96,14 +96,14 @@ Cross-link: `reference/surfaces.md` — concentric radius, 3-layer shadow formul
 
 ### Clickable Card Rules
 
-*Per WAI-ARIA APG link + button patterns — W3C — 2024*
+*Per WAI-ARIA APG link + button patterns - W3C - 2024*
 
 | Invocation | Element | Key |
 |------------|---------|-----|
 | Navigate to new page | `<a href>` wrapping or inside card | Enter |
 | Trigger action in context | `<button>` wrapping or inside card | Enter, Space |
 
-- **Do not wrap an entire card in `<a>` if it contains other interactive elements** (links, buttons inside) — nested interactive elements are inaccessible by keyboard
+- **Do not wrap an entire card in `<a>` if it contains other interactive elements** (links, buttons inside) - nested interactive elements are inaccessible by keyboard
 - Use the "card with primary action + secondary actions" pattern: one `<a>` stretched via `::after` pseudo-element to fill the card; secondary action buttons sit above in stacking context
 
 ### Accessibility Rules
@@ -123,7 +123,7 @@ Cross-link: `reference/surfaces.md` — concentric radius, 3-layer shadow formul
 | press scale | 80ms | ease | 1→0.99 (subtle; card is large) |
 | skeleton shimmer | 1.5s | linear loop | Respect `prefers-reduced-motion` |
 
-Cross-link: `reference/motion.md` — Skeleton shimmer pattern, `prefers-reduced-motion`
+Cross-link: `reference/motion.md` - Skeleton shimmer pattern, `prefers-reduced-motion`
 
 ---
 
@@ -139,7 +139,7 @@ Cross-link: `reference/motion.md` — Skeleton shimmer pattern, `prefers-reduced
 - Don't wrap the entire card in `<a>` if it contains other interactive elements *(WAI-ARIA APG)*
 - Don't use `<div>` as a clickable card without `role="button"` or `role="link"` + keyboard handler *(WAI-ARIA APG)*
 - Don't place the entire card title in a plain `<span>` when it could be `<h2>/<h3>` *(Atlassian, Carbon)*
-- Don't use more than 2 primary actions per card — extract to a detail view *(Material 3, Polaris)*
+- Don't use more than 2 primary actions per card - extract to a detail view *(Material 3, Polaris)*
 
 ---
 
@@ -197,4 +197,4 @@ grep -rn 'class.*card' src/ | xargs grep -L 'h[1-6]\|aria-label' 2>/dev/null
 
 **Why it fails**: Nested `<button>` inside `<a>` is invalid HTML. Keyboard users pressing Tab inside the link may reach the button, but Enter on the button may also trigger the link. Screen reader behavior is unpredictable.
 **Grep detection**: `grep -rn '<a.*href' src/ | xargs grep -l '<button' 2>/dev/null`
-**Fix**: Use the stretched-link pattern — `<h3><a href="/product/42">Product Name</a></h3>` with `::after { position: absolute; inset: 0; }` on the `<a>`, and position the "Add to cart" button above via `position: relative; z-index: 1`.
+**Fix**: Use the stretched-link pattern - `<h3><a href="/product/42">Product Name</a></h3>` with `::after { position: absolute; inset: 0; }` on the `<a>`, and position the "Add to cart" button above via `position: relative; z-index: 1`.

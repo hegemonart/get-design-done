@@ -1,4 +1,4 @@
-# Label — Benchmark Spec
+# Label - Benchmark Spec
 
 **Harvested from**: WAI-ARIA APG, Carbon, Material 3, Mantine, Polaris, Atlassian, Fluent 2, shadcn/ui
 **Wave**: 1 · **Category**: Inputs
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A label is the visible text that identifies a form control to the user and to assistive technology. It is the most critical accessibility primitive in forms — every input, select, checkbox, radio, and switch MUST have an associated label. Labels are distinct from placeholders (which disappear) and from hints (which supplement but do not replace). *(WAI-ARIA APG, Carbon, Polaris, Atlassian all agree)*
+A label is the visible text that identifies a form control to the user and to assistive technology. It is the most critical accessibility primitive in forms - every input, select, checkbox, radio, and switch MUST have an associated label. Labels are distinct from placeholders (which disappear) and from hints (which supplement but do not replace). *(WAI-ARIA APG, Carbon, Polaris, Atlassian all agree)*
 
 ---
 
@@ -42,26 +42,26 @@ Alternative (legend for group):
 
 | Variant | Description | Systems |
 |---------|-------------|---------|
-| Static label (above) | Fixed position above control — most accessible | Carbon, Polaris, Atlassian, Fluent |
+| Static label (above) | Fixed position above control - most accessible | Carbon, Polaris, Atlassian, Fluent |
 | Floating label | Starts inside control, floats up on focus/fill | Material 3, Mantine, shadcn |
 | Inline label | Label beside control (radio/checkbox) | All |
 | Legend | Group label inside `<fieldset>` | WAI-ARIA APG, all (for groups) |
 | Visually hidden | Accessible but not visible (e.g., search icon button) | WAI-ARIA APG, Carbon |
 
-**Norm** (≥5/18): static label above the control is the most accessible and implementation-simple approach — recommended as the default.
-**Diverge**: floating label — Material 3 and Mantine use it; Carbon, Polaris, Atlassian explicitly recommend static labels for a11y predictability. Floating labels require JavaScript, break if JS fails, and require careful `aria-*` management.
+**Norm** (≥5/18): static label above the control is the most accessible and implementation-simple approach - recommended as the default.
+**Diverge**: floating label - Material 3 and Mantine use it; Carbon, Polaris, Atlassian explicitly recommend static labels for a11y predictability. Floating labels require JavaScript, break if JS fails, and require careful `aria-*` management.
 
 ---
 
 ## States
 
-Labels are not interactive — they have no hover/focus states of their own. However:
+Labels are not interactive - they have no hover/focus states of their own. However:
 
 | Control State | Label Behaviour |
 |---------------|-----------------|
 | error | Label colour may shift to error colour (optional); error text replaces/appends helper |
 | disabled | Label at 38% opacity alongside disabled control |
-| required | Required indicator (`*`) added — never remove from DOM |
+| required | Required indicator (`*`) added - never remove from DOM |
 | focus (on control) | Label may shift colour to primary (Material 3 floating) |
 
 ---
@@ -70,19 +70,19 @@ Labels are not interactive — they have no hover/focus states of their own. How
 
 | Property | Value | Notes |
 |----------|-------|-------|
-| Font size | 14px (static); 12px (floating — small state) | |
+| Font size | 14px (static); 12px (floating - small state) | |
 | Weight | 500 | Slightly heavier than body to distinguish |
 | Gap: label → control | 4–8px | *(Carbon: 4px, Material 3: 8px)* |
 | Required asterisk gap | 2px left of asterisk | |
 | Width | Match control width | Labels should not exceed their control |
 
-Cross-link: `reference/typography.md` — label sizing rules
+Cross-link: `reference/typography.md` - label sizing rules
 
 ---
 
 ## Typography
 
-- Label text: 14px/500 — slightly heavier than body 400; distinguishes from surrounding content
+- Label text: 14px/500 - slightly heavier than body 400; distinguishes from surrounding content
 - Required `*`: same size, colour matches error or primary brand colour
 - Visually-hidden labels: use CSS `.sr-only` pattern (clip + overflow: hidden + absolute), never `display:none` or `visibility:hidden`
 
@@ -108,20 +108,20 @@ Cross-link: `reference/typography.md` — label sizing rules
 
 ### Association Methods (in order of preference)
 
-*Per WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/ — W3C — 2024*
+*Per WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/ - W3C - 2024*
 
-1. **`<label for="id">`** — native HTML; best browser + AT support; clicking label focuses control
-2. **`aria-labelledby="label-id"`** — when label cannot use `for` (complex composites)
-3. **`aria-label="string"`** — when no visible label is possible (icon-only controls); last resort
-4. **`<legend>` inside `<fieldset>`** — for groups of related controls; not replaceable by `aria-label`
+1. **`<label for="id">`** - native HTML; best browser + AT support; clicking label focuses control
+2. **`aria-labelledby="label-id"`** - when label cannot use `for` (complex composites)
+3. **`aria-label="string"`** - when no visible label is possible (icon-only controls); last resort
+4. **`<legend>` inside `<fieldset>`** - for groups of related controls; not replaceable by `aria-label`
 
 ### Accessibility Rules
 
-- NEVER use `placeholder` as the only label — it disappears on input and fails colour contrast *(WAI-ARIA APG, WCAG 1.3.1)*
+- NEVER use `placeholder` as the only label - it disappears on input and fails colour contrast *(WAI-ARIA APG, WCAG 1.3.1)*
 - Required fields: mark with `aria-required="true"` on the control AND `*` visually; provide a form-level note explaining the `*` convention
-- Optional fields: prefer marking optional fields with "(optional)" text over marking every required field with `*` — reduces asterisk clutter in long forms *(Polaris, Carbon)*
-- Group labels: `<legend>` inside `<fieldset>` is the ONLY proper group label technique — `aria-label` on a `<div>` group is inadequate for radio/checkbox groups in most AT
-- Visually hidden labels: use `.sr-only` CSS — never `display:none` (removes from AT tree) or `visibility:hidden`
+- Optional fields: prefer marking optional fields with "(optional)" text over marking every required field with `*` - reduces asterisk clutter in long forms *(Polaris, Carbon)*
+- Group labels: `<legend>` inside `<fieldset>` is the ONLY proper group label technique - `aria-label` on a `<div>` group is inadequate for radio/checkbox groups in most AT
+- Visually hidden labels: use `.sr-only` CSS - never `display:none` (removes from AT tree) or `visibility:hidden`
 
 ---
 
@@ -129,15 +129,15 @@ Cross-link: `reference/typography.md` — label sizing rules
 
 ### Do
 - Place labels above controls, not beside them, for forms wider than 240px *(Carbon, Polaris, Atlassian)*
-- Use `<label for="id">` — the click zone extends to the full label, improving usability *(WAI-ARIA APG, all)*
+- Use `<label for="id">` - the click zone extends to the full label, improving usability *(WAI-ARIA APG, all)*
 - Explain the `*` required indicator once near the top of the form *(Polaris, Carbon)*
-- Use `<legend>` for groups — it is read before each option in the group *(WAI-ARIA APG)*
+- Use `<legend>` for groups - it is read before each option in the group *(WAI-ARIA APG)*
 
 ### Don't
-- Don't use `placeholder` as the only label — it fails at 3 accessibility criteria *(WAI-ARIA APG, WCAG 1.3.1, 1.4.3)*
-- Don't use `display:none` on labels — removes them from the AT accessibility tree *(WAI-ARIA APG)*
-- Don't write labels as questions ("What is your name?") — prefer noun phrases ("Full name") *(Polaris, Carbon)*
-- Don't truncate label text — ellipsis hides required information from all users *(Atlassian, Carbon)*
+- Don't use `placeholder` as the only label - it fails at 3 accessibility criteria *(WAI-ARIA APG, WCAG 1.3.1, 1.4.3)*
+- Don't use `display:none` on labels - removes them from the AT accessibility tree *(WAI-ARIA APG)*
+- Don't write labels as questions ("What is your name?") - prefer noun phrases ("Full name") *(Polaris, Carbon)*
+- Don't truncate label text - ellipsis hides required information from all users *(Atlassian, Carbon)*
 
 ---
 

@@ -1,9 +1,9 @@
-# Windsurf — Price Table (stub)
+# Windsurf - Price Table (stub)
 
 **Runtime:** `windsurf` (Windsurf / Codeium)
-**Phase 26 D-08 sub-table — STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
+**Phase 26 D-08 sub-table - STUB.** Placeholder so the price-table router (`reference/model-prices.md`) has a complete link list for all 14 runtimes. Runtime adapter authors fill this in with provenance citations in a later cycle.
 
-**Provenance:** `<TODO: confirm at https://docs.windsurf.com/windsurf/plans>` — pending.
+**Provenance:** `<TODO: confirm at https://docs.windsurf.com/windsurf/plans>` - pending.
 
 ## Pricing (USD per 1M tokens)
 

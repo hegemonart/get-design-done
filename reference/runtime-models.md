@@ -1,12 +1,12 @@
-# Runtime Models — Per-Runtime Tier→Model Adapter Map
+# Runtime Models - Per-Runtime Tier→Model Adapter Map
 
 **Phase 26 source-of-truth (D-01).** Single canonical map from canonical Anthropic tier names (`opus|sonnet|haiku`) and runtime-neutral reasoning-class aliases (`high|medium|low`, D-10) to concrete model identifiers for each of the 14 runtimes the multi-runtime installer ships to (Phase 24 D-02).
 
 This file is parsed by `scripts/lib/install/parse-runtime-models.cjs` and consumed by:
 
-- `scripts/lib/tier-resolver.cjs` (26-02) — runtime tier resolution (`resolve(runtime, tier) → model`).
-- `scripts/lib/install/installer.cjs` (26-03) — emits `models.json` per runtime config-dir at install time.
-- `hooks/budget-enforcer.ts` + `scripts/lib/budget-enforcer.cjs` (26-05) — concrete model name for cost lookup.
+- `scripts/lib/tier-resolver.cjs` (26-02) - runtime tier resolution (`resolve(runtime, tier) → model`).
+- `scripts/lib/install/installer.cjs` (26-03) - emits `models.json` per runtime config-dir at install time.
+- `hooks/budget-enforcer.ts` + `scripts/lib/budget-enforcer.cjs` (26-05) - concrete model name for cost lookup.
 
 **Strict schema** (D-03): each runtime block is a fenced `json` code block validated against `reference/schemas/runtime-models.schema.json`. Schema version is locked at `1` until a breaking change forces a version bump.
 
@@ -26,7 +26,7 @@ This file is parsed by `scripts/lib/install/parse-runtime-models.cjs` and consum
 
 ---
 
-## claude — Claude Code
+## claude - Claude Code
 
 Anthropic's first-party runtime. Public tier docs at https://docs.anthropic.com/en/docs/about-claude/models. Seed picks per CONTEXT.md D-02.
 
@@ -56,7 +56,7 @@ Anthropic's first-party runtime. Public tier docs at https://docs.anthropic.com/
 
 ---
 
-## codex — OpenAI Codex CLI
+## codex - OpenAI Codex CLI
 
 OpenAI's Codex CLI runtime. Public tier docs at https://platform.openai.com/docs/models. Seed picks per CONTEXT.md D-02.
 
@@ -86,7 +86,7 @@ OpenAI's Codex CLI runtime. Public tier docs at https://platform.openai.com/docs
 
 ---
 
-## gemini — Gemini CLI
+## gemini - Gemini CLI
 
 Google's Gemini CLI runtime. Public tier docs at https://ai.google.dev/gemini-api/docs/models. Seed picks per CONTEXT.md D-02.
 
@@ -116,7 +116,7 @@ Google's Gemini CLI runtime. Public tier docs at https://ai.google.dev/gemini-ap
 
 ---
 
-## qwen — Qwen Code
+## qwen - Qwen Code
 
 Alibaba's Qwen Code runtime. Public tier docs at https://github.com/QwenLM/qwen-code. Seed picks per CONTEXT.md D-02.
 
@@ -146,9 +146,9 @@ Alibaba's Qwen Code runtime. Public tier docs at https://github.com/QwenLM/qwen-
 
 ---
 
-## kilo — Kilo Code
+## kilo - Kilo Code
 
-Kilo Code adapter — multi-provider, Anthropic-default fill until runtime-author docs confirm. Researcher fill needed (CONTEXT.md D-02).
+Kilo Code adapter - multi-provider, Anthropic-default fill until runtime-author docs confirm. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -176,9 +176,9 @@ Kilo Code adapter — multi-provider, Anthropic-default fill until runtime-autho
 
 ---
 
-## copilot — GitHub Copilot CLI
+## copilot - GitHub Copilot CLI
 
-GitHub Copilot CLI — multi-provider routing under the hood. Researcher fill needed (CONTEXT.md D-02).
+GitHub Copilot CLI - multi-provider routing under the hood. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -206,9 +206,9 @@ GitHub Copilot CLI — multi-provider routing under the hood. Researcher fill ne
 
 ---
 
-## cursor — Cursor
+## cursor - Cursor
 
-Cursor IDE/CLI — multi-provider routing. Researcher fill needed (CONTEXT.md D-02).
+Cursor IDE/CLI - multi-provider routing. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -236,9 +236,9 @@ Cursor IDE/CLI — multi-provider routing. Researcher fill needed (CONTEXT.md D-
 
 ---
 
-## windsurf — Windsurf
+## windsurf - Windsurf
 
-Windsurf (formerly Codeium) — multi-provider Cascade router. Researcher fill needed (CONTEXT.md D-02).
+Windsurf (formerly Codeium) - multi-provider Cascade router. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -266,9 +266,9 @@ Windsurf (formerly Codeium) — multi-provider Cascade router. Researcher fill n
 
 ---
 
-## antigravity — Antigravity
+## antigravity - Antigravity
 
-Antigravity — Google's agentic coding platform. Researcher fill needed (CONTEXT.md D-02).
+Antigravity - Google's agentic coding platform. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -296,9 +296,9 @@ Antigravity — Google's agentic coding platform. Researcher fill needed (CONTEX
 
 ---
 
-## augment — Augment
+## augment - Augment
 
-Augment Code — multi-provider agentic IDE. Researcher fill needed (CONTEXT.md D-02).
+Augment Code - multi-provider agentic IDE. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -326,9 +326,9 @@ Augment Code — multi-provider agentic IDE. Researcher fill needed (CONTEXT.md 
 
 ---
 
-## trae — Trae
+## trae - Trae
 
-Trae — single-model session runtime per CONTEXT.md D-02 example. `single_tier: true` annotates the row. Researcher fill needed.
+Trae - single-model session runtime per CONTEXT.md D-02 example. `single_tier: true` annotates the row. Researcher fill needed.
 
 ```json
 {
@@ -357,9 +357,9 @@ Trae — single-model session runtime per CONTEXT.md D-02 example. `single_tier:
 
 ---
 
-## codebuddy — CodeBuddy
+## codebuddy - CodeBuddy
 
-CodeBuddy (Tencent) — multi-provider routing. Researcher fill needed (CONTEXT.md D-02).
+CodeBuddy (Tencent) - multi-provider routing. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -387,9 +387,9 @@ CodeBuddy (Tencent) — multi-provider routing. Researcher fill needed (CONTEXT.
 
 ---
 
-## cline — Cline
+## cline - Cline
 
-Cline (formerly Claude Dev) — multi-provider VS Code agent. Researcher fill needed (CONTEXT.md D-02).
+Cline (formerly Claude Dev) - multi-provider VS Code agent. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {
@@ -417,9 +417,9 @@ Cline (formerly Claude Dev) — multi-provider VS Code agent. Researcher fill ne
 
 ---
 
-## opencode — OpenCode
+## opencode - OpenCode
 
-OpenCode — open-source AI coding agent, BYOK multi-provider. Researcher fill needed (CONTEXT.md D-02).
+OpenCode - open-source AI coding agent, BYOK multi-provider. Researcher fill needed (CONTEXT.md D-02).
 
 ```json
 {

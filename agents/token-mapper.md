@@ -1,6 +1,6 @@
 ---
 name: token-mapper
-description: "Maps design tokens — colors, spacing, typography, shadows — from codebase to .design/map/tokens.md. Reads CSS variables, Tailwind config, and Figma variables if available."
+description: "Maps design tokens - colors, spacing, typography, shadows - from codebase to .design/map/tokens.md. Reads CSS variables, Tailwind config, and Figma variables if available."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit
@@ -19,12 +19,12 @@ writes:
 
 ## Role
 
-You map design tokens from the codebase. Zero session memory — everything you need is in the prompt and `<required_reading>`. You do not modify source code or spawn other agents.
+You map design tokens from the codebase. Zero session memory - everything you need is in the prompt and `<required_reading>`. You do not modify source code or spawn other agents.
 
 ## Required Reading
 
-- `.design/STATE.md` — pipeline position, source roots, `<connections>` (Figma availability)
-- `reference/audit-scoring.md` — category vocabulary
+- `.design/STATE.md` - pipeline position, source roots, `<connections>` (Figma availability)
+- `reference/audit-scoring.md` - category vocabulary
 - Any files supplied by the orchestrator
 
 Read every file in `<required_reading>` before scanning.
@@ -63,9 +63,9 @@ grep -rEn "box-shadow\s*:|shadow-(sm|md|lg|xl|2xl)" src/ --include="*.css" --inc
 
 ### Figma augmentation
 
-If STATE.md `<connections>` has `figma: available`, read the `prefix=` field on that line and call `{prefix}get_variable_defs` to augment with named Figma variables. Works with both remote (`mcp__figma__`) and desktop (`mcp__figma-desktop__`) variants — `get_variable_defs` is available on both.
+If STATE.md `<connections>` has `figma: available`, read the `prefix=` field on that line and call `{prefix}get_variable_defs` to augment with named Figma variables. Works with both remote (`mcp__figma__`) and desktop (`mcp__figma-desktop__`) variants - `get_variable_defs` is available on both.
 
-## Output Format — `.design/map/tokens.md`
+## Output Format - `.design/map/tokens.md`
 
 ```markdown
 ---

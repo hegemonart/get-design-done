@@ -1,7 +1,7 @@
 # Intel Store Schema
 
 Version: 1.0.0
-Path: `.design/intel/` (gitignored — runtime data only)
+Path: `.design/intel/` (gitignored - runtime data only)
 
 ## Overview
 

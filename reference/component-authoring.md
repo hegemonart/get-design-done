@@ -1,6 +1,6 @@
 # Component Authoring Principles
 
-Source: Emil Kowalski's work on Sonner, Vaul, and cmdk — synthesised from his published writing and talks. See also: `reference/framer-motion-patterns.md`, `reference/motion-advanced.md`.
+Source: Emil Kowalski's work on Sonner, Vaul, and cmdk - synthesised from his published writing and talks. See also: `reference/framer-motion-patterns.md`, `reference/motion-advanced.md`.
 
 Use this file when authoring, reviewing, or auditing UI components. The 6 principles apply as a lens during code review and design verification. Each principle has a grep-able audit signal.
 
@@ -25,7 +25,7 @@ grep -E "^\s+\w+: " src/components/Button.tsx | grep -v "?" | wc -l
 - 6–9 props total: acceptable if logically grouped
 - ≥10 props: flag for decomposition
 
-**Pattern — variant over prop explosion:**
+**Pattern - variant over prop explosion:**
 ```tsx
 // BAD — prop explosion
 <Button color="blue" size="md" rounded={true} shadow={true} uppercase={false} />
@@ -48,7 +48,7 @@ The right abstraction lets consumers build what they need by combining small pie
 grep -rE "(backgroundColor|textColor|borderRadius|fontSize)=" src/components/ --include="*.tsx"
 ```
 
-**Pattern — slot composition:**
+**Pattern - slot composition:**
 ```tsx
 // BAD — too much configuration
 <Card title="Hello" subtitle="World" icon="user" rightContent={<Badge />} />
@@ -78,7 +78,7 @@ A component with sensible defaults doesn't require the consumer to know its inte
 grep -E "^\s+\w+: " src/components/Toast.tsx | grep -v "?" | wc -l
 ```
 
-**The Sonner model:** `<Toaster />` with zero props renders a toast system that follows the OS color scheme, positions correctly on all viewports, stacks properly, and auto-dismisses at a sensible duration. All options exist — but the zero-prop case works.
+**The Sonner model:** `<Toaster />` with zero props renders a toast system that follows the OS color scheme, positions correctly on all viewports, stacks properly, and auto-dismisses at a sensible duration. All options exist - but the zero-prop case works.
 
 **Anti-pattern:** Required props for things with a logical default (e.g., `position` on a modal that should always default to `center`).
 

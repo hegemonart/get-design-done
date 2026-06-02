@@ -1,4 +1,4 @@
-# List (Interactive & Display) — Benchmark Spec
+# List (Interactive & Display) - Benchmark Spec
 
 **Harvested from**: Carbon, Polaris, Material 3, Mantine, WAI-ARIA APG, UUPM (app-interface, MIT)
 **Wave**: 4 · **Category**: Navigation & Data
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A list component handles two distinct patterns: (1) a display list renders a series of items using semantic `<ul>/<ol>/<li>` HTML — no ARIA needed; (2) an interactive list (listbox) presents selectable options with keyboard navigation and selection state. Use a display list for content; use an interactive listbox when users choose one or more items from a set. *(Carbon, Polaris, Material 3 all define separate display and interactive list patterns)*
+A list component handles two distinct patterns: (1) a display list renders a series of items using semantic `<ul>/<ol>/<li>` HTML - no ARIA needed; (2) an interactive list (listbox) presents selectable options with keyboard navigation and selection state. Use a display list for content; use an interactive listbox when users choose one or more items from a set. *(Carbon, Polaris, Material 3 all define separate display and interactive list patterns)*
 
 ---
 
@@ -58,8 +58,8 @@ Display list:              Interactive listbox:
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Items visible; none selected | `aria-selected="false"` on all options |
-| option-hover | pointer over | 8% overlay | — |
+| default | - | Items visible; none selected | `aria-selected="false"` on all options |
+| option-hover | pointer over | 8% overlay | - |
 | option-focus | keyboard focus | 2px focus-visible ring | managed via `tabindex` |
 | option-selected | click or Enter/Space | Filled highlight; checkmark for multi-select | `aria-selected="true"` |
 | option-disabled | disabled prop | 38% opacity; cursor: default | `aria-disabled="true"` |
@@ -90,7 +90,7 @@ Display list:              Interactive listbox:
 - Empty state heading: heading-sm, center-aligned
 - Empty state body: body-sm, `color: --text-subtle`
 
-Cross-link: `reference/typography.md` — body-sm, heading scale
+Cross-link: `reference/typography.md` - body-sm, heading scale
 
 ---
 
@@ -101,7 +101,7 @@ Cross-link: `reference/typography.md` — body-sm, heading scale
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/listbox/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/listbox/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -117,14 +117,14 @@ Cross-link: `reference/typography.md` — body-sm, heading scale
 
 ### Accessibility Rules
 
-- Display lists use native `<ul>/<li>` — no ARIA roles needed; they are already accessible
-- Interactive lists MUST use `role="listbox"` + `role="option"` — not `<ul>/<li>` with click handlers
+- Display lists use native `<ul>/<li>` - no ARIA roles needed; they are already accessible
+- Interactive lists MUST use `role="listbox"` + `role="option"` - not `<ul>/<li>` with click handlers
 - `aria-selected` MUST be present on every `role="option"` (either `true` or `false`)
 - Multi-select listbox MUST declare `aria-multiselectable="true"` on the container
 - Virtual scroll: all options in the virtualised window must have correct `aria-posinset` and `aria-setsize` attributes
 - Empty state container MUST have `aria-label` or `aria-live` so AT announces the empty state
 
-Cross-link: `reference/accessibility.md` — listbox pattern, virtual list accessibility
+Cross-link: `reference/accessibility.md` - listbox pattern, virtual list accessibility
 
 ---
 
@@ -136,25 +136,25 @@ Cross-link: `reference/accessibility.md` — listbox pattern, virtual list acces
 | Skeleton item shimmer | 1500ms | linear loop | Loading placeholder |
 | Empty state entry | 150ms | ease-out | Fade in |
 
-**BAN**: Do not animate item reordering unless using a deliberate drag-and-drop library — unsolicited reordering causes disorientation.
+**BAN**: Do not animate item reordering unless using a deliberate drag-and-drop library - unsolicited reordering causes disorientation.
 
-Cross-link: `reference/motion.md` — skeleton shimmer, list animations
+Cross-link: `reference/motion.md` - skeleton shimmer, list animations
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Use native `<ul>/<ol>/<li>` for display-only lists — no ARIA needed *(WAI-ARIA APG)*
+- Use native `<ul>/<ol>/<li>` for display-only lists - no ARIA needed *(WAI-ARIA APG)*
 - Use `role="listbox"` + `role="option"` for selectable lists *(WAI-ARIA APG, Carbon, Polaris)*
 - Virtualise at > 100 items to prevent DOM bloat *(Carbon, Mantine)*
 - Provide a meaningful empty state with a CTA when the list can be populated *(Polaris, Material 3)*
 
 ### Don't
-- Don't use `<div onClick>` list items without `role="option"` — keyboard-inaccessible *(WCAG 2.1.1)*
-- Don't omit `aria-selected` on options — AT cannot determine what is selected *(WAI-ARIA APG)*
-- Don't use `<ul>/<li>` with `role="option"` — mixing native list semantics and listbox ARIA creates conflicts *(WAI-ARIA)*
-- Don't load all items at once when count > 100 — renders slowly and wastes memory *(Carbon, Mantine)*
+- Don't use `<div onClick>` list items without `role="option"` - keyboard-inaccessible *(WCAG 2.1.1)*
+- Don't omit `aria-selected` on options - AT cannot determine what is selected *(WAI-ARIA APG)*
+- Don't use `<ul>/<li>` with `role="option"` - mixing native list semantics and listbox ARIA creates conflicts *(WAI-ARIA)*
+- Don't load all items at once when count > 100 - renders slowly and wastes memory *(Carbon, Mantine)*
 
 ---
 
@@ -162,7 +162,7 @@ Cross-link: `reference/motion.md` — skeleton shimmer, list animations
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on interactive elements — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on interactive elements - `reference/anti-patterns.md#ban-04` |
 
 ---
 

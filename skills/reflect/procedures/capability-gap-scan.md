@@ -6,9 +6,9 @@ Run during the reflection pass to detect recurring patterns lacking a dedicated 
 
 Three signal sources are scanned. All paths are repo-relative; the scan tolerates absent sources (returns `[]` from that source, no error):
 
-- `.design/intel/*.md` — Phase 11 intel-store slice files. The scan extracts `Touches:` lines, tokenizes the comma-separated value, and clusters slices that share the same canonical `(sortedTouches, agent_type)` signal.
-- `.design/telemetry/posterior.json` — Phase 23.5 bandit posterior file written by `scripts/lib/bandit-router.cjs`. The scan reads `arms[]` and flags arms whose `count >= threshold` AND whose `agent` is in `GENERIC_AGENT_FALLBACKS` (`general-purpose`, `default-executor`, `fallback`, `generic`) OR is not in the project's specialized-agent set.
-- `.design/gep/events.jsonl` — Phase 22 typed-causal event chain via `scripts/lib/event-chain.cjs`. The scan filters rows to the last `windowDays` (default 30), groups by `(sortedDecisionRefs, agent)`, and flags sequences that recur ≥ threshold times.
+- `.design/intel/*.md` - Phase 11 intel-store slice files. The scan extracts `Touches:` lines, tokenizes the comma-separated value, and clusters slices that share the same canonical `(sortedTouches, agent_type)` signal.
+- `.design/telemetry/posterior.json` - Phase 23.5 bandit posterior file written by `scripts/lib/bandit-router.cjs`. The scan reads `arms[]` and flags arms whose `count >= threshold` AND whose `agent` is in `GENERIC_AGENT_FALLBACKS` (`general-purpose`, `default-executor`, `fallback`, `generic`) OR is not in the project's specialized-agent set.
+- `.design/gep/events.jsonl` - Phase 22 typed-causal event chain via `scripts/lib/event-chain.cjs`. The scan filters rows to the last `windowDays` (default 30), groups by `(sortedDecisionRefs, agent)`, and flags sequences that recur ≥ threshold times.
 
 ## Outputs
 
@@ -29,11 +29,11 @@ The orchestrator `runCapabilityGapScan(opts)` in `scripts/lib/reflector/capabili
 
 Key entry points (all exported from the module):
 
-- `computeContextHash({touches, agent_type})` — pure deterministic hash (sha256 of normalized JSON; touches are sorted ASCII-asc).
+- `computeContextHash({touches, agent_type})` - pure deterministic hash (sha256 of normalized JSON; touches are sorted ASCII-asc).
 - `scanIntelTouchesClusters({intelDir, existingAgents, threshold, baseDir})`
 - `scanPosteriorArms({posteriorPath, specializedAgents, threshold, baseDir})`
 - `scanTrajectorySlices({chainPath, windowDays, threshold, specializedAgents, baseDir})`
-- `runCapabilityGapScan(opts)` — orchestrator.
+- `runCapabilityGapScan(opts)` - orchestrator.
 
 The `context_hash` is the join key for Plan 29-03's aggregation: the same signal across runs produces the same hash regardless of touches-list ordering.
 
@@ -82,7 +82,7 @@ interface TrajectoryRef {
 }
 ```
 
-Internally, the scan carries a line-based `{path, lineStart, lineEnd, sha256}` shape on each `Finding.evidence_refs`. The `lineRefToTrajectoryRef` translator converts to the schema shape at emit time. The sha256 algorithm: read lines `[lineStart..lineEnd]` (1-based inclusive), join with `'\n'` (no trailing newline — stable across OSes), sha256 the UTF-8 bytes.
+Internally, the scan carries a line-based `{path, lineStart, lineEnd, sha256}` shape on each `Finding.evidence_refs`. The `lineRefToTrajectoryRef` translator converts to the schema shape at emit time. The sha256 algorithm: read lines `[lineStart..lineEnd]` (1-based inclusive), join with `'\n'` (no trailing newline - stable across OSes), sha256 the UTF-8 bytes.
 
 Consumers (Plan 29-03 + audit tooling) re-read the slice and recompute the hash; mismatch = chain mutation; abort + warn.
 
@@ -98,7 +98,7 @@ Without `--dry-run`, the CLI writes events to the chain file and prints a one-li
 
 ## Testing
 
-Tests live at `tests/reflector-capability-gap.test.cjs` and run on synthetic in-tmpdir fixtures only (D-11 — no live writes to real `.design/`). Each test passes an injected `emit` spy so no real `appendChainEvent` calls occur. The hash-pin mutation-detection regression is enforced by a dedicated test: re-read the pointed-to slice, recompute the sha256, and assert mismatch after the source file is mutated.
+Tests live at `tests/reflector-capability-gap.test.cjs` and run on synthetic in-tmpdir fixtures only (D-11 - no live writes to real `.design/`). Each test passes an injected `emit` spy so no real `appendChainEvent` calls occur. The hash-pin mutation-detection regression is enforced by a dedicated test: re-read the pointed-to slice, recompute the sha256, and assert mismatch after the source file is mutated.
 
 Run the tests directly:
 
@@ -114,7 +114,7 @@ npm test
 
 ## See also
 
-- `reference/schemas/events.schema.json` — the `capability_gap` event class shipped by Plan 29-01 (the 7-field shape + `TrajectoryRef` definition).
-- `scripts/lib/event-chain.cjs` — `appendChainEvent` (the real emitter API; 29-01 did NOT ship a separate helper file).
-- `scripts/lib/bandit-router.cjs` — Phase 23.5 posterior file producer (the source for scan #2).
-- `.planning/phases/29-capability-gap-self-authoring/CONTEXT.md` — phase decisions (D-02 7-field shape, D-07 hash-pinning, D-08 MCP carve-out, D-11 tmpdir tests).
+- `reference/schemas/events.schema.json` - the `capability_gap` event class shipped by Plan 29-01 (the 7-field shape + `TrajectoryRef` definition).
+- `scripts/lib/event-chain.cjs` - `appendChainEvent` (the real emitter API; 29-01 did NOT ship a separate helper file).
+- `scripts/lib/bandit-router.cjs` - Phase 23.5 posterior file producer (the source for scan #2).
+- `.planning/phases/29-capability-gap-self-authoring/CONTEXT.md` - phase decisions (D-02 7-field shape, D-07 hash-pinning, D-08 MCP carve-out, D-11 tmpdir tests).

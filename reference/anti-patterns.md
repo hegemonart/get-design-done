@@ -8,7 +8,7 @@ Use during Discover (baseline audit), Design (prevention), and Verify (complianc
 
 Before shipping any artifact: **"If I told someone 'AI made this,' would they believe me immediately?"**
 
-If yes — redo. The training-set monoculture has specific fingerprints. Learn them all.
+If yes - redo. The training-set monoculture has specific fingerprints. Learn them all.
 
 ---
 
@@ -28,7 +28,7 @@ border-right: 3px solid #6366f1;
 
 **Why**: The border-left accent card is the most recognizable AI default. It signals no design thinking happened.
 
-**Fix**: Use different element structure — colored icon, colored background section, or inline accent element.
+**Fix**: Use different element structure - colored icon, colored background section, or inline accent element.
 
 **Grep**: `border-left:\s*[2-9][0-9]*px|border-right:\s*[2-9][0-9]*px`
 
@@ -89,7 +89,7 @@ background: rgb(0, 0, 0);
 
 **Why**: Pure black in dark mode creates harsh contrast and looks amateur.
 
-**Fix**: oklch(12% 0 0) through oklch(18% 0.005 [hue]) — slightly warm or cool near-black.
+**Fix**: oklch(12% 0 0) through oklch(18% 0.005 [hue]) - slightly warm or cool near-black.
 
 **Grep**: `background.*#000000|background.*rgb\(0,\s*0,\s*0\)`
 
@@ -194,7 +194,7 @@ Glassmorphism as the default card treatment signals no layout thinking.
 
 Using Inter, DM Sans, Space Grotesk, or Plus Jakarta Sans without a documented brand reason.
 
-**Test**: Can you give 3 concrete reasons this font matches the product's brand? If not — choose again.
+**Test**: Can you give 3 concrete reasons this font matches the product's brand? If not - choose again.
 
 ### SLOP-06: Card-in-Card
 
@@ -235,7 +235,7 @@ Pastel-colored isometric illustrations with floating icons. Figma community temp
 ### Color Errors
 
 - Gray on colored backgrounds (fails contrast, not "subtle")
-- Pure gray neutrals — add 0.005–0.015 chroma toward brand hue
+- Pure gray neutrals - add 0.005–0.015 chroma toward brand hue
 - Red + green as the only meaning carrier (colorblind failure)
 - Text over image without scrim or overlay
 - Alpha-heavy transparency everywhere (incomplete palette signal)
@@ -274,7 +274,7 @@ Pastel-colored isometric illustrations with floating icons. Figma community temp
 
 - `ease-in` on entrances (use `ease-out`)
 - Same duration for enter and exit (exit should be 60–70% of enter)
-- Animating `width`/`height` (triggers layout — use `transform` only)
+- Animating `width`/`height` (triggers layout - use `transform` only)
 - No `prefers-reduced-motion` media query
 - Popover origin `transform-origin: center` (should come from trigger element)
 - Button with no `:active` press feedback
@@ -292,11 +292,11 @@ Pastel-colored isometric illustrations with floating icons. Figma community temp
 - No progressive disclosure on long forms (show all fields upfront)
 
 ### Feedback
-- Instant (0ms) state transitions — feels broken
+- Instant (0ms) state transitions - feels broken
 - "Loading..." spinners with no context ("Loading contacts..." is better)
 - Success toast that blocks the next interaction
 - Destructive action with no undo and no confirmation
-- Confirmation dialog for reversible action (annoyance — use undo instead)
+- Confirmation dialog for reversible action (annoyance - use undo instead)
 
 ### Navigation
 - Browser back button breaks app state
@@ -359,7 +359,7 @@ If YES to any → rewrite that element before proceeding.
 
 bdId: BAN-10
 
-Applying the same `border-radius` to a container and an element inside it (when the element is separated by padding) makes the inner element appear to "float" — the radii should be concentric, not equal.
+Applying the same `border-radius` to a container and an element inside it (when the element is separated by padding) makes the inner element appear to "float" - the radii should be concentric, not equal.
 
 **Grep (Tailwind):**
 ```

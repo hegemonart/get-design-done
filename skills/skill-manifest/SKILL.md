@@ -14,7 +14,7 @@ tools: Bash, Read, Glob
 ls .design/intel/exports.json 2>/dev/null && echo "ready" || echo "missing"
 ```
 
-## Mode 1 — Intel store available
+## Mode 1 - Intel store available
 
 Read `.design/intel/exports.json`. Group entries by `kind` (skill vs agent). Print:
 
@@ -47,7 +47,7 @@ Total: <N> skills, <M> agents
 
 To get the description for each skill/agent: read `exports.json` entry and look up the matching file in `files.json`, then read its frontmatter `description` field from `exports.json` (if stored) or from the file directly.
 
-## Mode 2 — Intel store missing (fallback)
+## Mode 2 - Intel store missing (fallback)
 
 If `.design/intel/exports.json` is not present, fall back to directory scan:
 
@@ -68,9 +68,9 @@ AGENTS: design-advisor.md, design-auditor.md, ...
 
 ## Filter mode
 
-`/gdd:skill-manifest agents` — show agents only
-`/gdd:skill-manifest skills` — show skills only
-`/gdd:skill-manifest <keyword>` — filter by keyword in name or description
+`/gdd:skill-manifest agents` - show agents only
+`/gdd:skill-manifest skills` - show skills only
+`/gdd:skill-manifest <keyword>` - filter by keyword in name or description
 
 ## Required reading (conditional)
 

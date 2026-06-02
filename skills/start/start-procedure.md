@@ -7,7 +7,7 @@ tags: [start, first-run, proof-path, scan, writer-agent, handoff]
 last_updated: 2026-05-18
 ---
 
-# Start Skill — Full Procedure
+# Start Skill - Full Procedure
 
 Extracted from `skills/start/SKILL.md` per Phase 28.5 D-10 (extract-then-link, never delete
 content). The skill keeps its arguments table, step headings, and non-goals; the per-step
@@ -17,7 +17,7 @@ template) lives here so the SKILL stays under the 100-line cap.
 The companion file `./start-interview.md` (Phase 27 ship) holds the 5-question copy,
 defaults, and validation rules. This file documents what `/gdd:start` does WITH the answers.
 
-## Step 0 — Dismiss-only shortcut
+## Step 0 - Dismiss-only shortcut
 
 If invoked with `--dismiss-nudge`:
 
@@ -27,7 +27,7 @@ If invoked with `--dismiss-nudge`:
 
 Do not proceed to any other step.
 
-## Step 1 — Detect UI root
+## Step 1 - Detect UI root
 
 Run the detector:
 
@@ -38,11 +38,11 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/lib/detect-ui-root.cjs" "$(pwd)"
 Capture the JSON output. Branches:
 
 - `kind: "backend-only"` → print the frontend-only diagnostic below, write nothing, exit with `## START COMPLETE`. The diagnostic copy is:
-  > `/gdd:start` is for frontend codebases. This repo looks backend-only (detected `<framework>`). The plugin can still help with design references and component libraries imported by your clients — but there is no UI surface here to scan. Exiting without creating `.design/`.
-- `kind: null` (no package.json, no UI dir) → print a short "Nothing recognizable here — point me at a frontend repo and try again." and exit.
+  > `/gdd:start` is for frontend codebases. This repo looks backend-only (detected `<framework>`). The plugin can still help with design references and component libraries imported by your clients - but there is no UI surface here to scan. Exiting without creating `.design/`.
+- `kind: null` (no package.json, no UI dir) → print a short "Nothing recognizable here - point me at a frontend repo and try again." and exit.
 - Any other `kind` → proceed with `detected.path` as the scan root.
 
-## Step 2 — Run the 5-question interview
+## Step 2 - Run the 5-question interview
 
 Read `./start-interview.md` for the exact question copy, defaults, and validation rules.
 
@@ -71,7 +71,7 @@ Store the answers + detection result in `.design/.start-context.json`:
 
 `.design/` is created here for the first time. `.design/STATE.md` is NOT written.
 
-## Step 3 — Scan findings
+## Step 3 - Scan findings
 
 Run the findings engine:
 
@@ -86,7 +86,7 @@ Capture the JSON. The output carries at most three findings, each with stable ID
 
 Append the engine output to `.design/.start-context.json` under a `scan` key.
 
-## Step 4 — Spawn the writer
+## Step 4 - Spawn the writer
 
 Dispatch `Task` with:
 
@@ -96,7 +96,7 @@ Dispatch `Task` with:
 
 Wait for the agent to complete. The agent writes `.design/START-REPORT.md`.
 
-## Step 5 — Print the handoff
+## Step 5 - Print the handoff
 
 Read the final line of `.design/START-REPORT.md` to capture the suggested command.
 

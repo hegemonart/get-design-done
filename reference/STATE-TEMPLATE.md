@@ -8,8 +8,8 @@ This is the canonical template for the design pipeline's runtime state file.
 - `.design/` is gitignored (not distributed with the plugin); only this template ships.
 
 **Distinction from `.planning/STATE.md`:**
-- `.planning/STATE.md` is GSD development state — used by the developers building this plugin.
-- `.design/STATE.md` is pipeline runtime state — used by the pipeline when it runs in a user's project.
+- `.planning/STATE.md` is GSD development state - used by the developers building this plugin.
+- `.design/STATE.md` is pipeline runtime state - used by the pipeline when it runs in a user's project.
 - Keep them strictly separate. Cross-references between them are deferred to Phase 6 per CONTEXT.md.
 
 ---
@@ -140,22 +140,22 @@ verify_completed_at: ~
 | Field | Type | Set by | Purpose |
 |-------|------|--------|---------|
 | `pipeline_state_version` | float | fixed at `1.0` | Forward-compat marker for future format changes |
-| `stage` | enum | every stage at entry | Current stage — one of: `brief|explore|plan|design|verify` |
+| `stage` | enum | every stage at entry | Current stage - one of: `brief|explore|plan|design|verify` |
 | `cycle` | string | lifecycle commands | Cycle identifier for Wave B multi-cycle projects (default: empty string) |
 | `wave` | int | every stage | Wave number within current stage |
-| `started_at` | ISO 8601 | scan at creation | Immutable — never updated after creation |
+| `started_at` | ISO 8601 | scan at creation | Immutable - never updated after creation |
 | `last_checkpoint` | ISO 8601 | every stage at exit | Updated on every stage transition and on mid-stage checkpoint |
 
 ### `<position>`
 
-Mirrors frontmatter stage/wave plus progress and status. Duplication is intentional — frontmatter is scannable by tooling; `<position>` is scannable by prose reading.
+Mirrors frontmatter stage/wave plus progress and status. Duplication is intentional - frontmatter is scannable by tooling; `<position>` is scannable by prose reading.
 
-- `task_progress`: `<completed>/<total>` — e.g. `3/7` means 3 of 7 tasks in the current stage complete
+- `task_progress`: `<completed>/<total>` - e.g. `3/7` means 3 of 7 tasks in the current stage complete
 - `status`: one of
-  - `initialized` — scan just created the file, no work done
-  - `in_progress` — stage is actively running
-  - `completed` — stage finished successfully; next stage may begin
-  - `blocked` — stage cannot proceed; see `<blockers>`
+  - `initialized` - scan just created the file, no work done
+  - `in_progress` - stage is actively running
+  - `completed` - stage finished successfully; next stage may begin
+  - `blocked` - stage cannot proceed; see `<blockers>`
 
 ### `<decisions>`
 
@@ -173,25 +173,25 @@ Discover stage populates with observable behaviors. Verify stage updates status.
 
 ### `<prototyping>`
 
-Phase 25 surface (D-01). A checkpoint log — NOT a stage. Tracks sketch and spike outcomes plus cycle-scoped skip suppressions for the prototype gate.
+Phase 25 surface (D-01). A checkpoint log - NOT a stage. Tracks sketch and spike outcomes plus cycle-scoped skip suppressions for the prototype gate.
 
-- `<sketch slug=… cycle=… decision=D-XX status=resolved/>` — written by `sketch-wrap-up` after a sketch resolves into a D-XX decision.
-- `<spike slug=… cycle=… decision=D-XX verdict=yes|no|partial status=resolved/>` — written by `spike-wrap-up` after a spike resolves; `verdict` captures the answer.
-- `<skipped at=… cycle=… reason=…/>` — written by the prototype gate when the user declines to sketch/spike at a firing point. Cycle-scoped suppression (D-02): a `<skipped/>` entry suppresses re-asking for the rest of the named cycle.
+- `<sketch slug=… cycle=… decision=D-XX status=resolved/>` - written by `sketch-wrap-up` after a sketch resolves into a D-XX decision.
+- `<spike slug=… cycle=… decision=D-XX verdict=yes|no|partial status=resolved/>` - written by `spike-wrap-up` after a spike resolves; `verdict` captures the answer.
+- `<skipped at=… cycle=… reason=…/>` - written by the prototype gate when the user declines to sketch/spike at a firing point. Cycle-scoped suppression (D-02): a `<skipped/>` entry suppresses re-asking for the rest of the named cycle.
 
-The block is **optional** — fresh STATE.md files do not carry it. The serializer omits the block entirely when no entries exist; appending the first entry is what materializes the block.
+The block is **optional** - fresh STATE.md files do not carry it. The serializer omits the block entirely when no entries exist; appending the first entry is what materializes the block.
 
 ### `<quality_gate>`
 
-Phase 25 surface (Plan 25-03 / D-06..D-09). Captures the most recent run of the Stage 4.5 quality gate (lint / typecheck / test / visual-regression) between Design and Verify. The block houses a single self-closing `<run/>` element — append-mode is overkill, so each gate completion overwrites the entry.
+Phase 25 surface (Plan 25-03 / D-06..D-09). Captures the most recent run of the Stage 4.5 quality gate (lint / typecheck / test / visual-regression) between Design and Verify. The block houses a single self-closing `<run/>` element - append-mode is overkill, so each gate completion overwrites the entry.
 
-- `started_at` — ISO 8601 at which the parallel command run entered.
-- `completed_at` — ISO 8601 at which the gate produced its terminal status.
-- `status` — `pass | fail | timeout | skipped`. `pass` clears the verify-entry gate; `fail` blocks; `timeout` warns + proceeds (D-07); `skipped` indicates the detection chain resolved zero commands.
-- `iteration` — non-negative integer fix-loop count (D-08). `1` = single clean pass; `N === max_iters` with `status === 'fail'` = bounded exhaustion.
-- `commands_run` — comma-separated names of the commands actually executed in Step 2 (e.g., `lint,typecheck,test`). Empty string when `status === 'skipped'`.
+- `started_at` - ISO 8601 at which the parallel command run entered.
+- `completed_at` - ISO 8601 at which the gate produced its terminal status.
+- `status` - `pass | fail | timeout | skipped`. `pass` clears the verify-entry gate; `fail` blocks; `timeout` warns + proceeds (D-07); `skipped` indicates the detection chain resolved zero commands.
+- `iteration` - non-negative integer fix-loop count (D-08). `1` = single clean pass; `N === max_iters` with `status === 'fail'` = bounded exhaustion.
+- `commands_run` - comma-separated names of the commands actually executed in Step 2 (e.g., `lint,typecheck,test`). Empty string when `status === 'skipped'`.
 
-The block is **optional** — fresh STATE.md files do not carry it. The serializer omits the block entirely when `quality_gate === null`; the SKILL writes the first `<run/>` to materialize it.
+The block is **optional** - fresh STATE.md files do not carry it. The serializer omits the block entirely when `quality_gate === null`; the SKILL writes the first `<run/>` to materialize it.
 
 ### `<connections>`
 
@@ -202,7 +202,7 @@ One line per external connection. Detected at scan entry via MCP availability pr
 
 ### `<blockers>`
 
-Append-only log of active blockers. Format: `[stage] [ISO date]: [description]`. Cleared manually when blocker resolves (do not auto-clear — preserve the record).
+Append-only log of active blockers. Format: `[stage] [ISO date]: [description]`. Cleared manually when blocker resolves (do not auto-clear - preserve the record).
 
 ### `<timestamps>`
 
@@ -217,7 +217,7 @@ Every stage that runs in the pipeline MUST follow this contract when reading and
 **At entry:**
 1. Read `.design/STATE.md`. If the file does not exist and the current stage is `scan`, create it from this template with `started_at` = now and `last_checkpoint` = now; otherwise abort with a clear error ("run scan first").
 2. Parse frontmatter `stage` and `<position>` `status`.
-3. If `stage == current_stage` and `status == in_progress`: RESUME — pick up from `task_progress` offset; do not reset progress.
+3. If `stage == current_stage` and `status == in_progress`: RESUME - pick up from `task_progress` offset; do not reset progress.
 4. If `stage != current_stage`: this is a normal stage transition. Set frontmatter `stage = current_stage`, `<position>` `stage = current_stage`, `<position>` `status = in_progress`, `<position>` `task_progress = 0/<total>`.
 5. Update `<connections>` by probing each MCP tool; write the detected status.
 6. Update `last_checkpoint` to now.
@@ -248,6 +248,6 @@ Every stage that runs in the pipeline MUST follow this contract when reading and
 ## Notes for Phase 2 implementors
 
 - Do not add new top-level XML sections without updating this template.
-- The write contract is non-negotiable — stages that skip the read-at-entry step break resume.
+- The write contract is non-negotiable - stages that skip the read-at-entry step break resume.
 - `<decisions>` and `<must_haves>` identifiers are sequential per-project, not globally unique. A new pipeline run on the same project starts at `D-01` / `M-01`.
-- When in doubt, prefer appending new fields to existing sections over introducing new sections — preserves compatibility with `pipeline_state_version: 1.0`.
+- When in doubt, prefer appending new fields to existing sections over introducing new sections - preserves compatibility with `pipeline_state_version: 1.0`.

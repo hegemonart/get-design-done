@@ -1,4 +1,4 @@
-# Switch — Benchmark Spec
+# Switch - Benchmark Spec
 
 **Harvested from**: Apple HIG, Material 3, Radix UI, Spectrum (Adobe), Polaris, Fluent 2, Mantine, shadcn/ui
 **Wave**: 1 · **Category**: Inputs
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A switch (toggle) represents an immediate binary action — changes take effect without a confirm step, like enabling dark mode or activating a feature. It differs from a checkbox in this immediacy: a checkbox is a form option submitted later; a switch acts now. Do not use a switch inside a form that requires a submit button to apply changes. *(Apple HIG, Material 3, Polaris all distinguish switch from checkbox this way)*
+A switch (toggle) represents an immediate binary action - changes take effect without a confirm step, like enabling dark mode or activating a feature. It differs from a checkbox in this immediacy: a checkbox is a form option submitted later; a switch acts now. Do not use a switch inside a form that requires a submit button to apply changes. *(Apple HIG, Material 3, Polaris all distinguish switch from checkbox this way)*
 
 ---
 
@@ -41,7 +41,7 @@ Label                     ← visible text describing the setting
 | Large | 32px height | Material 3, Apple HIG |
 
 **Norm** (≥5/18): label appears to the left of the switch (LTR); toggle is right-aligned.
-**Diverge**: thumb icon vs. bare thumb — Material 3 adds check icon on ON, x on OFF; most others use bare thumb. Bare is simpler and more portable across themes.
+**Diverge**: thumb icon vs. bare thumb - Material 3 adds check icon on ON, x on OFF; most others use bare thumb. Bare is simpler and more portable across themes.
 
 ---
 
@@ -51,8 +51,8 @@ Label                     ← visible text describing the setting
 |-------|--------|------|
 | OFF (unchecked) | Thumb left, track muted | `aria-checked="false"` |
 | ON (checked) | Thumb right, track colored | `aria-checked="true"` |
-| hover | Thumb scale up slightly (1.1×) | — |
-| focus | 2px focus ring around track | — |
+| hover | Thumb scale up slightly (1.1×) | - |
+| focus | 2px focus ring around track | - |
 | disabled OFF | 38% opacity, thumb left | `aria-disabled="true"` |
 | disabled ON | 38% opacity, thumb right | `aria-disabled="true"` |
 
@@ -66,17 +66,17 @@ Label                     ← visible text describing the setting
 | md (default) | 44×24px | 20px | 44×44px |
 | lg | 52×28px | 24px | 48×48px |
 
-Track radius: `border-radius: 9999px` (pill shape — all 8 systems agree).
+Track radius: `border-radius: 9999px` (pill shape - all 8 systems agree).
 Thumb travel: track width − thumb diameter − (2 × inset padding ≈ 2px).
 
-Cross-link: `reference/surfaces.md` — concentric radius rule does NOT apply here (pill shape is intentional, not nested radius)
+Cross-link: `reference/surfaces.md` - concentric radius rule does NOT apply here (pill shape is intentional, not nested radius)
 
 ---
 
 ## Typography
 
 - Label: 14px/400 body weight; not distinguished from surrounding text
-- State text (optional): 10–11px/600 uppercase inside track — ensure ≥4.5:1 contrast against track colour
+- State text (optional): 10–11px/600 uppercase inside track - ensure ≥4.5:1 contrast against track colour
 
 ---
 
@@ -87,7 +87,7 @@ Cross-link: `reference/surfaces.md` — concentric radius rule does NOT apply he
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/switch/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/switch/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -96,9 +96,9 @@ Cross-link: `reference/surfaces.md` — concentric radius rule does NOT apply he
 
 ### Accessibility Rules
 
-- `role="switch"` with `aria-checked="true/false"` — not `role="checkbox"` (different semantic contract; switch implies immediate action)
+- `role="switch"` with `aria-checked="true/false"` - not `role="checkbox"` (different semantic contract; switch implies immediate action)
 - Label MUST be associated: `<label>` with `for` on the switch element, or `aria-label`/`aria-labelledby`
-- State text ("ON"/"OFF") inside the track is a visual enhancement only — it MUST NOT be the sole accessible name
+- State text ("ON"/"OFF") inside the track is a visual enhancement only - it MUST NOT be the sole accessible name
 - Disabled: use `aria-disabled="true"` (not native `disabled` attr) if keyboard focus should remain (e.g. to explain why it's disabled via tooltip)
 - Announce state change via `aria-live="polite"` if switching triggers a significant UI change distant from the control
 
@@ -113,7 +113,7 @@ Cross-link: `reference/surfaces.md` — concentric radius rule does NOT apply he
 | Thumb scale on hover | 80ms | ease | 1→1.1× scale |
 | Press scale | 80ms | ease | 1→0.96× (canonical press scale) |
 
-Cross-link: `reference/motion.md` — spring bounce=0 canonical values, canonical scale-on-press 0.96
+Cross-link: `reference/motion.md` - spring bounce=0 canonical values, canonical scale-on-press 0.96
 
 ---
 
@@ -121,15 +121,15 @@ Cross-link: `reference/motion.md` — spring bounce=0 canonical values, canonica
 
 ### Do
 - Use `role="switch"` not `role="checkbox"` for toggle-with-immediate-effect *(WAI-ARIA APG, Radix)*
-- Animate the thumb sliding — static snap removes the "toggle" affordance *(Apple HIG, Material 3)*
+- Animate the thumb sliding - static snap removes the "toggle" affordance *(Apple HIG, Material 3)*
 - Place label to the left of the switch in LTR layouts *(Apple HIG, Material 3, Polaris)*
-- Apply changes immediately on toggle — no submit button required *(Apple HIG, Polaris)*
+- Apply changes immediately on toggle - no submit button required *(Apple HIG, Polaris)*
 
 ### Don't
-- Don't use a switch inside a form where the user must click "Save" — use a checkbox *(Apple HIG, Polaris)*
-- Don't rely on track colour alone to communicate state (colour blind users) — add icon or label *(Spectrum, Material 3)*
-- Don't use the same `aria-label` for ON and OFF states — screen readers read the current state via `aria-checked` *(WAI-ARIA APG)*
-- Don't animate thumb with `transition: all` — it catches border-radius changes and causes thumb deformation *(BAN-04)*
+- Don't use a switch inside a form where the user must click "Save" - use a checkbox *(Apple HIG, Polaris)*
+- Don't rely on track colour alone to communicate state (colour blind users) - add icon or label *(Spectrum, Material 3)*
+- Don't use the same `aria-label` for ON and OFF states - screen readers read the current state via `aria-checked` *(WAI-ARIA APG)*
+- Don't animate thumb with `transition: all` - it catches border-radius changes and causes thumb deformation *(BAN-04)*
 
 ---
 
@@ -137,7 +137,7 @@ Cross-link: `reference/motion.md` — spring bounce=0 canonical values, canonica
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` - `reference/anti-patterns.md#ban-04` |
 | Checkbox semantics for immediate-action toggle | `reference/anti-patterns.md` |
 
 ---

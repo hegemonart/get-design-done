@@ -18,14 +18,14 @@ Practical reference for responsive images, modern formats, loading strategies, a
 | **JPEG XL** | Limited (Chrome 91–109 behind flag; Safari 17+) | 20–60% smaller | Medium | Yes | No | Future-proofing; not yet viable as primary format |
 | **PNG** | Universal (100%) | Lossless only | Fast | Yes | No | Logos, UI icons needing lossless or transparency |
 | **SVG** | Universal (100%) | Vector = tiny | N/A | Yes | Yes | Icons, logos, illustrations with clean paths |
-| **GIF** | Universal (100%) | Poor | Fast | 1-bit | Yes | Avoid — use WebP or video instead |
+| **GIF** | Universal (100%) | Poor | Fast | 1-bit | Yes | Avoid - use WebP or video instead |
 
 ### Decision Rules
 
 - **Default for photos**: serve AVIF with WebP fallback, JPEG last resort.
 - **Default for UI assets with transparency**: WebP with PNG fallback.
 - **Icons/logos**: SVG always; PNG fallback only for email.
-- **Animated content**: WebP animated or `<video autoplay muted loop>` — never GIF.
+- **Animated content**: WebP animated or `<video autoplay muted loop>` - never GIF.
 - **JPEG XL**: Do not use as primary format until Safari + Chrome stable support lands.
 
 ```html
@@ -90,12 +90,12 @@ Example: image renders at 480px on mobile at 2x DPR → need a 960px source → 
 ```
 
 Breakpoint widths to always generate sources for:
-- `480w` — small mobile
-- `768w` — large mobile / portrait tablet
-- `960w` — landscape tablet / small desktop
-- `1280w` — standard desktop
-- `1920w` — full HD desktop
-- `2560w` — retina desktop / 2x of 1280
+- `480w` - small mobile
+- `768w` - large mobile / portrait tablet
+- `960w` - landscape tablet / small desktop
+- `1280w` - standard desktop
+- `1920w` - full HD desktop
+- `2560w` - retina desktop / 2x of 1280
 
 ### Density Descriptors (x descriptors)
 
@@ -118,7 +118,7 @@ Use `x` descriptors only when the image always renders at a fixed CSS size (e.g.
 
 ## 3. Responsive Art Direction
 
-Art direction changes the image content (crop, composition, subject) at different viewport sizes — not just resolution. Use `<picture>` with `media` attributes.
+Art direction changes the image content (crop, composition, subject) at different viewport sizes - not just resolution. Use `<picture>` with `media` attributes.
 
 ### `<picture>` + `<source>` Pattern
 
@@ -164,7 +164,7 @@ Art direction changes the image content (crop, composition, subject) at differen
 
 1. `<source>` elements are evaluated top-to-bottom; first match wins.
 2. Place mobile/narrow sources first when using `max-width` media queries.
-3. Always end with a plain `<img>` — it is the fallback AND the element browsers use for accessibility attributes.
+3. Always end with a plain `<img>` - it is the fallback AND the element browsers use for accessibility attributes.
 4. The `type` attribute on `<source>` enables format negotiation without JS.
 
 ### Combining Art Direction + Format Negotiation
@@ -294,7 +294,7 @@ Native browser lazy loading. Defers fetching images outside the viewport.
 <img src="photo.jpg" alt="Gallery item" loading="lazy" width="800" height="600">
 ```
 
-**Critical rule**: Never apply `loading="lazy"` to the LCP (Largest Contentful Paint) image. The LCP image must be fetched immediately. Identify it as the largest above-the-fold image — hero, product shot, or article lead image.
+**Critical rule**: Never apply `loading="lazy"` to the LCP (Largest Contentful Paint) image. The LCP image must be fetched immediately. Identify it as the largest above-the-fold image - hero, product shot, or article lead image.
 
 ### Intersection Observer Pattern
 
@@ -336,7 +336,7 @@ lazyImages.forEach(img => observer.observe(img));
 ### Lazy Loading Rules Summary
 
 - `loading="lazy"` on all below-the-fold images.
-- Never on LCP image — use `fetchpriority="high"` instead.
+- Never on LCP image - use `fetchpriority="high"` instead.
 - Set explicit `width` and `height` on every `<img>` to prevent layout shift (CLS).
 - `rootMargin: '200px'` is a safe default for IntersectionObserver to preload slightly early.
 
@@ -355,7 +355,7 @@ lazyImages.forEach(img => observer.observe(img));
 ### When to Apply
 
 - Apply to all large images that are not LCP-critical.
-- **Do not** apply to the LCP image — synchronous decoding ensures the image renders as soon as it loads, which improves LCP score.
+- **Do not** apply to the LCP image - synchronous decoding ensures the image renders as soon as it loads, which improves LCP score.
 - Combine with `loading="lazy"` on below-the-fold images.
 
 ```html
@@ -402,7 +402,7 @@ lazyImages.forEach(img => observer.observe(img));
 
 ### Rules
 
-- Apply to **exactly one** image per page — the LCP candidate.
+- Apply to **exactly one** image per page - the LCP candidate.
 - Do not use on multiple images; it degrades priority scheduling.
 - Use `fetchpriority="low"` on decorative or off-screen images you know will not be needed soon.
 - Works on `<img>`, `<link rel="preload">`, and `fetch()` calls.

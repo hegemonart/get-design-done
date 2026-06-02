@@ -7,8 +7,8 @@ tags: [discover, procedure, extracted, pipeline-stage, connection-probe, design-
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/discover/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
-The skill's load-bearing workflow stays in `../skills/discover/SKILL.md`; this file holds the
+Source: extracted from `skills/discover/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+The skill's essential workflow stays in `../skills/discover/SKILL.md`; this file holds the
 detail the agent reaches for when executing a specific step (state integration, three
 connection probes, design-context-builder + design-context-checker agent prompts, lazy gate
 prompt, auto-mode CSS detection).
@@ -23,17 +23,17 @@ Detailed procedure for the get-design-done `discover` Stage 1.5 orchestrator. Co
 ## State Integration
 
 1. Read `.design/STATE.md`.
-   - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=discover, status=in_progress, task_progress=0/1, and log warning: "STATE.md not found — created fresh. If this is a resumed session, run /get-design-done:scan first."
-   - If present and stage==discover and status==in_progress: RESUME — continue existing interview; do not reset.
-   - Otherwise: normal transition — set frontmatter stage=discover, <position> stage=discover, status=in_progress, task_progress=0/1.
-2. **Probe connection availability** — ToolSearch runs FIRST because MCP tools may be in the deferred tool set. This is the canonical probe pattern (spec lives in `connections/connections.md`; copied inline because SKILL.md has no include mechanism — if the probe pattern changes, update all stages that copied it). See §Connection Probes below.
+   - If missing: create minimal skeleton from `reference/STATE-TEMPLATE.md` with stage=discover, status=in_progress, task_progress=0/1, and log warning: "STATE.md not found - created fresh. If this is a resumed session, run /get-design-done:scan first."
+   - If present and stage==discover and status==in_progress: RESUME - continue existing interview; do not reset.
+   - Otherwise: normal transition - set frontmatter stage=discover, <position> stage=discover, status=in_progress, task_progress=0/1.
+2. **Probe connection availability** - ToolSearch runs FIRST because MCP tools may be in the deferred tool set. This is the canonical probe pattern (spec lives in `connections/connections.md`; copied inline because SKILL.md has no include mechanism - if the probe pattern changes, update all stages that copied it). See §Connection Probes below.
 3. Update last_checkpoint. Write STATE.md.
 
 ---
 
 ## Connection Probes
 
-### A — Figma probe (variant-agnostic)
+### A - Figma probe (variant-agnostic)
 
 ```
 A1. ToolSearch({ query: "figma get_metadata use_figma", max_results: 10 })
@@ -50,7 +50,7 @@ A4. Call {prefix}get_metadata:
       Error   -> figma: unavailable
 ```
 
-### B — Refero probe (ToolSearch presence is sufficient — no tool call needed)
+### B - Refero probe (ToolSearch presence is sufficient - no tool call needed)
 
 ```
 B1. ToolSearch({ query: "refero", max_results: 5 })
@@ -58,7 +58,7 @@ B2. Empty result  -> refero: not_configured
     Non-empty     -> refero: available
 ```
 
-### C — Pinterest probe (ToolSearch-only, same pattern as Refero)
+### C - Pinterest probe (ToolSearch-only, same pattern as Refero)
 
 ```
 C1. ToolSearch({ query: "mcp-pinterest", max_results: 5 })
@@ -66,9 +66,9 @@ C2. Empty result  -> pinterest: not_configured
     Non-empty     -> pinterest: available
 ```
 
-No live `pinterest_search` call at probe time — ToolSearch presence is sufficient. The synthesizer makes the actual search calls.
+No live `pinterest_search` call at probe time - ToolSearch presence is sufficient. The synthesizer makes the actual search calls.
 
-### D — Lazyweb probe (ToolSearch-only — free, discover Tier 1 per D-01)
+### D - Lazyweb probe (ToolSearch-only - free, discover Tier 1 per D-01)
 
 ```
 D1. ToolSearch({ query: "lazyweb", max_results: 5 })
@@ -76,7 +76,7 @@ D2. Empty result  -> lazyweb: not_configured
     Non-empty     -> lazyweb: available
 ```
 
-### E — Mobbin probe (ToolSearch-only — paid, discover Tier 2 per D-01)
+### E - Mobbin probe (ToolSearch-only - paid, discover Tier 2 per D-01)
 
 ```
 E1. ToolSearch({ query: "mobbin", max_results: 5 })
@@ -102,7 +102,7 @@ Auto Mode CSS detection (when `auto_mode: true` is passed to the builder):
 
 ---
 
-## Step 1 — Spawn design-context-builder
+## Step 1 - Spawn design-context-builder
 
 ```
 Task("design-context-builder", """
@@ -140,7 +140,7 @@ Wait for `## CONTEXT COMPLETE`. Update STATE.md task_progress = 0.5.
 
 ---
 
-## Step 1.75 — Lazy gate: should design-context-checker run? (Plan 10.1-04, D-21)
+## Step 1.75 - Lazy gate: should design-context-checker run? (Plan 10.1-04, D-21)
 
 Spawn the cheap Haiku gate before the full context-checker:
 
@@ -152,8 +152,8 @@ Spawn the cheap Haiku gate before the full context-checker:
     You are the design-context-checker-gate.
 
     Context:
-      diff_files: <git diff --name-only HEAD~1..HEAD>
-      diff_body: (not needed — single-file heuristic)
+      diff_files: <git diff `--name-only` HEAD~1..HEAD>
+      diff_body: (not needed - single-file heuristic)
       baseline_sha: <HEAD~1>
 
     Apply the heuristic (DESIGN-CONTEXT.md in diff_files?). Emit JSON + `## GATE COMPLETE`.
@@ -170,7 +170,7 @@ Wait for `## GATE COMPLETE`. Parse JSON:
 
 ---
 
-## Step 2 — Spawn design-context-checker
+## Step 2 - Spawn design-context-checker
 
 ```
 Task("design-context-checker", """
@@ -190,7 +190,7 @@ Wait for `## CONTEXT CHECK COMPLETE`.
 
 ---
 
-## Step 3 — Handle checker verdict
+## Step 3 - Handle checker verdict
 
 If APPROVED: proceed to state update.
 If BLOCKED: present dimensions that BLOCKED to user, offer fix-and-retry loop (re-spawn builder with specific fix instructions). Do not proceed to planning.

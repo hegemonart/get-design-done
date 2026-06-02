@@ -137,3 +137,19 @@ bash scripts/rollback-release.sh <version>
 
 This prompts for confirmation, then deletes the tag + GitHub Release.
 Manual-only per D-22 — auto-rollback is intentionally not implemented.
+
+## Editorial style (Phase 43)
+
+The project holds its own prose to an editorial floor. `npm run lint:prose` (CI-gated) fails on em
+dashes, prose double hyphens, and AI-prose tells (load-bearing, leverage, robust, seamless, ...) in
+`README.md`, `README.*.md`, `SKILL.md`, `source/skills/**`, `agents/**`, `CHANGELOG.md`, and
+`reference/**` (bodies AND frontmatter `description` fields). The full ruleset + rationale lives in
+`STYLE.md`, which is GENERATED from `scripts/lib/manifest/prose-denylist.json` (run `npm run build:style`;
+CI drift-gates it via `build:style:check`).
+
+What is skipped: fenced and inline code, YAML frontmatter delimiters, HTML comments, and Cyrillic-majority
+files (the denylist is English-only in v1). Put CLI flags in `code` spans. For a genuine quote that must
+contain a banned token, wrap it in `<!-- prose-lint-disable -->` ... `<!-- prose-lint-enable -->`.
+
+Replace an em dash with a comma, a colon, parentheses, or a spaced hyphen. Do not edit `skills/` or
+`dist/` by hand (Phase 42 makes them generated); edit `source/skills/` and run `npm run build:skills`.

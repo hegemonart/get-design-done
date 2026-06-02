@@ -5,9 +5,9 @@ Project-local skills live at `./.claude/skills/` within the user's project (not 
 ## Auto-loaded patterns
 
 Files matching `./.claude/skills/design-*-conventions.md` are read by:
-- `explore` — included in DESIGN-CONTEXT.md synthesis under a `<project_conventions>` section
-- `plan` — passed to design-planner as `<required_reading>`
-- `design` — passed to the executor as `<required_reading>`
+- `explore` - included in DESIGN-CONTEXT.md synthesis under a `<project_conventions>` section
+- `plan` - passed to design-planner as `<required_reading>`
+- `design` - passed to the executor as `<required_reading>`
 
 ## File format
 

@@ -1,4 +1,4 @@
-# PR Review Integration — the gh-based contract for `agents/pr-commenter.md`
+# PR Review Integration - the gh-based contract for `agents/pr-commenter.md`
 
 How GDD surfaces verify/audit output **inline on a pull request** and as a **status check**, using the `gh` CLI only (no GitHub SDK, no network library). `agents/pr-commenter.md` posts against this contract after `/gdd:ship` creates the PR. Every outbound string is redacted first; every failure mode degrades to a noop (never fails the ship).
 
@@ -23,8 +23,8 @@ gh api repos/{owner}/{repo}/pulls/{number}/comments \
   -F line=42 -f side=RIGHT
 ```
 
-- `body` — **redacted** finding text: the rule/pillar (`WCAG 1.4.3` / `audit:color`), the observation, a one-line suggested fix.
-- `path` + `line` + `side=RIGHT` — the changed line locus (RIGHT = the new version).
+- `body` - **redacted** finding text: the rule/pillar (`WCAG 1.4.3` / `audit:color`), the observation, a one-line suggested fix.
+- `path` + `line` + `side=RIGHT` - the changed line locus (RIGHT = the new version).
 - One comment per located finding. Findings with **no** changed-line locus go into a single summary review (below), not scattered.
 
 ## Summary review (findings without a line locus)
@@ -34,7 +34,7 @@ gh api repos/{owner}/{repo}/pulls/{number}/reviews \
   -f body="$SAFE_SUMMARY" -f event=COMMENT
 ```
 
-`event=COMMENT` (never `REQUEST_CHANGES`/`APPROVE` — GDD does not gate human approval). The summary lists verify pass/fail counts + the unlocated findings.
+`event=COMMENT` (never `REQUEST_CHANGES`/`APPROVE` - GDD does not gate human approval). The summary lists verify pass/fail counts + the unlocated findings.
 
 ## The `gdd/design-review` check-run (the team gate)
 
@@ -48,7 +48,7 @@ gh api repos/{owner}/{repo}/check-runs \
 - `conclusion`: **`success`** = verify passed AND no blocker-level pillar AND a11y-gate not failed; **`failure`** = verify failed OR a11y-gate failed; **`neutral`** = verify incomplete / degraded.
 - `output.summary` (redacted) carries: per-pillar audit scores (from `.design/DESIGN-AUDIT.md`), verify pass/fail (from `.design/DESIGN-VERIFICATION.md`), and the a11y-gate result.
 
-**Making it a required check (the team step — GDD never force-edits branch protection):** a maintainer enables `gdd/design-review` as a required status check via repo Settings → Branches, or via the bundled helper:
+**Making it a required check (the team step - GDD never force-edits branch protection):** a maintainer enables `gdd/design-review` as a required status check via repo Settings → Branches, or via the bundled helper:
 
 ```bash
 scripts/apply-branch-protection.sh --require-check "gdd/design-review"
@@ -89,8 +89,8 @@ No raw artifact excerpt reaches `gh` un-redacted.
 | no PR number (manual/failed creation) | noop + one-line note |
 | a single `gh api` call fails (≤3 attempts) | print that body; continue with the rest |
 
-In all cases pr-commenter exits cleanly — it **never** fails the `/gdd:ship` success path.
+In all cases pr-commenter exits cleanly - it **never** fails the `/gdd:ship` success path.
 
 ## Out of scope (per Phase 35 split)
 
-Slack/Discord notifications (Phase 35.2); Linear/Jira ticket-sync (Phase 35.3); `pseudonymize.cjs` (Phase 30 — wired for third-party channels); video walkthroughs (still images only); a GDD-side approver list (branch protection owns approvals).
+Slack/Discord notifications (Phase 35.2); Linear/Jira ticket-sync (Phase 35.3); `pseudonymize.cjs` (Phase 30 - wired for third-party channels); video walkthroughs (still images only); a GDD-side approver list (branch protection owns approvals).

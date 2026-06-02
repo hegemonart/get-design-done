@@ -26,7 +26,7 @@ Produces a branch that contains only code changes (under `src/`) so reviewers ar
 ## Do Not
 
 - Do not rewrite history on the original branch.
-- Do not include `.design/` or `.planning/` paths — if a mixed commit contains them, the cherry-pick carries them through, but reviewers are warned.
-- Do not push the branch automatically — let `/gdd:ship` or the user push.
+- Do not include `.design/` or `.planning/` paths - if a mixed commit contains them, the cherry-pick carries them through, but reviewers are warned.
+- Do not push the branch automatically - let `/gdd:ship` or the user push.
 
 ## PR-BRANCH COMPLETE

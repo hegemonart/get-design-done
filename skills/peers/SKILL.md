@@ -1,6 +1,6 @@
 ---
 name: gdd-peers
-description: "Discover peer-CLI capability matrix — which of {codex, gemini, cursor, copilot, qwen} are installed, allowlisted in .design/config.json, and (if Phase 23.5 has data) their cost/quality delta vs local. Single command, no flags. Read by users investigating delegation setup."
+description: "Discover peer-CLI capability matrix - which of {codex, gemini, cursor, copilot, qwen} are installed, allowlisted in .design/config.json, and (if Phase 23.5 has data) their cost/quality delta vs local. Single command, no flags. Read by users investigating delegation setup."
 argument-hint: ""
 tools: Read, Bash
 ---
@@ -49,7 +49,7 @@ Once Phase 27.5 has fired across enough spawns, `.design/telemetry/posterior.jso
 5. Require `sum(arm.count)` ≥ 3 in each slice. Else `(no data yet)`.
 6. Render: `+X% reward` (delta > 0.01), `-X% reward` (delta < -0.01), or `~equal` (`abs(delta) < 0.01`), where `X = round(abs(delta_pct) * 100)`.
 
-Reward is the Phase 23.5 lexicographic (correctness first, cost tiebreaker — see `scripts/lib/bandit-router.cjs` `computeReward()`). Cost-only deltas live in `cost-arbitrage.cjs` (Phase 26-06).
+Reward is the Phase 23.5 lexicographic (correctness first, cost tiebreaker - see `scripts/lib/bandit-router.cjs` `computeReward()`). Cost-only deltas live in `cost-arbitrage.cjs` (Phase 26-06).
 
 ### 5. Render the table
 
@@ -83,8 +83,8 @@ The table IS the output. No follow-up prose. Users act on it: `(opt-in disabled)
 
 ## Cross-references
 
-- `./../peer-cli-add/peer-cli-protocol.md` — ACP/ASP handshake + adapter scaffold (procedure ref shared with peer-cli-add/customize).
-- `./reference/peer-cli-capabilities.md` (Plan 27-05) — full capability matrix doc.
+- `./../peer-cli-add/peer-cli-protocol.md` - ACP/ASP handshake + adapter scaffold (procedure ref shared with peer-cli-add/customize).
+- `./reference/peer-cli-capabilities.md` (Plan 27-05) - full capability matrix doc.
 - `scripts/lib/peer-cli/registry.cjs` (Plan 27-05), `scripts/lib/install/runtimes.cjs` (Plan 27-11), `skills/peer-cli-customize/SKILL.md`, `skills/peer-cli-add/SKILL.md`, `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-10.
 
 ## Record

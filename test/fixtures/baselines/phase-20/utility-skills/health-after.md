@@ -1,6 +1,6 @@
 ---
 name: gdd-health
-description: "Reports .design/ artifact health — staleness, missing files, token drift, broken state transitions."
+description: "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions."
 tools: Read, Bash, Glob, Grep, mcp__gdd_state__get
 disable-model-invocation: true
 ---
@@ -11,19 +11,19 @@ disable-model-invocation: true
 
 ## Checks
 
-1. **Artifact inventory** — `ls -la .design/*.md` with size and mtime. Print a table.
-2. **Missing expected artifacts** — by `stage` field from the `mcp__gdd_state__get` snapshot:
+1. **Artifact inventory** - `ls -la .design/*.md` with size and mtime. Print a table.
+2. **Missing expected artifacts** - by `stage` field from the `mcp__gdd_state__get` snapshot:
    - `brief` expects BRIEF.md
    - `explore` expects DESIGN.md, DESIGN-DEBT.md, DESIGN-CONTEXT.md
    - `plan` expects DESIGN-PLAN.md
    - `design` expects DESIGN-SUMMARY.md
    - `verify` expects DESIGN-VERIFICATION.md
    FAIL per missing.
-3. **Token drift** — `wc -c .design/DESIGN.md .design/DESIGN-CONTEXT.md`; approx tokens = bytes/4. WARN if combined >40000.
-4. **Aged DESIGN-DEBT** — items in `.design/DESIGN-DEBT.md` not touched in >14 days (file mtime). WARN.
-5. **Broken state transitions** — `stage` field from the snapshot inconsistent with artifacts present (e.g. stage=`verify` but DESIGN-SUMMARY.md missing). FAIL.
-6. **Pending sketch/spike wrap-ups** — any `.design/sketches/*` or `.design/spikes/*` directory lacking a SUMMARY.md. WARN.
-7. **Seed germination** — scan `.design/SEEDS.md` (if present) for seeds whose trigger keywords match the snapshot or CYCLES.md content. List as "Seed ready: <text>".
+3. **Token drift** - `wc -c .design/DESIGN.md .design/DESIGN-CONTEXT.md`; approx tokens = bytes/4. WARN if combined >40000.
+4. **Aged DESIGN-DEBT** - items in `.design/DESIGN-DEBT.md` not touched in >14 days (file mtime). WARN.
+5. **Broken state transitions** - `stage` field from the snapshot inconsistent with artifacts present (e.g. stage=`verify` but DESIGN-SUMMARY.md missing). FAIL.
+6. **Pending sketch/spike wrap-ups** - any `.design/sketches/*` or `.design/spikes/*` directory lacking a SUMMARY.md. WARN.
+7. **Seed germination** - scan `.design/SEEDS.md` (if present) for seeds whose trigger keywords match the snapshot or CYCLES.md content. List as "Seed ready: <text>".
 
 ## State snapshot
 
@@ -57,17 +57,17 @@ Health: 5 / 6 checks passing.
 
 After the health table, the `gdd_health` MCP surface (`scripts/lib/health-mirror/index.cjs`) reports a `figma_extract` check so a user knows whether figma-extract is usable. The detail is one of three exact strings:
 
-- `figma extract: ready (token set)` — `FIGMA_TOKEN` (or `FIGMA_PERSONAL_ACCESS_TOKEN`) is present (status `ok`).
-- `figma extract: token missing` — no token env is set (status `warn`).
-- `figma extract: plugin sync needed for variables (Free tier detected)` — token present but a prior pull recorded a 403/skip on the Variables REST path, so run the plugin-sync step (status `warn`).
+- `figma extract: ready (token set)` - `FIGMA_TOKEN` (or `FIGMA_PERSONAL_ACCESS_TOKEN`) is present (status `ok`).
+- `figma extract: token missing` - no token env is set (status `warn`).
+- `figma extract: plugin sync needed for variables (Free tier detected)` - token present but a prior pull recorded a 403/skip on the Variables REST path, so run the plugin-sync step (status `warn`).
 
-Token PRESENCE only is detected (D-10) — the token value is never read, logged, or shown. The Free-tier signal is read from the local raw-pull cache only; no network call is made.
+Token PRESENCE only is detected (D-10) - the token value is never read, logged, or shown. The Free-tier signal is read from the local raw-pull cache only; no network call is made.
 
 ## Skill-discipline bootstrap (skill_discipline)
 
-The `gdd_health` MCP surface also reports a `skill_discipline` check (Phase 32) confirming the using-gdd SessionStart bootstrap is live — detail is one of three exact strings:
-- `skill-discipline: ready` — `skills/using-gdd/SKILL.md` exists AND `hooks/hooks.json` SessionStart wires `inject-using-gdd.sh` (status `ok`).
-- `skill-discipline: missing using-gdd` (skill absent) or `skill-discipline: hook not wired` (skill present, no SessionStart inject) — both `warn`.
+The `gdd_health` MCP surface also reports a `skill_discipline` check (Phase 32) confirming the using-gdd SessionStart bootstrap is live - detail is one of three exact strings:
+- `skill-discipline: ready` - `skills/using-gdd/SKILL.md` exists AND `hooks/hooks.json` SessionStart wires `inject-using-gdd.sh` (status `ok`).
+- `skill-discipline: missing using-gdd` (skill absent) or `skill-discipline: hook not wired` (skill present, no SessionStart inject) - both `warn`.
 
 ## Check MCP registration (gdd-mcp)
 
@@ -94,6 +94,6 @@ Thresholds: warn >=100, block >=250 (D-01). Strict description-format off by def
 
 ## Do Not
 
-- Do not mutate STATE.md — this skill is read-only. Only `mcp__gdd_state__get` is permitted.
+- Do not mutate STATE.md - this skill is read-only. Only `mcp__gdd_state__get` is permitted.
 
 ## HEALTH COMPLETE

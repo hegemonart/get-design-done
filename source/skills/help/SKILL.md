@@ -5,7 +5,7 @@ tools: Read
 disable-model-invocation: true
 ---
 
-# Get Design Done — Help
+# Get Design Done - Help
 
 **Role:** Print a formatted reference of all `{{command_prefix}}` commands, grouped by purpose.
 

@@ -1,6 +1,6 @@
-// tests/phase-27-6-baseline.test.cjs — Phase 27.6 regression baseline.
+// tests/phase-27-6-baseline.test.cjs - Phase 27.6 regression baseline.
 //
-// Version-agnostic per the Phase 26 lesson — reads package.json#version
+// Version-agnostic per the Phase 26 lesson - reads package.json#version
 // dynamically instead of hard-coding any version string. After v1.27.6
 // ships, this test continues to pass when package.json bumps to v1.28.0+
 // as long as the 4 manifests stay aligned and the phase-27-6 baseline
@@ -80,7 +80,7 @@ test('27.6-baseline: hooks.json registers PreCompact + 5-entry SessionStart', ()
   assert.ok(Array.isArray(h.hooks.PreCompact), 'PreCompact array required');
   assert.ok(h.hooks.PreCompact.length >= 1, '>= 1 PreCompact entry');
   assert.ok(h.hooks.PreCompact[0].hooks[0].command.includes('gdd-precompact-snapshot'));
-  // Phase 27.6 left SessionStart at 4 entries; Phase 32 (v1.32.0) added a 5th —
+  // Phase 27.6 left SessionStart at 4 entries; Phase 32 (v1.32.0) added a 5th -
   // the inject-using-gdd.sh skill-discipline bootstrap (matcher startup|clear|compact).
   assert.equal(h.hooks.SessionStart.length, 5, 'SessionStart has 5 entries after Phase 32');
   // The Phase 27.6 recap entry stays at index 3 (additive, not reordered).
@@ -150,7 +150,7 @@ test('27.6-baseline: docs/PERF-OPTIMIZATION.md operator guide ships', () => {
 test('27.6-baseline: reference/retrieval-contract.md extended with Phase 27.6 dedup section', () => {
   const f = path.join(REPO_ROOT, 'reference', 'retrieval-contract.md');
   const body = fs.readFileSync(f, 'utf8');
-  assert.ok(body.includes('Phase 27.6 — Shared-Context Dedup'), 'dedup section present');
+  assert.ok(body.includes('Phase 27.6 - Shared-Context Dedup'), 'dedup section present');
   assert.ok(body.includes('D-11'), 'D-11 cited');
   assert.ok(body.includes('GDD_DEDUP_OPT_OUT'), 'opt-out env var cited');
 });

@@ -8,7 +8,7 @@ Use during Discover (establishing baseline) and Verify (measuring improvement).
 
 | Level | Code | Impact | Action |
 |---|---|---|---|
-| Blocker | **P0** | Breaks functionality or violates a hard requirement | Fix before shipping — no exceptions |
+| Blocker | **P0** | Breaks functionality or violates a hard requirement | Fix before shipping - no exceptions |
 | Major | **P1** | Significantly degrades UX or fails accessibility standard | Fix in this design pass |
 | Minor | **P2** | Noticeable issue but doesn't break flows | Fix if time allows |
 | Cosmetic | **P3** | Polish item only, subjective quality issue | Deferred to polish pass |
@@ -24,10 +24,10 @@ Score each category 0–10. Overall score = weighted average.
 | Score | Criteria |
 |---|---|
 | 10 | All WCAG 2.1 AA criteria pass. Keyboard nav works end-to-end. Focus rings visible. No color-only meaning. |
-| 8–9 | Minor issues — 1–2 non-critical violations, no contrast failures on primary text |
-| 5–7 | Several violations — contrast issues on secondary text, some missing labels |
-| 3–4 | Multiple failures — some interactive elements inaccessible, missing alt text |
-| 0–2 | Critical failures — primary text fails contrast, keyboard nav broken, missing form labels |
+| 8–9 | Minor issues - 1–2 non-critical violations, no contrast failures on primary text |
+| 5–7 | Several violations - contrast issues on secondary text, some missing labels |
+| 3–4 | Multiple failures - some interactive elements inaccessible, missing alt text |
+| 0–2 | Critical failures - primary text fails contrast, keyboard nav broken, missing form labels |
 
 Auto-checkable:
 - Body text contrast ≥ 4.5:1
@@ -73,7 +73,7 @@ grep -rEn "(padding|margin|gap):\s*(8|12|16)px" src/ --include="*.css" 2>/dev/nu
 grep -rEn "(margin-top|margin-bottom|gap):\s*(32|40|48|64)px" src/ --include="*.css" 2>/dev/null | head -5
 ```
 
-These patterns supplement the qualitative rubric above — they cannot replace
+These patterns supplement the qualitative rubric above - they cannot replace
 visual inspection but reduce false positives during automated audit passes.
 
 ### 3. Typography (Weight: 15%)
@@ -162,11 +162,11 @@ Score = (Accessibility × 0.25)
 
 | Grade | Score | Meaning |
 |---|---|---|
-| A | 90–100 | Excellent — production ready |
-| B | 75–89 | Good — minor polish needed |
-| C | 60–74 | Acceptable — notable issues to address |
-| D | 45–59 | Poor — significant redesign needed |
-| F | 0–44 | Failing — fundamental problems |
+| A | 90–100 | Excellent - production ready |
+| B | 75–89 | Good - minor polish needed |
+| C | 60–74 | Acceptable - notable issues to address |
+| D | 45–59 | Poor - significant redesign needed |
+| F | 0–44 | Failing - fundamental problems |
 
 ---
 
@@ -226,7 +226,7 @@ Check for (see `reference/checklists.md` Micro-Polish Check gate):
 - Font smoothing at `:root` only
 - Dynamic numbers: `font-variant-numeric: tabular-nums`
 - Nested elements: concentric radius (`innerRadius = outerRadius − padding`)
-- Images: `outline: 1px solid rgba(0,0,0,0.08)` — no tinted outlines
+- Images: `outline: 1px solid rgba(0,0,0,0.08)` - no tinted outlines
 - Interactive elements <40px: `::after` hit-area extension to 40×40
 - Press feedback: `scale(0.96)` exactly
 - `AnimatePresence` on persistent UI: `initial={false}`
@@ -239,7 +239,7 @@ Check for (see `reference/checklists.md` Micro-Polish Check gate):
 
 ## Lens-Tags (Orthogonal)
 
-Tags auditors attach to findings under existing pillars to record cross-cutting dimensions without changing the pillar structure or weights. Same orthogonal pattern as Phase 19.6 `emotion_levels` and `authoring_principles`. Adding a lens-tag does NOT change pillar weights, scoring math, or audit output format — it is a label on an existing finding.
+Tags auditors attach to findings under existing pillars to record cross-cutting dimensions without changing the pillar structure or weights. Same orthogonal pattern as Phase 19.6 `emotion_levels` and `authoring_principles`. Adding a lens-tag does NOT change pillar weights, scoring math, or audit output format - it is a label on an existing finding.
 
 ### `composition_alignment`
 

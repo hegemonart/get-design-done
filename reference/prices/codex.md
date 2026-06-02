@@ -1,9 +1,9 @@
-# OpenAI — Codex CLI Price Table
+# OpenAI - Codex CLI Price Table
 
 **Runtime:** `codex` (OpenAI Codex CLI)
 **Phase 26 D-08 sub-table.** Pricing for the OpenAI Codex tier referenced in `reference/runtime-models.md` under `id: "codex"`.
 
-**Provenance:** `<TODO: confirm at https://openai.com/api/pricing/>` — retrieved 2026-04-29 (placeholder — v1.26.0 ships with seed numbers; runtime adapter authors confirm and PR before v1.27).
+**Provenance:** `<TODO: confirm at https://openai.com/api/pricing/>` - retrieved 2026-04-29 (placeholder - v1.26.0 ships with seed numbers; runtime adapter authors confirm and PR before v1.27).
 
 **Status:** placeholder values are taken from public OpenAI tier-positioning at the time of v1.26.0 ship. The cost-aggregator will surface drift if measured spend per spawn diverges from these figures by more than 20% after 10+ cycles.
 

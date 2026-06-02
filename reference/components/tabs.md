@@ -1,4 +1,4 @@
-# Tabs — Benchmark Spec
+# Tabs - Benchmark Spec
 
 **Harvested from**: WAI-ARIA APG, Radix UI, Carbon, Mantine, Material 3, Chakra UI, Atlassian, Fluent 2
 **Wave**: 2 · **Category**: Containers
@@ -51,7 +51,7 @@ Vertical tabs (sidebar):
 | Icon + label | Icon above or beside label | Material 3, Carbon |
 
 **Norm** (≥6/18): arrow keys navigate between tabs; Tab key moves to active panel content.
-**Diverge**: automatic vs. manual activation — automatic (arrow key selects immediately) vs. manual (arrow key moves focus, Enter selects). WAI-ARIA APG recommends manual for complex panels; Radix defaults to automatic.
+**Diverge**: automatic vs. manual activation - automatic (arrow key selects immediately) vs. manual (arrow key moves focus, Enter selects). WAI-ARIA APG recommends manual for complex panels; Radix defaults to automatic.
 
 ---
 
@@ -96,7 +96,7 @@ Vertical tabs (sidebar):
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/tabs/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/tabs/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -116,12 +116,12 @@ Vertical tabs (sidebar):
 
 ### Accessibility Rules
 
-- Only the selected tab has `tabindex="0"` — all other tabs have `tabindex="-1"` (roving tabindex pattern)
+- Only the selected tab has `tabindex="0"` - all other tabs have `tabindex="-1"` (roving tabindex pattern)
 - `tablist` MUST have a label: `aria-label="[Section name]"` or `aria-labelledby`
 - Inactive panels MUST be hidden with `hidden` attribute (not just CSS) so AT skips them
 - Panel SHOULD have `tabindex="0"` to allow focusing the panel after Tab from the tablist
 - Icon-only tabs MUST have `aria-label` on the tab element
-- Linked tabs (tabs that change URL): use `role="link"` semantics or native `<a>` within tab — but note this changes the keyboard contract
+- Linked tabs (tabs that change URL): use `role="link"` semantics or native `<a>` within tab - but note this changes the keyboard contract
 
 ---
 
@@ -133,23 +133,23 @@ Vertical tabs (sidebar):
 | Panel fade | 150ms | ease | Crossfade between panels |
 | Scroll reveal | 200ms | ease | When scrolling to new active tab in overflow |
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: disable indicator slide + panel fade
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: disable indicator slide + panel fade
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Use roving tabindex — `tabindex="0"` on selected, `tabindex="-1"` on all others *(WAI-ARIA APG)*
+- Use roving tabindex - `tabindex="0"` on selected, `tabindex="-1"` on all others *(WAI-ARIA APG)*
 - Navigate with arrow keys between tabs, not Tab key *(WAI-ARIA APG)*
 - Label the tablist with `aria-label` or `aria-labelledby` *(WAI-ARIA APG)*
 - Hide inactive panels with `hidden` attribute so AT skips them *(WAI-ARIA APG)*
 
 ### Don't
-- Don't use Tab key to navigate between tabs — Tab moves in/out of the tablist *(WAI-ARIA APG)*
-- Don't show all tab panel content simultaneously — defeats the purpose of tabs *(all systems)*
-- Don't use more than 7 tabs in a horizontal tab strip — prefer a select or dropdown for overflow *(Carbon, Atlassian)*
-- Don't use tabs for steps that must be completed in order — use a stepper *(Material 3, Atlassian)*
+- Don't use Tab key to navigate between tabs - Tab moves in/out of the tablist *(WAI-ARIA APG)*
+- Don't show all tab panel content simultaneously - defeats the purpose of tabs *(all systems)*
+- Don't use more than 7 tabs in a horizontal tab strip - prefer a select or dropdown for overflow *(Carbon, Atlassian)*
+- Don't use tabs for steps that must be completed in order - use a stepper *(Material 3, Atlassian)*
 
 ---
 

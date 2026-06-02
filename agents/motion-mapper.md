@@ -1,6 +1,6 @@
 ---
 name: motion-mapper
-description: "Maps motion and animation patterns — CSS transitions, framer-motion, GSAP, prefers-reduced-motion — to .design/map/motion.md."
+description: "Maps motion and animation patterns - CSS transitions, framer-motion, GSAP, prefers-reduced-motion - to .design/map/motion.md."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit
@@ -25,10 +25,10 @@ You inventory motion and animation patterns. Zero session memory. You do not mod
 
 - `.design/STATE.md`
 - `reference/motion.md` (if present)
-- `reference/motion-advanced.md` (if present) — advanced patterns: spring physics, scroll-driven, FLIP, View Transitions API, gesture/drag mechanics, clip-path patterns, blur crossfades, Framer Motion hardware-accel gotcha
-- `reference/motion-easings.md` (if present) — 12 canonical easing presets; classify each detected easing against this catalog
-- `reference/motion-transition-taxonomy.md` (if present) — 8 transition families; classify page/route transitions against this taxonomy
-- `reference/motion-spring.md` (if present) — spring presets; classify spring configs against gentle/wobbly/stiff/slow
+- `reference/motion-advanced.md` (if present) - advanced patterns: spring physics, scroll-driven, FLIP, View Transitions API, gesture/drag mechanics, clip-path patterns, blur crossfades, Framer Motion hardware-accel gotcha
+- `reference/motion-easings.md` (if present) - 12 canonical easing presets; classify each detected easing against this catalog
+- `reference/motion-transition-taxonomy.md` (if present) - 8 transition families; classify page/route transitions against this taxonomy
+- `reference/motion-spring.md` (if present) - spring presets; classify spring configs against gentle/wobbly/stiff/slow
 - Any files supplied by the orchestrator
 
 ## Scan Strategy
@@ -92,7 +92,7 @@ Classify easing values against the 12 canonical presets in `reference/motion-eas
 Classify page/route transitions against the 8 families in `reference/motion-transition-taxonomy.md`.
 Classify spring configs against the 4 presets in `reference/motion-spring.md`.
 
-## Output Format — `.design/map/motion.md`
+## Output Format - `.design/map/motion.md`
 
 **The output MUST begin with a structured JSON block** enclosed in ` ```json ``` ` fences, followed by the prose sections. The JSON block must conform to `reference/output-contracts/motion-map.schema.json`. Malformed or missing blocks are validation failures.
 
@@ -180,7 +180,7 @@ After the standard motion inventory, emit a "Micro-motion findings" section with
    - Report: these should use CSS transitions, not keyframe animations
 
 4. **Missing AnimatePresence initial={false}**
-   - Grep: `<AnimatePresence(?![^>]*initial=\{false\})` — AnimatePresence without initial={false}
+   - Grep: `<AnimatePresence(?![^>]*initial=\{false\})` - AnimatePresence without initial={false}
    - Report: file:line; check if the wrapped component is persistent UI (not route-level transitions)
 
 5. **Icon cross-fade with wrong bounce**
@@ -189,7 +189,7 @@ After the standard motion inventory, emit a "Micro-motion findings" section with
 
 6. **scale-on-press outside canonical range**
    - Grep: `scale.*0\.9[578]|scale.*0\.9[0-4]|whileTap.*scale.*0\.9[578]`
-   - Report: file:line; canonical press scale is 0.96 — not 0.95, 0.97, 0.98
+   - Report: file:line; canonical press scale is 0.96 - not 0.95, 0.97, 0.98
 
 ### Output format for this section:
 ```

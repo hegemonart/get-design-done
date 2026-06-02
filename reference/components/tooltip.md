@@ -1,4 +1,4 @@
-# Tooltip — Benchmark Spec
+# Tooltip - Benchmark Spec
 
 **Harvested from**: WAI-ARIA APG, Radix UI, Material 3, Carbon, Mantine, Fluent 2, Atlassian, Apple HIG
 **Wave**: 2 · **Category**: Containers
@@ -43,7 +43,7 @@ A tooltip is a small, non-interactive label that appears on hover or keyboard fo
 | Light | Light background | Mantine (inverted) |
 
 **Norm** (≥7/18): 300ms show delay, 0ms hide; max-width 240px; never interactive content.
-**Diverge**: delay duration — Carbon recommends 100ms for toolbars; WAI-ARIA APG recommends ≤500ms. 300ms is the safe default.
+**Diverge**: delay duration - Carbon recommends 100ms for toolbars; WAI-ARIA APG recommends ≤500ms. 300ms is the safe default.
 
 ---
 
@@ -72,8 +72,8 @@ A tooltip is a small, non-interactive label that appears on hover or keyboard fo
 
 ## Typography
 
-- 12px/400 — tooltip text is supplemental; smaller weight and size distinguish it from primary content
-- No bold, no headings inside tooltip — it is a single line of text (≤60 chars preferred)
+- 12px/400 - tooltip text is supplemental; smaller weight and size distinguish it from primary content
+- No bold, no headings inside tooltip - it is a single line of text (≤60 chars preferred)
 - Multi-line: allowed if content genuinely requires it; still no interactive elements
 
 ---
@@ -81,11 +81,11 @@ A tooltip is a small, non-interactive label that appears on hover or keyboard fo
 ## Keyboard & Accessibility
 
 > **WAI-ARIA role**: `tooltip`
-> **Trigger attributes**: `aria-describedby="tooltip-id"` — links the supplemental label
+> **Trigger attributes**: `aria-describedby="tooltip-id"` - links the supplemental label
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -97,11 +97,11 @@ Tooltip does NOT receive focus. It is purely a visual label attached to the trig
 
 ### Accessibility Rules
 
-- Trigger MUST have `aria-describedby` pointing to the tooltip's `id` — screen readers read tooltip content as supplemental description
-- Tooltip is `role="tooltip"` — NOT `role="dialog"` (no interactivity, no focus trap)
-- Tooltip MUST appear on keyboard focus, not only on hover — keyboard-only users need access too *(WCAG 1.3.3, 2.1.1)*
-- Do NOT put interactive content inside a tooltip — use Popover (`reference/components/popover.md`)
-- Do NOT use tooltip as the only accessible name for a control — use `aria-label` on the trigger instead; tooltip supplements, not replaces, the accessible name
+- Trigger MUST have `aria-describedby` pointing to the tooltip's `id` - screen readers read tooltip content as supplemental description
+- Tooltip is `role="tooltip"` - NOT `role="dialog"` (no interactivity, no focus trap)
+- Tooltip MUST appear on keyboard focus, not only on hover - keyboard-only users need access too *(WCAG 1.3.3, 2.1.1)*
+- Do NOT put interactive content inside a tooltip - use Popover (`reference/components/popover.md`)
+- Do NOT use tooltip as the only accessible name for a control - use `aria-label` on the trigger instead; tooltip supplements, not replaces, the accessible name
 - Escape MUST dismiss the tooltip without removing focus from the trigger *(WAI-ARIA APG)*
 
 ---
@@ -112,25 +112,25 @@ Tooltip does NOT receive focus. It is purely a visual label attached to the trig
 |------------|----------|--------|-------|
 | Show | 100ms | ease-out | Fade only; no scale (too flashy for a label) |
 | Hide | 80ms | ease | Fade only; immediate on Escape |
-| Delay | 300ms | — | CSS `transition-delay` or JS timeout |
+| Delay | 300ms | - | CSS `transition-delay` or JS timeout |
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion`: skip fade, instant show/hide
+Cross-link: `reference/motion.md` - `prefers-reduced-motion`: skip fade, instant show/hide
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Show on keyboard focus AND hover — not hover-only *(WAI-ARIA APG, WCAG 2.1.1)*
+- Show on keyboard focus AND hover - not hover-only *(WAI-ARIA APG, WCAG 2.1.1)*
 - Use `aria-describedby` to link trigger to tooltip *(WAI-ARIA APG)*
-- Limit tooltip content to ≤60 chars — longer content belongs in a popover *(Carbon, Material 3)*
+- Limit tooltip content to ≤60 chars - longer content belongs in a popover *(Carbon, Material 3)*
 - Apply 300ms show delay to prevent accidental triggers while cursor passes *(WAI-ARIA APG, Carbon)*
 
 ### Don't
-- Don't put interactive elements inside a tooltip *(WAI-ARIA APG — this makes it a popover)*
-- Don't use tooltip as the only accessible name — `aria-describedby` supplements, not replaces, `aria-label` *(WAI-ARIA APG)*
-- Don't trigger tooltip on click — use a popover *(Radix, WAI-ARIA APG)*
-- Don't use tooltip for critical information — it's supplemental; users on touch devices may miss it *(Material 3, Polaris)*
+- Don't put interactive elements inside a tooltip *(WAI-ARIA APG - this makes it a popover)*
+- Don't use tooltip as the only accessible name - `aria-describedby` supplements, not replaces, `aria-label` *(WAI-ARIA APG)*
+- Don't trigger tooltip on click - use a popover *(Radix, WAI-ARIA APG)*
+- Don't use tooltip for critical information - it's supplemental; users on touch devices may miss it *(Material 3, Polaris)*
 
 ---
 

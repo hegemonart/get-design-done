@@ -1,4 +1,4 @@
-# Stepper / Wizard — Benchmark Spec
+# Stepper / Wizard - Benchmark Spec
 
 **Harvested from**: Carbon (ProgressIndicator + StepNavigation), Material 3 Stepper, Atlassian Design System, Mantine Stepper
 **Wave**: 5 · **Category**: Advanced
@@ -8,7 +8,7 @@
 
 ## Purpose
 
-A Stepper (or Wizard) guides users through a sequential multi-step flow — onboarding, checkout, multi-page forms, settings setup. It communicates how many steps exist, which step is current, which are complete, and which are upcoming. Unlike Tabs (free navigation), a linear Stepper enforces order: the user must complete the current step before advancing. *(Carbon, Material 3, Atlassian, Mantine agree: step indicator list + content area + explicit Next/Back buttons is the canonical wizard pattern.)*
+A Stepper (or Wizard) guides users through a sequential multi-step flow - onboarding, checkout, multi-page forms, settings setup. It communicates how many steps exist, which step is current, which are complete, and which are upcoming. Unlike Tabs (free navigation), a linear Stepper enforces order: the user must complete the current step before advancing. *(Carbon, Material 3, Atlassian, Mantine agree: step indicator list + content area + explicit Next/Back buttons is the canonical wizard pattern.)*
 
 ---
 
@@ -59,7 +59,7 @@ Actions:
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| upcoming | Step not yet reached | Muted circle/number, secondary text color | — |
+| upcoming | Step not yet reached | Muted circle/number, secondary text color | - |
 | current | Active step | Brand-color filled circle; bold label | `aria-current="step"` |
 | completed | Step passed + valid | Check icon; full-opacity; clickable if non-linear | `aria-label="Step N: [name] - completed"` |
 | error | Step has validation errors | Error color circle; error icon | `aria-label="Step N: [name] - has errors"` |
@@ -77,7 +77,7 @@ Actions:
 
 **Norm**: Step circles 32px default *(Carbon, Mantine)*. Horizontal spacing between steps should scale with the available width so the indicator spans the container. Connector line is centered between circles.
 
-Cross-link: `reference/surfaces.md` — minimum 44×44px touch target for clickable step indicators.
+Cross-link: `reference/surfaces.md` - minimum 44×44px touch target for clickable step indicators.
 
 ---
 
@@ -86,9 +86,9 @@ Cross-link: `reference/surfaces.md` — minimum 44×44px touch target for clicka
 - Step label: body-sm (completed/upcoming) → body-sm weight 600 (current)
 - Step number/icon inside circle: caption-sm, center-aligned
 - Step description (optional sub-label): caption-sm, secondary color
-- Action buttons: body-md, weight 500 — same as standard button spec
+- Action buttons: body-md, weight 500 - same as standard button spec
 
-Cross-link: `reference/typography.md` — label weight change for current state.
+Cross-link: `reference/typography.md` - label weight change for current state.
 
 ---
 
@@ -99,27 +99,27 @@ Cross-link: `reference/typography.md` — label weight change for current state.
 
 ### Keyboard Contract
 
-*Derived from WAI-ARIA APG list and button patterns — https://www.w3.org/WAI/ARIA/apg/ — W3C — 2024*
+*Derived from WAI-ARIA APG list and button patterns - https://www.w3.org/WAI/ARIA/apg/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
 | Tab | Move focus through interactive elements: clickable completed steps (non-linear), Back button, Next/Submit button |
 | Enter / Space | Activate focused Back, Next, Submit button; activate clickable completed step (non-linear) |
-| (No arrow-key navigation) | Steps are NOT tabs — do not implement roving tabindex / arrow-key navigation between steps |
+| (No arrow-key navigation) | Steps are NOT tabs - do not implement roving tabindex / arrow-key navigation between steps |
 
 Steps are NOT `role="tab"` and do not use the tab keyboard pattern. Upcoming steps are not focusable in linear mode. Only completed steps are interactive (and focusable) in non-linear mode.
 
 ### Accessibility Rules
 
-- Step indicators MUST use `role="list"` + `role="listitem"` — not `role="tablist"` + `role="tab"` (tabs allow free navigation; wizard steps do not)
-- Current step MUST have `aria-current="step"` — this is the correct token (not `aria-selected` or `aria-checked`)
+- Step indicators MUST use `role="list"` + `role="listitem"` - not `role="tablist"` + `role="tab"` (tabs allow free navigation; wizard steps do not)
+- Current step MUST have `aria-current="step"` - this is the correct token (not `aria-selected` or `aria-checked`)
 - Completed steps in non-linear mode MUST be `<button>` elements (or have `role="button"` + `tabindex="0"`) with `aria-label` including the step name and "completed" state
-- Step connector lines MUST be `aria-hidden="true"` — they are purely decorative
+- Step connector lines MUST be `aria-hidden="true"` - they are purely decorative
 - Validate current step before allowing Next; display inline error messages with `aria-describedby` associations
-- "Next", "Back", and "Submit" MUST be explicit text labels — do not use icon-only navigation buttons
+- "Next", "Back", and "Submit" MUST be explicit text labels - do not use icon-only navigation buttons
 - Announce step transitions via `aria-live="polite"` on the content region header (e.g., "Step 2 of 4: Profile")
 
-Cross-link: `reference/accessibility.md` — aria-current values, list semantics.
+Cross-link: `reference/accessibility.md` - aria-current values, list semantics.
 
 ---
 
@@ -132,25 +132,25 @@ Cross-link: `reference/accessibility.md` — aria-current values, list semantics
 | Error state appear | 150ms | ease-out | Circle color change + icon fade in |
 | Back navigation | 200ms | ease-in-out | Slide right (reverse direction) |
 
-**BAN**: Do not use the same slide direction for both forward and backward step navigation — direction must be consistent with the mental model (forward = left, backward = right).
+**BAN**: Do not use the same slide direction for both forward and backward step navigation - direction must be consistent with the mental model (forward = left, backward = right).
 
-Cross-link: `reference/motion.md` — reduced-motion: skip slide; cross-fade content area only.
+Cross-link: `reference/motion.md` - reduced-motion: skip slide; cross-fade content area only.
 
 ---
 
 ## Do / Don't
 
 ### Do
-- Use `role="list"` for the step indicator — steps are a list, not a tab set *(WAI-ARIA APG, Carbon)*
+- Use `role="list"` for the step indicator - steps are a list, not a tab set *(WAI-ARIA APG, Carbon)*
 - Set `aria-current="step"` on the active step *(WAI-ARIA spec §aria-current)*
 - Validate the current step before advancing and show inline errors *(Carbon, Atlassian)*
-- Label Back/Next/Submit buttons explicitly — not icons or chevrons *(Material 3, Carbon, Mantine)*
+- Label Back/Next/Submit buttons explicitly - not icons or chevrons *(Material 3, Carbon, Mantine)*
 
 ### Don't
-- Don't use `role="tablist"` for steps — tabs allow free navigation; wizard steps are ordered and gated *(diverges from all 4 systems)*
-- Don't allow jumping to future unvisited steps in linear mode — breaks the sequential contract *(Carbon, Atlassian)*
-- Don't use `aria-selected` on steps — `aria-current="step"` is the correct token *(WAI-ARIA spec)*
-- Don't omit the Back button — users must be able to correct previous steps *(Material 3, Atlassian)*
+- Don't use `role="tablist"` for steps - tabs allow free navigation; wizard steps are ordered and gated *(diverges from all 4 systems)*
+- Don't allow jumping to future unvisited steps in linear mode - breaks the sequential contract *(Carbon, Atlassian)*
+- Don't use `aria-selected` on steps - `aria-current="step"` is the correct token *(WAI-ARIA spec)*
+- Don't omit the Back button - users must be able to correct previous steps *(Material 3, Atlassian)*
 
 ---
 
@@ -158,8 +158,8 @@ Cross-link: `reference/motion.md` — reduced-motion: skip slide; cross-fade con
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-14 | Stepper using role="tablist" — semantically incorrect navigation model — `reference/anti-patterns.md#ban-14` |
-| BAN-07 | Missing aria-current on active step — `reference/anti-patterns.md#ban-07` |
+| BAN-14 | Stepper using role="tablist" - semantically incorrect navigation model - `reference/anti-patterns.md#ban-14` |
+| BAN-07 | Missing aria-current on active step - `reference/anti-patterns.md#ban-07` |
 
 ---
 
@@ -215,6 +215,6 @@ grep -rn 'wizard.*next\|stepper.*next\|wizard.*back\|stepper.*back' src/ | grep 
 </ul>
 ```
 
-**Why it fails**: `role="tablist"` implies that all tabs are independently activatable and content switches freely — this is correct for Tabs but wrong for a wizard where steps are gated. AT users expect arrow-key navigation between tabs; in a wizard this would allow jumping to uncompleted future steps. `aria-selected` is the tab token; the correct token for a wizard is `aria-current="step"`.
+**Why it fails**: `role="tablist"` implies that all tabs are independently activatable and content switches freely - this is correct for Tabs but wrong for a wizard where steps are gated. AT users expect arrow-key navigation between tabs; in a wizard this would allow jumping to uncompleted future steps. `aria-selected` is the tab token; the correct token for a wizard is `aria-current="step"`.
 **Grep detection**: `grep -rn 'role="tablist"' src/ | grep -i 'step\|wizard'`
 **Fix**: Replace `<ul role="tablist">` with `<ol role="list">` (ordered list signals sequence), each `<li>` with `role="listitem"`, remove `aria-selected`, and add `aria-current="step"` to the current step. Make only completed steps keyboard-focusable (as `<button>`) in non-linear mode; upcoming steps are not interactive.

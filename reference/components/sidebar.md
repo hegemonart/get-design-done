@@ -1,4 +1,4 @@
-# Sidebar (Collapsible Side Navigation Panel) — Benchmark Spec
+# Sidebar (Collapsible Side Navigation Panel) - Benchmark Spec
 
 **Harvested from**: Material 3, Carbon, Polaris, Atlassian, UUPM (app-interface, MIT)
 **Wave**: 4 · **Category**: Navigation
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A sidebar provides persistent or collapsible secondary navigation along the vertical axis of an application. In expanded state it shows icon + label; in collapsed state it shows icon only (with a tooltip). It is distinct from a Drawer (which is a modal overlay — see `drawer.md`) and from a Navbar (primary horizontal navigation). Use a sidebar for application-level section switching and hierarchical settings navigation. *(Material 3 Navigation Drawer, Carbon UI Shell Left Nav, Atlassian SideNavigation, Polaris Navigation agree)*
+A sidebar provides persistent or collapsible secondary navigation along the vertical axis of an application. In expanded state it shows icon + label; in collapsed state it shows icon only (with a tooltip). It is distinct from a Drawer (which is a modal overlay - see `drawer.md`) and from a Navbar (primary horizontal navigation). Use a sidebar for application-level section switching and hierarchical settings navigation. *(Material 3 Navigation Drawer, Carbon UI Shell Left Nav, Atlassian SideNavigation, Polaris Navigation agree)*
 
 ---
 
@@ -59,9 +59,9 @@ A sidebar provides persistent or collapsible secondary navigation along the vert
 |-------|---------|--------|------|
 | expanded | default or toggle | Full width, labels visible | `aria-expanded="true"` on toggle |
 | collapsed | toggle click | Icon-only, labels hidden | `aria-expanded="false"` on toggle |
-| item-default | — | Resting fill | — |
-| item-hover | pointer over | 8% overlay | — |
-| item-focus | keyboard focus | 2px focus-visible ring | — |
+| item-default | - | Resting fill | - |
+| item-hover | pointer over | 8% overlay | - |
+| item-focus | keyboard focus | 2px focus-visible ring | - |
 | item-active | current route | Filled pill or left indicator bar | `aria-current="page"` |
 | subsection-open | button click | Children visible; chevron rotated 180° | `aria-expanded="true"` on section button |
 | subsection-closed | button click | Children hidden | `aria-expanded="false"` on section button |
@@ -74,7 +74,7 @@ A sidebar provides persistent or collapsible secondary navigation along the vert
 |-------|-------|-------------|----------------|
 | Expanded | 240–280px | 40px | 16px |
 | Collapsed | 48–64px | 40px | 12px (centered icon) |
-| Sub-item indent | — | 36px | 32px (16px base + 16px indent) |
+| Sub-item indent | - | 36px | 32px (16px base + 16px indent) |
 
 **Norm**: 240px expanded width (Carbon, Atlassian, Polaris). 40px item height matches button defaults.
 
@@ -84,10 +84,10 @@ A sidebar provides persistent or collapsible secondary navigation along the vert
 
 - Nav item label: body-sm (13–14px), weight 400; active item weight 500 or 600
 - Sub-section heading (if present): label-xs (11–12px), uppercase, weight 600, `color: --text-subtle`
-- Tooltip: body-xs (11–12px) — concise, matches item label exactly in collapsed state
-- Never truncate nav item labels — resize the sidebar or abbreviate the label intentionally
+- Tooltip: body-xs (11–12px) - concise, matches item label exactly in collapsed state
+- Never truncate nav item labels - resize the sidebar or abbreviate the label intentionally
 
-Cross-link: `reference/typography.md` — label scale, body-sm
+Cross-link: `reference/typography.md` - label scale, body-sm
 
 ---
 
@@ -98,7 +98,7 @@ Cross-link: `reference/typography.md` — label scale, body-sm
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -116,7 +116,7 @@ Cross-link: `reference/typography.md` — label scale, body-sm
 - In collapsed state, each icon-only item MUST have a tooltip AND `aria-label` (tooltip is not a substitute for accessible name)
 - `aria-current="page"` MUST be present on the currently active item
 
-Cross-link: `reference/accessibility.md` — landmark labelling, disclosure pattern
+Cross-link: `reference/accessibility.md` - landmark labelling, disclosure pattern
 
 ---
 
@@ -130,9 +130,9 @@ Cross-link: `reference/accessibility.md` — landmark labelling, disclosure patt
 | Chevron rotate | 150ms | ease-in-out | 0° → 180° on open |
 | Label fade in | 100ms | ease-out | Delay until width ≥ 140px to prevent overlap |
 
-**BAN**: Animating sidebar width using `transition: all` — catches unrelated property changes and causes jank.
+**BAN**: Animating sidebar width using `transition: all` - catches unrelated property changes and causes jank.
 
-Cross-link: `reference/motion.md` — layout transitions, BAN-04
+Cross-link: `reference/motion.md` - layout transitions, BAN-04
 
 ---
 
@@ -145,7 +145,7 @@ Cross-link: `reference/motion.md` — layout transitions, BAN-04
 - Use `aria-expanded` on sub-section toggles *(WAI-ARIA APG disclosure pattern)*
 
 ### Don't
-- Don't use `<a href="#">` for items that don't navigate — breaks bookmark/open-in-new-tab expectations *(Carbon, WAI-ARIA)*
+- Don't use `<a href="#">` for items that don't navigate - breaks bookmark/open-in-new-tab expectations *(Carbon, WAI-ARIA)*
 - Don't hide sub-items with `display: none` without also removing them from tab order *(WCAG 2.1.1)*
 - Don't use the same `aria-label` on both sidebar nav and top navbar *(WAI-ARIA landmark uniqueness)*
 - Don't collapse the sidebar below 44px touch target width on mobile *(WCAG 2.5.5)*
@@ -156,7 +156,7 @@ Cross-link: `reference/motion.md` — layout transitions, BAN-04
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on interactive elements — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on interactive elements - `reference/anti-patterns.md#ban-04` |
 
 ---
 

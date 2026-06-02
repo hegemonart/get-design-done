@@ -1,4 +1,4 @@
-# AI-Native Design Tool Interface — Capability Contract
+# AI-Native Design Tool Interface - Capability Contract
 
 This file defines the capability-based contract that AI-native design tools must implement to integrate with the get-design-done pipeline. Two sub-categories are defined: **canvas** and **component-generator**. Future tools implement one sub-category and plug in via the same probe/read/write or probe/generate/adopt surface.
 
@@ -26,8 +26,8 @@ write(proposal) → { confirmed | rejected }
 ```
 
 **Implementations:**
-- `connections/paper-design.md` — MCP-based; 24-tool server; budget: 100 calls/week (free)
-- `connections/pencil-dev.md` — file-based; `.pen` YAML spec files; git-tracked; no MCP
+- `connections/paper-design.md` - MCP-based; 24-tool server; budget: 100 calls/week (free)
+- `connections/pencil-dev.md` - file-based; `.pen` YAML spec files; git-tracked; no MCP
 
 **Pipeline stages:** `explore` (read) + `verify` (screenshot) + `design` (write via writer agent)
 
@@ -53,8 +53,8 @@ adopt(variant: object) → { confirmed | rejected }
 ```
 
 **Implementations:**
-- `connections/21st-dev.md` — Magic MCP; `npx @21st-dev/magic@latest init`; marketplace prior-art gate
-- `connections/magic-patterns.md` — Claude connector (`mcp__magic_patterns*`) + API key fallback; DS-aware generation
+- `connections/21st-dev.md` - Magic MCP; `npx @21st-dev/magic@latest init`; marketplace prior-art gate
+- `connections/magic-patterns.md` - Claude connector (`mcp__magic_patterns*`) + API key fallback; DS-aware generation
 
 **Pipeline stages:** `explore` (prior-art gate for 21st.dev) + `design` (generate + adopt)
 

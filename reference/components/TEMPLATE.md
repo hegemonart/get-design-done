@@ -1,4 +1,4 @@
-# [Component Name] — Benchmark Spec
+# [Component Name] - Benchmark Spec
 
 > **Template version**: 1.0 (Phase 16)
 > Replace every placeholder in `[brackets]`. Delete this block before committing.
@@ -55,10 +55,10 @@ distinguishes it visually/behaviorally.]
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | [description] | — |
-| hover | pointer over | [description] | — |
-| focus | keyboard focus | focus-visible ring | — |
-| active / pressed | mousedown / Space/Enter | [description] | — |
+| default | - | [description] | - |
+| hover | pointer over | [description] | - |
+| focus | keyboard focus | focus-visible ring | - |
+| active / pressed | mousedown / Space/Enter | [description] | - |
 | disabled | `disabled` attr | [description] | `aria-disabled="true"` |
 | loading | [if applicable] | [description] | `aria-busy="true"` |
 | error | [if applicable] | [description] | `aria-invalid="true"` |
@@ -84,7 +84,7 @@ for typographic and radius rules.]
 
 [Any typographic constraints: weight, size relative to body, line-height cap, truncation rules.]
 
-Cross-link: `reference/typography.md` — [relevant section]
+Cross-link: `reference/typography.md` - [relevant section]
 
 ---
 
@@ -95,7 +95,7 @@ Cross-link: `reference/typography.md` — [relevant section]
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — [pattern URL] — W3C — [access date]*
+*Quoted verbatim from WAI-ARIA APG - [pattern URL] - W3C - [access date]*
 
 | Key | Action |
 |-----|--------|
@@ -103,11 +103,11 @@ Cross-link: `reference/typography.md` — [relevant section]
 
 ### Accessibility Rules
 
-- [Rule 1 — e.g., must have visible label or `aria-label`]
-- [Rule 2 — e.g., focus-visible ring must not be suppressed]
-- [Rule 3 — e.g., disabled state uses `aria-disabled`, not `disabled` attr, if interactive]
+- [Rule 1 - e.g., must have visible label or `aria-label`]
+- [Rule 2 - e.g., focus-visible ring must not be suppressed]
+- [Rule 3 - e.g., disabled state uses `aria-disabled`, not `disabled` attr, if interactive]
 
-Cross-link: `reference/accessibility.md` — [relevant section]
+Cross-link: `reference/accessibility.md` - [relevant section]
 
 ---
 
@@ -121,7 +121,7 @@ Cross-link: `reference/accessibility.md` — [relevant section]
 
 **BAN**: [any motion anti-patterns specific to this component]
 
-Cross-link: `reference/motion.md` — [relevant section]
+Cross-link: `reference/motion.md` - [relevant section]
 
 ---
 
@@ -143,7 +143,7 @@ Cross-link: `reference/motion.md` — [relevant section]
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| [BAN-XX] | [brief name] — `reference/anti-patterns.md#ban-xx` |
+| [BAN-XX] | [brief name] - `reference/anti-patterns.md#ban-xx` |
 
 ---
 

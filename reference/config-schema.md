@@ -118,7 +118,7 @@ Stages are the only code that read `.design/config.json`. When spawning an agent
 2. Injects it into the agent prompt (e.g., `model_profile: balanced`) so the agent can reason about its own budget.
 3. Selects the concrete model per the profile table above and passes it to the `Task` tool.
 
-Agents never read config directly — the profile is always injected at spawn time.
+Agents never read config directly - the profile is always injected at spawn time.
 
 ## .design/budget.json Schema (Phase 10.1)
 
@@ -205,17 +205,17 @@ Resolution order for the per-spawn cap:
 1. If `complexity_class` is in `tool_input.context.router_decision` AND `class_caps_usd[class]` is a positive finite number → use it.
 2. Otherwise → use `per_task_cap_usd`.
 
-Class `S` is special: when `complexity_class === "S"` is supplied to the hook, enforcement is skipped entirely (no cap check, no auto-downgrade) — class-S commands typically short-circuit the router upstream so this hook never runs at all; the explicit S handling is the defensive path. See `skills/router/SKILL.md` for the canonical `S → fast (short-circuited)`, `M → fast`, `L → quick`, `XL → full` mapping.
+Class `S` is special: when `complexity_class === "S"` is supplied to the hook, enforcement is skipped entirely (no cap check, no auto-downgrade) - class-S commands typically short-circuit the router upstream so this hook never runs at all; the explicit S handling is the defensive path. See `skills/router/SKILL.md` for the canonical `S → fast (short-circuited)`, `M → fast`, `L → quick`, `XL → full` mapping.
 
-`per_phase_cap_usd` is unchanged by this field — phase-cumulative enforcement always uses the global per-phase cap regardless of class.
+`per_phase_cap_usd` is unchanged by this field - phase-cumulative enforcement always uses the global per-phase cap regardless of class.
 
 ## Bootstrap behavior
 
-If `.design/budget.json` is missing when any `/gdd:*` command runs, `scripts/bootstrap.sh` writes the Default Config values (per D-12). Don't block the spawn — defaults are sensible.
+If `.design/budget.json` is missing when any `/gdd:*` command runs, `scripts/bootstrap.sh` writes the Default Config values (per D-12). Don't block the spawn - defaults are sensible.
 
 ## .design/telemetry/costs.jsonl + .design/agent-metrics.json (Phase 10.1)
 
-Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.js` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.ts` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory — they are local session state, not committed.
+Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.js` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.ts` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory - they are local session state, not committed.
 
 ### .design/telemetry/costs.jsonl
 
@@ -239,21 +239,21 @@ Append-only ledger. One JSON object per line. Written by `hooks/budget-enforcer.
 
 **Extra diagnostic fields** (optional; Phase 11 reflector ignores unknown fields gracefully):
 
-- `tier_downgraded: <bool>` — set when soft-threshold downgrade fired (D-03).
-- `enforcement_mode: <"enforce" | "warn" | "log">` — mirrors `.design/budget.json.enforcement_mode` at the time of decision.
-- `lazy_skipped: <bool>` — set when plan 10.1-04 gate agent declined to spawn the full checker.
-- `block_reason: <"per_task_cap" | "per_phase_cap">` — set when hook blocked the spawn.
+- `tier_downgraded: <bool>` - set when soft-threshold downgrade fired (D-03).
+- `enforcement_mode: <"enforce" | "warn" | "log">` - mirrors `.design/budget.json.enforcement_mode` at the time of decision.
+- `lazy_skipped: <bool>` - set when plan 10.1-04 gate agent declined to spawn the full checker.
+- `block_reason: <"per_task_cap" | "per_phase_cap">` - set when hook blocked the spawn.
 
 **Guarantees:**
 
-- Writes are `fs.appendFileSync` — OS-level atomic per line.
+- Writes are `fs.appendFileSync` - OS-level atomic per line.
 - The file is **never truncated or rotated** by the hook in v1. Log rotation is a Phase 12 concern.
-- Consumers must be tolerant of malformed lines (partial writes from crashed processes) — skip-and-continue is the canonical pattern.
-- Rows log only token counts, agent name, tier, cost, cycle, phase. **No prompt or response content is logged** — the schema is information-disclosure-safe by construction.
+- Consumers must be tolerant of malformed lines (partial writes from crashed processes) - skip-and-continue is the canonical pattern.
+- Rows log only token counts, agent name, tier, cost, cycle, phase. **No prompt or response content is logged** - the schema is information-disclosure-safe by construction.
 
 ### .design/agent-metrics.json
 
-Per-agent aggregate derived from `costs.jsonl` by `scripts/aggregate-agent-metrics.ts`. Written atomically via tmp-file + rename. Overwritten in full on every refresh — not append-only. Consumers should treat it as a snapshot.
+Per-agent aggregate derived from `costs.jsonl` by `scripts/aggregate-agent-metrics.ts`. Written atomically via tmp-file + rename. Overwritten in full on every refresh - not append-only. Consumers should treat it as a snapshot.
 
 **Schema:**
 
@@ -279,8 +279,8 @@ Per-agent aggregate derived from `costs.jsonl` by `scripts/aggregate-agent-metri
 
 **Field sources:**
 
-- `typical_duration_seconds`, `default_tier`, `parallel_safe`, `reads_only` — read from `agents/{agent}.md` frontmatter (kebab-case in the markdown; re-keyed to snake_case in JSON). Null if the agent file is absent or the field is missing.
-- `total_spawns`, `total_cost_usd`, `total_tokens_in`, `total_tokens_out` — summed across all `costs.jsonl` rows for this agent.
+- `typical_duration_seconds`, `default_tier`, `parallel_safe`, `reads_only` - read from `agents/{agent}.md` frontmatter (kebab-case in the markdown; re-keyed to snake_case in JSON). Null if the agent file is absent or the field is missing.
+- `total_spawns`, `total_cost_usd`, `total_tokens_in`, `total_tokens_out` - summed across all `costs.jsonl` rows for this agent.
 - `cache_hit_rate = cache_hits / total_spawns` (clamped when total_spawns = 0).
 - `lazy_skip_rate = lazy_skips / total_spawns` (same).
 
@@ -292,11 +292,11 @@ Both files sit inside `.design/`, which is already `.gitignore`d at the project 
 
 ### Refresh cadence
 
-The aggregator is invoked as a detached child process by `hooks/budget-enforcer.js` after every telemetry row write. It is also invoked directly by `/gdd:optimize` before analysis. There is no cron, no daemon, and no scheduled task — metrics are always at most one spawn stale.
+The aggregator is invoked as a detached child process by `hooks/budget-enforcer.js` after every telemetry row write. It is also invoked directly by `/gdd:optimize` before analysis. There is no cron, no daemon, and no scheduled task - metrics are always at most one spawn stale.
 
 ## .design/cache-manifest.json Schema (Phase 10.1)
 
-Authored and maintained by `skills/cache-manager/SKILL.md`. Read by `hooks/budget-enforcer.js` (PreToolUse on Agent spawns) for short-circuiting cached spawns per D-05. Layer B of the D-08 two-layer cache. Flat KV shape — keys are SHA-256 hex of the deterministic input-hash, values are entry objects. Schema version 1.
+Authored and maintained by `skills/cache-manager/SKILL.md`. Read by `hooks/budget-enforcer.js` (PreToolUse on Agent spawns) for short-circuiting cached spawns per D-05. Layer B of the D-08 two-layer cache. Flat KV shape - keys are SHA-256 hex of the deterministic input-hash, values are entry objects. Schema version 1.
 
 ## Full Schema
 
@@ -333,28 +333,28 @@ Authored and maintained by `skills/cache-manager/SKILL.md`. Read by `hooks/budge
 
 ### `agent`
 
-String — the `agents/<name>.md` basename without extension (e.g., `design-verifier`). Human-readable debug aid; not load-bearing for lookup.
+String - the `agents/<name>.md` basename without extension (e.g., `design-verifier`). Human-readable debug aid; not essential for lookup.
 
 ### `result`
 
-String — either (a) a base64-encoded blob (for small results, typically < 16KB), or (b) a filesystem path under `.design/cache-blobs/<sha-prefix>.md` for larger results. Writers choose based on size; readers handle both transparently.
+String - either (a) a base64-encoded blob (for small results, typically < 16KB), or (b) a filesystem path under `.design/cache-blobs/<sha-prefix>.md` for larger results. Writers choose based on size; readers handle both transparently.
 
 ### `written_at`
 
-String — ISO-8601 UTC timestamp at write time. Produced by `new Date().toISOString()`.
+String - ISO-8601 UTC timestamp at write time. Produced by `new Date().toISOString()`.
 
 ### `ttl_seconds`
 
-Integer — copied from `.design/budget.json.cache_ttl_seconds` at write time (default 3600). Preserved in the entry so a later budget.json change does not retroactively invalidate or extend existing entries.
+Integer - copied from `.design/budget.json.cache_ttl_seconds` at write time (default 3600). Preserved in the entry so a later budget.json change does not retroactively invalidate or extend existing entries.
 
 ### `expires_at`
 
-String — ISO-8601 UTC timestamp equal to `written_at + ttl_seconds`. Precomputed at write time; readers never recompute. Stale entries (`Date.now() > expires_at`) are treated as misses.
+String - ISO-8601 UTC timestamp equal to `written_at + ttl_seconds`. Precomputed at write time; readers never recompute. Stale entries (`Date.now() > expires_at`) are treated as misses.
 
 ## TTL semantics
 
 - TTL default source: `.design/budget.json.cache_ttl_seconds` (default 3600s = 1 hour, per Plan 10.1-01 schema).
-- TTL is copied into each entry at write time — **not** recomputed on read. Budget.json changes do not retroactively affect existing entries.
+- TTL is copied into each entry at write time - **not** recomputed on read. Budget.json changes do not retroactively affect existing entries.
 - `expires_at` = `written_at + ttl_seconds`, computed once, stored in the entry.
 - Stale entries are **not** actively purged (lazy cleanup): they remain in the file until overwritten by a new write with the same key, or pruned manually. A proactive reaper is out of v1 scope.
 - Readers (`hooks/budget-enforcer.js`) check `Date.now() / 1000 > Date.parse(expires_at) / 1000`; if true, return miss.
@@ -362,43 +362,43 @@ String — ISO-8601 UTC timestamp equal to `written_at + ttl_seconds`. Precomput
 ## Read/Write contract
 
 - **Single writer**: `skills/cache-manager/SKILL.md` Phase 4 (`write-result-on-completion`). Other code must not write this file directly.
-- **Multiple readers**: `hooks/budget-enforcer.js`, any orchestrator that runs Phase 2 (`lookup`) for dry-run planning. Readers treat malformed JSON as "manifest absent" (empty cache) — do not throw.
+- **Multiple readers**: `hooks/budget-enforcer.js`, any orchestrator that runs Phase 2 (`lookup`) for dry-run planning. Readers treat malformed JSON as "manifest absent" (empty cache) - do not throw.
 - **Concurrency**: Claude Code agent spawns are serialized at the hook level (PreToolUse is synchronous). No file locking is needed at v1 scale. Concurrent writes from parallel orchestrators are theoretically possible but exceedingly rare; last-writer-wins is acceptable (cache miss on next read re-populates).
 
 ## Bootstrap behavior
 
-If `.design/cache-manifest.json` is missing when `hooks/budget-enforcer.js` reads it, the hook treats every lookup as a miss and the spawn proceeds normally. No bootstrap action is required — the manifest is created lazily on first successful spawn when `skills/cache-manager/SKILL.md` Phase 4 fires. Unlike `.design/budget.json`, missing cache-manifest.json is the **correct** initial state on a fresh repo.
+If `.design/cache-manifest.json` is missing when `hooks/budget-enforcer.js` reads it, the hook treats every lookup as a miss and the spawn proceeds normally. No bootstrap action is required - the manifest is created lazily on first successful spawn when `skills/cache-manager/SKILL.md` Phase 4 fires. Unlike `.design/budget.json`, missing cache-manifest.json is the **correct** initial state on a fresh repo.
 
 ## Cross-references
 
-- `skills/cache-manager/SKILL.md` — producer; documents the four-phase contract.
-- `hooks/budget-enforcer.js` (Plan 10.1-01) — reader; short-circuits spawns on hit.
-- `.design/budget.json` — provides `cache_ttl_seconds` default.
-- `.design/telemetry/costs.jsonl` (Plan 10.1-05) — records `cache_hit: true` rows with zero tokens and zero cost when the short-circuit fires.
-- D-05, D-08, D-09 in `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` — decision lineage.
+- `skills/cache-manager/SKILL.md` - producer; documents the four-phase contract.
+- `hooks/budget-enforcer.js` (Plan 10.1-01) - reader; short-circuits spawns on hit.
+- `.design/budget.json` - provides `cache_ttl_seconds` default.
+- `.design/telemetry/costs.jsonl` (Plan 10.1-05) - records `cache_hit: true` rows with zero tokens and zero cost when the short-circuit fires.
+- D-05, D-08, D-09 in `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` - decision lineage.
 
 ## Team collaboration (Phase 40)
 
-Three optional top-level `.design/config.json` keys enable team mode. All are absent/off by default —
+Three optional top-level `.design/config.json` keys enable team mode. All are absent/off by default -
 single-operator projects are unaffected. Full contract: `reference/multi-author-model.md`.
 
-- **`gdd_cycle_mode`** (`designer` | `dev` | `full`, default `full`) — sectional handoff. `designer`
+- **`gdd_cycle_mode`** (`designer` | `dev` | `full`, default `full`) - sectional handoff. `designer`
   permits Brief + Explore writes; `dev` permits Plan + Design + Verify; `full` = all stages.
   `scripts/lib/collab/cycle-mode.cjs` `stagePermitted(mode, stage)` gates STATE writes by stage.
-- **`permissions`** — per-section write permissions (`scripts/lib/collab/permissions.cjs`). Permissive
+- **`permissions`** - per-section write permissions (`scripts/lib/collab/permissions.cjs`). Permissive
   by default (absent = everyone `owner`). Shape: `{ default, actors: {<actor>: <role>}, rules:
   [{section, action, roles}] }`, roles in `owner|contributor|reviewer|viewer`. A rule restricts a
   `(section, action)` to its listed roles; an unruled pair is allowed. `viewer` never mutates. A CI
   gate calls `can(config, actor, section, action)` to enforce on PRs.
-- **`collab`** — `{ multi_writer_enabled (bool), lock_timeout_ms (int), sync_backend
+- **`collab`** - `{ multi_writer_enabled (bool), lock_timeout_ms (int), sync_backend
   (git|s3|git-lfs) }`. `multi_writer_enabled: true` switches the gdd-state advisory lock to the
-  team-mode policy (`scripts/lib/collab/lock-policy.cjs` — 30 s wait + 100 ms backoff);
+  team-mode policy (`scripts/lib/collab/lock-policy.cjs` - 30 s wait + 100 ms backoff);
   `sync_backend` selects the cross-machine `.design/` backend (`scripts/lib/collab/sync-backend.cjs`,
-  default `git`; `s3`/`git-lfs` are opt-in declarations — a live client is not bundled this phase).
+  default `git`; `s3`/`git-lfs` are opt-in declarations - a live client is not bundled this phase).
 
 ## CLI localization (Phase 40.5)
 
-- **`locale`** (`en`|`ru`|`uk`|`de`|`fr`|`zh`|`ja`) — overrides the language of GDD's own `--help`,
+- **`locale`** (`en`|`ru`|`uk`|`de`|`fr`|`zh`|`ja`) - overrides the language of GDD's own `--help`,
   common error messages, and skill prompt headers. Set via `/gdd:locale <code>`. Precedence: this key >
   env `LANG`/`LC_ALL` > `en`. Missing message keys fall back to English (`scripts/lib/i18n/index.cjs`,
   chain `locale → base → en`); `en` + `ru` are complete, the other five are placeholders. Full

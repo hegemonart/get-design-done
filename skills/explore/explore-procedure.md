@@ -7,8 +7,8 @@ tags: [explore, procedure, extracted, pipeline-stage, connection-probe, design-i
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/explore/SKILL.md` (Phase 28.5 rework — D-10 extract-then-link).
-The skill's load-bearing workflow stays in `../skills/explore/SKILL.md`; this file holds the
+Source: extracted from `skills/explore/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+The skill's essential workflow stays in `../skills/explore/SKILL.md`; this file holds the
 detail the agent reaches for when executing a specific step (six connection probes, 21st.dev
 prior-art check, inventory scan grep, design interview protocol, i18n probe, decision
 recording).
@@ -17,26 +17,26 @@ recording).
 
 Detailed procedure for the get-design-done `explore` Stage 2 orchestrator. Companion to
 `../skills/explore/SKILL.md`. Read this file when executing a specific step; the SKILL.md
-keeps the load-bearing workflow + decision tree, this file holds the deep methodology.
+keeps the essential workflow + decision tree, this file holds the deep methodology.
 
 ---
 
 ## Stage entry
 
-All STATE.md persistence in this skill goes through `gdd-state` MCP tools — no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
+All STATE.md persistence in this skill goes through `gdd-state` MCP tools - no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
 
 1. Call `mcp__gdd_state__transition_stage` with `to: "explore"`.
    - On success: proceed to probes.
    - On gate failure: emit blockers to the user (do not advance). Each blocker is a line in the `error.context.blockers` array; print them verbatim.
-2. Call `mcp__gdd_state__get` with no arguments — snapshot the parsed state into a local `state` variable for downstream steps.
+2. Call `mcp__gdd_state__get` with no arguments - snapshot the parsed state into a local `state` variable for downstream steps.
 
 ---
 
-## Step 1 — Connection probe
+## Step 1 - Connection probe
 
-Probe connection availability (the batched write lands at the end of this step — see "Commit probe results" below):
+Probe connection availability (the batched write lands at the end of this step - see "Commit probe results" below):
 
-**A — Figma probe (variant-agnostic):**
+**A - Figma probe (variant-agnostic):**
 ```
 ToolSearch({ query: "figma get_metadata use_figma", max_results: 10 })
 Parse tool names matching /^mcp__([^_]*figma[^_]*)__(get_metadata|use_figma)$/i
@@ -52,35 +52,35 @@ Then call {prefix}get_metadata:
   error   -> figma: unavailable
 ```
 
-**B — Refero probe:**
+**B - Refero probe:**
 ```
 ToolSearch({ query: "refero", max_results: 5 })
 Empty -> refero: not_configured
 Non-empty -> refero: available
 ```
 
-**C — 21st.dev probe:**
+**C - 21st.dev probe:**
 ```
 ToolSearch({ query: "mcp__21st", max_results: 5 })
 Empty -> 21st-dev: not_configured
 Non-empty -> 21st-dev: available
 ```
 
-**D — Magic Patterns probe:**
+**D - Magic Patterns probe:**
 ```
 ToolSearch({ query: "mcp__magic_patterns", max_results: 5 })
 Empty -> magic-patterns: not_configured
 Non-empty -> magic-patterns: available
 ```
 
-**E — paper.design probe:**
+**E - paper.design probe:**
 ```
 ToolSearch({ query: "mcp__paper", max_results: 5 })
 Empty -> paper-design: not_configured
 Non-empty -> call mcp__paper-design__get_selection; success -> available; error -> unavailable
 ```
 
-**F — pencil.dev probe (file-based):**
+**F - pencil.dev probe (file-based):**
 ```bash
 find . -name "*.pen" -not -path "*/node_modules/*" 2>/dev/null | head -1
 Empty -> pencil-dev: not_configured
@@ -91,7 +91,7 @@ Found -> pencil-dev: available
 
 After all probes complete, commit results in a single call:
 
-`mcp__gdd_state__probe_connections` with `probe_results` = an array of `{ name, status }` entries — one per probed connection. Example:
+`mcp__gdd_state__probe_connections` with `probe_results` = an array of `{ name, status }` entries - one per probed connection. Example:
 
 ```json
 {
@@ -103,9 +103,9 @@ After all probes complete, commit results in a single call:
 }
 ```
 
-Unspecified connections keep their existing value. Do NOT issue multiple `probe_connections` calls — the tool is designed for a single batch write per stage.
+Unspecified connections keep their existing value. Do NOT issue multiple `probe_connections` calls - the tool is designed for a single batch write per stage.
 
-## Step 1.5 — 21st.dev Prior-Art Check (when 21st-dev: available)
+## Step 1.5 - 21st.dev Prior-Art Check (when 21st-dev: available)
 
 If `state.connections.21st-dev === "not_configured"` (from the snapshot captured at stage entry): skip this step entirely.
 
@@ -131,7 +131,7 @@ If no greenfield components in scope: skip this step.
 
 ---
 
-## Step 2 — Inventory scan (unless `--skip-scan`)
+## Step 2 - Inventory scan (unless `--skip-scan`)
 
 **Map pre-check:** If `.design/map/` exists and all 5 files (`tokens.md`, `components.md`, `visual-hierarchy.md`, `a11y.md`, `motion.md`) are present AND fresher than `src/` (mtime), consume them as the inventory source and skip the grep pass. Otherwise proceed with grep below and, after Step 4, suggest running `/gdd:map` for richer parallel-scanned data on the next cycle.
 
@@ -143,22 +143,22 @@ If no greenfield components in scope: skip this step.
 
 Run the canonical scan grep/glob inventory (preserves PLAT-01/02 POSIX ERE patterns from Phase 1):
 
-- **Component detection** — `Glob` for `**/*.{tsx,jsx,vue,svelte}`; count exports, identify shared UI primitives.
-- **Color extraction** — `Grep` for hex (`#[0-9a-fA-F]{3,8}`), `rgb(`, `hsl(`, Tailwind arbitrary color classes; dedupe.
-- **Typography scan** — Grep font-family declarations, Tailwind `font-*`, `text-*` size classes; identify type scale.
-- **Motion scan** — Grep `transition`, `animate-`, `@keyframes`, `framer-motion` imports.
-- **Token detection** — Check for `tailwind.config.{js,cjs,mjs,ts}`, CSS custom properties (`--*`), design-token JSON.
-- **Layout detection** — Ordered fallback: `src/` -> `app/` -> `pages/` -> `lib/` -> unknown.
+- **Component detection** - `Glob` for `**/*.{tsx,jsx,vue,svelte}`; count exports, identify shared UI primitives.
+- **Color extraction** - `Grep` for hex (`#[0-9a-fA-F]{3,8}`), `rgb(`, `hsl(`, Tailwind arbitrary color classes; dedupe.
+- **Typography scan** - Grep font-family declarations, Tailwind `font-*`, `text-*` size classes; identify type scale.
+- **Motion scan** - Grep `transition`, `animate-`, `@keyframes`, `framer-motion` imports.
+- **Token detection** - Check for `tailwind.config.{js,cjs,mjs,ts}`, CSS custom properties (`--*`), design-token JSON.
+- **Layout detection** - Ordered fallback: `src/` -> `app/` -> `pages/` -> `lib/` -> unknown.
 
 Write findings to:
-- `.design/DESIGN.md` — current design system inventory + baseline score
-- `.design/DESIGN-DEBT.md` — prioritized debt roadmap
+- `.design/DESIGN.md` - current design system inventory + baseline score
+- `.design/DESIGN-DEBT.md` - prioritized debt roadmap
 
 Record scan progress: call `mcp__gdd_state__update_progress` with `task_progress: "<completed>/<total>"` to reflect the scan pass.
 
-### Step 2.x — i18n readiness probe (informational)
+### Step 2.x - i18n readiness probe (informational)
 
-Phase 28 D-04 probe — 3-state classification, **informational only**. NO gate, NO blocking, NO required-action. Output appears as a single line in the explore report.
+Phase 28 D-04 probe - 3-state classification, **informational only**. NO gate, NO blocking, NO required-action. Output appears as a single line in the explore report.
 
 Classification logic (matches `./reference/i18n.md` §Explore Integration Spec):
 
@@ -185,34 +185,34 @@ Output line in explore report (single informational line, per D-04):
 Localization readiness: framework-managed | partial | none
 ```
 
-(Exactly one of the three values, single line.) A consumer downstream (a planning agent, a roadmap reviewer, the user) can act on the signal if a gap is meaningful for the project, but the probe itself never forces a step — surface signal, do not bolt on a new pillar (D-07 orthogonal-lens discipline).
+(Exactly one of the three values, single line.) A consumer downstream (a planning agent, a roadmap reviewer, the user) can act on the signal if a gap is meaningful for the project, but the probe itself never forces a step - surface signal, do not bolt on a new pillar (D-07 orthogonal-lens discipline).
 
-## Step 2.5 — Detect prior sketches and project-local conventions
+## Step 2.5 - Detect prior sketches and project-local conventions
 
-**Sketches**: If `.design/sketches/` exists, list all sketch slugs — group by those with `WINNER.md` (completed wrap-ups) vs without (pending). Call `mcp__gdd_state__set_status` with a brief note (e.g., `status: "explore_sketches_present"`) so downstream stages see the history. Include the inventory in DESIGN.md under a "Prior Explorations" section.
+**Sketches**: If `.design/sketches/` exists, list all sketch slugs - group by those with `WINNER.md` (completed wrap-ups) vs without (pending). Call `mcp__gdd_state__set_status` with a brief note (e.g., `status: "explore_sketches_present"`) so downstream stages see the history. Include the inventory in DESIGN.md under a "Prior Explorations" section.
 
-**Project-local skills**: Read any `./.claude/skills/design-*-conventions.md` files if present. Include their content in DESIGN-CONTEXT.md under a `<project_conventions>` section — these are codified decisions from prior `/gdd:sketch-wrap-up` runs or manual edits, and they override defaults.
+**Project-local skills**: Read any `./.claude/skills/design-*-conventions.md` files if present. Include their content in DESIGN-CONTEXT.md under a `<project_conventions>` section - these are codified decisions from prior `/gdd:sketch-wrap-up` runs or manual edits, and they override defaults.
 
-**Global skills**: If `~/.claude/gdd/global-skills/` exists and contains `.md` files (other than README.md), read them and prepend their content to the `<project_conventions>` section under a `<global_conventions>` sub-block. Global skills represent cross-project personal conventions. They inform but do not override project-local decisions — when a project-local D-XX decision conflicts with a global skill, the project-local decision wins.
+**Global skills**: If `~/.claude/gdd/global-skills/` exists and contains `.md` files (other than README.md), read them and prepend their content to the `<project_conventions>` section under a `<global_conventions>` sub-block. Global skills represent cross-project personal conventions. They inform but do not override project-local decisions - when a project-local D-XX decision conflicts with a global skill, the project-local decision wins.
 
 ---
 
-## Step 3 — Design interview (unless `--skip-interview`)
+## Step 3 - Design interview (unless `--skip-interview`)
 
-**Run this inline — do NOT spawn `design-discussant` as a subagent.** Subagent UI tools (`AskUserQuestion`) only render the native picker when called from the top-level skill context; spawning a Task() degrades the interview to plain markdown in chat (broken in Claude Desktop).
+**Run this inline - do NOT spawn `design-discussant` as a subagent.** Subagent UI tools (`AskUserQuestion`) only render the native picker when called from the top-level skill context; spawning a Task() degrades the interview to plain markdown in chat (broken in Claude Desktop).
 
-### 3.a — Pre-load context
+### 3.a - Pre-load context
 
 Read in this order:
-1. `state.decisions` from the snapshot captured at stage entry — existing D-XX entries (do NOT re-ask anything covered). If the snapshot is stale, refresh by calling `mcp__gdd_state__get`.
-2. `.design/BRIEF.md` — problem statement, audience, constraints
-3. `.design/DESIGN.md` — auto-detected inventory from Step 2
-4. `.design/DESIGN-CONTEXT.md` if it exists — `<gray_areas>` block lists unresolved topics
-5. `./.claude/skills/design-*-conventions.md` if any — locked project conventions, treat as authoritative
+1. `state.decisions` from the snapshot captured at stage entry - existing D-XX entries (do NOT re-ask anything covered). If the snapshot is stale, refresh by calling `mcp__gdd_state__get`.
+2. `.design/BRIEF.md` - problem statement, audience, constraints
+3. `.design/DESIGN.md` - auto-detected inventory from Step 2
+4. `.design/DESIGN-CONTEXT.md` if it exists - `<gray_areas>` block lists unresolved topics
+5. `./.claude/skills/design-*-conventions.md` if any - locked project conventions, treat as authoritative
 
 If `state.connections` shows `figma: available`, read the resolved `prefix=` from the same entry and call `{prefix}get_variable_defs`, then draft tentative D-XX entries (mark `(tentative — confirm with user)`) before asking.
 
-### 3.b — Identify question set
+### 3.b - Identify question set
 
 Build the list of areas needing input. Skip any area already answered by an existing D-XX or covered by a project convention. Default coverage:
 
@@ -225,13 +225,13 @@ Build the list of areas needing input. Skip any area already answered by an exis
 - Motion preferences (only if no motion patterns detected)
 - Any `<gray_areas>` from DESIGN-CONTEXT.md
 
-### 3.c — Ask, one question at a time
+### 3.c - Ask, one question at a time
 
-For each area, call `AskUserQuestion` with a single focused question. Provide 4 concrete options plus "Other" / "Skip" where it helps. Do not batch questions into one call. Do not print the question as markdown — always go through the tool.
+For each area, call `AskUserQuestion` with a single focused question. Provide 4 concrete options plus "Other" / "Skip" where it helps. Do not batch questions into one call. Do not print the question as markdown - always go through the tool.
 
 Reject generic answers ("modern", "clean", "professional"). If the answer is vague, ask one follow-up before recording.
 
-### 3.d — Record after each answer
+### 3.d - Record after each answer
 
 After each confirmed answer:
 1. Call `mcp__gdd_state__add_decision` with the decision payload. The tool assigns the next `D-NN` id and persists atomically. Format the summary as:
@@ -243,18 +243,18 @@ After each confirmed answer:
    {"ts":"<iso>","question_id":"Q-NN","question_text":"<verbatim>","answer_summary":"<one sentence>","quality":"high|medium|low|skipped","evidence":"<why>","cycle":"<active-cycle-slug>"}
    ```
    Quality classification: `skipped` if user picked Skip / "doesn't matter"; `low` if < 10 words and not a specific value; `medium` if hedged ("maybe", "I think", "not sure"); `high` otherwise.
-3. `add_decision` commits incrementally — the decision survives a crash mid-interview without an explicit save step.
+3. `add_decision` commits incrementally - the decision survives a crash mid-interview without an explicit save step.
 
-### 3.e — Produce DESIGN-CONTEXT.md
+### 3.e - Produce DESIGN-CONTEXT.md
 
 When all questions are answered, write `.design/DESIGN-CONTEXT.md` summarizing the locked decisions, remaining gray areas, and any Figma-sourced tentatives that were confirmed or rejected. Set frontmatter `status: complete`.
 
 ---
 
-## Step 4 — Close out explore
+## Step 4 - Close out explore
 
 - If the synthesizer (or equivalent mapper batch) ran in Step 2, call `mcp__gdd_state__update_progress` with `task_progress: "<mappers-completed>/<mappers-total>"` and `status: "explore_mappers_done"` before advancing.
-- Call `mcp__gdd_state__checkpoint` — bumps `frontmatter.last_checkpoint` + appends a timestamp entry.
+- Call `mcp__gdd_state__checkpoint` - bumps `frontmatter.last_checkpoint` + appends a timestamp entry.
 - Stage advance to `plan` happens at the next stage's entry (the plan skill will transition from its own entry step); do not edit frontmatter directly from this skill.
 
 ## After Writing

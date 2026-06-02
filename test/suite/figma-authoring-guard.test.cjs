@@ -52,7 +52,7 @@ function classify(text, authorRes, decisionRes) {
 const body = fs.readFileSync(AGENT_PATH, 'utf8');
 
 test('figma-authoring-guard: agent body contains Step 0.5 section and redirect marker', () => {
-  assert.match(body, /## Step 0\.5 — Authoring-Intent Guard/);
+  assert.match(body, /## Step 0\.5 - Authoring-Intent Guard/);
   assert.match(body, /## FIGMA AUTHORING-INTENT REDIRECT/);
   assert.match(body, /figma:figma-generate-design/);
   assert.match(body, /reference\/figma-sandbox\.md/);
@@ -68,7 +68,7 @@ test('figma-authoring-guard: agent body cites 4 sandbox pitfalls', () => {
 test('figma-authoring-guard: pattern lists are parseable', () => {
   const authorEn = extractPatternList(body, '**Author-intent patterns (EN):**');
   const authorRu = extractPatternList(body, '**Author-intent patterns (RU):**');
-  const decisionEn = extractPatternList(body, "**Decision-intent patterns (EN) — these WIN over ambiguous author-intent:**");
+  const decisionEn = extractPatternList(body, "**Decision-intent patterns (EN) - these WIN over ambiguous author-intent:**");
   const decisionRu = extractPatternList(body, '**Decision-intent patterns (RU):**');
   assert.ok(authorEn.length >= 5, `author-intent EN patterns: ${authorEn.length}`);
   assert.ok(authorRu.length >= 3, `author-intent RU patterns: ${authorRu.length}`);
@@ -82,7 +82,7 @@ test('figma-authoring-guard: 5 author-intent fixtures (EN+RU) route to REDIRECT'
     ...extractPatternList(body, '**Author-intent patterns (RU):**'),
   ]);
   const decisionRes = compile([
-    ...extractPatternList(body, "**Decision-intent patterns (EN) — these WIN over ambiguous author-intent:**"),
+    ...extractPatternList(body, "**Decision-intent patterns (EN) - these WIN over ambiguous author-intent:**"),
     ...extractPatternList(body, '**Decision-intent patterns (RU):**'),
   ]);
   const fixtures = [
@@ -103,7 +103,7 @@ test('figma-authoring-guard: 5 decision-intent fixtures route to PROCEED', () =>
     ...extractPatternList(body, '**Author-intent patterns (RU):**'),
   ]);
   const decisionRes = compile([
-    ...extractPatternList(body, "**Decision-intent patterns (EN) — these WIN over ambiguous author-intent:**"),
+    ...extractPatternList(body, "**Decision-intent patterns (EN) - these WIN over ambiguous author-intent:**"),
     ...extractPatternList(body, '**Decision-intent patterns (RU):**'),
   ]);
   const fixtures = [
@@ -124,7 +124,7 @@ test('figma-authoring-guard: ambiguous "create a token binding for this componen
     ...extractPatternList(body, '**Author-intent patterns (RU):**'),
   ]);
   const decisionRes = compile([
-    ...extractPatternList(body, "**Decision-intent patterns (EN) — these WIN over ambiguous author-intent:**"),
+    ...extractPatternList(body, "**Decision-intent patterns (EN) - these WIN over ambiguous author-intent:**"),
     ...extractPatternList(body, '**Decision-intent patterns (RU):**'),
   ]);
   // "create a token binding" — has "create" (author verb) but "bind … token" is decision

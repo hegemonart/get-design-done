@@ -4,7 +4,7 @@ description: "Refreshes the knowledge graph at .design/graph/graph.json from .de
 tools: Bash, Read, Write
 color: green
 default-tier: haiku
-tier-rationale: "Refresh is a deterministic file-walk + atomic write — cheap Haiku is enough"
+tier-rationale: "Refresh is a deterministic file-walk + atomic write - cheap Haiku is enough"
 parallel-safe: false
 typical-duration-seconds: 20
 reads-only: false
@@ -16,7 +16,7 @@ writes:
 
 # gdd-graph-refresh
 
-**Role:** Refresh the project knowledge graph at `.design/graph/graph.json` from the intel store at `.design/intel/`. Reads intel slices and (re)builds the graph via the native `bin/gdd-graph build` command. Phase 30.6 simplification: intel and graph share a single `{from,to,kind,weight?}` edge schema (D-03.b), so there is no longer a translation step — `gdd-graph build` ingests intel slices directly.
+**Role:** Refresh the project knowledge graph at `.design/graph/graph.json` from the intel store at `.design/intel/`. Reads intel slices and (re)builds the graph via the native `bin/gdd-graph build` command. Phase 30.6 simplification: intel and graph share a single `{from,to,kind,weight?}` edge schema (D-03.b), so there is no longer a translation step - `gdd-graph build` ingests intel slices directly.
 
 ## When to invoke
 
@@ -26,23 +26,23 @@ writes:
 
 ## Protocol
 
-### Step 1 — Check intel store
+### Step 1 - Check intel store
 
 ```bash
 test -d .design/intel/ && echo "ready" || echo "missing"
 ```
 
-If missing: print "Intel store not found — run node scripts/build-intel.cjs --force first." and stop.
+If missing: print "Intel store not found - run node scripts/build-intel.cjs `--force` first." and stop.
 
-### Step 2 — Check graphify enabled
+### Step 2 - Check graphify enabled
 
 ```bash
 node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
 ```
 
-If `false`: print "Graphify not enabled in .design/config.json — skipping refresh. To enable, set `graphify.enabled: true` in .design/config.json." and stop gracefully (exit 0, do not fail).
+If `false`: print "Graphify not enabled in .design/config.json - skipping refresh. To enable, set `graphify.enabled: true` in .design/config.json." and stop gracefully (exit 0, do not fail).
 
-### Step 3 — Rebuild graph from intel slices
+### Step 3 - Rebuild graph from intel slices
 
 Phase 30.6 simplification: with shared `{from,to,kind,weight?}` schema between intel and graph (D-03.b), the canonical refresh is a single `build` invocation. No per-node iteration, no translation step.
 
@@ -50,9 +50,9 @@ Phase 30.6 simplification: with shared `{from,to,kind,weight?}` schema between i
 node bin/gdd-graph build
 ```
 
-Exit code 0 indicates success; non-zero with stderr indicates a schema violation in an intel slice — report and stop.
+Exit code 0 indicates success; non-zero with stderr indicates a schema violation in an intel slice - report and stop.
 
-### Step 4 — Verify the rebuilt graph
+### Step 4 - Verify the rebuilt graph
 
 ```bash
 node bin/gdd-graph status --format json
@@ -60,7 +60,7 @@ node bin/gdd-graph status --format json
 
 Capture `{ node_count, edge_count, built_at, schema_version }` from the JSON output.
 
-### Step 5 — Summary
+### Step 5 - Summary
 
 ```
 ━━━ Graph refresh complete ━━━

@@ -1,6 +1,6 @@
 # Pre-Delivery Checklists
 
-Run these before saying "done." Each checklist below is **gated** — if any item fails, you cannot ship.
+Run these before saying "done." Each checklist below is **gated** - if any item fails, you cannot ship.
 
 ## Master pre-ship checklist
 
@@ -60,7 +60,7 @@ Use this before any design artifact goes to the user or into a PR.
 - [ ] Error messages: what happened + how to fix (not just what's wrong)
 - [ ] Empty state acknowledges state + explains value + one CTA
 - [ ] No "Oops!" / forced cheer in errors
-- [ ] No 3-adjective pile-up ("beautiful, seamless, intuitive")
+- [ ] No 3-adjective pile-up ("beautiful, smooth, intuitive")
 - [ ] Placeholders show format, not restated label
 
 ### Technical check (code artifacts)
@@ -78,7 +78,7 @@ Use this before any design artifact goes to the user or into a PR.
 
 ---
 
-## Quick checklist — Small changes
+## Quick checklist - Small changes
 
 When the change is a single-screen tweak, use this shortened list:
 
@@ -99,11 +99,11 @@ When the change is a single-screen tweak, use this shortened list:
 When adding tokens/components to the design system:
 
 - [ ] New tokens follow `[category].[variant].[property].[state]` naming
-- [ ] No primitive token used directly in a component — route through semantic
+- [ ] No primitive token used directly in a component - route through semantic
 - [ ] Component has full anatomy doc (slots + variants + states + behavior + platform notes + do/don't)
 - [ ] Figma spec frame exists OR explicit note that it doesn't
 - [ ] Component validated against: same-structure-variant rule, not-a-new-component rule
-- [ ] 30-min audit performed — no off-grid spacings, no duplicate color tokens
+- [ ] 30-min audit performed - no off-grid spacings, no duplicate color tokens
 
 ---
 
@@ -145,18 +145,18 @@ Use this checklist after the main design review for pixel-level craft verificati
 
 ### Typography micro
 - [ ] Headings use `text-wrap: balance`
-- [ ] Body/caption uses `text-wrap: pretty` (or no wrap setting — not `balance`)
+- [ ] Body/caption uses `text-wrap: pretty` (or no wrap setting - not `balance`)
 - [ ] Font smoothing applied at `:root` only, not per-element
 - [ ] Dynamic numbers (counters, prices, timers) use `font-variant-numeric: tabular-nums`
 
 ### Surfaces
 - [ ] Nested elements use concentric radius (`innerRadius = outerRadius − padding`)
 - [ ] No same-radius parent+child within padded container (see BAN-10 same-radius-nested)
-- [ ] Images have `outline: 1px solid rgba(0,0,0,0.08)` — no tinted outlines
+- [ ] Images have `outline: 1px solid rgba(0,0,0,0.08)` - no tinted outlines
 - [ ] Interactive elements <40px have `::after` hit-area extension to 40×40
 
 ### Motion
-- [ ] Press feedback uses `scale(0.96)` — not 0.95, not 0.97, not 0.98
+- [ ] Press feedback uses `scale(0.96)` - not 0.95, not 0.97, not 0.98
 - [ ] `AnimatePresence` on persistent UI has `initial={false}`
 - [ ] Icon cross-fade spring has `bounce: 0`
 - [ ] No `transition: all` anywhere (see BAN-12 transition-all)
@@ -165,30 +165,30 @@ Use this checklist after the main design review for pixel-level craft verificati
 
 ---
 
-## Rams Lens — 10 Design Questions
+## Rams Lens - 10 Design Questions
 
 Dieter Rams's 10 principles of good design (Vitsœ/Braun, 1970s–80s) applied as a self-audit lens. Each question maps to one principle.
 
-- [ ] **Innovative** — Does this design solve the problem in a way that was not possible or obvious before?
-- [ ] **Useful** — Does every element serve the primary function? Nothing decorative that doesn't earn its place?
-- [ ] **Aesthetic** — Is the visual appearance the minimum necessary for legibility and emotional resonance?
-- [ ] **Understandable** — Can the user figure out how to use this without reading documentation or a tooltip?
-- [ ] **Unobtrusive** — Does the design stay in the background and let the content or task take focus?
-- [ ] **Honest** — Does the design not imply capabilities, quality, or status that the product doesn't have?
-- [ ] **Long-lasting** — Is this design free of trend-dependent choices (gradients, micro-styles) that will age in 12 months?
-- [ ] **Thorough** — Have edge cases been considered and handled (empty states, error states, loading states, overflow text)?
-- [ ] **Environmentally friendly** — Is the performance footprint minimal? (image sizes, JS bundle, font weight)
-- [ ] **As little design as possible** — If you removed 20% of the design decisions, would the product be worse? If not, remove them.
+- [ ] **Innovative** - Does this design solve the problem in a way that was not possible or obvious before?
+- [ ] **Useful** - Does every element serve the primary function? Nothing decorative that doesn't earn its place?
+- [ ] **Aesthetic** - Is the visual appearance the minimum necessary for legibility and emotional resonance?
+- [ ] **Understandable** - Can the user figure out how to use this without reading documentation or a tooltip?
+- [ ] **Unobtrusive** - Does the design stay in the background and let the content or task take focus?
+- [ ] **Honest** - Does the design not imply capabilities, quality, or status that the product doesn't have?
+- [ ] **Long-lasting** - Is this design free of trend-dependent choices (gradients, micro-styles) that will age in 12 months?
+- [ ] **Thorough** - Have edge cases been considered and handled (empty states, error states, loading states, overflow text)?
+- [ ] **Environmentally friendly** - Is the performance footprint minimal? (image sizes, JS bundle, font weight)
+- [ ] **As little design as possible** - If you removed 20% of the design decisions, would the product be worse? If not, remove them.
 
 ---
 
-## Sonner / Component-Authoring Lens — 6 Questions
+## Sonner / Component-Authoring Lens - 6 Questions
 
 Emil Kowalski's component-authoring principles applied as a per-component self-audit. Full reference: `reference/component-authoring.md`.
 
-- [ ] **P-01 API surface** — Does this component work correctly in 1 line with zero configuration?
-- [ ] **P-02 Composability** — Does this component compose via slots/children, not via style-configuration props?
-- [ ] **P-03 Defaults** — Are the defaults so sensible that most consumers never need to pass any props?
-- [ ] **P-04 Animation** — Does every animation in this component communicate a state change? No decorative loops?
-- [ ] **P-05 Accessibility** — Does this component have a complete ARIA contract before any visual styling?
-- [ ] **P-06 Edge honesty** — Are known failure modes documented with `// KNOWN:` or `// EDGE:` comments?
+- [ ] **P-01 API surface** - Does this component work correctly in 1 line with zero configuration?
+- [ ] **P-02 Composability** - Does this component compose via slots/children, not via style-configuration props?
+- [ ] **P-03 Defaults** - Are the defaults so sensible that most consumers never need to pass any props?
+- [ ] **P-04 Animation** - Does every animation in this component communicate a state change? No decorative loops?
+- [ ] **P-05 Accessibility** - Does this component have a complete ARIA contract before any visual styling?
+- [ ] **P-06 Edge honesty** - Are known failure modes documented with `// KNOWN:` or `// EDGE:` comments?

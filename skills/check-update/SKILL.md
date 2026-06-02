@@ -14,7 +14,7 @@ tools: Read, Write, Bash, Task
 | Flag | Effect |
 |------|--------|
 | *(none)* | Print cached state. If cache is older than 24h, trigger `--refresh` implicitly. |
-| `--refresh` | Invoke `hooks/update-check.sh --refresh` — bypasses the 24h TTL and re-fetches immediately. |
+| `--refresh` | Invoke `hooks/update-check.sh --refresh` - bypasses the 24h TTL and re-fetches immediately. |
 | `--dismiss` | Write `update_dismissed: "<latest_tag>"` to `.design/config.json` atomically and delete `.design/update-available.md`. Sticky until a newer release ships. |
 | `--prompt` | Spawn `design-update-checker` agent (Haiku) to produce a 3–5-line "what this release changes for you" summary. Does not alter the banner or cache. |
 
@@ -34,7 +34,7 @@ Flags combine: `--refresh --prompt` is valid (re-fetch, then enrich). `--dismiss
 
 3. **Read cache.** After any optional refresh, read `.design/update-cache.json`. If missing: print `No cache. Network may be unreachable or the hook has not run yet. Try /gdd:check-update --refresh.` and exit.
 
-4. **`--dismiss` path** (if set): Compute new config contents and write atomically via the env-prefix Python heredoc pattern below. The pattern is load-bearing — passing variables as trailing `KEY=VALUE` argv treats them as `sys.argv`, not `os.environ`. Use env-prefix form only.
+4. **`--dismiss` path** (if set): Compute new config contents and write atomically via the env-prefix Python heredoc pattern below. The pattern is essential - passing variables as trailing `KEY=VALUE` argv treats them as `sys.argv`, not `os.environ`. Use env-prefix form only.
 
     ```bash
     CONFIG_PATH=".design/config.json"
@@ -86,10 +86,10 @@ Flags combine: `--refresh --prompt` is valid (re-fetch, then enrich). `--dismiss
 
 ## Do Not
 
-- Do not fetch from GitHub directly — always go through `hooks/update-check.sh --refresh` so caching + state-guard + dismissal logic stays in one place.
+- Do not fetch from GitHub directly - always go through `hooks/update-check.sh --refresh` so caching + state-guard + dismissal logic stays in one place.
 - Do not modify `.design/update-available.md` except to delete on `--dismiss`.
-- Do not rewrite `.design/config.json` wholesale — the atomic Python rewrite preserves every unknown key (D-14).
-- Do not pass variables to the Python heredoc via trailing `KEY=VALUE` argv — env-prefix form only.
+- Do not rewrite `.design/config.json` wholesale - the atomic Python rewrite preserves every unknown key (D-14).
+- Do not pass variables to the Python heredoc via trailing `KEY=VALUE` argv - env-prefix form only.
 
 ## Completion marker
 

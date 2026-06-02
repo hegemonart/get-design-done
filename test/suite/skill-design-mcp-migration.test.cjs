@@ -8,7 +8,7 @@
  * the worktree-isolation orchestration and design-executor spawn
  * discipline byte-for-byte.
  *
- * Design is the stage most affected by Phase 10.1 parallelism —
+ * Design is the stage most affected by Phase 10.1 parallelism -
  * multiple executors run concurrently in worktrees and each needs to
  * update `<position>` `task_progress` as they complete their batch.
  * The lockfile (Plan 20-01) + MCP serialization + event stream
@@ -20,9 +20,9 @@
  * load is deferred to Plan 20-15's race-condition + end-to-end test.
  *
  * Baselines:
- *   - test/fixtures/baselines/phase-20/design-before.md — pre-migration
+ *   - test/fixtures/baselines/phase-20/design-before.md - pre-migration
  *     snapshot (anchors line-count tolerance + worktree-count parity).
- *   - test/fixtures/baselines/phase-20/design-after.md — post-migration
+ *   - test/fixtures/baselines/phase-20/design-after.md - post-migration
  *     snapshot (human review aid; asserted byte-identical to live file).
  */
 
@@ -122,7 +122,7 @@ function frontmatter(body) {
 
 /**
  * Remove the STATE.md mutation protocol block (the blockquote that
- * INSTRUCTS executors not to mutate STATE.md directly — it mentions
+ * INSTRUCTS executors not to mutate STATE.md directly - it mentions
  * `Read` + `Write` as forbidden patterns, which would otherwise trip
  * the forbidden-pattern assertions). This is the one legitimate
  * mention of those patterns in the post-migration skill.
@@ -135,7 +135,7 @@ function bodyWithoutProtocolBlock(body) {
 }
 
 /**
- * Body of the skill with frontmatter removed — used when we want to
+ * Body of the skill with frontmatter removed - used when we want to
  * count occurrences in the prose only (excludes the `tools:` list,
  * which legitimately contains every MCP tool name).
  */
@@ -173,7 +173,7 @@ test('skill-design-mcp-migration: frontmatter tools lists all 7 required MCP ent
 });
 
 test('skill-design-mcp-migration: exactly one transition_stage call in prose', () => {
-  // Exclude the frontmatter `tools:` declaration — it's a capability
+  // Exclude the frontmatter `tools:` declaration - it's a capability
   // declaration, not a call. The prose must contain exactly one
   // invocation of `mcp__gdd_state__transition_stage` (Stage entry).
   const prose = bodyWithoutFrontmatter(readSkill());
@@ -213,7 +213,7 @@ test('skill-design-mcp-migration: executor-spawn prompt contains STATE.md mutati
 });
 
 test('skill-design-mcp-migration: no direct STATE.md mutation outside the protocol block', () => {
-  // Scope to skills/design/SKILL.md only — the SKILL must not contain
+  // Scope to skills/design/SKILL.md only - the SKILL must not contain
   // direct STATE.md mutation language (the protocol-block prose lives in
   // reference/design-procedure.md after Plan 28.5-04). Strip any
   // protocol-block prose still inline (defensive) before asserting.
@@ -245,7 +245,7 @@ test('skill-design-mcp-migration: worktree isolation orchestration preserved', (
   assert.ok(
     afterCount >= beforeCount,
     `worktree reference count regressed: before=${beforeCount}, after=${afterCount} ` +
-      '— the worktree-isolation prose must remain (post-Phase-28.5 the canonical ' +
+      '- the worktree-isolation prose must remain (post-Phase-28.5 the canonical ' +
       'count lives in SKILL + reference/design-procedure.md combined; mentions may ' +
       'increase as the procedure ref adds context but must not drop below the baseline).',
   );
@@ -315,7 +315,7 @@ test('skill-design-mcp-migration: line count within ±15% of pre-migration', () 
 });
 
 test('skill-design-mcp-migration: post-migration baseline matches current SKILL.md', () => {
-  // design-after.md is a human-readable snapshot — it should match the
+  // design-after.md is a human-readable snapshot - it should match the
   // live file. If this fails, either the snapshot is stale (update the
   // fixture) or the live file drifted (intentional? rerun plan 20-10
   // or document the delta in a follow-on summary).

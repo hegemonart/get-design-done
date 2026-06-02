@@ -10,9 +10,9 @@
 
 Spring animations are governed by three parameters that model a physical spring:
 
-- **stiffness** — how tightly wound the spring is; higher = faster, snappier response
-- **damping** — friction applied to the oscillation; higher = settles faster with less bounce
-- **mass** — inertia of the object; higher = slower start and more overshoot
+- **stiffness** - how tightly wound the spring is; higher = faster, snappier response
+- **damping** - friction applied to the oscillation; higher = settles faster with less bounce
+- **mass** - inertia of the object; higher = slower start and more overshoot
 
 The damping ratio `ζ = damping / (2 * Math.sqrt(stiffness * mass))` determines behavior:
 
@@ -222,10 +222,10 @@ el.animate(
 
 ### The Four Steps
 
-1. **First** — record the element's current bounding rect (`getBoundingClientRect()`)
-2. **Last** — apply the DOM change, then record the new rect
-3. **Invert** — set a CSS transform that moves the element back to its "First" position
-4. **Play** — animate the transform to identity (`0, 0, scale(1)`)
+1. **First** - record the element's current bounding rect (`getBoundingClientRect()`)
+2. **Last** - apply the DOM change, then record the new rect
+3. **Invert** - set a CSS transform that moves the element back to its "First" position
+4. **Play** - animate the transform to identity (`0, 0, scale(1)`)
 
 ```ts
 function flip(el: HTMLElement, applyChange: () => void) {
@@ -577,7 +577,7 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
 
 ## Blur-to-Mask Crossfades
 
-Use a short `filter: blur()` during state transitions to bridge the visual gap between two overlapping states — it softens the hard edge that appears when opacity alone creates a ghost.
+Use a short `filter: blur()` during state transitions to bridge the visual gap between two overlapping states - it softens the hard edge that appears when opacity alone creates a ghost.
 
 ```tsx
 <motion.div
@@ -591,10 +591,10 @@ Use a short `filter: blur()` during state transitions to bridge the visual gap b
 ```
 
 **Rules:**
-- Cap blur under 20px on non-animated elements — Safari allocates GPU memory per blurred layer, causing stutter at high values
+- Cap blur under 20px on non-animated elements - Safari allocates GPU memory per blurred layer, causing stutter at high values
 - Pair with `scale(0.97)` for press feedback; the scale signals physical depth while blur softens content churn
 - Use for: skeleton → content, loading → loaded image, optimistic update → confirmed state
-- Do NOT use for layout shifts — blur does not mask reflow artifacts
+- Do NOT use for layout shifts - blur does not mask reflow artifacts
 
 ---
 
@@ -710,7 +710,7 @@ Motion values are a **design decision**, not a technical default. They communica
 | Interruptible UI (toggles, toasts) | `bounce: 0`, transitions not keyframes | Must retarget without pop |
 | Height + opacity combos | Trial and error per library | `height: auto` is not animatable in CSS; each library handles it differently |
 
-**Do not mix** snappy dashboard animations with bouncy spring animations in the same product — the conflicting personalities create a sense that the UI was assembled from parts.
+**Do not mix** snappy dashboard animations with bouncy spring animations in the same product - the conflicting personalities create a sense that the UI was assembled from parts.
 
 ---
 
@@ -744,7 +744,7 @@ Fresh eyes catch what in-the-moment iteration misses. Animations feel correct wh
 
 ---
 
-## Disney's 12 Principles — UX Mapping
+## Disney's 12 Principles - UX Mapping
 
 Original source: Frank Thomas & Ollie Johnston, *The Illusion of Life: Disney Animation* (1981). The 12 principles were developed for hand-drawn character animation; the UX mappings below translate each to interface motion.
 
@@ -752,7 +752,7 @@ Original source: Frank Thomas & Ollie Johnston, *The Illusion of Life: Disney An
 
 ### 1. Squash and Stretch
 
-**Animation:** Objects deform under force — squash on impact, stretch during fast movement.
+**Animation:** Objects deform under force - squash on impact, stretch during fast movement.
 
 **UX mapping:** Scale feedback communicates physical weight and responsiveness.
 ```tsx
@@ -763,7 +763,7 @@ Original source: Frank Thomas & Ollie Johnston, *The Illusion of Life: Disney An
   transition={{ type: "spring", stiffness: 500, damping: 30 }}
 />
 ```
-**Rule:** Constrain squash/stretch to ≤5% deviation — more reads as glitchy, not physical.
+**Rule:** Constrain squash/stretch to ≤5% deviation - more reads as glitchy, not physical.
 
 ---
 
@@ -799,7 +799,7 @@ Original source: Frank Thomas & Ollie Johnston, *The Illusion of Life: Disney An
 
 **Animation:** Straight-ahead: draw each frame in sequence. Pose-to-pose: define key positions and interpolate.
 
-**UX mapping:** All CSS transitions and spring animations are pose-to-pose by definition — you define start and end states. This means:
+**UX mapping:** All CSS transitions and spring animations are pose-to-pose by definition - you define start and end states. This means:
 - Transitions retarget smoothly when interrupted (see CSS Transitions vs Keyframes section above)
 - The in-between frames are computed by the engine, not designed
 - Design the **poses** (states) carefully; the interpolation handles itself
@@ -872,7 +872,7 @@ transition: transform 0.2s cubic-bezier(0.4, 0, 1, 1);
 - Success state: checkmark draws itself after the confirmation color appears
 - Delete: item fades + the list count badge decrements with a small number-flip animation
 
-**Rule:** Secondary actions must complete before or simultaneously with the primary — never after. They reinforce, not extend.
+**Rule:** Secondary actions must complete before or simultaneously with the primary - never after. They reinforce, not extend.
 
 ---
 
@@ -915,17 +915,17 @@ transition: transform 0.2s cubic-bezier(0.4, 0, 1, 1);
 
 **Animation:** Characters have weight, depth, and obey perspective; they feel three-dimensional.
 
-**UX mapping:** UI elements should feel visually grounded — not floating. Shadows, depth layering, and transform-origin choices communicate which layer an element lives on.
-- Drawers and sheets slide from an edge — they feel physically attached
-- Modals emerge from center or from the triggering element — they float above the page
-- Tooltips appear near the cursor — they are attached to the pointer
+**UX mapping:** UI elements should feel visually grounded - not floating. Shadows, depth layering, and transform-origin choices communicate which layer an element lives on.
+- Drawers and sheets slide from an edge - they feel physically attached
+- Modals emerge from center or from the triggering element - they float above the page
+- Tooltips appear near the cursor - they are attached to the pointer
 - `transform-origin` must match where the element conceptually emerges from
 
 ---
 
 ### 12. Appeal
 
-**Animation:** Characters have a quality that makes the audience want to watch them — not necessarily cute, but interesting.
+**Animation:** Characters have a quality that makes the audience want to watch them - not necessarily cute, but interesting.
 
 **UX mapping:** Animation has personality that is consistent with the product's brand.
 

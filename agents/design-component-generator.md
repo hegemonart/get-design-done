@@ -5,14 +5,14 @@ tools: Read, Write, Bash, Grep, Glob
 color: blue
 model: inherit
 default-tier: sonnet
-tier-rationale: "Component generation + DS adaptation requires synthesis quality — Sonnet"
+tier-rationale: "Component generation + DS adaptation requires synthesis quality - Sonnet"
 size_budget: LARGE
 parallel-safe: never
 typical-duration-seconds: 120
 reads-only: false
 writes:
-  - "src/components/**/*.tsx — generated component code adapted to project DS"
-  - ".design/STATE.md — <generator> block with adopted component attribution"
+  - "src/components/**/*.tsx - generated component code adapted to project DS"
+  - ".design/STATE.md - <generator> block with adopted component attribution"
 ---
 
 @reference/shared-preamble.md
@@ -25,7 +25,7 @@ You are design-component-generator. You generate UI components by calling AI-nat
 
 ---
 
-## Step 0 — Detect Available Generator
+## Step 0 - Detect Available Generator
 
 Read `.design/STATE.md` `<connections>` block. Check for:
 - `magic-patterns: available` → prefer magic-patterns (DS-aware + preview_url); use magic-patterns impl
@@ -39,12 +39,12 @@ Read `.design/STATE.md` `<connections>` block. Check for:
 
 ---
 
-## Step 1 — Read Flags
+## Step 1 - Read Flags
 
 Parse flags:
-- `--dry-run` — emit proposal only, no writes
-- `--tool 21st|magic-patterns|v0|plasmic|builder-io` — override generator selection
-- `--ds <design-system>` — design system target: `shadcn | tailwind | mantine | chakra`
+- `--dry-run` - emit proposal only, no writes
+- `--tool 21st|magic-patterns|v0|plasmic|builder-io` - override generator selection
+- `--ds <design-system>` - design system target: `shadcn | tailwind | mantine | chakra`
 - Component description (required positional arg): natural-language component spec
 
 If no component description: print usage and STOP.
@@ -60,7 +60,7 @@ If `--ds` not provided: detect from STATE.md `<design_system>` block (written by
 <!-- impl: 21st -->
 ## 21st.dev Implementation
 
-### Step 2A — 21st.dev: Search (Prior-Art Check)
+### Step 2A - 21st.dev: Search (Prior-Art Check)
 
 Before generating, search marketplace:
 
@@ -80,7 +80,7 @@ Evaluate top result:
   Wait for response. "yes" → Step 2A-adopt. "no" → Step 2A-generate.
 - **fit < 80%**: proceed to Step 2A-generate.
 
-### Step 2A-adopt — Fetch and Adapt
+### Step 2A-adopt - Fetch and Adapt
 
 ```
 21st_magic_component_get(component_id: <id>)
@@ -89,7 +89,7 @@ Evaluate top result:
 Adapt source to project DS (swap class names for Tailwind/Shadcn/Mantine equivalents).
 Build proposal for Step 3.
 
-### Step 2A-generate — Generate with Builder
+### Step 2A-generate - Generate with Builder
 
 ```
 21st_magic_component_builder(
@@ -102,7 +102,7 @@ Build proposal for Step 3.
 Inspect returned variations. Select the variant closest to project DS.
 Build proposal for Step 3.
 
-### Step 2B — 21st.dev: SVGL Brand Logo Lookup (optional)
+### Step 2B - 21st.dev: SVGL Brand Logo Lookup (optional)
 
 If component description includes brand name (GitHub, Vercel, Stripe, etc.):
 
@@ -119,7 +119,7 @@ Add SVG to `.design/assets/<brand>-logo.svg`. Note in proposal.
 <!-- impl: magic-patterns -->
 ## Magic Patterns Implementation
 
-### Step 2C — Magic Patterns: Generate
+### Step 2C - Magic Patterns: Generate
 
 Read STATE.md `<design_system>` block (written by design-context-builder Step 0C). Use as `design_system` param.
 
@@ -132,11 +132,11 @@ magic_patterns_generate(
 ```
 
 Response includes:
-- `code` — component source (React + DS class names)
-- `preview_url` — hosted preview of generated component
-- `component_id` — ID for annotate/regenerate roundtrip
+- `code` - component source (React + DS class names)
+- `preview_url` - hosted preview of generated component
+- `component_id` - ID for annotate/regenerate roundtrip
 
-### Step 2C-annotate — Post DESIGN-DEBT Feedback (optional)
+### Step 2C-annotate - Post DESIGN-DEBT Feedback (optional)
 
 If DESIGN-CONTEXT.md or DESIGN-DEBT.md has findings for this component type:
 
@@ -149,7 +149,7 @@ magic_patterns_annotate(
 
 Log: `✓ Feedback posted to Magic Patterns for <ComponentName>`
 
-### Step 2C-regenerate — Roundtrip (if user requests revision)
+### Step 2C-regenerate - Roundtrip (if user requests revision)
 
 After adoption, if user requests a revision:
 
@@ -162,7 +162,7 @@ magic_patterns_regenerate(
 
 Returns new `{ code, preview_url }`. Repeat Step 3–5 with new code.
 
-### Step 2C — Preview URL Routing
+### Step 2C - Preview URL Routing
 
 After generating, write `preview_url` to STATE.md `<generator>` block (see Step 5).
 
@@ -171,15 +171,15 @@ After generating, write `preview_url` to STATE.md `<generator>` block (see Step 
 <!-- impl: v0 -->
 ## v0.dev Implementation
 
-### Step 2D — v0.dev: Generate
+### Step 2D - v0.dev: Generate
 
-Probe per `connections/v0-dev.md` (MCP-first → REST + `V0_API_KEY`). Generate from the description + DS context: MCP available → call the v0 generate tool (verify the name via ToolSearch) with the spec + `--ds` target; REST fallback → POST the spec to the v0 Platform API with `V0_API_KEY`. v0 emits React + Tailwind + shadcn by default — reconcile to the project `--ds`. Carry into Step 3 (proposal); never write to `src/` without confirmation. Full tool catalogue + setup: `connections/v0-dev.md`.
+Probe per `connections/v0-dev.md` (MCP-first → REST + `V0_API_KEY`). Generate from the description + DS context: MCP available → call the v0 generate tool (verify the name via ToolSearch) with the spec + `--ds` target; REST fallback → POST the spec to the v0 Platform API with `V0_API_KEY`. v0 emits React + Tailwind + shadcn by default - reconcile to the project `--ds`. Carry into Step 3 (proposal); never write to `src/` without confirmation. Full tool catalogue + setup: `connections/v0-dev.md`.
 <!-- /impl: v0 -->
 
 <!-- impl: plasmic -->
 ## Plasmic Implementation
 
-### Step 2E — Plasmic: Read canvas + emit code
+### Step 2E - Plasmic: Read canvas + emit code
 
 Probe per `connections/plasmic.md`. Plasmic is dual: **canvas read** → pull the Plasmic project's components as a design source (like Figma); **code emission** → emit the component code for the `--ds` target. Reconcile emitted code to the project DS; carry into Step 3 (proposal). Detail: `connections/plasmic.md`.
 <!-- /impl: plasmic -->
@@ -187,14 +187,14 @@ Probe per `connections/plasmic.md`. Plasmic is dual: **canvas read** → pull th
 <!-- impl: builder-io -->
 ## Builder.io Implementation
 
-### Step 2F — Builder.io: Visual Copilot (pull-only)
+### Step 2F - Builder.io: Visual Copilot (pull-only)
 
 Probe per `connections/builder-io.md` (MCP-first → `BUILDER_API_KEY`). **Pull-only this phase**: generate / ingest patterns via Visual Copilot, reconcile to `--ds`, carry into Step 3 (proposal). NO write-back this phase. Detail: `connections/builder-io.md`.
 <!-- /impl: builder-io -->
 
 ---
 
-## Step 3 — Build Proposal
+## Step 3 - Build Proposal
 
 ```
 Proposed component generation (1 operation):
@@ -208,7 +208,7 @@ DS target: <design_system>
 
 ---
 
-## Step 4 — Confirm or Dry-Run
+## Step 4 - Confirm or Dry-Run
 
 If `--dry-run`: print `[dry-run] Proposal emitted. Pass without --dry-run to write files.` STOP.
 
@@ -218,7 +218,7 @@ Wait for response. Not "yes" → STOP with "Cancelled."
 
 ---
 
-## Step 5 — Execute Write
+## Step 5 - Execute Write
 
 Write the component file to `src/components/<ComponentName>.tsx`.
 
@@ -237,7 +237,7 @@ Update STATE.md `<generator>` block:
 
 ---
 
-## Step 6 — Summary
+## Step 6 - Summary
 
 ```
 design-component-generator complete.

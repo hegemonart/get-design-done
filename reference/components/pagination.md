@@ -1,4 +1,4 @@
-# Pagination — Benchmark Spec
+# Pagination - Benchmark Spec
 
 **Harvested from**: Carbon, Polaris, Atlassian, Mantine, Material 3, UUPM (app-interface, MIT)
 **Wave**: 4 · **Category**: Navigation
@@ -53,12 +53,12 @@ Pagination divides a large dataset into discrete pages and provides controls to 
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | All buttons enabled except current page | — |
-| current-page | — | Filled/highlighted button | `aria-current="page"` |
+| default | - | All buttons enabled except current page | - |
+| current-page | - | Filled/highlighted button | `aria-current="page"` |
 | prev-disabled | page = 1 | Previous button dimmed | `disabled` or `aria-disabled="true"` |
 | next-disabled | page = last | Next button dimmed | `disabled` or `aria-disabled="true"` |
-| button-hover | pointer over | 8% overlay | — |
-| button-focus | keyboard focus | 2px focus-visible ring | — |
+| button-hover | pointer over | 8% overlay | - |
+| button-focus | keyboard focus | 2px focus-visible ring | - |
 | loading | page change in flight | Spinner overlay on content; buttons retain focus | `aria-busy="true"` on results region |
 
 ---
@@ -84,7 +84,7 @@ Pagination divides a large dataset into discrete pages and provides controls to 
 - Results summary: body-sm, `color: --text-subtle`
 - Per-page label: label-sm (12px), always visible above or beside the select
 
-Cross-link: `reference/typography.md` — body-sm, label scale
+Cross-link: `reference/typography.md` - body-sm, label scale
 
 ---
 
@@ -95,7 +95,7 @@ Cross-link: `reference/typography.md` — body-sm, label scale
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/landmark-regions/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/landmark-regions/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -105,14 +105,14 @@ Cross-link: `reference/typography.md` — body-sm, label scale
 
 ### Accessibility Rules
 
-- `aria-label="Pagination"` MUST be on the `<nav>` — distinguishes from other navigation landmarks on the page
-- `aria-current="page"` MUST be on the currently active page button — screen readers announce "Page 3, current"
+- `aria-label="Pagination"` MUST be on the `<nav>` - distinguishes from other navigation landmarks on the page
+- `aria-current="page"` MUST be on the currently active page button - screen readers announce "Page 3, current"
 - Previous button on page 1 and Next button on last page MUST use `disabled` or `aria-disabled="true"` + visually dimmed
 - `aria-label` on each page number button ("Page 1", "Page 2") prevents screen readers from just announcing the number alone
 - Results summary text MUST use `aria-live="polite"` so screen reader users hear the count update after page change
-- Per-page `<select>` MUST have a visible `<label>` — not just a placeholder
+- Per-page `<select>` MUST have a visible `<label>` - not just a placeholder
 
-Cross-link: `reference/accessibility.md` — aria-current, landmark labelling, live regions
+Cross-link: `reference/accessibility.md` - aria-current, landmark labelling, live regions
 
 ---
 
@@ -124,9 +124,9 @@ Cross-link: `reference/accessibility.md` — aria-current, landmark labelling, l
 | Page change content transition | 150ms | ease-out | Fade the results region; managed by page, not pagination |
 | Ellipsis expand (if interactive) | 120ms | ease-out | Reveal hidden page buttons |
 
-**BAN**: Do not animate the pagination bar itself when a page changes — only the content region transitions.
+**BAN**: Do not animate the pagination bar itself when a page changes - only the content region transitions.
 
-Cross-link: `reference/motion.md` — content region transitions
+Cross-link: `reference/motion.md` - content region transitions
 
 ---
 
@@ -139,10 +139,10 @@ Cross-link: `reference/motion.md` — content region transitions
 - Show a results summary ("Showing 51–75 of 587") near the pagination controls *(Carbon, Polaris)*
 
 ### Don't
-- Don't use `<a href>` with pushState without `aria-current` — screen readers won't know which page is current *(WAI-ARIA)*
-- Don't show more than 7 page buttons without ellipsis truncation — visually overwhelming *(Carbon, Mantine)*
-- Don't disable the Previous/Next buttons with only visual styling — use `disabled` attr or `aria-disabled` *(WCAG 1.4.3)*
-- Don't place pagination at the top only — bottom placement is expected; both positions is acceptable *(Polaris, Carbon)*
+- Don't use `<a href>` with pushState without `aria-current` - screen readers won't know which page is current *(WAI-ARIA)*
+- Don't show more than 7 page buttons without ellipsis truncation - visually overwhelming *(Carbon, Mantine)*
+- Don't disable the Previous/Next buttons with only visual styling - use `disabled` attr or `aria-disabled` *(WCAG 1.4.3)*
+- Don't place pagination at the top only - bottom placement is expected; both positions is acceptable *(Polaris, Carbon)*
 
 ---
 
@@ -150,7 +150,7 @@ Cross-link: `reference/motion.md` — content region transitions
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-07 | Missing `aria-current` on active navigation items — `reference/anti-patterns.md#ban-07` |
+| BAN-07 | Missing `aria-current` on active navigation items - `reference/anti-patterns.md#ban-07` |
 
 ---
 

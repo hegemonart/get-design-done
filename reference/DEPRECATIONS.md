@@ -9,11 +9,11 @@ the scanner pattern list in lockstep.
 
 ## Namespaces
 
-- **`/design:<cmd>`** → `/gdd:<cmd>` — deprecated in Phase 7 (namespace rename). All commands now use the `/gdd:` prefix. Migrated: every shipped skill invocation and agent reference now uses `/gdd:`.
+- **`/design:<cmd>`** → `/gdd:<cmd>` - deprecated in Phase 7 (namespace rename). All commands now use the `/gdd:` prefix. Migrated: every shipped skill invocation and agent reference now uses `/gdd:`.
 
 ## Agents
 
-- **`design-context-builder`** — replaced by the Phase 3 agent split (design-context-reader + design-context-summarizer). Mentioned only in historical documentation; new work must spawn the split agents directly.
+- **`design-context-builder`** - replaced by the Phase 3 agent split (design-context-reader + design-context-summarizer). Mentioned only in historical documentation; new work must spawn the split agents directly.
 - **`design-pattern-mapper`** (monolithic) → split into 5 domain mappers in Phase 3 (migrated):
   - `token-mapper`
   - `component-taxonomy-mapper`
@@ -30,15 +30,15 @@ the scanner pattern list in lockstep.
 
 ## Authoring surfaces
 
-- **`skills/` as the authoring source** → **`source/skills/`** — deprecated in Phase 42 (multi-harness
+- **`skills/` as the authoring source** → **`source/skills/`** - deprecated in Phase 42 (multi-harness
   source compilation). Skills are now authored once in `source/skills/` with placeholders
   (`{{command_prefix}}` et al.; see `reference/skill-placeholders.md`) and compiled per-harness by
   `scripts/build-skills.cjs`. The committed `skills/` tree is now a **generated artifact** (the Claude-Code
-  compile target) — CI's `npm run build:skills:check` drift-gates `committed === generated`.
+  compile target) - CI's `npm run build:skills:check` drift-gates `committed === generated`.
 
   Migration for contributors: **edit `source/skills/`, never `skills/` directly**, then run
   `npm run build:skills` (or `gdd-sdk build skills`) and commit the regenerated `skills/` +
-  `dist/claude-code/`. `.claude-plugin/plugin.json`'s `"skills": ["./skills/"]` is unchanged — the plugin
+  `dist/claude-code/`. `.claude-plugin/plugin.json`'s `"skills": ["./skills/"]` is unchanged - the plugin
   still loads `skills/`, now produced from `source/skills/`. This is a path/authoring move only; no
   stale-ref token is emitted (both paths are live), so the `detect-stale-refs.cjs` list is not extended.
 
@@ -46,7 +46,7 @@ the scanner pattern list in lockstep.
 
 `scripts/detect-stale-refs.cjs` flags these tokens (line-granular match):
 
-- `/design:<cmd>` — any occurrence of the legacy namespace
+- `/design:<cmd>` - any occurrence of the legacy namespace
 - `design-context-builder` (standalone word)
 - `design-pattern-mapper` (when not followed by `-<suffix>`)
 - `scan/SKILL.md` and `discover/SKILL.md` path references
@@ -56,7 +56,7 @@ The scanner excludes `.planning/`, `.claude/`, `.design/`, `node_modules/`,
 
 ## Path migrations (machine-readable)
 
-Phase 39.5 adds a machine-readable registry of **path** migrations — modules/files GDD moved or
+Phase 39.5 adds a machine-readable registry of **path** migrations - modules/files GDD moved or
 removed. `scripts/lib/deprecation-registry.cjs` parses the table below; `/gdd:migrate` consults it to
 help users update local references; `test/suite/deprecation-completeness.test.cjs` asserts every row
 is honest (a `removed` row's `Old` path must be gone from the tree; a `deprecated` row's `Old` path
@@ -66,9 +66,9 @@ must still carry a shim).
 
 A row's status is derived from the running plugin version `v`:
 
-- **pending** — `v` < `Since` (deprecation announced for a future version; rare).
-- **deprecated** — `Since` ≤ `v` < `Removed in` (the old path still works via a shim; update at leisure).
-- **removed** — `v` ≥ `Removed in` (the old path is gone; you MUST use the new path).
+- **pending** - `v` < `Since` (deprecation announced for a future version; rare).
+- **deprecated** - `Since` ≤ `v` < `Removed in` (the old path still works via a shim; update at leisure).
+- **removed** - `v` ≥ `Removed in` (the old path is gone; you MUST use the new path).
 
 **Default shim lifetime is one minor version** (the Phase 31.5 precedent): a path deprecated in `x.y.z`
 is removed in the next minor `x.(y+1).0`. The `Removed in` column is authoritative per row.

@@ -1,7 +1,7 @@
 ---
 name: gdd-turn-closeout
 description: "Portable mirror of the gdd-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills (/gdd:next, /gdd:design, /gdd:verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical."
-argument-hint: "(none — reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)"
+argument-hint: "(none - reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)"
 tools: Read, Bash
 ---
 
@@ -11,12 +11,12 @@ tools: Read, Bash
 
 You are a deterministic **closeout** skill. You close the per-turn telemetry gap on runtimes that don't expose a Stop event (codex, gemini, and 11 others). You are a code-level mirror of `hooks/gdd-turn-closeout.js` (D-10): same conditions, same idempotence, same emitted event shape. The only difference: the JS hook emits the nudge as `additionalContext` via the harness; this skill prints the nudge directly to the user. See `./../new-cycle/milestone-completeness-rubric.md` §"Task level" for the broader closeout discipline (what "turn complete" means within a stage).
 
-**When to invoke:** orchestrator skills (`/gdd:next`, `/gdd:design`, `/gdd:verify`) tail-call this skill as their final step before returning. Adoption is incremental — each orchestrator can wire the tail-call independently; the skill exists as a stable, callable surface today.
+**When to invoke:** orchestrator skills (`/gdd:next`, `/gdd:design`, `/gdd:verify`) tail-call this skill as their final step before returning. Adoption is incremental - each orchestrator can wire the tail-call independently; the skill exists as a stable, callable surface today.
 
 ## Invocation Contract
 
 - **Input**: none. Operates on `.design/STATE.md` and `.design/telemetry/events.jsonl` in cwd.
-- **Output**: at most one printed line — the nudge — or silent return.
+- **Output**: at most one printed line - the nudge - or silent return.
 - **Latency budget**: ≤10ms typical. Read **only** STATE.md and the tail of events.jsonl.
 - **Idempotence**: if the most recent event is already a `turn_end` for the current `(stage, task_progress)` tuple, skip append but still print nudge.
 - **Non-blocking**: any I/O failure → silent return. This skill never gates the user.
@@ -25,17 +25,17 @@ You are a deterministic **closeout** skill. You close the per-turn telemetry gap
 
 Execute in order; stop at the first early-return.
 
-### Step 1 — Read STATE.md
+### Step 1 - Read STATE.md
 
 Read `.design/STATE.md`. Missing or unreadable → **return silently** (no print, no append).
 
-### Step 2 — Parse `<position>` block
+### Step 2 - Parse `<position>` block
 
 Lightweight-parse only `<position>…</position>` (regex `/<position>([\s\S]*?)<\/position>/` then per-line `key: value`). Extract `stage`, `status`, `task_progress`. Do not invoke the full STATE parser.
 
-If `status != "in_progress"` → **return silently**. Pipeline is initialized / completed / blocked — no turn-end gap to close.
+If `status != "in_progress"` → **return silently**. Pipeline is initialized / completed / blocked - no turn-end gap to close.
 
-### Step 3 — Tail the last event line
+### Step 3 - Tail the last event line
 
 Read **only the last 8 KiB** of `.design/telemetry/events.jsonl`. Treat as "stale by definition":
 
@@ -46,7 +46,7 @@ Read **only the last 8 KiB** of `.design/telemetry/events.jsonl`. Treat as "stal
 
 Otherwise compute `now - last_event.timestamp`. Gap < 60 seconds → user is actively mid-turn → **return silently** (next real event closes the gap naturally). Bash one-liner for the tail: `tail -n 1 .design/telemetry/events.jsonl 2>/dev/null`.
 
-### Step 4 — Idempotence check, then append
+### Step 4 - Idempotence check, then append
 
 If last event is already `{type:"turn_end", stage:<same>, payload:{task_progress:<same>}}` for the exact `(stage, task_progress)` from Step 2: **skip append** but proceed to Step 5.
 
@@ -58,14 +58,14 @@ Otherwise append one JSONL line to `.design/telemetry/events.jsonl`:
 
 Create `.design/telemetry/` if missing. Append is a single `appendFile`-equivalent call (writer assumes append-atomicity per Plan 20-06).
 
-### Step 5 — Print the nudge
+### Step 5 - Print the nudge
 
 Match `task_progress` against `^(\d+)/(\d+)$`:
 
 - **Numerator equals denominator and denominator > 0** (e.g. `5/5`): `Stage <stage> complete — run /gdd:next or /gdd:reflect`.
 - **Otherwise** (mid-task, e.g. `3/7`, `0/0`, malformed): `Stage <stage> paused mid-task — resume with /gdd:resume`.
 
-One line exactly. No commentary — the nudge is the user-facing surface.
+One line exactly. No commentary - the nudge is the user-facing surface.
 
 ## Failure Modes
 

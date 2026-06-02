@@ -5,7 +5,7 @@ tools: Read, Bash, Grep
 color: cyan
 model: inherit
 default-tier: haiku
-tier-rationale: "Cheap diff-scan gate — context checker only runs when DESIGN-CONTEXT.md changed"
+tier-rationale: "Cheap diff-scan gate - context checker only runs when DESIGN-CONTEXT.md changed"
 size_budget: S
 parallel-safe: always
 typical-duration-seconds: 10
@@ -27,9 +27,9 @@ You run once per discover invocation. You are read-only. You do not run the full
 
 The orchestrator supplies three fields in the prompt context:
 
-- `diff_files` — newline-separated paths changed since the baseline (output of `git diff --name-only <baseline_sha>..HEAD`).
-- `diff_body` — unified-diff body (not needed for this gate — single-file heuristic).
-- `baseline_sha` — the SHA the diff is computed against (typically `HEAD~1`).
+- `diff_files` - newline-separated paths changed since the baseline (output of `git diff --name-only <baseline_sha>..HEAD`).
+- `diff_body` - unified-diff body (not needed for this gate - single-file heuristic).
+- `baseline_sha` - the SHA the diff is computed against (typically `HEAD~1`).
 
 ## Heuristic
 
@@ -85,7 +85,7 @@ You MAY:
 
 ## Why this agent exists
 
-Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the context-checker-specific instance of that pattern — the full `design-context-checker` runs a 6-dimension rubric against `.design/DESIGN-CONTEXT.md`. If the builder made no changes to that file in this phase (a no-op re-run of discover, for example), the prior verdict still holds and the spawn is wasted cost.
+Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the context-checker-specific instance of that pattern - the full `design-context-checker` runs a 6-dimension rubric against `.design/DESIGN-CONTEXT.md`. If the builder made no changes to that file in this phase (a no-op re-run of discover, for example), the prior verdict still holds and the spawn is wasted cost.
 
 ## Record
 

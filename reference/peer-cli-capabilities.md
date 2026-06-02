@@ -4,7 +4,7 @@ Last verified: 2026-04-29
 
 Authoritative capability matrix for the peer-CLI delegation layer (Phase 27).
 The registry at `scripts/lib/peer-cli/registry.cjs` reads this map (encoded as
-data in the `.cjs` source — this doc is the human-readable mirror) to decide
+data in the `.cjs` source - this doc is the human-readable mirror) to decide
 which peer-CLI claims which agent role and which protocol to speak.
 
 If you change this matrix, you MUST also change `CAPABILITY_MATRIX` in
@@ -14,7 +14,7 @@ The two are version-locked by Phase 27 D-05.
 ## Capability matrix
 
 Each peer claims a fixed set of agent roles. The registry refuses to dispatch
-a role to a peer that does not claim it — this prevents accidental
+a role to a peer that does not claim it - this prevents accidental
 mis-delegations like "let's try `design-auditor` against Qwen" that produce
 garbage output (Phase 27 CONTEXT D-05).
 
@@ -28,19 +28,19 @@ garbage output (Phase 27 CONTEXT D-05).
 
 Slash-command translation lives in each per-peer adapter
 (`scripts/lib/peer-cli/adapters/<peer>.cjs`, landed by Plan 27-04). The
-registry never invokes slash commands directly — it routes the role and
+registry never invokes slash commands directly - it routes the role and
 delegates prompt-prefixing + slash translation to the adapter.
 
 ## Tie-breaking when two peers claim the same role
 
 `research` is claimed by both `gemini` and `copilot`. When the registry's
 `findPeerFor('research', tier)` runs, it walks peers in alphabetical order
-of peer ID — `codex` < `copilot` < `cursor` < `gemini` < `qwen` — and
+of peer ID - `codex` < `copilot` < `cursor` < `gemini` < `qwen` - and
 returns the first one that passes the health probe. So `copilot` wins
 `research` over `gemini` when both are installed and allowlisted.
 
 Users can override this by removing one of the two from
-`.design/config.json#peer_cli.enabled_peers` — the unlisted peer is treated
+`.design/config.json#peer_cli.enabled_peers` - the unlisted peer is treated
 as absent regardless of installation status (Phase 27 D-11 opt-in gating).
 
 ## Opt-in gating (D-11)
@@ -48,7 +48,7 @@ as absent regardless of installation status (Phase 27 D-11 opt-in gating).
 A peer is dispatched to ONLY when:
 
 1. The peer ID appears in `.design/config.json#peer_cli.enabled_peers`
-   (an array of allowlisted peer IDs). Default: `[]` — empty, nothing
+   (an array of allowlisted peer IDs). Default: `[]` - empty, nothing
    dispatches.
 2. The peer's adapter module loads at `scripts/lib/peer-cli/adapters/<peer>.cjs`.
 3. The adapter's `peerBinary()` resolver returns a path that exists on disk.
@@ -63,7 +63,7 @@ or broken peer must never break the cycle.
 ### `codex` (ASP)
 
 OpenAI Codex CLI invoked as `codex app-server`. Speaks the App Server
-Protocol — thread-oriented, supports resume across calls (currently unused;
+Protocol - thread-oriented, supports resume across calls (currently unused;
 v1.27 always starts fresh threads).
 
 - **Provenance:** runtime entry in `scripts/lib/install/runtimes.cjs` (`id: 'codex'`).
@@ -98,7 +98,7 @@ workflows.
 ### `copilot` (ACP)
 
 GitHub Copilot CLI in ACP mode. Claims `review` and `research`. Tends to
-win `research` against `gemini` on alphabetical tie-break — users who
+win `research` against `gemini` on alphabetical tie-break - users who
 prefer Gemini for research should remove `copilot` from `enabled_peers`.
 
 - **Provenance:** runtime entry in `scripts/lib/install/runtimes.cjs` (`id: 'copilot'`).
@@ -124,7 +124,7 @@ To add a new peer-CLI to the matrix:
    Plan 27-10). It walks the protocol-fit check, the role-claim audit, the
    adapter scaffold, and the test coverage required.
 2. Append the peer to `CAPABILITY_MATRIX` in `scripts/lib/peer-cli/registry.cjs`
-   AND to the table at the top of this file. The two MUST stay in sync —
+   AND to the table at the top of this file. The two MUST stay in sync -
    the test suite (`tests/peer-cli-registry.test.cjs`) asserts the matrix
    shape.
 3. Add a `<peer>.cjs` adapter under `scripts/lib/peer-cli/adapters/`.
@@ -139,13 +139,13 @@ a peer, reverse the steps above plus update `tests/phase-27-baseline.test.cjs`.
 
 ## Cross-references
 
-- `scripts/lib/peer-cli/registry.cjs` — central dispatch, single source of
+- `scripts/lib/peer-cli/registry.cjs` - central dispatch, single source of
   truth for the capability matrix as code.
-- `scripts/lib/peer-cli/adapters/*.cjs` — per-peer thin adapters
+- `scripts/lib/peer-cli/adapters/*.cjs` - per-peer thin adapters
   (Plan 27-04).
-- `scripts/lib/peer-cli/{acp,asp}-client.cjs` — protocol clients
+- `scripts/lib/peer-cli/{acp,asp}-client.cjs` - protocol clients
   (Plans 27-01 / 27-02).
-- `scripts/lib/peer-cli/broker-lifecycle.cjs` — long-lived session per
+- `scripts/lib/peer-cli/broker-lifecycle.cjs` - long-lived session per
   `(peer, workspace)` (Plan 27-03).
-- Phase 27 CONTEXT.md — decision log including D-05 (this matrix),
+- Phase 27 CONTEXT.md - decision log including D-05 (this matrix),
   D-07 (transparent fallback), D-11 (opt-in gating).

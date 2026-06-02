@@ -3,7 +3,7 @@
 
 # Motion Springs
 
-Spring animations model physical mass-spring-damper systems. Unlike tween animations, springs are driven by physics rather than duration — they respond to velocity and settle naturally, making them ideal for interactions that require a sense of weight.
+Spring animations model physical mass-spring-damper systems. Unlike tween animations, springs are driven by physics rather than duration - they respond to velocity and settle naturally, making them ideal for interactions that require a sense of weight.
 
 ---
 
@@ -13,7 +13,7 @@ Every spring is defined by three parameters:
 
 ### Stiffness (`k`)
 
-The spring constant — how strongly the spring pulls toward the target.
+The spring constant - how strongly the spring pulls toward the target.
 
 - **Low stiffness** (80–150): soft, gentle, slow to accelerate
 - **Medium stiffness** (150–300): standard UI feel
@@ -25,7 +25,7 @@ Higher stiffness = faster animation, more acceleration. Does not affect whether 
 
 ### Damping (`c`)
 
-The friction coefficient — how quickly oscillation energy is removed.
+The friction coefficient - how quickly oscillation energy is removed.
 
 - **Low damping relative to stiffness**: spring oscillates (undershooted)
 - **Damping at critical value**: spring settles exactly without oscillation
@@ -95,7 +95,7 @@ stiffness: 180  |  damping: 12  |  mass: 1
 settle time: ~600ms  |  overshoots: yes (pronounced, 2–3 cycles)
 ```
 
-High energy, bouncy. Use for playful or expressive interactions — celebratory states, game-like UIs, avatar reactions. Not appropriate for productivity or enterprise UIs.
+High energy, bouncy. Use for playful or expressive interactions - celebratory states, game-like UIs, avatar reactions. Not appropriate for productivity or enterprise UIs.
 
 ```js
 // Framer Motion
@@ -133,7 +133,7 @@ stiffness: 280  |  damping: 60  |  mass: 1
 settle time: ~800ms  |  overshoots: no (overdamped)
 ```
 
-Overdamped spring — creeps gently to target with no oscillation. Feels heavy and deliberate. Good for large layout changes, full-screen transitions, onboarding sequences.
+Overdamped spring - creeps gently to target with no oscillation. Feels heavy and deliberate. Good for large layout changes, full-screen transitions, onboarding sequences.
 
 ```js
 // Framer Motion
@@ -203,17 +203,17 @@ The baked approximation loses velocity responsiveness (a real spring reacts to i
 
 ### Use spring when:
 
-- **Drag release / throw** — the animation should carry the momentum from the gesture. Springs naturally handle initial velocity; tweens cannot.
-- **Toggle state** — a checkbox, switch, or button that needs to feel responsive and alive. The `stiff` preset is standard here.
-- **Interactive hover / follow** — cursor-tracking, magnetic elements. Springs give a sense of physical weight.
-- **Interrupt-safe sequences** — if the user reverses a motion mid-way, springs handle the reversal gracefully by inheriting the current velocity.
+- **Drag release / throw** - the animation should carry the momentum from the gesture. Springs naturally handle initial velocity; tweens cannot.
+- **Toggle state** - a checkbox, switch, or button that needs to feel responsive and alive. The `stiff` preset is standard here.
+- **Interactive hover / follow** - cursor-tracking, magnetic elements. Springs give a sense of physical weight.
+- **Interrupt-safe sequences** - if the user reverses a motion mid-way, springs handle the reversal gracefully by inheriting the current velocity.
 
 ### Use tween (eased duration) when:
 
-- **Navigation transitions** — page or route changes should complete in a fixed, predictable time. A spring may not settle in time if interrupted.
-- **Data-driven state changes** — tab switches, accordion open/close, tooltip appear. A 200–300ms cubic-out tween is predictable and familiar.
-- **Reduced motion** — when `prefers-reduced-motion` is active, replace all springs with short (150ms) linear or ease-out tweens. Springs are inherently bouncy; motion-sensitive users should never see oscillation.
-- **Synchronized choreography** — when multiple elements must start and end together (e.g., a staggered list entrance), tweens with explicit durations are easier to coordinate.
+- **Navigation transitions** - page or route changes should complete in a fixed, predictable time. A spring may not settle in time if interrupted.
+- **Data-driven state changes** - tab switches, accordion open/close, tooltip appear. A 200–300ms cubic-out tween is predictable and familiar.
+- **Reduced motion** - when `prefers-reduced-motion` is active, replace all springs with short (150ms) linear or ease-out tweens. Springs are inherently bouncy; motion-sensitive users should never see oscillation.
+- **Synchronized choreography** - when multiple elements must start and end together (e.g., a staggered list entrance), tweens with explicit durations are easier to coordinate.
 
 ```css
 @media (prefers-reduced-motion: reduce) {

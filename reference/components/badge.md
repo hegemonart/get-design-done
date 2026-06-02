@@ -1,4 +1,4 @@
-# Badge — Benchmark Spec
+# Badge - Benchmark Spec
 
 **Harvested from**: Material 3, Polaris, Carbon, Radix
 **Wave**: 3 · **Category**: Feedback
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A badge is a compact numeric counter or status indicator overlaid on or beside a parent element (icon, avatar, button) to communicate a count (unread messages, notification count) or status (online, offline, busy). It is purely decorative — the accessible count or status is surfaced through the parent element's `aria-label`. *(Material 3, Polaris, Carbon, Radix agree: badge is decorative; parent carries accessible state)*
+A badge is a compact numeric counter or status indicator overlaid on or beside a parent element (icon, avatar, button) to communicate a count (unread messages, notification count) or status (online, offline, busy). It is purely decorative - the accessible count or status is surfaced through the parent element's `aria-label`. *(Material 3, Polaris, Carbon, Radix agree: badge is decorative; parent carries accessible state)*
 
 ---
 
@@ -36,7 +36,7 @@ A badge is a compact numeric counter or status indicator overlaid on or beside a
 | Badge element | Yes | Pill or circle shape containing count or dot |
 | Count / label text | Conditional | Present for count/icon variants; absent for dot |
 | Parent element | Yes (for attached) | Carries `aria-label` with accessible count |
-| Dot indicator | No | Status dot variant — no number, pure color/shape |
+| Dot indicator | No | Status dot variant - no number, pure color/shape |
 
 ---
 
@@ -70,7 +70,7 @@ A badge is a compact numeric counter or status indicator overlaid on or beside a
 |---------|-----------|-----------|-----------|-------|
 | Count (sm) | 16px | 16px (= height) | 10px/500 | Single digit fills circle |
 | Count (md) | 20px | 20px (= height) | 12px/500 | Two-digit + "99+" |
-| Dot | 8px | 8px | — | No text; absolute top-right |
+| Dot | 8px | 8px | - | No text; absolute top-right |
 
 - **Shape**: pill when width > height; circle when width = height (single digit)
 - **Position** (attached): `position: absolute; top: -4px; right: -4px` relative to parent
@@ -82,11 +82,11 @@ A badge is a compact numeric counter or status indicator overlaid on or beside a
 
 ## Typography
 
-- Count text: 10–12px / 500 (medium weight) — legible at small scale
+- Count text: 10–12px / 500 (medium weight) - legible at small scale
 - No wrapping; never truncate count text; use "99+" cap instead
-- Letter-spacing: 0 — tight spacing at 10–12px scale
+- Letter-spacing: 0 - tight spacing at 10–12px scale
 
-Cross-link: `reference/typography.md` — small label scale (10–12px)
+Cross-link: `reference/typography.md` - small label scale (10–12px)
 
 ---
 
@@ -97,7 +97,7 @@ Cross-link: `reference/typography.md` — small label scale (10–12px)
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -107,14 +107,14 @@ Badge never receives focus. It is a purely visual overlay. All keyboard interact
 
 ### Accessibility Rules
 
-- Badge element itself MUST have `aria-hidden="true"` — screen readers should not announce the badge number separately; they read it as part of the parent's `aria-label`
+- Badge element itself MUST have `aria-hidden="true"` - screen readers should not announce the badge number separately; they read it as part of the parent's `aria-label`
 - Parent element MUST have an `aria-label` that includes the count: `aria-label="Messages, 3 unread"` *(WAI-ARIA APG, Material 3)*
-- Parent `aria-label` MUST be updated dynamically when count changes — use `aria-live` on the parent if the count changes while the page is rendered *(WCAG 4.1.3)*
-- Zero badge: if badge is hidden at zero, remove it from DOM (or `display: none`) — do NOT leave it with empty text in the DOM *(Polaris)*
+- Parent `aria-label` MUST be updated dynamically when count changes - use `aria-live` on the parent if the count changes while the page is rendered *(WCAG 4.1.3)*
+- Zero badge: if badge is hidden at zero, remove it from DOM (or `display: none`) - do NOT leave it with empty text in the DOM *(Polaris)*
 - Dot variant: parent `aria-label` MUST include the status: `aria-label="User profile, status: online"` *(Radix)*
-- Never rely on badge color alone to communicate status — include text in parent `aria-label` *(WCAG 1.4.1)*
+- Never rely on badge color alone to communicate status - include text in parent `aria-label` *(WCAG 1.4.1)*
 
-Cross-link: `reference/accessibility.md` — dynamic label updates, aria-live
+Cross-link: `reference/accessibility.md` - dynamic label updates, aria-live
 
 ---
 
@@ -126,9 +126,9 @@ Cross-link: `reference/accessibility.md` — dynamic label updates, aria-live
 | Badge appear | 100ms | ease-out | Fade + scale from 0.5 |
 | Badge disappear (at zero) | 80ms | ease-in | Fade + scale to 0 |
 
-**BAN**: Continuous bounce animation on badge — implies urgency and is distracting; one-shot pulse on value change is acceptable.
+**BAN**: Continuous bounce animation on badge - implies urgency and is distracting; one-shot pulse on value change is acceptable.
 
-Cross-link: `reference/motion.md` — scale-in/scale-out; `prefers-reduced-motion`: skip all badge animation
+Cross-link: `reference/motion.md` - scale-in/scale-out; `prefers-reduced-motion`: skip all badge animation
 
 ---
 
@@ -142,9 +142,9 @@ Cross-link: `reference/motion.md` — scale-in/scale-out; `prefers-reduced-motio
 
 ### Don't
 - Don't surface badge count only through color (dot badge without parent label) *(WCAG 1.4.1)*
-- Don't put interactive content in a badge — it is always decorative *(Material 3, Carbon)*
-- Don't animate badge continuously — one-shot pulse on value change only *(Polaris)*
-- Don't use badge text as the only accessible notification — always update parent `aria-label` *(WAI-ARIA APG)*
+- Don't put interactive content in a badge - it is always decorative *(Material 3, Carbon)*
+- Don't animate badge continuously - one-shot pulse on value change only *(Polaris)*
+- Don't use badge text as the only accessible notification - always update parent `aria-label` *(WAI-ARIA APG)*
 
 ---
 

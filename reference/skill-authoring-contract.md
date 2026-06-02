@@ -7,7 +7,7 @@ tags: [skill, authoring, contract, length-cap, description, frontmatter, progres
 last_updated: 2026-05-18
 ---
 
-Source: mattpocock/skills (MIT) — adapted with permission. See `../NOTICE` for the full attribution block.
+Source: mattpocock/skills (MIT) - adapted with permission. See `../NOTICE` for the full attribution block.
 
 # Skill Authoring Contract
 
@@ -27,14 +27,14 @@ Two-tier threshold, enforced by the validator (D-01):
 - **Warn at `≥100` lines.** Validator emits a warning. CI does NOT fail. Treat as a forcing
   function: a 110-line skill is fine; a 180-line skill needs a hard look at what can be
   extracted.
-- **Block at `≥250` lines.** Validator emits an error. CI FAILS. No exceptions —
+- **Block at `≥250` lines.** Validator emits an error. CI FAILS. No exceptions -
   multi-stage orchestrator skills push extraction harder, they do not waive the cap.
 
-When a skill exceeds the cap, use the extract-then-link discipline (D-10) — NEVER delete
+When a skill exceeds the cap, use the extract-then-link discipline (D-10) - NEVER delete
 content. Move it. Steps:
 
-1. Identify load-bearing workflow + decision-tree content. Keep this in `SKILL.md`.
-2. Identify domain content — heuristics, framework matrices, glossaries, extended examples.
+1. Identify essential workflow + decision-tree content. Keep this in `SKILL.md`.
+2. Identify domain content - heuristics, framework matrices, glossaries, extended examples.
    Extract to an existing `reference/<topic>.md` if the topic matches; create a new
    `reference/<topic>.md` if it does not.
 3. Replace the extracted content with a single-sentence summary + cross-link.
@@ -47,16 +47,16 @@ worst-offender and is scheduled for Bucket 1 rework in plan `28.5-04`. `skills/h
 
 Two rules:
 
-- **Length cap is STRICT.** `description ≤ 1024 chars` — no flag, no override. Under 20 chars
+- **Length cap is STRICT.** `description ≤ 1024 chars` - no flag, no override. Under 20 chars
   is also blocked as under-specification.
-- **Recommended form is LAX by default.** `<what>. Use when <triggers>.` — third person,
+- **Recommended form is LAX by default.** `<what>. Use when <triggers>.` - third person,
   first sentence what the skill does, second sentence the trigger conditions. Validator
   enforces the form regex only under `--strict-description` or `STRICT_DESCRIPTION=1`. Default
   is length-only.
 
 Why lax-by-default (D-02): `obra/superpowers/skills/writing-skills/SKILL.md` documents a
-shortcut-effect where an agent reads the description and skips the body — the more
-load-bearing the description summary, the more often this happens. Phase 33 ships an A/B
+shortcut-effect where an agent reads the description and skips the body - the more
+essential the description summary, the more often this happens. Phase 33 ships an A/B
 study at `.design/research/description-format-ab.md`; until then the regex stays advisory.
 
 Examples (both 20–1024 chars, both pass the length check):
@@ -73,18 +73,18 @@ Compares OKLCH gamut coverage against sRGB and prints a visual diff chart.
 
 Required fields (validator blocks if absent):
 
-- `name` — kebab-case skill identifier; matches `^[a-z0-9][a-z0-9-._]*$`.
-- `description` — 20–1024 chars; see `## Description format` above.
+- `name` - kebab-case skill identifier; matches `^[a-z0-9][a-z0-9-._]*$`.
+- `description` - 20–1024 chars; see `## Description format` above.
 
 Optional fields (recognized by the Claude Code agent loader):
 
-- `argument-hint` — usage hint shown in the slash-command picker.
-- `tools` — comma-separated allowed tool list (e.g. `Read, Grep`).
-- `disable-model-invocation: true|false` — when `true`, the skill fires ONLY on explicit
+- `argument-hint` - usage hint shown in the slash-command picker.
+- `tools` - comma-separated allowed tool list (e.g. `Read, Grep`).
+- `disable-model-invocation: true|false` - when `true`, the skill fires ONLY on explicit
   user invocation and the router will not auto-trigger it. Allowed ONLY on the D-09
   whitelist (pure shortcuts like `help`, `stats`, `note`, `health`, `zoom-out`). The
   validator blocks if a non-whitelisted skill sets this field to `true`.
-- `user-invocable: true|false` — whether the slash-command picker exposes the skill.
+- `user-invocable: true|false` - whether the slash-command picker exposes the skill.
 
 Concrete example:
 
@@ -103,7 +103,7 @@ References-one-level-deep is the rule (D-06):
 
 - **One level deep.** `SKILL.md` may cross-link into a reference. A reference may
   cross-link into another reference. `SKILL.md` does NOT instruct the agent to follow a
-  reference's references — load the first level only.
+  reference's references - load the first level only.
 - **When to add `scripts/`.** Per mattpocock's three criteria, add a script only when the
   step is deterministic, repeated across runs, and the failure mode needs explicit error
   handling. Anything ad-hoc or once-off stays inline as agent prose.

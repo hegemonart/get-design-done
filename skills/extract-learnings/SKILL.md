@@ -16,7 +16,7 @@ tools: Bash, Read, Write, Glob, Grep
 
 ## Protocol
 
-### Step 1 — Gather source artifacts
+### Step 1 - Gather source artifacts
 
 Collect content from available `.design/` files:
 
@@ -26,11 +26,11 @@ ls .design/*.md 2>/dev/null
 
 Read (if present): DESIGN-CONTEXT.md, DESIGN-VERIFICATION.md, DESIGN-DEBT.md, DESIGN-SUMMARY.md, CYCLES.md
 
-### Step 2 — Invoke gdd-learnings-extractor agent
+### Step 2 - Invoke gdd-learnings-extractor agent
 
 Delegate extraction to the `gdd-learnings-extractor` agent, passing it the list of available files. The agent extracts structured learning entries.
 
-### Step 3 — Write learnings artifact
+### Step 3 - Write learnings artifact
 
 The agent writes or appends to `.design/learnings/LEARNINGS.md`.
 
@@ -53,7 +53,7 @@ Layout of `.design/learnings/LEARNINGS.md`:
 ---
 ```
 
-### Step 4 — Reference file proposal (optional)
+### Step 4 - Reference file proposal (optional)
 
 After writing LEARNINGS.md, check each learning entry with `Proposed reference update: yes`.
 
@@ -78,7 +78,7 @@ If user types `y`: write the addition to the reference file.
 If user types `n`: mark the learning as "proposal declined" in LEARNINGS.md.
 If user types `edit`: open the proposed text for the user to modify, then write.
 
-### Step 5 — Summary
+### Step 5 - Summary
 
 ```
 ━━━ Learnings extracted ━━━

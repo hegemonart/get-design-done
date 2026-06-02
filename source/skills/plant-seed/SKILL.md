@@ -10,12 +10,12 @@ disable-model-invocation: true
 
 **Role:** Capture an idea that is too early to act on now but should surface when a future condition is met. Backing store: `.design/SEEDS.md`.
 
-## Step 1 — Gather inputs
+## Step 1 - Gather inputs
 
 - `<text>`: free-text idea. If empty, ask the user: "What's the seed idea?"
 - `--trigger <condition>`: the surfacing condition. If missing, ask: "What trigger condition should surface this idea? (e.g., 'when we add dark mode', 'when the nav component is redesigned', 'at next cycle start')"
 
-## Step 2 — Append to .design/SEEDS.md
+## Step 2 - Append to .design/SEEDS.md
 
 Create the file with `# Design Seeds` header if missing. Append:
 
@@ -30,11 +30,11 @@ Create the file with `# Design Seeds` header if missing. Append:
 ---
 ```
 
-## Step 3 — Surfacing contract
+## Step 3 - Surfacing contract
 
 Seeds are surfaced automatically by `{{command_prefix}}progress` and `{{command_prefix}}health`. Those commands do a keyword match of each seed's trigger text against current STATE.md + `.design/CYCLES.md` content and print any matches as `Seed ready to germinate: <text>`.
 
-This skill does NOT surface seeds itself — it only plants them.
+This skill does NOT surface seeds itself - it only plants them.
 
 ## Output
 

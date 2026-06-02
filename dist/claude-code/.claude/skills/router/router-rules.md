@@ -30,7 +30,7 @@ Bucket assignment:
 
 | Signal | complexity_class | path |
 |--------|------------------|------|
-| Command is `/gdd:help`, `/gdd:stats`, `/gdd:note`, `/gdd:health`, single-Haiku skill | `S` | `fast` (short-circuited — see below) |
+| Command is `/gdd:help`, `/gdd:stats`, `/gdd:note`, `/gdd:health`, single-Haiku skill | `S` | `fast` (short-circuited - see below) |
 | Command is `/gdd:scan`, `/gdd:brief`, `/gdd:sketch`, `/gdd:spike`, `/gdd:fast` | `M` | `fast` |
 | Command spawns exactly one agent (no orchestration), not in S list | `M` | `fast` |
 | Command is `/gdd:explore`, `/gdd:discover`, standalone `/gdd:verify`, standalone `/gdd:plan` | `L` | `quick` |
@@ -41,7 +41,7 @@ Bucket assignment:
 
 ### S-class short-circuit
 
-When `complexity_class` would be `S`, the router itself **does not run** for that invocation — the deterministic skip list is encoded in the `/gdd:*` SKILL.md entry of the matching command. The budget-enforcer hook treats "no router decision payload + matching command name" as the S-class signal and skips enforcement entirely (no telemetry row, no cache lookup, no event emission). When the router *is* invoked explicitly (e.g., debugging) it still emits `complexity_class: "S"` in the JSON for observability, but the runtime path is the no-op.
+When `complexity_class` would be `S`, the router itself **does not run** for that invocation - the deterministic skip list is encoded in the `/gdd:*` SKILL.md entry of the matching command. The budget-enforcer hook treats "no router decision payload + matching command name" as the S-class signal and skips enforcement entirely (no telemetry row, no cache lookup, no event emission). When the router *is* invoked explicitly (e.g., debugging) it still emits `complexity_class: "S"` in the JSON for observability, but the runtime path is the no-op.
 
 ## Cost Estimation Algorithm
 
@@ -57,7 +57,7 @@ return total
 
 ## Runtime-aware model resolution
 
-The router emits `resolved_models` alongside `model_tier_overrides` so downstream consumers (budget-enforcer cost computation, Phase 22 cost telemetry, Phase 23.5 bandit posterior store) can read the **concrete model ID** for the active runtime without re-deriving it from the tier name. The resolution is per-agent and additive — `model_tier_overrides` keeps its `opus|sonnet|haiku` enum for back-compat across all 14 runtimes, and `resolved_models` runs the runtime-specific translation on top of it.
+The router emits `resolved_models` alongside `model_tier_overrides` so downstream consumers (budget-enforcer cost computation, Phase 22 cost telemetry, Phase 23.5 bandit posterior store) can read the **concrete model ID** for the active runtime without re-deriving it from the tier name. The resolution is per-agent and additive - `model_tier_overrides` keeps its `opus|sonnet|haiku` enum for back-compat across all 14 runtimes, and `resolved_models` runs the runtime-specific translation on top of it.
 
 Computation contract (per D-07):
 
@@ -71,14 +71,14 @@ for each agent in planned spawn graph:
 
 Implementation surfaces (Phase 26 / Wave A):
 
-- `scripts/lib/runtime-detect.cjs` — `detect() → runtime-id | null`. Reads the same `*_CONFIG_DIR` / `*_HOME` env-vars Phase 24's installer uses (single source of truth in `scripts/lib/install/runtimes.cjs`). Returns `null` when no recognized runtime env-var is set; the router falls back to `'claude'` so the resolver always has a runtime ID to work with.
-- `scripts/lib/tier-resolver.cjs` — `resolve(runtime, tier, opts?) → model | null`. Translates `opus|sonnet|haiku` to the concrete model the runtime understands using the `./runtime-models.md` mapping (Phase 26 / Wave A). Fallback chain (D-04): runtime-specific entry → `claude` row default with `tier_resolution_fallback` event → `null` with `tier_resolution_failed` event. Never throws; `null` is a valid output the consumer must handle.
+- `scripts/lib/runtime-detect.cjs` - `detect() → runtime-id | null`. Reads the same `*_CONFIG_DIR` / `*_HOME` env-vars Phase 24's installer uses (single source of truth in `scripts/lib/install/runtimes.cjs`). Returns `null` when no recognized runtime env-var is set; the router falls back to `'claude'` so the resolver always has a runtime ID to work with.
+- `scripts/lib/tier-resolver.cjs` - `resolve(runtime, tier, opts?) → model | null`. Translates `opus|sonnet|haiku` to the concrete model the runtime understands using the `./runtime-models.md` mapping (Phase 26 / Wave A). Fallback chain (D-04): runtime-specific entry → `claude` row default with `tier_resolution_fallback` event → `null` with `tier_resolution_failed` event. Never throws; `null` is a valid output the consumer must handle.
 
 Per-agent emission rules:
 
 - One key per agent in the planned spawn graph (same key set the cost-estimation loop iterates over). Keys MUST match agent names exactly so consumers can join `resolved_models` against `model_tier_overrides` and the spawn graph by name.
 - Value is the concrete model string returned by `tier-resolver.resolve(runtime, tier)`.
-- When the resolver returns `null` (missing tier-map row, missing tier, garbage input), the value is JSON `null` — NOT omitted, NOT the empty string. Consumers (budget-enforcer, telemetry) MUST handle `null`: typically by skipping the cost row for that spawn and emitting their own diagnostic event, never by crashing.
-- When `complexity_class` is `S` and the router itself short-circuits (see **S-class short-circuit** above), no payload is emitted at all and `resolved_models` does not exist for that invocation — the budget-enforcer's "no router decision payload" branch already handles this case.
+- When the resolver returns `null` (missing tier-map row, missing tier, garbage input), the value is JSON `null` - NOT omitted, NOT the empty string. Consumers (budget-enforcer, telemetry) MUST handle `null`: typically by skipping the cost row for that spawn and emitting their own diagnostic event, never by crashing.
+- When `complexity_class` is `S` and the router itself short-circuits (see **S-class short-circuit** above), no payload is emitted at all and `resolved_models` does not exist for that invocation - the budget-enforcer's "no router decision payload" branch already handles this case.
 
 Back-compat assertion: a router invocation in a Claude runtime (or any environment where `runtime-detect.detect()` returns `null` and the router falls back to `'claude'`) produces `resolved_models` values that are the canonical Anthropic model IDs (`claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5`) for the corresponding tiers. Pre-Phase-26 consumers that ignore `resolved_models` see the same `model_tier_overrides` they always saw (Plan 26-09 owns the runtime fixture diff that asserts this).

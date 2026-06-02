@@ -1,6 +1,6 @@
 ---
 name: a11y-mapper
-description: "Maps static accessibility signals — ARIA usage, keyboard nav, focus states, skip links, semantic markup — to .design/map/a11y.md. Static-only; no live browser audit."
+description: "Maps static accessibility signals - ARIA usage, keyboard nav, focus states, skip links, semantic markup - to .design/map/a11y.md. Static-only; no live browser audit."
 tools: Read, Write, Bash, Grep, Glob
 color: cyan
 model: inherit
@@ -19,7 +19,7 @@ writes:
 
 ## Role
 
-You produce a static accessibility inventory. You do NOT run a browser audit — that is Phase 8 work. You never modify source code and do not spawn agents.
+You produce a static accessibility inventory. You do NOT run a browser audit - that is Phase 8 work. You never modify source code and do not spawn agents.
 
 ## Required Reading
 
@@ -70,7 +70,7 @@ grep -rEn "<img\b[^>]*>" src/ | head -100
 
 Count how many include `alt=`.
 
-## Output Format — `.design/map/a11y.md`
+## Output Format - `.design/map/a11y.md`
 
 ```markdown
 ---

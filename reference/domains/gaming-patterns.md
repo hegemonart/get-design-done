@@ -16,7 +16,7 @@ The canonical model is the four-quadrant scheme from Fagerholt & Lorentzon ("Bey
 Guidance:
 
 - Default competitive and twitch genres (shooters, MOBAs, fighting) to **non-diegetic** for raw readability; reserve diegetic/meta for ambience.
-- Diegetic elements must degrade gracefully — if the player can't see the gun, they can't see the ammo, so pair with an accessibility fallback (toggleable non-diegetic readout).
+- Diegetic elements must degrade gracefully - if the player can't see the gun, they can't see the ammo, so pair with an accessibility fallback (toggleable non-diegetic readout).
 - **Minimalist / no-HUD trends**: contextual fade (show on change, fade when idle), HUD-on-demand (hold a button to reveal), and full no-HUD modes (Journey, photo modes). Always make HUD density a player setting rather than a hard removal.
 - Never encode critical state in a single channel that a player may have disabled (color, a diegetic-only readout, an audio-only cue).
 
@@ -26,7 +26,7 @@ Guidance:
 
 Provide **in-game toggles** for each of the following AND honor the OS / platform "reduce motion" signal (`prefers-reduced-motion` on web, the equivalent OS accessibility flag on console/mobile). The in-game control overrides, but reduced-motion should set the safe default.
 
-- Camera shake (combat, explosions, footsteps) — slider 0–100%, not just on/off.
+- Camera shake (combat, explosions, footsteps) - slider 0–100%, not just on/off.
 - Parallax and large background motion in menus and HUD.
 - Head-bob / weapon-sway / view-bob during locomotion.
 - Screen-wide motion: speed lines, motion blur, chromatic aberration, full-screen zoom/punch.
@@ -35,7 +35,7 @@ Provide **in-game toggles** for each of the following AND honor the OS / platfor
 ### Photosensitive epilepsy (PSE)
 
 - No more than **three general flashes per second** over any one-second window (WCAG 2.3.1 *Three Flashes or Below Threshold*; aligns with the Harding/ITU broadcast limit).
-- Apply extra caution to **saturated red** flashes — red flashing is disproportionately provocative and has a stricter threshold than general luminance flashes.
+- Apply extra caution to **saturated red** flashes - red flashing is disproportionately provocative and has a stricter threshold than general luminance flashes.
 - Avoid large high-contrast rapidly-alternating patterns (stripes, checkerboards) covering a large area of the screen.
 - Surface a PSE warning at first launch and document risky effects; offer a "reduce flashing" toggle that caps strobe effects.
 
@@ -47,13 +47,13 @@ Provide **in-game toggles** for each of the following AND honor the OS / platfor
 
 ## ESRB / PEGI age-gates & content disclosure
 
-- **Neutral date-of-birth gate**: collect day/month/year with **no pre-filled default** and no shortcut. Do **not** use a "Are you 18?" yes/no toggle or any single-tap affirmation — these are non-compliant gates. The gate should not telegraph the passing answer.
+- **Neutral date-of-birth gate**: collect day/month/year with **no pre-filled default** and no shortcut. Do **not** use a "Are you 18?" yes/no toggle or any single-tap affirmation - these are non-compliant gates. The gate should not telegraph the passing answer.
 - Display the **correct regional rating**: ESRB (North America, esrb.org), PEGI (Europe, pegi.info), plus regional bodies where shipped (USK in Germany, CERO in Japan, ACB in Australia, GRAC in Korea, ClassInd in Brazil).
 - Show **content descriptors** alongside the rating mark (e.g., Violence, Blood, Strong Language, Sexual Content, Use of Drugs) and **interactive elements** notices.
 - Disclose **in-game purchases** and the **"Includes Random Items"** / loot-box descriptor when paid randomized rewards exist; honor regional loot-box and odds-disclosure rules (e.g., published drop-rate odds where required).
 - See ESRB ratings guide: https://www.esrb.org/ratings-guide/ and PEGI: https://pegi.info/.
 
-## Input model — controller-first vs touch-first vs KB/M
+## Input model - controller-first vs touch-first vs KB/M
 
 Detect the **active** input device and adapt; never assume mouse hover exists.
 
@@ -67,9 +67,9 @@ Detect the **active** input device and adapt; never assume mouse hover exists.
 
 ## Feedback & game-feel
 
-- **Juice, used deliberately**: hit-stop (brief freeze on impact), screen-shake, particle bursts, and squash/stretch sell impact — but screen-shake and heavy effects must be **sparing and toggleable** (ties into the vestibular sliders above).
+- **Juice, used deliberately**: hit-stop (brief freeze on impact), screen-shake, particle bursts, and squash/stretch sell impact - but screen-shake and heavy effects must be **sparing and toggleable** (ties into the vestibular sliders above).
 - **Readable damage / state feedback without color alone**: pair damage-direction indicators with shape/position, low-health with a non-color cue (audio heartbeat, vignette + icon), and status effects with distinct icons + text, not just a tint. This satisfies the color-independence requirement (WCAG 1.4.1 *Use of Color* as a design north star).
-- **Latency budgets**: target end-to-end input-to-photon responsiveness — roughly under ~100 ms feels responsive, under ~50 ms feels tight; competitive/rhythm titles need the tightest budgets. Never debounce or animation-gate a core action input so heavily that it adds perceptible lag.
+- **Latency budgets**: target end-to-end input-to-photon responsiveness - roughly under ~100 ms feels responsive, under ~50 ms feels tight; competitive/rhythm titles need the tightest budgets. Never debounce or animation-gate a core action input so heavily that it adds perceptible lag.
 - **Multi-channel confirmation**: important events (pickup, hit-confirm, objective complete) should land on at least two of {visual, audio, haptic} so a player with one channel disabled still gets feedback.
 
 ## Detection signals
@@ -100,12 +100,12 @@ The presence of a game engine dep plus any HUD/player keyword should auto-route 
 1. Every motion effect (camera shake, parallax, head-bob, motion blur, screen-wide zoom) respects the OS reduced-motion setting AND exposes an in-game slider (not just on/off).
 2. No visual effect flashes more than **three times per second**, and saturated-red flashing is specifically avoided (WCAG 2.3.1); a PSE warning is shown at first launch.
 3. An FOV slider and a motion-sickness comfort option (vignette/tunneling; snap-turn or teleport in VR) are present where the camera is first/close-third person.
-4. The age gate is a **neutral date-of-birth entry** with no pre-filled default — not an "Are you 18?" yes/no toggle.
+4. The age gate is a **neutral date-of-birth entry** with no pre-filled default - not an "Are you 18?" yes/no toggle.
 5. The correct regional rating mark, content descriptors, and an in-game-purchase / loot-box ("Includes Random Items") disclosure are displayed.
 6. Every interactive element is reachable via D-pad / stick focus navigation with a visible focus highlight; nothing is pointer-only.
 7. On-screen button prompts adapt to the active input device (Xbox / PlayStation / Nintendo / KB-M) and re-detect on device switch; nothing relies on mouse hover.
 8. Critical HUD and text sit inside a TV-safe / action-safe margin (~5% inset) and survive overscan; a HUD-bounds adjustment exists where relevant.
 9. All gameplay controls are fully remappable (with toggle-vs-hold options) as an accessibility provision.
-10. No critical state is encoded by color alone — damage, low-health, and status effects use shape, position, icon+text, or audio in addition to color.
+10. No critical state is encoded by color alone - damage, low-health, and status effects use shape, position, icon+text, or audio in addition to color.
 11. Screen-shake and other "juice" are sparing and toggleable; core action inputs are not animation-gated into perceptible lag (input-to-response budget honored).
 12. Important events (hit-confirm, pickup, objective) are confirmed on at least two of visual / audio / haptic channels.

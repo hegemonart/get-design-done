@@ -11,7 +11,7 @@ tools: Read, Edit, Write, Bash, Grep
 
 ## Role
 
-You add a brand-new peer-CLI to gdd's delegation layer. v1.27.0 ships 5 peers (codex, gemini, cursor, copilot, qwen). When the user wants a 6th — a peer that exists in the wild but isn't in our capability matrix — you walk them through the verification ladder and produce the 3-file footprint that integrates the peer cleanly. The procedural ladder, adapter scaffold shape, and verification gate live in `./peer-cli-protocol.md`.
+You add a brand-new peer-CLI to gdd's delegation layer. v1.27.0 ships 5 peers (codex, gemini, cursor, copilot, qwen). When the user wants a 6th - a peer that exists in the wild but isn't in our capability matrix - you walk them through the verification ladder and produce the 3-file footprint that integrates the peer cleanly. The procedural ladder, adapter scaffold shape, and verification gate live in `./peer-cli-protocol.md`.
 
 ## Invocation Contract
 
@@ -20,7 +20,7 @@ You add a brand-new peer-CLI to gdd's delegation layer. v1.27.0 ships 5 peers (c
 
 ## Procedure
 
-### Step 1 — Verification ladder (no edits yet)
+### Step 1 - Verification ladder (no edits yet)
 
 Walk the four-rung ladder in `./peer-cli-protocol.md` §"Verification ladder":
 
@@ -31,26 +31,26 @@ Walk the four-rung ladder in `./peer-cli-protocol.md` §"Verification ladder":
 
 Stop at the first failing rung. Do not proceed to scaffold a broken adapter.
 
-### Step 2 — Generate the adapter scaffold
+### Step 2 - Generate the adapter scaffold
 
-Copy one of `scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs` as the template (pick by protocol — ASP for `<protocol>=asp`, else ACP). Replace `ROLES_CLAIMED`, `ROLE_PREFIX`, `name`, `protocol` with the user's values from Step 1. The full adapter scaffold shape — `claims`, `dispatch`, exports — lives in `./peer-cli-protocol.md` §"Adapter scaffold shape" so consumers (codex/gemini/cursor/copilot/qwen) stay byte-similar.
+Copy one of `scripts/lib/peer-cli/adapters/{codex,gemini,cursor,copilot,qwen}.cjs` as the template (pick by protocol - ASP for `<protocol>=asp`, else ACP). Replace `ROLES_CLAIMED`, `ROLE_PREFIX`, `name`, `protocol` with the user's values from Step 1. The full adapter scaffold shape - `claims`, `dispatch`, exports - lives in `./peer-cli-protocol.md` §"Adapter scaffold shape" so consumers (codex/gemini/cursor/copilot/qwen) stay byte-similar.
 
 Write the result to `scripts/lib/peer-cli/adapters/<new-peer-id>.cjs`.
 
-### Step 3 — Three-file footprint
+### Step 3 - Three-file footprint
 
 Per `./peer-cli-protocol.md` §"Three-file footprint":
 
 1. New adapter at `scripts/lib/peer-cli/adapters/<new-peer-id>.cjs` (Step 2).
-2. Edit `scripts/lib/install/runtimes.cjs` — add `peerBinary` field (platform-aware: `<peer-binary>.cmd` on Windows, plain on POSIX).
-3. Edit `reference/peer-cli-capabilities.md` — add matrix row + per-peer section citing the Step 1 verification evidence.
-4. Edit `scripts/lib/peer-cli/registry.cjs` — append to `CAPABILITY_MATRIX` (and `KNOWN_PEERS` if separate).
+2. Edit `scripts/lib/install/runtimes.cjs` - add `peerBinary` field (platform-aware: `<peer-binary>.cmd` on Windows, plain on POSIX).
+3. Edit `reference/peer-cli-capabilities.md` - add matrix row + per-peer section citing the Step 1 verification evidence.
+4. Edit `scripts/lib/peer-cli/registry.cjs` - append to `CAPABILITY_MATRIX` (and `KNOWN_PEERS` if separate).
 
-### Step 4 — Verification gate
+### Step 4 - Verification gate
 
-Run the four-check gate in `./peer-cli-protocol.md` §"Verification gate": `tsc --noEmit`, peer-cli tests, reference-registry round-trip, frontmatter validator. Any failure — surface error + offer revert.
+Run the four-check gate in `./peer-cli-protocol.md` §"Verification gate": `tsc --noEmit`, peer-cli tests, reference-registry round-trip, frontmatter validator. Any failure - surface error + offer revert.
 
-### Step 5 — Surface the summary
+### Step 5 - Surface the summary
 
 ```
 ## peer-cli-add summary

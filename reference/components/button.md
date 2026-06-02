@@ -1,4 +1,4 @@
-# Button — Benchmark Spec
+# Button - Benchmark Spec
 
 **Harvested from**: Material 3, Polaris, Carbon, Fluent 2, Radix, shadcn/ui, Primer, Atlassian
 **Wave**: 1 · **Category**: Inputs
@@ -7,7 +7,7 @@
 
 ## Purpose
 
-A button triggers a discrete action in the current context — submitting a form, opening a dialog, executing a command. It is not a navigation element (use Link for href-based navigation). Buttons have an explicit visual affordance of clickability and must communicate their current state (loading, disabled) clearly. *(Material 3, Carbon, Polaris agree: button = action trigger, not navigation)*
+A button triggers a discrete action in the current context - submitting a form, opening a dialog, executing a command. It is not a navigation element (use Link for href-based navigation). Buttons have an explicit visual affordance of clickability and must communicate their current state (loading, disabled) clearly. *(Material 3, Carbon, Polaris agree: button = action trigger, not navigation)*
 
 ---
 
@@ -42,7 +42,7 @@ A button triggers a discrete action in the current context — submitting a form
 | Link-style | Looks like link, behaves as button | Carbon, Primer |
 
 **Norm** (≥6/18 systems agree): primary/secondary/ghost hierarchy; one primary per viewport section.
-**Diverge**: "tertiary" naming (Material 3) vs. "ghost" (Carbon) vs. "plain" (Polaris) — same visual intent, different labels.
+**Diverge**: "tertiary" naming (Material 3) vs. "ghost" (Carbon) vs. "plain" (Polaris) - same visual intent, different labels.
 
 ---
 
@@ -50,15 +50,15 @@ A button triggers a discrete action in the current context — submitting a form
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Resting fill/border | — |
-| hover | pointer over | 8% overlay (light) / 8% overlay (dark) | — |
-| focus | keyboard focus | 2px focus-visible ring, 2px offset | — |
-| active / pressed | mousedown / Space / Enter | 12% overlay; scale 0.96 | — |
+| default | - | Resting fill/border | - |
+| hover | pointer over | 8% overlay (light) / 8% overlay (dark) | - |
+| focus | keyboard focus | 2px focus-visible ring, 2px offset | - |
+| active / pressed | mousedown / Space / Enter | 12% overlay; scale 0.96 | - |
 | disabled | `disabled` attr | 38% opacity; cursor: not-allowed | `disabled` attr |
 | loading | async action in flight | Spinner, `aria-busy="true"` | `aria-busy="true"` |
 
 **Norm**: 96% scale on press (Material 3, shadcn, Carbon confirm). 38% opacity for disabled (Material 3 spec).
-**Diverge**: hover overlay vs. background tint — systems use either approach; overlay is more theme-portable.
+**Diverge**: hover overlay vs. background tint - systems use either approach; overlay is more theme-portable.
 
 ---
 
@@ -71,17 +71,17 @@ A button triggers a discrete action in the current context — submitting a form
 | lg | 48px | 24px | 96px | 16px/500 |
 
 **Norm**: 40px default height (Carbon, Polaris, Fluent all confirm). Min-width prevents single-character buttons.
-Cross-link: `reference/surfaces.md` — hit-area rule (minimum 44×44px accessible tap target via padding, not height).
+Cross-link: `reference/surfaces.md` - hit-area rule (minimum 44×44px accessible tap target via padding, not height).
 
 ---
 
 ## Typography
 
-- Weight: 500 (medium) — not bold; distinguishes from body text without being heavy *(Material 3, Carbon)*
+- Weight: 500 (medium) - not bold; distinguishes from body text without being heavy *(Material 3, Carbon)*
 - Letter-spacing: +0.01em for sm/md, 0 for lg
-- No text truncation — resize button or use icon-only variant; truncated button labels break affordance
+- No text truncation - resize button or use icon-only variant; truncated button labels break affordance
 
-Cross-link: `reference/typography.md` — tabular-nums rule (use on loading counters, not labels)
+Cross-link: `reference/typography.md` - tabular-nums rule (use on loading counters, not labels)
 
 ---
 
@@ -92,7 +92,7 @@ Cross-link: `reference/typography.md` — tabular-nums rule (use on loading coun
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/button/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/button/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -101,7 +101,7 @@ Cross-link: `reference/typography.md` — tabular-nums rule (use on loading coun
 
 ### Accessibility Rules
 
-- Icon-only buttons MUST have `aria-label` or `aria-labelledby` — a tooltip is not a substitute
+- Icon-only buttons MUST have `aria-label` or `aria-labelledby` - a tooltip is not a substitute
 - Loading state: set `aria-busy="true"` and disable pointer events; announce completion via `aria-live`
 - Disabled: use native `disabled` attribute (not `aria-disabled`) unless button must remain focusable for tooltip explanation
 - Never use `<div>` or `<a>` as a button trigger without `role="button"` and keyboard handlers
@@ -119,9 +119,9 @@ Cross-link: `reference/accessibility.md`
 | press scale (0.96) | 80ms | ease-in | Immediate tactile feedback |
 | loading spinner in | 150ms | ease-out | Replaces or overlays label |
 
-**BAN**: `transition: all` — catches width change on loading and causes layout jank.
+**BAN**: `transition: all` - catches width change on loading and causes layout jank.
 
-Cross-link: `reference/motion.md` — canonical scale-on-press 0.96, BAN-04 (`transition: all`)
+Cross-link: `reference/motion.md` - canonical scale-on-press 0.96, BAN-04 (`transition: all`)
 
 ---
 
@@ -134,10 +134,10 @@ Cross-link: `reference/motion.md` — canonical scale-on-press 0.96, BAN-04 (`tr
 - Maintain 8px minimum spacing between adjacent buttons *(Carbon, Fluent)*
 
 ### Don't
-- Don't use a button for navigation to another page — use `<a href>` (Link) *(Carbon, Primer)*
-- Don't disable a button without explaining why — prefer showing error state after submission *(Polaris)*
-- Don't use "Click here" or "Submit" as labels — be specific about the action *(Polaris, Carbon)*
-- Don't truncate button labels — buttons must fit their content *(Fluent, Atlassian)*
+- Don't use a button for navigation to another page - use `<a href>` (Link) *(Carbon, Primer)*
+- Don't disable a button without explaining why - prefer showing error state after submission *(Polaris)*
+- Don't use "Click here" or "Submit" as labels - be specific about the action *(Polaris, Carbon)*
+- Don't truncate button labels - buttons must fit their content *(Fluent, Atlassian)*
 
 ---
 
@@ -145,7 +145,7 @@ Cross-link: `reference/motion.md` — canonical scale-on-press 0.96, BAN-04 (`tr
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-04 | `transition: all` on interactive elements — `reference/anti-patterns.md#ban-04` |
+| BAN-04 | `transition: all` on interactive elements - `reference/anti-patterns.md#ban-04` |
 
 ---
 

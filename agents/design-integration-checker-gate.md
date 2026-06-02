@@ -5,7 +5,7 @@ tools: Read, Bash, Grep
 color: blue
 model: inherit
 default-tier: haiku
-tier-rationale: "Cheap diff-scan gate — expensive integration checker spawned only on heuristic hit"
+tier-rationale: "Cheap diff-scan gate - expensive integration checker spawned only on heuristic hit"
 size_budget: S
 parallel-safe: always
 typical-duration-seconds: 10
@@ -27,9 +27,9 @@ You run once per verify invocation. You are read-only. You do not spawn the full
 
 The orchestrator supplies three fields in the prompt context:
 
-- `diff_files` — newline-separated paths changed since the baseline (output of `git diff --name-only <baseline_sha>..HEAD`).
-- `diff_body` — unified-diff body, truncated.
-- `baseline_sha` — the SHA the diff is computed against.
+- `diff_files` - newline-separated paths changed since the baseline (output of `git diff --name-only <baseline_sha>..HEAD`).
+- `diff_body` - unified-diff body, truncated.
+- `baseline_sha` - the SHA the diff is computed against.
 
 ## Heuristic
 
@@ -88,7 +88,7 @@ You MAY:
 
 ## Why this agent exists
 
-Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the integration-checker-specific instance of that pattern — the full `design-integration-checker` is a LARGE-size post-verification spawn that grep-walks the codebase for D-XX decision application. If no decision or anchor doc moved in the diff, the wiring result is unchanged from the last verify and the spawn is wasted cost.
+Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the integration-checker-specific instance of that pattern - the full `design-integration-checker` is a LARGE-size post-verification spawn that grep-walks the codebase for D-XX decision application. If no decision or anchor doc moved in the diff, the wiring result is unchanged from the last verify and the spawn is wasted cost.
 
 ## Record
 

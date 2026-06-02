@@ -9,7 +9,7 @@ source of the mapping. Phase 33.6, decision D-03 (heuristic + override), D-04
 ## What it maps
 
 The plugin speaks one tier vocabulary everywhere a model tier is named in
-frontmatter or config: `opus`, `sonnet`, `haiku` — the same `VALID_TIERS` the
+frontmatter or config: `opus`, `sonnet`, `haiku` - the same `VALID_TIERS` the
 Phase-26 `tier-resolver.cjs` enforces. OpenRouter, by contrast, exposes a flat
 catalog of provider-prefixed model ids (`anthropic/claude-opus-4-7`,
 `meta-llama/llama-3.1-8b-instruct`, `qwen/qwen-2.5-72b-instruct`, …). The adapter
@@ -29,18 +29,18 @@ The adapter's public `resolve(tier)` always speaks `opus` / `sonnet` / `haiku`;
 ## The buckets
 
 - **opus (HIGH) = top-tier closed.** The most capable closed-vendor model in the
-  catalog — the priciest premium id from a closed namespace. This is the
+  catalog - the priciest premium id from a closed namespace. This is the
   "spare-no-expense, hardest reasoning" slot.
 - **sonnet (MEDIUM) = mid / top-open.** A capable model that sits below the opus
-  pick — typically the mid-priced closed model, or the strongest open model when
+  pick - typically the mid-priced closed model, or the strongest open model when
   no second closed tier is present. The everyday workhorse slot.
-- **haiku (LOW) = cheap open.** The cheapest capable OPEN model — the
+- **haiku (LOW) = cheap open.** The cheapest capable OPEN model - the
   fast/inexpensive slot for high-volume, low-stakes calls.
 
 ## The signals
 
 The heuristic is computed from fields already present on each catalog model, so it
-stays deterministic for a fixed catalog (no clock, no randomness — important so the
+stays deterministic for a fixed catalog (no clock, no randomness - important so the
 33.6-04 golden baseline is stable):
 
 - **Namespace (closed vs open).** The id prefix before the `/` names the vendor.
@@ -77,7 +77,7 @@ an exact catalog id via `.design/config.json`:
 ```
 
 An override **wins** over the heuristic: when `openrouter_tier_overrides[tier]` is a
-non-empty string, the adapter returns it verbatim — even if that id is not present
+non-empty string, the adapter returns it verbatim - even if that id is not present
 in the live catalog (the user's explicit choice is honored over catalog membership).
 Tests inject the same map via `opts.overrides` instead of reading the live config
 file, so the override path is exercised hermetically. The config read is best-effort:
@@ -86,12 +86,12 @@ rather than throwing.
 
 ## The graceful-null contract
 
-OpenRouter is opt-in ALONGSIDE native provider auth — never OpenRouter-only (D-08).
+OpenRouter is opt-in ALONGSIDE native provider auth - never OpenRouter-only (D-08).
 When no catalog is available (no cache, an empty `models[]`, or a `readCatalog` that
 returns null) AND no override applies to the requested tier, `resolve` returns
 `null`. A `null` is not an error: it is the signal that the caller (the router /
 budget-enforcer, wired in 33.6-03) should fall back to the native provider via the
-existing `scripts/lib/tier-resolver.cjs` fallback chain. The adapter NEVER throws —
+existing `scripts/lib/tier-resolver.cjs` fallback chain. The adapter NEVER throws -
 an unknown tier, a missing config, a corrupt cache, or garbage options all degrade to
 `null` (or to an override when one applies). This keeps OpenRouter a strictly
 additive capability: turning it off, or having it fail to fetch, can never break a

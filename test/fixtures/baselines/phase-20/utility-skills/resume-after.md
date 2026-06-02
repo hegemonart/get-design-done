@@ -13,9 +13,9 @@ disable-model-invocation: true
 
 Inverse of `/gdd:pause`. Reads a checkpoint file, prints a clear "you were here" summary, and routes to the next command.
 
-## Step 0 — Prime cycle context
+## Step 0 - Prime cycle context
 
-Two paths — MCP preferred when available, file-read fallback otherwise. This runs BEFORE checkpoint restoration so the "you were here" summary has full cycle context (phase, plans, decisions).
+Two paths - MCP preferred when available, file-read fallback otherwise. This runs BEFORE checkpoint restoration so the "you were here" summary has full cycle context (phase, plans, decisions).
 
 ### MCP path (preferred)
 
@@ -26,7 +26,7 @@ When `mcp__gdd_status` is exposed (Phase 27.7+, registered via `npx @hegemonart/
 3. Call `mcp__gdd_decisions_list` (no args) → full D-XX list with rationale. Use for the "decisions you made" line in the resume summary.
 4. (Optional) Call `mcp__gdd_plans_list` (no args) → current phase plans + status, to identify next incomplete plan.
 
-Three to four MCP calls = full resume priming (~5s, ~32k tokens — Storybloq benchmark). Proceed to Step 1.
+Three to four MCP calls = full resume priming (~5s, ~32k tokens - Storybloq benchmark). Proceed to Step 1.
 
 ### File-read path (fallback)
 
@@ -36,7 +36,7 @@ When MCP tools are not available:
 2. Also `Read .design/CYCLES.md` (if present) to see prior cycle state for the recap.
 3. Proceed to Step 1.
 
-This path loads the same context in 3–5 file reads (~60s, ~46.5k tokens — file-reading baseline).
+This path loads the same context in 3–5 file reads (~60s, ~46.5k tokens - file-reading baseline).
 
 ## Steps
 
@@ -55,7 +55,7 @@ This path loads the same context in 3–5 file reads (~60s, ~46.5k tokens — fi
 
 3. **Read checkpoint**: load `.design/checkpoints/NN-*.md`. If not found, try `.design/HANDOFF.md` as legacy fallback.
 
-4. **Check paused status via MCP**: call `mcp__gdd_state__get` and inspect `status`. If it does **not** start with `paused:`, print "No pause to resume" and exit — the prior session was not paused via `/gdd:pause`, so there is nothing to restore.
+4. **Check paused status via MCP**: call `mcp__gdd_state__get` and inspect `status`. If it does **not** start with `paused:`, print "No pause to resume" and exit - the prior session was not paused via `/gdd:pause`, so there is nothing to restore.
 
 5. **Restore prior status via MCP**: parse the prior status from the `paused:<prior>` prefix. Call `mcp__gdd_state__set_status` with `status: <prior>` to restore the pre-pause state.
 
@@ -74,7 +74,7 @@ This path loads the same context in 3–5 file reads (~60s, ~46.5k tokens — fi
    ```
 
 9. **Staleness check**: compare mtime of `.design/` artifacts vs `src/` via Bash `stat` when available. If `src/` has commits newer than the checkpoint timestamp, warn:
-   "Source has changed since checkpoint NN — consider re-running explore or verify."
+   "Source has changed since checkpoint NN - consider re-running explore or verify."
 
 10. **Route recommendation** based on checkpoint `Stage:` field:
     - `brief` → "Run `/gdd:brief`"
@@ -86,8 +86,8 @@ This path loads the same context in 3–5 file reads (~60s, ~46.5k tokens — fi
 ## Do Not
 
 - Do not delete checkpoint files.
-- Do not mutate STATE.md directly — all STATE.md writes go through the `gdd-state` MCP tools above.
-- Do not auto-execute the next command — just recommend.
-- Do not call `mcp__gdd_state__transition_stage` — resume restores prior status without moving the pipeline.
+- Do not mutate STATE.md directly - all STATE.md writes go through the `gdd-state` MCP tools above.
+- Do not auto-execute the next command - just recommend.
+- Do not call `mcp__gdd_state__transition_stage` - resume restores prior status without moving the pipeline.
 
 ## RESUME COMPLETE

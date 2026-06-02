@@ -10,7 +10,7 @@
  * before/after baseline pair at `test/fixtures/baselines/phase-20/utility-skills/<skill>-{before,after}.md`
  * anchors line-count drift and the `after.md` twin matches the live file.
  *
- * Pattern mirrors tests/skill-*-mcp-migration.test.cjs (Waves B + C) —
+ * Pattern mirrors tests/skill-*-mcp-migration.test.cjs (Waves B + C) -
  * a single file with one `describe()` per skill, multiple `test()` each.
  *
  * Runtime invocation (confirming the MCP tools actually fire) is covered
@@ -38,7 +38,7 @@ const BASELINE_DIR = path.join(
 /**
  * Per-skill test spec. `mutationTools` is the complete set of MCP mutators
  * the skill must reference in its body (beyond `get`). `readOnly` skills
- * may only reference `mcp__gdd_state__get` — any mutator reference fails.
+ * may only reference `mcp__gdd_state__get` - any mutator reference fails.
  */
 const SKILLS = [
   {
@@ -127,13 +127,13 @@ const ALL_MUTATORS = [
   'mcp__gdd_state__frontmatter_update',
 ];
 
-// Utility skills must never issue a stage transition — that discipline
+// Utility skills must never issue a stage transition - that discipline
 // belongs to the five stage skills only (brief/explore/plan/design/verify).
 const FORBIDDEN_UTILITY_TOOLS = ['mcp__gdd_state__transition_stage'];
 
 // Patterns that indicate direct STATE.md mutation paths the migration
 // should have eliminated. These are checked against every utility skill
-// body without exception — unlike `brief`, utility skills have no
+// body without exception - unlike `brief`, utility skills have no
 // bootstrap exception (the brief skill owns STATE.md seeding).
 const FORBIDDEN_STATE_MUTATION_PATTERNS = [
   { name: 'Edit on .design/STATE.md', re: /Edit\s+[^\n]*\.design\/STATE\.md/i },
@@ -207,7 +207,7 @@ for (const spec of SKILLS) {
         assert.doesNotMatch(
           body,
           re,
-          `SKILL.md body must not contain "${patternName}" — STATE.md mutations belong to MCP`,
+          `SKILL.md body must not contain "${patternName}" - STATE.md mutations belong to MCP`,
         );
       }
     });
@@ -216,7 +216,7 @@ for (const spec of SKILLS) {
       const body = bodyOnly(readSkill(skillPath));
       for (const tool of FORBIDDEN_UTILITY_TOOLS) {
         // Match INVOCATIONS, not prose mentions. An invocation is the tool
-        // name in backticks followed by `with` or `call` / `Call` — mirrors
+        // name in backticks followed by `with` or `call` / `Call` - mirrors
         // the verify-migration test (tests/skill-verify-mcp-migration.test.cjs).
         // This lets skills explicitly document "do not call X" without
         // tripping the guard.
@@ -226,7 +226,7 @@ for (const spec of SKILLS) {
         assert.doesNotMatch(
           body,
           invocationRe,
-          `utility skill must not invoke "${tool}" — stage transitions belong to stage skills only`,
+          `utility skill must not invoke "${tool}" - stage transitions belong to stage skills only`,
         );
       }
     });
@@ -322,7 +322,7 @@ describe('utility-skill progress: snapshot reuse', () => {
   test('<connections> check sources the MCP get snapshot, not direct STATE.md', () => {
     const body = readSkill(skillPath);
     // The first-run nudge and forensic Check 6 both reference
-    // <connections> — after migration, both must source the MCP snapshot
+    // <connections> - after migration, both must source the MCP snapshot
     // rather than a fresh STATE.md read.
     assert.match(
       body,

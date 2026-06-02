@@ -5,7 +5,7 @@ description: Off-context Figma design-system extraction into a compact local dig
 
 # gdd-figma-extract
 
-Pull a whole Figma design system into a compact, queryable local digest — **without** the raw JSON ever entering Claude context. The heavy lifting runs in tested `.cjs` tools; the model reads only the digest outputs.
+Pull a whole Figma design system into a compact, queryable local digest - **without** the raw JSON ever entering Claude context. The heavy lifting runs in tested `.cjs` tools; the model reads only the digest outputs.
 
 ## Usage
 
@@ -22,21 +22,21 @@ Pull a whole Figma design system into a compact, queryable local digest — **wi
    ```
    node -e "process.exit(process.env.FIGMA_TOKEN||process.env.FIGMA_PERSONAL_ACCESS_TOKEN?0:1)"
    ```
-   If unset, tell the user to `export FIGMA_TOKEN=figd_…` (from https://www.figma.com/developers/api#access-tokens). The token comes from the environment **only** — never ask the user to paste it into a file or the chat, and never echo it back.
+   If unset, tell the user to `export FIGMA_TOKEN=figd_…` (from https://www.figma.com/developers/api#access-tokens). The token comes from the environment **only** - never ask the user to paste it into a file or the chat, and never echo it back.
 
-2. **Stage 1 — pull.** Pull the file's REST endpoints into the gitignored raw cache (D-09):
+2. **Stage 1 - pull.** Pull the file's REST endpoints into the gitignored raw cache (D-09):
    ```
    node scripts/lib/figma-extract/pull.cjs "<file-key-or-url>"
    ```
-   This caches to `.figma-extract-cache/raw/<file-key>/` and skips re-pulling when Figma's `version` is unchanged (D-11). Add `--force` to bypass the cache, `--out <dir>` to relocate the cache. The tool prints a JSON summary (endpoints, bytes, cached) on stdout — the raw bodies stay on disk.
+   This caches to `.figma-extract-cache/raw/<file-key>/` and skips re-pulling when Figma's `version` is unchanged (D-11). Add `--force` to bypass the cache, `--out <dir>` to relocate the cache. The tool prints a JSON summary (endpoints, bytes, cached) on stdout - the raw bodies stay on disk.
 
-3. **Stage 2 — plugin sync (OPTIONAL, Path C).** Only when the design tokens live in Figma Variables that the REST API cannot return (non-Enterprise plans → the pull summary shows `variables` skipped) and the user wants token coverage:
+3. **Stage 2 - plugin sync (OPTIONAL, Path C).** Only when the design tokens live in Figma Variables that the REST API cannot return (non-Enterprise plans → the pull summary shows `variables` skipped) and the user wants token coverage:
    ```
    node scripts/lib/figma-extract/receiver.cjs --out .figma-extract-cache/raw/<file-key>
    ```
-   This binds `127.0.0.1:5179` (D-06). Tell the user to run the dev-installed **"GDD Sync"** plugin in Figma and click **"Export to GDD"** — see `figma-plugin/README.md` for the one-time dev-install. The receiver writes `variables.json` into the cache and exits on receipt or timeout. Skip this stage entirely for design systems whose tokens already come through the REST pull.
+   This binds `127.0.0.1:5179` (D-06). Tell the user to run the dev-installed **"GDD Sync"** plugin in Figma and click **"Export to GDD"** - see `figma-plugin/README.md` for the one-time dev-install. The receiver writes `variables.json` into the cache and exits on receipt or timeout. Skip this stage entirely for design systems whose tokens already come through the REST pull.
 
-4. **Stage 3 — digest.** Transform the cache into the compact digest:
+4. **Stage 3 - digest.** Transform the cache into the compact digest:
    ```
    node scripts/lib/figma-extract/digest.cjs --raw .figma-extract-cache/raw/<file-key> --out .figma-extract-cache/digest
    ```
@@ -46,9 +46,9 @@ Pull a whole Figma design system into a compact, queryable local digest — **wi
 
 ## Required Reading
 
-- `.figma-extract-cache/digest/DESIGN.md` — the compact human/LLM-readable spec
-- `.figma-extract-cache/digest/tokens.json` — resolved design tokens (when structured token data is needed)
-- `.figma-extract-cache/digest/components.json` — components with variants/props/defaults (when structured component data is needed)
+- `.figma-extract-cache/digest/DESIGN.md` - the compact human/LLM-readable spec
+- `.figma-extract-cache/digest/tokens.json` - resolved design tokens (when structured token data is needed)
+- `.figma-extract-cache/digest/components.json` - components with variants/props/defaults (when structured component data is needed)
 
 ## Notes
 
@@ -59,6 +59,6 @@ Pull a whole Figma design system into a compact, queryable local digest — **wi
 ## Do Not
 
 - **Do NOT read or `cat` the `raw/*.json` cache** (e.g. `.figma-extract-cache/raw/<file-key>/file.json`). It is tool-internal and often 100+ MB; loading it into context defeats the off-context guarantee (D-12). Read only the digest outputs above.
-- **Do not persist, log, echo, or print `FIGMA_TOKEN`** (D-10). It belongs in the environment only — never write it to a file, a commit, or chat output.
+- **Do not persist, log, echo, or print `FIGMA_TOKEN`** (D-10). It belongs in the environment only - never write it to a file, a commit, or chat output.
 
 ## FIGMA-EXTRACT COMPLETE

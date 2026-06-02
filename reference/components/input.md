@@ -1,4 +1,4 @@
-# Input — Benchmark Spec
+# Input - Benchmark Spec
 
 **Harvested from**: Material 3, Carbon, Ant Design, Mantine, Polaris, Fluent 2, Atlassian, shadcn/ui
 **Wave**: 1 · **Category**: Inputs
@@ -47,7 +47,7 @@ Label *                     ← <label for="id"> — always visible
 | Number | `type="number"` or `inputmode="numeric"` | Material 3, Ant, Mantine |
 
 **Norm** (≥6/18): outlined with floating or static label is the most-cited default.
-**Diverge**: floating vs. static label — Material 3 uses floating; Carbon, Polaris, Atlassian use static (above). Static label is safer for a11y (floating requires JavaScript + ARIA management).
+**Diverge**: floating vs. static label - Material 3 uses floating; Carbon, Polaris, Atlassian use static (above). Static label is safer for a11y (floating requires JavaScript + ARIA management).
 
 ---
 
@@ -55,14 +55,14 @@ Label *                     ← <label for="id"> — always visible
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Resting border | — |
-| hover | pointer over | Border lightens 20% | — |
-| focus | keyboard / click | 2px focus-visible ring or thickened border | — |
-| filled | has value | Label lifts (floating) or stays static | — |
+| default | - | Resting border | - |
+| hover | pointer over | Border lightens 20% | - |
+| focus | keyboard / click | 2px focus-visible ring or thickened border | - |
+| filled | has value | Label lifts (floating) or stays static | - |
 | disabled | `disabled` attr | 38% opacity; cursor: not-allowed | `disabled` attr |
 | read-only | `readonly` attr | No border change; cursor: default | `readonly` attr |
 | error | invalid | Red/error border + icon + error message | `aria-invalid="true"` + `aria-describedby` |
-| success | valid (opt.) | Green border + check icon | — |
+| success | valid (opt.) | Green border + check icon | - |
 
 ---
 
@@ -75,20 +75,20 @@ Label *                     ← <label for="id"> — always visible
 | lg | 48px | 16px | 16px | 16px |
 
 **Norm**: 40px default height (Carbon, Polaris, Fluent, Atlassian confirm).
-Minimum width: 200px — narrower inputs invite input truncation and frustrate users.
+Minimum width: 200px - narrower inputs invite input truncation and frustrate users.
 
-Cross-link: `reference/surfaces.md` — hit area ≥44px via padding; `reference/typography.md` — label sizing.
+Cross-link: `reference/surfaces.md` - hit area ≥44px via padding; `reference/typography.md` - label sizing.
 
 ---
 
 ## Typography
 
 - Label: 14px/500 above input; 12px when floating in focus/filled state
-- Placeholder: 14px/400; color at 40% contrast minimum — never the only label
+- Placeholder: 14px/400; color at 40% contrast minimum - never the only label
 - Helper/error: 12px/400; full contrast for error messages
 - **Placeholder is not a label**: it disappears on type, fails contrast, and cannot be announced by screen readers as a persistent label
 
-Cross-link: `reference/typography.md` — text-wrap, font-smoothing rules
+Cross-link: `reference/typography.md` - text-wrap, font-smoothing rules
 
 ---
 
@@ -99,7 +99,7 @@ Cross-link: `reference/typography.md` — text-wrap, font-smoothing rules
 
 ### Keyboard Contract
 
-*Quoted verbatim from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/textbox/ — W3C — 2024*
+*Quoted verbatim from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/textbox/ - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -115,7 +115,7 @@ Password toggle and clear button must be keyboard accessible (Enter/Space activa
 
 ### Accessibility Rules
 
-- Label MUST be associated via `<label for="id">` or `aria-label` — `placeholder` alone is not sufficient
+- Label MUST be associated via `<label for="id">` or `aria-label` - `placeholder` alone is not sufficient
 - Error message MUST be linked via `aria-describedby` and triggered before or alongside visual indicator
 - `aria-invalid="true"` MUST be set on the input when in error state
 - `aria-required="true"` for required fields (supplement with visual `*` + legend)
@@ -133,7 +133,7 @@ Cross-link: `reference/accessibility.md`
 | border colour | 100ms | ease | Focus/error state border change |
 | error message in | 150ms | ease-out | Slide-down + fade; respect prefers-reduced-motion |
 
-Cross-link: `reference/motion.md` — `prefers-reduced-motion` guard required on label float
+Cross-link: `reference/motion.md` - `prefers-reduced-motion` guard required on label float
 
 ---
 
@@ -146,10 +146,10 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion` guard required on
 - Use `autocomplete` attributes for common fields (name, email, address) *(Polaris, Fluent)*
 
 ### Don't
-- Don't use `placeholder` as the only label — it disappears and fails contrast *(Carbon, Polaris, Atlassian)*
+- Don't use `placeholder` as the only label - it disappears and fails contrast *(Carbon, Polaris, Atlassian)*
 - Don't show error state before the user has had a chance to input (premature validation) *(Polaris)*
-- Don't remove the label on focus to create space — floating labels break screen readers *(Atlassian)*
-- Don't use `type="number"` for things that aren't math operands (phone, ZIP) — use `inputmode` instead *(Mantine, Carbon)*
+- Don't remove the label on focus to create space - floating labels break screen readers *(Atlassian)*
+- Don't use `type="number"` for things that aren't math operands (phone, ZIP) - use `inputmode` instead *(Mantine, Carbon)*
 
 ---
 
@@ -157,7 +157,7 @@ Cross-link: `reference/motion.md` — `prefers-reduced-motion` guard required on
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| Placeholder-as-label | `reference/anti-patterns.md` — no dedicated BAN yet; cross-ref accessibility.md |
+| Placeholder-as-label | `reference/anti-patterns.md` - no dedicated BAN yet; cross-ref accessibility.md |
 
 ---
 

@@ -5,7 +5,7 @@
 
 ## Scope
 
-This document models the security posture of **GDD's own runtime** — the
+This document models the security posture of **GDD's own runtime** - the
 multi-MCP-server, peer-CLI-spawning, WebSocket-emitting SDK that grew across
 Phases 20–27 without a formalized security model. It does **NOT** model the
 user code that GDD audits; the safety floor for *audited user code* is Phase
@@ -25,10 +25,10 @@ audit trail), **I**nformation disclosure (leaking data to the wrong party),
 Each of the five in-scope components below gets a fixed five-part treatment:
 **Assets** (what an attacker wants), **Entry points** (the untrusted-input
 boundary), **STRIDE threats** (which categories apply), **Current mitigations**
-(citing **real shipped code** — file + line + behavior), and **Residual risks**
+(citing **real shipped code** - file + line + behavior), and **Residual risks**
 (threats current code does **not** fully cover, each routed to the Phase 33.5
 plan that closes it). Out of scope per CONTEXT: rewriting the issue-reporter
-network model — it is **documented** here as already-mitigated, not
+network model - it is **documented** here as already-mitigated, not
 re-engineered.
 
 ## Trust boundaries
@@ -46,13 +46,13 @@ controls; the table names what crosses the line.
 | OpenRouter catalog fetch `→` openrouter.ai | The OpenRouter `/models` API host (and any MITM on the path) | The `Authorization: Bearer <OPENROUTER_API_KEY>` request header + the untrusted `/models` JSON the host returns |
 
 The event payloads that traverse the bus (and therefore the WS transport and
-any persisted JSONL) are scrubbed at serialize time — see Component 4's
+any persisted JSONL) are scrubbed at serialize time - see Component 4's
 `redact.cjs` mitigation, which is the cross-cutting information-disclosure
 control for the whole bus.
 
 ---
 
-## Component 1 — Hooks (SessionStart update-check + budget/context-monitor)
+## Component 1 - Hooks (SessionStart update-check + budget/context-monitor)
 
 The hooks run automatically: `SessionStart` fires the update-check on every
 session, and the budget / context-monitor hook runs on tool-use to enforce
@@ -71,16 +71,16 @@ inside the user's repo, with no sandbox.
     "latest version" response to the update-check.
   - **Tampering:** A malformed `.design/config.json` could try to corrupt the
     budget/context accounting or flip the monitor's thresholds.
-  - **Repudiation:** Hook actions are largely silent — limited audit trail of
+  - **Repudiation:** Hook actions are largely silent - limited audit trail of
     what a SessionStart hook did or why a budget veto fired.
   - **Information disclosure:** The update-check's User-Agent / outbound
     request reveals that GDD is in use; a verbose hook could echo env into logs.
   - **Denial of service:** A hung or slow update endpoint could stall session
     start if the fetch were unbounded.
-  - **Elevation of privilege:** The hook already runs at full user privilege —
+  - **Elevation of privilege:** The hook already runs at full user privilege -
     the residual concern is a config-driven path or command injection lifting
     *attacker* input to that privilege level.
-- **Current mitigations:** The update-check is **advisory** — it informs of a
+- **Current mitigations:** The update-check is **advisory** - it informs of a
   newer version and never auto-installs or executes downloaded code, so a
   spoofed version string cannot achieve code execution. The budget /
   context-monitor reads config defensively (missing file / malformed JSON /
@@ -98,13 +98,13 @@ inside the user's repo, with no sandbox.
 
 ---
 
-## Component 2 — MCP servers (gdd-state: 11 mutating tools / gdd-mcp: read)
+## Component 2 - MCP servers (gdd-state: 11 mutating tools / gdd-mcp: read)
 
 Two MCP servers expose GDD state to an MCP client: **gdd-state**
-(`sdk/mcp/gdd-state/`) with **11 mutating tools** — `add_blocker`,
+(`sdk/mcp/gdd-state/`) with **11 mutating tools** - `add_blocker`,
 `add_decision`, `add_must_have`, `checkpoint`, `frontmatter_update`, `get`,
 `probe_connections`, `resolve_blocker`, `set_status`, `transition_stage`,
-`update_progress` — and **gdd-mcp** (`sdk/mcp/gdd-mcp/`) with read tools. The
+`update_progress` - and **gdd-mcp** (`sdk/mcp/gdd-mcp/`) with read tools. The
 mutating server is the higher-value target because it writes `STATE.md`.
 
 - **Assets:** The integrity of `STATE.md` (the project's source of truth for
@@ -120,7 +120,7 @@ mutating server is the higher-value target because it writes `STATE.md`.
     `STATE.md`, or `GDD_STATE_PATH` could redirect writes onto an unintended
     file (path traversal).
   - **Repudiation:** Without a complete mutation audit trail, a hostile or
-    buggy mutation is hard to attribute — partly addressed by the event
+    buggy mutation is hard to attribute - partly addressed by the event
     emissions below.
   - **Information disclosure:** A `get` against a traversed path could read a
     file outside the intended `.design/` boundary.
@@ -132,14 +132,14 @@ mutating server is the higher-value target because it writes `STATE.md`.
 - **Current mitigations:** Every mutation emits a `state.mutation` /
   `state.transition` event through `emitStateMutation()` / `emitStateTransition()`
   (`sdk/mcp/gdd-state/tools/shared.ts` lines 91–140), giving a partial audit
-  trail (anti-repudiation). Handlers **never throw to the harness** — every
+  trail (anti-repudiation). Handlers **never throw to the harness** - every
   error funnels through `errorResponse()` → `toToolError()` into a structured
   `{success:false,error}` (shared.ts lines 28–31, 148–151), so a malformed
   input degrades to a clean error instead of a crash. Each of the 11 tools
   already ships a JSON input schema under `sdk/mcp/gdd-state/schemas/`. State
   events are redacted by `redact.cjs` at serialize time (Component 4).
 - **Residual risks:** `resolveStatePath()` (`sdk/mcp/gdd-state/tools/shared.ts`
-  lines 60–64) honors `GDD_STATE_PATH` with **no path-traversal guard** — it
+  lines 60–64) honors `GDD_STATE_PATH` with **no path-traversal guard** - it
   returns the override verbatim, so `..` escape / absolute-outside / symlink
   escape are unchecked. The tool schemas exist but carry **no payload-size cap**
   (no JSON-bomb guard) and are not uniformly tightened
@@ -149,15 +149,15 @@ mutating server is the higher-value target because it writes `STATE.md`.
 
 ---
 
-## Component 3 — Peer-CLI broker (acp-client + asp-client child spawn)
+## Component 3 - Peer-CLI broker (acp-client + asp-client child spawn)
 
 The broker spawns peer CLIs over stdio: `scripts/lib/peer-cli/acp-client.cjs`
 (ACP-protocol peers) and `scripts/lib/peer-cli/asp-client.cjs` (Codex
 app-server protocol). Both fork a local child process and exchange
-line-delimited JSON over its stdio. The child is **untrusted** — it is a
+line-delimited JSON over its stdio. The child is **untrusted** - it is a
 third-party CLI whose stdout the broker parses.
 
-- **Assets:** GDD's process environment — specifically `ANTHROPIC_API_KEY`,
+- **Assets:** GDD's process environment - specifically `ANTHROPIC_API_KEY`,
   `GH_TOKEN`, and any `GDD_*` / provider secret in `process.env`; the broker's
   memory/availability; the integrity of the JSON protocol exchange.
 - **Entry points:** The child's **stdout** (untrusted JSON frames the broker
@@ -170,23 +170,23 @@ third-party CLI whose stdout the broker parses.
     the broker's line-buffer / pending-request state.
   - **Repudiation:** Limited record of exactly what env a given child was
     handed at spawn.
-  - **Information disclosure:** **The headline risk** — the child inherits
+  - **Information disclosure:** **The headline risk** - the child inherits
     GDD's full environment, so a hostile or compromised peer reads
     `ANTHROPIC_API_KEY` / `GH_TOKEN` straight out of `process.env`.
   - **Denial of service:** A peer that never emits a newline could force the
     broker to buffer unbounded stdout until memory exhaustion.
   - **Elevation of privilege:** Inherited secrets let a peer act *as GDD*
-    against GDD's providers — using GDD's keys for the peer's own ends.
+    against GDD's providers - using GDD's keys for the peer's own ends.
 - **Current mitigations:** `acp-client.cjs` caps an un-terminated stdout line
   at **`MAX_LINE_BYTES = 16 * 1024 * 1024`** (16 MiB; defined line 62, enforced
-  lines 166–176 — a peer that emits 16 MiB without a newline gets its active
+  lines 166–176 - a peer that emits 16 MiB without a newline gets its active
   prompt rejected as a protocol violation). This is a real **DoS guard** on the
   untrusted stdout channel. The broker uses plain `spawn` with **no shell**
   (acp-client.cjs lines 106–113, `windowsHide: true`), avoiding shell-injection
   on the command path. Per-request correlation via a pending-id map bounds the
   protocol state machine.
 - **Residual risks:** Both clients default the child's environment to the
-  **full `process.env`** when `opts.env` is absent — `acp-client.cjs` line 102
+  **full `process.env`** when `opts.env` is absent - `acp-client.cjs` line 102
   (`const env = opts.env && typeof opts.env === 'object' ? opts.env :
   process.env;`) and `asp-client.cjs` line 122 (when `opts.env` is absent no
   `spawnOptions.env` is set, so the child inherits the parent's `process.env` by
@@ -197,11 +197,11 @@ third-party CLI whose stdout the broker parses.
 
 ---
 
-## Component 4 — WebSocket event-stream transport (scripts/lib/transports/ws.cjs)
+## Component 4 - WebSocket event-stream transport (scripts/lib/transports/ws.cjs)
 
 `scripts/lib/transports/ws.cjs` exposes the event-stream bus over WebSocket:
 one JSON event per text frame, with optional replay of a tail file to each new
-connection. It is an **optional dependency** (`ws`) — absent installs render an
+connection. It is an **optional dependency** (`ws`) - absent installs render an
 install hint instead of starting. When running, it is a network listener.
 
 - **Assets:** The **event stream itself** (every `state.mutation` /
@@ -213,11 +213,11 @@ install hint instead of starting. When running, it is a network listener.
 - **STRIDE threats:**
   - **Spoofing:** A client without the token attempting to subscribe to the
     live event stream.
-  - **Tampering:** N/A for inbound (the transport is push-only to clients) —
+  - **Tampering:** N/A for inbound (the transport is push-only to clients) -
     the concern is read access, not write.
   - **Repudiation:** No per-connection identity beyond the shared token, so
     individual subscribers are not distinguishable in an audit.
-  - **Information disclosure:** **The headline risk** — an unauthorized
+  - **Information disclosure:** **The headline risk** - an unauthorized
     subscriber would receive the entire live event stream, including any
     sensitive payload detail, if it could reach the socket and pass auth.
   - **Denial of service:** Many connections / a slow consumer could pressure
@@ -227,12 +227,12 @@ install hint instead of starting. When running, it is a network listener.
 - **Current mitigations:** **Bearer-token auth is enforced on every upgrade**:
   `ws.cjs` lines 110–116 reject any upgrade whose header is missing or where
   the supplied token does not match the expected `Bearer` value, returning an `HTTP/1.1 401 Unauthorized` and a
-  socket destroy. The token **must be ≥8 chars** — `startServer` throws a
+  socket destroy. The token **must be ≥8 chars** - `startServer` throws a
   `TypeError` if `opts.token.length < 8` (line 74), preventing trivially weak
   tokens. Backpressure is **fire-and-forget with no queue** (lines 91–108):
   events for a non-OPEN socket are dropped, bounding memory under a slow
   consumer. Cross-cutting for the whole bus: **`redact.cjs`** deep-walks every
-  event payload at serialize time (`scripts/lib/redact.cjs` — `redact()` lines
+  event payload at serialize time (`scripts/lib/redact.cjs` - `redact()` lines
   95–116, `redactString()` lines 75–83) and scrubs **8 secret patterns** (pem,
   jwt, anthropic `sk-ant-`, stripe `sk_live_`, slack `xox[baprs]`, github_pat
   `ghp_`, aws `AKIA`, generic `sk-`), so secrets in event payloads are masked
@@ -240,7 +240,7 @@ install hint instead of starting. When running, it is a network listener.
   the runtime's primary information-disclosure control across **all** components
   that emit events.
 - **Residual risks:**
-  - The server binds to **all interfaces (`0.0.0.0`)** by default —
+  - The server binds to **all interfaces (`0.0.0.0`)** by default -
     `httpServer.listen(opts.port, ...)` (line 145) passes **no host argument**,
     so on a multi-homed / LAN host the token-protected stream is reachable
     off-box. The token compare uses `!==` (line 112), which is
@@ -256,7 +256,7 @@ install hint instead of starting. When running, it is a network listener.
 
 ---
 
-## Component 5 — Issue-reporter outbound (gh CLI only)
+## Component 5 - Issue-reporter outbound (gh CLI only)
 
 `scripts/lib/issue-reporter/` is the only first-party feature that intentionally
 reaches the network. It assembles a bug report and submits it through the user's
@@ -271,25 +271,25 @@ model).
   from local state); the `.design/config.json` and the env that gate whether the
   reporter runs at all.
 - **STRIDE threats:**
-  - **Spoofing:** A forged destination could try to receive reports — mitigated
+  - **Spoofing:** A forged destination could try to receive reports - mitigated
     by the frozen destination below.
   - **Tampering:** Attempting to redirect submissions to an attacker repo by
     injecting a destination override.
   - **Repudiation:** Submissions flow through `gh` under the user's identity,
     which is itself the attribution record.
-  - **Information disclosure:** **The headline risk** — a report could exfiltrate
+  - **Information disclosure:** **The headline risk** - a report could exfiltrate
     secrets / PII embedded in local state if the payload were not scrubbed.
-  - **Denial of service:** Not a meaningful vector — submission is a
+  - **Denial of service:** Not a meaningful vector - submission is a
     user-initiated, one-shot CLI call.
   - **Elevation of privilege:** Using the user's `gh` credentials beyond the
     single sanctioned submit.
-- **Current mitigations (ALREADY shipped — documented, no change here):**
+- **Current mitigations (ALREADY shipped - documented, no change here):**
   - **Outbound is via the `gh` CLI ONLY.** `gh-submit.cjs` wraps
     `gh issue create --repo <DESTINATION_REPO> --title … --body-file …` and is
     explicit that "the user's gh CLI is the sole outbound primitive. No HTTP-S
     URL literals, no global fetch primitive, no plugin-side credentials" (D-05).
     There is no raw HTTP egress in this subtree.
-  - **Frozen destination.** `destination.cjs` is an `Object.freeze`-d module —
+  - **Frozen destination.** `destination.cjs` is an `Object.freeze`-d module -
     the single source of truth for the destination repo, with **no env-var
     lookup, no config override, no flag override**. A static CI gate asserts it
     is the only file under the report-issue tree that contains the destination
@@ -302,7 +302,7 @@ model).
   - Payloads pass through privacy-diff / consent-prompt machinery before
     submission, and event telemetry is redacted by `redact.cjs` (Component 4).
 - **Residual risks:** The issue-reporter's **own** network model has no residual
-  this phase changes — it is intentionally documented as complete. The only
+  this phase changes - it is intentionally documented as complete. The only
   cross-cutting residual touching it is the **lack of a machine-readable
   outbound allowlist + CI gate** that proves `gh-submit` is the sole egress in
   this subtree at a tree-wide level: closed by **33.5-02** (the canonical
@@ -312,10 +312,10 @@ model).
 
 ---
 
-## Component 6 — OpenRouter catalog fetcher (scripts/lib/openrouter/catalog-fetcher.cjs)
+## Component 6 - OpenRouter catalog fetcher (scripts/lib/openrouter/catalog-fetcher.cjs)
 
 > Added in Phase 33.6 (OR-01, CONTEXT D-06). This is the runtime's **first
-> plugin-side outbound REST client** — the issue-reporter (Component 5) reaches
+> plugin-side outbound REST client** - the issue-reporter (Component 5) reaches
 > the network only through the user's `gh` CLI, and the WS transport (Component
 > 4) is a *server*, not an outbound client. The catalog fetcher is the first
 > first-party code to open an outbound HTTP request to a third-party host
@@ -326,7 +326,7 @@ model).
 OpenRouter model catalog (`https://openrouter.ai/api/v1/models`) through an
 **injectable `fetchImpl`** (default global `fetch`), maps the response into the
 `.design/cache/openrouter-models.json` cache shape, and writes it atomically.
-The live fetch is opt-in — gated on `OPENROUTER_API_KEY` being present at
+The live fetch is opt-in - gated on `OPENROUTER_API_KEY` being present at
 runtime; absent it, the fetcher returns cached-if-any-else-null and tier
 resolution falls back to the native provider.
 
@@ -340,7 +340,7 @@ resolution falls back to the native provider.
     `OPENROUTER_BASE_URL`) could feed a forged catalog.
   - **Tampering:** A malformed/oversized `/models` body could try to corrupt the
     cache the resolver reads, or smuggle unexpected fields downstream.
-  - **Information disclosure:** **The headline risk** — leaking the
+  - **Information disclosure:** **The headline risk** - leaking the
     `OPENROUTER_API_KEY` by persisting it to the cache, logging it, or sending it
     to an unintended host.
   - **Denial of service:** A hung or slow host could stall the fetch; a giant
@@ -349,7 +349,7 @@ resolution falls back to the native provider.
     an attacker-chosen model id.
 - **Current mitigations:** The key is read from **`OPENROUTER_API_KEY` env only**,
   sent **solely** as an `Authorization: Bearer` request header, and is **never
-  persisted to the cache nor written to any log seam** — the cache shape carries
+  persisted to the cache nor written to any log seam** - the cache shape carries
   only `id`/`name`/`context_length`/`pricing`, and the mapper keeps **only** those
   fields, dropping everything else (the `/models` body is **mapped, never
   eval'd**). The cache write is **atomic** (per-pid temp + rename) into the
@@ -359,11 +359,11 @@ resolution falls back to the native provider.
   cached-if-any-else-null, bounding the DoS surface, and retries are **bounded**
   (max 3 attempts) on a jittered-backoff curve with `rate-guard` awareness.
   Egress is **allowlisted** via `scripts/lib/openrouter/**` in
-  `scripts/security/outbound-allowlist.json` — the only sanctioned outbound site
-  in that subtree — so the 33.5 `scan:outbound` gate proves no un-approved egress
+  `scripts/security/outbound-allowlist.json` - the only sanctioned outbound site
+  in that subtree - so the 33.5 `scan:outbound` gate proves no un-approved egress
   crept in. The **injectable `fetchImpl`** keeps the default `npm test` suite
-  hermetic (D-07) — no live network — and there is **no new HTTP dependency**
-  (global `fetch` + `sdk/primitives` only — D-10), avoiding both a new supply-chain
+  hermetic (D-07) - no live network - and there is **no new HTTP dependency**
+  (global `fetch` + `sdk/primitives` only - D-10), avoiding both a new supply-chain
   surface and the gate's `axios`/`node-fetch`/`undici` package patterns.
 - **Residual risks:** None this phase leaves open. The catalog is advisory data
   consumed by the tier-resolver heuristic (33.6-02), which already clamps to

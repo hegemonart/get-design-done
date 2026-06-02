@@ -1,4 +1,4 @@
-# Date Picker — Benchmark Spec
+# Date Picker - Benchmark Spec
 
 **Harvested from**: Material 3, Carbon Design System, Atlassian Design System, Mantine DatePicker
 **Wave**: 5 · **Category**: Advanced
@@ -31,7 +31,7 @@ Range variant adds a second input field for end date.
 | Part | Required | Notes |
 |------|----------|-------|
 | Text input | Yes | Shows selected date; accepts direct keyboard entry |
-| Format hint label | Yes | Visible "MM/DD/YYYY" supplement — NOT placeholder only |
+| Format hint label | Yes | Visible "MM/DD/YYYY" supplement - NOT placeholder only |
 | Calendar trigger button | Yes | Opens/closes popover; `aria-label="Open calendar"` |
 | Popover (dialog) | Yes | `role="dialog"` + `aria-modal="true"` + focus trap |
 | Month navigation | Yes | Previous/next month buttons; keyboard Page Up/Down |
@@ -59,13 +59,13 @@ Range variant adds a second input field for end date.
 
 | State | Trigger | Visual | ARIA |
 |-------|---------|--------|------|
-| default | — | Resting input + trigger icon | — |
+| default | - | Resting input + trigger icon | - |
 | open | Trigger click or input focus + Enter | Popover visible, focus moves inside | `aria-expanded="true"` on trigger |
-| day hover | Pointer over day | Background highlight | — |
-| day focus | Keyboard navigation | Focus-visible ring on day button | — |
+| day hover | Pointer over day | Background highlight | - |
+| day focus | Keyboard navigation | Focus-visible ring on day button | - |
 | day selected | Enter/Space or click | Filled background (brand color) | `aria-pressed="true"` on day button |
-| range-in-progress | Start selected, end not yet | Partial fill from start | — |
-| range-complete | Both start and end selected | Full highlight between dates | — |
+| range-in-progress | Start selected, end not yet | Partial fill from start | - |
+| range-complete | Both start and end selected | Full highlight between dates | - |
 | disabled date | Date excluded by min/max/filter | Muted; `tabindex="-1"` | `aria-disabled="true"` on day button |
 | error | Invalid date typed | Red border + error message | `aria-invalid="true"` on input |
 
@@ -82,7 +82,7 @@ Range variant adds a second input field for end date.
 **Norm**: 288px popover width fits a standard 7-column month grid with comfortable padding *(Carbon, Mantine)*.
 Day cells must be ≥32px to meet minimum touch-target guidance; prefer 40px for mixed pointer/touch contexts.
 
-Cross-link: `reference/surfaces.md` — minimum 44×44px accessible tap target via padding.
+Cross-link: `reference/surfaces.md` - minimum 44×44px accessible tap target via padding.
 
 ---
 
@@ -91,9 +91,9 @@ Cross-link: `reference/surfaces.md` — minimum 44×44px accessible tap target v
 - Input text: body-md weight 400; monospace or tabular-nums variant for date digits aids alignment
 - Day numbers: body-sm, center-aligned within cell
 - Month/year header: body-md weight 600
-- Format hint ("MM/DD/YYYY"): caption-sm, secondary color — attached as visible `<label>` supplement or `<span aria-hidden="true">` paired with `aria-describedby` on the input
+- Format hint ("MM/DD/YYYY"): caption-sm, secondary color - attached as visible `<label>` supplement or `<span aria-hidden="true">` paired with `aria-describedby` on the input
 
-Cross-link: `reference/typography.md` — tabular-nums for date/time fields.
+Cross-link: `reference/typography.md` - tabular-nums for date/time fields.
 
 ---
 
@@ -104,7 +104,7 @@ Cross-link: `reference/typography.md` — tabular-nums for date/time fields.
 
 ### Keyboard Contract
 
-*Adapted from WAI-ARIA APG — https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ and grid pattern — W3C — 2024*
+*Adapted from WAI-ARIA APG - https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ and grid pattern - W3C - 2024*
 
 | Key | Action |
 |-----|--------|
@@ -122,7 +122,7 @@ Cross-link: `reference/typography.md` — tabular-nums for date/time fields.
 
 ### Accessibility Rules
 
-- Calendar popover MUST use `role="dialog"` + `aria-modal="true"` — do not use a plain `<div>` overlay
+- Calendar popover MUST use `role="dialog"` + `aria-modal="true"` - do not use a plain `<div>` overlay
 - Focus MUST be trapped inside the open calendar; Escape closes and returns focus to the trigger
 - Each selectable day MUST be a `<button>` (or element with `role="button"`) so keyboard and AT users can activate it
 - Date format hint MUST be visible text, not only a placeholder (placeholder disappears on input and is not consistently announced)
@@ -130,7 +130,7 @@ Cross-link: `reference/typography.md` — tabular-nums for date/time fields.
 - Range variant: announce selected range via `aria-label` on day buttons (e.g., `aria-label="April 15, 2025, start of range"`)
 - Mobile: provide native `<input type="date">` fallback when touch device detected or user preference set
 
-Cross-link: `reference/accessibility.md` — focus-trap pattern, dialog role requirements.
+Cross-link: `reference/accessibility.md` - focus-trap pattern, dialog role requirements.
 
 ---
 
@@ -144,9 +144,9 @@ Cross-link: `reference/accessibility.md` — focus-trap pattern, dialog role req
 | Day selection | 80ms | ease-out | Fill background color |
 | Range fill | 150ms | ease-out | Animate fill between dates |
 
-**BAN**: Do not animate the calendar grid with a full-page slide — disorienting for keyboard users navigating by month.
+**BAN**: Do not animate the calendar grid with a full-page slide - disorienting for keyboard users navigating by month.
 
-Cross-link: `reference/motion.md` — reduced-motion: omit slide, keep instant day selection.
+Cross-link: `reference/motion.md` - reduced-motion: omit slide, keep instant day selection.
 
 ---
 
@@ -155,14 +155,14 @@ Cross-link: `reference/motion.md` — reduced-motion: omit slide, keep instant d
 ### Do
 - Show the date format as visible text ("MM/DD/YYYY") near the input *(Carbon, Atlassian)*
 - Ensure keyboard users can navigate the entire calendar without a pointer *(WAI-ARIA APG)*
-- Allow direct text entry in the input field — some users know the date and do not need the calendar *(Mantine, Carbon)*
+- Allow direct text entry in the input field - some users know the date and do not need the calendar *(Mantine, Carbon)*
 - Support locale-aware first day of week (Sunday vs. Monday) and locale month/day names *(Material 3, Mantine)*
 
 ### Don't
-- Don't use `<table>` with click-only cells — add `role="grid"` and full keyboard navigation *(WCAG 2.1 §2.1.1)*
-- Don't use placeholder text alone to convey the date format — placeholder vanishes on input *(Carbon, Atlassian)*
-- Don't trap focus permanently — Escape must always close the popover and restore focus *(WAI-ARIA APG)*
-- Don't omit the native `<input type="date">` for mobile — custom calendars are unusable on small touch screens *(Material 3)*
+- Don't use `<table>` with click-only cells - add `role="grid"` and full keyboard navigation *(WCAG 2.1 §2.1.1)*
+- Don't use placeholder text alone to convey the date format - placeholder vanishes on input *(Carbon, Atlassian)*
+- Don't trap focus permanently - Escape must always close the popover and restore focus *(WAI-ARIA APG)*
+- Don't omit the native `<input type="date">` for mobile - custom calendars are unusable on small touch screens *(Material 3)*
 
 ---
 
@@ -170,8 +170,8 @@ Cross-link: `reference/motion.md` — reduced-motion: omit slide, keep instant d
 
 | Anti-pattern | Entry |
 |--------------|-------|
-| BAN-07 | Placeholder as only label/hint — `reference/anti-patterns.md#ban-07` |
-| BAN-12 | Custom overlay without focus trap — `reference/anti-patterns.md#ban-12` |
+| BAN-07 | Placeholder as only label/hint - `reference/anti-patterns.md#ban-07` |
+| BAN-12 | Custom overlay without focus trap - `reference/anti-patterns.md#ban-12` |
 
 ---
 

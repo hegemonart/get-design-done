@@ -1,6 +1,6 @@
 ---
 name: gdd-reflect
-description: "Run design-reflector on demand — produces .design/reflections/<cycle-slug>.md with improvement proposals. Review proposals with {{command_prefix}}apply-reflections."
+description: "Run design-reflector on demand - produces .design/reflections/<cycle-slug>.md with improvement proposals. Review proposals with {{command_prefix}}apply-reflections."
 argument-hint: "[--dry-run] [--cycle <slug>]"
 tools: Read, Write, Task
 ---
@@ -9,7 +9,7 @@ tools: Read, Write, Task
 
 # {{command_prefix}}reflect
 
-Run `design-reflector` on demand against the current (or specified) cycle. Produces `.design/reflections/<cycle-slug>.md` with numbered improvement proposals. Every proposal requires explicit user review — nothing is auto-applied.
+Run `design-reflector` on demand against the current (or specified) cycle. Produces `.design/reflections/<cycle-slug>.md` with numbered improvement proposals. Every proposal requires explicit user review - nothing is auto-applied.
 
 ## Steps
 
@@ -81,5 +81,5 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
 
 - Do not auto-apply any proposal.
 - Do not modify agent files, reference files, or budget.json.
-- Do not run the full audit pipeline — this is a standalone reflection run.
+- Do not run the full audit pipeline - this is a standalone reflection run.
 - Do not bypass the threshold knob. The default `reflector.capability_gap_threshold: 3` exists to suppress noise; do NOT lower it below 1.

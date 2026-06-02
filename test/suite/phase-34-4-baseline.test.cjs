@@ -1,5 +1,5 @@
 'use strict';
-// Phase 34.4 — Lazyweb + Mobbin Research Connections regression baseline (recovered
+// Phase 34.4 - Lazyweb + Mobbin Research Connections regression baseline (recovered
 // from a stranded Phase 30.5 worktree fork). Freezes the v1.34.4 release artifact:
 // the two new discover-stage connection specs, the cost-aware D-01 tier order
 // (Lazyweb free first, before paid Mobbin/Refero), the onboarded-14 snapshot, and
@@ -29,13 +29,13 @@ test('34.4-04: lazyweb + mobbin connection specs exist + carry Setup/Fallback/pr
   }
 });
 
-// ── 2. D-01 cost-aware tier order — Lazyweb (free) precedes paid Mobbin/Refero ───────
+// ── 2. D-01 cost-aware tier order - Lazyweb (free) precedes paid Mobbin/Refero ───────
 test('34.4-04: discover Area 5 puts Lazyweb (free) Tier 1 before paid Mobbin/Refero (D-01)', () => {
   const dcb = read('agents/design-context-builder.md');
-  const t1 = dcb.indexOf('Tier 1 — Lazyweb');
-  const t2 = dcb.indexOf('Tier 2 — Mobbin');
-  assert.ok(t1 > 0, 'design-context-builder Area 5 must have a "Tier 1 — Lazyweb" block (free, tried first)');
-  assert.ok(t2 > t1, 'Mobbin/Refero (Tier 2, paid) must come AFTER Lazyweb (Tier 1, free) — D-01 cost-aware order');
+  const t1 = dcb.indexOf('Tier 1 - Lazyweb');
+  const t2 = dcb.indexOf('Tier 2 - Mobbin');
+  assert.ok(t1 > 0, 'design-context-builder Area 5 must have a "Tier 1 - Lazyweb" block (free, tried first)');
+  assert.ok(t2 > t1, 'Mobbin/Refero (Tier 2, paid) must come AFTER Lazyweb (Tier 1, free) - D-01 cost-aware order');
 });
 
 // ── 3. onboarded-connections snapshot == 14, each with a matching spec file ──────────

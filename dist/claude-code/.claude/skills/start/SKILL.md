@@ -1,12 +1,12 @@
 ---
 name: start
-description: "First-Run Proof Path — one command that scans your UI code and returns one concrete first fix. Leaf command, no STATE.md writes, no pipeline entry. Writes .design/START-REPORT.md and exits."
+description: "First-Run Proof Path - one command that scans your UI code and returns one concrete first fix. Leaf command, no STATE.md writes, no pipeline entry. Writes .design/START-REPORT.md and exits."
 argument-hint: "[--budget <fast|balanced|thorough>] [--skip-interview] [--dismiss-nudge]"
 tools: Read, Grep, Glob, Bash, Write, Task
 disable-model-invocation: true
 ---
 
-# Get Design Done — /gdd:start
+# Get Design Done - /gdd:start
 
 **Role:** the canonical 0→1 proof path. A new user runs `/gdd:start`, answers five short questions, and receives `.design/START-REPORT.md` with three concrete findings in the user's own code, one `best_first_proof` selected by a deterministic rubric, and a single next command to run.
 
@@ -21,9 +21,9 @@ disable-model-invocation: true
 
 ## When NOT to use
 
-- `.design/STATE.md` already exists — route to `/gdd:progress` instead.
-- User asked for a full audit — route to `/gdd:scan`.
-- User asked to fix a specific file — route to `/gdd:fast`.
+- `.design/STATE.md` already exists - route to `/gdd:progress` instead.
+- User asked for a full audit - route to `/gdd:scan`.
+- User asked to fix a specific file - route to `/gdd:fast`.
 
 ---
 
@@ -52,7 +52,7 @@ Six steps, all documented in `./start-procedure.md`. Companion file `./reference
 | 4 | Spawn `design-start-writer` Task → emit `.design/START-REPORT.md` (7 H2 sections + JSON block, no STATE.md write) | `start-procedure.md#step-4-spawn-the-writer` |
 | 5 | Print one-line handoff with suggested command (fallback: `/gdd:brief` if `bestFirstProofId` is null); emit `## START COMPLETE` | `start-procedure.md#step-5-print-the-handoff` |
 
-Failure handling: every error path exits with `## START COMPLETE` plus a one-line pointer. Do not half-write files — if the writer fails, keep `.design/.start-context.json` and tell the user they can rerun. Do not delete `.design/` unless it was empty before the run.
+Failure handling: every error path exits with `## START COMPLETE` plus a one-line pointer. Do not half-write files - if the writer fails, keep `.design/.start-context.json` and tell the user they can rerun. Do not delete `.design/` unless it was empty before the run.
 
 ---
 
@@ -61,7 +61,7 @@ Failure handling: every error path exits with `## START COMPLETE` plus a one-lin
 - Do not write or mutate `.design/STATE.md`.
 - Do not modify source code.
 - Do not auto-install MCPs or write to `.design/config.json`.
-- Do not take more than the budgeted wall-clock — let the engine truncate findings rather than hang.
-- Do not invent findings — the findings engine output is the sole source of truth.
+- Do not take more than the budgeted wall-clock - let the engine truncate findings rather than hang.
+- Do not invent findings - the findings engine output is the sole source of truth.
 
 ## START COMPLETE

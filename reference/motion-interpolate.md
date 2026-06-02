@@ -3,7 +3,7 @@
 
 # Motion Interpolation
 
-Interpolation is the mechanism that maps any changing value — progress, scroll position, pointer delta, elapsed time — into any animated output range. Every animation in a system can be decomposed into a single canonical form.
+Interpolation is the mechanism that maps any changing value - progress, scroll position, pointer delta, elapsed time - into any animated output range. Every animation in a system can be decomposed into a single canonical form.
 
 ---
 
