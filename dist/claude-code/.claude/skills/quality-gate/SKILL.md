@@ -39,7 +39,7 @@ Read once at start from `.design/config.json` (all optional; defaults in parens)
 Stop at the first tier that produces ≥ 1 command:
 
 1. **Authoritative config.** If `.design/config.json` has `quality_gate.commands` non-empty, use verbatim.
-2. **Auto-detect from `package.json#scripts`** - match against allowlist: `lint`, `typecheck`, `tsc` (only if `typecheck` absent), `test`, `chromatic`, `test:visual`, `lint:design` (Phase 41 - the `gdd-detect` deterministic anti-pattern gate, alongside `axe`/`pa11y`/`lighthouse`). Exclude by name: `test:e2e`, `test:integration` (if separate `test`), anything starting `dev:`, `build:`, `start:`. Run via `npm run <name>` unless `quality_gate.package_manager` overrides.
+2. **Auto-detect from `package.json#scripts`** - match against allowlist: `lint`, `typecheck`, `tsc` (only if `typecheck` absent), `test`, `chromatic`, `test:visual`, `lint:design` (Phase 41 - the `gdd-detect` deterministic anti-pattern gate), and the accessibility scripts `axe`, `pa11y`, `lighthouse`, `eslint-plugin-jsx-a11y` (or a script named `jsx-a11y`) which classify into the `a11y` bucket. Exclude by name: `test:e2e`, `test:integration` (if separate `test`), anything starting `dev:`, `build:`, `start:`. Run via `npm run <name>` unless `quality_gate.package_manager` overrides.
 3. **Skip with notice.** Emit `quality_gate_skipped` (Step 6) and write a `<run/>` with `status="skipped"`. Verify treats skipped as non-blocking.
 
 ## Step 2 - Parallel run
@@ -48,7 +48,7 @@ Emit `quality_gate_started`. Spawn each command in a separate `Bash`; collect `{
 
 ## Step 3 - Classification
 
-Spawn `quality-gate-runner` agent via `Task` with payload `{outputs: [{command, exit_code, stderr}, ...]}`. Agent returns `{status: "pass"|"fail", classified_failures: {lint, type, test, visual}}`. `pass` → Step 5. `fail` → Step 4.
+Spawn `quality-gate-runner` agent via `Task` with payload `{outputs: [{command, exit_code, stderr}, ...]}`. Agent returns `{status: "pass"|"fail", classified_failures: {lint, type, test, visual, a11y}}`. The `a11y` bucket groups accessibility failures from axe / pa11y / lighthouse / jsx-a11y. `pass` → Step 5. `fail` → Step 4.
 
 ## Step 4 - Fix loop (D-08)
 

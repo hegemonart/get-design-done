@@ -580,6 +580,15 @@ OFF_CADENCE_VERSIONS.add('1.46.0');
 // parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.47.0');
 
+// 1.48.0 -> Phase 48 (Audit & Pillar Expansion). Minor on 1.47.0. Four audit-side gaps: a deepened copy/UX-writing
+// pillar (agents/copy-auditor.md + reference/copy-quality.md; design-auditor 7-pillar contract formalized with a
+// scoring_contract_version marker + reserved 8th slot); a project-wide retroactive debt crawler
+// (agents/design-debt-crawler.md + reference/debt-categories.md -> .design/debt/DEBT-CATALOG.md); a brief critic
+// (agents/brief-auditor.md + reference/brief-quality-rubric.md, non-blocking tail-wire into /gdd:brief); and an a11y
+// quality-gate (hooks/gdd-a11y-gate.js + axe/pa11y/lighthouse/jsx-a11y auto-detect + quality-gate-runner a11y 5th
+// bucket). 3 new agents, 3 new reference docs, 1 hook. Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.48.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

@@ -108,6 +108,23 @@ Run this final spec-quality pass over `.design/BRIEF.md` before the brief→expl
 - Scope check: nothing in the artifact exceeds (or silently drops) the agreed scope.
 - Ambiguity check: every requirement/decision is specific enough to act on without a follow-up question.
 
+## Optional brief audit (non-blocking)
+
+Before the gate, you MAY spawn `agents/brief-auditor.md` via `Task` to grade the brief against the five
+brief anti-patterns (vague verbs, missing audience, immeasurable success criteria, scope creep, missing
+anti-goals). The auditor reads `.design/BRIEF.md` plus `reference/brief-quality-rubric.md` and writes
+advisory findings to `.design/BRIEF-AUDIT.md`. This step is advisory and MUST NOT block the brief to
+explore transition.
+
+If the auditor reports one or more fired anti-patterns, surface a single-line pointer to the user:
+
+```
+Brief audit flagged N issue(s) - run {{command_prefix}}discuss brief to refine, or proceed to explore.
+```
+
+The user decides. Proceeding to explore with a flagged brief is allowed; the pointer is a nudge, not a gate.
+If the auditor reports no fired anti-patterns, or you skip the audit, continue to the gate unchanged.
+
 <HARD-GATE>
 Do NOT transition to explore (or invoke `{{command_prefix}}explore`) until the brief artifact (default `.design/BRIEF.md`) is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>

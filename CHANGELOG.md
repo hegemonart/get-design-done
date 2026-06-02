@@ -4,6 +4,53 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.48.0] - 2026-06-03
+
+### Phase 48 - Audit & Pillar Expansion
+
+The audit surface had grown asymmetrically: output quality matured (7 pillars, multiple lenses, a quality-gate
+before verify) while input quality went ungraded, copy stayed a thin pillar, and there was no project-wide debt
+sweep or accessibility gate. Phase 48 closes four audit-side gaps in one release: a deepened copy pillar, a
+retroactive debt crawler, a brief critic, and an a11y quality-gate. Planned and executed via the GSD pipeline
+(2 research agents + 3 parallel executor subagents). No new runtime dependency, no new egress.
+
+### Breaking changes
+
+- **The design-auditor scoring contract is now explicitly versioned.** `agents/design-auditor.md` carries a
+  `scoring_contract_version` marker (7 pillars; copy deepened; an 8th pillar slot reserved and unscored), and the
+  stale "6-Pillar" heading is corrected to 7. Consumers read pillars by name (not index), so existing integrations
+  are unaffected, but tooling that parsed the heading text should read the version marker instead.
+- **`a11y` is now the fifth quality-gate failure bucket.** `quality-gate-runner` classifies `axe` / `pa11y` /
+  `lighthouse` / `jsx-a11y` command output into a new `a11y` class (previously these fell through to `test`), and
+  the quality-gate auto-detect allowlist runs them. A project with those scripts will see accessibility regressions
+  surfaced and routed to `design-fixer` at Stage 4.5.
+
+### Added
+
+- **Copy pillar deepened**: `reference/copy-quality.md` (microcopy rubric covering button/CTA labels, error
+  messages, empty-states, ARIA-text, alt-text, loading copy, voice alignment; i18n-aware with a +40% expansion
+  overflow lens) + `agents/copy-auditor.md` (a focused single-pillar auditor design-auditor folds into Pillar 1).
+- **`agents/design-debt-crawler.md`** + **`reference/debt-categories.md`**: a project-wide retroactive crawler
+  (does not read STATE.md completed tasks) that walks the whole tree, enumerates raw color literals, anti-pattern
+  hits, untokenized components, contrast and density issues, and writes a priority-scored `.design/debt/DEBT-CATALOG.md`
+  (visible-delta x effort x prevalence). Pure catalog, one `/gdd:fast "<finding>"` suggestion per row.
+- **`agents/brief-auditor.md`** + **`reference/brief-quality-rubric.md`**: grades the brief against 5 anti-patterns
+  (vague verbs, missing audience, immeasurable success criteria, scope creep, missing anti-goals); wired into the
+  tail of `/gdd:brief` as a non-blocking warning that offers `/gdd:discuss brief`.
+- **`hooks/gdd-a11y-gate.js`**: an advisory PostToolUse surface for a11y findings, plus the quality-gate +
+  quality-gate-runner + design-fixer a11y wiring.
+
+### Notes
+
+- 6-manifest lockstep at **v1.48.0** + `OFF_CADENCE_VERSIONS.add('1.48.0')` + 37 `manifests-version.txt` baselines +
+  tarball golden 895 -> 902 (3 agents, 3 reference docs, 1 hook). Agent baselines (`agent-list.txt` 60,
+  `agent-frontmatter-snapshot.json`, `hook-list.txt`) + registry (171) re-locked.
+- The 7-pillar contract already existed in `design-auditor` (copy was Pillar 1); Phase 48 formalizes it rather than
+  migrating 6->7. The unified cross-auditor finding schema (severity/confidence/issue-key/location/suggested-fix) is
+  noted as a follow-up candidate, not shipped here.
+
+---
+
 ## [1.47.0] - 2026-06-03
 
 ### Phase 47 - In-Browser Design Iteration (Live Mode)

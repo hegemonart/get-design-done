@@ -2,6 +2,7 @@ _hook-emit.js
 budget-enforcer.ts
 context-exhaustion.ts
 first-run-nudge.sh
+gdd-a11y-gate.js
 gdd-bash-guard.js
 gdd-decision-injector.js
 gdd-mcp-circuit-breaker.js

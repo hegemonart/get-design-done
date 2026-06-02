@@ -6,6 +6,7 @@ design-component-generator.md
 design-context-builder.md
 design-context-checker-gate.md
 design-context-checker.md
+design-debt-crawler.md
 design-discussant.md
 design-doc-writer.md
 design-executor.md

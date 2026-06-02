@@ -166,3 +166,6 @@ spatial: reference/spatial.md
 interaction: reference/interaction.md
 responsive: reference/responsive.md
 ux-writing: reference/ux-writing.md
+copy-quality: reference/copy-quality.md
+debt-categories: reference/debt-categories.md
+brief-quality-rubric: reference/brief-quality-rubric.md
