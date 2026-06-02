@@ -169,14 +169,24 @@ test('49-worktree: [integration] real worktree resolves to the main checkout', {
   }
 
   try {
-    const realMain = fs.realpathSync(mainRepo);
-    const realWt = fs.realpathSync(wtDir);
+    // realpathSync.native canonicalizes Windows 8.3 short names (os.tmpdir() can
+    // return C:\Users\RUNNER~1\... on CI while git emits the long C:\Users\runneradmin\...).
+    // Normalize both sides through it so the comparison is path-spelling-agnostic.
+    const realCanon = (p) => {
+      try {
+        return fs.realpathSync.native(p);
+      } catch {
+        return fs.realpathSync(p);
+      }
+    };
+    const realMain = realCanon(mainRepo);
+    const realWt = realCanon(wtDir);
 
     assert.equal(wt.isWorktree(realWt), true, 'real worktree is detected');
     assert.equal(wt.isWorktree(realMain), false, 'main checkout is not a worktree');
 
     assert.equal(
-      fs.realpathSync(wt.resolveRepoRoot(realWt)),
+      realCanon(wt.resolveRepoRoot(realWt)),
       realMain,
       'resolveRepoRoot from the worktree points at the main checkout',
     );
@@ -185,7 +195,7 @@ test('49-worktree: [integration] real worktree resolves to the main checkout', {
     const designRoot = wt.resolveDesignRoot(realWt);
     assert.equal(path.basename(designRoot), '.design', 'design root ends in .design');
     assert.equal(
-      fs.realpathSync(path.dirname(designRoot)),
+      realCanon(path.dirname(designRoot)),
       realMain,
       'resolveDesignRoot is rooted at the main checkout',
     );
