@@ -1100,6 +1100,27 @@
       "type": "domain-index",
       "phase": 45,
       "description": "Phase 45 domain-index: UX-writing + voice - brand-voice, style-vocabulary, anti-patterns."
+    },
+    {
+      "name": "copy-quality",
+      "path": "reference/copy-quality.md",
+      "type": "heuristic",
+      "phase": 48,
+      "description": "Phase 48 copy-quality pillar rubric: microcopy (button/CTA labels, error messages, empty states, ARIA/alt text, loading copy), voice alignment, i18n overflow lens."
+    },
+    {
+      "name": "debt-categories",
+      "path": "reference/debt-categories.md",
+      "type": "taxonomy",
+      "phase": 48,
+      "description": "Phase 48 design-debt taxonomy: debt classes (color-literal, untokenized-component, anti-pattern, contrast, density-spacing, typography-drift, a11y-text) + visible-delta x effort x prevalence priority scoring."
+    },
+    {
+      "name": "brief-quality-rubric",
+      "path": "reference/brief-quality-rubric.md",
+      "type": "output-contract",
+      "phase": 48,
+      "description": "Phase 48 brief-quality rubric: 5 anti-patterns (vague verbs, missing audience, immeasurable success criteria, scope creep, missing anti-goals) the brief-auditor surfaces."
     }
   ]
 }

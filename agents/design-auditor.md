@@ -68,7 +68,9 @@ Minimum expected files:
 
 ---
 
-## 6-Pillar Scoring System
+## 7-Pillar Scoring System
+
+> **Scoring contract: v2** (`scoring_contract_version: v2`) - 7 pillars; copy deepened in Phase 48 via `reference/copy-quality.md` + `agents/copy-auditor.md`; 8th pillar slot reserved, unscored. The pillar count and slot 7 (Micro-Polish) name are read by `design-verifier` by name; do not renumber existing pillars.
 
 **Score definitions (1–4 per pillar):**
 
@@ -83,7 +85,9 @@ Minimum expected files:
 
 ### Pillar 1: Copy
 
-**What this measures:** The quality and specificity of text content - button labels, empty states, error messages, headings, and microcopy. Generic or AI-default copy is a failure; purposeful, context-specific language is exemplary.
+**What this measures:** The quality and specificity of text content - button labels, empty states, error messages, loading copy, ARIA strings, alt text, form copy, and voice alignment. Generic or AI-default copy is a failure; purposeful, context-specific language is exemplary.
+
+**Detailed rubric:** `reference/copy-quality.md` is the source of truth for this pillar - it holds the per-category criteria (CTAs, errors, empty states, loading/skeleton, ARIA text, alt text, form labels/helper/validation, voice/tone), the failure patterns, the internationalization lens (hardcoded-string probe + `+40%` expansion-overflow check, per Phase 28 i18n), and the canonical 1-4 Scoring Guide table. Read it before scoring Copy. For a deep, evidence-rich Copy pass, the verify stage may spawn `agents/copy-auditor.md`, which scores this pillar against `reference/copy-quality.md` and writes `.design/COPY-AUDIT.md`; when that supplement exists, fold its score and top finding into this pillar rather than re-deriving them. Keep the 1-4 scale below either way.
 
 **Audit method:**
 
@@ -311,6 +315,12 @@ grep -rEn "w-4 h-4|w-5 h-5|w-6 h-6" src/ --include="*.tsx" --include="*.jsx" 2>/
 
 ---
 
+### Pillar 8: Content Internationalization Integrity (reserved, unscored)
+
+**Status: reserved slot - do NOT score.** This is a named placeholder for a future eighth pillar covering localization integrity beyond what the Copy pillar's i18n lens already checks (ICU message correctness, plural and gender rules, locale-aware date/number/currency formatting, RTL mirroring completeness, multi-script font coverage). It is documented here so the slot has a stable name, but it carries no score, no audit method, and no entry in the Pillar Scores table. The audit total stays **/28 (7 pillars × 4)**. When a future phase activates this pillar, the scoring contract version increments and the total moves to /32; until then, treat this section as informational only. The internationalization checks that the current audit performs live inside Pillar 1 (Copy) per `reference/copy-quality.md`.
+
+---
+
 ## Domain checklist addendum (Tier-3)
 
 If DESIGN-CONTEXT.md carries a `<domain>` line (set by `design-context-builder` Step 0F - `finance` / `healthcare` / `gaming` / `civic`), **also** run that pack's `## Audit checklist` from `reference/domains/<domain>-patterns.md` and fold its findings into the relevant pillar:
@@ -459,7 +469,7 @@ This audit is **code-only**. No Playwright-MCP and no dev server screenshot capt
 
 ## Motion Anti-Pattern Check
 
-When the codebase uses Framer Motion (detectable by `import.*framer-motion` in source files), perform this additional check after the 6-pillar audit and include findings in **Pillar 6: Experience Design** under a `### Motion (Framer Motion)` subsection.
+When the codebase uses Framer Motion (detectable by `import.*framer-motion` in source files), perform this additional check after the 7-pillar audit and include findings in **Pillar 6: Experience Design** under a `### Motion (Framer Motion)` subsection.
 
 Read `reference/framer-motion-patterns.md` for the full rationale behind these rules. The two hard violations to surface:
 

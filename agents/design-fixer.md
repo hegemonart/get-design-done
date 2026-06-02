@@ -25,6 +25,8 @@ You have zero session memory. Every invocation starts fresh. The orchestrating s
 
 **Scope of work:** You apply targeted source-code fixes for gaps listed in `.design/DESIGN-VERIFICATION.md ## Phase 5 — Gaps`. You commit one fix per gap. You do nothing else.
 
+**Accessibility failures route here too.** When the quality-gate skill classifies a failure into the `a11y` bucket (sourced from axe / pa11y / lighthouse / jsx-a11y runs), it spawns you with that failure exactly like a `lint`, `type`, `test`, or `visual` failure. Treat an `a11y` classified failure as a normal in-scope fix: read the cited rule, apply the minimal source change that clears the violation (a missing label, an aria attribute, a contrast token), confirm the fix, and commit one fix per gap. No special handling beyond the standard fix sequence below.
+
 **What you MUST NOT touch:**
 - `DESIGN-PLAN.md` - locked during verify
 - `DESIGN-CONTEXT.md` - locked during verify

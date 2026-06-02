@@ -7,11 +7,13 @@ README.md
 SKILL.md
 agents/README.md
 agents/a11y-mapper.md
+agents/brief-auditor.md
 agents/component-benchmark-harvester.md
 agents/component-benchmark-synthesizer.md
 agents/component-taxonomy-mapper.md
 agents/compose-executor.md
 agents/conflict-resolver.md
+agents/copy-auditor.md
 agents/cost-forecaster.md
 agents/decision-journal-exporter.md
 agents/design-advisor.md
@@ -22,6 +24,7 @@ agents/design-component-generator.md
 agents/design-context-builder.md
 agents/design-context-checker-gate.md
 agents/design-context-checker.md
+agents/design-debt-crawler.md
 agents/design-discussant.md
 agents/design-doc-writer.md
 agents/design-executor.md
@@ -229,6 +232,7 @@ hooks/_hook-emit.js
 hooks/budget-enforcer.ts
 hooks/context-exhaustion.ts
 hooks/first-run-nudge.sh
+hooks/gdd-a11y-gate.js
 hooks/gdd-bash-guard.js
 hooks/gdd-decision-injector.js
 hooks/gdd-mcp-circuit-breaker.js
@@ -255,6 +259,7 @@ reference/audit-scoring.md
 reference/authority-feeds.md
 reference/bandit-integration.md
 reference/brand-voice.md
+reference/brief-quality-rubric.md
 reference/capability-gap-stage-gate.md
 reference/checklists.md
 reference/cli-localization.md
@@ -304,6 +309,7 @@ reference/config-schema.md
 reference/context-md-format.md
 reference/contrast-advanced.md
 reference/conversational-ui.md
+reference/copy-quality.md
 reference/cost-governance.md
 reference/css-grid-layout.md
 reference/cycle-handoff-preamble.md
@@ -311,6 +317,7 @@ reference/data-visualization.md
 reference/data/google-fonts.csv
 reference/data/palettes.csv
 reference/data/styles.csv
+reference/debt-categories.md
 reference/debugger-philosophy.md
 reference/design-system-guidance.md
 reference/design-systems-catalog.md

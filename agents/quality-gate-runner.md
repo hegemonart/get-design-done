@@ -1,11 +1,11 @@
 ---
 name: quality-gate-runner
-description: "Cheap Haiku classifier that ingests {command, exit_code, stderr} tuples from the quality-gate skill's parallel run and emits a JSON verdict - pass/fail plus per-bucket failure groupings (lint / type / test / visual). Read-only. Does not run commands itself."
+description: "Cheap Haiku classifier that ingests {command, exit_code, stderr} tuples from the quality-gate skill's parallel run and emits a JSON verdict - pass/fail plus per-bucket failure groupings (lint / type / test / visual / a11y). Read-only. Does not run commands itself."
 tools: Read, Bash, Grep
 color: amber
 model: inherit
 default-tier: haiku
-tier-rationale: "Pattern-match exit codes and bucket stderr into four named categories - no synthesis, no rewrites, no spawning. Belongs on Haiku to keep classification cost trivial relative to the actual command runs."
+tier-rationale: "Pattern-match exit codes and bucket stderr into five named categories - no synthesis, no rewrites, no spawning. Belongs on Haiku to keep classification cost trivial relative to the actual command runs."
 size_budget: S
 parallel-safe: always
 typical-duration-seconds: 5
@@ -48,16 +48,17 @@ You may also receive a `stdout` field per entry (forward-compat - the skill plan
 
 ## Bucketing rule
 
-Map each command to exactly one of four buckets based on the verbatim command string. Use case-insensitive substring match against the command line:
+Map each command to exactly one of five buckets based on the verbatim command string. Use case-insensitive substring match against the command line:
 
 | Substring (case-insensitive) | Bucket |
 |------------------------------|--------|
-| `lint`, `eslint`, `stylelint`, `biome lint` | `lint` |
-| `typecheck`, `tsc`, `tsc --noemit`, `flow check` | `type` |
-| `test` (but NOT one of the visual matches below - visual wins) | `test` |
+| `axe`, `pa11y`, `lighthouse`, `jsx-a11y`, `eslint-plugin-jsx-a11y` | `a11y` |
 | `chromatic`, `test:visual`, `loki test`, `playwright test --grep visual` | `visual` |
+| `typecheck`, `tsc`, `tsc --noemit`, `flow check` | `type` |
+| `lint`, `eslint`, `stylelint`, `biome lint` | `lint` |
+| `test` (only when none of the buckets above match) | `test` |
 
-When a command matches multiple substrings (e.g., `npm run test:visual` matches both `test` and `test:visual`), `visual` wins. If a command matches none, bucket it under `test` (catch-all - most user-supplied custom commands are test-like). Do not invent a fifth bucket.
+Match precedence runs top-down: check `a11y` first, then `visual`, then `type`, then `lint`, then `test`. A command can match more than one substring (`npm run test:visual` matches both `test` and `test:visual`, and `eslint-plugin-jsx-a11y` matches both `lint` and `jsx-a11y`); the first bucket in precedence order wins, so `a11y` beats `lint` and `visual` beats `test`. If a command matches none, bucket it under `test` (catch-all - most user-supplied custom commands are test-like). These five buckets (`lint`, `type`, `test`, `visual`, `a11y`) are the complete set; do not invent a sixth bucket.
 
 ## Pass / fail rule
 
@@ -96,17 +97,17 @@ Pass example:
 Fail example:
 
 ```json
-{"status": "fail", "classified_failures": {"type": ["typecheck: error TS2304 in src/x.ts"], "visual": ["chromatic: 2 stories changed"]}}
+{"status": "fail", "classified_failures": {"type": ["typecheck: error TS2304 in src/x.ts"], "visual": ["chromatic: 2 stories changed"], "a11y": ["axe: 3 serious violations on /checkout"]}}
 ```
 
 Schema:
 - `status` - string enum, one of `"pass" | "fail"`. Note: this is NOT the same enum as the skill's STATE-block status (which also has `timeout` and `skipped`); those two cases are decided by the skill, not by you. You only emit `pass | fail`.
-- `classified_failures` - object. Keys are a subset of `lint | type | test | visual`. Values are arrays of short summary strings (≤ 120 chars each). The object is `{}` (empty) when `status === "pass"`.
+- `classified_failures` - object. Keys are a subset of `lint | type | test | visual | a11y`. Values are arrays of short summary strings (≤ 120 chars each). The object is `{}` (empty) when `status === "pass"`.
 
 ## Constraints
 
 - **Do not** read `stderr` content beyond the first non-empty line. The skill keeps the verbatim outputs for the design-fixer; your job is routing, not analysis.
-- **Do not** invent buckets outside the four-name set.
+- **Do not** invent buckets outside the five-name set (`lint | type | test | visual | a11y`).
 - **Do not** ever emit `status: "timeout"` or `status: "skipped"` - those are skill-level statuses, not classifier outputs.
 - **Do not** consult external services or MCP tools. Classification is a pure function of the supplied input.
 - **Do not** exceed `size_budget: S`. If `outputs[*].stderr` is unexpectedly large, prefer to summarize from the first 4 KB of each stderr rather than refuse.

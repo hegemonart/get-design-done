@@ -5,7 +5,7 @@ audit: 79
 bandit-status: 94
 benchmark: 65
 bootstrap-ds: 43
-brief: 128
+brief: 145
 budget: 45
 cache-manager: 66
 check-update: 98
@@ -29,6 +29,8 @@ graphify: 49
 health: 99
 help: 87
 list-assumptions: 61
+list-pins: 27
+live: 98
 locale: 51
 map: 89
 migrate: 70
@@ -42,6 +44,7 @@ pause: 77
 peer-cli-add: 88
 peer-cli-customize: 90
 peers: 96
+pin: 37
 plan: 105
 plant-seed: 48
 pr-branch: 32
@@ -61,11 +64,11 @@ router: 89
 scan: 92
 settings: 87
 ship: 48
-sketch: 78
 sketch-wrap-up: 92
+sketch: 78
 skill-manifest: 79
-spike: 67
 spike-wrap-up: 86
+spike: 67
 start: 67
 stats: 51
 style: 71
@@ -75,6 +78,7 @@ todo: 64
 turn-closeout: 95
 undo: 31
 unlock-decision: 54
+unpin: 31
 update: 56
 using-gdd: 78
 verify: 113
