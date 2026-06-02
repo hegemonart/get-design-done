@@ -23,6 +23,7 @@
     "sdk/",
     "recipes/",
     "docs/i18n/",
+    "dist/claude-code/",
     "scripts/lib/",
     "scripts/cli/",
     "scripts/install.cjs",
@@ -47,6 +48,8 @@
   },
   "scripts": {
     "build:bundles": "node scripts/build-distribution-bundles.cjs",
+    "build:skills": "node scripts/build-skills.cjs",
+    "build:skills:check": "node scripts/build-skills.cjs --check",
     "build:sdk": "node scripts/build-sdk-bins.cjs",
     "prepack": "npm run build:sdk",
     "postpack": "node scripts/build-sdk-bins.cjs --clean",
