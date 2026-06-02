@@ -148,12 +148,21 @@ function scan(text, denylist) {
   return findings;
 }
 
-/** Extract the frontmatter `description` value (single-line or folded continuation). */
+/** Extract the frontmatter `description` value (single-line or folded continuation). Line-based, not a
+ *  single nested-quantifier regex — that form (.*(?:\n[ \t]+.*)*) is a ReDoS (js/redos) on pathological
+ *  indented input, so we walk lines linearly instead. */
 function extractDescription(text) {
   const fm = text.match(/^---\n([\s\S]*?)\n---/);
   if (!fm) return null;
-  const d = fm[1].match(/^description:[ \t]*(.*(?:\n[ \t]+.*)*)$/m);
-  return d ? d[1].replace(/\n[ \t]+/g, ' ').trim() : null;
+  const lines = fm[1].split('\n');
+  const i = lines.findIndex((l) => /^description:/.test(l));
+  if (i === -1) return null;
+  let val = lines[i].slice(lines[i].indexOf(':') + 1).trim();
+  for (let j = i + 1; j < lines.length; j++) {
+    if (/^[ \t]+\S/.test(lines[j])) val += ' ' + lines[j].trim(); // folded continuation line
+    else break;
+  }
+  return val.trim();
 }
 
 /** SC#7: apply the denylist to a skill/agent `description` — em dash + AI-tells, but NOT the `--` token
