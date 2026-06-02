@@ -60,6 +60,7 @@
     "lint:changelog": "node scripts/lint-changelog.cjs",
     "lint:design": "node bin/gdd-detect test/fixtures/detect/negative --json",
     "sync:rule-catalogue": "node scripts/sync-rule-catalogue.cjs --check",
+    "validate:manifest": "node scripts/validate-manifest.cjs --check",
     "validate:schemas": "node --experimental-strip-types scripts/validate-schemas.ts",
     "validate:frontmatter": "node --experimental-strip-types scripts/validate-frontmatter.ts agents/",
     "detect:stale-refs": "node scripts/detect-stale-refs.cjs",

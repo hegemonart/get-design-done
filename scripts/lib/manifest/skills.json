@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "note": "Skill metadata SoT (Phase 41.5 seed = the live skills/ dir names). Phase 47 enriches each record (aliases, pin, description budget).",
+  "skills": [
+    {
+      "name": "add-backlog"
+    },
+    {
+      "name": "analyze-dependencies"
+    },
+    {
+      "name": "apply-reflections"
+    },
+    {
+      "name": "audit"
+    },
+    {
+      "name": "bandit-status"
+    },
+    {
+      "name": "benchmark"
+    },
+    {
+      "name": "bootstrap-ds"
+    },
+    {
+      "name": "brief"
+    },
+    {
+      "name": "budget"
+    },
+    {
+      "name": "cache-manager"
+    },
+    {
+      "name": "check-update"
+    },
+    {
+      "name": "compare"
+    },
+    {
+      "name": "complete-cycle"
+    },
+    {
+      "name": "connections"
+    },
+    {
+      "name": "continue"
+    },
+    {
+      "name": "darkmode"
+    },
+    {
+      "name": "debug"
+    },
+    {
+      "name": "design"
+    },
+    {
+      "name": "discover"
+    },
+    {
+      "name": "discuss"
+    },
+    {
+      "name": "do"
+    },
+    {
+      "name": "explore"
+    },
+    {
+      "name": "export"
+    },
+    {
+      "name": "extract-learnings"
+    },
+    {
+      "name": "fast"
+    },
+    {
+      "name": "figma-extract"
+    },
+    {
+      "name": "figma-write"
+    },
+    {
+      "name": "graphify"
+    },
+    {
+      "name": "health"
+    },
+    {
+      "name": "help"
+    },
+    {
+      "name": "list-assumptions"
+    },
+    {
+      "name": "locale"
+    },
+    {
+      "name": "map"
+    },
+    {
+      "name": "migrate"
+    },
+    {
+      "name": "new-cycle"
+    },
+    {
+      "name": "new-project"
+    },
+    {
+      "name": "next"
+    },
+    {
+      "name": "note"
+    },
+    {
+      "name": "openrouter-status"
+    },
+    {
+      "name": "optimize"
+    },
+    {
+      "name": "pause"
+    },
+    {
+      "name": "peer-cli-add"
+    },
+    {
+      "name": "peer-cli-customize"
+    },
+    {
+      "name": "peers"
+    },
+    {
+      "name": "plan"
+    },
+    {
+      "name": "plant-seed"
+    },
+    {
+      "name": "pr-branch"
+    },
+    {
+      "name": "progress"
+    },
+    {
+      "name": "quality-gate"
+    },
+    {
+      "name": "quick"
+    },
+    {
+      "name": "reapply-patches"
+    },
+    {
+      "name": "recall"
+    },
+    {
+      "name": "reflect"
+    },
+    {
+      "name": "report-issue"
+    },
+    {
+      "name": "resume"
+    },
+    {
+      "name": "review-backlog"
+    },
+    {
+      "name": "review-decisions"
+    },
+    {
+      "name": "roi"
+    },
+    {
+      "name": "rollout-status"
+    },
+    {
+      "name": "router"
+    },
+    {
+      "name": "scan"
+    },
+    {
+      "name": "settings"
+    },
+    {
+      "name": "ship"
+    },
+    {
+      "name": "sketch"
+    },
+    {
+      "name": "sketch-wrap-up"
+    },
+    {
+      "name": "skill-manifest"
+    },
+    {
+      "name": "spike"
+    },
+    {
+      "name": "spike-wrap-up"
+    },
+    {
+      "name": "start"
+    },
+    {
+      "name": "stats"
+    },
+    {
+      "name": "style"
+    },
+    {
+      "name": "synthesize"
+    },
+    {
+      "name": "timeline"
+    },
+    {
+      "name": "todo"
+    },
+    {
+      "name": "turn-closeout"
+    },
+    {
+      "name": "undo"
+    },
+    {
+      "name": "unlock-decision"
+    },
+    {
+      "name": "update"
+    },
+    {
+      "name": "using-gdd"
+    },
+    {
+      "name": "verify"
+    },
+    {
+      "name": "warm-cache"
+    },
+    {
+      "name": "watch-authorities"
+    },
+    {
+      "name": "zoom-out"
+    }
+  ]
+}
