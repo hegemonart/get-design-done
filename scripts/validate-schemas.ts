@@ -205,6 +205,16 @@ export const PAIRS: readonly Pair[] = [
     data: null,
     required: false,
   },
+  {
+    name: 'live-session',
+    schema: 'reference/schemas/live-session.schema.json',
+    // Phase-47 live-mode session files live at .design/live-sessions/<id>.json
+    // (runtime-only, not a tracked subject file), so schema-compile only here to
+    // keep the Draft-07 declaration valid. Per-record conformance is enforced by
+    // test/suite/phase-47-session.test.cjs (Ajv-validates real session JSON).
+    data: null,
+    required: false,
+  },
 ];
 
 const USE_NPX: boolean = !process.argv.includes('--no-npx');

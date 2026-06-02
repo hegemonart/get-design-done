@@ -4,6 +4,53 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.47.0] - 2026-06-03
+
+### Phase 47 - In-Browser Design Iteration (Live Mode)
+
+GDD's design loop was repo-bound (edit, save, preview, screenshot) with no tight in-browser iteration. Phase 47
+ships `/gdd:live`: pick an element on a running dev server, generate N variants in one batch, post-check each with
+gdd-detect, hot-swap via HMR, accept or discard, and the session persists for resume. It drives the existing Preview
+MCP connection at runtime (the same surface verify screenshots and darkmode injection already use), so there is no
+new runtime dependency and no new egress. Planned and executed via the GSD pipeline (2 research agents + 3 parallel
+executor subagents).
+
+### Breaking changes
+
+- **`capability_matrix.mcp_support` now also gates live mode.** A harness declared `mcp_support: false` runs
+  `/gdd:live` in degraded screenshot-only mode (no element-pick or HMR swap). Harness authors adding a runtime must
+  set `mcp_support` honestly, since it now drives this behavioral split in addition to MCP tool availability.
+- **The live-session schema joins the validated set.** `reference/schemas/live-session.schema.json` is registered in
+  `validate:schemas`, and the six `live_*` event types are seeded into `reference/schemas/events.schema.json`.
+  Editing either must keep them valid (CI-gated).
+
+### Added
+
+- **`/gdd:live`** at `source/skills/live/SKILL.md`: boot (probe Preview, detect dev server Vite/Next/Bun/static,
+  degraded mode if no MCP), element pick, single-batch N-variant generation (default 3, loads the Phase 45 canonical
+  reference first), per-variant gdd-detect post-check (findings inline; `error` flagged, never auto-rejected),
+  accept/discard with canonical-edit selection, session persistence, and resume.
+- **`scripts/lib/live/` substrate** (all dependency-free, all unit-tested): `session-store` (the
+  `.design/live-sessions/<id>.json` lifecycle + resume), `scope-guard` (blocks writes outside the picked element's
+  implicated source set), `postcheck` (wraps the gdd-detect engine in-memory), `events` (the six typed `live_*`
+  emitters), `bandit-feed` (accepted variants call the Phase 38 store's `observe(..., {source:'dev_time'})` at a 0.5
+  dev-time weight; the `Beta(2,8)` prior keeps them advisory), `harness-mode` (mcp_support to puppeteer/degraded),
+  `runtime` (the browser-side pick/swap script injected via `preview_eval`, keyed on `data-gdd-variant`).
+- **`reference/live-mode-integration.md`** documents the loop, the Preview surface, the events, the session file, the
+  bandit feed, degraded mode, and the scope guard.
+
+### Notes
+
+- 6-manifest lockstep at **v1.47.0** + `OFF_CADENCE_VERSIONS.add('1.47.0')` + 37 `manifests-version.txt` baselines +
+  tarball golden 884 -> 895 (the `live` skill in `skills/` + `dist/claude-code/`, 7 `scripts/lib/live/*.cjs`,
+  `reference/live-mode-integration.md`, `reference/schemas/live-session.schema.json`).
+- Testability: the deterministic substrate is fully unit-tested (session, scope, postcheck, events, bandit-feed,
+  harness-mode, runtime shape) plus a deterministic session-replay baseline at `test/fixtures/baselines/phase-47/`.
+  Live element-pick, HMR swap, and screenshots are runtime behaviors driven by the skill through the Preview
+  connection, exercised by the existing conditional main-branch E2E rather than new browserless CI suites.
+
+---
+
 ## [1.46.0] - 2026-06-03
 
 ### Phase 46 - Skill UX Polish

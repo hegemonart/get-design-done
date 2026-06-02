@@ -857,6 +857,13 @@
       "description": "Phase 46 skill-metadata single source of truth: scripts/lib/manifest/skills.json record shape, the generate-skill-frontmatter.cjs forward/extract/check modes, the skills.json to generator to build:skills to skills/+dist build chain, the six managed frontmatter keys (canonical order, always-quoted strings) vs extra_frontmatter passthrough, the 20..1024 description budget (validate-skill-length.cjs + lint-agentskills-spec.cjs R4, lint:agentskills CI gate), and the pin metadata catalogue consumer."
     },
     {
+      "name": "live-mode-integration",
+      "path": "reference/live-mode-integration.md",
+      "type": "meta-rules",
+      "phase": 47,
+      "description": "Phase 47 live-mode contract for /gdd:live: the seven-stage pick to generate to accept loop, the Claude Preview MCP surface (preview_eval injects scripts/lib/live/runtime.cjs RUNTIME_JS, hot-swap via the data-gdd-variant marker), the six live_* telemetry events vs the four on-disk session kinds, the .design/live-sessions session file (scripts/lib/live/session-store.cjs + live-session.schema.json), the dev-time bandit feed (bandit-feed.cjs into design-variants), degraded screenshot-only mode gated on capability_matrix.mcp_support (harness-mode.cjs), and the scope guard (scope-guard.cjs)."
+    },
+    {
       "name": "capability-gap-stage-gate",
       "path": "reference/capability-gap-stage-gate.md",
       "type": "meta-rules",

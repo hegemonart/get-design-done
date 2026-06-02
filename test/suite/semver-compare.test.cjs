@@ -571,6 +571,15 @@ OFF_CADENCE_VERSIONS.add('1.45.0');
 // CI gate. Two new CI gates = the `### Breaking changes`. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.46.0');
 
+// 1.47.0 -> Phase 47 (In-Browser Design Iteration / Live Mode). Minor on 1.46.0. /gdd:live: pick a DOM element
+// on a running dev server (via the Preview MCP connection, no new dependency), generate N variants in one batch,
+// post-check each with gdd-detect, hot-swap via HMR, accept/discard; session persists to .design/live-sessions/
+// with resume. New scripts/lib/live/ substrate (session-store, scope-guard, postcheck, events, bandit-feed,
+// harness-mode, runtime); 6 typed live_* events; accepted variants feed the Phase 38 bandit store with a dev_time
+// source tag (Beta(2,8) prior). Degraded screenshot-only mode on harnesses without MCP. Planned/executed via
+// parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.47.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
