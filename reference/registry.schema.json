@@ -4,19 +4,41 @@
   "title": "Reference Registry",
   "description": "Typed index of every reference/*.md (and reference/*.json default) in the plugin. Enables agents to query by type instead of grep-hunting import strings. Round-trip enforced: every reference/*.md must appear in entries[], every entry must resolve to an existing file.",
   "type": "object",
-  "required": ["version", "generated_at", "entries"],
+  "required": [
+    "version",
+    "generated_at",
+    "entries"
+  ],
   "properties": {
-    "$schema": { "type": "string" },
-    "version": { "const": 1 },
-    "generated_at": { "type": "string", "format": "date-time" },
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "entries": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "path", "type"],
+        "required": [
+          "name",
+          "path",
+          "type"
+        ],
         "properties": {
-          "name": { "type": "string", "minLength": 1, "pattern": "^[a-z0-9][a-z0-9-._]*$" },
-          "path": { "type": "string", "minLength": 1 },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9-._]*$"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
           "type": {
             "type": "string",
             "enum": [
@@ -41,13 +63,28 @@
               "typography",
               "layout",
               "performance",
-              "component-spec"
+              "component-spec",
+              "domain-index"
             ]
           },
-          "tier": { "enum": ["L0", "L1", "L2"] },
-          "phase": { "type": "number", "description": "Phase that introduced this entry. Numbers are allowed (e.g., 19.6, 27.5, 27.6, 27.7, 28.5) — decimal phases are valid per the long-standing precedent established by Phases 19.6 / 27.5 / 27.6 / 27.7 / 28.5." },
-          "description": { "type": "string" },
-          "registered_at": { "type": "string", "format": "date-time" }
+          "tier": {
+            "enum": [
+              "L0",
+              "L1",
+              "L2"
+            ]
+          },
+          "phase": {
+            "type": "number",
+            "description": "Phase that introduced this entry. Numbers are allowed (e.g., 19.6, 27.5, 27.6, 27.7, 28.5) — decimal phases are valid per the long-standing precedent established by Phases 19.6 / 27.5 / 27.6 / 27.7 / 28.5."
+          },
+          "description": {
+            "type": "string"
+          },
+          "registered_at": {
+            "type": "string",
+            "format": "date-time"
+          }
         },
         "additionalProperties": false
       }

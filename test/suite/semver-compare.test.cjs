@@ -556,6 +556,13 @@ OFF_CADENCE_VERSIONS.add('1.43.0');
 // subagents. The harness-freshness CI gate is the `### Breaking changes`. No new runtime dependency.
 OFF_CADENCE_VERSIONS.add('1.44.0');
 
+// 1.45.0 -> Phase 45 (Canonical Domain Reference Index). Minor on 1.44.0. 7 reference/{typography,
+// color,spatial,motion,interaction,responsive,ux-writing}.md index entry-points over existing fragments
+// (registry domain-index kind) + check-domain-cross-links + check-no-duplication CI gates + consumer
+// required-reading migration (motion-mapper 89% token cut, design-auditor/executor index-first). Planned/
+// executed via parallel GSD subagents. New CI gates = the `### Breaking changes`. No new runtime dependency.
+OFF_CADENCE_VERSIONS.add('1.45.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

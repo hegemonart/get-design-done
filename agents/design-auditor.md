@@ -45,6 +45,7 @@ Minimum expected files:
 - `.design/DESIGN-CONTEXT.md` - goals, brand direction, design decisions (D-XX)
 - `.design/DESIGN-PLAN.md` - planned tasks and acceptance criteria
 - `.design/tasks/` - what was actually done (glob all task files)
+- **Domain-index navigation (Phase 45):** the 7 entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` index every fragment below. For a pillar, load the relevant domain index first, then drill into the specific fragments it lists only as the pillar needs them - this is the cheap navigation layer over the detailed fragments.
 - `reference/audit-scoring.md` - existing 7-category scoring rubric (understand, do not duplicate)
 - `reference/brand-voice.md` - voice axes, archetype library, and tone-by-context table (use when auditing Pillar 1: Copy)
 - `reference/gestalt.md` - 8 Gestalt principles with scoring rubrics (use when auditing Pillar 2: Visual Hierarchy)

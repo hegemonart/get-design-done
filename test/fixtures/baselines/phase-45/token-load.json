@@ -1,0 +1,19 @@
+{
+  "note": "Phase 45 (SC#8/#10) token-load baseline. Loading a domain-index entry instead of all the fragments it indexes is the saving. Tokens ~= bytes/4. Captured 2026-06-02.",
+  "consumers": {
+    "motion-mapper": {
+      "before_fragments": ["motion-advanced.md", "motion-easings.md", "motion-transition-taxonomy.md", "motion-spring.md"],
+      "before_tokens": 14927,
+      "after_index": "motion.md",
+      "after_tokens": 1669,
+      "reduction_pct": 89
+    },
+    "design-auditor-sample": {
+      "before_fragments": ["gestalt.md", "visual-hierarchy-layout.md", "brand-voice.md", "style-vocabulary.md", "performance.md"],
+      "before_tokens": 27967,
+      "after_indexes": ["spatial.md", "ux-writing.md", "color.md", "responsive.md"],
+      "after_tokens": 3023,
+      "reduction_pct": 89
+    }
+  }
+}

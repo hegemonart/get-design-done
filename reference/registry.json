@@ -625,8 +625,9 @@
     {
       "name": "motion",
       "path": "reference/motion.md",
-      "type": "motion",
-      "description": "Motion vocabulary seed (extended in Phase 18)"
+      "type": "domain-index",
+      "description": "Phase 45 domain-index: motion navigation - indexes easings, spring, transition-taxonomy, interpolate, advanced, framer-motion-patterns.",
+      "phase": 45
     },
     {
       "name": "motion-advanced",
@@ -797,8 +798,9 @@
     {
       "name": "typography",
       "path": "reference/typography.md",
-      "type": "heuristic",
-      "description": "Typography-system heuristics used by visual-hierarchy-mapper"
+      "type": "domain-index",
+      "description": "Phase 45 domain-index: typography navigation - indexes type-scale heuristics, variable-fonts-loading, proportion-systems.",
+      "phase": 45
     },
     {
       "name": "user-research",
@@ -1049,6 +1051,41 @@
       "type": "meta-rules",
       "phase": 42,
       "description": "Phase 42 multi-harness skill-placeholder catalogue: the four placeholders ({{command_prefix}}/{{model}}/{{config_file}}/{{ask_instruction}}) + per-harness substitution table + the \\{{...}} escape + the <!-- harness-only: a,b --> block rule. Skills authored once in source/skills/, compiled per-harness by scripts/build-skills.cjs via scripts/lib/build/factory.cjs reading scripts/lib/manifest/harnesses.json."
+    },
+    {
+      "name": "color",
+      "path": "reference/color.md",
+      "type": "domain-index",
+      "phase": 45,
+      "description": "Phase 45 domain-index: color + contrast navigation - color-theory, palette-catalog, contrast-advanced, style-vocabulary."
+    },
+    {
+      "name": "spatial",
+      "path": "reference/spatial.md",
+      "type": "domain-index",
+      "phase": 45,
+      "description": "Phase 45 domain-index: layout/spacing/composition - composition, proportion-systems, css-grid-layout, visual-hierarchy-layout, gestalt, image-optimization, data-visualization, surfaces."
+    },
+    {
+      "name": "interaction",
+      "path": "reference/interaction.md",
+      "type": "domain-index",
+      "phase": 45,
+      "description": "Phase 45 domain-index: interaction + a11y + components - accessibility, component-authoring, form-patterns, information-architecture, onboarding-progressive-disclosure, emotional-design, components/."
+    },
+    {
+      "name": "responsive",
+      "path": "reference/responsive.md",
+      "type": "domain-index",
+      "phase": 45,
+      "description": "Phase 45 domain-index: responsive + i18n + platforms - i18n, rtl-cjk-cultural, platforms, native-platforms, performance, css-grid-layout."
+    },
+    {
+      "name": "ux-writing",
+      "path": "reference/ux-writing.md",
+      "type": "domain-index",
+      "phase": 45,
+      "description": "Phase 45 domain-index: UX-writing + voice - brand-voice, style-vocabulary, anti-patterns."
     }
   ]
 }

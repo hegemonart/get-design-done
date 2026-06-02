@@ -24,11 +24,15 @@ You inventory motion and animation patterns. Zero session memory. You do not mod
 ## Required Reading
 
 - `.design/STATE.md`
-- `reference/motion.md` (if present)
-- `reference/motion-advanced.md` (if present) - advanced patterns: spring physics, scroll-driven, FLIP, View Transitions API, gesture/drag mechanics, clip-path patterns, blur crossfades, Framer Motion hardware-accel gotcha
-- `reference/motion-easings.md` (if present) - 12 canonical easing presets; classify each detected easing against this catalog
-- `reference/motion-transition-taxonomy.md` (if present) - 8 transition families; classify page/route transitions against this taxonomy
-- `reference/motion-spring.md` (if present) - spring presets; classify spring configs against gentle/wobbly/stiff/slow
+- `reference/motion.md` (if present) - **the motion domain-index (Phase 45): start here.** It indexes the
+  motion fragments below with a "use this when" pointer for each. Load a specific fragment ONLY when you
+  reach the classification step that needs it (drill-in), not all of them up front - this is the bulk of
+  the token saving (the index is ~1.7k tokens vs ~15k for all four fragments).
+- Drill-in fragments (load on demand, per the index in `motion.md`):
+  - `reference/motion-advanced.md` - advanced patterns: spring physics, scroll-driven, FLIP, View Transitions API, gesture/drag mechanics, clip-path patterns, blur crossfades, Framer Motion hardware-accel gotcha
+  - `reference/motion-easings.md` - 12 canonical easing presets; classify each detected easing against this catalog
+  - `reference/motion-transition-taxonomy.md` - 8 transition families; classify page/route transitions against this taxonomy
+  - `reference/motion-spring.md` - spring presets; classify spring configs against gentle/wobbly/stiff/slow
 - Any files supplied by the orchestrator
 
 ## Scan Strategy

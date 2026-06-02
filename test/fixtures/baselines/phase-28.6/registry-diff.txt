@@ -159,3 +159,8 @@ cost-governance: reference/cost-governance.md
 multi-author-model: reference/multi-author-model.md
 cli-localization: reference/cli-localization.md
 skill-placeholders: reference/skill-placeholders.md
+color: reference/color.md
+spatial: reference/spatial.md
+interaction: reference/interaction.md
+responsive: reference/responsive.md
+ux-writing: reference/ux-writing.md
