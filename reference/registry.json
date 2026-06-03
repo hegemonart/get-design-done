@@ -475,7 +475,7 @@
       "name": "insight-line.schema",
       "path": "reference/schemas/insight-line.schema.json",
       "type": "schema",
-      "tier": "haiku",
+      "tier": "L2",
       "description": "JSONL schema for agent run-end insight lines written to .design/intel/insights.jsonl"
     },
     {
