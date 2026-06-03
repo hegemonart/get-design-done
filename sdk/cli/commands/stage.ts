@@ -110,6 +110,18 @@ const VALID_STAGE_NAMES = new Set<string>([
   'discuss',
 ]);
 
+// Names of top-level `gdd-sdk` subcommands that users sometimes try to invoke
+// as stages (e.g. `gdd-sdk stage audit`). When a stage name collides with one,
+// surface a "did you mean" hint pointing at the real invocation.
+const TOP_LEVEL_COMMANDS_OFTEN_CONFUSED_FOR_STAGES = new Set<string>([
+  'audit',
+  'build',
+  'dashboard',
+  'init',
+  'query',
+  'run',
+]);
+
 export async function stageCommand(
   args: ParsedArgs,
   deps: StageCommandDeps = {},
@@ -134,6 +146,11 @@ export async function stageCommand(
     stderr.write(
       `gdd-sdk stage: "${stageName}" is not one of brief|explore|plan|design|verify|discuss\n`,
     );
+    if (TOP_LEVEL_COMMANDS_OFTEN_CONFUSED_FOR_STAGES.has(stageName)) {
+      stderr.write(
+        `gdd-sdk stage: did you mean \`gdd-sdk ${stageName}\`? "${stageName}" is a top-level subcommand, not a pipeline stage.\n`,
+      );
+    }
     return 3;
   }
 
