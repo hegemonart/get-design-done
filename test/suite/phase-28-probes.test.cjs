@@ -30,15 +30,17 @@ describe('28-06: verifier i18n probes (D-03)', () => {
     assert.equal(matches.length, 1, 'expected exactly one "### i18n probes" subsection');
   });
 
-  test('28-06: verifier §i18n probes appears inside Phase 1 (before Phase 2)', () => {
-    const phase1Idx = verifier.search(/^## Phase 1 /m);
-    const phase2Idx = verifier.search(/^## Phase 2 /m);
+  test('28-06: verifier §i18n probes appears inside Stage 1 (before Stage 2)', () => {
+    // Verifier H2 headings were renamed Phase -> Stage in the Phase NN sweep
+    // (Stage 1..5 mirror the 5-stage pipeline naming used everywhere else).
+    const stage1Idx = verifier.search(/^## Stage 1 /m);
+    const stage2Idx = verifier.search(/^## Stage 2 /m);
     const probesIdx = verifier.search(/^### i18n probes$/m);
-    assert.ok(phase1Idx >= 0, 'Phase 1 heading missing');
-    assert.ok(phase2Idx >= 0, 'Phase 2 heading missing');
+    assert.ok(stage1Idx >= 0, 'Stage 1 heading missing');
+    assert.ok(stage2Idx >= 0, 'Stage 2 heading missing');
     assert.ok(probesIdx >= 0, 'i18n probes heading missing');
-    assert.ok(phase1Idx < probesIdx, 'i18n probes appeared before Phase 1');
-    assert.ok(probesIdx < phase2Idx, 'i18n probes appeared after Phase 2 (must be inside Phase 1)');
+    assert.ok(stage1Idx < probesIdx, 'i18n probes appeared before Stage 1');
+    assert.ok(probesIdx < stage2Idx, 'i18n probes appeared after Stage 2 (must be inside Stage 1)');
   });
 
   test('28-06: verifier §i18n probes contains all 4 D-10 library regex patterns', () => {
