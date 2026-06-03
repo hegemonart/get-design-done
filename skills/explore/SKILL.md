@@ -1,7 +1,7 @@
 ---
 name: gdd-explore
 description: "Stage 2 of 5 - unified exploration merging inventory grep + design interview. Probes 6 connections, scans the codebase, conducts the AskUserQuestion interview, and writes .design/DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md. Use after /gdd:brief to map the existing system and lock decisions before planning. Activates for requests involving researching design direction, gathering references, or exploring visual options."
-argument-hint: "[--skip-interview] [--skip-scan]"
+argument-hint: "[--skip-interview] [--skip-scan] [--incremental] [--full]"
 tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__probe_connections, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__add_decision
 ---
 
@@ -48,6 +48,8 @@ For each greenfield component in scope: `21st_magic_component_search(component_n
 **Map pre-check**: if `.design/map/` exists with all 5 files (`tokens.md`, `components.md`, `visual-hierarchy.md`, `a11y.md`, `motion.md`) fresher than `src/`, consume them and skip the grep pass. Otherwise grep and, after Step 4, suggest `/gdd:map` for the next cycle.
 
 **Parallelism decision**: read `.design/config.json` + `reference/parallelism-rules.md`. Record verdict via `mcp__gdd_state__set_status` (`"explore_parallel"` / `"explore_serial"`). Parallel -> multiple `Task()` in one response; serial -> sequential.
+
+**Incremental batching (Phase 53, default)**: `--incremental` (default; `--full` opts out) runs the change classifier first via the fingerprint store, groups the DesignContext graph into Louvain community batches, and dispatches mappers per the verdict (SKIP=0, PARTIAL=affected batches only, FULL=all). Engine: `scripts/lib/explore-parallel-runner` + `scripts/lib/mappers/incremental-discover.cjs`; dispatch concurrency comes from `concurrency-tuner.cjs`. Detail: `./explore-procedure.md` §Incremental Batching.
 
 Run the canonical scan grep/glob inventory (POSIX ERE, preserving PLAT-01/02): component detection (Glob `**/*.{tsx,jsx,vue,svelte}`), color extraction (hex / rgb / hsl / Tailwind arbitrary), typography scan (font-family / Tailwind `font-*` / `text-*`), motion scan (`transition` / `animate-` / `@keyframes` / `framer-motion`), token detection (tailwind.config / CSS custom properties / token JSON), layout detection (ordered fallback `src/` -> `app/` -> `pages/` -> `lib/` -> unknown). Write `.design/DESIGN.md` + `.design/DESIGN-DEBT.md`. Then `mcp__gdd_state__update_progress` for scan progress. Detail: `./explore-procedure.md` §Step 2.
 

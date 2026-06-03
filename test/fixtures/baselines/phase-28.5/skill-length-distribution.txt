@@ -17,10 +17,10 @@ continue: 24
 darkmode: 76
 debug: 41
 design: 99
-discover: 72
+discover: 78
 discuss: 96
 do: 45
-explore: 105
+explore: 107
 export: 30
 extract-learnings: 114
 fast: 91
