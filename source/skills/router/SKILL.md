@@ -1,6 +1,6 @@
 ---
 name: gdd-router
-description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic - no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.js."
+description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic - no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.ts."
 argument-hint: "<intent-string> [<target-artifacts-csv>]"
 tools: Read, Bash, Grep
 ---
@@ -9,7 +9,7 @@ tools: Read, Bash, Grep
 
 ## Role
 
-You are a deterministic routing skill. You do not spawn agents. You read `.design/budget.json`, `reference/model-prices.md`, `.design/cache-manifest.json` (if present), and the agent frontmatter list, then emit a single JSON object describing the planned spawn graph. The budget-enforcer hook (`hooks/budget-enforcer.js`) consumes your output on every `Agent` tool call.
+You are a deterministic routing skill. You do not spawn agents. You read `.design/budget.json`, `reference/model-prices.md`, `.design/cache-manifest.json` (if present), and the agent frontmatter list, then emit a single JSON object describing the planned spawn graph. The budget-enforcer hook (`hooks/budget-enforcer.ts`) consumes your output on every `Agent` tool call.
 
 ## Invocation Contract
 

@@ -88,7 +88,7 @@ You MAY:
 
 ## Why this agent exists
 
-Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the integration-checker-specific instance of that pattern - the full `design-integration-checker` is a LARGE-size post-verification spawn that grep-walks the codebase for D-XX decision application. If no decision or anchor doc moved in the diff, the wiring result is unchanged from the last verify and the spawn is wasted cost.
+Lazy Checker Spawning: cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn the full checker. If false, the full checker is skipped and logged as `lazy_skipped: true` in telemetry. This gate is the integration-checker-specific instance of that pattern - the full `design-integration-checker` is a LARGE-size post-verification spawn that grep-walks the codebase for D-XX decision application. If no decision or anchor doc moved in the diff, the wiring result is unchanged from the last verify and the spawn is wasted cost.
 
 ## Record
 

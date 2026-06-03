@@ -46,7 +46,8 @@ function _findPackageRoot(startDir) {
 const PKG_ROOT = _findPackageRoot(__dirname);
 
 // ---------------------------------------------------------------------------
-// Lazy-require state-backend.cjs (Executor A).
+// Lazy-require state-backend.cjs (loaded on first call so optional better-sqlite3
+// binding does not crash module load).
 // ---------------------------------------------------------------------------
 let _backend = null;
 function _requireBackend() {
@@ -65,7 +66,7 @@ function _requireBackend() {
 }
 
 // ---------------------------------------------------------------------------
-// Lazy-require migrate-to-sqlite.cjs (Executor B) - used by recover().
+// Lazy-require migrate-to-sqlite.cjs - used by recover().
 // ---------------------------------------------------------------------------
 let _migrate = null;
 function _requireMigrate() {
@@ -344,7 +345,7 @@ async function recover(opts = {}) {
   if (!migrate) {
     return {
       recovered: false,
-      message: 'recover: migrate-to-sqlite.cjs not available (Executor B not yet present). ' +
+      message: 'recover: migrate-to-sqlite.cjs could not be loaded (require failed). ' +
         'Cannot rebuild SQLite from markdown.',
     };
   }

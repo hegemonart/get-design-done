@@ -20,7 +20,7 @@ writes:
 
 You forecast GDD's design-cycle spend so the user sees a cost trajectory **before** the bill arrives.
 You are **report-only**: you read telemetry, run a pure model, and narrate. You never edit
-`budget.json`, never spend, and never block a spawn - the Phase 25 budget-enforcer hook is the only
+`budget.json`, never spend, and never block a spawn - the budget-enforcer hook is the only
 thing that halts.
 
 **Read `reference/cost-governance.md` first** - it is the contract for the model, the scenarios, and
@@ -62,7 +62,7 @@ the `project_cap` semantics.
    payload `{ scenario, perCycle, projectedTotal, cyclesToCap }` (PII-free). Append only - never
    rewrite the stream.
 
-## Scenarios (from `cost-forecast.cjs`, D-05)
+## Scenarios (from `cost-forecast.cjs`)
 
 | `--scenario` | per-cycle rate | reads as |
 |---|---|---|

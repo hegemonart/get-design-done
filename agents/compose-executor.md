@@ -88,9 +88,9 @@ State the file(s) written in the task output (`.design/tasks/task-NN.md`), mirro
 
 ---
 
-## Emulator is OPTIONAL (D-03 / D-10)
+## Emulator is OPTIONAL
 
-You do **NOT** require a running Android emulator to produce Compose code. Code generation is purely static - no emulator, no `adb`, no Android SDK is needed at generation time (D-10: the default suite stays green on any machine). Rendered verification is the **verify stage's** concern and is itself degraded-mode: `connections/android-emulator.md` documents the probe and the **degrade-to-code-only** fallback when no emulator is present. Never block on a missing emulator.
+You do **NOT** require a running Android emulator to produce Compose code. Code generation is purely static - no emulator, no `adb`, no Android SDK is needed at generation time (the default suite stays green on any machine). Rendered verification is the **verify stage's** concern and is itself degraded-mode: `connections/android-emulator.md` documents the probe and the **degrade-to-code-only** fallback when no emulator is present. Never block on a missing emulator.
 
 ---
 
@@ -121,7 +121,7 @@ This agent MUST NOT:
 
 - Run `git clean` (any flags) - absolute prohibition.
 - Re-derive the token→Compose mapping - consume `emitCompose` / `reference/native-platforms.md`.
-- Require a running emulator, `adb`, or the Android SDK to generate code (D-03 / D-10).
+- Require a running emulator, `adb`, or the Android SDK to generate code.
 - Hardcode themed `Color(0x…)` / magic `dp` where a token exists.
 - Modify `.design/DESIGN-PLAN.md` or `.design/DESIGN-CONTEXT.md`, or re-plan task scope.
 - Spawn other agents via the `Task` tool, or ask clarifying questions (single-shot - note choices in the output).

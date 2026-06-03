@@ -49,7 +49,7 @@ Parse mode: `annotate | roundtrip` (required). If absent, list modes and STOP.
 **annotate mode** - read `.design/DESIGN-DEBT.md`, map findings to .pen components:
 ```
 Proposed annotations (N operations):
-1. Button.pen → add comment: "DEBT: padding token mismatch — D-03 says 8px, impl uses 10px"
+1. Button.pen → add comment: "DEBT: padding token mismatch — decision says 8px, impl uses 10px"
 2. Modal.pen → add comment: "DEBT: missing focus-trap per accessibility audit"
 ```
 

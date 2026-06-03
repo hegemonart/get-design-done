@@ -63,7 +63,7 @@
     },
     {
       "name": "cache-manager",
-      "description": "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.js before every Agent spawn.",
+      "description": "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.ts before every Agent spawn.",
       "user_invocable": false,
       "tools": "Read, Bash, Write",
       "disable_model_invocation": true
@@ -480,7 +480,7 @@
     },
     {
       "name": "router",
-      "description": "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic - no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.js.",
+      "description": "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic - no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.ts.",
       "argument_hint": "<intent-string> [<target-artifacts-csv>]",
       "tools": "Read, Bash, Grep"
     },

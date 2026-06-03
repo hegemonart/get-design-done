@@ -26,7 +26,7 @@ You inventory motion and animation patterns. Zero session memory. You do not mod
 ## Required Reading
 
 - `.design/STATE.md`
-- `reference/motion.md` (if present) - **the motion domain-index (Phase 45): start here.** It indexes the
+- `reference/motion.md` (if present) - **the motion domain-index: start here.** It indexes the
   motion fragments below with a "use this when" pointer for each. Load a specific fragment ONLY when you reach the classification step that needs it (drill-in), not all of them up front.
 - Drill-in fragments (load on demand, per the index in `motion.md`):
   - `reference/motion-advanced.md` - advanced patterns: spring physics, scroll-driven, FLIP, View Transitions API, gesture/drag mechanics, clip-path patterns, blur crossfades, Framer Motion hardware-accel gotcha
@@ -69,7 +69,7 @@ From the collected values, bucket by:
 - Normal: 200–400ms
 - Slow: >400ms
 
-## Advanced Scan Patterns (Phase 18+)
+## Advanced Scan Patterns
 
 When `reference/motion-advanced.md` is present, additionally scan for:
 

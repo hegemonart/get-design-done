@@ -19,9 +19,9 @@ writes: []
 
 ## Role
 
-At verify time, open the motion **exports** a project ships (Lottie JSON, Rive `.riv`) and surface motion-quality + performance concerns the 7-pillar code audit cannot see - frame-rate sanity, duration, embedded-asset bloat, bundle budget, and (for Rive) state-machine reachability. Motion exists as a *principle* (Phase 18); this agent makes it a *verifiable artifact*.
+At verify time, open the motion **exports** a project ships (Lottie JSON, Rive `.riv`) and surface motion-quality + performance concerns the 7-pillar code audit cannot see - frame-rate sanity, duration, embedded-asset bloat, bundle budget, and (for Rive) state-machine reachability. Motion exists as a *principle*; this agent makes it a *verifiable artifact*.
 
-**Hard rule (D-02): WARN, never block.** Every finding is a warning in `DESIGN-VERIFICATION.md`, never a `<blocker>` - motion is creative, not contractually broken. The single exception: a `must_have` that *explicitly* requires motion verification (then a failed check escalates to that must_have).
+**Hard rule: WARN, never block.** Every finding is a warning in `DESIGN-VERIFICATION.md`, never a `<blocker>` - motion is creative, not contractually broken. The single exception: a `must_have` that *explicitly* requires motion verification (then a failed check escalates to that must_have).
 
 ## When invoked
 
@@ -61,7 +61,7 @@ Map each returned warning to a verify finding (all WARN):
 
 The validator also returns `info` (fr, layers, durationSeconds, embeddedAssets) - narrate it in the report.
 
-## Step 3 - Check Rive (`.riv` is binary - be honest, D-04)
+## Step 3 - Check Rive (`.riv` is binary - be honest)
 
 Pure JS cannot parse the `.riv` state-machine graph. The static floor is:
 
@@ -76,7 +76,7 @@ Read the cap from `.design/config.json` → `motion_budget_kb` (fallback **200 K
 
 ## Degrade behavior
 
-- No Lottie player / no Rive runtime → the pure `validate-motion.cjs` (Lottie) + size/header (Rive) is the deterministic floor; then a code-only review of how the animation is loaded/triggered. Never blocks (D-03).
+- No Lottie player / no Rive runtime → the pure `validate-motion.cjs` (Lottie) + size/header (Rive) is the deterministic floor; then a code-only review of how the animation is loaded/triggered. Never blocks.
 - No motion exports at all → this agent is not invoked.
 
 ## Record

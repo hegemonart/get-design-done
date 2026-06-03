@@ -1,24 +1,23 @@
-// scripts/lib/apply-reflections/incubator-proposals.cjs — Plan 29-05
+// scripts/lib/apply-reflections/incubator-proposals.cjs
 //
 // Incubator-draft proposal class for /gdd:apply-reflections. Consumes drafts
-// authored by scripts/lib/incubator-author.cjs (Plan 29-04) at
+// authored by scripts/lib/incubator-author.cjs at
 // `.design/reflections/incubator/<slug>/` and exposes the 7 actions surfaced
 // in skills/apply-reflections/SKILL.md.
 //
 // Exports: discoverIncubatorDrafts, renderProposal, applyAccept, applyReject,
 //          applyEdit, checkStage1Gate, recordOptIn.
 //
-// Decisions honoured:
-//   * D-01 — checkStage1Gate is read-only; recordOptIn is the sole writer and
-//            only fires on explicit user confirmation. No auto-flip ever.
-//   * D-04 — applyAccept performs the full draft → final-artifact write +
-//            registry append in one call. No intermediate state.
-//   * D-05 — applyAccept calls validateScope from
-//            scripts/validate-incubator-scope.cjs BEFORE any filesystem
-//            mutation. Failure throws; registry and incubator subdir
-//            untouched. Non-bypassable.
-//   * D-12 — DRAFT.md is copied verbatim, so the drafter's `delegate_to: null`
-//            frontmatter survives the promotion.
+// Invariants:
+//   * checkStage1Gate is read-only; recordOptIn is the sole state writer and
+//     only fires on explicit user confirmation. No auto-flip ever.
+//   * applyAccept performs the full draft → final-artifact write + registry
+//     append in one call. No intermediate state.
+//   * applyAccept calls validateScope from
+//     scripts/validate-incubator-scope.cjs BEFORE any filesystem mutation.
+//     Failure throws; registry and incubator subdir untouched. Non-bypassable.
+//   * DRAFT.md is copied verbatim, so the drafter's `delegate_to: null`
+//     frontmatter survives the promotion.
 //
 // Style: CommonJS, zero external deps (node:fs / node:path / node:child_process /
 //        node:os only).
@@ -37,7 +36,7 @@ const { validateScope } = require('../../validate-incubator-scope.cjs');
 const DEFAULT_INCUBATOR_DIR = '.design/reflections/incubator';
 const DEFAULT_REGISTRY_PATH = 'reference/registry.json';
 const DEFAULT_GATE_SPEC_PATH = 'reference/capability-gap-stage-gate.md';
-const DEFAULT_STATE_PATH = '.planning/STATE.md';
+const DEFAULT_STATE_PATH = '.design/STATE.md';
 const OPT_IN_HEADING = '## Capability-gap Stage-1 opt-in';
 const OPT_IN_TOKEN_RE = /Stage-1 opt-in|capability.gap.*opt.in|confirmed_by/i;
 
@@ -94,7 +93,7 @@ function discoverIncubatorDrafts(options) {
   const drafts = [];
   for (const ent of entries) {
     if (!ent.isDirectory()) continue;
-    if (ent.name === 'archive') continue; // D-06: archived drafts not surfaced
+    if (ent.name === 'archive') continue; // archived drafts not surfaced
 
     const slugDir = path.join(incubatorDir, ent.name);
     const manifestPath = path.join(slugDir, 'manifest.json');
@@ -199,15 +198,15 @@ function renderUnifiedDiff(oldText, newText) {
   return out.join('\n');
 }
 
-// ---  applyAccept (D-04 + D-05)  ---
+// ---  applyAccept  ---
 
 /**
- * Promote draft → final artifact + registry entry in one call (D-04).
+ * Promote draft → final artifact + registry entry in one call.
  *
- * Order: validateScope (D-05; throws → no writes) → read DRAFT.md →
+ * Order: validateScope (throws → no writes) → read DRAFT.md →
  * [dryRun: return intent] → mkdirp parent → atomic-write target →
  * append-and-atomic-write registry → fs.rm incubator subdir last
- * (so partial failure leaves draft retryable — T-29.05-04).
+ * (so partial failure leaves draft retryable).
  */
 function applyAccept(draft, options) {
   const o = options || {};
@@ -217,7 +216,7 @@ function applyAccept(draft, options) {
     : path.join(repoRoot, o.registryPath || DEFAULT_REGISTRY_PATH);
   const dryRun = !!o.dryRun;
 
-  // Step 1 — D-05 scope guard. THROWS on failure; registry untouched.
+  // Step 1 — scope guard. THROWS on failure; registry untouched.
   validateScope(draft.target_path, { repoRoot });
 
   const draftBody = fs.readFileSync(draft.draft_path, 'utf8');
@@ -275,7 +274,7 @@ function appendRegistryEntry(registryPath, kind, entry) {
     throw new Error(`[incubator-proposals] registry root must be an object: ${registryPath}`);
   }
 
-  // Phase 14.5 self-authoring shape: { agents: [...], skills: [...] }.
+  // Self-authoring registry shape: { agents: [...], skills: [...] }.
   // Initialize missing arrays additively so we never clobber another schema's data.
   if (kind === 'agent') {
     if (!Array.isArray(registry.agents)) registry.agents = [];
@@ -356,10 +355,10 @@ function applyEdit(draft, options) {
   }
 }
 
-// ---  checkStage1Gate (D-01: read-only)  ---
+// ---  checkStage1Gate (read-only)  ---
 
 /**
- * Read-only Stage-1 gate inspection (D-01).
+ * Read-only Stage-1 gate inspection.
  *   thresholdMet  = count(registry entries with origin === 'incubator') ≥ K
  *   optInRecorded = state file contains an opt-in token
  *   summary       = human-readable one-liner
@@ -404,7 +403,7 @@ function checkStage1Gate(options) {
 /**
  * Pull `K` out of capability-gap-stage-gate.md. The doc encodes K as a row
  * in a markdown table:  `| K | 3 | Minimum number of stable clusters... |`.
- * If absent or unparseable, fall back to 3 (Phase 29 D-03 default).
+ * If absent or unparseable, fall back to 3 (the documented default).
  */
 function readK(gateSpecPath) {
   const src = safeReadFileSync(gateSpecPath);
@@ -415,12 +414,12 @@ function readK(gateSpecPath) {
   return Number.isFinite(v) && v > 0 ? v : 3;
 }
 
-// ---  recordOptIn (D-01: explicit-only)  ---
+// ---  recordOptIn (explicit-only)  ---
 
 /**
  * Persist the user's explicit Stage-1 opt-in to STATE.md. Idempotent.
  * IMPORTANT: this is the SOLE state writer in this module. Only invoke after
- * explicit user confirmation in the apply-reflections UX (D-01).
+ * explicit user confirmation in the apply-reflections UX.
  */
 function recordOptIn(options) {
   const o = options || {};

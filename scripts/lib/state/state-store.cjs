@@ -15,8 +15,8 @@
  *   setPosition(position, opts)     - upsert state_position
  *   getPosition(opts)               - return current position
  *   queryDecisions(ftsQuery, opts)  - FTS5 search over decisions (or JS fallback)
- *   migrate(migrateOpts)            - lazy-require migrate-to-sqlite.cjs (Executor B)
- *   render(projectRoot)             - lazy-require render-markdown.cjs (Executor C)
+ *   migrate(migrateOpts)            - lazy-require migrate-to-sqlite.cjs
+ *   render(projectRoot)             - lazy-require render-markdown.cjs
  *   backendName()                   - return BACKEND string
  *
  * R7 dual-write: every SQLite MUTATION wraps writeStructured() + renderMarkdown()
@@ -103,18 +103,18 @@ async function loadSdk() {
 }
 
 // ---------------------------------------------------------------------------
-// Lazy-require helpers for Executor B and C modules (PINNED names).
-// Do NOT call require() on these at module load - they may not exist yet.
+// Lazy-require helpers for the migrate and render sibling modules (PINNED names).
+// Loaded on first call so a missing better-sqlite3 binding does not crash module load.
 // ---------------------------------------------------------------------------
 
-/** @type {any|null} Cached migrate-to-sqlite module (Executor B). */
+/** @type {any|null} Cached migrate-to-sqlite module. */
 let _migrateModule = null;
-/** @type {any|null} Cached render-markdown module (Executor C). */
+/** @type {any|null} Cached render-markdown module. */
 let _renderModule = null;
 
 /**
- * Lazy-require ./migrate-to-sqlite.cjs (Executor B's module).
- * Returns null if not yet available.
+ * Lazy-require ./migrate-to-sqlite.cjs.
+ * Returns null if the require fails (e.g. better-sqlite3 missing).
  * @returns {any|null}
  */
 function _requireMigrate() {
@@ -128,8 +128,8 @@ function _requireMigrate() {
 }
 
 /**
- * Lazy-require ./render-markdown.cjs (Executor C's module).
- * Returns null if not yet available.
+ * Lazy-require ./render-markdown.cjs.
+ * Returns null if the require fails.
  * @returns {any|null}
  */
 function _requireRender() {
@@ -280,7 +280,7 @@ function _dualWrite(db, statePath, cycleId, writeStructured, sdk) {
       db.prepare('INSERT OR REPLACE INTO _meta(key, value) VALUES (?, ?)').run('last_render_sha256', newSha);
     }
     // If render module not available or sdk not loaded, still write the structured data.
-    // STATE.md will be stale until Executor C's render module is present.
+    // STATE.md will be stale until the render module loads successfully.
   });
   txn();
 }
@@ -654,13 +654,13 @@ function _currentCycleId(db) {
 }
 
 // ---------------------------------------------------------------------------
-// migrate - lazy delegate to migrate-to-sqlite.cjs (Executor B).
+// migrate - lazy delegate to migrate-to-sqlite.cjs.
 // ---------------------------------------------------------------------------
 
 /**
  * Run migration from markdown STATE.md to SQLite.
- * Delegates to ./migrate-to-sqlite.cjs (created by Executor B).
- * If that module is not yet present, logs a clear message and returns.
+ * Delegates to ./migrate-to-sqlite.cjs.
+ * If that module cannot be loaded, returns a structured message and a no-op.
  *
  * @param {{ statePath?: string, dbPath?: string, projectRoot?: string,
  *           dryRun?: boolean, upsertOnly?: boolean }} [migrateOpts]
@@ -679,7 +679,7 @@ function migrate(migrateOpts = {}) {
     return {
       migrated: false,
       backend: 'sqlite',
-      message: 'migrate-to-sqlite.cjs not yet available (Executor B pending)',
+      message: 'migrate-to-sqlite.cjs could not be loaded (require failed)',
     };
   }
   if (typeof mod.migrateToSqlite === 'function') {
@@ -699,13 +699,13 @@ function migrate(migrateOpts = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// render - lazy delegate to render-markdown.cjs (Executor C).
+// render - lazy delegate to render-markdown.cjs.
 // ---------------------------------------------------------------------------
 
 /**
  * Re-render STATE.md from SQLite state (reverse of migration).
- * Delegates to ./render-markdown.cjs (created by Executor C).
- * If that module is not yet present, logs a clear message and returns null.
+ * Delegates to ./render-markdown.cjs.
+ * If that module cannot be loaded, returns null silently.
  *
  * @param {string} [projectRoot]
  * @returns {Promise<string|null>} rendered markdown string, or null if unavailable

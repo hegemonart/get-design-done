@@ -19,7 +19,7 @@ writes: []
 
 ## Role
 
-You answer one question for the `quality-gate` skill (Phase 25 Plan 25-03): *given the outputs of the parallel command run, did the gate pass - and if not, into which buckets do the failures fall?*
+You answer one question for the `quality-gate` skill: *given the outputs of the parallel command run, did the gate pass - and if not, into which buckets do the failures fall?*
 
 You are read-only. You do not re-run any commands, do not write STATE.md, do not spawn agents, do not produce fixes. Your only job is to classify the outputs and return JSON.
 

@@ -122,7 +122,7 @@ Agents never read config directly - the profile is always injected at spawn time
 
 ## .design/budget.json Schema (Phase 10.1)
 
-Governs the optimization layer introduced in Phase 10.1. Read by every `Agent` tool spawn via `hooks/budget-enforcer.js` (PreToolUse). Bootstrap writes defaults if the file is missing.
+Governs the optimization layer introduced in Phase 10.1. Read by every `Agent` tool spawn via `hooks/budget-enforcer.ts` (PreToolUse). Bootstrap writes defaults if the file is missing.
 
 ## Full Schema
 
@@ -215,11 +215,11 @@ If `.design/budget.json` is missing when any `/gdd:*` command runs, `scripts/boo
 
 ## .design/telemetry/costs.jsonl + .design/agent-metrics.json (Phase 10.1)
 
-Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.js` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.ts` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory - they are local session state, not committed.
+Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.ts` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.ts` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory - they are local session state, not committed.
 
 ### .design/telemetry/costs.jsonl
 
-Append-only ledger. One JSON object per line. Written by `hooks/budget-enforcer.js` on every PreToolUse decision: spawn allowed, spawn blocked by cap, tier downgraded, cache-hit short-circuit, lazy-gate skip. Consumed by the Phase 11 reflector (`agents/design-reflector.md`) and by `/gdd:optimize`.
+Append-only ledger. One JSON object per line. Written by `hooks/budget-enforcer.ts` on every PreToolUse decision: spawn allowed, spawn blocked by cap, tier downgraded, cache-hit short-circuit, lazy-gate skip. Consumed by the Phase 11 reflector (`agents/design-reflector.md`) and by `/gdd:optimize`.
 
 **Row schema** (verbatim from ROADMAP criterion 7):
 
@@ -292,11 +292,11 @@ Both files sit inside `.design/`, which is already `.gitignore`d at the project 
 
 ### Refresh cadence
 
-The aggregator is invoked as a detached child process by `hooks/budget-enforcer.js` after every telemetry row write. It is also invoked directly by `/gdd:optimize` before analysis. There is no cron, no daemon, and no scheduled task - metrics are always at most one spawn stale.
+The aggregator is invoked as a detached child process by `hooks/budget-enforcer.ts` after every telemetry row write. It is also invoked directly by `/gdd:optimize` before analysis. There is no cron, no daemon, and no scheduled task - metrics are always at most one spawn stale.
 
 ## .design/cache-manifest.json Schema (Phase 10.1)
 
-Authored and maintained by `skills/cache-manager/SKILL.md`. Read by `hooks/budget-enforcer.js` (PreToolUse on Agent spawns) for short-circuiting cached spawns per D-05. Layer B of the D-08 two-layer cache. Flat KV shape - keys are SHA-256 hex of the deterministic input-hash, values are entry objects. Schema version 1.
+Authored and maintained by `skills/cache-manager/SKILL.md`. Read by `hooks/budget-enforcer.ts` (PreToolUse on Agent spawns) for short-circuiting cached spawns per D-05. Layer B of the D-08 two-layer cache. Flat KV shape - keys are SHA-256 hex of the deterministic input-hash, values are entry objects. Schema version 1.
 
 ## Full Schema
 
@@ -357,22 +357,22 @@ String - ISO-8601 UTC timestamp equal to `written_at + ttl_seconds`. Precomputed
 - TTL is copied into each entry at write time - **not** recomputed on read. Budget.json changes do not retroactively affect existing entries.
 - `expires_at` = `written_at + ttl_seconds`, computed once, stored in the entry.
 - Stale entries are **not** actively purged (lazy cleanup): they remain in the file until overwritten by a new write with the same key, or pruned manually. A proactive reaper is out of v1 scope.
-- Readers (`hooks/budget-enforcer.js`) check `Date.now() / 1000 > Date.parse(expires_at) / 1000`; if true, return miss.
+- Readers (`hooks/budget-enforcer.ts`) check `Date.now() / 1000 > Date.parse(expires_at) / 1000`; if true, return miss.
 
 ## Read/Write contract
 
 - **Single writer**: `skills/cache-manager/SKILL.md` Phase 4 (`write-result-on-completion`). Other code must not write this file directly.
-- **Multiple readers**: `hooks/budget-enforcer.js`, any orchestrator that runs Phase 2 (`lookup`) for dry-run planning. Readers treat malformed JSON as "manifest absent" (empty cache) - do not throw.
+- **Multiple readers**: `hooks/budget-enforcer.ts`, any orchestrator that runs Phase 2 (`lookup`) for dry-run planning. Readers treat malformed JSON as "manifest absent" (empty cache) - do not throw.
 - **Concurrency**: Claude Code agent spawns are serialized at the hook level (PreToolUse is synchronous). No file locking is needed at v1 scale. Concurrent writes from parallel orchestrators are theoretically possible but exceedingly rare; last-writer-wins is acceptable (cache miss on next read re-populates).
 
 ## Bootstrap behavior
 
-If `.design/cache-manifest.json` is missing when `hooks/budget-enforcer.js` reads it, the hook treats every lookup as a miss and the spawn proceeds normally. No bootstrap action is required - the manifest is created lazily on first successful spawn when `skills/cache-manager/SKILL.md` Phase 4 fires. Unlike `.design/budget.json`, missing cache-manifest.json is the **correct** initial state on a fresh repo.
+If `.design/cache-manifest.json` is missing when `hooks/budget-enforcer.ts` reads it, the hook treats every lookup as a miss and the spawn proceeds normally. No bootstrap action is required - the manifest is created lazily on first successful spawn when `skills/cache-manager/SKILL.md` Phase 4 fires. Unlike `.design/budget.json`, missing cache-manifest.json is the **correct** initial state on a fresh repo.
 
 ## Cross-references
 
 - `skills/cache-manager/SKILL.md` - producer; documents the four-phase contract.
-- `hooks/budget-enforcer.js` (Plan 10.1-01) - reader; short-circuits spawns on hit.
+- `hooks/budget-enforcer.ts` (Plan 10.1-01) - reader; short-circuits spawns on hit.
 - `.design/budget.json` - provides `cache_ttl_seconds` default.
 - `.design/telemetry/costs.jsonl` (Plan 10.1-05) - records `cache_hit: true` rows with zero tokens and zero cost when the short-circuit fires.
 - D-05, D-08, D-09 in `.planning/phases/10.1-optimization-layer-cost-governance/10.1-CONTEXT.md` - decision lineage.

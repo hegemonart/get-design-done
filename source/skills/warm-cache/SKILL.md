@@ -62,7 +62,7 @@ Full + filtered command-output examples live in `./../cache-manager/cache-policy
 
 - **Pre-sprint**: `{{command_prefix}}warm-cache` is the recommended first line of a `{{command_prefix}}discover`, `{{command_prefix}}plan`, or `{{command_prefix}}verify` sprint. Users type it before the real command, or an orchestrator-level wrapper runs it automatically if `agent-metrics.json` (Plan 10.1-05) indicates the last sprint was > 5 min ago.
 - **`reference/shared-preamble.md`** (authored in Plan 10.1-04) is the essential file for this command - agents import it first per D-17, which makes the first N tokens of every agent's rendered system prompt identical, which is what Anthropic's prompt cache keys on.
-- **No interaction with `hooks/budget-enforcer.js`** - the hook is a PreToolUse gate; warm-cache runs as an ordinary Agent tool call itself and is subject to the hook (each no-op Haiku ping is budgeted and logged like any other spawn). This is intentional: warm-cache's own telemetry rows in `.design/telemetry/costs.jsonl` are the evidence that cache priming happened.
+- **No interaction with `hooks/budget-enforcer.ts`** - the hook is a PreToolUse gate; warm-cache runs as an ordinary Agent tool call itself and is subject to the hook (each no-op Haiku ping is budgeted and logged like any other spawn). This is intentional: warm-cache's own telemetry rows in `.design/telemetry/costs.jsonl` are the evidence that cache priming happened.
 
 ## Cost Model
 

@@ -49,7 +49,7 @@ Never let a `gh` hiccup fail the `/gdd:ship` success path - every failure mode h
 
 ---
 
-## Redact every outbound body (mandatory, D-05)
+## Redact every outbound body (mandatory)
 
 Before any `gh` call, pass each comment/summary string through the secret-redactor:
 
@@ -58,23 +58,23 @@ const { redact } = require('scripts/lib/redact.cjs');
 const safeBody = redact(commentBody);
 ```
 
-`redact` (Phase 22, 11 patterns) strips API keys/tokens/secrets. **Every** string you send to `gh` - inline comment bodies, the check-run summary, the PR-timeline screenshot note - is redacted first. Never post a raw artifact excerpt without redacting it.
+`redact` (11 patterns) strips API keys/tokens/secrets. **Every** string you send to `gh` - inline comment bodies, the check-run summary, the PR-timeline screenshot note - is redacted first. Never post a raw artifact excerpt without redacting it.
 
 ---
 
 ## What you post (against `reference/pr-review-integration.md`)
 
 1. **Inline review comments** - for each verify/audit finding that maps to a changed file+line, post an inline comment via `gh api repos/{owner}/{repo}/pulls/{n}/comments` (path + line + redacted body: the finding, the rule/pillar, and a one-line suggested fix). Findings with no changed-line locus go into a single summary review comment, not scattered.
-2. **Screenshot pairs (degrade, D-04)** - when `.design/STATE.md` `<connections>` shows `preview: available` or `chromatic: available` AND a before-after pair exists for a changed surface, attach the image refs in the comment/PR timeline. When absent → text-only; never a precondition.
-3. **`gdd/design-review` check-run (D-03)** - `gh api repos/{owner}/{repo}/check-runs` with `name: "gdd/design-review"`, a `conclusion` (`success` if verify passed + no blocker pillars, `failure` if verify failed or a11y-gate failed, else `neutral`), and an `output.summary` carrying the audit pillar scores + verify pass/fail + a11y result. This is the gate a teammate's branch-protection rule can require - see the reference for the required-check setup (`scripts/apply-branch-protection.sh`); you **register** the check, you never edit branch protection.
-4. **Decision threading (Phase 40, team mode)** - for each `D-XX` decision referenced in the PR's `DESIGN.md` / `DESIGN-VERIFICATION.md`, thread a PR comment keyed to that decision (one comment per `D-XX`, body = the decision text + its `proposed/reviewing/approved/locked` review state from `reference/multi-author-model.md`), so decision discussion persists as part of the PR history. Redacted like every other body; degrade-to-noop when `gh` is absent. This makes a decision's rationale reviewable inline by teammates who don't run GDD.
+2. **Screenshot pairs (degrade)** - when `.design/STATE.md` `<connections>` shows `preview: available` or `chromatic: available` AND a before-after pair exists for a changed surface, attach the image refs in the comment/PR timeline. When absent → text-only; never a precondition.
+3. **`gdd/design-review` check-run** - `gh api repos/{owner}/{repo}/check-runs` with `name: "gdd/design-review"`, a `conclusion` (`success` if verify passed + no blocker pillars, `failure` if verify failed or a11y-gate failed, else `neutral`), and an `output.summary` carrying the audit pillar scores + verify pass/fail + a11y result. This is the gate a teammate's branch-protection rule can require - see the reference for the required-check setup (`scripts/apply-branch-protection.sh`); you **register** the check, you never edit branch protection.
+4. **Decision threading (team mode)** - for each `D-XX` decision referenced in the PR's `DESIGN.md` / `DESIGN-VERIFICATION.md`, thread a PR comment keyed to that decision (one comment per `D-XX`, body = the decision text + its `proposed/reviewing/approved/locked` review state from `reference/multi-author-model.md`), so decision discussion persists as part of the PR history. Redacted like every other body; degrade-to-noop when `gh` is absent. This makes a decision's rationale reviewable inline by teammates who don't run GDD.
 
 ---
 
 ## Execution Principles
 
 1. **Post-ship surface, not a gate.** You run after the PR exists; you never block ship or the pipeline. Every failure → degraded noop.
-2. **Redact everything outbound (D-05).** No raw artifact excerpt reaches `gh` un-redacted.
+2. **Redact everything outbound.** No raw artifact excerpt reaches `gh` un-redacted.
 3. **Observable outcomes only.** Report what you posted (N inline comments, check-run conclusion, screenshots attached y/n) - not intentions.
 4. **`reference/pr-review-integration.md` is authoritative** for the gh-api shapes; apply it, do not re-derive.
 5. **Decision authority:** in-context → proceed; out-of-context (architectural, contradicts a locked D-XX, a new external API) → Rule 4: STOP, note it, emit the marker.
@@ -113,9 +113,9 @@ This agent MUST NOT:
 
 - Run `git clean` (any flags) - absolute prohibition.
 - Fail the `/gdd:ship` success path - every failure mode degrades to a noop.
-- Add a GitHub SDK (`@octokit`/etc.) or any network dependency - `gh` is the channel (D-02).
-- Post any outbound body without passing it through `scripts/lib/redact.cjs` (D-05).
-- Edit branch-protection rules - register the `gdd/design-review` check only; required-check setup is the user's repo-settings step (D-03).
+- Add a GitHub SDK (`@octokit`/etc.) or any network dependency - `gh` is the channel.
+- Post any outbound body without passing it through `scripts/lib/redact.cjs`.
+- Edit branch-protection rules - register the `gdd/design-review` check only; required-check setup is the user's repo-settings step.
 - Modify the plan, context, connection index, or any repo file; re-plan; spawn other agents; ask clarifying questions; or `git add .`/`-A`.
 
 ---

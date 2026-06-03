@@ -1,6 +1,6 @@
 ---
 name: gdd-cache-manager
-description: "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.js before every Agent spawn."
+description: "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.ts before every Agent spawn."
 user-invocable: false
 tools: Read, Bash, Write
 disable-model-invocation: true
@@ -38,11 +38,11 @@ You are the deterministic cache-key computer and cache-manifest writer for the o
 
 ## Deterministic Input-Hash Algorithm
 
-The canonical reference implementation (single source of truth; `hooks/budget-enforcer.js` imports the same primitive via a shared helper) lives in `./cache-policy.md#deterministic-input-hash-algorithm-layer-b` - it documents the JS implementation, the maintainer notes (sorted-unique paths, MISSING-file sentinel, agent-path bust behavior), the manifest shape, and TTL semantics in one place. Conform to the algorithm exactly so the hook and any orchestrator agree byte-for-byte.
+The canonical reference implementation (single source of truth; `hooks/budget-enforcer.ts` imports the same primitive via a shared helper) lives in `./cache-policy.md#deterministic-input-hash-algorithm-layer-b` - it documents the JS implementation, the maintainer notes (sorted-unique paths, MISSING-file sentinel, agent-path bust behavior), the manifest shape, and TTL semantics in one place. Conform to the algorithm exactly so the hook and any orchestrator agree byte-for-byte.
 
 ## Integration Points
 
-- **`hooks/budget-enforcer.js`** (Plan 10.1-01) reads the manifest on every Agent spawn. The hook already calls `cacheLookup(agent, inputHash)` against `.design/cache-manifest.json`. This skill is the authority on how `inputHash` is computed so the hook and any orchestrator agree byte-for-byte.
+- **`hooks/budget-enforcer.ts`** (Plan 10.1-01) reads the manifest on every Agent spawn. The hook already calls `cacheLookup(agent, inputHash)` against `.design/cache-manifest.json`. This skill is the authority on how `inputHash` is computed so the hook and any orchestrator agree byte-for-byte.
 - **Orchestrators** (e.g., `skills/map/`, `skills/discover/`, `skills/plan/`) invoke Phase 1 (compute-key) + Phase 4 (write-result-on-completion) around each Agent spawn they launch. Phase 2 + Phase 3 are executed by the hook.
 - **Warm-cache command** (`skills/warm-cache/SKILL.md`, Task 02) does not touch Layer B - it only primes Anthropic's 5-min prompt cache (Layer A). Do not confuse the two.
 

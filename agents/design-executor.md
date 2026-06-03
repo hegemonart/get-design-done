@@ -6,7 +6,7 @@ color: yellow
 default-tier: sonnet
 tier-rationale: "Follows an Opus-authored plan; executes rather than plans"
 size_budget: XXL
-size_budget_rationale: "Phase 17 added Benchmark Spec Pre-Flight section for type:components (+17 lines)"
+size_budget_rationale: "Benchmark Spec Pre-Flight section for type:components adds ~17 lines"
 parallel-safe: conditional-on-touches
 typical-duration-seconds: 60
 reads-only: false
@@ -34,7 +34,7 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 - `.design/STATE.md` - pipeline state (decisions, blockers, must-haves)
 - `.design/DESIGN-PLAN.md` - full task list (your task is identified by task_id)
 - `.design/DESIGN-CONTEXT.md` - brand decisions, constraints, locked choices
-- The reference file(s) relevant to the task type (e.g., `reference/typography.md` for a typography task). The 7 domain-index entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` (Phase 45) are the navigation start: load the index, drill into the fragments it lists only as the task needs them.
+- The reference file(s) relevant to the task type (e.g., `reference/typography.md` for a typography task). The 7 domain-index entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` are the navigation start: load the index, drill into the fragments it lists only as the task needs them.
 
 **Invariant:** read all listed files FIRST, before making any changes.
 

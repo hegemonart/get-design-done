@@ -218,7 +218,7 @@ Proceed to Step 0E regardless of whether Step 0D ran or was skipped.
 
 Detect the **project type** so the pipeline routes the brief to the correct executor. Reuse the Step 0C / Step 1 grep/glob idiom (file reads only, < 1 second, no skip condition).
 
-**Enum (7 values - D-06 + 36.3):** `web` (DEFAULT) · `native-ios` · `native-android` · `flutter` · `email` · `print` · `conversational`. (The first six are the Phase-34 *rendered-output* set; `conversational` is the Phase-36.3 *interaction-surface* type - a chat/voice UI is still rendered code, so it routes to `design-executor` but loads the conversational patterns.)
+**Enum (7 values):** `web` (DEFAULT) · `native-ios` · `native-android` · `flutter` · `email` · `print` · `conversational`. (The first six are the *rendered-output* set; `conversational` is the *interaction-surface* type - a chat/voice UI is still rendered code, so it routes to `design-executor` but loads the conversational patterns.)
 
 **Detection signals + precedence** (first match wins; brief overrides - if the user explicitly says "iOS app" / "Android app" / "Flutter app" / "email" / "newsletter" / "email template" / "print" / "PDF" / "print-ready" / "brochure" / "flyer" / "poster", honor that):
 
@@ -246,7 +246,7 @@ Precedence: an explicit brief override (the user says "email" / "newsletter" / "
 | print            | pdf-executor      |
 | conversational   | design-executor (loads `reference/conversational-ui.md`) |
 
-<!-- Phase 34 output types complete: native (34.1: native-ios/native-android/flutter) + email (34.2) + print (34.3). Print is the FINAL Phase-34 output type — no further Phase-34 output types; the enum + routing table above are the full set. (34.1/34.2 kept this seam OPEN for the next type; 34.3 ties it off.) -->
+<!-- Output types complete: native (native-ios/native-android/flutter) + email + print. The enum + routing table above are the full set. The routing table remains structurally extensible for future output types. -->
 
 Record the detected type in DESIGN-CONTEXT.md as a `<project_type>` line (e.g. `<project_type>native-ios</project_type>`) so downstream stages route correctly. The native specifics (token→theme bridge) live in `reference/native-platforms.md`; the email specifics (table layout, inline styles, MSO/dark-mode constraints) live in `reference/email-design.md`; the print specifics (the `@page` box model, bleed/crop marks, CMYK awareness, font embedding, 300dpi raster) live in `reference/print-design.md`; the conversational specifics (voice-flow reprompts, multi-turn dialogue, prompt-as-UX, chatbot empty-states, error recovery) live in `reference/conversational-ui.md` - do not inline any of them here.
 
@@ -270,7 +270,7 @@ grep -iE "trading|portfolio|brokerage|fintech|patient|clinical|EHR|HIPAA|HUD|mul
 node -e "const p=require('./package.json');const d={...p.dependencies,...p.devDependencies};console.log(Object.keys(d).join(' '))" 2>/dev/null   # match against the dependency column
 ```
 
-**Confidence rule (D-02):**
+**Confidence rule:**
 
 - **≥2 distinct signals, OR any dependency match → auto-apply** the pack. Record it + note it in the brief ("Detected finance domain - loaded finance-patterns.md").
 - **Exactly 1 weak keyword signal → suggest**, don't impose ("This looks like a healthcare project - load healthcare-patterns.md? [y/N]").
@@ -417,7 +417,7 @@ The NOT is equally important:
 
 ### Area 5 - Visual References (cost-aware - free source first)
 
-This area pulls real product references, resolving sources **cost-aware (D-01, Phase 34.4): try the free source before any paid one.** Check `.design/STATE.md` `<connections>` for `lazyweb:` / `mobbin:` / `refero:` / `pinterest:` status before proceeding. Tool names may vary - verify via ToolSearch before calling. **Two or more references are required.**
+This area pulls real product references, resolving sources **cost-aware: try the free source before any paid one.** Check `.design/STATE.md` `<connections>` for `lazyweb:` / `mobbin:` / `refero:` / `pinterest:` status before proceeding. Tool names may vary - verify via ToolSearch before calling. **Two or more references are required.**
 
 **Tier 1 - Lazyweb (FREE - tried first; if `lazyweb: available`)**
 

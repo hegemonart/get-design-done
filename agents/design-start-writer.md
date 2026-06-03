@@ -6,7 +6,7 @@ color: green
 
 model: haiku
 default-tier: haiku
-tier-rationale: "Formatting + light synthesis over a bounded ~3KB input; Haiku is the correct tier per Phase 10.1 D-14 (Haiku = writers/formatters with fixed schemas)."
+tier-rationale: "Formatting + light synthesis over a bounded ~3KB input; Haiku is the correct tier (writers/formatters with fixed schemas)."
 
 parallel-safe: always
 typical-duration-seconds: 10

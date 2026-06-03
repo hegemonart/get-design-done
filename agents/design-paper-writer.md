@@ -60,11 +60,11 @@ STOP.
 
 Read `.design/DESIGN-CONTEXT.md`. Build a numbered operation list per mode. Do NOT execute yet.
 
-**annotate mode** - extract confirmed D-XX decisions, map to canvas nodes:
+**annotate mode** - extract confirmed decisions, map to canvas nodes:
 ```
 Proposed annotations (N operations):
-1. Node "Button/Primary" → add_comment: "bg: brand-primary-500 per D-03"
-2. Node "Typography/H1" → add_comment: "font: Inter 32/40 per D-07"
+1. Node "Button/Primary" → add_comment: "bg: brand-primary-500 per color decision"
+2. Node "Typography/H1" → add_comment: "font: Inter 32/40 per typography decision"
 ```
 
 **tokenize mode** - extract CSS literal values, map to paper.design style updates:

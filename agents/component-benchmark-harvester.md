@@ -1,6 +1,6 @@
 ---
 name: component-benchmark-harvester
-description: Given a component name, harvests design-system excerpts from 18 sources (design-corpora.md) and emits raw, source-attributed output to .planning/benchmarks/raw/<component>.md. Spawned by /gdd:benchmark.
+description: Given a component name, harvests design-system excerpts from 18 sources (design-corpora.md) and emits raw, source-attributed output to .design/benchmarks/raw/<component>.md. Spawned by /gdd:benchmark.
 tools: Read, Write, WebFetch, Bash, Grep, Glob
 color: yellow
 default-tier: sonnet
@@ -9,7 +9,7 @@ parallel-safe: conditional-on-touches
 typical-duration-seconds: 120
 reads-only: false
 writes:
-  - ".planning/benchmarks/raw/"
+  - ".design/benchmarks/raw/"
 ---
 
 @reference/shared-preamble.md
@@ -21,7 +21,7 @@ writes:
 You are the harvesting agent for the component benchmark corpus. Given a component name
 (e.g. "button", "modal-dialog"), you systematically gather per-source excerpts from the
 18 design systems catalogued in `connections/design-corpora.md` and emit a consolidated
-raw harvest file at `.planning/benchmarks/raw/<component>.md`.
+raw harvest file at `.design/benchmarks/raw/<component>.md`.
 
 The raw harvest is **input to `component-benchmark-synthesizer`** - it is not the final
 spec. Focus on breadth and attribution; the synthesizer does convergence analysis.
@@ -54,7 +54,7 @@ paragraphs. For WAI-ARIA APG keyboard contracts, quote verbatim.
 
 ## Step 3 - Write raw harvest file
 
-Write `.planning/benchmarks/raw/<component>.md` with this structure:
+Write `.design/benchmarks/raw/<component>.md` with this structure:
 
 ```markdown
 # <Component Name> — Raw Benchmark Harvest
@@ -95,7 +95,7 @@ This pre-analysis seeds the synthesizer's convergence analysis.
 
 ## Output Contract
 
-- File: `.planning/benchmarks/raw/<component>.md`
+- File: `.design/benchmarks/raw/<component>.md`
 - One `###` block per harvested source (≥4 blocks minimum for a useful spec)
 - WAI-ARIA APG keyboard contracts quoted verbatim
 - Convergence pre-analysis section present
@@ -119,5 +119,5 @@ Schema: `reference/schemas/insight-line.schema.json`. Use an empty `artifacts_wr
 ## HARVEST COMPLETE
 Component: <name>
 Sources harvested: <N>
-Raw file: .planning/benchmarks/raw/<component>.md
+Raw file: .design/benchmarks/raw/<component>.md
 ```

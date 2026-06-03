@@ -64,9 +64,9 @@ Expected: `components.json decisions.json debt.json dependencies.json exports.js
 
 Report any missing slices as warnings.
 
-### Step 3.5 - Sync `.design/intel/agent-tiers.json` (Plan 26-08)
+### Step 3.5 - Sync `.design/intel/agent-tiers.json`
 
-Phase 26 introduced the runtime-neutral `reasoning-class` alias for `default-tier` (CONTEXT D-10/D-11). Downstream tooling that wants tier information without re-parsing markdown reads `.design/intel/agent-tiers.json`. Both fields MUST be populated per agent so consumers do not have to know the equivalence table - the intel-updater is the single source of truth that fills the missing field via the locked map:
+The runtime-neutral `reasoning-class` alias for `default-tier` lets downstream tooling read tier information without re-parsing markdown via `.design/intel/agent-tiers.json`. Both fields MUST be populated per agent so consumers do not have to know the equivalence table - the intel-updater is the single source of truth that fills the missing field via the locked map:
 
 | `reasoning-class` | `default-tier` |
 |-------------------|----------------|
