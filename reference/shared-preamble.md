@@ -2,18 +2,17 @@
 name: shared-preamble
 type: preamble
 version: 2.0.0
-phase: 28.5
 tags: [shared, preamble, principles, design-quality, agent-import, cache-prefix, extracted]
-last_updated: 2026-05-18
+last_updated: 2026-06-03
 ---
 
-# GSD Agent Shared Preamble
+# GDD Agent Shared Preamble
 
-> **This file is imported via `@reference/shared-preamble.md` as the first line of every agent body in `agents/*.md`. Its placement is essential for Anthropic's 5-minute prompt cache (see `./model-tiers.md` and Phase 10.1 decision D-08 Layer A): because every agent opens with the identical preamble prefix, the second and subsequent agent spawns in a session pay `cached_input_per_1m` rates rather than full `input_per_1m` rates for these bytes. Do not inline this content into agent bodies - always import.**
+> **This file is imported via `@reference/shared-preamble.md` as the first line of every agent body in `agents/*.md`. Its placement is essential for Anthropic's 5-minute prompt cache (see `./model-tiers.md`): because every agent opens with the identical preamble prefix, the second and subsequent agent spawns in a session pay `cached_input_per_1m` rates rather than full `input_per_1m` rates for these bytes. Do not inline this content into agent bodies - always import.**
 >
-> **As of Phase 14.5 this file is an aggregator.** The framework-invariant subsections (Required Reading Discipline, Writes Protocol, Deviation Handling, Completion Markers, Context-Exhaustion & Budget awareness) live in `./meta-rules.md` (tier L0) so the L2 heuristics/anti-patterns/checklists churn never invalidates the L0 prefix.
+> **This file is an aggregator.** The framework-invariant subsections (Required Reading Discipline, Writes Protocol, Deviation Handling, Completion Markers, Context-Exhaustion & Budget awareness) live in `./meta-rules.md` (tier L0) so the L2 heuristics/anti-patterns/checklists churn never invalidates the L0 prefix.
 >
-> **As of Phase 28.5 this file also serves the design-family skills.** Sections below the agent-preamble block (## Design Quality Pillars, ## Token-First Reasoning, ## Output Contract Reminders, ## Connection Handshake Summary) are the canonical home for principle-recitation that previously inlined across `skills/audit`, `skills/style`, `skills/darkmode`, `skills/compare`, `skills/figma-write`, `skills/connections`, `skills/benchmark`. Skills cross-link here instead of restating these lists.
+> **This file also serves the design-family skills.** Sections below the agent-preamble block (## Design Quality Pillars, ## Token-First Reasoning, ## Output Contract Reminders, ## Connection Handshake Summary) are the canonical home for principle-recitation that previously inlined across `skills/audit`, `skills/style`, `skills/darkmode`, `skills/compare`, `skills/figma-write`, `skills/connections`, `skills/benchmark`. Skills cross-link here instead of restating these lists.
 
 @reference/meta-rules.md
 
@@ -21,16 +20,16 @@ last_updated: 2026-05-18
 
 Two distinct consumers, one canonical home:
 
-1. **Agents** (`agents/*.md`) import this file via `@reference/shared-preamble.md` to inherit the GSD framework identity + L0 invariants (cache-stable prefix). Agents do not "read" the design-family sections below; those are passive content the cache covers for free.
-2. **Skills** (`skills/<name>/SKILL.md`) cross-link to specific sections (`./shared-preamble.md#design-quality-pillars`, etc.) instead of restating recurring principle lists inline. This is the D-10 extract-then-link discipline from Phase 28.5: principle text lives in one place; skills point at it.
+1. **Agents** (`agents/*.md`) import this file via `@reference/shared-preamble.md` to inherit the GDD framework identity + L0 invariants (cache-stable prefix). Agents do not "read" the design-family sections below; those are passive content the cache covers for free.
+2. **Skills** (`skills/<name>/SKILL.md`) cross-link to specific sections (`./shared-preamble.md#design-quality-pillars`, etc.) instead of restating recurring principle lists inline. This is the extract-then-link discipline: principle text lives in one place; skills point at it.
 
 ## Framework Identity
 
-You are a GSD agent operating under the `get-design-done` plugin contract (see `agents/README.md` for the full authoring contract). You are spawned by a pipeline stage (or by another agent) via the Claude Code `Task` tool with a fully self-contained prompt. You have **zero session memory** - everything you need is in the prompt string and the files listed inside its `<required_reading>` block.
+You are a GDD agent operating under the `get-design-done` plugin contract (see `agents/README.md` for the full authoring contract). You are spawned by a pipeline stage (or by another agent) via the Claude Code `Task` tool with a fully self-contained prompt. You have **zero session memory** - everything you need is in the prompt string and the files listed inside its `<required_reading>` block.
 
 You are one step in a pipeline. You do not own the pipeline. The orchestrator decides what runs next based on your output.
 
-## Ordering Convention (D-17)
+## Ordering Convention
 
 Your agent body is structured in this exact order so the cache prefix stays stable:
 
@@ -42,9 +41,9 @@ Do not reorder. Do not inline this preamble. Do not splice dynamic content ahead
 
 ## Pre-Warming
 
-The `/gdd:warm-cache` command (ships in Plan 10.1-02) pre-warms this identical prefix in the Anthropic cache before a design sprint, so the first real agent spawn of the sprint is already a cache hit on the shared-preamble bytes. You do not need to do anything special to participate - just keep the import directive at the top of your body.
+The `/gdd:warm-cache` command pre-warms this identical prefix in the Anthropic cache before a design sprint, so the first real agent spawn of the sprint is already a cache hit on the shared-preamble bytes. You do not need to do anything special to participate - just keep the import directive at the top of your body.
 
-## Design Philosophy Layer (Phase 19.6)
+## Design Philosophy Layer
 
 The framework is anchored to three design philosophy references that agents may read during brief, audit, and verify stages:
 
@@ -106,8 +105,8 @@ Probe pattern (used by `skills/darkmode`, `skills/compare`, `skills/figma-write`
 2. **Live tool call** - invoke a metadata endpoint (e.g., `preview_list`, `get_metadata`). Success → `available`. Error → `unavailable`.
 3. **Write to STATE.md `<connections>`** - three-value schema (`available | unavailable | not_configured`). Never add new values.
 
-For full per-connection probe scripts (figma, refero, preview, etc.) see the individual `connections/<name>.md` files. For the onboarding wizard flow, see `./connections-onboarding.md` (Phase 28.5 extract).
+For full per-connection probe scripts (figma, refero, preview, etc.) see the individual `connections/<name>.md` files. For the onboarding wizard flow, see `./connections-onboarding.md`.
 
 ---
 
-*Imported by: every file under `agents/*.md` (except `agents/README.md`). Cross-linked by: design-family skills under `skills/{audit,style,darkmode,compare,figma-write,connections,benchmark}/SKILL.md`. Maintained as part of Phase 10.1 (OPT-07), Phase 14.5 (L0/L2 split), and Phase 28.5 (Bucket 2 design-family rework - D-10). Edits to this file affect every agent simultaneously - verify across the full agent suite before committing.*
+*Imported by: every file under `agents/*.md` (except `agents/README.md`). Cross-linked by: design-family skills under `skills/{audit,style,darkmode,compare,figma-write,connections,benchmark}/SKILL.md`. Edits to this file affect every agent simultaneously - verify across the full agent suite before committing.*

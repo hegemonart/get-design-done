@@ -120,7 +120,7 @@ async function runReportFlow(args) {
       submitted: false,
       reason: 'disabled',
       surface: reason, // 'env' | 'config'
-      message: `/gdd:report-issue is disabled by ${reasonMsg}. Run \`gsd-health\` to see the active disable surface.`,
+      message: `/gdd:report-issue is disabled by ${reasonMsg}. Run \`/gdd:health\` to see the active disable surface.`,
     };
   }
 
