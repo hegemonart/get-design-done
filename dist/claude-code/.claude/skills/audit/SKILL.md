@@ -1,6 +1,6 @@
 ---
 name: gdd-audit
-description: "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 6-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix. Activates for requests involving scoring an existing design, retroactively reviewing quality, or re-checking after a fix."
+description: "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 7-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix. Activates for requests involving scoring an existing design, retroactively reviewing quality, or re-checking after a fix."
 argument-hint: "[--retroactive] [--quick] [--no-reflect]"
 tools: Read, Write, Task, Glob, Bash
 ---
@@ -9,12 +9,12 @@ tools: Read, Write, Task, Glob, Bash
 
 Wraps the existing `design-auditor`, `design-verifier`, and `design-integration-checker` agents - no new auditor logic here. Parses flags, spawns the right combination, prints summary.
 
-For the 6-pillar scoring rubric this skill aggregates, see `../../reference/audit-scoring.md`. For the shared design-quality pillar set that frames the score categories, see `../../reference/shared-preamble.md`.
+For the 7-pillar scoring rubric this skill aggregates, see `../../reference/audit-scoring.md`. For the shared design-quality pillar set that frames the score categories, see `../../reference/shared-preamble.md`.
 
 ## Modes
 
 ### Default
-Spawn `design-auditor` (6-pillar scoring 1–4) in parallel with `design-integration-checker`. After both finish, read `.design/DESIGN-AUDIT.md` and `.design/DESIGN-INTEGRATION.md` and print a consolidated summary (scores + top 3 findings each).
+Spawn `design-auditor` (7-pillar scoring 1–4) in parallel with `design-integration-checker`. After both finish, read `.design/DESIGN-AUDIT.md` and `.design/DESIGN-INTEGRATION.md` and print a consolidated summary (scores + top 3 findings each).
 
 After the auditor and integration checker complete, check if `.design/learnings/` exists and contains at least one `.md` file. If so - and unless `--no-reflect` is passed - spawn `design-reflector` for the current cycle. Append the reflection proposal count to the audit summary: "Reflection: N proposals → review with `/gdd:apply-reflections`".
 
@@ -70,8 +70,8 @@ The excuses an agent reaches for to skip or thin out an audit, and the drift eac
 | Thought | Reality |
 |---------|---------|
 | "The audit passed last cycle, I can skip it this cycle." | Per-cycle audit catches drift the prior pass couldn't see; a skipped review is exactly where regressions accumulate unnoticed. |
-| "`--quick` is fine, integration isn't the concern here." | Dropping the integration-checker hides orphaned decisions - wiring breaks even when the 6-pillar score looks healthy. |
-| "I can eyeball the scores instead of spawning the auditor." | The auditor's rubric scores six pillars consistently; an eyeballed review drifts toward whatever the agent already believes. |
+| "`--quick` is fine, integration isn't the concern here." | Dropping the integration-checker hides orphaned decisions - wiring breaks even when the 7-pillar score looks healthy. |
+| "I can eyeball the scores instead of spawning the auditor." | The auditor's rubric scores seven pillars consistently; an eyeballed review drifts toward whatever the agent already believes. |
 | "Reflection proposals are optional polish, skip the reflector." | The reflector turns this cycle's learnings into next-cycle improvements; skipping it lets the same mistakes repeat. |
 | "I'll modify the source while I'm in here fixing findings." | Audit is read-only by contract; editing source mid-audit invalidates the very scores you're producing. |
 | "Retroactive mode is overkill for a finished cycle." | Retroactive verification is the only check on tasks that shipped without per-task verify - skipping it leaves a completed cycle unaudited. |

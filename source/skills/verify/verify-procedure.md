@@ -204,7 +204,7 @@ Three agents run in sequence. Each waits for its completion marker before the ne
 
 **Note on lazy gates (Plan 10.1-04 / D-21):** Each full checker is preceded by a cheap Haiku gate that reads the diff and may return `{spawn: false}` to short-circuit. When gated out, `lazy_skipped: true` is appended to `.design/telemetry/costs.jsonl`. Gates: `design-verifier-gate` (before 1b), `design-integration-checker-gate` (before 1c). `design-context-checker-gate` is wired into `skills/discover/SKILL.md` Step 1.75.
 
-### 1a. Run design-auditor first (retrospective 6-pillar audit)
+### 1a. Run design-auditor first (retrospective 7-pillar audit)
 
 ```
 Task("design-auditor", """
@@ -216,7 +216,7 @@ Task("design-auditor", """
 @reference/audit-scoring.md
 </required_reading>
 
-You are the design-auditor agent. Run the 6-pillar retrospective audit (copy, visual hierarchy,
+You are the design-auditor agent. Run the 7-pillar retrospective audit (copy, visual hierarchy,
 color, typography, layout/spacing, experience design) against the completed design work.
 
 Score each pillar 1-4. Write your findings to .design/DESIGN-AUDIT.md.
@@ -273,7 +273,7 @@ Task("design-verifier", """
 
 You are the design-verifier agent. Run the 5-phase verification against completed design work.
 
-DESIGN-AUDIT.md (above) contains a retrospective 6-pillar qualitative audit from design-auditor.
+DESIGN-AUDIT.md (above) contains a retrospective 7-pillar qualitative audit from design-auditor.
 Read it as supplementary signal — incorporate the priority fix list into your Phase 5 gap analysis
 where relevant. The auditor's 1-4 scores complement your 0-10 category scores; they do not
 replace your Phase 1 category scoring.
@@ -463,7 +463,7 @@ Task("design-verifier", """
 
 You are the design-verifier agent. This is a re-verification run after inline fixes.
 
-DESIGN-AUDIT.md contains the retrospective 6-pillar audit from design-auditor (read as supplementary context).
+DESIGN-AUDIT.md contains the retrospective 7-pillar audit from design-auditor (read as supplementary context).
 
 Context:
   auto_mode: <true|false>
@@ -496,7 +496,7 @@ Status: PASS | FAIL | ACCEPTED-WITH-GAPS
 Gaps:   X blockers, Y majors, Z minors, W cosmetics
 
 Agents run:
-  design-auditor              -> .design/DESIGN-AUDIT.md (6-pillar qualitative)
+  design-auditor              -> .design/DESIGN-AUDIT.md (7-pillar qualitative)
   design-verifier-gate        -> JSON gate decision (may skip design-verifier)
   design-verifier             -> .design/DESIGN-VERIFICATION.md (7-category + heuristics + UAT)
   design-integration-checker-gate -> JSON gate decision (may skip design-integration-checker)

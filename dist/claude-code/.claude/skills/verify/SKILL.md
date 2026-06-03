@@ -49,7 +49,7 @@ Run preview / storybook / chromatic probes at stage entry, then issue ONE batche
 
 Initialize the fix-loop iteration counter to 0. Each full checker is preceded by a cheap Haiku gate that may return `{spawn: false}` to short-circuit (lazy-gate pattern from Plan 10.1-04 / D-21); skipped agents append `lazy_skipped: true` to `.design/telemetry/costs.jsonl`.
 
-**1a. design-auditor** (retrospective 6-pillar audit) -> `.design/DESIGN-AUDIT.md`. Wait for `## AUDIT COMPLETE`, then `mcp__gdd_state__update_progress` `task_progress: "1/3"`.
+**1a. design-auditor** (retrospective 7-pillar audit) -> `.design/DESIGN-AUDIT.md`. Wait for `## AUDIT COMPLETE`, then `mcp__gdd_state__update_progress` `task_progress: "1/3"`.
 
 **1b-gate -> 1b. design-verifier** (5-phase verification, reads auditor output) -> `.design/DESIGN-VERIFICATION.md`. Wait for `## VERIFICATION COMPLETE`, then `task_progress: "2/3"`.
 

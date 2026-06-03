@@ -22,7 +22,7 @@
     },
     {
       "name": "audit",
-      "description": "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 6-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix. Activates for requests involving scoring an existing design, retroactively reviewing quality, or re-checking after a fix.",
+      "description": "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 7-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix. Activates for requests involving scoring an existing design, retroactively reviewing quality, or re-checking after a fix.",
       "argument_hint": "[--retroactive] [--quick] [--no-reflect]",
       "tools": "Read, Write, Task, Glob, Bash"
     },
@@ -49,7 +49,10 @@
       "name": "brief",
       "description": "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before {{command_prefix}}explore. Activates for requests involving capturing a problem statement, defining audience and constraints, or starting a new design brief.",
       "argument_hint": "[--re-brief to redo intake on existing project]",
-      "tools": "Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get"
+      "tools": "Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get",
+      "next_skills": [
+        "explore"
+      ]
     },
     {
       "name": "budget",
@@ -115,7 +118,10 @@
       "description": "Stage 4 of 5 orchestrator that reads DESIGN-PLAN.md, partitions tasks by wave + parallel-safe flag, and spawns design-executor agents with the appropriate isolation (worktree for parallel batches, in-place for sequential tail). Use when DESIGN-PLAN.md is approved and ready for implementation. Activates for requests involving implementing UI, building components, or turning a plan into working interface code.",
       "argument_hint": "[--auto] [--parallel] [--variants N]",
       "user_invocable": true,
-      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint"
+      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint",
+      "next_skills": [
+        "verify"
+      ]
     },
     {
       "name": "discover",
@@ -140,7 +146,10 @@
       "name": "explore",
       "description": "Stage 2 of 5 - unified exploration merging inventory grep + design interview. Probes 6 connections, scans the codebase, conducts the AskUserQuestion interview, and writes .design/DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md. Use after {{command_prefix}}brief to map the existing system and lock decisions before planning. Activates for requests involving researching design direction, gathering references, or exploring visual options.",
       "argument_hint": "[--skip-interview] [--skip-scan]",
-      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__probe_connections, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__add_decision"
+      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__probe_connections, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__add_decision",
+      "next_skills": [
+        "plan"
+      ]
     },
     {
       "name": "export",
@@ -237,7 +246,10 @@
       "name": "new-project",
       "description": "Initialize a new get-design-done project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage.",
       "argument_hint": "[--name <project-name>]",
-      "tools": "Read, Write, AskUserQuestion, Bash, Glob"
+      "tools": "Read, Write, AskUserQuestion, Bash, Glob",
+      "next_skills": [
+        "brief"
+      ]
     },
     {
       "name": "new-skill",
@@ -315,7 +327,10 @@
       "description": "Stage 3 of 5 orchestrator that reads DESIGN-CONTEXT.md, runs optional research (phase-researcher / pattern-mapper / assumptions-analyzer / synthesizer), spawns design-planner + design-plan-checker, and writes DESIGN-PLAN.md. Use when DESIGN-CONTEXT.md is locked and you need a wave-ordered execution plan. Activates for requests involving breaking design work into steps, sequencing implementation, or planning a build.",
       "argument_hint": "[--auto] [--parallel]",
       "user_invocable": true,
-      "tools": "Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections"
+      "tools": "Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections",
+      "next_skills": [
+        "design"
+      ]
     },
     {
       "name": "plant-seed",
@@ -567,7 +582,10 @@
       "description": "Stage 5 of 5 orchestrator that spawns design-auditor, design-verifier, and design-integration-checker in sequence, interprets pass/gap result, and drives the gap-response loop (inline fix, save-and-exit, or accept-as-is). Use when implementation is complete and ready for final pre-ship verification. Activates for requests involving checking finished UI against the design system, running a pre-ship review, or final verification.",
       "argument_hint": "[--auto] [--post-handoff]",
       "user_invocable": true,
-      "tools": "mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_must_have, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections"
+      "tools": "mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_must_have, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections",
+      "next_skills": [
+        "ship"
+      ]
     },
     {
       "name": "warm-cache",

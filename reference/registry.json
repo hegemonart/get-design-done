@@ -94,7 +94,7 @@
       "name": "audit-scoring",
       "path": "reference/audit-scoring.md",
       "type": "output-contract",
-      "description": "6-pillar + 7-category audit score rubric and output schema"
+      "description": "7-pillar + 7-category audit score rubric and output schema"
     },
     {
       "name": "authority-feeds",
