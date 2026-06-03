@@ -33,15 +33,20 @@
  *   (absent / unknown)  -> default
  */
 
-/** Canonical action → color map (the only colors the Findings pane uses). */
+/**
+ * Canonical action -> color map. Keys are lowercase (matching the emitter's
+ * suggested_action values from events.schema.json: allow/review/
+ * require_confirmation/block). The display label is separate from the key so
+ * the map can do a single case-insensitive lookup.
+ */
 const ACTION_COLOR = Object.freeze({
-  Allow: 'green',
-  Review: 'yellow',
-  RequireConfirmation: 'orange',
-  Block: 'red',
+  allow: 'green',
+  review: 'yellow',
+  require_confirmation: 'orange',
+  block: 'red',
 });
 
-/** The set of recognized suggested-action values (Phase 56 vocabulary). */
+/** The set of recognized suggested-action values (Phase 56 vocabulary, lowercase). */
 const VALID_ACTIONS = Object.freeze(Object.keys(ACTION_COLOR));
 
 /** The blank placeholder row emitted pre-56 (or for malformed/absent input). */
@@ -66,34 +71,64 @@ function finiteOrNull(v) {
 }
 
 /**
- * Map a suggested_action to its display color. Unknown / absent -> 'default'.
+ * Canonicalize a suggested_action to its lowercase snake_case key for lookup.
+ * Handles the emitter's lowercase values (allow/review/require_confirmation/block)
+ * AND legacy CamelCase (Allow/Review/RequireConfirmation/Block) - the CamelCase
+ * 'RequireConfirmation' lowercases to 'requireconfirmation' with no separator, so
+ * map that explicitly to 'require_confirmation'. Returns null for non-strings.
+ * @param {*} action
+ * @returns {string|null}
+ */
+function canonAction(action) {
+  if (typeof action !== 'string') return null;
+  let s = action.trim().toLowerCase().replace(/[\s-]+/g, '_');
+  if (s === 'requireconfirmation') s = 'require_confirmation';
+  return s;
+}
+
+/**
+ * Map a suggested_action to its display color. Case-insensitive so both
+ * 'allow' (emitter) and 'Allow' (legacy) resolve correctly. Unknown / absent -> 'default'.
  * @param {*} action
  * @returns {'green'|'yellow'|'orange'|'red'|'default'}
  */
 function colorForAction(action) {
-  if (typeof action === 'string' && Object.prototype.hasOwnProperty.call(ACTION_COLOR, action)) {
-    return ACTION_COLOR[action];
+  const canon = canonAction(action);
+  if (canon !== null && Object.prototype.hasOwnProperty.call(ACTION_COLOR, canon)) {
+    return ACTION_COLOR[canon];
   }
   return 'default';
 }
 
 /**
- * Surface the risk fields on ONE event/finding. Reads `risk_score`,
- * `confidence`, `suggested_action` WHEN PRESENT; otherwise returns the blank
- * placeholder. PURE; NEVER throws.
+ * Surface the risk fields on ONE event/finding. Accepts either a raw
+ * risk_assessment envelope (with a `.payload` sub-object) OR a bare payload
+ * object. When `.payload` is present it is used as the source of risk fields;
+ * otherwise `item` itself is inspected (bare-payload / legacy path).
  *
- * @param {*} item an event or finding (may be missing the risk fields pre-56)
+ * Reads `risk_score`, `confidence`, `suggested_action` WHEN PRESENT; otherwise
+ * returns the blank placeholder. PURE; NEVER throws.
+ *
+ * @param {*} item an event envelope or bare payload (may be missing risk fields pre-56)
  * @returns {{risk_score:number|null, confidence:number|null,
  *            suggested_action:string|null, color:string}}
  */
 function surfaceRiskOne(item) {
   if (!item || typeof item !== 'object') return blankRow();
 
-  const risk_score = finiteOrNull(item.risk_score);
-  const confidence = finiteOrNull(item.confidence);
-  const rawAction = item.suggested_action;
-  const suggested_action =
-    typeof rawAction === 'string' && VALID_ACTIONS.includes(rawAction) ? rawAction : null;
+  // Normalize: if the caller passed a full event envelope (with .payload), use the payload.
+  const src = (item.payload && typeof item.payload === 'object') ? item.payload : item;
+
+  const risk_score = finiteOrNull(src.risk_score);
+  const confidence = finiteOrNull(src.confidence);
+  const rawAction = src.suggested_action;
+  const canon = canonAction(rawAction);
+  const recognized =
+    canon !== null && Object.prototype.hasOwnProperty.call(ACTION_COLOR, canon);
+  // Preserve the action VERBATIM when recognized: the emitter sends lowercase
+  // (allow/review/require_confirmation/block), legacy callers may send CamelCase,
+  // and either is echoed back unchanged. Unrecognized / absent -> null.
+  const suggested_action = recognized ? rawAction : null;
 
   // Pre-56: when NONE of the risk fields are present, emit the blank placeholder
   // verbatim (color 'default') so the column reads as "not yet scored".
@@ -105,7 +140,7 @@ function surfaceRiskOne(item) {
     risk_score,
     confidence,
     suggested_action,
-    color: colorForAction(suggested_action),
+    color: recognized ? ACTION_COLOR[canon] : 'default',
   };
 }
 

@@ -128,8 +128,13 @@ function _firstToken(sql) {
 }
 
 /**
- * Assert that the SQL query is a safe readonly SELECT.
- * Throws with a descriptive message when the first token is denied or not SELECT.
+ * Assert that the SQL query is a safe readonly SELECT (or CTE: WITH ... SELECT).
+ * Throws with a descriptive message when the first token is denied or not SELECT/WITH.
+ *
+ * BUG-11: allow a leading WITH token for CTEs (WITH ... SELECT ...).
+ * The engine-level readonly connection already blocks any write CTE.
+ * We keep blocking all other non-SELECT first tokens.
+ *
  * @param {string} sql
  */
 function _assertReadonly(sql) {
@@ -142,7 +147,8 @@ function _assertReadonly(sql) {
       `query-surface: statement type '${token}' is not allowed (denylist). Only SELECT is permitted.`
     );
   }
-  if (token !== 'SELECT') {
+  // Allow WITH for CTEs (WITH ... SELECT ...) — engine readonly blocks any write CTE.
+  if (token !== 'SELECT' && token !== 'WITH') {
     throw new Error(
       `query-surface: first token '${token}' is not SELECT. Only SELECT queries are permitted.`
     );
@@ -305,10 +311,13 @@ function demigrate(opts = {}) {
  *   3. Invoke migrate-to-sqlite with force:true to rebuild from markdown.
  *   4. Run integrity_check on the new database.
  *
+ * BUG-03/08: recover() is now async — it awaits migrateToSqlite() so that
+ * state.sqlite actually exists before the integrity check is run.
+ *
  * @param {{ projectRoot?: string, dbPath?: string }} [opts]
- * @returns {{ recovered: boolean, message: string, integrity?: boolean }}
+ * @returns {Promise<{ recovered: boolean, message: string, integrity?: boolean }>}
  */
-function recover(opts = {}) {
+async function recover(opts = {}) {
   const backend = _requireBackend();
   if (!backend || backend.BACKEND !== 'sqlite') {
     return {
@@ -343,13 +352,16 @@ function recover(opts = {}) {
   let migrateResult = null;
   try {
     if (typeof migrate.migrateToSqlite === 'function') {
-      migrateResult = migrate.migrateToSqlite({
+      // BUG-03/08: await the async migrateToSqlite so state.sqlite is written before
+      // the integrity check below. Without await, recover() returned before the DB
+      // existed, causing integrity:false on every call.
+      migrateResult = await migrate.migrateToSqlite({
         projectRoot: opts.projectRoot,
         dbPath,
         force: true,
       });
     } else if (typeof migrate.migrate === 'function') {
-      migrateResult = migrate.migrate({ projectRoot: opts.projectRoot, dbPath, force: true });
+      migrateResult = await migrate.migrate({ projectRoot: opts.projectRoot, dbPath, force: true });
     } else {
       return { recovered: false, message: 'recover: migrate-to-sqlite.cjs has no recognized export.' };
     }

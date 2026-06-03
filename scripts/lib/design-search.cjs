@@ -124,14 +124,32 @@ function reindex(projectRoot) {
   db.close();
 }
 
+/**
+ * Re-wrap each whitespace/OR-delimited term in FTS5 double-quote escaping so
+ * that tokens containing `.`, `/`, `-`, or other punctuation that the trigram
+ * tokenizer treats as illegal bare-term characters are accepted as quoted
+ * phrase queries. This matches the pattern used in instinct-store.cjs.
+ *
+ * Examples:
+ *   "heuristics.md OR reference/heuristics.md"
+ *     -> '"heuristics.md" OR "reference/heuristics.md"'
+ *   "color tokens"
+ *     -> '"color" OR "tokens"'
+ */
+function _quoteFts5Query(rawQuery) {
+  const terms = rawQuery.split(/\s+OR\s+|\s+/).filter(Boolean);
+  return terms.map(t => '"' + t.replace(/"/g, '""') + '"').join(' OR ');
+}
+
 function _searchFts5(query, projectRoot, limit) {
   const dbPath = _dbPath(projectRoot);
   if (!fs.existsSync(dbPath)) reindex(projectRoot);
   const db = new Database(dbPath, { readonly: true });
   try {
+    const matchExpr = _quoteFts5Query(query);
     const rows = db.prepare(
       `SELECT file, line, text FROM docs WHERE docs MATCH ? ORDER BY rank LIMIT ?`
-    ).all(query, limit);
+    ).all(matchExpr, limit);
     return rows.map(r => ({ file: r.file, line: r.line, text: r.text }));
   } finally {
     db.close();
@@ -203,4 +221,4 @@ function search(query, projectRoot, opts = {}) {
   return _searchNode(query, projectRoot, limit);
 }
 
-module.exports = { search, reindex, backendName };
+module.exports = { search, reindex, backendName, _quoteFts5Query };

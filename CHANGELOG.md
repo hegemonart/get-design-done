@@ -4,6 +4,34 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.57.1] - 2026-06-03
+
+### Fixed
+
+Post-wave debug analysis (a 4-agent sweep after Phase 57) found and fixed a set of latent bugs that surface only when
+`better-sqlite3` is installed (the CI surface, which has no module, was unaffected - so these never failed CI but did
+degrade real users who have the module). No new dependency; the markdown floor is unchanged.
+
+- **Recall returned nothing for every `.md` file when better-sqlite3 was present.** `scripts/lib/design-search.cjs`
+  passed unquoted query terms (e.g. `heuristics.md OR reference/heuristics.md`) to FTS5, whose trigram tokenizer rejects
+  `.` and `/` as a syntax error; the error was swallowed and recall came back empty. Each term is now double-quoted
+  (matching the instinct-store pattern), so FTS5 recall matches the JS-scan fallback.
+- **The Phase 57 fact-force freshness guard silently discarded hand-edits.** `state-store.cjs` detected an out-of-band
+  STATE.md edit but its re-sync body was empty, so the edit was overwritten and lost. It now folds the hand-edit back
+  into SQLite before the next mutation.
+- **Blocker rows duplicated on every re-migration** (no `ON CONFLICT`); migration now clears a cycle's blockers before
+  re-inserting. **FTS5 virtual tables were never populated** by the migration; they are now. **`/gdd:state recover`**
+  never awaited the async migration (always reported corruption); it is now async. **State getters threw** on an absent
+  `state.sqlite` (exposing the fact-force hook); they now return empty. **`migrationActive`** guards against a directory
+  named `state.sqlite`. **`WITH ... SELECT` CTEs** are allowed by the read-only query surface.
+- **The `risk_assessment` event did not conform to its own schema** (`tool`/`score` instead of `tool_name`/`risk_score`,
+  no `event_id`, extra fields); `hooks/gdd-risk-gate.js` now emits the schema-correct shape, and an Ajv validation test
+  guards it. The **dashboard risk column** read the wrong fields and case-mismatched the action vocabulary, so it was
+  permanently blank; it is now wired and case-correct.
+- **`budget-enforcer` PreToolUse blocks** used `message` instead of `stopReason`, so the block reason was invisible to
+  the user; they now use `stopReason`. The **read-injection scanner** loads its pattern file fail-open (a missing file
+  no longer crashes the hook). Three package-root walk-ups now match the scoped package name.
+
 ## [1.57.0] - 2026-06-03
 
 ### Phase 57 - SQLite State Backbone (Cross-Session Query Layer)

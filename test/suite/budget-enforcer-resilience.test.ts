@@ -119,15 +119,15 @@ test('budget-enforcer: rate-guard short-circuit emits rate-limited decision + bl
 
     assert.equal(r.status, 0, `nonzero exit: stderr=${r.stderr}`);
     assert.ok(r.stdout.length > 0, 'expected stdout payload');
-    const parsed = JSON.parse(r.stdout) as { continue: boolean; message?: string };
+    const parsed = JSON.parse(r.stdout) as { continue: boolean; stopReason?: string };
     assert.equal(parsed.continue, false, 'rate-limited spawn must be blocked');
     assert.ok(
-      typeof parsed.message === 'string' && parsed.message.includes('rate-limited on anthropic'),
-      `expected rate-limited message, got: ${parsed.message ?? 'undefined'}`,
+      typeof parsed.stopReason === 'string' && parsed.stopReason.includes('rate-limited on anthropic'),
+      `expected rate-limited stopReason, got: ${parsed.stopReason ?? 'undefined'}`,
     );
     assert.ok(
-      parsed.message?.includes('retry in'),
-      'rate-limited message must include a wait time',
+      parsed.stopReason?.includes('retry in'),
+      'rate-limited stopReason must include a wait time',
     );
 
     // Event stream must carry a hook.fired event with decision='rate-limited'.

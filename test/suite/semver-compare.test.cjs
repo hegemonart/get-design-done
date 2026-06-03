@@ -675,6 +675,17 @@ OFF_CADENCE_VERSIONS.add('1.56.0');
 // dependency. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.57.0');
 
+// 1.57.1 -> post-1.57.0 debug-analysis bug-fix patch (no new features). Fixes confirmed by a 4-agent post-wave
+// debug sweep: design-search FTS5 query now quotes dotted/slashed terms (recall returned EMPTY for every .md file
+// whenever better-sqlite3 was present); the Phase 57 state-store R8 freshness guard now actually folds hand-edits
+// (was an empty try-block -> silent data loss); blocker rows de-duplicate on re-migrate; /gdd:state recover awaits
+// the async migration; FTS5 virtual tables are populated by migrate; state getters return empty instead of throwing
+// on an absent db; migrationActive guards against a directory named state.sqlite; the risk_assessment event now
+// conforms to its own schema (tool_name/risk_score/event_id); the dashboard risk column is wired + case-correct;
+// budget-enforcer PreToolUse blocks use stopReason; the injection-scanner pattern load is fail-open; three package
+// -root walk-ups use the scoped name. No new dependency. Markdown floor (the CI surface) unchanged.
+OFF_CADENCE_VERSIONS.add('1.57.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
