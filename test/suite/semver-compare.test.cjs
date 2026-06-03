@@ -615,6 +615,15 @@ OFF_CADENCE_VERSIONS.add('1.50.0');
 // de-duplicated the benchmark command row; fixed the codex defaultPrompt to the /gdd- prefix. Patch, no new surface.
 OFF_CADENCE_VERSIONS.add('1.50.1');
 
+// 1.51.0 -> Phase 51 (Instinct-Based Learnings). Minor on 1.50.1. Restructures learnings from prose to atomic
+// confidence-weighted instinct units (reference/instinct-format.md + reference/schemas/instinct.schema.json), stored
+// project + global via scripts/lib/instinct-store.cjs (JSON-canonical + optional better-sqlite3 FTS5 acceleration,
+// no new dependency, mirroring the Phase 19.5 design-search pattern); a /gdd:instinct skill (list/query/promote);
+// a K=2/M=2 promotion gate with a Beta(2,8) prior; decision-injector surfaces top-3 relevant instincts; design-reflector
+// dual-emits atomic instincts + narrative; apply-reflections gains an [INSTINCT] proposal class; TTL decay + archive.
+// Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.51.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

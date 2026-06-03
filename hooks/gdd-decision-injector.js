@@ -402,6 +402,96 @@ function buildAdrBlock(matched) {
   return lines.join('\n');
 }
 
+/**
+ * Phase 51 — surface the project instinct store's top matches for the opened
+ * file. Instinct units are atomic, confidence-weighted design instincts learned
+ * across cycles (schema: reference/instinct-format.md), persisted + ranked by
+ * scripts/lib/instinct-store.cjs. The store is a SIBLING module — we reference
+ * it by name and never reimplement its query/decay logic.
+ *
+ * Two seams keep this testable + resilient:
+ *   - `instinctTokens()` derives the query keyword(s) from the opened file's
+ *     basename + relPath (mirrors the matchTokens derivation used for glossary
+ *     /ADR matching, so an opened `color-tokens.md` queries on `color`+`tokens`).
+ *   - `buildInstinctsBlock()` is a PURE renderer over already-fetched units, so
+ *     the populated-path render is unit-testable without the store on disk.
+ *
+ * The store query itself (in main()) is wrapped in try/catch and is fully
+ * non-fatal: if the store module is absent (sibling not yet installed) or its
+ * data file is missing/corrupt, the block is silently skipped and the hook
+ * still returns { continue: true }.
+ */
+function instinctTokens(basename, relPath) {
+  const stem = basename.replace(/\.md$/i, '');
+  return Array.from(new Set([
+    stem,
+    ...stem.split(/[-_./\\]/),
+    ...String(relPath || '').split(/[-_./\\]/),
+  ].filter((t) => t && t.length > 2)));
+}
+
+/**
+ * Pure renderer: format up to the top-3 instinct units as a compact block.
+ * Each line carries the trigger, confidence (2dp), and domain. Returns null when
+ * there are no units so main() can omit the heading entirely.
+ *
+ * Defensive: tolerates missing fields (trigger/confidence/domain) and non-array
+ * input so a malformed store payload can never throw on the Read hot path.
+ *
+ * @param {Array<{id?: string, trigger?: string, confidence?: number, domain?: string}>} units
+ * @returns {string | null}
+ */
+function buildInstinctsBlock(units) {
+  if (!Array.isArray(units) || units.length === 0) return null;
+  const top = units.slice(0, 3);
+  const lines = [];
+  lines.push('');
+  lines.push('### Relevant instincts');
+  for (const u of top) {
+    if (!u || typeof u !== 'object') continue;
+    const trigger = (u.trigger == null ? '' : String(u.trigger)).trim() || '(no trigger)';
+    const conf = typeof u.confidence === 'number' && Number.isFinite(u.confidence)
+      ? u.confidence.toFixed(2)
+      : '?';
+    const domain = (u.domain == null ? '' : String(u.domain)).trim() || 'unknown';
+    lines.push(`> - ${trigger} (confidence ${conf}, ${domain})`);
+  }
+  // If every unit was malformed (no valid line emitted), drop the block.
+  if (lines.length <= 2) return null;
+  lines.push('');
+  return lines.join('\n');
+}
+
+/**
+ * Non-fatal glue: query the project instinct store for the opened file's tokens
+ * and render the block. Any failure (module absent, query throws, bad data)
+ * yields null so the caller simply omits the section. NEVER throws.
+ *
+ * @param {string} cwd — project root (passed to the store as baseDir)
+ * @param {string} basename
+ * @param {string} relPath
+ * @returns {string | null}
+ */
+function queryInstinctsBlock(cwd, basename, relPath) {
+  try {
+    // Sibling module — referenced by name, resolved relative to this hook.
+    // Absent in installs that predate Phase 51's instinct store.
+    // eslint-disable-next-line node/no-missing-require, global-require
+    const store = require(path.join(__dirname, '..', 'scripts', 'lib', 'instinct-store.cjs'));
+    if (!store || typeof store.query !== 'function') return null;
+    const tokens = instinctTokens(basename, relPath);
+    if (tokens.length === 0) return null;
+    // instinct-store.query() takes a STRING keyword (it splits on whitespace
+    // into terms) — pass the tokens space-joined, not the raw array.
+    const keyword = tokens.join(' ');
+    const units = store.query(keyword, { scope: 'project', baseDir: cwd, limit: 3 });
+    return buildInstinctsBlock(units);
+  } catch {
+    // Store missing or query failed — surface no instinct block, never crash.
+    return null;
+  }
+}
+
 function buildRecallBlock(matches, basename, backendLabel) {
   if (!matches.length) return null;
   const uniq = [];
@@ -526,21 +616,40 @@ async function main() {
     adrBlock = buildAdrBlock(matchedAdrs);
   } catch { /* defensive: never crash on ADR issues */ }
 
-  if (!block && !protoBlock && !glossaryBlock && !adrBlock) {
+  // Phase 51: surface the project instinct store's top-3 matches for the
+  // opened file. Fully non-fatal — queryInstinctsBlock swallows a missing
+  // store / bad data and returns null, so this can never break a Read.
+  const instinctsBlock = queryInstinctsBlock(cwd, basename, relPath);
+
+  if (!block && !protoBlock && !glossaryBlock && !adrBlock && !instinctsBlock) {
     try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'no-hits', { backend: backendLabel }); } catch { /* swallow */ }
     process.stdout.write(JSON.stringify({ continue: true }));
     return;
   }
 
-  const additionalContext = [block, protoBlock, glossaryBlock, adrBlock].filter(Boolean).join('\n');
+  const additionalContext = [block, protoBlock, glossaryBlock, adrBlock, instinctsBlock].filter(Boolean).join('\n');
 
-  try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'inject', { backend: backendLabel, hit_count: hits.length, prototyping: !!protoBlock, glossary: !!glossaryBlock, adr: !!adrBlock }); } catch { /* swallow */ }
+  try { require('./_hook-emit.js').emitHookFired('gdd-decision-injector', 'inject', { backend: backendLabel, hit_count: hits.length, prototyping: !!protoBlock, glossary: !!glossaryBlock, adr: !!adrBlock, instincts: !!instinctsBlock }); } catch { /* swallow */ }
   process.stdout.write(JSON.stringify({
     continue: true,
     hookSpecificOutput: { hookEventName: 'PreToolUse', additionalContext },
   }));
 }
 
-main().catch(() => {
-  process.stdout.write(JSON.stringify({ continue: true }));
-});
+// Auto-run when invoked directly (the hooks.json registration runs this hook
+// as `node hooks/gdd-decision-injector.js`, where require.main === module).
+// Guarding the auto-run lets tests require() the module in-process to unit-test
+// the pure helpers without triggering a stdin read.
+if (require.main === module) {
+  main().catch(() => {
+    process.stdout.write(JSON.stringify({ continue: true }));
+  });
+}
+
+// Exported for tests — pure helpers only; main() owns the I/O + contract.
+module.exports = {
+  buildInstinctsBlock,
+  instinctTokens,
+  queryInstinctsBlock,
+  main,
+};

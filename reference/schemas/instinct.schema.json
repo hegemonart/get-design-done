@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/instinct.schema.json",
+  "title": "Instinct Unit",
+  "description": "An atomic, confidence-weighted design instinct learned across cycles. Validates the YAML frontmatter object of an instinct unit (see reference/instinct-format.md). Project-scoped units live at <root>/instincts/instincts.json; promoted global units live at ~/.claude/gdd/global-instincts.json. Persisted + queried by scripts/lib/instinct-store.cjs.",
+  "type": "object",
+  "required": ["id", "trigger", "confidence", "domain", "scope", "source"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 80,
+      "description": "Kebab-case stable identifier, e.g. \"prefer-token-over-hex\". Lowercase letters, digits, single hyphens."
+    },
+    "trigger": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 280,
+      "description": "One sentence naming the situation that fires the instinct, e.g. \"When a color literal appears in a component, reach for a design token first.\""
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.3,
+      "maximum": 0.9,
+      "description": "Posterior trust in the instinct. Floor 0.3 (a fresh instinct is advisory, never directive); ceiling 0.9 (no instinct is ever certain). TTL decay multiplies this by 0.9 when the instinct goes unsurfaced."
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["intake", "explore", "decide", "build", "verify", "operate", "utility"],
+      "description": "Lifecycle stage the instinct applies to, aligned to the Phase 50 lifecycle stages."
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["project", "global"],
+      "description": "project = learned from one repository; global = promoted after the K/M gate across distinct projects."
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}$",
+      "description": "8-char hex sha of the normalized git origin the instinct was first learned from. Required for project scope; optional for global (a promoted instinct is no longer tied to one origin)."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["reflection", "extract-learnings", "user"],
+      "description": "Which producer minted the instinct: a reflection pass, the extract-learnings step, or a direct user assertion."
+    },
+    "cycles_seen": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "How many distinct design cycles have surfaced this instinct. Feeds the K=2 half of the promotion gate."
+    },
+    "project_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[0-9a-f]{8}$" },
+      "uniqueItems": true,
+      "description": "Set of distinct project ids that have surfaced this instinct. Its length feeds the M=2 half of the promotion gate."
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date (YYYY-MM-DD) the instinct was first recorded."
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date (YYYY-MM-DD) the instinct was last surfaced. Resets the TTL decay window."
+    },
+    "alpha": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Beta posterior success weight. Seeded from the Beta(2,8) prior on promotion."
+    },
+    "beta": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Beta posterior failure weight. Seeded from the Beta(2,8) prior on promotion."
+    },
+    "prior_class": {
+      "type": "string",
+      "description": "Tag recording which prior class seeded the posterior, e.g. \"instinct\"."
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "properties": { "scope": { "const": "project" } } },
+      "then": { "required": ["project_id"] }
+    }
+  ]
+}

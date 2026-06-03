@@ -84,6 +84,23 @@ Incubator drafts authored by `scripts/lib/incubator-author.cjs` (Phase 29-04) ap
 
 KFM-catalogue proposals authored by `scripts/lib/reflector-kfm-proposer.cjs` (Phase 30.5-03 D-05) appear as a 6th proposal class. Drafts at `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md`; pre-filled 11-field schema with `TODO:` placeholders for `pattern` + `fix`. Two upstream signals share the surface (D-06): `capability_gap` clusters (≥3, no existing match) + `kfm-candidate` events (whitelist-matched articles, 1-shot). User chooses **accept** | **reject** | **defer** | **edit**. `applyAccept` appends to `reference/known-failure-modes.md` + `reference/registry.json` (`origin: incubator-kfm`); `applyReject` removes the incubator subdir; `applyDefer` stamps `deferred_until`; `applyEdit` returns the draft path for `$EDITOR`. Full procedure: `./apply-reflections-procedure.md` §[KFM-CANDIDATE].
 
+## [INSTINCT]
+
+Atomic instinct units emitted by `design-reflector` (and surfaced from `{{command_prefix}}extract-learnings`) appear as a distinct proposal class, alongside `[INCUBATOR]` and `[KFM-CANDIDATE]`. Each unit is a fenced `yaml` block under the reflector's `## Atomic instincts` section, shaped per `reference/instinct-format.md` (`id`, `trigger`, `confidence`, `domain`, `scope`, `project_id`, `source`, `cycles_seen`, `first_seen`, `last_seen`, plus a short body). A unit is a proposal, never a stored fact - nothing lands until the user accepts it.
+
+Mirror the `[INCUBATOR]` flow:
+
+1. Discover the units: parse every `yaml` block under `## Atomic instincts` in the reflections file. Skip malformed blocks (warn on stderr, keep going).
+2. For each unit: show the parsed `trigger`, `domain`, `confidence`, and body so the user sees what would be stored.
+3. Prompt: `(a) accept   (r) reject   (d) defer   (e) edit   (q) quit`.
+
+**Per-action behavior:**
+
+1. **accept** - call `scripts/lib/instinct-store.cjs` `add(unit, { scope, baseDir })` with the unit at its emitted `confidence`. The store owns de-duplication and `cycles_seen` bookkeeping. On success print `Stored instinct <id> (<domain>, confidence <n>).` and append `**Applied**: <date>` to the proposal block.
+2. **reject** - do not store the unit. Append `**Reviewed: rejected**` to the reflections file.
+3. **defer** - no-op; the unit re-surfaces next run. Append `**Reviewed: deferred**`.
+4. **edit** - let the user adjust `trigger`, `confidence`, or `domain`, then accept the edited unit through the same `add(...)` call. Default `scope: 'project'` (write `global` only when the unit's frontmatter says so); never edit `.design/instincts/instincts.json` directly, and promote to global via the separate gated `{{command_prefix}}instinct promote`.
+
 ## Do Not
 
 - Do not apply any proposal without the user explicitly choosing `a` or `e`.

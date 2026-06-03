@@ -10,7 +10,7 @@
     "type": {
       "type": "string",
       "minLength": 1,
-      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick, verify_outcome, rollout_started, rollout_advanced, rollout_stuck, budget_forecast, project_cap_warning, project_cap_halt, live_session_start, live_pick, live_generate, live_accept, live_discard, live_session_end."
+      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick, verify_outcome, rollout_started, rollout_advanced, rollout_stuck, budget_forecast, project_cap_warning, project_cap_halt, live_session_start, live_pick, live_generate, live_accept, live_discard, live_session_end, instinct_emitted, instinct_promoted, instinct_decayed."
     },
     "timestamp": {
       "type": "string",

@@ -1,6 +1,6 @@
 add-backlog: 48
 analyze-dependencies: 95
-apply-reflections: 92
+apply-reflections: 109
 audit: 79
 bandit-status: 94
 benchmark: 65
@@ -21,13 +21,14 @@ discuss: 96
 do: 45
 explore: 105
 export: 30
-extract-learnings: 98
+extract-learnings: 114
 fast: 91
 figma-extract: 64
 figma-write: 39
 graphify: 49
 health: 99
 help: 87
+instinct: 111
 list-assumptions: 61
 list-pins: 27
 live: 98

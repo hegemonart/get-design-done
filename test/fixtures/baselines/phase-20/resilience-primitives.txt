@@ -16,6 +16,7 @@ glob-match.cjs
 harness-freshness.cjs
 hedge-ensemble.cjs
 incubator-author.cjs
+instinct-store.cjs
 mmr-rerank.cjs
 parse-contract.cjs
 probe-optional.cjs

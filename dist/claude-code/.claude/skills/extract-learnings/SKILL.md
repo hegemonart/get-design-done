@@ -53,6 +53,22 @@ Layout of `.design/learnings/LEARNINGS.md`:
 ---
 ```
 
+### Step 3b - Dual-emit atomic instinct units (Phase 51)
+
+Alongside the prose `LEARNINGS.md`, emit atomic instinct units for every learning the extractor tags as an `instinct-candidate`. A learning is an `instinct-candidate` when it states a single trigger plus a one-line response - the same shape the reflector emits. Broader narrative learnings stay prose-only.
+
+For each `instinct-candidate`, build a unit per `reference/instinct-format.md` (frontmatter: `id`, `trigger`, `confidence` from 0.3 to 0.9, `domain`, `scope`, `project_id`, `source`, `cycles_seen`, `first_seen`, `last_seen`, plus a short body). Set `source: extract-learnings`. Carry the learning's confidence (high / medium / low) into the numeric field (roughly 0.8 / 0.55 / 0.35), capped at 0.9.
+
+Write each unit through the store engine `scripts/lib/instinct-store.cjs` rather than by hand:
+
+```bash
+node "${CLAUDE_PLUGIN_ROOT}/scripts/lib/instinct-store.cjs" add --scope project
+```
+
+If the engine exposes a module API only, drive `add(unit, { scope: 'project', baseDir })` from a short `node -e` script. The engine owns de-duplication and `cycles_seen` bookkeeping; do not pre-merge.
+
+The prose `LEARNINGS.md` is **retained read-only for one minor version** so existing readers keep working while tooling migrates to the units. Keep writing it; do not drop the prose path in this version.
+
 ### Step 4 - Reference file proposal (optional)
 
 After writing LEARNINGS.md, check each learning entry with `Proposed reference update: yes`.
