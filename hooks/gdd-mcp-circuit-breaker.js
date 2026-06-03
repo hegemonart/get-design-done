@@ -40,15 +40,70 @@ function loadBudget(cwd) {
   return defaults;
 }
 
+/**
+ * Classify the outcome of an MCP tool call as 'success' | 'timeout' | 'error'.
+ *
+ * The previous implementation substring-matched 'timeout' / 'failed' against
+ * the ENTIRE JSON-stringified response. That fired false positives on legit
+ * successful payloads whose content happens to mention those words — e.g. a
+ * Figma node literally named "TimeoutBanner", or a summary line "2 of 5 nodes
+ * failed to update, retrying...". When the breaker false-positives, it
+ * advances consecutive_timeouts and eventually trips on healthy traffic.
+ *
+ * The fix: use the structured isError / is_error envelope as the primary
+ * signal. MCP tool results carry isError=true|false. Anything without an
+ * explicit error flag is treated as success — full stop. Only when the
+ * envelope says "error" do we then inspect the ERROR-message fields
+ * (content[*].text + error.message + error.code + top-level message) to
+ * decide between 'timeout' and generic 'error'. Arbitrary content text is
+ * never scanned.
+ */
 function classifyOutcome(toolResponse) {
   if (!toolResponse || typeof toolResponse !== 'object') return 'error';
-  const text = JSON.stringify(toolResponse).slice(0, 4000).toLowerCase();
-  // Check timeout FIRST — a timed-out call may also set is_error, but we want
-  // to classify it as "timeout" so consecutive_timeouts advances correctly.
-  if (text.includes('timeout') || text.includes('timed out') || text.includes('deadline exceeded')) return 'timeout';
-  if (toolResponse.is_error) return 'error';
-  if (text.includes('"error"') || text.includes('failed')) return 'error';
-  return 'success';
+
+  // MCP standard envelope: isError (camelCase). Claude Code historically
+  // passes is_error (snake_case). Accept either; treat absence as success.
+  const isError =
+    toolResponse.isError === true || toolResponse.is_error === true;
+
+  if (!isError) return 'success';
+
+  // Error path: classify timeout vs generic by reading ONLY the dedicated
+  // error-message fields, not the entire payload.
+  const messageBits = [];
+
+  // content[] may be a string (legacy) or an array of {type,text} (spec).
+  if (typeof toolResponse.content === 'string') {
+    messageBits.push(toolResponse.content);
+  } else if (Array.isArray(toolResponse.content)) {
+    for (const c of toolResponse.content) {
+      if (c && typeof c.text === 'string') messageBits.push(c.text);
+    }
+  }
+
+  if (toolResponse.error && typeof toolResponse.error === 'object') {
+    if (typeof toolResponse.error.message === 'string') {
+      messageBits.push(toolResponse.error.message);
+    }
+    if (typeof toolResponse.error.code === 'string') {
+      messageBits.push(toolResponse.error.code);
+    }
+  }
+  if (typeof toolResponse.message === 'string') {
+    messageBits.push(toolResponse.message);
+  }
+
+  const combined = messageBits.join(' ').toLowerCase();
+  // \btimeout\b matches "timeout" and "request timeout"; \btimed?\s*out\b
+  // matches "timed out"; deadline exceeded is gRPC; etimedout is Node fs.
+  if (
+    /\btimeout\b|\btimed?\s*out\b|\bdeadline\s+exceeded\b|\betimedout\b/.test(
+      combined,
+    )
+  ) {
+    return 'timeout';
+  }
+  return 'error';
 }
 
 function readJsonlTail(filePath) {
