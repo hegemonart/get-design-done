@@ -1,7 +1,7 @@
 {
   "name": "get-design-done",
   "version": "1.57.1",
-  "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
+  "description": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design system.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
@@ -43,7 +43,7 @@
   "interface": {
     "displayName": "Get Design Done",
     "shortDescription": "A design-quality pipeline for AI coding agents.",
-    "longDescription": "A design-quality pipeline for AI coding agents: brief, explore, plan, implement, and verify. Get Design Done keeps AI-generated UI tied to your brief, your design system, your references, and your quality gates. Works with Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline.",
+    "longDescription": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify. Get Design Done keeps AI-generated UI tied to your brief, your design system, your references, and your quality gates. Works with Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline.",
     "developerName": "hegemonart",
     "category": "Design",
     "capabilities": [

@@ -4,7 +4,7 @@
 
 **English** · [简体中文](docs/i18n/README.zh-CN.md) · [日本語](docs/i18n/README.ja.md) · [한국어](docs/i18n/README.ko.md) · [Français](docs/i18n/README.fr.md) · [Italiano](docs/i18n/README.it.md) · [Deutsch](docs/i18n/README.de.md)
 
-**A design-quality pipeline for AI coding agents: brief → explore → plan → implement → verify.**
+**A design-quality pipeline for AI coding agents: brief → explore → plan → design → verify.**
 
 **Get Design Done keeps AI-generated UI tied to your brief, your design system, your references, and your quality gates. Works with Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline.**
 
@@ -56,7 +56,7 @@ What I kept running into: the agent could generate a screen that looked fine in 
 
 So I built Get Design Done: a design pipeline that gives AI coding agents the same kind of structure developers already expect from engineering workflows. It captures the brief, maps the current design system, grounds decisions in references, decomposes the work into atomic tasks, executes those tasks, and verifies the result before you ship.
 
-Behind the scenes: 37 specialized agents, a queryable intel store, tier-aware model routing, 12 optional tool connections, atomic commits, and a no-regret adaptive layer that learns from solidify-with-rollback outcomes. What you use day to day: a few `/gdd:*` commands that keep design work coherent.
+Behind the scenes: 61 specialized agents, a queryable intel store, tier-aware model routing, 41 optional tool connections, atomic commits, and a no-regret adaptive layer that learns from solidify-with-rollback outcomes. What you use day to day: a few `/gdd:*` commands that keep design work coherent.
 
 - **Hegemon**
 
@@ -64,7 +64,7 @@ Behind the scenes: 37 specialized agents, a queryable intel store, tier-aware mo
 
 AI-generated design has the same failure mode as AI-generated code: describe what you want, get something plausible, then watch it fall apart at scale because no system tied the output back to the brief.
 
-Get Design Done is the context engineering layer for design work. It turns "make this UI better" into a traceable cycle: brief → inventory → references → plan → implementation → verification.
+Get Design Done is the context engineering layer for design work. It turns "make this UI better" into a traceable cycle: brief → explore → plan → design → verify.
 
 ---
 
@@ -412,7 +412,7 @@ See [`skills/figma-extract/SKILL.md`](skills/figma-extract/SKILL.md) and [`figma
 
 ### Skill discipline bootstrap (v1.32.0+)
 
-GDD ships 70+ skills, but a description-match skill router consults them opportunistically - easy to skip a stage under pressure. v1.32.0 adds the forcing function GDD lacked, porting the skill-discipline **mechanism** (not content) from [`obra/superpowers`](https://github.com/obra/superpowers) (MIT):
+GDD ships 94 skills, but a description-match skill router consults them opportunistically - easy to skip a stage under pressure. v1.32.0 added the forcing function GDD lacked, porting the skill-discipline **mechanism** (not content) from [`obra/superpowers`](https://github.com/obra/superpowers) (MIT):
 
 - **SessionStart inject.** A `using-gdd` bootstrap contract is injected at every session start / `/clear` / compact (`hooks/inject-using-gdd.sh`, per-harness: Cursor / Claude Code / SDK). It carries the **1%-rule** ("even a 1% chance a skill applies → invoke it"), a red-flags `Thought → Reality` table, and the skill-priority + instruction-priority order - so the agent is primed to find the right skill before it acts.
 - **`<HARD-GATE>` at every stage transition.** Brief / Explore / Plan / Design / Verify each refuse to advance until the stage's artifact exists and is approved - no free-handing a stage.
@@ -577,7 +577,7 @@ GDD handles it for you:
 
 Size limits where Claude's quality degrades. Stay under, get consistency.
 
-### 37 Specialized Agents
+### 61 Specialized Agents
 
 Each stage is a thin orchestrator that spawns specialized agents. Heavy lifting happens in fresh 200k contexts, not your main session.
 
@@ -590,7 +590,7 @@ Each stage is a thin orchestrator that spawns specialized agents. Heavy lifting 
 | Verify | spawns auditor + verifier + checker | design-auditor (6-pillar score), design-verifier (goal-backward), design-integration-checker (D-XX → code) |
 | Reflect | reads telemetry + learnings | design-reflector (opus), design-authority-watcher, design-update-checker |
 
-### 12 Tool Connections
+### 41 Tool Connections
 
 All optional - the pipeline degrades gracefully when any connection is unavailable:
 
@@ -768,7 +768,7 @@ Targets 50–70% per-task token-cost reduction with no quality-floor regression.
 
 ## Connections
 
-GDD ships with 12 tool connections. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable. Configure with `/gdd:connections`.
+GDD ships with 41 tool connections. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable. Configure with `/gdd:connections`.
 
 | Connection | Purpose | Probe |
 |------------|---------|-------|

@@ -1,7 +1,7 @@
 {
   "name": "@hegemonart/get-design-done",
   "version": "1.57.1",
-  "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
+  "description": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
   "repository": {
@@ -86,6 +86,7 @@
     "validate:schemas": "node --experimental-strip-types scripts/validate-schemas.ts",
     "validate:frontmatter": "node --experimental-strip-types scripts/validate-frontmatter.ts agents/",
     "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
+    "validate:feature-counts": "node scripts/check-feature-counts.cjs",
     "scan:injection": "node scripts/run-injection-scanner-ci.cjs",
     "scan:outbound": "node scripts/scan-outbound-network.cjs",
     "scan:ws-bind": "node scripts/scan-ws-bind.cjs",
