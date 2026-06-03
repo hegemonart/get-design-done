@@ -641,6 +641,13 @@ OFF_CADENCE_VERSIONS.add('1.52.0');
 // dependency (node:crypto + optional better-sqlite3 via probeOptional). Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.53.0');
 
+// 1.54.0 -> Phase 54 (Composable Reference Addendums). Minor on 1.53.0. Adds 18 stack-specific prompt
+// addendums (reference/systems/*.md x8, reference/frameworks/*.md x6, reference/motion/*.md x4) composed into
+// the explore mapper prompts at spawn time by stack detection (scripts/lib/detect/stack.cjs) +
+// scripts/lib/mapper-spawn.cjs (cap 3), a registry "stack-addendum" type + composes_into field, a
+// /gdd:new-addendum scaffolder skill, and a gsd-health coverage row. No new dependency. Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.54.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

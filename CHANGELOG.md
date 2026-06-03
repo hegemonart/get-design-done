@@ -4,6 +4,47 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.54.0] - 2026-06-03
+
+### Phase 54 - Composable Reference Addendums (Per-DS + Per-Framework + Per-Motion-Lib)
+
+One general mapper prompt could not be stack-aware: it missed Tailwind's `@theme` tokens, shadcn's `cn()` convention,
+vanilla-extract's `style({})` shape. Phase 54 adds 18 composable prompt addendums (one per design system, framework, and
+motion library) that the explore mappers compose into their prompt at spawn time based on the detected stack. Adapted
+from Understand-Anything's per-language/per-framework addendum pattern. Maintainer-authored and vendor-cross-checked;
+no LLM-generated content. Planned and executed via the GSD pipeline (5 parallel executors + 1 integration executor).
+
+### Breaking changes
+
+- **Mappers are now stack-aware.** `scripts/lib/detect/stack.cjs` detects `{ds, framework, motion_libs[]}` from
+  package.json deps + config files + import signatures; `scripts/lib/mapper-spawn.cjs` composes the matching addendums
+  (capped at 3: one DS, one framework, one motion) into each mapper's prompt before dispatch (additive and
+  backward-compatible: no detected stack or no addendum leaves the base prompt unchanged).
+- **Registry gains a `stack-addendum` type.** `reference/registry.schema.json` adds `"stack-addendum"` to the entry
+  type enum and an optional `composes_into` field; the 18 addendums register against it with their target mappers.
+
+### Added
+
+- **Design-system addendums** (`reference/systems/`): tailwind, shadcn, radix-themes, mui, chakra, vanilla-extract,
+  styled-components, css-modules. **Framework addendums** (`reference/frameworks/`): nextjs, remix, vite-react, astro,
+  sveltekit, storybook. **Motion-lib addendums** (`reference/motion/`): framer-motion, gsap, motion-one, react-spring.
+  Each is at most 50 lines with four sections (Conventions, File patterns, Gotchas, and an Example output fragment in
+  the Phase 52 DesignContext schema).
+- **`/gdd:new-addendum <kind> <name>`** skill + `scripts/lib/new-addendum.cjs` scaffolder (mirrors `/gdd:new-skill`;
+  validates the kind and slug, defaults `composes_into` by kind, writes the 4-section skeleton).
+- **Fallback + coverage**: an unmatched stack falls back to the base prompt and flags the gap; `gsd-health` reports a
+  "N/M detected stacks have addendums" coverage row.
+
+### Notes
+
+- 6-manifest lockstep at **v1.54.0** + `OFF_CADENCE_VERSIONS.add('1.54.0')` + 37 `manifests-version.txt` baselines.
+  Re-locked: skill-list (91 -> 92, +new-addendum) + the phase-28.5 distribution (new-addendum at 81 lines, clean; warn
+  count unchanged at 10) + skill-graph + the registry-diff baseline (+18 stack-addendum entries) + resilience-primitives
+  (+mapper-spawn.cjs +new-addendum.cjs) + the phase-42 compile count (115 -> 116) + the gsd-health check count (8 -> 9).
+  Tarball golden 944 -> 969 (+25). **No new runtime dependency.**
+
+---
+
 ## [1.53.0] - 2026-06-03
 
 ### Phase 53 - Semantic Mapper Engine (Louvain Batching + neighborMap + Fingerprint Incremental)

@@ -37,6 +37,7 @@ locale: 51
 map: 89
 migrate: 70
 migrate-context: 123
+new-addendum: 81
 new-cycle: 37
 new-project: 53
 new-skill: 90

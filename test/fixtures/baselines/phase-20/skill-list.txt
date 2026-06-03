@@ -37,6 +37,7 @@ locale
 map
 migrate
 migrate-context
+new-addendum
 new-cycle
 new-project
 new-skill

@@ -164,3 +164,4 @@ Always respect this. It is not optional.
 - CSS layout transitions: `reference/spatial.md`
 - Typography: `reference/typography.md`
 - UX writing: `reference/ux-writing.md`
+- Per-library motion conventions (Phase 54 composable addendums): `reference/motion/` (framer-motion, gsap, motion-one, react-spring). These reuse the duration classes above and are composed into the motion mapper at spawn time by `scripts/lib/mapper-spawn.cjs` when `detectStack` matches the project; each is a `type:"stack-addendum"` entry in `reference/registry.json`.

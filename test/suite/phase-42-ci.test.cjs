@@ -17,9 +17,9 @@ function parseFrontmatter(text) {
 }
 
 for (const cfg of CONFIGS) {
-  test(`42-ci-smoke[${cfg.id}]: compiles all 115 skills with no unresolved placeholders`, () => {
+  test(`42-ci-smoke[${cfg.id}]: compiles all 116 skills with no unresolved placeholders`, () => {
     const map = compileAll(cfg);
-    assert.equal(map.size, 115, `${cfg.id}: expected 115 compiled files`);
+    assert.equal(map.size, 116, `${cfg.id}: expected 116 compiled files`);
     for (const [rel, text] of map) {
       assert.ok(text.length > 0, `${cfg.id}:${rel} empty`);
       assert.equal(

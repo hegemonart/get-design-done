@@ -8,7 +8,7 @@
 // Surface:
 //   async getHealthChecks(rootDir) → { checks: HealthCheck[] }
 //
-// The 7 checks (in stable order) are:
+// The 9 checks (in stable order) are:
 //   1. claude_md            — CLAUDE.md presence
 //   2. planning_dir         — .planning/ presence
 //   3. design_dir           — .design/ presence
@@ -16,6 +16,8 @@
 //   5. issue_reporter       — kill-switch state (Plan 30-06 / D-08)
 //   6. figma_extract        — extract readiness + Free-tier signal (Plan 31-09)
 //   7. skill_discipline     — using-gdd bootstrap + SessionStart inject (Plan 32-07)
+//   8. harness_freshness    — per-harness last_verified age (Phase 44)
+//   9. stack_addendums      — Phase 54 coverage: N/M detected stacks have addendums
 //
 // Check 5 was added in Plan 30-06 — surfaces the report-issue kill-switch
 // (env or config disable) so users can verify why the command is
@@ -236,6 +238,76 @@ async function getHealthChecks(rootDir) {
       detail = 'harness freshness: unavailable';
     }
     checks.push({ name: 'harness_freshness', status, detail });
+  }
+
+  // 9. stack_addendums — Phase 54 coverage row. Fingerprints the project
+  // (detect/stack.cjs) and reports how many DETECTED stacks (design-system +
+  // framework + motion libs) have a registered type:"stack-addendum" entry in
+  // reference/registry.json. PURE read-only (detection reads files but never
+  // networks; registry is a local JSON read). GRACEFUL-ABSENT: no detected
+  // stack -> "no stacks detected"; an unreadable registry -> "registry
+  // unavailable". status is 'ok' on full coverage or nothing-to-cover,
+  // otherwise 'warn'. NEVER throws.
+  {
+    let status = 'ok';
+    let detail;
+    try {
+      const { detectStack } = require('../detect/stack.cjs');
+      const stack = detectStack(rootDir) || { ds: null, framework: null, motion_libs: [] };
+
+      // The detected stack values to cover, paired with the category an
+      // addendum must classify into to count as coverage.
+      const wanted = [];
+      if (typeof stack.ds === 'string' && stack.ds) wanted.push({ category: 'system', key: stack.ds });
+      if (typeof stack.framework === 'string' && stack.framework) {
+        wanted.push({ category: 'framework', key: stack.framework });
+      }
+      if (Array.isArray(stack.motion_libs)) {
+        for (const m of stack.motion_libs) {
+          if (typeof m === 'string' && m) wanted.push({ category: 'motion', key: m });
+        }
+      }
+
+      if (wanted.length === 0) {
+        detail = 'stack addendums: no stacks detected';
+        status = 'ok';
+      } else {
+        // Load the registry + classify its stack-addendum entries. A missing or
+        // malformed registry counts as zero coverage (warn), never a throw.
+        let entries = [];
+        try {
+          const reg = JSON.parse(
+            fs.readFileSync(path.join(rootDir, 'reference', 'registry.json'), 'utf8')
+          );
+          entries = Array.isArray(reg.entries) ? reg.entries : [];
+        } catch {
+          entries = null; // distinguish "registry unavailable" from "zero coverage"
+        }
+
+        if (entries === null) {
+          detail = 'stack addendums: registry unavailable';
+          status = 'warn';
+        } else {
+          const { classifyEntry } = require('../mapper-spawn.cjs');
+          // Build the set of {category|key} an addendum exists for.
+          const covered = new Set();
+          for (const e of entries) {
+            if (!e || e.type !== 'stack-addendum') continue;
+            const { category, key } = classifyEntry(e);
+            if (category && key) covered.add(category + '|' + key);
+          }
+          const have = wanted.filter((w) => covered.has(w.category + '|' + String(w.key).toLowerCase())).length;
+          const total = wanted.length;
+          status = have >= total ? 'ok' : 'warn';
+          detail = `stack addendums: ${have}/${total} detected stacks have addendums`;
+        }
+      }
+    } catch {
+      // Absolute safety net — the health probe must never crash on this check.
+      status = 'warn';
+      detail = 'stack addendums: unavailable';
+    }
+    checks.push({ name: 'stack_addendums', status, detail });
   }
 
   return { checks };

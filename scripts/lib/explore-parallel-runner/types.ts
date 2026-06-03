@@ -138,6 +138,33 @@ export interface ExploreRunnerOptions {
     /** Forwarded into classify's projectStats.thresholds. */
     readonly thresholds?: unknown;
   };
+  /**
+   * Phase 54 (REG-01) — OPTIONAL composable stack addendums. Before spawning,
+   * the runner fingerprints the project (`scripts/lib/detect/stack.cjs#detectStack`)
+   * ONCE and appends the matching `type:"stack-addendum"` reference bodies to
+   * each mapper's prompt via `scripts/lib/mapper-spawn.cjs#applyAddendums`
+   * (cap 1 design-system + 1 framework + 1 motion per spawn). The addendum is
+   * selected by the mapper's AGENT name (e.g. token-mapper) against the
+   * registry `composes_into` list.
+   *
+   * BACKWARD-COMPATIBLE + ADDITIVE: defaults ON, but a project with no
+   * detected stack (or no matching addendum) gets a byte-for-byte unchanged
+   * prompt. The whole step is wrapped in try/catch so a detection/registry
+   * failure NEVER aborts dispatch. Set `enabled: false` to opt out entirely.
+   * The `detectStack` / `registry` / `refDir` fields are test-injection seams.
+   */
+  readonly addendums?: {
+    /** Opt out of stack-addendum composition entirely. Default: enabled. */
+    readonly enabled?: boolean;
+    /** Detection root. Defaults to `cwd`. */
+    readonly root?: string;
+    /** Injected detectStack (tests). Defaults to detect/stack.cjs#detectStack. */
+    readonly detectStack?: (root: string) => unknown;
+    /** Injected registry object (tests). Defaults to reference/registry.json. */
+    readonly registry?: unknown;
+    /** Reference dir addendum paths resolve against. Defaults to repo reference/. */
+    readonly refDir?: string;
+  };
 }
 
 /**

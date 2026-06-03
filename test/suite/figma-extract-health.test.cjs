@@ -219,7 +219,7 @@ test('31-09: the token VALUE never appears in the detail (D-10 non-leak)', async
   }
 });
 
-test('31-09: getHealthChecks returns the original 5 checks in order + figma_extract 6th + skill_discipline 7th (additive invariant)', async () => {
+test('31-09: getHealthChecks returns the checks in stable order through stack_addendums 9th (additive invariant)', async () => {
   const root = makeRoot();
   try {
     // Minimal complete project surface so the prior checks resolve normally.
@@ -242,6 +242,7 @@ test('31-09: getHealthChecks returns the original 5 checks in order + figma_extr
         'figma_extract',
         'skill_discipline',
         'harness_freshness',
+        'stack_addendums',
       ]);
       // Every check has a valid status enum.
       for (const c of result.checks) {

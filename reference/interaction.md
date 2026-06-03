@@ -46,3 +46,4 @@ Interaction is the broadest design domain. It governs every point where a user a
 - Civic one-thing-per-page forms: `reference/domains/civic-patterns.md`
 - Typography: `reference/typography.md`
 - Color: `reference/color.md`
+- Stack-specific component and token conventions (Phase 54 composable addendums): `reference/systems/` (design systems) and `reference/frameworks/` (frameworks). These are composed into the explore mappers at spawn time by `scripts/lib/mapper-spawn.cjs` when `detectStack` matches the project, and are registered as `type:"stack-addendum"` entries in `reference/registry.json`.
