@@ -115,3 +115,109 @@ test('protected-paths: stopReason names the matching pattern', () => {
   assert.equal(parsed.continue, false);
   assert.match(parsed.stopReason, /reference\/\*\*/);
 });
+
+// --- Regression: 4 bypass vectors in extractBashTargets ---
+// Audit-flagged: match() returned only first match (chained-command bypass);
+// no subshell scanning; no multi-arg coverage; no backtick scanning.
+
+test('protected-paths: chained `&&` rm — both targets are checked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'rm safe.txt && rm reference/anti-patterns.md' },
+  });
+  assert.equal(parsed.continue, false, 'second segment must trip the guard');
+  assert.match(parsed.stopReason, /reference\/\*\*/);
+});
+
+test('protected-paths: chained `;` rm — both targets are checked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'rm safe.txt ; rm reference/anti-patterns.md' },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: multi-arg `rm file1 file2 file3` — every arg is checked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'rm safe1.txt safe2.txt reference/heuristics.md safe3.txt' },
+  });
+  assert.equal(parsed.continue, false, 'protected path mixed into the multi-arg list must trip the guard');
+});
+
+test('protected-paths: `$(...)` subshell — inner rm of protected path is blocked', () => {
+  // The subshell expression itself executes: `rm reference/x.md` runs inside,
+  // and its output ('') substitutes into the parent (echo ''). The audit's
+  // bypass was: outer regex never scanned the subshell body, so the inner
+  // rm slipped through.
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'echo $(rm reference/heuristics.md)' },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: backtick subshell — inner rm of protected path is blocked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'echo `rm reference/heuristics.md`' },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: `sudo rm` is treated as `rm`', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'sudo rm -rf reference/heuristics.md' },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: `>` redirect into protected path is blocked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'echo poison > reference/heuristics.md' },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: `>>` redirect into protected path is blocked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'echo poison >> reference/heuristics.md' },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: `git restore` of protected file is blocked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'git restore reference/heuristics.md' },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: `sed -i` modifying protected file is blocked', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: "sed -i 's/foo/bar/' reference/heuristics.md" },
+  });
+  assert.equal(parsed.continue, false);
+});
+
+test('protected-paths: `sed` WITHOUT -i is allowed (read-only)', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: "sed 's/foo/bar/' reference/heuristics.md" },
+  });
+  // sed without -i prints to stdout — no mutation, must pass through.
+  assert.equal(parsed.continue, true);
+});
+
+test('protected-paths: quoted target `rm "reference/heuristics.md"` is detected', () => {
+  const { parsed } = runHook({
+    tool_name: 'Bash',
+    tool_input: { command: 'rm "reference/heuristics.md"' },
+  });
+  assert.equal(parsed.continue, false);
+});
