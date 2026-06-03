@@ -120,8 +120,12 @@ test('52-int: render() emits a mermaid flowchart grouped by Atomic-Design tier',
 test('52-int: render() draws composes as solid and extends as dotted arrows', async () => {
   const { render } = await importMap();
   const md = render(syntheticGraph());
-  // composes -> solid arrow between the two component nodes.
-  assert.match(md, /-->/, 'composes edge is a solid arrow');
+  // composes -> solid arrow between the two component nodes. Use a literal
+  // substring check (not a regex): a RegExp matching the `-->` token trips
+  // CodeQL js/bad-tag-filter (it reads as an HTML-comment-end parser that
+  // omits `--!>`). This is mermaid output, not HTML filtering, so a plain
+  // includes() is both correct and CodeQL-clean.
+  assert.ok(md.includes('-->'), 'composes edge is a solid arrow');
   // extends -> dotted "extends" arrow for the variant specialization.
   assert.match(md, /-\.\s*extends\s*\.->/, 'extends edge is a dotted "extends" arrow');
   // The non-assembly uses-token edge target must not be wired in the map body.
