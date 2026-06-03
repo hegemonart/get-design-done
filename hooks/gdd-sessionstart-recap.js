@@ -21,11 +21,28 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const SNAPSHOT_DIR = path.resolve(process.cwd(), '.design', 'snapshots');
-const STATE_MD_PATH = path.resolve(process.cwd(), '.design', 'STATE.md');
-const EVENTS_PATH = path.resolve(process.cwd(), '.design', 'telemetry', 'events.jsonl');
-const RECAP_JSON_PATH = path.join(SNAPSHOT_DIR, 'last-recap.json');
 const SCHEMA_VERSION = '1.0.0';
+
+/**
+ * Resolve the bundle of paths the hook reads/writes, anchored at `cwd`.
+ *
+ * Phase 27.6 originally resolved these at module load via `process.cwd()`,
+ * which is the wrong anchor when Claude Code invokes the hook from a
+ * worktree (the harness's cwd at module load can be the parent / `.claude`
+ * directory, not the project root). Resolving against `payload.cwd` matches
+ * how 8 sibling hooks already work (gdd-protected-paths, gdd-fact-force,
+ * gdd-decision-injector, gdd-mcp-circuit-breaker, gdd-a11y-gate,
+ * gdd-design-quality-check, gdd-risk-gate, gdd-turn-closeout).
+ */
+function computePaths(cwd) {
+  const snapshotDir = path.resolve(cwd, '.design', 'snapshots');
+  return {
+    snapshotDir,
+    stateMdPath: path.resolve(cwd, '.design', 'STATE.md'),
+    eventsPath: path.resolve(cwd, '.design', 'telemetry', 'events.jsonl'),
+    recapJsonPath: path.join(snapshotDir, 'last-recap.json'),
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Harness detection (D-10) — mirrors gdd-precompact-snapshot.js
@@ -60,11 +77,11 @@ function getAppendEvent() {
 // needs frontmatter + a flat decisions list for the diff)
 // ---------------------------------------------------------------------------
 
-function readStateMd() {
-  if (!fs.existsSync(STATE_MD_PATH)) return { frontmatter: {}, decisions: [] };
+function readStateMd(paths) {
+  if (!fs.existsSync(paths.stateMdPath)) return { frontmatter: {}, decisions: [] };
   let body;
   try {
-    body = fs.readFileSync(STATE_MD_PATH, 'utf8');
+    body = fs.readFileSync(paths.stateMdPath, 'utf8');
   } catch {
     return { frontmatter: {}, decisions: [] };
   }
@@ -92,11 +109,11 @@ function readStateMd() {
 // Snapshot discovery — highest-mtime *.json (excluding last-recap.json)
 // ---------------------------------------------------------------------------
 
-function findLatestSnapshot() {
-  if (!fs.existsSync(SNAPSHOT_DIR)) return null;
+function findLatestSnapshot(paths) {
+  if (!fs.existsSync(paths.snapshotDir)) return null;
   let files;
   try {
-    files = fs.readdirSync(SNAPSHOT_DIR);
+    files = fs.readdirSync(paths.snapshotDir);
   } catch {
     return null;
   }
@@ -108,7 +125,7 @@ function findLatestSnapshot() {
   let best = null;
   let bestMtime = -1;
   for (const name of candidates) {
-    const full = path.join(SNAPSHOT_DIR, name);
+    const full = path.join(paths.snapshotDir, name);
     try {
       const mtime = fs.statSync(full).mtimeMs;
       if (mtime > bestMtime) {
@@ -126,11 +143,11 @@ function findLatestSnapshot() {
 // Event count since snapshot timestamp (JSONL-tolerant)
 // ---------------------------------------------------------------------------
 
-function countEventsSince(isoTimestamp) {
-  if (!fs.existsSync(EVENTS_PATH)) return 0;
+function countEventsSince(paths, isoTimestamp) {
+  if (!fs.existsSync(paths.eventsPath)) return 0;
   let body;
   try {
-    body = fs.readFileSync(EVENTS_PATH, 'utf8');
+    body = fs.readFileSync(paths.eventsPath, 'utf8');
   } catch {
     return 0;
   }
@@ -154,16 +171,34 @@ function countEventsSince(isoTimestamp) {
 // Main
 // ---------------------------------------------------------------------------
 
-function main() {
+async function main() {
   const harness = detectHarness();
   if (harness === 'codex') {
-    // D-10: SessionStart on Codex skips recap; Phase 45 dep for full
-    // pre-large-context-action integration.
-    process.stderr.write('[gdd-sessionstart-recap] codex harness no-op (Phase 45 dep)\n');
+    // D-10: SessionStart on Codex skips recap. Tracked in the runtime-parity
+    // matrix; full pre-large-context-action integration is on the roadmap.
+    process.stderr.write('[gdd-sessionstart-recap] codex harness no-op\n');
     process.exit(0);
   }
 
-  const snapshotPath = findLatestSnapshot();
+  // Drain stdin and extract payload.cwd (Claude Code SessionStart pipes a JSON
+  // envelope). Falls back to process.cwd() when stdin is empty (unit tests,
+  // direct invocation).
+  let buf = '';
+  try {
+    for await (const chunk of process.stdin) buf += chunk;
+  } catch {
+    /* swallow — empty stdin is fine */
+  }
+  let payload = {};
+  try {
+    payload = JSON.parse(buf || '{}');
+  } catch {
+    /* malformed stdin → fall through with empty payload */
+  }
+  const cwd = (payload && typeof payload.cwd === 'string') ? payload.cwd : process.cwd();
+  const paths = computePaths(cwd);
+
+  const snapshotPath = findLatestSnapshot(paths);
   if (!snapshotPath) {
     process.stderr.write('[gdd-sessionstart-recap] no prior snapshot\n');
     process.exit(0);
@@ -181,13 +216,13 @@ function main() {
     process.exit(0);
   }
 
-  const current = readStateMd();
+  const current = readStateMd(paths);
   const priorDecisions = Array.isArray(snapshot.last_n_decisions)
     ? snapshot.last_n_decisions
     : [];
   const priorSet = new Set(priorDecisions);
   const newDecisions = current.decisions.filter((d) => !priorSet.has(d));
-  const newEventCount = countEventsSince(snapshot.timestamp || '1970-01-01T00:00:00.000Z');
+  const newEventCount = countEventsSince(paths, snapshot.timestamp || '1970-01-01T00:00:00.000Z');
 
   const priorCycle = snapshot.cycle_id || 'unknown';
   const currentCycle = current.frontmatter.milestone || 'unknown';
@@ -226,9 +261,9 @@ function main() {
   try {
     // mkdir -p for safety — directory should exist if snapshotPath was found,
     // but defensive ensure for race conditions.
-    fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
-    fs.writeFileSync(RECAP_JSON_PATH + '.tmp', JSON.stringify(recap, null, 2), 'utf8');
-    fs.renameSync(RECAP_JSON_PATH + '.tmp', RECAP_JSON_PATH);
+    fs.mkdirSync(paths.snapshotDir, { recursive: true });
+    fs.writeFileSync(paths.recapJsonPath + '.tmp', JSON.stringify(recap, null, 2), 'utf8');
+    fs.renameSync(paths.recapJsonPath + '.tmp', paths.recapJsonPath);
   } catch (err) {
     process.stderr.write(
       '[gdd-sessionstart-recap] sidecar write failed: ' +
