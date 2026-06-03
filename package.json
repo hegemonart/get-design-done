@@ -27,6 +27,7 @@
     "scripts/lib/",
     "scripts/cli/",
     "scripts/install.cjs",
+    "scripts/injection-patterns.cjs",
     "SKILL.md",
     "README.md",
     "CHANGELOG.md",

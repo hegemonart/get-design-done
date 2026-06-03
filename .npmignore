@@ -25,7 +25,9 @@ scripts/verify-version-sync.cjs
 scripts/extract-changelog-section.cjs
 scripts/detect-stale-refs.cjs
 scripts/run-injection-scanner-ci.cjs
-scripts/injection-patterns.cjs
+# NOTE: scripts/injection-patterns.cjs is REQUIRED at runtime by
+# hooks/gdd-read-injection-scanner.ts. It MUST ship in the tarball.
+# (Excluding it makes the PostToolUse:Read injection scanner a silent no-op.)
 scripts/build-distribution-bundles.cjs
 scripts/build-sdk-bins.cjs
 scripts/build-intel.cjs
