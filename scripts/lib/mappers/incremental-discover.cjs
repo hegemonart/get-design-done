@@ -77,13 +77,41 @@
  */
 
 const path = require('node:path');
+const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
 
-const MAPPERS_DIR = __dirname;
-const SDK_FP_DIR = path.resolve(__dirname, '..', '..', '..', 'sdk', 'fingerprint');
+// Resolve dependency dirs relative to the PACKAGE ROOT (the dir holding
+// package.json), found by walking up from this file -- NOT via a fixed
+// `__dirname`-relative jump. This is load-bearing for the esbuild SDK bundle:
+// when this .cjs is inlined into sdk/cli/index.js, esbuild rewrites `__dirname`
+// to the bundle's location (sdk/cli/), so `../../../sdk/fingerprint` would
+// resolve one level ABOVE the package (the gdd-sdk --help crash on POSIX CI).
+// The package root is the single ancestor of both the source tree
+// (scripts/lib/mappers/) and the bundle (sdk/cli/), so a walk-up is correct in
+// every mode: source, the in-repo test, and the packed/installed bundle.
+function pkgRoot() {
+  let dir = __dirname;
+  for (let i = 0; i < 10; i += 1) {
+    if (fs.existsSync(path.join(dir, 'package.json'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return process.cwd();
+}
+const ROOT = pkgRoot();
+const MAPPERS_DIR = path.join(ROOT, 'scripts', 'lib', 'mappers');
+const SDK_FP_DIR = path.join(ROOT, 'sdk', 'fingerprint');
 
-// classify.cjs is CJS — require directly.
-const { classify } = require(path.join(SDK_FP_DIR, 'classify.cjs'));
+// classify.cjs is CJS, but require it LAZILY + memoized: merely loading this
+// module (e.g. when the SDK CLI imports the explore runner just to print
+// `--help`) must not pull classify in. It loads only when planIncremental
+// actually classifies. Mirrors the lazy ESM/TS loaders below.
+let _classify = null;
+function classify(...args) {
+  if (!_classify) _classify = require(path.join(SDK_FP_DIR, 'classify.cjs')).classify;
+  return _classify(...args);
+}
 
 // ---------------------------------------------------------------------------
 // Lazy + memoized ESM/TS module loading. CJS cannot statically require() an
