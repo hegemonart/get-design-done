@@ -241,7 +241,7 @@ docs/i18n/README.zh-CN.md
 hooks/_hook-emit.js
 hooks/budget-enforcer.ts
 hooks/context-exhaustion.ts
-hooks/first-run-nudge.sh
+hooks/first-run-nudge.cjs
 hooks/gdd-a11y-gate.js
 hooks/gdd-bash-guard.js
 hooks/gdd-decision-injector.js
@@ -256,9 +256,9 @@ hooks/gdd-sessionstart-recap.js
 hooks/gdd-trajectory-capture.js
 hooks/gdd-turn-closeout.js
 hooks/hooks.json
-hooks/inject-using-gdd.sh
+hooks/inject-using-gdd.cjs
 hooks/run-hook.cmd
-hooks/update-check.sh
+hooks/update-check.cjs
 package.json
 recipes/.gitkeep
 reference/DEPRECATIONS.md
@@ -482,7 +482,9 @@ reference/ux-writing.md
 reference/variable-fonts-loading.md
 reference/visual-hierarchy-layout.md
 reference/visual-tells.md
+scripts/bootstrap.cjs
 scripts/cli/gdd-events.mjs
+scripts/injection-patterns.cjs
 scripts/install.cjs
 scripts/lib/adaptive-mode.cjs
 scripts/lib/apply-reflections/incubator-proposals.cjs

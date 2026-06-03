@@ -16,7 +16,6 @@
 #   sdk/ recipes/ docs/i18n/ bin/  (all required at runtime / by the plugin)
 
 # --- maintainer-only files that sit DIRECTLY under scripts/ (never reach node_modules) ---
-scripts/bootstrap.sh
 scripts/bootstrap-manifest.txt
 scripts/rollback-release.sh
 scripts/apply-branch-protection.sh

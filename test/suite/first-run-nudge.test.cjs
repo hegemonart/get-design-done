@@ -7,12 +7,12 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const HOOK = path.resolve(__dirname, '../..', 'hooks', 'first-run-nudge.sh');
+const HOOK = path.resolve(__dirname, '../..', 'hooks', 'first-run-nudge.cjs');
 const NUDGE_LINE = 'Tip: run /gdd:start to let GDD inspect this codebase and suggest one first fix.';
 
 function runHook({ cwd, home }) {
   try {
-    const out = execFileSync('bash', [HOOK], {
+    const out = execFileSync(process.execPath, [HOOK], {
       cwd,
       env: { ...process.env, HOME: home, USERPROFILE: home, GDD_NUDGE_DEBUG: '0' },
       encoding: 'utf8',
@@ -94,9 +94,9 @@ test('hook is registered in hooks.json SessionStart', () => {
   const hooks = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../..', 'hooks', 'hooks.json'), 'utf8'));
   const sessionStart = hooks.hooks?.SessionStart || [];
   const registered = sessionStart.some((entry) =>
-    (entry.hooks || []).some((h) => String(h.command || '').includes('first-run-nudge.sh'))
+    (entry.hooks || []).some((h) => /first-run-nudge\.(cjs|sh)/.test(String(h.command || '')))
   );
-  assert.ok(registered, 'first-run-nudge.sh must be registered in hooks.json SessionStart');
+  assert.ok(registered, 'first-run-nudge.{cjs,sh} must be registered in hooks.json SessionStart');
 });
 
 test('hook contains the locked nudge copy', () => {

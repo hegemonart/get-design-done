@@ -28,6 +28,7 @@
     "scripts/cli/",
     "scripts/install.cjs",
     "scripts/injection-patterns.cjs",
+    "scripts/bootstrap.cjs",
     "SKILL.md",
     "README.md",
     "CHANGELOG.md",
