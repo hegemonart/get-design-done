@@ -116,25 +116,27 @@ describe('27.7-03: gdd-mcp tools lint', () => {
     }
   });
 
-  test('27.7-03: tool-count-cap — synthetic 13 tool files trigger violation', () => {
+  test('27.7-03: tool-count-cap — synthetic 14 tool files trigger violation', () => {
+    // Cap raised 12 -> 13 in Phase 52 (gdd_context_query). 14 > 13 violates.
     const dir = tmp('lint-cap');
-    for (let i = 0; i < 13; i++) {
+    for (let i = 0; i < 14; i++) {
       writeTool(dir, 'gdd_tool' + i + '.ts', cleanToolBody('gdd_tool' + i));
     }
     const result = lintMcpToolsDir({ dir });
     const v = result.violations.find((x) => x.rule === 'tool-count-cap');
     assert.ok(v, 'expected tool-count-cap violation');
-    assert.match(v.message, /13/);
+    assert.match(v.message, /14/);
   });
 
-  test('27.7-03: tool-count-cap — exactly 12 tools passes', () => {
+  test('27.7-03: tool-count-cap — exactly 13 tools passes', () => {
+    // 13 is the cap after Phase 52 (was 12).
     const dir = tmp('lint-cap-ok');
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 13; i++) {
       writeTool(dir, 'gdd_tool' + i + '.ts', cleanToolBody('gdd_tool' + i));
     }
     const result = lintMcpToolsDir({ dir });
     const v = result.violations.find((x) => x.rule === 'tool-count-cap');
-    assert.equal(v, undefined, 'exactly 12 must pass');
+    assert.equal(v, undefined, 'exactly 13 must pass');
   });
 
   test('27.7-03: max-loc — synthetic 31-LOC tool is flagged', () => {

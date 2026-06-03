@@ -12,7 +12,8 @@
 //
 // Required reading discipline: this test reads tools/index.ts dynamically
 // via `import('../../sdk/mcp/gdd-mcp/tools/index.ts')` to verify
-// TOOL_COUNT === 12 and that all 12 tool names match the baseline. The
+// TOOL_COUNT === 13 (raised 12 -> 13 in Phase 52 for gdd_context_query)
+// and that all 13 tool names match the baseline. The
 // TS import requires Node 22+ with --experimental-strip-types.
 // (gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan
 //  31-5-05, D-08; bin repointed to the ./bin/gdd-mcp trampoline.)
@@ -53,15 +54,15 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     assert.equal(baseline, expected, 'baseline manifests-version.txt must equal package.json#version');
   });
 
-  test('27.7-07: tool-registry baseline matches actual TOOL_MODULES, count === 12, no write-tool names', async () => {
+  test('27.7-07: tool-registry baseline matches actual TOOL_MODULES, count === 13, no write-tool names', async () => {
     const reg = JSON.parse(
       fs.readFileSync(path.join(BASELINE_DIR, 'tool-registry.json'), 'utf8'),
     );
-    assert.equal(reg.count, 12, 'tool-registry.count must be 12');
+    assert.equal(reg.count, 13, 'tool-registry.count must be 13 (raised 12 -> 13 in Phase 52)');
     assert.equal(reg.write_tools.length, 0, 'write_tools must be empty (D-04)');
     // Dynamic import of TS tool registry — verifies baseline matches reality.
     const mod = await import('../../sdk/mcp/gdd-mcp/tools/index.ts');
-    assert.equal(mod.TOOL_COUNT, 12, 'TOOL_COUNT must be 12 (D-03)');
+    assert.equal(mod.TOOL_COUNT, 13, 'TOOL_COUNT must be 13 (D-03, raised 12 -> 13 in Phase 52)');
     const actualNames = mod.TOOL_MODULES.map((t) => t.name).sort();
     const baselineNames = [...reg.tools].sort();
     assert.deepEqual(actualNames, baselineNames, 'tool names must match baseline');

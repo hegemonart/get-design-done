@@ -224,6 +224,15 @@ export const PAIRS: readonly Pair[] = [
     data: null,
     required: false,
   },
+  {
+    name: 'design-context',
+    schema: 'reference/schemas/design-context.schema.json',
+    // Phase-52 KEYSTONE: .design/context-graph.json is runtime-only (gitignored),
+    // so schema-compile only here; graph conformance is enforced by
+    // scripts/validate-design-context.cjs (Ajv + referential integrity).
+    data: null,
+    required: false,
+  },
 ];
 
 const USE_NPX: boolean = !process.argv.includes('--no-npx');

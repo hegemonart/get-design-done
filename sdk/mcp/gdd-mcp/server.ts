@@ -14,7 +14,8 @@
 //      Zod shapes, and our per-tool schemas are Draft-07 JSON.)
 //   2. Register `tools/list` — returns the registered tools with their
 //      input JSON Schemas loaded from disk. Scaffold ships with 0
-//      tools; Plan 27.7-02 populates `TOOL_MODULES` with 12 entries.
+//      tools; Plan 27.7-02 populated `TOOL_MODULES` with 12 entries;
+//      Phase 52 raised it to 13 (gdd_context_query, D5).
 //   3. Register `tools/call` — dispatches by name to the matching
 //      handler. Each handler returns a typed ToolResponse; the server
 //      wraps it into the MCP CallToolResult shape. Unknown tool names
@@ -89,8 +90,8 @@ function here(): string {
  *  restart, which matches every other part of the pipeline.
  *
  *  Scaffold ships with 0 tools — loadTools() returns []. Plan 27.7-02
- *  adds 12 tool modules, each with its own `schemaPath` pointing into
- *  `sdk/mcp/gdd-mcp/schemas/`. */
+ *  added 12 tool modules; Phase 52 raised it to 13. Each has its own
+ *  `schemaPath` pointing into `sdk/mcp/gdd-mcp/schemas/`. */
 interface LoadedTool extends ToolModule {
   inputSchema: Record<string, unknown>;
 }
@@ -124,12 +125,14 @@ function loadTools(): LoadedTool[] {
  * Tool descriptions — short, scannable, lifted from the plan. Skill
  * prose uses these verbatim when suggesting a tool to the model.
  *
- * Plan 27.7-02 populates 12 entries — one per tool name in the canonical
- * 12-tool list.
+ * Plan 27.7-02 populated 12 entries; Phase 52 added a 13th
+ * (gdd_context_query) — one per tool name in the canonical 13-tool list.
  */
 export const TOOL_DESCRIPTIONS: Record<string, string> = {
   gdd_status:
     'gdd_status: current cycle phase, branch, last-3 decisions, last-3 completed plans, blocker count.',
+  gdd_context_query:
+    'gdd_context_query: read-only query over the DesignContext graph (.design/context-graph.json) — op one of nodes/edges/path/consumers-of/unreachable/cycles/coverage; structured no-graph result when absent.',
   gdd_phase_current:
     'gdd_phase_current: STATE.md <position> block (phase, stage, task_progress, status).',
   gdd_phases_list:
@@ -159,6 +162,7 @@ export const TOOL_DESCRIPTIONS: Record<string, string> = {
  *  modify disk. v1 is read-only (D-04) so every entry is `true`. */
 export const TOOL_READONLY: Record<string, boolean> = {
   gdd_status: true,
+  gdd_context_query: true,
   gdd_phase_current: true,
   gdd_phases_list: true,
   gdd_plans_list: true,

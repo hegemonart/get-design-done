@@ -86,6 +86,10 @@ After the pipeline state (and forensic audit if run), surface a one-line composi
 
 Run `scripts/validate-composition-graph.cjs` for the authoritative cycle and dangling-edge counts when that validator is present; until then report `0` and note the graph is not yet wired. This is a readiness hint, not a gate.
 
+## Step 3.6 - DesignContext graph coverage
+
+When `.design/context-graph.json` exists, surface one line for the typed DesignContext graph using the `coverage` helper in `scripts/lib/design-context-query.cjs` (`node scripts/lib/design-context-query.cjs coverage`), then point at the Atomic-Design map: `DesignContext graph: <pct>% node-type coverage | map: .design/INTEGRATION-MAP.md`. Skip this line entirely when the graph is absent (a pre-Phase-52 project); offer `/gdd:migrate-context` as the next step instead. Readiness hint, not a gate.
+
 ## Step 4 - Update notice (safe-window surface)
 
 After printing the pipeline state, emit the plugin-update banner if one is present. This file is written by `hooks/update-check.sh` subject to the state-machine guard (mid-pipeline stages suppress it) and per-version dismissal.

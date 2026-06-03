@@ -1156,6 +1156,20 @@
       "type": "meta-rules",
       "phase": 51,
       "description": "Phase 51 instinct unit format: YAML frontmatter (id, trigger, confidence 0.3-0.9, domain, scope, project_id, source, cycles_seen, first/last_seen) + body; promotion gate K=2/M=2; Beta(2,8) prior; TTL decay. Stored via scripts/lib/instinct-store.cjs."
+    },
+    {
+      "name": "design-context-schema",
+      "path": "reference/design-context-schema.md",
+      "type": "schema",
+      "phase": 52,
+      "description": "Phase 52 (KEYSTONE) typed DesignContext graph: 10 node types + 12 edge types, Node/Edge/Fragment/Graph shapes, two-phase mapper pattern. Schema at reference/schemas/design-context.schema.json."
+    },
+    {
+      "name": "design-context-tag-vocab",
+      "path": "reference/design-context-tag-vocab.md",
+      "type": "meta-rules",
+      "phase": 52,
+      "description": "Phase 52 controlled tag vocabulary for DesignContext nodes; validate-design-context.cjs soft-warns on unknown tags."
     }
   ]
 }

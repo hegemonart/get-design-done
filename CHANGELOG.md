@@ -4,6 +4,53 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.52.0] - 2026-06-03
+
+### Phase 52 - Typed DesignContext Graph Schema (KEYSTONE)
+
+GDD's design knowledge lived in flat `.design/map/*.md` mapper notes that nothing downstream could query. Phase 52
+introduces a typed DesignContext graph: a design-semantic map of tokens, components, variants, states, motion fragments,
+a11y patterns, screens, layers, and design patterns, plus the typed edges between them. It is the keystone for phases
+53-57 (semantic mapper engine, graph-aware verification, dashboard, SQLite mirror). Regex extraction (not tree-sitter),
+JSON storage (not SQLite), zero new dependency. Planned and executed via the GSD pipeline (5 parallel executor subagents).
+
+### Breaking changes
+
+- **New graph contract at `.design/context-graph.json`.** Nodes are `{ id, type, name, summary, tags[], complexity }`
+  over 10 node types; edges are `{ source, target, type, direction, weight }` over 12 edge types
+  (`reference/schemas/design-context.schema.json`). The 5 mapper agents and the synthesizer now DUAL-EMIT: they keep
+  writing `.design/map/*.md` AND emit graph fragments to `.design/fragments/<mapper>.json` (backward-compatible for one
+  minor version), so consumers gain the graph without losing the markdown maps.
+- **gdd-mcp tool cap raised 12 -> 13.** A 13th read-only tool, `gdd_context_query`, joins the registry
+  (`sdk/mcp/gdd-mcp/tools/index.ts`). The hard cap in the tool index, the MCP-tools lint, and the Phase 27.7 baselines
+  all move to 13. No write tools were added.
+
+### Added
+
+- **Schema, validator, query lib**: `reference/schemas/design-context.schema.json` (plus `reference/design-context-schema.md`
+  and `reference/design-context-tag-vocab.md`); `scripts/validate-design-context.cjs` (referential integrity, id
+  uniqueness, completeness, controlled tag vocabulary; dep-free with an optional Ajv overlay; wired as the
+  `validate:design-context` CI gate, a clean no-op when no graph is present); and `scripts/lib/design-context-query.cjs`
+  (`load`/`nodes`/`edges`/`path`/`consumersOf`/`unreachable`/`cycles`/`coverage`; pure, dep-free).
+- **Extract and merge engine**: `scripts/lib/design-context/{extract-tokens,extract-components,extract-motion,extract-a11y,extract-visual-hierarchy,merge-fragments,integration-map}.mjs`,
+  regex over source roots, dep-free, emitting schema-valid fragments; merge dedupes nodes by id and recovers or drops dangling edges.
+- **MCP and skills**: `gdd_context_query` (read-only graph query over the seven operations), `/gdd:context` (its front
+  end), and `/gdd:migrate-context` (migrate a pre-Phase-52 project from `.design/map/*.md` to the graph, flagging
+  low-confidence transforms; preview-first with `--dry-run`).
+- **Debt-crawler dual-mode**: `design-debt-crawler` queries the graph when `.design/context-graph.json` is present and
+  falls back to grep otherwise; `/gdd:progress` surfaces graph coverage; `integration-map.mjs` renders a mermaid map per Atomic-Design layer.
+
+### Notes
+
+- 6-manifest lockstep at **v1.52.0** + `OFF_CADENCE_VERSIONS.add('1.52.0')` + 37 `manifests-version.txt` baselines.
+  Re-locked: skill-list (89 -> 91; +context +migrate-context), root SKILL.md rows, the phase-42 compile count
+  (113 -> 115), the phase-28.5 distribution + warn count (8 -> 10; context at 137 and migrate-context at 123 lines, both
+  in the advisory WARN band), the progress post-migration baseline, the gdd-mcp 27.7 tool-count + registry baselines
+  (12 -> 13), and skills.json (+2). Tarball golden 917 -> 934 (+17). The `lint:md` ignore was widened to nested
+  `node_modules`.
+
+---
+
 ## [1.51.0] - 2026-06-03
 
 ### Phase 51 - Instinct-Based Learnings

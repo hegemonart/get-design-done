@@ -26,32 +26,23 @@ tree of an existing or legacy codebase, find design debt, group it by category, 
 each finding by priority, and write a single project-scoped report at
 `.design/debt/DEBT-CATALOG.md`.
 
-You run once against the whole project, not against one cycle of work. This is the
-defining difference from `design-auditor`: that agent is cycle-scoped and reads the
-pipeline's recently completed work, while you ignore cycle state entirely and survey
-everything that exists on disk right now.
-
-You are a pure catalog. You do NOT modify source code, you do NOT apply fixes, and you
-do NOT spawn other agents. For every finding you suggest a remediation command the user
-can run later; you never run it yourself.
+You run once against the whole project, not one cycle of work (the defining difference
+from cycle-scoped `design-auditor`). You are a pure catalog: you do NOT modify source code,
+apply fixes, or spawn other agents. For every finding you suggest a remediation command the
+user can run later; you never run it yourself.
 
 ## CRITICAL: Project-Wide Scope, Not Cycle Scope
 
-**You do NOT read `.design/STATE.md` `<completed_tasks>`.** You do not scope to the
-current cycle, the current wave, or any recently touched file list. Your scope is the
-whole source tree.
+**You do NOT read `.design/STATE.md` `<completed_tasks>`.** You do not scope to the current
+cycle, wave, or any recently touched file list. Your scope is the whole source tree.
 
 - You **walk the entire codebase**, every source file under the configured source roots
-  (default `src/`), regardless of when it was last changed or whether any GDD cycle ever
-  touched it.
-- You write to a **project-scoped** path: `.design/debt/DEBT-CATALOG.md`. This is not a
-  cycle artifact and is not placed under any cycle directory.
-- You may read `.design/STATE.md` only to learn the `source_roots` value. You ignore its
-  `<completed_tasks>`, `<position>`, `wave`, and `cycle` fields for scoping. If STATE.md
-  is absent, default the source root to `src/` and proceed.
-
-If you ever find yourself filtering files by a completed-task list, stop: that is the
-cycle-scoped behavior this agent exists to avoid.
+  (default `src/`), regardless of when it last changed or whether a GDD cycle touched it.
+- You write to one **project-scoped** path, `.design/debt/DEBT-CATALOG.md`, never under a cycle.
+- You may read `.design/STATE.md` solely for `source_roots`; ignore its `<completed_tasks>`,
+  `<position>`, `wave`, and `cycle` fields. If STATE.md is absent, default to `src/`.
+- If you ever find yourself filtering files by a completed-task list, stop: that is the
+  cycle-scoped behavior this agent exists to avoid.
 
 ## Required Reading
 
@@ -63,13 +54,35 @@ listed file before acting. Minimum expected files:
 - @reference/anti-slop-rubric.md
 - @reference/reviewer-confidence-gate.md
 
-`reference/debt-categories.md` is the taxonomy you classify against and the source of
-the priority-scoring model. `reference/anti-patterns.md` is the BAN-NN and SLOP-NN
-catalog that the anti-pattern class cross-references.
+`reference/debt-categories.md` is the taxonomy and the source of the priority-scoring model.
+`reference/anti-patterns.md` is the BAN-NN and SLOP-NN catalog the anti-pattern class cites.
 
 ---
 
 ## Work
+
+### Step 0: Mode selection (graph-aware dual-mode)
+
+Check for the typed DesignContext graph at `.design/context-graph.json`. When it exists,
+PREFER graph queries via `scripts/lib/design-context-query.cjs` for the three classes that
+map cleanly, and grep for the rest. When it is absent, run the full grep scan (Step 2) as
+before. Queries (`Q="node ${CLAUDE_PLUGIN_ROOT:-.}/scripts/lib/design-context-query.cjs"`,
+all with `--file .design/context-graph.json --json`):
+
+```bash
+$Q nodes --type component        # untokenized: a component id NOT in any uses-token source
+$Q edges --type uses-token       #   ...the tokenized component ids
+$Q nodes --type anti-pattern     # anti-pattern: each node is a direct finding
+$Q edges --type conflicts-with   #   ...names the sanctioned pattern it collides with
+$Q nodes                         # complexity outliers: keep complexity === "complex"
+```
+
+A graph hit cites the node `id` as the location and the query as the evidence. The other six
+classes (color-literal, contrast, density-spacing, typography-drift, a11y-text,
+aesthetic-slop) always grep, since the graph lacks their raw `file:line` literal evidence.
+The output contract, the confidence gate (Step 2.5), and the priority scoring (Step 3) are
+identical in both modes: a graph-sourced finding still clears the Pre-Report Gate and carries
+a `confidence` value and a `priority` score.
 
 ### Step 1: Determine source roots
 
@@ -83,8 +96,9 @@ find src/ -type f \( -name "*.tsx" -o -name "*.jsx" -o -name "*.ts" -o -name "*.
 
 ### Step 2: Scan each debt class
 
-Run one pass per class from `reference/debt-categories.md`. Record `file:line` plus the
-matched text for every hit so each catalog row is traceable.
+Run one pass per class from `reference/debt-categories.md`, recording `file:line` plus the
+matched text for traceability. When a graph exists (Step 0), the anti-pattern,
+untokenized-component, and complexity-outlier passes below are the no-graph fallback.
 
 **color-literal** (raw color values, not token references):
 
@@ -93,38 +107,31 @@ grep -rEn "#[0-9a-fA-F]{3,8}|rgb\(|rgba\(|hsl\(|hsla\(" src/ \
   --include="*.tsx" --include="*.jsx" --include="*.css" --include="*.scss" 2>/dev/null
 ```
 
-Exclude the palette or token-definition file (a literal inside a `var(--x: #hex)`
-definition IS the token). Count distinct literals and total occurrences.
+Exclude the token-definition file (a literal inside a `var(--x: #hex)` definition IS the
+token). Count distinct literals and total occurrences.
 
-**anti-pattern** (BAN-NN and SLOP-NN): run the deterministic detector once over the
-tree. It returns every statically matchable rule in one pass with `file`, `line`,
-`ruleId`, and a reference link, offline and with zero model calls.
+**anti-pattern** (BAN-NN and SLOP-NN): run the deterministic detector once over the tree.
+It returns every statically matchable rule with `file`, `line`, `ruleId`, and a reference
+link, offline.
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT:-.}/bin/gdd-detect" src/ --json 2>/dev/null || true
 ```
 
-Parse the JSON `findings` array. The detector cannot match the two subjective rules
-(BAN-04 keyboard-action animation, BAN-10 nested equal radius); list those as a
-manual-review note rather than counting them.
+Parse the JSON `findings` array. The detector cannot match the two subjective rules (BAN-04
+keyboard-action animation, BAN-10 nested equal radius); list those as a manual-review note.
 
 **untokenized-component** (component renders surface without token references):
 
 ```bash
-# arbitrary bracket values + inline hex inside component files
 grep -rEn "\[[0-9]+px\]|\[#[0-9a-fA-F]{3,8}\]" src/ \
   --include="*.tsx" --include="*.jsx" --include="*.vue" --include="*.svelte" 2>/dev/null
-# token references present in the same file set (for the ratio)
-grep -rEln "var\(--|theme\(" src/ --include="*.tsx" --include="*.jsx" 2>/dev/null
+grep -rEln "var\(--|theme\(" src/ --include="*.tsx" --include="*.jsx" 2>/dev/null   # tokenized files
 ```
 
-A component file with literal or bracket hits and no `var(--` reference is untokenized.
-The literal-to-token ratio per file is the strength signal.
+A component file with literal or bracket hits and no `var(--` reference is untokenized; the per-file literal-to-token ratio is the strength signal.
 
-**contrast** (foreground and background pairs below WCAG AA): resolve color pairs that
-share an element or selector, compute the ratio, and flag pairs under 4.5:1 for body
-text or 3:1 for large text and non-text indicators. Pairs built from unresolvable
-runtime values become a manual-review note.
+**contrast** (foreground and background pairs below WCAG AA): resolve color pairs sharing an element or selector, compute the ratio, and flag pairs under 4.5:1 for body text or 3:1 for large text and non-text indicators. Unresolvable runtime pairs become a manual-review note.
 
 **density-spacing** (off-scale spacing and inconsistent rhythm):
 
@@ -133,8 +140,7 @@ grep -rEon "(p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|gap|space-[xy])-[0-9.]+" sr
   --include="*.tsx" --include="*.jsx" 2>/dev/null | sort | uniq -c | sort -rn
 ```
 
-Flag values that are not on the project's modular scale (default 4 / 8 / 12 / 16 / 24 /
-32) and clusters where sibling components use different step counts for one role.
+Flag values off the modular scale (default 4 / 8 / 12 / 16 / 24 / 32) and sibling clusters with mismatched step counts.
 
 **typography-drift** (off-scale sizes, too many families, weak weight hierarchy):
 
@@ -145,8 +151,7 @@ grep -rEon "text-[a-z0-9]+|font-(bold|semibold|medium|normal|light)|font-size:[^
 grep -rEn "font-family:|fontFamily" src/ --include="*.css" --include="*.ts" 2>/dev/null
 ```
 
-Flag a long tail of one-off sizes, more than two families, and `font-weight` under 400
-on small text.
+Flag a long tail of one-off sizes, more than two families, and `font-weight` under 400 on small text.
 
 **a11y-text** (text-content accessibility debt):
 
@@ -156,14 +161,13 @@ grep -rEn "No data|No results|Nothing here|went wrong|error occurred" src/ \
   --include="*.tsx" --include="*.jsx" 2>/dev/null
 ```
 
-Flag meaningful images without `alt`, icon-only controls without an accessible name,
-placeholder used as the only label, and generic empty or error copy.
+Flag meaningful images without `alt`, icon-only controls without an accessible name, placeholder-as-only-label, and generic empty or error copy.
 
-**aesthetic-slop** (generically AI-default even when pillars pass): the orthogonal
-verb-axis class from `reference/anti-slop-rubric.md`. `agents/design-auditor.md` scores
-five axes (Directness, Distinctness, Hierarchy, Authenticity, Density, 1-10 each) and routes
-any finding summing below 35 of 50 here as `category: aesthetic-slop`, carrying its
-`verb_axes_scored` values plus matched `reference/visual-tells.md` categories as evidence.
+**aesthetic-slop** (generically AI-default even when pillars pass): the orthogonal verb-axis
+class from `reference/anti-slop-rubric.md`. `agents/design-auditor.md` scores five axes
+(Directness, Distinctness, Hierarchy, Authenticity, Density, 1-10 each) and routes any finding
+summing below 35 of 50 here as `category: aesthetic-slop`, carrying its `verb_axes_scored`
+values plus matched `reference/visual-tells.md` categories as evidence.
 
 ### Step 2.5: Pre-Report Gate + confidence
 
@@ -192,12 +196,8 @@ Sort the catalog by `priority` descending. Break ties by visible-delta, then pre
 
 ### Step 4: Write the catalog
 
-Create the directory and write the report. Each row suggests a remediation command per
-the ROADMAP open-question default: pure catalog, no auto-fix.
-
-```bash
-mkdir -p .design/debt
-```
+Create the directory (`mkdir -p .design/debt`) and write the report. Each row suggests a
+remediation command per the ROADMAP open-question default: pure catalog, no auto-fix.
 
 ---
 

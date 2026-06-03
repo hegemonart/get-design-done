@@ -37,7 +37,9 @@ const path = require('node:path');
 
 const DEFAULT_EXEMPTIONS = new Set(['index.ts', 'shared.ts']);
 const DEFAULT_MAX_LOC = 30;
-const DEFAULT_TOOL_CAP = 12;
+// Raised 12 -> 13 in Phase 52 (DesignContext keystone, D5) for the read-only
+// `gdd_context_query` tool. Mirrors the cap in sdk/mcp/gdd-mcp/tools/index.ts.
+const DEFAULT_TOOL_CAP = 13;
 const TOOL_FILE_GLOB = /^gdd_[a-z0-9_]+\.ts$/;
 
 const FORBIDDEN_IMPORT_PATTERNS = Object.freeze([
