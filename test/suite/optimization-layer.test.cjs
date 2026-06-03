@@ -131,7 +131,9 @@ test('optimization-layer: router tier-selection reference matches agent frontmat
   // frontmatter default-tier or model field. We soften this to a presence
   // check to tolerate drift during the transition window.
   const agentDir = path.join(REPO_ROOT, 'agents');
-  const agentFiles = fs.readdirSync(agentDir).filter(f => f.startsWith('design-') && f.endsWith('.md'));
+  // Widened from `f.startsWith('design-')` — non-design agents also belong in
+  // the router-tier cross-reference if they appear in the router doc.
+  const agentFiles = fs.readdirSync(agentDir).filter(f => f.endsWith('.md') && f !== 'README.md');
   for (const agentFile of agentFiles) {
     const name = agentFile.replace(/\.md$/, '');
     if (!routerBody.includes(name)) continue;
@@ -217,8 +219,16 @@ test('optimization-layer: aggregateByPhase excludes blocked rows from phase tota
   }
 });
 
-test('optimization-layer: lazy-spawn gate — every design-* agent declares required reading or equivalent', () => {
+test('optimization-layer: lazy-spawn gate — every design-stage agent declares required reading or equivalent', () => {
   const agentDir = path.join(REPO_ROOT, 'agents');
+  // Lazy-spawn gate is specifically about wasteful design-stage agent
+  // spawns. Operational/housekeeping agents (gdd-* updaters, exporters,
+  // verifiers that derive inputs from frontmatter `writes:` declarations,
+  // etc.) live outside this gate's scope — they don't spawn from the
+  // design pipeline and so the lazy-spawn savings don't apply.
+  //
+  // Kept the `design-*` prefix on this single test; the other tests in
+  // this file widened their filters per Batch E1.
   const agentFiles = fs
     .readdirSync(agentDir)
     .filter(f => f.startsWith('design-') && f.endsWith('.md'));

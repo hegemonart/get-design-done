@@ -43,8 +43,11 @@ function gitTrackedSubdirs(dirPrefix) {
 
 test('baseline: agent-list matches committed agents/ files', () => {
   const expected = readBaselineLines('agent-list.txt');
+  // Widened from `f.startsWith('design-')`: the baseline now covers every
+  // agent in agents/, not just design-* ones. Re-lock at every shipped
+  // addition so drift is caught immediately.
   const actual = gitTrackedFiles('agents/')
-    .filter(f => f.startsWith('design-') && f.endsWith('.md'))
+    .filter(f => f.endsWith('.md') && f !== 'README.md')
     .sort();
   assert.deepEqual(actual, expected,
     `Agent list drift detected. Expected:\n${expected.join('\n')}\nActual:\n${actual.join('\n')}\n\nIf intentional, re-lock per test/fixtures/baselines/current/README.md`
