@@ -22,6 +22,7 @@ import { queryCommand } from './commands/query.ts';
 import { auditCommand } from './commands/audit.ts';
 import { initCommand } from './commands/init.ts';
 import { buildCommand } from './commands/build.ts';
+import { dashboardCommand } from './commands/dashboard.ts';
 
 // ---------------------------------------------------------------------------
 // Top-level USAGE.
@@ -36,6 +37,7 @@ Commands:
   audit            Probe connections + dry-run verify.
   init             Bootstrap a new project.
   build skills     Compile per-harness skill bundles from source/skills/.
+  dashboard        Open the GDD dashboard (TUI; --web for the browser graph).
 
 Use 'gdd-sdk <command> -h' for command-specific flags.
 
@@ -60,6 +62,7 @@ export interface DispatcherDeps {
     readonly audit?: typeof auditCommand;
     readonly init?: typeof initCommand;
     readonly build?: typeof buildCommand;
+    readonly dashboard?: typeof dashboardCommand;
   };
 }
 
@@ -85,6 +88,7 @@ export async function dispatch(
     audit: deps.commands?.audit ?? auditCommand,
     init: deps.commands?.init ?? initCommand,
     build: deps.commands?.build ?? buildCommand,
+    dashboard: deps.commands?.dashboard ?? dashboardCommand,
   };
 
   // Bare invocation or top-level help → USAGE.
@@ -117,6 +121,8 @@ export async function dispatch(
       return await commands.init(parsed, { stdout, stderr });
     case 'build':
       return await commands.build(parsed, { stdout, stderr });
+    case 'dashboard':
+      return await commands.dashboard(parsed, { stdout, stderr });
     default:
       stderr.write(
         `gdd-sdk: unknown subcommand "${parsed.subcommand}"\n${USAGE}`,
@@ -132,6 +138,7 @@ const KNOWN_SUBCOMMANDS: ReadonlySet<string> = new Set([
   'audit',
   'init',
   'build',
+  'dashboard',
 ]);
 
 // ---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.54.0",
+  "version": "1.55.0",
   "description": "A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -34,6 +34,7 @@
     "NOTICE"
   ],
   "bin": {
+    "gdd-dashboard": "./bin/gdd-dashboard",
     "gdd-detect": "./bin/gdd-detect",
     "gdd-events": "./scripts/cli/gdd-events.mjs",
     "gdd-graph": "./bin/gdd-graph",

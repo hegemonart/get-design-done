@@ -447,7 +447,9 @@ test('27.7-02: gdd_health — returns 4 checks with valid statuses', async () =>
     // Plan 32-07 added 7th check (skill_discipline) — using-gdd bootstrap.
     // Phase 44 added 8th check (harness_freshness) — per-harness last_verified age.
     // Phase 54 added 9th check (stack_addendums) — detected-stack addendum coverage.
-    assert.equal(res.data.checks.length, 9);
+    // Phase 55 added 10th check (dashboard_reachable) — bin + data plane (graceful).
+    assert.equal(res.data.checks.length, 10);
+    assert.ok(res.data.checks.some((c) => c.name === 'dashboard_reachable'));
     for (const c of res.data.checks) {
       assert.ok(['ok', 'warn', 'fail'].includes(c.status));
     }

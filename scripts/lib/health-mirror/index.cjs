@@ -8,7 +8,7 @@
 // Surface:
 //   async getHealthChecks(rootDir) → { checks: HealthCheck[] }
 //
-// The 9 checks (in stable order) are:
+// The 10 checks (in stable order) are:
 //   1. claude_md            — CLAUDE.md presence
 //   2. planning_dir         — .planning/ presence
 //   3. design_dir           — .design/ presence
@@ -18,6 +18,7 @@
 //   7. skill_discipline     — using-gdd bootstrap + SessionStart inject (Plan 32-07)
 //   8. harness_freshness    — per-harness last_verified age (Phase 44)
 //   9. stack_addendums      — Phase 54 coverage: N/M detected stacks have addendums
+//  10. dashboard_reachable  — Phase 55: bin/gdd-dashboard on disk + data plane loads
 //
 // Check 5 was added in Plan 30-06 — surfaces the report-issue kill-switch
 // (env or config disable) so users can verify why the command is
@@ -48,6 +49,22 @@
 //                                           inject-using-gdd entry)
 // status: 'ok' when ready, 'warn' otherwise. PURE read-only (rootDir-relative
 // file + JSON inspection only) — NEVER throws, NEVER networks.
+//
+// Check 10 was added in Phase 55 — surfaces whether the GDD dashboard is
+// reachable so a user running /gdd:health knows the `gdd dashboard` entrypoint
+// is wired. GRACEFUL-ABSENT by design (D-8 risk surfacing precedent): the
+// dashboard is an opt-in, read-only surface that also works via file-scrape, so
+// a missing bin or absent data plane is a 'warn' (actionable note), NEVER a
+// hard 'fail'. The status is 'ok' when BOTH the bin/gdd-dashboard trampoline
+// resolves on disk (located via a package-root walk-up — the Phase 53/54 lesson,
+// NEVER a fixed __dirname jump) AND the dashboard data plane module
+// (sdk/dashboard/data/source.cjs) loads + exposes loadDashboardModel. The detail
+// line is one of:
+//   - "dashboard: bin/gdd-dashboard present; data plane ok"
+//   - "dashboard: bin missing"                 (trampoline not on disk)
+//   - "dashboard: data plane unavailable"      (bin present, source.cjs absent)
+//   - "dashboard: bin missing; data plane unavailable"
+// PURE read-only (fs.statSync + a wrapped require) — NEVER throws, NEVER networks.
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -310,6 +327,39 @@ async function getHealthChecks(rootDir) {
     checks.push({ name: 'stack_addendums', status, detail });
   }
 
+  // 10. dashboard_reachable — Phase 55. GRACEFUL-ABSENT: reports whether the
+  // GDD dashboard entrypoint is wired (bin/gdd-dashboard on disk) AND its data
+  // plane module loads. NEVER 'fail' — a missing bin is a 'warn' note because
+  // the dashboard is opt-in and also works via file-scrape. PURE read-only
+  // (fs.statSync + a wrapped require); NEVER throws, NEVER networks.
+  {
+    let status;
+    let detail;
+    try {
+      const gddRoot = resolveDashboardRoot(rootDir);
+      const binPresent = dashboardBinResolves(gddRoot);
+      const dataPlaneOk = dashboardDataPlaneLoads(gddRoot);
+      if (binPresent && dataPlaneOk) {
+        status = 'ok';
+        detail = 'dashboard: bin/gdd-dashboard present; data plane ok';
+      } else {
+        status = 'warn';
+        if (!binPresent && !dataPlaneOk) {
+          detail = 'dashboard: bin missing; data plane unavailable';
+        } else if (!binPresent) {
+          detail = 'dashboard: bin missing';
+        } else {
+          detail = 'dashboard: data plane unavailable';
+        }
+      }
+    } catch {
+      // Absolute safety net — the health probe must never crash on this check.
+      status = 'warn';
+      detail = 'dashboard: unavailable';
+    }
+    checks.push({ name: 'dashboard_reachable', status, detail });
+  }
+
   return { checks };
 }
 
@@ -398,6 +448,101 @@ function figmaVariablesBlockedLocally(rootDir) {
     return false;
   } catch {
     // Absolute safety net — the health probe must never crash on this check.
+    return false;
+  }
+}
+
+/**
+ * Walk UP from `startDir` to the GDD package root (the first ancestor whose
+ * package.json `name` is the GDD package). This mirrors the Phase 53/54 lesson
+ * (sdk/dashboard/data/_pkg-root.cjs): NEVER resolve a cross-tree sibling via a
+ * fixed __dirname-relative jump. The shipped package name is scoped
+ * ("@hegemonart/get-design-done"); dev/self-host/fixture roots may use the bare
+ * "get-design-done" — both match. Bounded climb; defensive. Returns null if no
+ * GDD root marker is found.
+ *
+ * @param {string} startDir
+ * @returns {string|null} absolute package-root dir, or null
+ */
+function findGddPackageRoot(startDir) {
+  try {
+    let dir = path.resolve(startDir);
+    for (let i = 0; i < 12; i++) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+        if (pkg && typeof pkg.name === 'string') {
+          if (pkg.name === 'get-design-done' || /\/get-design-done$/.test(pkg.name)) {
+            return dir;
+          }
+        }
+      } catch {
+        // no/garbage package.json at this level — keep climbing
+      }
+      const parent = path.dirname(dir);
+      if (parent === dir) break;
+      dir = parent;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Resolve the AUTHORITATIVE GDD package root for the dashboard probe, given the
+ * project root being health-checked. Resolution (D-7 walk-up, never a fixed
+ * __dirname jump):
+ *   - If `rootDir` itself sits inside a GDD checkout (dev / self-host / a
+ *     hermetic fixture that declares the GDD name), THAT root is authoritative —
+ *     its own bin/ + sdk/dashboard/ are the truth. No cross-root fallback (so a
+ *     fixture is hermetic + deterministic regardless of the shipped tree).
+ *   - Otherwise `rootDir` is an unrelated CONSUMER project (no GDD marker); the
+ *     dashboard ships alongside THIS module, so walk up from __dirname.
+ * Returns null only if neither resolves (degrades the check to 'warn').
+ *
+ * @param {string} rootDir project root passed to getHealthChecks
+ * @returns {string|null}
+ */
+function resolveDashboardRoot(rootDir) {
+  const fromRoot = findGddPackageRoot(rootDir);
+  if (fromRoot) return fromRoot;
+  return findGddPackageRoot(__dirname);
+}
+
+/**
+ * Does the bin/gdd-dashboard trampoline resolve on disk under the authoritative
+ * GDD root? (Phase 55, check 10.) `fs.statSync` follows symlinks, so an npm
+ * bin-linked trampoline (a symlink resolving to a file) counts as present. PURE
+ * read-only; NEVER throws.
+ *
+ * @param {string} gddRoot authoritative GDD root (or null)
+ * @returns {boolean} true iff bin/gdd-dashboard is present on disk
+ */
+function dashboardBinResolves(gddRoot) {
+  if (!gddRoot) return false;
+  try {
+    return fs.statSync(path.join(gddRoot, 'bin', 'gdd-dashboard')).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Does the dashboard data plane module load + expose loadDashboardModel under
+ * the authoritative GDD root? (Phase 55, check 10.) The data plane is
+ * sdk/dashboard/data/source.cjs (R1 — the in-process shared-lib read surface the
+ * dashboard renders). A missing module or a require error degrades to false
+ * (→ 'warn'), NEVER throws.
+ *
+ * @param {string} gddRoot authoritative GDD root (or null)
+ * @returns {boolean} true iff source.cjs loads and exports loadDashboardModel
+ */
+function dashboardDataPlaneLoads(gddRoot) {
+  if (!gddRoot) return false;
+  try {
+    const mod = require(path.join(gddRoot, 'sdk', 'dashboard', 'data', 'source.cjs'));
+    return !!(mod && typeof mod.loadDashboardModel === 'function');
+  } catch {
     return false;
   }
 }

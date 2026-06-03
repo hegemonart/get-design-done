@@ -648,6 +648,14 @@ OFF_CADENCE_VERSIONS.add('1.53.0');
 // /gdd:new-addendum scaffolder skill, and a gsd-health coverage row. No new dependency. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.54.0');
 
+// 1.55.0 -> Phase 55 (GDD Dashboard). Minor on 1.54.0. Adds a DEP-FREE read-only multi-harness control plane
+// (maintainer Rule-4 decision: no Ink, no React/Vite/React Flow): a hand-rolled ANSI TUI (bin/gdd-dashboard +
+// sdk/dashboard/tui + sdk/dashboard/data data plane reading the shared state/event/graph libs in-process) and a
+// self-contained-HTML graph view (scripts/lib/dashboard/graph-html.cjs, inline SVG + vanilla JS, layered layout)
+// launched via `gdd dashboard --web`; plus a gsd-health dashboard_reachable check + risk/confidence placeholder
+// surfacing (live post-56). No new dependency. Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.55.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
