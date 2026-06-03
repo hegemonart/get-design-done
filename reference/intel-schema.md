@@ -8,8 +8,11 @@ Path: `.design/intel/` (gitignored - runtime data only)
 The intel store is a set of flat JSON files (slices) that index the design surface.
 Each slice is an independent file. Agents read slices they need; the updater rewrites only changed slices.
 
-Slices are rebuilt by `scripts/build-intel.cjs` (full initial build) and kept current by the
-`gdd-intel-updater` agent (incremental updates triggered by file changes).
+Slices are rebuilt by `scripts/build-intel.cjs` (full initial build) and refreshed on-demand
+by the `gdd-intel-updater` agent (incremental updates when run by the user or a skill that
+spawns it). The store is **not auto-current**: it reflects the last invocation of build-intel
+or the updater. Skills that depend on fresh intel should invoke the updater first or treat
+slice timestamps as best-effort.
 
 ## Slice Definitions
 
@@ -243,6 +246,38 @@ Cross-reference graph: nodes are files, edges are dependency relationships from 
   ]
 }
 ```
+
+---
+
+### agent-tiers.json
+
+Runtime-neutral tier index per agent; populated by `gdd-intel-updater` so downstream
+tooling reads tier information without re-parsing every agent's markdown frontmatter.
+Both the model-tier (`opus|sonnet|haiku`) and the equivalent runtime-neutral
+reasoning class (`high|medium|low`) are emitted side-by-side using the locked
+equivalence map (opus↔high, sonnet↔medium, haiku↔low).
+
+```json
+{
+  "generated": "<ISO-8601>",
+  "agents": [
+    {
+      "name": "design-planner",
+      "default_tier": "opus",
+      "reasoning_class": "high"
+    },
+    {
+      "name": "design-verifier-gate",
+      "default_tier": "haiku",
+      "reasoning_class": "low"
+    }
+  ]
+}
+```
+
+Consumers: router, budget enforcer, multi-runtime tier resolver.
+Validation: every agent in `agents/*.md` (except README.md) MUST appear exactly once.
+Written atomically (.tmp + rename) when the updater runs; absent on a fresh checkout.
 
 ## Incremental Update Rules
 
