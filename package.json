@@ -88,6 +88,8 @@
     "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
     "validate:feature-counts": "node scripts/check-feature-counts.cjs",
     "validate:registry-tiers": "node scripts/validate-registry-tiers.cjs",
+    "validate:no-internal-refs": "node scripts/validate-no-internal-refs.cjs",
+    "validate:cache-tiers": "node scripts/check-cache-tiers.cjs",
     "scan:injection": "node scripts/run-injection-scanner-ci.cjs",
     "scan:outbound": "node scripts/scan-outbound-network.cjs",
     "scan:ws-bind": "node scripts/scan-ws-bind.cjs",

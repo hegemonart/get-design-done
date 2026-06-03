@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-03T23:07:48.583Z",
+  "generated_at": "2026-06-03T23:15:49.221Z",
   "counts": {
     "skills/analyze-dependencies/SKILL.md": 2,
     "skills/apply-reflections/apply-reflections-procedure.md": 26,
@@ -121,7 +121,7 @@
     "source/skills/peer-cli-add/SKILL.md": 1,
     "source/skills/peer-cli-customize/SKILL.md": 5,
     "source/skills/peers/SKILL.md": 10,
-    "source/skills/plan/plan-procedure.md": 4,
+    "source/skills/plan/plan-procedure.md": 6,
     "source/skills/plan/SKILL.md": 2,
     "source/skills/progress/SKILL.md": 2,
     "source/skills/quality-gate/SKILL.md": 5,
@@ -147,6 +147,7 @@
     "source/skills/turn-closeout/SKILL.md": 7,
     "source/skills/update/SKILL.md": 5,
     "source/skills/verify/SKILL.md": 3,
+    "source/skills/verify/verify-procedure.md": 2,
     "source/skills/warm-cache/SKILL.md": 4,
     "source/skills/watch-authorities/SKILL.md": 4,
     "agents/component-benchmark-harvester.md": 1,
