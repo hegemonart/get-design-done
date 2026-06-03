@@ -146,10 +146,11 @@ test('55-01: loadDashboardModel assembles every section from a fake .design', as
     const model = await source.loadDashboardModel({ root });
 
     // Exact top-level key set (the pinned contract executors D/F consume).
+    // Phase 57 Round 3-E adds `backend` to indicate the active state backend.
     assert.deepEqual(
       Object.keys(model).sort(),
       [
-        'blockers', 'chain', 'costs', 'cycle', 'decisions', 'degraded',
+        'backend', 'blockers', 'chain', 'costs', 'cycle', 'decisions', 'degraded',
         'events', 'graph', 'health', 'phase', 'plans', 'root', 'runtimes',
         'sessions', 'status', 'worktrees',
       ].sort(),

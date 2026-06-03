@@ -214,6 +214,7 @@ dist/claude-code/.claude/skills/spike-wrap-up/SKILL.md
 dist/claude-code/.claude/skills/spike/SKILL.md
 dist/claude-code/.claude/skills/start/SKILL.md
 dist/claude-code/.claude/skills/start/start-procedure.md
+dist/claude-code/.claude/skills/state/SKILL.md
 dist/claude-code/.claude/skills/stats/SKILL.md
 dist/claude-code/.claude/skills/style/SKILL.md
 dist/claude-code/.claude/skills/style/style-doc-procedure.md
@@ -757,6 +758,11 @@ scripts/lib/snapshot-reader/index.cjs
 scripts/lib/snapshot-reader/index.d.cts
 scripts/lib/spring.cjs
 scripts/lib/start-findings-engine.cjs
+scripts/lib/state/migrate-to-sqlite.cjs
+scripts/lib/state/query-surface.cjs
+scripts/lib/state/render-markdown.cjs
+scripts/lib/state/state-backend.cjs
+scripts/lib/state/state-store.cjs
 scripts/lib/tier-resolver-openrouter.cjs
 scripts/lib/tier-resolver.cjs
 scripts/lib/tool-scoping/index.ts
@@ -869,6 +875,7 @@ sdk/state/index.ts
 sdk/state/lockfile.ts
 sdk/state/mutator.ts
 sdk/state/parser.ts
+sdk/state/schema.sql
 sdk/state/types.ts
 skills/add-backlog/SKILL.md
 skills/analyze-dependencies/SKILL.md
@@ -970,6 +977,7 @@ skills/spike-wrap-up/SKILL.md
 skills/spike/SKILL.md
 skills/start/SKILL.md
 skills/start/start-procedure.md
+skills/state/SKILL.md
 skills/stats/SKILL.md
 skills/style/SKILL.md
 skills/style/style-doc-procedure.md

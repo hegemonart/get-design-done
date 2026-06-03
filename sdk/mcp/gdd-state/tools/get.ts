@@ -5,6 +5,14 @@
 // event. Optionally projects a subset of fields when `input.fields` is
 // provided; unknown field names are silently ignored so callers can pass
 // a broad list without pre-flight knowledge of ParsedState shape.
+//
+// Phase 57 (Round 3-E): this tool already benefits from the SQLite read
+// path transparently. `sdk/state/index.ts` `read()` delegates through the
+// migration-active gate: when BACKEND==='sqlite' and a sibling state.sqlite
+// exists the dual-write path keeps STATE.md byte-equal with SQLite state,
+// so reading the on-disk STATE.md returns the canonical view regardless of
+// which backend is active. No behavioral change is required here and the
+// tool input/output SCHEMA IS UNCHANGED (no mcp-tools-manifest hash drift).
 
 import { read } from '../../../state/index.ts';
 import type { ParsedState } from '../../../state/types.ts';

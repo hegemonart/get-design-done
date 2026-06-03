@@ -148,13 +148,102 @@ function decisionSources(cwd) {
 }
 
 /**
- * Does any decision/blocker line mention this file? Best-effort substring grep
- * over the canonical docs for the file's basename or relPath (the same terms
- * the decision-injector greps on). Returns { found:boolean, where:string|null }.
+ * Lazy-require state-store.cjs (Phase 57 dual-backend layer).
+ * Returns null if not yet available (degrade to grep).
+ */
+function _requireStateStore() {
+  try {
+    const candidates = [
+      path.join(__dirname, '..', 'scripts', 'lib', 'state', 'state-store.cjs'),
+    ];
+    const root = findPackageRoot(__dirname);
+    if (root) candidates.push(path.join(root, 'scripts', 'lib', 'state', 'state-store.cjs'));
+    for (const c of candidates) {
+      try {
+        const m = require(c);
+        if (m && typeof m.queryDecisions === 'function') return m;
+      } catch { /* try next */ }
+    }
+  } catch { /* never throw */ }
+  return null;
+}
+
+/**
+ * Lazy-require state-backend.cjs to check if migration is active.
+ * Migration is active when BACKEND==='sqlite' AND the sibling .design/state.sqlite exists.
+ */
+function _isMigrationActive(cwd) {
+  try {
+    const candidates = [
+      path.join(__dirname, '..', 'scripts', 'lib', 'state', 'state-backend.cjs'),
+    ];
+    const root = findPackageRoot(__dirname);
+    if (root) candidates.push(path.join(root, 'scripts', 'lib', 'state', 'state-backend.cjs'));
+    let backend = null;
+    for (const c of candidates) {
+      try {
+        const m = require(c);
+        if (m && typeof m.BACKEND === 'string' && typeof m.sqlitePath === 'function') {
+          backend = m;
+          break;
+        }
+      } catch { /* try next */ }
+    }
+    if (!backend || backend.BACKEND !== 'sqlite') return false;
+    // Verify that the sibling .design/state.sqlite actually exists (migration-active gate).
+    const dbPath = backend.sqlitePath(cwd);
+    return fs.existsSync(dbPath);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Does any decision/blocker line mention this file?
+ *
+ * When migration is active (BACKEND==='sqlite' AND .design/state.sqlite exists):
+ *   - Tier-0: query state-store.cjs queryDecisions(term) for each search term.
+ *     Falls back to grep if the store query throws.
+ * When migration is NOT active (default, un-migrated):
+ *   - Substring grep over STATE.md/CYCLES.md/LEARNINGS.md (UNCHANGED).
+ *
+ * Returns { found:boolean, where:string|null }.
+ * The return shape and the soften-if-absent behavior are UNCHANGED.
  */
 function decisionMentions(cwd, relPath) {
   const basename = path.basename(relPath);
   const terms = Array.from(new Set([basename, relPath].filter(Boolean)));
+
+  // Tier-0: FTS5 path (migration-active only).
+  if (_isMigrationActive(cwd)) {
+    const store = _requireStateStore();
+    if (store) {
+      try {
+        for (const t of terms) {
+          if (!t) continue;
+          const rows = store.queryDecisions(t, { projectRoot: cwd, limit: 1 });
+          if (Array.isArray(rows) && rows.length > 0) {
+            return { found: true, where: 'state.sqlite' };
+          }
+        }
+        // FTS5 returned no matches; check blockers via getBlockers substring.
+        const blockers = store.getBlockers ? store.getBlockers({ projectRoot: cwd }) : [];
+        if (Array.isArray(blockers) && blockers.length > 0) {
+          for (const b of blockers) {
+            const body = (b.body_md || b.raw_line || '');
+            for (const t of terms) {
+              if (t && body.includes(t)) return { found: true, where: 'state.sqlite' };
+            }
+          }
+        }
+        return { found: false, where: null };
+      } catch {
+        // FTS5 query failed: fall through to grep.
+      }
+    }
+  }
+
+  // Tier-1 (always-on fallback): substring grep over canonical docs.
   for (const src of decisionSources(cwd)) {
     let content;
     try { content = fs.readFileSync(src, 'utf8'); } catch { continue; }

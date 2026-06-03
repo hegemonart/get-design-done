@@ -76,6 +76,7 @@ skill-manifest
 spike
 spike-wrap-up
 start
+state
 stats
 style
 synthesize

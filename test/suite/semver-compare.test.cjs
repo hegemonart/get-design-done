@@ -665,6 +665,16 @@ OFF_CADENCE_VERSIONS.add('1.55.0');
 // calibration (calibration.cjs) feeding the bandit reward. No new dependency. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.56.0');
 
+// 1.57.0 -> Phase 57 (SQLite State Backbone). Minor on 1.56.0. Adds an OPT-IN, ZERO-NEW-DEPENDENCY SQLite query layer
+// over project state: a new scripts/lib/state/ module (state-backend.cjs opportunistic probeOptional('better-sqlite3')
+// + FTS5 probe, state-store.cjs dual-backend dispatch, migrate-to-sqlite.cjs idempotent --migrate-state, render-markdown.cjs
+// byte-equal STATE.md round-trip) + sdk/state/schema.sql (14 tables + FTS5) + sdk/state dual-write behind a migration-active
+// gate (markdown stays the human-editable + fallback SoT; the frozen read/mutate/transition API is unchanged) + consumers
+// (gdd_state__get + dashboard read SQLite-direct, gdd-fact-force FTS5 tier-0) + a /gdd:state skill (readonly query / recover
+// / demigrate). Markdown remains authoritative when the module is absent (the CI surface); SQLite verified locally. No new
+// dependency. Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.57.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
