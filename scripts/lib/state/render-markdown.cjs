@@ -376,21 +376,33 @@ function renderStateMarkdown(db, cycle_id, sdk) {
   }
 
   // --- blockers raw_body ---
-  // Only unresolved blockers go in the STATE.md <blockers> block.
+  // activeBlockers is used both for raw_bodies reconstruction and the blockers state array below.
   const activeBlockers = blockerRows.filter((r) => !r.resolved_at);
-  if (activeBlockers.length > 0) {
-    const lines = activeBlockers.map((row) => {
-      // ALWAYS prefer raw_line for blockers (date-format hazard).
-      if (row.raw_line) return row.raw_line;
-      return canonicalBlocker({ stage: row.stage || '', date: row.date || '', text: row.body_md || '' });
-    });
-    raw_bodies.blockers = lines.join('\n');
-  } else if ('blockers' in blockGaps) {
-    raw_bodies.blockers = blockRawBodies['blockers'] !== undefined
-      ? blockRawBodies['blockers']
-      : '';
-  } else if (blockRawBodies['blockers'] !== undefined) {
-    raw_bodies.blockers = blockRawBodies['blockers'];
+
+  // BUG-09: when _block_meta stores a non-null raw_body for 'blockers', emit it
+  // verbatim (like unstructured blocks). This preserves comment lines inside
+  // <blockers> that would otherwise be silently dropped when rebuilding from rows.
+  //
+  // Fall through to row-reconstruction only when raw_body is absent (null), which
+  // happens after an appendBlocker() call that doesn't update _block_meta.raw_body.
+  const blockersRawBody = blockRawBodies['blockers'];
+  if (blockersRawBody !== undefined && blockersRawBody !== null) {
+    // Verbatim round-trip: emit stored raw_body (preserves comments).
+    raw_bodies.blockers = blockersRawBody;
+  } else {
+    // Reconstruct from rows (no stored raw_body).
+    // Only unresolved blockers go in the STATE.md <blockers> block.
+    if (activeBlockers.length > 0) {
+      const lines = activeBlockers.map((row) => {
+        // ALWAYS prefer raw_line for blockers (date-format hazard).
+        if (row.raw_line) return row.raw_line;
+        return canonicalBlocker({ stage: row.stage || '', date: row.date || '', text: row.body_md || '' });
+      });
+      raw_bodies.blockers = lines.join('\n');
+    } else if ('blockers' in blockGaps) {
+      raw_bodies.blockers = '';
+    }
+    // If no blockGaps entry for blockers, raw_bodies.blockers stays null (block omitted).
   }
 
   // --- unstructured blocks: verbatim from _block_meta.raw_body ---

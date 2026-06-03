@@ -274,14 +274,16 @@ test('hooks-ts-rewrite: budget-enforcer block-path produces continue:false + bud
     const parsed = JSON.parse(r.stdout) as {
       continue: boolean;
       suppressOutput: boolean;
-      message?: string;
+      stopReason?: string;
     };
     assert.equal(parsed.continue, expected.continue);
     assert.equal(parsed.suppressOutput, expected.suppressOutput);
+    // Phase 57 debug-fix: budget-enforcer PreToolUse blocks now use the house
+    // contract field `stopReason` (was `message`), so the reason reaches the user.
     assert.ok(
-      typeof parsed.message === 'string' &&
-        parsed.message.includes(expected.message_pattern),
-      `expected message to include "${expected.message_pattern}" (got: ${parsed.message ?? 'undefined'})`,
+      typeof parsed.stopReason === 'string' &&
+        parsed.stopReason.includes(expected.message_pattern),
+      `expected stopReason to include "${expected.message_pattern}" (got: ${parsed.stopReason ?? 'undefined'})`,
     );
   } finally {
     cleanup();

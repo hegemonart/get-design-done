@@ -142,10 +142,13 @@ test('56-02: a risk_assessment event is emitted for a scored call', () => {
       assert.ok(risk.length >= 1, `expected a risk_assessment event, got: ${JSON.stringify(events.map((e) => e.type))}`);
       const ev = risk[0];
       assert.equal(ev.sessionId, 'test-sess');
-      assert.equal(ev.payload.tool, 'Edit');
+      // Schema-aligned field names (RiskAssessmentPayload): tool_name, risk_score, not tool/score.
+      assert.equal(ev.payload.tool_name, 'Edit');
       assert.equal(ev.payload.suggested_action, 'block');
-      assert.equal(typeof ev.payload.score, 'number');
+      assert.equal(typeof ev.payload.risk_score, 'number');
       assert.ok(Array.isArray(ev.payload.reasons) && ev.payload.reasons.length >= 1);
+      // event_id must be a UUIDv4 (required field).
+      assert.match(ev.payload.event_id, /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     },
   );
 });
@@ -260,4 +263,50 @@ test('56-02: compileFileSensitivityExtra drops malformed entries + compiles stri
   assert.equal(out[0].label, 'secret-files');
   assert.ok(out[0].test instanceof RegExp);
   assert.equal(out[0].test.test('foo.secret'), true);
+});
+
+// ── dbg-C: AJV regression — real emitted payload must validate against events.schema.json ──
+//
+// This test closes the gap that allowed the schema mismatch to ship: it compiles
+// RiskAssessmentPayload via ajv against the canonical events.schema.json, runs the
+// hook to collect a real emitted payload, and asserts the payload validates.
+//
+// Tagged dbg-C per the debug-fix session that introduced it.
+
+test('56-02 dbg-C: a REAL emitted risk_assessment payload validates against events.schema.json', () => {
+  // Load ajv (must be present — it is a dev-dep on the project).
+  let Ajv;
+  try { Ajv = require('ajv'); } catch {
+    // If ajv is not installed, skip gracefully so CI on a fresh install does not
+    // hard-fail before deps are restored. In normal dev + CI ajv is always available.
+    console.warn('[56-02 dbg-C] ajv not found — skipping AJV validation test');
+    return;
+  }
+
+  // Collect a real payload via subprocess.
+  const r = runHook(
+    { tool_name: 'Write', tool_input: { file_path: 'src/any.ts', content: 'hello' } },
+  );
+  try {
+    const riskEvents = r.events.filter((e) => e.type === 'risk_assessment');
+    assert.ok(riskEvents.length >= 1, 'no risk_assessment event emitted');
+    const payload = riskEvents[0].payload;
+
+    // Load the canonical schema (SoT — never change it in this test).
+    const schemaPath = join(REPO_ROOT, 'reference', 'schemas', 'events.schema.json');
+    const schema = JSON.parse(require('node:fs').readFileSync(schemaPath, 'utf8'));
+
+    // Compile the RiskAssessmentPayload sub-schema directly from definitions.
+    const ajv = new Ajv({ strict: false });
+    // Add the root schema so $ref chains resolve.
+    ajv.addSchema(schema, schema.$id);
+    const validate = ajv.compile(schema.definitions.RiskAssessmentPayload);
+    const valid = validate(payload);
+    assert.ok(
+      valid,
+      `risk_assessment payload FAILED schema validation:\n${JSON.stringify(validate.errors, null, 2)}\nPayload: ${JSON.stringify(payload, null, 2)}`,
+    );
+  } finally {
+    rmSync(r.dir, { recursive: true, force: true });
+  }
 });

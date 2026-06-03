@@ -6,8 +6,8 @@
  * resolve a cross-tree sibling via a fixed `__dirname`-relative `../../..`
  * jump, because that breaks the moment a file is copied/moved or the layout
  * shifts. Instead, walk UP from this file's directory until we find the GDD
- * package.json (identified by `name === 'get-design-done'`), and resolve all
- * in-repo siblings relative to that root.
+ * package.json (identified by `name === '@hegemonart/get-design-done'`), and
+ * resolve all in-repo siblings relative to that root.
  *
  * Even though these dashboard `.cjs` files are NOT esbuild-bundled (R8 — the
  * bin trampoline runs them directly so the Phase 53 __dirname-rewrite trap
@@ -23,7 +23,7 @@ let _cachedRoot = null;
 
 /**
  * Walk up from `startDir` looking for the GDD package root. The GDD root is
- * the first ancestor whose package.json declares `name: "get-design-done"`;
+ * the first ancestor whose package.json declares `name: "@hegemonart/get-design-done"`;
  * if no such marker is found (e.g. running from an unusual layout), fall back
  * to the FIRST ancestor that has any package.json, then to `startDir`.
  *
@@ -44,7 +44,7 @@ function findPackageRoot(startDir) {
     }
     if (pkg) {
       if (firstWithPkg === null) firstWithPkg = dir;
-      if (pkg.name === 'get-design-done') return dir;
+      if (pkg.name === '@hegemonart/get-design-done') return dir;
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;
