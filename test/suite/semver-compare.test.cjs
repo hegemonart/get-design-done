@@ -608,6 +608,13 @@ OFF_CADENCE_VERSIONS.add('1.49.0');
 // of 18 high-traffic skill descriptions to the v3 form. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.50.0');
 
+// 1.50.1 -> post-release consistency patch on 1.50.0. Aligned audit terminology to 7 pillars across
+// skills/audit + skills/verify + skill-authoring-contract + registry (design-auditor has been 7-pillar since
+// Phase 48); refreshed .claude-plugin positioning counts (59 agents / 88 skills / 41 connections); seeded the
+// Phase-50 composition graph with the real next_skills pipeline chain (new-project -> brief -> ... -> ship);
+// de-duplicated the benchmark command row; fixed the codex defaultPrompt to the /gdd- prefix. Patch, no new surface.
+OFF_CADENCE_VERSIONS.add('1.50.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

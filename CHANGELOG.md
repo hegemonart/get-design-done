@@ -4,6 +4,34 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.50.1] - 2026-06-03
+
+### Fixed
+
+Post-release consistency sweep against the shipped v1.50.0 surface.
+
+- **Audit terminology aligned to 7 pillars.** `design-auditor` has been a 7-pillar audit since Phase 48, but
+  `skills/audit`, `skills/verify` (+ `verify-procedure.md`), `reference/skill-authoring-contract.md`, and the
+  registry rubric description still said "6-pillar". All now read 7-pillar (the copy/visual-hierarchy/color/
+  typography/layout/experience/micro-polish set, /28). `copy-auditor`'s "the other six pillars" is correct and
+  unchanged (copy plus six others is seven).
+- **Plugin positioning refreshed.** `.claude-plugin/plugin.json` advertised "22+ specialized agents, 9 connections";
+  it now reads the accurate **59 agents, 88 skills, 41 connection integrations**.
+- **Composition graph seeded.** Phase 50 shipped the composition manifest infrastructure with no data, so
+  `reference/skill-graph.md` had zero edges. The true pipeline chain is now declared via `next_skills`
+  (new-project → brief → explore → plan → design → verify → ship); `validate:composition-graph` confirms it stays an
+  acyclic, dangle-free DAG.
+- **`SKILL.md` command table** no longer lists `benchmark` twice.
+- **Codex default prompt** uses the `/gdd-` command prefix consistently (`/gdd-brief`, `/gdd-explore`) instead of the
+  Claude-style `/gdd:` and a stray `$gdd-explore`.
+
+### Notes
+
+- 6-manifest lockstep at **v1.50.1** + `OFF_CADENCE_VERSIONS.add('1.50.1')` + 37 `manifests-version.txt` baselines.
+  Re-locked `verify-after.md` after the terminology fix. No new shipped files (tarball golden unchanged).
+
+---
+
 ## [1.50.0] - 2026-06-03
 
 ### Phase 50 - Authoring Contract v3

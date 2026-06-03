@@ -161,7 +161,7 @@ lifecycle stage; CI drift-gates that file with `--check`.
 ```yaml
 ---
 name: audit
-description: "Runs a design audit and prints a 6-pillar score. Use when the user wants to score the current design. Activates for requests involving audit, score, design review."
+description: "Runs a design audit and prints a 7-pillar score. Use when the user wants to score the current design. Activates for requests involving audit, score, design review."
 tools: Read, Write, Task, Glob, Bash
 composes_with: [scan]
 next_skills: [reflect]

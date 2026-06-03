@@ -164,13 +164,16 @@ test('50-comp-11: a valid synthetic DAG has no cycles and no dangling refs', () 
   assert.equal(vc.findDangling(synthetic).length, 0);
 });
 
-test('50-comp-12: the real corpus is an edge-free valid DAG', () => {
+test('50-comp-12: the real corpus is a valid DAG (acyclic, no dangling refs)', () => {
   const skills = realSkills();
   const graph = vc.buildGraph(skills);
   const edgeCount = [...graph.edges.values()].reduce((n, t) => n + t.length, 0);
-  assert.equal(edgeCount, 0, 'real corpus carries no composition edges today');
-  assert.equal(vc.findCycles(graph).length, 0);
-  assert.equal(vc.findDangling(skills).length, 0);
+  // v1.50.1 seeded the pipeline next_skills chain (new-project -> brief -> explore
+  // -> plan -> design -> verify -> ship). The corpus is no longer edge-free; the
+  // load-bearing contract is that it stays acyclic with no dangling references.
+  assert.ok(edgeCount >= 6, `real corpus carries the seeded pipeline edges (got ${edgeCount})`);
+  assert.equal(vc.findCycles(graph).length, 0, 'composition graph must be acyclic');
+  assert.equal(vc.findDangling(skills).length, 0, 'no composition edge may point at a missing skill');
 });
 
 test('50-comp-13: validate-composition-graph main() exits 0 on the real corpus', () => {
