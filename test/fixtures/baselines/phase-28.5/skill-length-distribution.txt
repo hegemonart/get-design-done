@@ -25,7 +25,7 @@ export: 30
 extract-learnings: 114
 fast: 91
 figma-extract: 64
-figma-write: 39
+figma-write: 50
 graphify: 49
 health: 99
 help: 87

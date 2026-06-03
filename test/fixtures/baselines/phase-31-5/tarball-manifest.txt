@@ -488,7 +488,6 @@ scripts/injection-patterns.cjs
 scripts/install.cjs
 scripts/lib/adaptive-mode.cjs
 scripts/lib/apply-reflections/incubator-proposals.cjs
-scripts/lib/audit-aggregator/index.cjs
 scripts/lib/authority-watcher/index.cjs
 scripts/lib/bandit-arbitrage.cjs
 scripts/lib/bandit-router.cjs
@@ -599,7 +598,6 @@ scripts/lib/harness/index.ts
 scripts/lib/harness/tool-map.ts
 scripts/lib/health-mirror/index.cjs
 scripts/lib/health-mirror/index.d.cts
-scripts/lib/hedge-ensemble.cjs
 scripts/lib/i18n/index.cjs
 scripts/lib/i18n/messages/de.json
 scripts/lib/i18n/messages/en.json

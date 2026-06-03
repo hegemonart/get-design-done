@@ -34,13 +34,12 @@ test('phase-23 baseline: touches-analyzer module shipped', () => {
   }
 });
 
-test('phase-23 baseline: audit-aggregator module shipped', () => {
-  assert.ok(existsSync(join(REPO_ROOT, 'scripts/lib/audit-aggregator/index.cjs')));
-  const m = require(join(REPO_ROOT, 'scripts/lib/audit-aggregator/index.cjs'));
-  for (const fn of ['aggregate', 'score', 'normalizePath', 'dedupKey', 'defaultMerge']) {
-    assert.equal(typeof m[fn], 'function');
-  }
-});
+// audit-aggregator/index.cjs was deleted (Batch D D7): the module + 15
+// unit tests + 5 exported functions shipped but had zero production
+// callers (verified via grep across scripts/, sdk/, hooks/, agents/,
+// skills/). With Phase 56 risk-gate now owning post-action consolidation
+// and the design-verifier owning audit aggregation natively, the module
+// was dead-on-arrival.
 
 test('phase-23 baseline: reference-resolver shipped', () => {
   assert.ok(existsSync(join(REPO_ROOT, 'scripts/lib/reference-resolver.cjs')));
