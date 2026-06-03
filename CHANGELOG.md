@@ -4,6 +4,53 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.55.0] - 2026-06-03
+
+### Phase 55 - GDD Dashboard (Multi-Harness Control Plane + Graph Visualization + Session Surface)
+
+GDD ships to 14 runtimes and users run multi-harness sessions in parallel; a control plane is the natural way to surface
+that. Phase 55 ships a READ-ONLY dashboard: a terminal TUI (`bin/gdd-dashboard`) and an opt-in browser graph view
+(`gdd dashboard --web`) that visualizes the Phase 52 DesignContext graph. **Built fully dep-free** (maintainer Rule-4
+decision): no Ink, no React / Vite / React Flow. The ROADMAP had named those stacks (~100 packages / ~84 MB + a CI build
+gate); a footprint study plus the read-only / single-machine / opt-in scale made a hand-rolled ANSI TUI + a
+self-contained-HTML graph (extending the Phase 35.5 `build-html.cjs` precedent) the better fit, and it keeps the
+zero-new-dependency streak intact. The web layer is kept swappable, so a React Flow migration later needs no data rewrite.
+Planned and executed via the GSD pipeline (3 + 3 parallel executors).
+
+### Breaking changes
+
+- **New `bin/gdd-dashboard` + `gdd dashboard [--web]`.** A new bin (the TUI) and a new SDK CLI subcommand. Read-only by
+  design: the dashboard never mutates state (the action surface is "open this file / copy this command / run the
+  slash-skill"). The `--web` server is an ephemeral LOCAL loopback (127.0.0.1, OS-assigned port) serving a single
+  self-contained HTML file to your own browser, then exits.
+- **`gsd-health` gains a 10th check** (`dashboard_reachable`); the health check count moves 9 -> 10.
+
+### Added
+
+- **Data plane** `sdk/dashboard/data/` - `source.cjs` (`loadDashboardModel` reads state / events / graph / health via the
+  shared libs in-process, with a `.design/*` file-scrape fallback; never throws), `cost-aggregator.cjs` (per-runtime +
+  cumulative + per-cycle), `discovery.cjs` (14-runtime detection, worktree enumeration via `git worktree list`,
+  best-effort session manifests).
+- **TUI** `bin/gdd-dashboard` + `sdk/dashboard/tui/` - a hand-rolled ANSI render core (`ansi.cjs`: box/column layout,
+  width-aware truncation incl. CJK, line-diff repaint) + 5 panes (Sessions / Cycle / Cost / Findings /
+  DesignContext-tree), keyboard navigation, alt-screen, event-tail live refresh. Plain `.cjs` (no bundle, no flags).
+- **Web graph** `scripts/lib/dashboard/graph-html.cjs` (`buildGraphHtml`) - one self-contained HTML doc (inline SVG +
+  vanilla JS): layered Atomic / Molecular / Organism / Template layout with barycenter crossing-reduction, viewBox
+  pan/zoom, click-to-inspect, type/tag filters, find-consumers highlight, unreachable outline, PNG export, minimap.
+  Deterministic (hermetic byte-equal test). Launched by `gdd dashboard --web` (`node:http` loopback + browser-open;
+  headless prints the URL; `--once` writes `.design/dashboard.html`).
+- **Risk surfacing** `sdk/dashboard/data/risk-surface.cjs` - reads `risk_score`/`confidence` when present (Phase 56),
+  color-routes Allow/Review/RequireConfirmation/Block; a blank placeholder pre-56.
+
+### Notes
+
+- 6-manifest lockstep at **v1.55.0** + `OFF_CADENCE_VERSIONS.add('1.55.0')` + 37 `manifests-version.txt` baselines.
+  No new skill (the dashboard is a bin + CLI subcommand) -> skill-list / build:skills / skills.json unchanged. No new
+  agent. The dashboard's local `node:http` server is allowlisted in `scripts/security/outbound-allowlist.json` (an
+  inbound loopback read-only server, not outbound egress). Tarball golden 969 -> 979. **No new runtime dependency.**
+
+---
+
 ## [1.54.0] - 2026-06-03
 
 ### Phase 54 - Composable Reference Addendums (Per-DS + Per-Framework + Per-Motion-Lib)

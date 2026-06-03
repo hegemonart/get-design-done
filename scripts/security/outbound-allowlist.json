@@ -32,6 +32,10 @@
     {
       "glob": "scripts/lib/notify/**",
       "justification": "Notification backplane (Phase 35.2) — dispatch.cjs POSTs a routed, REDACTED (scripts/lib/redact.cjs — the single chokepoint) pipeline-event body to Slack/Discord INCOMING WEBHOOKS (SLACK_WEBHOOK_URL/DISCORD_WEBHOOK_URL env) via an injectable fetchImpl (default global fetch; no @slack/discord SDK). Per-channel kill-switch (GDD_DISABLE_SLACK/DISCORD) + degrade-to-noop (missing URL/disabled/error never throws). Injectable fetchImpl keeps the default suite hermetic (no live webhook); the notify-privacy-guard test asserts no notify module bypasses redact."
+    },
+    {
+      "glob": "sdk/cli/commands/dashboard.ts",
+      "justification": "Dashboard web launcher (Phase 55) — `gdd dashboard --web` runs an EPHEMERAL LOCAL node:http server (createServer, bound to 127.0.0.1 on an OS-assigned port via listen(0,'127.0.0.1')) that serves a single self-contained, read-only DesignContext graph HTML to the user's own browser, then exits on SIGINT (or skips serving entirely under --once). This is an INBOUND loopback server, not outbound egress: no fetch/.get/.request, no remote bind, no client connection, no secret forwarded. Read-only by design (no state mutation). The browser-open is a child_process spawn of the platform opener (open/start/xdg-open), not a networking CLI."
     }
   ]
 }

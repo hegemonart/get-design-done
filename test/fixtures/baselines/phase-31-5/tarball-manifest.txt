@@ -67,6 +67,7 @@ agents/ticket-sync-agent.md
 agents/token-mapper.md
 agents/user-research-synthesizer.md
 agents/visual-hierarchy-mapper.md
+bin/gdd-dashboard
 bin/gdd-detect
 bin/gdd-graph
 bin/gdd-mcp
@@ -509,6 +510,7 @@ scripts/lib/context-engine/truncate.ts
 scripts/lib/context-engine/types.ts
 scripts/lib/cost-arbitrage.cjs
 scripts/lib/dangerous-patterns.cjs
+scripts/lib/dashboard/graph-html.cjs
 scripts/lib/deprecation-registry.cjs
 scripts/lib/design-context-query.cjs
 scripts/lib/design-context/extract-a11y.mjs
@@ -762,6 +764,7 @@ scripts/lib/worktree-resolve.cjs
 sdk/README.md
 sdk/cli/commands/audit.ts
 sdk/cli/commands/build.ts
+sdk/cli/commands/dashboard.ts
 sdk/cli/commands/init.ts
 sdk/cli/commands/query.ts
 sdk/cli/commands/run.ts
@@ -769,6 +772,13 @@ sdk/cli/commands/stage.ts
 sdk/cli/index.js
 sdk/cli/index.ts
 sdk/cli/parse-args.ts
+sdk/dashboard/data/_pkg-root.cjs
+sdk/dashboard/data/cost-aggregator.cjs
+sdk/dashboard/data/discovery.cjs
+sdk/dashboard/data/risk-surface.cjs
+sdk/dashboard/data/source.cjs
+sdk/dashboard/tui/ansi.cjs
+sdk/dashboard/tui/index.cjs
 sdk/errors/classification.ts
 sdk/errors/index.ts
 sdk/event-stream/emitter.ts

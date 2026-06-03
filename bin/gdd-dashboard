@@ -1,0 +1,91 @@
+#!/usr/bin/env node
+// bin/gdd-dashboard — Phase 55 (GDD Dashboard, DEP-FREE), TUI-01 (executor D).
+//
+// CJS trampoline that launches the terminal dashboard
+// (sdk/dashboard/tui/index.cjs) under `node`, forwarding argv + the child's
+// exit code / signal. Windows-safe.
+//
+// SIMPLER than bin/gdd-sdk (R8): the TUI is plain `.cjs` (Node builtins only),
+// so there is NO esbuild bundle and NO `--experimental-strip-types` flag — we
+// just `node <entry>`. The only reason this is a spawning trampoline (rather
+// than a direct require) is the same one gdd-sdk documents: npm's
+// auto-generated Windows `.cmd` shim invokes `node bin/gdd-dashboard` and we
+// want a single, platform-uniform launch path that cleanly forwards the exit
+// code and re-raises a terminating signal (so Ctrl-C tears down correctly).
+//
+// Sibling resolution uses a PACKAGE-ROOT WALK-UP (the Phase 53/54 lesson, D7),
+// never a fixed `__dirname`-relative cross-tree jump: we climb from this file's
+// directory to the GDD package root (package.json with name
+// "get-design-done") and resolve `sdk/dashboard/tui/index.cjs` from there. This
+// keeps the bin correct even if it is copied/relocated within the tree.
+
+'use strict';
+
+const { spawn } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+
+/**
+ * Walk up from `startDir` to the GDD package root: the first ancestor whose
+ * package.json declares `name === "get-design-done"`. Falls back to the first
+ * ancestor that has any package.json, then to `startDir`. Bounded climb.
+ * @param {string} startDir
+ * @returns {string} absolute package-root directory
+ */
+function findPackageRoot(startDir) {
+  let dir = path.resolve(startDir);
+  let firstWithPkg = null;
+  for (let i = 0; i < 12; i++) {
+    const pkgPath = path.join(dir, 'package.json');
+    let pkg = null;
+    try {
+      pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    } catch {
+      pkg = null;
+    }
+    if (pkg) {
+      if (firstWithPkg === null) firstWithPkg = dir;
+      if (pkg.name === 'get-design-done') return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return firstWithPkg || path.resolve(startDir);
+}
+
+const root = findPackageRoot(__dirname);
+const entry = path.join(root, 'sdk', 'dashboard', 'tui', 'index.cjs');
+
+if (!fs.existsSync(entry)) {
+  // eslint-disable-next-line no-console
+  console.error(`gdd-dashboard: TUI entry not found at ${entry}`);
+  process.exit(3);
+}
+
+const child = spawn(process.execPath, [entry, ...process.argv.slice(2)], {
+  stdio: 'inherit',
+  shell: false,
+});
+
+child.on('exit', (code, signal) => {
+  if (signal) {
+    // Re-raise the signal so the parent shell sees the same termination mode
+    // (e.g. Ctrl+C propagates as SIGINT). Falls back to a non-zero exit if the
+    // self-signal cannot be delivered.
+    try {
+      process.kill(process.pid, signal);
+    } catch {
+      process.exit(1);
+    }
+    return;
+  }
+  process.exit(typeof code === 'number' ? code : 0);
+});
+
+child.on('error', (err) => {
+  // Failure to spawn node itself — extremely rare; surface to stderr.
+  // eslint-disable-next-line no-console
+  console.error('gdd-dashboard: failed to launch the TUI:', err.message);
+  process.exit(3);
+});
