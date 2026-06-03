@@ -209,9 +209,12 @@ test('51-injector: events.schema.json seeds the 3 instinct_* types', () => {
   for (const seed of ['instinct_emitted', 'instinct_promoted', 'instinct_decayed']) {
     assert.ok(typeProp.description.includes(seed), `seed list must mention ${seed}`);
   }
-  // No new allOf conditional was added for the instinct types (stays at 3:
-  // capability_gap, kfm-candidate, router_pick).
-  assert.equal(schema.allOf.length, 3, 'no new allOf conditional for instinct seeds');
+  // The instinct types added NO allOf conditional of their own. The payload
+  // discriminators are: capability_gap, kfm-candidate, router_pick (Phases
+  // 29/30.5/32) plus risk_assessment (Phase 56 R8) = 4. This count is a lower
+  // bound on the discriminated-payload types; assert exactly 4 so a stray
+  // instinct-era conditional would still fail.
+  assert.equal(schema.allOf.length, 4, 'allOf holds the 4 discriminated payload types (instincts add none)');
 });
 
 // ---------------------------------------------------------------------------

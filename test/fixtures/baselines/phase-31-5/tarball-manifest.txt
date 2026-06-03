@@ -173,6 +173,7 @@ dist/claude-code/.claude/skills/next/SKILL.md
 dist/claude-code/.claude/skills/note/SKILL.md
 dist/claude-code/.claude/skills/openrouter-status/SKILL.md
 dist/claude-code/.claude/skills/optimize/SKILL.md
+dist/claude-code/.claude/skills/override/SKILL.md
 dist/claude-code/.claude/skills/pause/SKILL.md
 dist/claude-code/.claude/skills/peer-cli-add/SKILL.md
 dist/claude-code/.claude/skills/peer-cli-add/peer-cli-protocol.md
@@ -244,10 +245,12 @@ hooks/gdd-a11y-gate.js
 hooks/gdd-bash-guard.js
 hooks/gdd-decision-injector.js
 hooks/gdd-design-quality-check.js
+hooks/gdd-fact-force.js
 hooks/gdd-mcp-circuit-breaker.js
 hooks/gdd-precompact-snapshot.js
 hooks/gdd-protected-paths.js
 hooks/gdd-read-injection-scanner.ts
+hooks/gdd-risk-gate.js
 hooks/gdd-sessionstart-recap.js
 hooks/gdd-trajectory-capture.js
 hooks/gdd-turn-closeout.js
@@ -733,6 +736,12 @@ scripts/lib/reflector-capability-gap-aggregator.cjs
 scripts/lib/reflector-kfm-proposer.cjs
 scripts/lib/reflector/capability-gap-scan.cjs
 scripts/lib/relevance-counter.cjs
+scripts/lib/risk/calibration.cjs
+scripts/lib/risk/compute-risk.cjs
+scripts/lib/risk/consumers.cjs
+scripts/lib/risk/override.cjs
+scripts/lib/risk/route.cjs
+scripts/lib/risk/tables.cjs
 scripts/lib/roadmap-reader/index.cjs
 scripts/lib/roadmap-reader/index.d.cts
 scripts/lib/rollout/rollout-status.cjs
@@ -920,6 +929,7 @@ skills/next/SKILL.md
 skills/note/SKILL.md
 skills/openrouter-status/SKILL.md
 skills/optimize/SKILL.md
+skills/override/SKILL.md
 skills/pause/SKILL.md
 skills/peer-cli-add/SKILL.md
 skills/peer-cli-add/peer-cli-protocol.md

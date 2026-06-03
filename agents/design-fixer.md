@@ -125,6 +125,22 @@ f. **Record status.** Note `G-NN: fixed` in your running tracker.
 - **Rule 3 - Blocking issue:** If something prevents applying this specific fix (missing import, wrong file structure), resolve the blocking issue first, then apply the fix → continue.
 - **Rule 4 - Architectural change required:** If resolving the gap requires a new DB table, major schema change, switching libraries, or breaking API changes → DO NOT force a fix. Classify as unresolvable and proceed to Step 3 for this gap.
 
+### Step 2.5 - Confidence x risk routing (Phase 56)
+
+Step 1's confidence filter (`scripts/lib/confidence-route.cjs`) already dropped tentative and low-confidence gaps. Step 2.5 adds the action-risk dimension: a fix that is correct can still be dangerous to APPLY (touching STATE.md, a schema, a hook, a large diff). Score the write, then combine score and confidence into one routing decision per gap.
+
+For each in-scope gap, before applying its edit:
+
+1. **Score the write.** `risk = computeRisk('Edit', { file_path, new_string })` from `scripts/lib/risk/compute-risk.cjs` (use `MultiEdit` with `edits[]` for multi-hunk fixes, `Write` for full rewrites). `risk.suggested_action` is one of `allow | review | require_confirmation | block`.
+2. **Route.** `decision = route(gap.confidence, risk.suggested_action)` from `scripts/lib/risk/route.cjs`:
+   - `auto` (high confidence, low risk): apply the fix via the Step 2 sequence and commit.
+   - `confirm` (medium confidence, or `require_confirmation` risk): propose the fix with its diff via `AskUserQuestion` before writing. Apply only on approval; otherwise treat it as `skip`. This agent is the only place the confirmation prompt happens (the writer hooks just score and flag).
+   - `skip` (confidence below 0.5, non-block): leave the gap as a deferred finding; do not write. Note it in the tracker.
+   - `override` (risk `block`, at any confidence): do NOT auto-apply a block-risk write. Route the user to `{{command_prefix}}override <G-NN> --approver <who> --reason <text>`; apply only after the audited override is recorded.
+3. **Record.** Note each gap as `G-NN: auto | confirm | skip | override` in your running tracker, then carry the `auto` and approved-`confirm` gaps into the Step 2 fix sequence.
+
+`route` and `computeRisk` are pure and dependency-free, so this filter is deterministic. A gap whose confidence field is missing is treated as the lowest tier (skip, unless the action is `block`, which routes to override).
+
 ### Step 3 - Handle unresolvable gaps
 
 A gap is unresolvable if:
