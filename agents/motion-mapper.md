@@ -11,6 +11,7 @@ typical-duration-seconds: 30
 reads-only: false
 writes:
   - ".design/map/motion.md"
+  - ".design/fragments/motion-mapper.json"
 ---
 
 @reference/shared-preamble.md
@@ -25,9 +26,7 @@ You inventory motion and animation patterns. Zero session memory. You do not mod
 
 - `.design/STATE.md`
 - `reference/motion.md` (if present) - **the motion domain-index (Phase 45): start here.** It indexes the
-  motion fragments below with a "use this when" pointer for each. Load a specific fragment ONLY when you
-  reach the classification step that needs it (drill-in), not all of them up front - this is the bulk of
-  the token saving (the index is ~1.7k tokens vs ~15k for all four fragments).
+  motion fragments below with a "use this when" pointer for each. Load a specific fragment ONLY when you reach the classification step that needs it (drill-in), not all of them up front.
 - Drill-in fragments (load on demand, per the index in `motion.md`):
   - `reference/motion-advanced.md` - advanced patterns: spring physics, scroll-driven, FLIP, View Transitions API, gesture/drag mechanics, clip-path patterns, blur crossfades, Framer Motion hardware-accel gotcha
   - `reference/motion-easings.md` - 12 canonical easing presets; classify each detected easing against this catalog
@@ -91,10 +90,7 @@ grep -rEn "animation-timeline|ScrollTimeline|useScroll\b" src/ | head -30
 grep -rEn "\.animate\(\[|WebAnimation|getAnimations" src/ | head -20
 ```
 
-Classify gesture patterns against `reference/motion-advanced.md` (velocity formula, pointer capture, multi-touch protection).
-Classify easing values against the 12 canonical presets in `reference/motion-easings.md`; output `"custom"` with justification for anything that doesn't match.
-Classify page/route transitions against the 8 families in `reference/motion-transition-taxonomy.md`.
-Classify spring configs against the 4 presets in `reference/motion-spring.md`.
+Classify gesture patterns against `reference/motion-advanced.md` (velocity formula, pointer capture, multi-touch protection), easing values against the 12 presets in `reference/motion-easings.md` (output `"custom"` with justification for anything unmatched), page/route transitions against the 8 families in `reference/motion-transition-taxonomy.md`, and spring configs against the 4 presets in `reference/motion-spring.md`.
 
 ## Output Format - `.design/map/motion.md`
 
@@ -134,10 +130,12 @@ generated: [ISO 8601]
 ```
 
 ## CSS transitions
+
 | File | Property | Duration | Easing | Canonical Easing |
 |------|----------|----------|--------|-----------------|
 
 ## Library usage
+
 | Library | Files | Notes |
 |---------|-------|-------|
 
@@ -149,20 +147,20 @@ generated: [ISO 8601]
 - Narrative (>800ms): [N]
 
 ## Easing classification
+
 | Detected Easing | Canonical Name | Count | Notes |
 |----------------|---------------|-------|-------|
 
 ## Advanced patterns detected
+
 | Pattern | Files | Notes |
 |---------|-------|-------|
 
 ## Reduced-motion compliance
-- `prefers-reduced-motion` queries present: [N]
-- Animated components lacking a reduced-motion branch: [list]
+- `prefers-reduced-motion` queries present: [N]; animated components lacking a reduced-motion branch: [list]
 
 ## Score
-Reduced-motion compliance: [Full | Partial | None]
-Motion consistency: [Consistent | Mixed | Chaotic]
+Reduced-motion compliance: [Full | Partial | None]. Motion consistency: [Consistent | Mixed | Chaotic]
 
 ## Micro-motion findings
 
@@ -207,12 +205,36 @@ After the standard motion inventory, emit a "Micro-motion findings" section with
 Total: N violations found. (0 = clean)
 ```
 
-If no violations found, emit: `## Micro-motion findings — CLEAN (0 violations)`
+If no violations found, emit: `## Micro-motion findings (CLEAN, 0 violations)`
 ```
+
+## Graph fragment emission
+
+Dual-emit: keep writing `.design/map/motion.md` above, and ALSO emit a typed graph fragment for the synthesizer to merge into `.design/context-graph.json`. Fragment shape comes from `reference/design-context-schema.md`; allowed `tags[]` come from `reference/design-context-tag-vocab.md`. Do not invent fields or tags outside those references.
+
+### 1. Deterministic phase
+
+```bash
+node scripts/lib/design-context/extract-motion.mjs <source_root> [<source_root>...] > .design/fragments/motion-mapper.json
+```
+
+`extract-motion.mjs` walks the source roots with regex (zero-dep) and returns a Fragment whose `nodes[]` (`type: motion-fragment`) have `id`, `name`, and a stub `summary` you replace. It maps to the `animations[]` you already inventoried, so reuse that data.
+
+### 2. LLM phase (fill summary, tags, complexity)
+
+- `summary`: one sentence per node, distinct from `name`. Example: "Toast enter, opacity plus translateY over 180ms".
+- `tags[]`: from the tag-vocab only (motion terms such as `enter`, `exit`, `gesture`, `scroll-driven`, `reduced-motion`). Drop tags not in the vocab.
+- `complexity`: `simple` for a single CSS transition, `moderate` for a library spring or multi-property tween, `complex` for FLIP, scroll-driven, or gesture-physics patterns.
+
+Add `transitions-to` edges between fragments that form an enter/exit pair or a route sequence. Set `direction` and `weight` per the schema.
+
+### 3. Write the fragment
+
+Write the Fragment to `.design/fragments/motion-mapper.json` (`schema_version`, `mapper: "motion-mapper"`, `generated_at` ISO 8601, enriched `nodes[]`, `edges[]`), resolving the main repo root so a worktree run does not leak the file.
 
 ## Constraints
 
-No modifications outside `.design/map/`. No git. No agent spawning.
+No modifications outside `.design/map/` and `.design/fragments/`. No git. No agent spawning.
 
 ## Record
 

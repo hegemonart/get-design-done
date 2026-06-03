@@ -12,6 +12,7 @@ check-update
 compare
 complete-cycle
 connections
+context
 continue
 darkmode
 debug
@@ -35,6 +36,7 @@ live
 locale
 map
 migrate
+migrate-context
 new-cycle
 new-project
 new-skill

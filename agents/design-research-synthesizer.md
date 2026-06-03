@@ -11,6 +11,7 @@ typical-duration-seconds: 60
 reads-only: false
 writes:
   - ".design/DESIGN-CONTEXT.md"
+  - ".design/context-graph.json"
 ---
 
 @reference/shared-preamble.md
@@ -26,6 +27,7 @@ Aggregates outputs from the 5 mappers, discussant decisions, phase-researcher fi
 - `.design/map/visual-hierarchy.md` - visual-hierarchy-mapper output
 - `.design/map/a11y.md` - a11y-mapper output
 - `.design/map/motion.md` - motion-mapper output
+- `.design/fragments/*.json` - the typed graph fragments the 5 mappers dual-emit (one per mapper); these feed the graph merge below
 - `.design/STATE.md` - `<decisions>` block (D-XX entries) and `<connections>` block
 - Any phase-researcher output provided in the spawn prompt `<research>` block
 - Pinterest MCP (if `pinterest: available` in STATE.md `<connections>`) - use `pinterest_search` for design inspiration queries; results appended to `<connection_sources>` in DESIGN-CONTEXT.md
@@ -84,6 +86,30 @@ Use Glob to confirm presence; skip absent files gracefully and mark section as `
    sources: [tokens, components, visual-hierarchy, a11y, motion, decisions, research]
    ---
    ```
+
+## Graph merge and validation
+
+The 5 mappers now dual-emit typed graph fragments to `.design/fragments/<mapper>.json` alongside their `.design/map/*.md`. After they finish, merge those fragments into the typed DesignContext graph, validate it, and derive the human view from it. This runs in addition to the markdown synthesis above (dual-emit, kept for one minor for backward-compat).
+
+1. **Merge fragments into the graph.** Invoke the merge engine over every fragment present:
+
+   ```bash
+   node scripts/lib/design-context/merge-fragments.mjs .design/fragments/*.json > .design/context-graph.json 2> .design/fragments/merge.stderr
+   ```
+
+   `merge-fragments.mjs` dedupes nodes by `id`, recovers or drops dangling edges, and emits the merged Graph (`schema_version`, `generated_at`, `nodes[]`, `edges[]`) per `reference/design-context-schema.md`. Items it could not auto-fix (dropped edges, id collisions it could not reconcile) are written to stderr; keep that stderr for the review pass below.
+
+2. **Validate the graph (hard block).** Run the validator and gate on its exit code:
+
+   ```bash
+   node scripts/validate-design-context.cjs .design/context-graph.json
+   ```
+
+   Exit 0 is clean. A non-zero exit is a hard block: do NOT write a `status: complete` DESIGN-CONTEXT.md over a graph that failed validation. Report the validator output and stop, leaving the prior artifact in place. Soft warnings (for example a `summary` equal to its `name`, or a tag near the vocab boundary) are surfaced but do not block.
+
+3. **Derive the human view FROM the graph.** Treat `.design/context-graph.json` as the source of truth and render `.design/DESIGN-CONTEXT.md` as an auto-derived view of it. Keep the existing section structure so downstream consumers do not break: `<token_system>` from `token` nodes, `<component_inventory>` from `component`/`variant`/`state` nodes grouped by atomic-design layer tag, `<visual_hierarchy>` from `screen`/`pattern`/`anti-pattern` nodes, `<a11y_baseline>` from `a11y-pattern` nodes, `<motion_system>` from `motion-fragment` nodes, and `<decisions>` from STATE.md as before. Each node's `summary` and `tags[]` populate the rows; edges populate the cross-reference notes (for example which components consume which tokens via `uses-token`).
+
+4. **Review pass for could-not-fix items.** Hand the contents of `.design/fragments/merge.stderr` (plus any validator soft-warnings) to an assemble-review pass that cites the offending pattern and proposes a fix back to the owning mapper. Follow the assemble-reviewer pattern used elsewhere in the pipeline for "could not fix" hand-off. A dedicated `assemble-reviewer` agent is a likely future addition for this; do not create or spawn it here. For now, list these items under a `<graph_review>` section in DESIGN-CONTEXT.md so the next cycle can act on them.
 
 ## Handoff mode
 
@@ -163,7 +189,7 @@ Read .design/STATE.md
 
 Before writing any `.design/` artifact, resolve the main repo root via `scripts/lib/worktree-resolve.cjs` (`resolveDesignRoot`) so a worktree run writes to the main checkout and does not leak.
 
-Single file: `.design/DESIGN-CONTEXT.md`.
+Two artifacts (dual-emit): `.design/context-graph.json` (the merged, validated typed graph, source of truth) and `.design/DESIGN-CONTEXT.md` (the auto-derived human view of that graph).
 
 ## Record
 

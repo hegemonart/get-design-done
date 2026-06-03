@@ -129,6 +129,7 @@ dist/claude-code/.claude/skills/compare/compare-rubric.md
 dist/claude-code/.claude/skills/complete-cycle/SKILL.md
 dist/claude-code/.claude/skills/connections/SKILL.md
 dist/claude-code/.claude/skills/connections/connections-onboarding.md
+dist/claude-code/.claude/skills/context/SKILL.md
 dist/claude-code/.claude/skills/continue/SKILL.md
 dist/claude-code/.claude/skills/darkmode/SKILL.md
 dist/claude-code/.claude/skills/darkmode/darkmode-audit-procedure.md
@@ -158,6 +159,7 @@ dist/claude-code/.claude/skills/list-pins/SKILL.md
 dist/claude-code/.claude/skills/live/SKILL.md
 dist/claude-code/.claude/skills/locale/SKILL.md
 dist/claude-code/.claude/skills/map/SKILL.md
+dist/claude-code/.claude/skills/migrate-context/SKILL.md
 dist/claude-code/.claude/skills/migrate/SKILL.md
 dist/claude-code/.claude/skills/new-cycle/SKILL.md
 dist/claude-code/.claude/skills/new-cycle/milestone-completeness-rubric.md
@@ -323,6 +325,8 @@ reference/data/palettes.csv
 reference/data/styles.csv
 reference/debt-categories.md
 reference/debugger-philosophy.md
+reference/design-context-schema.md
+reference/design-context-tag-vocab.md
 reference/design-system-guidance.md
 reference/design-systems-catalog.md
 reference/design-variants.md
@@ -417,6 +421,7 @@ reference/runtime-models.md
 reference/schemas/authority-snapshot.schema.json
 reference/schemas/budget.schema.json
 reference/schemas/config.schema.json
+reference/schemas/design-context.schema.json
 reference/schemas/events.schema.json
 reference/schemas/generated.d.ts
 reference/schemas/hooks.schema.json
@@ -484,6 +489,14 @@ scripts/lib/context-engine/types.ts
 scripts/lib/cost-arbitrage.cjs
 scripts/lib/dangerous-patterns.cjs
 scripts/lib/deprecation-registry.cjs
+scripts/lib/design-context-query.cjs
+scripts/lib/design-context/extract-a11y.mjs
+scripts/lib/design-context/extract-components.mjs
+scripts/lib/design-context/extract-motion.mjs
+scripts/lib/design-context/extract-tokens.mjs
+scripts/lib/design-context/extract-visual-hierarchy.mjs
+scripts/lib/design-context/integration-map.mjs
+scripts/lib/design-context/merge-fragments.mjs
 scripts/lib/design-search.cjs
 scripts/lib/design-solidify.mjs
 scripts/lib/design-tokens/_js-harness.cjs
@@ -734,6 +747,7 @@ sdk/event-stream/types.ts
 sdk/event-stream/writer.ts
 sdk/index.ts
 sdk/mcp/gdd-mcp/README.md
+sdk/mcp/gdd-mcp/schemas/gdd_context_query.schema.json
 sdk/mcp/gdd-mcp/schemas/gdd_cycle_recap.schema.json
 sdk/mcp/gdd-mcp/schemas/gdd_decisions_list.schema.json
 sdk/mcp/gdd-mcp/schemas/gdd_events_tail.schema.json
@@ -748,6 +762,7 @@ sdk/mcp/gdd-mcp/schemas/gdd_status.schema.json
 sdk/mcp/gdd-mcp/schemas/gdd_telemetry_query.schema.json
 sdk/mcp/gdd-mcp/server.js
 sdk/mcp/gdd-mcp/server.ts
+sdk/mcp/gdd-mcp/tools/gdd_context_query.ts
 sdk/mcp/gdd-mcp/tools/gdd_cycle_recap.ts
 sdk/mcp/gdd-mcp/tools/gdd_decisions_list.ts
 sdk/mcp/gdd-mcp/tools/gdd_events_tail.ts
@@ -820,6 +835,7 @@ skills/compare/compare-rubric.md
 skills/complete-cycle/SKILL.md
 skills/connections/SKILL.md
 skills/connections/connections-onboarding.md
+skills/context/SKILL.md
 skills/continue/SKILL.md
 skills/darkmode/SKILL.md
 skills/darkmode/darkmode-audit-procedure.md
@@ -849,6 +865,7 @@ skills/list-pins/SKILL.md
 skills/live/SKILL.md
 skills/locale/SKILL.md
 skills/map/SKILL.md
+skills/migrate-context/SKILL.md
 skills/migrate/SKILL.md
 skills/new-cycle/SKILL.md
 skills/new-cycle/milestone-completeness-rubric.md

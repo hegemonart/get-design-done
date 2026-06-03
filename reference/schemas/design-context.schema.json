@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/design-context.schema.json",
+  "title": "Design Context Graph",
+  "description": "The canonical typed knowledge graph of a design system, persisted at .design/context-graph.json. Nodes are design entities (tokens, components, screens, patterns); edges are typed relationships between them (uses-token, composes, transitions-to). Built by a two-phase mapper: a deterministic extract pass emits node/edge skeletons, then an LLM summary pass fills each node summary. Validated structurally by scripts/validate-design-context.cjs and queried by scripts/lib/design-context-query.cjs.",
+  "type": "object",
+  "required": ["schema_version", "nodes", "edges"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Schema version of this graph document (e.g. \"52.0\")."
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp the graph was last assembled (optional)."
+    },
+    "nodes": {
+      "type": "array",
+      "description": "All design entities in the graph. Node ids must be unique.",
+      "items": { "$ref": "#/definitions/node" }
+    },
+    "edges": {
+      "type": "array",
+      "description": "All typed relationships. Every source/target must resolve to a node id.",
+      "items": { "$ref": "#/definitions/edge" }
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "name", "summary", "complexity"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable unique identifier for the node (referenced by edge source/target)."
+        },
+        "type": {
+          "type": "string",
+          "description": "The kind of design entity this node represents.",
+          "enum": [
+            "token",
+            "component",
+            "variant",
+            "state",
+            "motion-fragment",
+            "a11y-pattern",
+            "screen",
+            "layer",
+            "pattern",
+            "anti-pattern"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable name of the entity."
+        },
+        "summary": {
+          "type": "string",
+          "description": "One-line LLM-authored description of what the entity is and does. A stub summary (empty or identical to name) is flagged by the validator as a soft warning."
+        },
+        "tags": {
+          "type": "array",
+          "description": "Controlled-vocabulary tags grouping the node by concern (see reference/design-context-tag-vocab.md). Unknown tags are a soft warning, not a hard error.",
+          "items": { "type": "string" }
+        },
+        "complexity": {
+          "type": "string",
+          "description": "Coarse complexity bucket for the entity.",
+          "enum": ["simple", "moderate", "complex"]
+        },
+        "subtype": {
+          "type": "string",
+          "description": "Optional finer classification. For token nodes one of color/spacing/typography/radius/shadow; for layer nodes one of Atomic/Molecular/Organism/Template. Free-form for other node types."
+        }
+      },
+      "additionalProperties": true
+    },
+    "edge": {
+      "type": "object",
+      "required": ["source", "target", "type", "direction", "weight"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Node id the edge originates from."
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Node id the edge points to."
+        },
+        "type": {
+          "type": "string",
+          "description": "The kind of relationship between source and target.",
+          "enum": [
+            "uses-token",
+            "composes",
+            "extends",
+            "transitions-to",
+            "depends-on",
+            "mirrors",
+            "conflicts-with",
+            "referenced-by",
+            "tested-by",
+            "documented-by",
+            "consumes-context",
+            "provides-context"
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "description": "Whether the relationship reads source-to-target (forward), target-to-source (backward), or both ways (bidirectional).",
+          "enum": ["forward", "backward", "bidirectional"]
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Relationship strength in the inclusive range 0..1."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

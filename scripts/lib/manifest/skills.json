@@ -94,6 +94,14 @@
       "tools": "Read, Write, Bash, Glob, Grep, AskUserQuestion, ToolSearch"
     },
     {
+      "name": "context",
+      "description": "Queries the typed DesignContext graph at .design/context-graph.json - the design-semantic map of tokens, components, variants, states, motion, a11y patterns, screens, layers, and design patterns plus the edges between them. Lists and filters nodes and edges, traces a path between two nodes, finds the consumers of a node, and reports unreachable nodes, dependency cycles, and coverage. Use when the user wants to inspect the design graph, find what depends on a token or component, trace how one node reaches another, or check graph health. Activates for requests involving the design context graph, design dependencies, token consumers, component composition, unreachable design nodes, design cycles, or design coverage.",
+      "argument_hint": "[nodes --type X | edges --type Z | path <a> <b> | consumers-of <id> | unreachable | cycles | coverage]",
+      "tools": "Read, Bash",
+      "user_invocable": true,
+      "registered_in_phase": "52"
+    },
+    {
       "name": "continue",
       "description": "Alias for {{command_prefix}}resume - restore session context from the most recent checkpoint.",
       "argument_hint": "[<checkpoint-N>]",
@@ -243,6 +251,14 @@
       "argument_hint": "[--yes] [--dry-run]",
       "user_invocable": true,
       "tools": "Read, Write, Bash, Grep, Glob"
+    },
+    {
+      "name": "migrate-context",
+      "description": "Migrates a pre-Phase-52 project from the flat .design/map/*.md mapper notes to the typed DesignContext graph at .design/context-graph.json. Reads the old map notes, runs the deterministic extract-*.mjs passes to build mapper fragments, merges them with merge-fragments.mjs, validates the result with validate-design-context.cjs, and flags every low-confidence transform for human review before anything is trusted. Read-first and reversible; --dry-run previews the plan without writing. Use when upgrading a project to the DesignContext graph and .design/map/*.md still holds the only structured design notes. Activates for requests involving migrating design maps, building the context graph from old notes, or DesignContext graph migration.",
+      "argument_hint": "[--dry-run]",
+      "tools": "Read, Write, Bash",
+      "user_invocable": true,
+      "registered_in_phase": "52"
     },
     {
       "name": "new-cycle",

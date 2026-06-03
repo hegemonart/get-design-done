@@ -11,6 +11,7 @@ typical-duration-seconds: 45
 reads-only: false
 writes:
   - ".design/map/a11y.md"
+  - ".design/fragments/a11y-mapper.json"
 ---
 
 @reference/shared-preamble.md
@@ -136,9 +137,37 @@ Total: N findings. (0 = clean)
 ```
 ```
 
+## Graph fragment emission
+
+Dual-emit: keep writing `.design/map/a11y.md` above, and ALSO emit a typed graph fragment for the synthesizer to merge into `.design/context-graph.json`. Fragment shape and field rules come from `reference/design-context-schema.md`; allowed `tags[]` come from `reference/design-context-tag-vocab.md`. Do not invent fields or tags outside those two references.
+
+### 1. Deterministic phase (structural nodes/edges)
+
+Run the matching extractor over the same source roots you scanned above:
+
+```bash
+node scripts/lib/design-context/extract-a11y.mjs <source_root> [<source_root>...] > .design/fragments/a11y-mapper.json
+```
+
+`extract-a11y.mjs` walks the source roots with regex (zero-dep) and returns a Fragment whose `nodes[]` have `id`, `type` (`a11y-pattern`), and `name` filled, with stub `summary` you must replace. Patterns map to the ARIA, keyboard, focus, landmark, and skip-link signals you inventoried above. This is a static scan only; runtime behavior stays out (Phase 8).
+
+### 2. LLM phase (fill summary, tags, complexity)
+
+For every node the extractor produced, set:
+
+- `summary`: one sentence describing the pattern and the WCAG concern it touches, distinct from `name`. Example: "Focus-visible ring on interactive controls, supports 2.4.7".
+- `tags[]`: pick from `reference/design-context-tag-vocab.md` only (a11y terms such as `aria`, `keyboard`, `focus`, `landmark`, `contrast`). Where a node maps to a WCAG criterion you tracked, use the vocab tag for it. Drop any tag not in the vocab.
+- `complexity`: `simple` for a single attribute or landmark, `moderate` for a keyboard-handler pattern across a widget, `complex` for a composite pattern such as a focus-managed dialog.
+
+Add edges the extractor cannot infer: a pattern whose coverage a test asserts is `tested-by`; a pattern explained in a reference is `documented-by`. Set `direction` and `weight` per the schema.
+
+### 3. Write the fragment
+
+Write the completed Fragment to `.design/fragments/a11y-mapper.json` with `schema_version`, `mapper: "a11y-mapper"`, `generated_at` (ISO 8601), the enriched `nodes[]`, and `edges[]`. Resolve the main repo root the same way the rest of the pipeline does so a worktree run does not leak the file.
+
 ## Constraints
 
-No modifications outside `.design/map/`. No live browser. No git. No agent spawning.
+No modifications outside `.design/map/` and `.design/fragments/`. No live browser. No git. No agent spawning.
 
 ## A11Y MAP COMPLETE
 

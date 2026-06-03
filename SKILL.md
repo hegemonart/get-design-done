@@ -113,6 +113,8 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `review-decisions [<id>] [--pending]` | `get-design-done:gdd-review-decisions` | Phase 40 - surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
 | `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `get-design-done:gdd-unlock-decision` | Phase 40 - reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
 | `locale [<code>]` | `get-design-done:gdd-locale` | Phase 40.5 - inspect or set the GDD CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
+| `context [nodes --type X \| edges --type Z \| path <a> <b> \| consumers-of <id> \| unreachable \| cycles \| coverage]` | `get-design-done:gdd-context` | Phase 52 - read-only query front end for the typed DesignContext graph at `.design/context-graph.json`; lists/filters nodes and edges, traces a path between two nodes, finds a node's consumers, and reports unreachable nodes, dependency cycles, and coverage. Never writes |
+| `migrate-context [--dry-run]` | `get-design-done:gdd-migrate-context` | Phase 52 - migrate a pre-Phase-52 project from flat `.design/map/*.md` mapper notes to the typed DesignContext graph; runs the extract-*.mjs passes, merges fragments, validates with `validate-design-context.cjs`, and flags low-confidence transforms for review. Preview-first; `--dry-run` previews without writing |
 
 ## Handoff Routing
 

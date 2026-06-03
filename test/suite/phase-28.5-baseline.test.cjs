@@ -95,7 +95,7 @@ test('28.5-11 baseline: summary records 0 blockers (D-12 success criterion; warn
   // warn count is re-locked to the post-Phase-50 distribution snapshot
   // (see the "current run matches baseline summary" test below).
   assert.equal(summary.blockers, 0, `baseline records blockers=${summary.blockers}; expected 0 (hard contract)`);
-  assert.equal(summary.warnings, 8, `baseline records warnings=${summary.warnings}; expected 8 post-Phase-51 (brief/explore/plan/verify + progress + apply-reflections/extract-learnings instinct dual-emit + the new instinct skill, all in the advisory >=100-line WARN band)`);
+  assert.equal(summary.warnings, 10, `baseline records warnings=${summary.warnings}; expected 10 post-Phase-52 (the 8 post-Phase-51 skills + the two new DesignContext skills context (137 lines) and migrate-context (123 lines), all in the advisory >=100-line WARN band)`);
 });
 
 test('28.5-11 baseline: current validator run matches baseline summary (zero regression in blockers/warnings)', () => {

@@ -11,6 +11,7 @@ typical-duration-seconds: 45
 reads-only: false
 writes:
   - ".design/map/visual-hierarchy.md"
+  - ".design/fragments/visual-hierarchy-mapper.json"
 ---
 
 @reference/shared-preamble.md
@@ -117,9 +118,37 @@ Total: N findings.
 ```
 ```
 
+## Graph fragment emission
+
+Dual-emit: keep writing `.design/map/visual-hierarchy.md` above, and ALSO emit a typed graph fragment for the synthesizer to merge into `.design/context-graph.json`. Fragment shape and field rules come from `reference/design-context-schema.md`; allowed `tags[]` come from `reference/design-context-tag-vocab.md`. Do not invent fields or tags outside those two references.
+
+### 1. Deterministic phase (structural nodes/edges)
+
+Run the matching extractor over the same source roots you scanned above:
+
+```bash
+node scripts/lib/design-context/extract-visual-hierarchy.mjs <source_root> [<source_root>...] > .design/fragments/visual-hierarchy-mapper.json
+```
+
+`extract-visual-hierarchy.mjs` walks the source roots with regex (zero-dep) and returns a Fragment whose `nodes[]` have `id`, `type` (`screen` for pages or routes, `pattern` for layout patterns, `anti-pattern` for hierarchy violations you flagged), and `name` filled, with stub `summary` you must replace.
+
+### 2. LLM phase (fill summary, tags, complexity)
+
+For every node the extractor produced, set:
+
+- `summary`: one sentence describing the screen or pattern and its hierarchy signal, distinct from `name`. Example for an F-pattern node: "Left-aligned scan path with stacked content blocks".
+- `tags[]`: pick from `reference/design-context-tag-vocab.md` only (hierarchy terms such as `f-pattern`, `z-pattern`, `centered`, `type-scale`, `focal-weight`). Drop any tag not in the vocab.
+- `complexity`: `simple` for a single layout pattern, `moderate` for a screen combining two patterns, `complex` for a screen with nested or competing focal regions.
+
+Add edges the extractor cannot infer: two screens sharing a layout pattern are `mirrors`; a flagged anti-pattern that contradicts a sibling screen's pattern is `conflicts-with`. Set `direction` and `weight` per the schema.
+
+### 3. Write the fragment
+
+Write the completed Fragment to `.design/fragments/visual-hierarchy-mapper.json` with `schema_version`, `mapper: "visual-hierarchy-mapper"`, `generated_at` (ISO 8601), the enriched `nodes[]`, and `edges[]`. Resolve the main repo root the same way the rest of the pipeline does so a worktree run does not leak the file.
+
 ## Constraints
 
-No modifications outside `.design/map/`. No git. No agent spawning.
+No modifications outside `.design/map/` and `.design/fragments/`. No git. No agent spawning.
 
 ## Record
 

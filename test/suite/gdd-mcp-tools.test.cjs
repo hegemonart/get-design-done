@@ -1,7 +1,8 @@
 'use strict';
 // tests/gdd-mcp-tools.test.cjs
 // ---------------------------------------------------------------------------
-// Plan 27.7-02 — 12-tool MCP test suite.
+// Plan 27.7-02 — MCP tool test suite. Originally 12 tools; Phase 52 raised the
+// cap 12 -> 13 (gdd_context_query, D5) — the count assertions below track 13.
 //
 // Test names are all prefixed `27.7-02:` for the tag count check.
 // Includes: 24 base tests (2 per tool = input contract + output shape),
@@ -25,6 +26,7 @@ const SCHEMA_PATH = path.join(REPO_ROOT, 'reference', 'schemas', 'mcp-gdd-tools.
 
 const TOOL_NAMES = [
   'gdd_status',
+  'gdd_context_query',
   'gdd_phase_current',
   'gdd_phases_list',
   'gdd_plans_list',
@@ -171,12 +173,13 @@ async function withProjectRoot(root, fn) {
 // no-op left over from refactoring with no assertions. The real check
 // lives in the next test which asserts m.TOOL_COUNT === 12 explicitly.)
 
-test('27.7-02: tools/index exports TOOL_COUNT === 12', async () => {
+test('27.7-02: tools/index exports TOOL_COUNT === 13', async () => {
+  // Phase 52 raised the cap 12 -> 13 (gdd_context_query, D5).
   const file = path.join(TOOLS_DIR, 'index.ts');
   const url = new URL('file://' + file.replace(/\\/g, '/'));
   const m = await import(url.href);
-  assert.equal(m.TOOL_COUNT, 12);
-  assert.equal(m.TOOL_MODULES.length, 12);
+  assert.equal(m.TOOL_COUNT, 13);
+  assert.equal(m.TOOL_MODULES.length, 13);
 });
 
 test('27.7-02: no write-tool names', async () => {
@@ -190,10 +193,11 @@ test('27.7-02: no write-tool names', async () => {
   }
 });
 
-test('27.7-02: schema-file has exactly 12 entries', () => {
+test('27.7-02: schema-file has exactly 13 entries', () => {
+  // Phase 52 raised the combined-manifest tool count 12 -> 13 (gdd_context_query).
   const s = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
   const tools = s.properties.tools.properties;
-  assert.equal(Object.keys(tools).length, 12);
+  assert.equal(Object.keys(tools).length, 13);
   for (const n of TOOL_NAMES) {
     assert.ok(tools[n], 'missing schema entry for: ' + n);
     assert.ok(tools[n].properties.input, 'missing input for: ' + n);

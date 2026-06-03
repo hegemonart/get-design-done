@@ -11,6 +11,7 @@ typical-duration-seconds: 45
 reads-only: false
 writes:
   - ".design/map/tokens.md"
+  - ".design/fragments/token-mapper.json"
 ---
 
 @reference/shared-preamble.md
@@ -140,9 +141,37 @@ Total: N findings. (0 = clean)
 ```
 ```
 
+## Graph fragment emission
+
+Dual-emit: keep writing `.design/map/tokens.md` above, and ALSO emit a typed graph fragment so the synthesizer can merge it into `.design/context-graph.json`. Fragment shape and field rules come from `reference/design-context-schema.md`; the allowed `tags[]` come from `reference/design-context-tag-vocab.md`. Do not invent fields or tags outside those two references.
+
+### 1. Deterministic phase (structural nodes/edges)
+
+Run the matching extractor over the same `<source_roots>` you scanned above:
+
+```bash
+node scripts/lib/design-context/extract-tokens.mjs <source_root> [<source_root>...] > .design/fragments/token-mapper.json
+```
+
+`extract-tokens.mjs` walks the source roots with regex (zero-dep) and returns a Fragment whose `nodes[]` have `id`, `type` (`token`, subtype color/spacing/typography/radius/shadow), and `name` filled, plus structural `uses-token` edges from consuming files. Each node `summary` arrives as a STUB you must replace.
+
+### 2. LLM phase (fill summary, tags, complexity)
+
+For every node the extractor produced, set:
+
+- `summary`: one sentence describing the token's role, distinct from `name` (a summary equal to the name is a soft-warn in the validator). Example for `--color-primary`: "Brand accent used for primary CTAs and active states".
+- `tags[]`: pick from `reference/design-context-tag-vocab.md` only (for tokens, terms such as `color`, `spacing`, `typography`, `semantic`, `brand`). Drop any tag not in the vocab.
+- `complexity`: `simple` for a single literal value, `moderate` for a token that aliases or composes others (for example a shadow built from a 3-layer formula), `complex` for a token whose value depends on mode/theme resolution.
+
+Add cross-token edges you can see that the extractor cannot infer: a semantic token aliasing a primitive is `extends`; a shadow token referencing spacing or color primitives is `uses-token`. Set `direction` and `weight` per the schema.
+
+### 3. Write the fragment
+
+Write the completed Fragment to `.design/fragments/token-mapper.json` with `schema_version`, `mapper: "token-mapper"`, `generated_at` (ISO 8601), the enriched `nodes[]`, and `edges[]`. Resolve the main repo root the same way the rest of the pipeline does so a worktree run does not leak the file.
+
 ## Constraints
 
-You MUST NOT modify anything outside `.design/map/`. Do not run git commands or spawn agents.
+You MUST NOT modify anything outside `.design/map/` and `.design/fragments/`. Do not run git commands or spawn agents.
 
 ## Record
 

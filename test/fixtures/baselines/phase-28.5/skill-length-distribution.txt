@@ -12,6 +12,7 @@ check-update: 98
 compare: 82
 complete-cycle: 81
 connections: 71
+context: 137
 continue: 24
 darkmode: 76
 debug: 41
@@ -35,6 +36,7 @@ live: 98
 locale: 51
 map: 89
 migrate: 70
+migrate-context: 123
 new-cycle: 37
 new-project: 53
 new-skill: 90
@@ -50,7 +52,7 @@ pin: 37
 plan: 105
 plant-seed: 48
 pr-branch: 32
-progress: 103
+progress: 107
 quality-gate: 90
 quick: 44
 reapply-patches: 32
@@ -66,11 +68,11 @@ router: 89
 scan: 92
 settings: 87
 ship: 48
-sketch-wrap-up: 92
 sketch: 78
+sketch-wrap-up: 92
 skill-manifest: 79
-spike-wrap-up: 86
 spike: 67
+spike-wrap-up: 86
 start: 67
 stats: 51
 style: 71

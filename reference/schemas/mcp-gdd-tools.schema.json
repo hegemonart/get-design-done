@@ -7,7 +7,7 @@
   "properties": {
     "tools": {
       "type": "object",
-      "description": "Per-tool input/output schemas keyed by tool name. Exactly 12 entries (D-03 hard cap).",
+      "description": "Per-tool input/output schemas keyed by tool name. Exactly 13 entries (D-03 cap, raised 12 -> 13 in Phase 52 for gdd_context_query).",
       "additionalProperties": false,
       "properties": {
         "gdd_status": {
@@ -29,6 +29,39 @@
                 "last_decisions": { "type": "array", "items": { "type": "object" } },
                 "last_completed_plans": { "type": "array", "items": { "type": "object" } },
                 "blocker_count": { "type": "integer", "minimum": 0 }
+              }
+            }
+          }
+        },
+        "gdd_context_query": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["op"],
+              "properties": {
+                "op": {
+                  "type": "string",
+                  "enum": ["nodes", "edges", "path", "consumers-of", "unreachable", "cycles", "coverage"]
+                },
+                "type": { "type": "string" },
+                "tag": { "type": "string" },
+                "from": { "type": "string" },
+                "to": { "type": "string" },
+                "id": { "type": "string" }
+              }
+            },
+            "output": {
+              "type": "object",
+              "required": ["op", "graph_present", "result"],
+              "properties": {
+                "op": { "type": "string" },
+                "graph_present": { "type": "boolean" },
+                "path": { "type": "string" },
+                "result": { "type": ["array", "object", "null"] }
               }
             }
           }

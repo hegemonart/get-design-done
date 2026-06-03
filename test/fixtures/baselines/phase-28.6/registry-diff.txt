@@ -174,3 +174,5 @@ reviewer-confidence-gate: reference/reviewer-confidence-gate.md
 anti-slop-rubric: reference/anti-slop-rubric.md
 skill-graph: reference/skill-graph.md
 instinct-format: reference/instinct-format.md
+design-context-schema: reference/design-context-schema.md
+design-context-tag-vocab: reference/design-context-tag-vocab.md

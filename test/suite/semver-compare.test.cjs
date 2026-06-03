@@ -624,6 +624,15 @@ OFF_CADENCE_VERSIONS.add('1.50.1');
 // Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.51.0');
 
+// 1.52.0 -> Phase 52 (Typed DesignContext Graph Schema, KEYSTONE). Minor on 1.51.0. Adds the typed
+// design-semantic graph: a Draft-07 schema (reference/schemas/design-context.schema.json) over 10 node
+// types and 12 edge types, a dep-free validator (scripts/validate-design-context.cjs) + pure query lib
+// (scripts/lib/design-context-query.cjs), regex extract/merge passes (scripts/lib/design-context/*.mjs),
+// a 13th read-only gdd-mcp tool (gdd_context_query, cap raised 12 -> 13), /gdd:context + /gdd:migrate-context
+// skills, and dual-emit graph fragments from the 5 mapper agents + the synthesizer. No new dependency.
+// Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.52.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
