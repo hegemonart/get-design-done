@@ -4,6 +4,51 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.56.0] - 2026-06-03
+
+### Phase 56 - Risk-Scoring + Fact-Forcing Gate (Quantified Action Confidence)
+
+Every writer action now carries a quantified risk score instead of a binary allow/deny. Phase 56 adds a pure,
+deterministic risk scorer (no I/O, frozen tables) that grades each Write / Edit / MultiEdit / Bash by tool, file
+sensitivity, and input shape, then routes it through two PreToolUse hooks: a risk gate that emits a `risk_assessment`
+event and blocks only genuinely dangerous actions, and a fact-force gate that holds the FIRST write to a file until its
+graph consumers and recorded decisions have actually been read. Both are **dep-free** (a maintainer Rule-4 decision: a
+pure scorer plus static tables, no ML, no new dependency). The gate softens to a warning whenever the Phase 52
+DesignContext graph is absent, so greenfield projects are never over-blocked. A new `/gdd:override` escalation skill
+clears a block or a fact-force hold with an approver and reason (audit-trailed as a `D-XX` override decision), and
+`design-fixer` gains a confidence-times-risk routing step. Planned and executed via the GSD pipeline (3 + 2 parallel
+executors).
+
+### Breaking changes
+
+- **Writer actions are now risk-gated.** A new PreToolUse hook (`hooks/gdd-risk-gate.js`, matcher
+  `Write|Edit|MultiEdit|Bash`) scores every writer action and blocks the few that score at or above 0.85 (destructive
+  bash, high-sensitivity-file rewrites). Blocking uses the house-style `{continue:false, stopReason}` contract; `allow`
+  is silent, `review` and `require_confirmation` attach advisory context for the agent to surface. Read-only agents are
+  allowlisted through.
+- **The first write to a file is fact-forced.** A second PreToolUse hook (`hooks/gdd-fact-force.js`, matcher
+  `Edit|Write|MultiEdit`) holds the first mutation of a file until its DesignContext consumers and any recorded
+  decisions or blockers for it have been Read this session. The hold is soft (a `stopReason` listing the missing facts)
+  and softens to a warning when no graph exists; clear it deliberately with `/gdd:override factforce <path>`.
+
+### Added
+
+- **Risk scorer** `scripts/lib/risk/` - `compute-risk.cjs` (`computeRisk(tool, input) -> {score, reasons, suggested_action, breakdown}`,
+  pure and deterministic), `tables.cjs` (frozen BASE_TOOL_RISK / FILE_SENSITIVITY / INPUT_PATTERN_RISK / THRESHOLDS,
+  config-overridable extend-only), `route.cjs` (`route(confidence, action) -> auto|confirm|skip|override`),
+  `consumers.cjs` (best-effort file-to-node consumers lookup, soften-if-absent), `calibration.cjs` (rolling-50 per-agent
+  calibration plus drift detection feeding the bandit reward), `override.cjs`.
+- **`/gdd:override`** - escalation surface for a risk-gate block or a fact-force hold; writes a `D-XX` override-tagged
+  decision (audit trail) or clears the `checked[path]` lock, always with an approver and reason.
+- **`risk_assessment` event type** in `reference/schemas/events.schema.json` (score, suggested_action, reasons),
+  surfaced by the Phase 55 dashboard risk pane.
+- **`design-fixer` Step 2.5** - a confidence-times-risk routing filter (auto-apply / confirm-with-diff / skip / escalate).
+
+### Changed
+
+- **`hooks/gdd-decision-injector.js`** now records per-file reads so the fact-force gate can tell which files you have
+  legitimately reviewed this session.
+
 ## [1.55.0] - 2026-06-03
 
 ### Phase 55 - GDD Dashboard (Multi-Harness Control Plane + Graph Visualization + Session Surface)

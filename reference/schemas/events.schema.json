@@ -10,7 +10,7 @@
     "type": {
       "type": "string",
       "minLength": 1,
-      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick, verify_outcome, rollout_started, rollout_advanced, rollout_stuck, budget_forecast, project_cap_warning, project_cap_halt, live_session_start, live_pick, live_generate, live_accept, live_discard, live_session_end, instinct_emitted, instinct_promoted, instinct_decayed."
+      "description": "Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick, verify_outcome, rollout_started, rollout_advanced, rollout_stuck, budget_forecast, project_cap_warning, project_cap_halt, live_session_start, live_pick, live_generate, live_accept, live_discard, live_session_end, instinct_emitted, instinct_promoted, instinct_decayed, risk_assessment."
     },
     "timestamp": {
       "type": "string",
@@ -232,6 +232,55 @@
         }
       },
       "description": "Phase 32-08 D-02 router_pick payload — 7 fields, additionalProperties: false, NO PII (context_hash only). Records which skill the router auto-picked per intent — the instrument that surfaces under-reached skills. Validated when the envelope's type === 'router_pick' via the allOf[2] conditional."
+    },
+    "RiskAssessmentPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "tool_name",
+        "risk_score",
+        "suggested_action",
+        "reasons"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable identifier for this risk_assessment event. Used by Phase 56 calibration to de-dupe re-emissions and to pair an assessment with its post-apply outcome (accept / reject / undo)."
+        },
+        "tool_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The tool the risk gate scored — Write | Edit | MultiEdit | Bash | NotebookEdit (or any writer tool). Mirrors the PreToolUse tool_name the gdd-risk-gate hook received."
+        },
+        "risk_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "The clamped 0..1 score from scripts/lib/risk/compute-risk.cjs computeRisk(). 0 = no risk, 1 = maximal. Drives suggested_action via the THRESHOLDS table."
+        },
+        "suggested_action": {
+          "type": "string",
+          "enum": ["allow", "review", "require_confirmation", "block"],
+          "description": "The action the risk scorer recommends for this score. allow < review < require_confirmation < block (ascending threshold bands). The gdd-risk-gate hook silences 'allow', advises on 'review'/'require_confirmation', and blocks on 'block'."
+        },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ordered, human-readable contributing factors from computeRisk().reasons (e.g. 'base:Bash=0.55', 'file:STATE.md(x2+0)', 'input:destructive-bash=+0.3'). May be empty for a zero-risk assessment."
+        },
+        "agent": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional — the writer agent whose action was scored (e.g. 'design-fixer'). Used by Phase 56 calibration to maintain per-agent rolling statistics. Absent when the gate fired outside an agent context."
+        },
+        "decision_context": {
+          "type": "string",
+          "description": "Optional — a short, PII-free context tag the agent layer attaches when routing the assessment (e.g. a finding id or routing verdict). Free-form; never the raw prompt."
+        }
+      },
+      "description": "Phase 56 (R8) risk_assessment payload — 5 required fields + 2 optional (agent, decision_context), additionalProperties: false. Emitted by the gdd-risk-gate PreToolUse hook for every scored writer action; read by sdk/dashboard/data/risk-surface.cjs ({risk_score, suggested_action}) and gdd-events --type risk_assessment. Validated when the envelope's type === 'risk_assessment' via the allOf[3] conditional."
     }
   },
   "allOf": [
@@ -265,6 +314,17 @@
       "then": {
         "properties": {
           "payload": { "$ref": "#/definitions/RouterPickPayload" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "risk_assessment" } },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {
+          "payload": { "$ref": "#/definitions/RiskAssessmentPayload" }
         }
       }
     }

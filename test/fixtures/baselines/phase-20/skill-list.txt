@@ -45,6 +45,7 @@ next
 note
 openrouter-status
 optimize
+override
 pause
 peer-cli-add
 peer-cli-customize

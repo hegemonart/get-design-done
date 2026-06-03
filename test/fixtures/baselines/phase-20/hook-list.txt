@@ -6,10 +6,12 @@ gdd-a11y-gate.js
 gdd-bash-guard.js
 gdd-decision-injector.js
 gdd-design-quality-check.js
+gdd-fact-force.js
 gdd-mcp-circuit-breaker.js
 gdd-precompact-snapshot.js
 gdd-protected-paths.js
 gdd-read-injection-scanner.ts
+gdd-risk-gate.js
 gdd-sessionstart-recap.js
 gdd-trajectory-capture.js
 gdd-turn-closeout.js

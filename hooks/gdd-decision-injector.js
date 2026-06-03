@@ -524,6 +524,58 @@ function buildRecallBlock(matches, basename, backendLabel) {
   return lines.join('\n');
 }
 
+/**
+ * Phase 56 (fact-force) read-tracking — ADDITIVE, best-effort, non-blocking.
+ *
+ * On every Read, record `reads[<normalizedRelPath>] = <ISO>` into the SAME
+ * session-state file the fact-forcing gate consults
+ * (`<cwd>/.design/locks/factforce-<sanitized session_id>.json`). This is how the
+ * gate knows which importer files an agent has already opened before its first
+ * mutation. Fully swallowed on any error so it can NEVER change this Read hook's
+ * existing decision-injection behavior or its `{ continue: true }` contract.
+ *
+ * Self-contained (no new import): mirrors the gate's session_id derivation
+ * (`payload.session_id ?? GDD_SESSION_ID ?? 'hook'`), path normalization, and
+ * atomic tmp+rename write so the two hooks agree byte-for-byte on the file.
+ */
+function recordReadForFactForce(payload) {
+  try {
+    const fp = payload && payload.tool_input && payload.tool_input.file_path;
+    if (!fp) return;
+    const cwd = (payload && payload.cwd) || process.cwd();
+
+    let rel = String(fp);
+    if (rel.startsWith('/') || /^[A-Za-z]:[\\/]/.test(rel)) {
+      try { rel = path.relative(cwd, rel); } catch { /* keep rel */ }
+    }
+    rel = rel.replace(/\\/g, '/').replace(/^\.\//, '');
+    if (!rel) return;
+
+    const rawSid = (payload && (payload.session_id || payload.sessionId))
+      || process.env.GDD_SESSION_ID
+      || 'hook';
+    const sid = String(rawSid).replace(/[^A-Za-z0-9_-]+/g, '-').slice(0, 120) || 'hook';
+    const stateFile = path.join(cwd, '.design', 'locks', `factforce-${sid}.json`);
+
+    let state = { reads: {}, first_mutation_seen: {}, checked: {} };
+    try {
+      const parsed = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+      if (parsed && typeof parsed === 'object') {
+        state.reads = (typeof parsed.reads === 'object' && parsed.reads) || {};
+        state.first_mutation_seen = (typeof parsed.first_mutation_seen === 'object' && parsed.first_mutation_seen) || {};
+        state.checked = (typeof parsed.checked === 'object' && parsed.checked) || {};
+      }
+    } catch { /* missing/corrupt -> start fresh */ }
+
+    state.reads[rel] = new Date().toISOString();
+
+    fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+    const tmp = `${stateFile}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(state, null, 2));
+    fs.renameSync(tmp, stateFile);
+  } catch { /* best-effort: never let read-tracking affect the Read hook */ }
+}
+
 async function main() {
   let buf = '';
   for await (const chunk of process.stdin) buf += chunk;
@@ -538,6 +590,11 @@ async function main() {
     process.stdout.write(JSON.stringify({ continue: true }));
     return;
   }
+
+  // Phase 56: record this Read into the fact-force session state for EVERY
+  // Read (not just recall-matching .md files), before the recall matcher gate.
+  // Best-effort + fully swallowed — does not alter the behavior below.
+  recordReadForFactForce(payload);
 
   const fp = payload?.tool_input?.file_path || '';
   if (!MATCHER_RE.test(fp)) {
@@ -651,5 +708,6 @@ module.exports = {
   buildInstinctsBlock,
   instinctTokens,
   queryInstinctsBlock,
+  recordReadForFactForce,
   main,
 };

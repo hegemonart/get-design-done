@@ -656,6 +656,15 @@ OFF_CADENCE_VERSIONS.add('1.54.0');
 // surfacing (live post-56). No new dependency. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.55.0');
 
+// 1.56.0 -> Phase 56 (Risk-Scoring + Fact-Forcing Gate). Minor on 1.55.0. Adds a DEP-FREE quantified-action-confidence
+// layer: a pure deterministic risk scorer (scripts/lib/risk/compute-risk.cjs + frozen tables.cjs + route.cjs) feeding
+// two PreToolUse hooks - gdd-risk-gate (scores Write/Edit/MultiEdit/Bash, emits a risk_assessment event, blocks on
+// suggested_action=block) and gdd-fact-force (holds the first write to a file until its consumers/decisions were read,
+// softens to a warning when the Phase 52 graph is absent) - plus a /gdd:override escalation skill (D-XX override-tagged
+// decision or factforce checked[path] clear), design-fixer Step 2.5 confidence x risk routing, and rolling-50
+// calibration (calibration.cjs) feeding the bandit reward. No new dependency. Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.56.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
