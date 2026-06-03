@@ -1,10 +1,16 @@
-# Visual Tells Catalog (v1)
+# Visual Tells Catalog (v2)
 
 The default-AI aesthetic has a fingerprint. When a model generates a front-end
 without a brand brief, it falls back to the same handful of moves it saw most in
 its training set. This catalog names those moves so the cheap regex floor in
 `hooks/gdd-design-quality-check.js` can flag them on every `.tsx` / `.vue` /
 `.svelte` / `.astro` write.
+
+This catalog grows commit by commit. The v1 floor named the eight loudest tells the
+hook matches today; v2 adds five more identified through hands-on usage. Newer
+categories may be catalog-only (documented and cross-linked, not yet wired to a hook
+rule) until a regex earns its place. Each entry below names a **primary axis** from
+`reference/anti-slop-rubric.md`, so a tell connects to the verb axis it most degrades.
 
 Severity here is WARN (advisory), in the vocabulary of `reference/audit-scoring.md`.
 A WARN is not a FLAG: it does not block the write and it does not fail a gate. It
@@ -227,11 +233,151 @@ and never animate keyboard-driven actions. See the Motion Anti-Patterns section 
 
 ---
 
+## stock-photo-people
+
+Rule id: `stock-photo-people` (catalog-only)
+
+Generic smiling-team and handshake stock photography dropped in where a real product
+view belongs. The diverse-team-around-a-laptop shot, the lone founder gazing out a
+window, the abstract handshake: these read as filler the moment a viewer asks what the
+product actually does. Like the isometric fallback, the tell is that no real screen was
+available, so a stock human filled the hole.
+
+Instances:
+
+1. A hero photo of four people laughing at one laptop, captioned with a value prop.
+2. `src="/images/team-meeting.jpg"` standing in for a product screenshot.
+3. A testimonial section using stock headshots instead of real customer faces.
+4. An unsplash or shutterstock asset path in a primary marketing surface.
+5. The same stock photo reused across unrelated sections of one page.
+
+Diagnostic regex (where applicable): `\b(?:unsplash|shutterstock|istockphoto|gettyimages|stock[-_]?photo)[\w./-]*` in an asset path or `src`.
+
+Remediation: show the real product or real people connected to it. A genuine screenshot,
+a real customer portrait with permission, or a purpose-shot photo all beat a stock human.
+If no real asset exists yet, a clean illustration with brand character beats a stock smile.
+
+Primary axis: Authenticity.
+
+---
+
+## badge-spam
+
+Rule id: `badge-spam` (catalog-only)
+
+Decorative pills stacked to manufacture importance: "New", "Beta", "Pro", "AI-powered",
+"v2" scattered across cards and nav with no state behind them. One badge that reflects a
+real status orients the user. Four badges in a row are noise that the model adds because
+badges look like product maturity. The tell is a cluster of status pills none of which
+encode a true, current state.
+
+Instances:
+
+1. A card carrying "New", "Hot", and "AI-powered" badges at once.
+2. A nav item with a permanent "Beta" pill that has shipped for a year.
+3. Every feature tile in a grid wearing the same "Pro" badge.
+4. An "AI-powered" badge on a feature with no AI in it.
+5. Three or more `<Badge>` or `.badge` elements rendered in one small region.
+
+Diagnostic regex (where applicable): a quoted label matching `\b(?:New|Beta|Pro|AI-powered|Hot|Coming soon)\b` inside a badge or chip element, flagged at three or more in one component.
+
+Remediation: keep one badge that carries a real, current status, and delete the rest.
+A badge should change when state changes. If a label never changes, it is decoration, not
+status, and belongs in the copy or not at all.
+
+Primary axis: Authenticity.
+
+---
+
+## oversized-single-word
+
+Rule id: `oversized-single-word` (catalog-only)
+
+A single word blown up to display size to fill a section that has no content to carry it.
+"Build.", "Ship.", "Scale." at `text-8xl` with nothing beneath but air. Large type is a
+strong tool for one real headline; the tell is a one-word slab standing in for a sentence
+the writer did not write, sized for drama rather than meaning.
+
+Instances:
+
+1. A section whose only content is "Innovate." at `text-9xl`.
+2. A stack of one-word slabs ("Fast." "Simple." "Powerful.") each filling a viewport.
+3. A giant verb with no object, no supporting line, and 300px of padding around it.
+4. Display-size text where the word count is one and the surrounding region is empty.
+
+Diagnostic regex (where applicable): an element with `text-(?:7xl|8xl|9xl)` whose text node is a single word.
+
+Remediation: write the sentence the word was standing in for, then size the headline to
+serve reading. If a one-word moment is genuinely the design, give it a supporting line and
+a reason to be that large. Density should fit the content, not inflate to fill space.
+
+Primary axis: Density.
+
+---
+
+## motion-without-content-intent
+
+Rule id: `motion-without-content-intent` (catalog-only)
+
+Scroll-triggered fades, parallax layers, and entrance animations applied to every block
+because motion reads as "modern". This is the storytelling cousin of the ambient-loop tell:
+where `decorative-motion-without-intent` flags a forever-looping spinner, this flags motion
+wired to scroll or load that carries no content reason. Every element fading up in sequence
+delays the reader and signals motion chosen as decoration, not to direct attention.
+
+Instances:
+
+1. Every section wrapped in a `whileInView` fade-up with a staggered delay.
+2. Parallax on three background layers that encode no depth meaning.
+3. An entrance animation on body copy that the reader is waiting to read.
+4. Scroll-jacking that overrides native scroll for a "cinematic" reveal.
+
+Diagnostic regex (where applicable): `whileInView|data-aos|scroll-trigger|parallax` applied broadly across blocks without a reduced-motion guard in the same file.
+
+Remediation: tie motion to a content reason. Animate the one element that should draw the
+eye, let the rest render immediately, and respect `prefers-reduced-motion`. Reading content
+should never wait on a decorative reveal. See the Motion Anti-Patterns section of
+`reference/anti-patterns.md`.
+
+Primary axis: Hierarchy.
+
+---
+
+## narrator-from-a-distance-UI
+
+Rule id: `narrator-from-a-distance-UI` (catalog-only)
+
+Copy that describes the product from the outside in a detached marketing voice instead of
+speaking to the user doing a task. "Our platform empowers teams to achieve more" is a
+narrator at a distance; "Invite your team and assign the first task" speaks to the person
+in front of the screen. The tell is third-person product description where a second-person
+instruction belongs, especially inside the product rather than on a landing page.
+
+Instances:
+
+1. A dashboard empty state reading "The platform helps you organize your work" instead of "Create your first board".
+2. In-product copy in third person ("Users can export reports") rather than direct address.
+3. A feature headline describing the feature to an investor, not to its user.
+4. Onboarding steps narrated about the product instead of instructing the new user.
+
+Diagnostic regex (where applicable): in-product strings matching `\b(?:our platform|the platform|users can|we help you|empowers)\b` outside marketing routes.
+
+Remediation: write to the user in second person and name the next action. Inside the
+product, copy should instruct and orient, not pitch. Reserve the outside-in description for
+the marketing surface, and even there, lead with what the reader can do. See
+`reference/copy-quality.md` for the per-surface voice contract.
+
+Primary axis: Directness.
+
+---
+
 ## Notes
 
-This is a v1 floor, not a ceiling. The regexes favor precision over recall: they
-aim to fire only on the obvious cases so the WARN stays trustworthy. A clean pass
-here does not mean the design is good. It means the eight loudest default-AI tells
-are absent. Real review still applies the full rubric in
-`reference/audit-scoring.md` and the BAN / SLOP catalog in
+This is a v2 catalog, growing commit by commit, not a ceiling. The hook regexes favor
+precision over recall: they aim to fire only on the obvious cases so the WARN stays
+trustworthy. The five v2 categories above are catalog-only until a regex earns a place in
+the hook; they still give review a named tell and a primary axis to score against. A clean
+pass here does not mean the design is good. It means the loudest default-AI tells are
+absent. Real review still applies the full rubric in `reference/audit-scoring.md`, the verb
+axes in `reference/anti-slop-rubric.md`, and the BAN / SLOP catalog in
 `reference/anti-patterns.md`.

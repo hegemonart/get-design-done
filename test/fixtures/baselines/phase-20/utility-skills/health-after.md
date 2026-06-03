@@ -1,6 +1,6 @@
 ---
 name: gdd-health
-description: "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions."
+description: "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions. Activates for requests involving checking .design artifact health, staleness, token drift, or broken state transitions."
 tools: Read, Bash, Glob, Grep, mcp__gdd_state__get
 disable-model-invocation: true
 ---
@@ -90,7 +90,7 @@ After the health table, surface the Phase 28.5 skill-authoring contract drift si
 - `Skill-length: <total> total | <clean> clean | <warnings> warn (>=100) | <blockers> block (>=250)`
 - If blockers > 0: list each blocker as a row `- <name> (<lines> lines)`. Else: print `All skills within contract.`
 
-Thresholds: warn >=100, block >=250 (D-01). Strict description-format off by default (D-02). See `./health-skill-length-report.md` for the JSON shape and threshold rationale.
+Thresholds: warn >=100, block >=250 (D-01). Strict description-format off by default (D-02). Then add two compact Phase 50 lines from `scripts/lib/manifest/skills.json`: `Skills: <n>/<total> in v3 description form` (descriptions matching `/Activates for requests involving/i`) and `Composition: <edges> edges | <cycles> cycles` (`composes_with`/`next_skills` fan-out; cycles via `scripts/validate-composition-graph.cjs` when present, else `0`). See `./health-skill-length-report.md` for the JSON shape and threshold rationale.
 
 ## Do Not
 

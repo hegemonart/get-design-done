@@ -80,6 +80,15 @@ jobs:
       - name: Domain-index no-duplication (entries link, never copy)
         run: npm run check:no-duplication
 
+      - name: Skill composition graph (DAG — no cycles, no dangling refs)
+        run: npm run validate:composition-graph
+
+      - name: Skill frontmatter boilerplate-cohort lint (no 3+ shared opening sentences)
+        run: npm run validate:skill-frontmatter
+
+      - name: Skill graph drift gate (reference/skill-graph.md == skills.json)
+        run: npm run build:skill-graph:check
+
       - name: Detect stale references
         run: node scripts/detect-stale-refs.cjs
 

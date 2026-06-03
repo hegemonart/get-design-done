@@ -60,6 +60,20 @@
             },
             "description": "Reserved for pin shortcuts; honored by the pin metadata catalogue."
           },
+          "composes_with": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Phase 50 (v3) optional: skill names this skill calls as sub-orchestration. Each becomes a directed composition edge validated by scripts/validate-composition-graph.cjs (must be a DAG, no dangling refs)."
+          },
+          "next_skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Phase 50 (v3) optional: pipeline hint listing skill names that naturally run after this one. Each becomes a directed edge in the composition graph (DAG, no dangling refs)."
+          },
           "extra_frontmatter": {
             "type": "array",
             "items": {

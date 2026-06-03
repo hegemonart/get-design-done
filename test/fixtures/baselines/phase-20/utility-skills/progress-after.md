@@ -1,6 +1,6 @@
 ---
 name: gdd-progress
-description: "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit."
+description: "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit. Activates for requests involving showing current project state, routing to the next action, or a status check."
 argument-hint: "[--forensic]"
 tools: Read, Bash, Grep, Glob, mcp__gdd_state__get, mcp__gdd_status, mcp__gdd_phase_current
 ---
@@ -77,6 +77,14 @@ Print:
 Seeds ready: 0
 ━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+## Step 3.5 - Composition-graph readiness
+
+After the pipeline state (and forensic audit if run), surface a one-line composition-graph hint from `scripts/lib/manifest/skills.json`. Count skill records declaring `composes_with` or `next_skills`, then probe for structural problems (cycles in the directed graph, or edges pointing at a skill name that has no record). Print one line:
+
+- `Composition graph: <edges> edges, <skills-with-edges> skills wired | cycles: <n> | dangling: <n>`
+
+Run `scripts/validate-composition-graph.cjs` for the authoritative cycle and dangling-edge counts when that validator is present; until then report `0` and note the graph is not yet wired. This is a readiness hint, not a gate.
 
 ## Step 4 - Update notice (safe-window surface)
 

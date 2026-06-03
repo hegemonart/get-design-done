@@ -1,10 +1,10 @@
 ---
 name: skill-authoring-contract
 type: meta-rules
-version: 1.0.0
-phase: 28.5
-tags: [skill, authoring, contract, length-cap, description, frontmatter, progressive-disclosure]
-last_updated: 2026-05-18
+version: 3.0.0
+phase: 50
+tags: [skill, authoring, contract, length-cap, description, frontmatter, progressive-disclosure, composition, skill-graph]
+last_updated: 2026-06-03
 ---
 
 Source: mattpocock/skills (MIT) - adapted with permission. See `../NOTICE` for the full attribution block.
@@ -48,26 +48,64 @@ worst-offender and is scheduled for Bucket 1 rework in plan `28.5-04`. `skills/h
 Two rules:
 
 - **Length cap is STRICT.** `description ≤ 1024 chars` - no flag, no override. Under 20 chars
-  is also blocked as under-specification.
-- **Recommended form is LAX by default.** `<what>. Use when <triggers>.` - third person,
-  first sentence what the skill does, second sentence the trigger conditions. Validator
-  enforces the form regex only under `--strict-description` or `STRICT_DESCRIPTION=1`. Default
-  is length-only.
+  is also blocked as under-specification. The 1024-char cap is UNCHANGED in v3.
+- **Recommended form is LAX by default.** The validator enforces a form regex only under
+  `--strict-description` or `STRICT_DESCRIPTION=1`. Default is length-only.
 
-Why lax-by-default (D-02): `obra/superpowers/skills/writing-skills/SKILL.md` documents a
-shortcut-effect where an agent reads the description and skips the body - the more
-essential the description summary, the more often this happens. Phase 33 ships an A/B
-study at `.design/research/description-format-ab.md`; until then the regex stays advisory.
-
-Examples (both 20–1024 chars, both pass the length check):
+### v3 form (recommended)
 
 ```text
-# Strict-mode-compliant
+<what>. Use when <triggers>. Activates for requests involving <kw1>, <kw2>, <kw3>.
+```
+
+Three sentences, third person:
+
+1. **`<what>`** - what the skill does.
+2. **`Use when <triggers>`** - the trigger conditions.
+3. **`Activates for requests involving <kw1>, <kw2>, <kw3>`** - a short keyword list. This
+   trigger sentence is the v3 addition: naming the activating keywords improves retrieval, so the
+   router surfaces the skill on the requests it is meant to handle rather than on near-misses.
+
+### v2 form (still accepted during the transition window)
+
+```text
+<what>. Use when <triggers>.
+```
+
+The v2 form is the two-sentence shape shipped in Phase 28.5 (first sentence what, second sentence
+when). It omits the `Activates for ...` trigger sentence.
+
+### Transition window
+
+BOTH the v2 form and the v3 form are accepted for one minor version. Neither is a hard failure
+during the window; the length cap (20-1024) is the only blocking description rule. `gsd-health`
+tracks v3 adoption (the share of descriptions carrying the `Activates for ...` sentence) so the
+rollout is measurable before the v2 form is retired in a later minor.
+
+Why lax-by-default (D-02): `obra/superpowers/skills/writing-skills/SKILL.md` documents a
+shortcut-effect where an agent reads the description and skips the body - the more essential the
+description summary, the more often this happens. The form regex therefore stays advisory; only
+length is enforced by default.
+
+Examples (all 20-1024 chars, all pass the length check):
+
+```text
+# v3 form (recommended)
+Renders an OKLCH gamut comparison chart. Use when the user asks to see the visible difference between a target gamut and sRGB. Activates for requests involving gamut, OKLCH, sRGB.
+
+# v2 form (accepted during the transition window)
 Renders an OKLCH gamut comparison chart. Use when the user asks to see the visible difference between a target gamut and sRGB.
 
-# Lax-mode-only acceptable
+# Lax-mode-only acceptable (length passes; form regex would flag under --strict-description)
 Compares OKLCH gamut coverage against sRGB and prints a visual diff chart.
 ```
+
+### Anti-boilerplate gate
+
+`scripts/validate-skill-frontmatter.cjs` is a separate, always-on cohort check: if three or more
+skills share an identical opening sentence OR an identical `Use when` clause, it fails. Collapsed
+boilerplate across many descriptions erases the discriminating signal the router needs, so each
+skill keeps a distinct opening and a distinct trigger clause.
 
 ## Frontmatter
 
@@ -85,6 +123,10 @@ Optional fields (recognized by the Claude Code agent loader):
   whitelist (pure shortcuts like `help`, `stats`, `note`, `health`, `zoom-out`). The
   validator blocks if a non-whitelisted skill sets this field to `true`.
 - `user-invocable: true|false` - whether the slash-command picker exposes the skill.
+- `composes_with: [skill, ...]` - optional (v3). Skill names this skill calls as
+  sub-orchestration. See `## Skill composition` below.
+- `next_skills: [skill]` - optional (v3). A pipeline hint listing the skills that naturally
+  run after this one. See `## Skill composition` below.
 
 Concrete example:
 
@@ -94,6 +136,35 @@ name: help
 description: "Lists all available get-design-done commands with one-line descriptions. Use when the user asks for help, a command list, or wants to know what is available."
 tools: Read
 disable-model-invocation: true
+---
+```
+
+## Skill composition
+
+v3 closes the "no skill calls another skill" gap with two optional, machine-parseable frontmatter
+fields. Both are arrays of skill names and both are OPTIONAL; a skill with neither is unchanged.
+
+- `composes_with: [skill, ...]` - the skills this one calls as sub-orchestration. Use it when a
+  skill spawns or delegates into another skill as part of its own run.
+- `next_skills: [skill]` - a pipeline hint: the skills that naturally run after this one. It does
+  not call them; it records the intended flow so tooling can suggest the next step.
+
+Each entry becomes a directed edge (this skill points at the referenced skill). The composition
+graph across all skills MUST be a directed acyclic graph: a skill cannot transitively compose back
+into itself, and every referenced name MUST be a real skill. `scripts/validate-composition-graph.cjs`
+reads these fields from `scripts/lib/manifest/skills.json` (either as native array fields or parsed
+from the record's `extra_frontmatter` passthrough lines), then fails on a cycle or a dangling
+reference. `scripts/generate-skill-graph.cjs` reads the same edges and regenerates
+`./skill-graph.md`, a mermaid flowchart of the skills and their composition edges grouped by
+lifecycle stage; CI drift-gates that file with `--check`.
+
+```yaml
+---
+name: audit
+description: "Runs a design audit and prints a 6-pillar score. Use when the user wants to score the current design. Activates for requests involving audit, score, design review."
+tools: Read, Write, Task, Glob, Bash
+composes_with: [scan]
+next_skills: [reflect]
 ---
 ```
 
@@ -157,3 +228,14 @@ node scripts/validate-skill-length.cjs --quiet --json
 Exit codes: `0` clean, `1` warnings only, `2` blockers present. Flags: `--quiet` suppresses
 per-skill output, `--strict-description` adds the form regex check, `--json` emits
 machine-readable output. Env: `STRICT_DESCRIPTION=1` and `SKILLS_DIR=<path>` are honored.
+
+v3 adds three SoT-driven scripts that read `scripts/lib/manifest/skills.json`:
+
+```text
+node scripts/validate-skill-frontmatter.cjs   # fail on 3+ shared opening/Use-when clauses
+node scripts/validate-composition-graph.cjs   # fail on a composition cycle or dangling ref
+node scripts/generate-skill-graph.cjs --check # drift-gate the generated skill-graph.md
+```
+
+Each exits `0` clean, `1` on a failure (drift for the generator under `--check`), `2` on an
+internal error.

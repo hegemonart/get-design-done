@@ -1,6 +1,6 @@
 ---
 name: discover
-description: "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after /gdd:scan when a fast-path context build is wanted instead of the full /gdd:explore."
+description: "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after /gdd:scan when a fast-path context build is wanted instead of the full /gdd:explore. Activates for requests involving detecting an existing design system, inventorying tokens and components, or onboarding a brownfield repo."
 argument-hint: "[--auto]"
 user-invocable: true
 ---

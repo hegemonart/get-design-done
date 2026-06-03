@@ -1,6 +1,6 @@
 ---
 name: verify
-description: "Stage 5 of 5 orchestrator that spawns design-auditor, design-verifier, and design-integration-checker in sequence, interprets pass/gap result, and drives the gap-response loop (inline fix, save-and-exit, or accept-as-is). Use when implementation is complete and ready for final pre-ship verification."
+description: "Stage 5 of 5 orchestrator that spawns design-auditor, design-verifier, and design-integration-checker in sequence, interprets pass/gap result, and drives the gap-response loop (inline fix, save-and-exit, or accept-as-is). Use when implementation is complete and ready for final pre-ship verification. Activates for requests involving checking finished UI against the design system, running a pre-ship review, or final verification."
 argument-hint: "[--auto] [--post-handoff]"
 user-invocable: true
 tools: mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_must_have, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections
