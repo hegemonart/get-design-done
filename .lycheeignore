@@ -6,6 +6,7 @@
 ^https://localhost.*
 ^http://localhost.*
 ^https://mcp\.figma\.com/.*
+^https://www\.figma\.com/.*
 ^https://mcp\.pinterest\.com/.*
 ^https://norddesignsystem\.com/.*
 ^https://jakub\.kr/.*

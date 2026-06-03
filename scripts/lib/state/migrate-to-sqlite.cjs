@@ -47,7 +47,7 @@ function findPackageRoot(startDir) {
     try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch { pkg = null; }
     if (pkg) {
       if (firstWithPkg === null) firstWithPkg = dir;
-      if (pkg.name === 'get-design-done') return dir;
+      if (pkg.name === '@hegemonart/get-design-done') return dir;
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -214,19 +214,24 @@ function buildDryRunDiff(ops) {
  * Migrate .design/STATE.md (and supplementary stores) into the SQLite database.
  *
  * @param {object} opts
- * @param {string} [opts.projectRoot]  - project root dir (defaults to cwd / env)
- * @param {boolean} [opts.dryRun=false] - wrap writes in BEGIN/ROLLBACK + print diff
- * @param {boolean} [opts.force=false]  - same as --migrate-state flag; required to actually write
+ * @param {string} [opts.projectRoot]    - project root dir (defaults to cwd / env)
+ * @param {string} [opts.statePath]      - explicit path to STATE.md (overrides projectRoot lookup)
+ * @param {boolean} [opts.dryRun=false]  - wrap writes in BEGIN/ROLLBACK + print diff
+ * @param {boolean} [opts.force=false]   - same as --migrate-state flag; required to actually write
+ * @param {boolean} [opts.upsertOnly=false] - re-parse markdown and UPSERT without wiping unrelated rows
+ *                                            (used by the R8 freshness guard to fold hand-edits into SQLite)
  * @returns {Promise<{migrated:boolean, tables:object, dryRun:boolean, skipped:boolean, reason:string}>}
  */
 async function migrateToSqlite(opts = {}) {
-  const { dryRun = false, force = false } = opts;
+  const { dryRun = false, force = false, upsertOnly = false } = opts;
+  // upsertOnly implies force (it's always an internal call, not user-facing opt-in).
+  const effectiveForce = force || upsertOnly;
   const projectRoot = resolveProjectRoot(opts.projectRoot);
 
   // Opt-in guard: --migrate-state / force required.
   // This fires first (before the SQLite probe) so the message is consistent
   // regardless of whether better-sqlite3 is installed.
-  if (!force) {
+  if (!effectiveForce) {
     const notice =
       'Migration is opt-in in v1.57.0. Re-run with --migrate-state to proceed.';
     return {
@@ -254,7 +259,7 @@ async function migrateToSqlite(opts = {}) {
   }
 
   // Read STATE.md.
-  const statePath = path.join(projectRoot, '.design', 'STATE.md');
+  const statePath = opts.statePath || path.join(projectRoot, '.design', 'STATE.md');
   if (!fs.existsSync(statePath)) {
     return {
       migrated: false,
@@ -440,9 +445,20 @@ async function migrateToSqlite(opts = {}) {
       );
       counts.decisions++;
       ops.push({ action: 'upsert', table: 'decisions', id: d.id, fields: { status: d.status, body_md: d.text, raw_line: rawLine } });
+      // BUG-05: populate FTS5 table so queryDecisions returns hits.
+      // FTS5 virtual tables do not support ON CONFLICT — use DELETE + INSERT pattern.
+      // Guard: if FTS5 tables are absent (no-fts5 build), skip without throwing.
+      try {
+        db.prepare('DELETE FROM decisions_fts WHERE id = ?').run(d.id);
+        db.prepare('INSERT INTO decisions_fts (id, body_md, tags) VALUES (?, ?, ?)').run(d.id, d.text, null);
+      } catch { /* FTS5 table absent - skip */ }
     }
 
     // --- blockers ---
+    // BUG-02: DELETE existing rows for this cycle_id before re-inserting to prevent duplication.
+    // The blockers table uses AUTOINCREMENT PK with no natural-key ON CONFLICT, so
+    // re-running migrate without this delete would DUPLICATE every blocker row.
+    db.prepare('DELETE FROM blockers WHERE cycle_id = ?').run(cycleId);
     for (let i = 0; i < blockers.length; i++) {
       const b = blockers[i];
       const rawLine = `[${b.stage}] [${b.date}]: ${b.text}`;

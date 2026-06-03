@@ -79,7 +79,15 @@ function loadPatterns(): readonly RegExp[] {
   );
 }
 
-const INJECTION_PATTERNS: readonly RegExp[] = loadPatterns();
+// Wrapped in try/catch so a missing injection-patterns.cjs does not throw
+// at import time (before main()'s catch guard is active). On failure the
+// hook falls back to an empty pattern list and emits a passthrough result.
+let INJECTION_PATTERNS: readonly RegExp[];
+try {
+  INJECTION_PATTERNS = loadPatterns();
+} catch {
+  INJECTION_PATTERNS = [];
+}
 
 // ── Types ───────────────────────────────────────────────────────────────────
 

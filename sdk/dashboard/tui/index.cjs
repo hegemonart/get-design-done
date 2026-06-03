@@ -37,6 +37,21 @@ const readline = require('node:readline');
 
 const ansi = require('./ansi.cjs');
 
+// Lazily require the risk-surface helper (same dep-free constraint as the data plane).
+let _surfaceRisk = null;
+function getSurfaceRisk() {
+  if (_surfaceRisk === null) {
+    try {
+      ({ surfaceRisk: _surfaceRisk } = require('../data/risk-surface.cjs'));
+    } catch {
+      // If the module is unavailable for any reason, fall back to a no-op that returns
+      // blank placeholder rows so the column still renders cleanly.
+      _surfaceRisk = () => ({ risk_score: null, confidence: null, suggested_action: null, color: 'default' });
+    }
+  }
+  return _surfaceRisk;
+}
+
 // Lazily require the data plane so `renderFrame` (the pure path) can be imported + unit-tested
 // without paying for the data module's transitive requires. `run` resolves it on demand.
 let _loadDashboardModel = null;
@@ -351,11 +366,22 @@ function bodyFindings(model, inner, scroll) {
   if (tail.length === 0) {
     lines.push('  ' + ansi.color('no events', { dim: true }));
   } else {
+    const surfaceRisk = getSurfaceRisk();
     for (const ev of tail) {
       const name = (ev && (ev.event || ev.type || ev.kind)) || 'event';
-      // Pre-Phase-56: risk/confidence are blank placeholders (D8).
+      // Phase-56+: surface risk/confidence from risk_assessment events.
+      // For pre-56 events that lack risk fields, surfaceRiskOne returns the blank placeholder.
+      const surfaced = (ev && ev.type === 'risk_assessment')
+        ? surfaceRisk(ev)
+        : { risk_score: null, confidence: null, suggested_action: null, color: 'default' };
+      const riskText = surfaced.risk_score !== null
+        ? ansi.color(surfaced.risk_score.toFixed(2), { fg: surfaced.color !== 'default' ? surfaced.color : undefined })
+        : ansi.color('·', { dim: true });
+      const confText = surfaced.confidence !== null
+        ? String(surfaced.confidence.toFixed(2))
+        : ansi.color('·', { dim: true });
       lines.push(ansi.columns(
-        [String(name), ansi.color('·', { dim: true }), ansi.color('·', { dim: true })],
+        [String(name), riskText, confText],
         [Math.max(8, inner - 14), 5, 5],
       ));
     }

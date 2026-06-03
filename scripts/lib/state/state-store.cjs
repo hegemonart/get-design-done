@@ -56,7 +56,7 @@ function findPackageRoot(startDir) {
     try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch { pkg = null; }
     if (pkg) {
       if (firstWithPkg === null) firstWithPkg = dir;
-      if (pkg.name === 'get-design-done') return dir;
+      if (pkg.name === '@hegemonart/get-design-done') return dir;
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -198,12 +198,12 @@ function _onDiskSha(statePath) {
  * If they differ, the user has hand-edited STATE.md since the last SQLite write.
  * In that case, run a mini-migration (upsert SQLite from markdown) before proceeding.
  *
- * This is called BEFORE the db.transaction() so it can be async.
+ * This is ASYNC - must be awaited before entering the db.transaction().
  *
  * @param {import('better-sqlite3').Database} db
  * @param {string} statePath absolute path to STATE.md
  */
-function _applyFreshnessGuard(db, statePath) {
+async function _applyFreshnessGuard(db, statePath) {
   try {
     const onDisk = _onDiskSha(statePath);
     if (onDisk === null) return; // STATE.md doesn't exist yet - skip
@@ -211,20 +211,21 @@ function _applyFreshnessGuard(db, statePath) {
     const stored = metaRow ? metaRow.value : null;
     if (stored === onDisk) return; // No drift - proceed normally
     // Drift detected: user hand-edited STATE.md.
-    // Run mini-migration to upsert SQLite from the current markdown state.
+    // Run mini-migration (upsertOnly) to fold the hand-edit into SQLite before
+    // proceeding with the intended mutation.
     const migrate = _requireMigrate();
     if (migrate && typeof migrate.migrateToSqlite === 'function') {
       try {
-        // migrateToSqlite is async but we handle it best-effort here.
-        // For the freshness guard we do a best-effort synchronous approach:
-        // if the module is loaded, call it. If it's async we can't await here
-        // (this is called outside the transaction but may be called from sync context).
-        // The mini-migration is best-effort.
+        // Close db first if needed - migrateToSqlite opens its own connection.
+        // We pass the resolved projectRoot (dirname of .design/STATE.md's parent).
+        const projectRoot = path.resolve(path.dirname(statePath), '..');
+        await migrate.migrateToSqlite({ statePath, projectRoot, force: true, upsertOnly: true });
       } catch {
         // Migration failed - log and continue rather than blocking the write.
+        // Still update the sha to prevent infinite re-triggering.
       }
     }
-    // Update stored sha to prevent re-triggering on every call even if migrate fails.
+    // Update stored sha to reflect the current on-disk content.
     db.prepare('INSERT OR REPLACE INTO _meta(key, value) VALUES (?, ?)').run('last_render_sha256', onDisk);
   } catch {
     /* Freshness guard must never break a write path */
@@ -326,8 +327,12 @@ async function appendDecision(decision, opts = {}) {
   const statePath = _statePath(opts.projectRoot);
   const db = openStateDb(dbPath);
   try {
-    _applyFreshnessGuard(db, statePath);
+    await _applyFreshnessGuard(db, statePath);
     const cycleId = decision.cycleId || _currentCycleId(db);
+    // BUG-10: if no cycle is active, skip rather than inserting cycle_id=null (NOT NULL throw).
+    if (!cycleId) {
+      return { backend: 'sqlite', skipped: true, reason: 'no active cycle_id - call setPosition first' };
+    }
     _dualWrite(db, statePath, cycleId, () => {
       db.prepare(`
         INSERT INTO decisions
@@ -349,6 +354,17 @@ async function appendDecision(decision, opts = {}) {
         decision.rawLine || null,
         decision.createdAt || new Date().toISOString(),
       );
+      // BUG-05: populate decisions_fts so FTS5 queries return hits.
+      // FTS5 virtual tables do not support ON CONFLICT — use DELETE + INSERT pattern.
+      // Guard: if FTS5 tables are absent (no-fts5 build), skip without throwing.
+      try {
+        db.prepare(`DELETE FROM decisions_fts WHERE id = ?`).run(decision.id);
+        db.prepare(`INSERT INTO decisions_fts (id, body_md, tags) VALUES (?, ?, ?)`).run(
+          decision.id,
+          decision.bodyMd || '',
+          decision.tags ? JSON.stringify(decision.tags) : null,
+        );
+      } catch { /* FTS5 table absent in no-fts5 build - skip */ }
     }, sdk);
     return { backend: 'sqlite', id: decision.id };
   } finally {
@@ -373,16 +389,21 @@ function getDecisions(opts = {}) {
   if (BACKEND !== 'sqlite') {
     return [];
   }
-  const dbPath = _resolveDbPath(opts);
-  const db = openStateDb(dbPath, { readonly: true });
+  // BUG-06: wrap in try/catch — openStateDb(readonly) throws on a missing file.
   try {
-    const cycleId = opts.cycleId || _currentCycleId(db);
-    if (!cycleId) return [];
-    return db.prepare(
-      'SELECT * FROM decisions WHERE cycle_id = ? ORDER BY ordinal ASC'
-    ).all(cycleId);
-  } finally {
-    db.close();
+    const dbPath = _resolveDbPath(opts);
+    const db = openStateDb(dbPath, { readonly: true });
+    try {
+      const cycleId = opts.cycleId || _currentCycleId(db);
+      if (!cycleId) return [];
+      return db.prepare(
+        'SELECT * FROM decisions WHERE cycle_id = ? ORDER BY ordinal ASC'
+      ).all(cycleId);
+    } finally {
+      db.close();
+    }
+  } catch {
+    return [];
   }
 }
 
@@ -408,7 +429,7 @@ async function appendBlocker(blocker, opts = {}) {
   const statePath = _statePath(opts.projectRoot);
   const db = openStateDb(dbPath);
   try {
-    _applyFreshnessGuard(db, statePath);
+    await _applyFreshnessGuard(db, statePath);
     const cycleId = blocker.cycleId || _currentCycleId(db);
     let rowid = null;
     _dualWrite(db, statePath, cycleId, () => {
@@ -447,21 +468,26 @@ function getBlockers(opts = {}) {
   if (BACKEND !== 'sqlite') {
     return [];
   }
-  const dbPath = _resolveDbPath(opts);
-  const db = openStateDb(dbPath, { readonly: true });
+  // BUG-06: wrap in try/catch — openStateDb(readonly) throws on a missing file.
   try {
-    const cycleId = opts.cycleId || _currentCycleId(db);
-    if (!cycleId) return [];
-    if (opts.includeResolved) {
+    const dbPath = _resolveDbPath(opts);
+    const db = openStateDb(dbPath, { readonly: true });
+    try {
+      const cycleId = opts.cycleId || _currentCycleId(db);
+      if (!cycleId) return [];
+      if (opts.includeResolved) {
+        return db.prepare(
+          'SELECT * FROM blockers WHERE cycle_id = ? ORDER BY ordinal ASC'
+        ).all(cycleId);
+      }
       return db.prepare(
-        'SELECT * FROM blockers WHERE cycle_id = ? ORDER BY ordinal ASC'
+        'SELECT * FROM blockers WHERE cycle_id = ? AND resolved_at IS NULL ORDER BY ordinal ASC'
       ).all(cycleId);
+    } finally {
+      db.close();
     }
-    return db.prepare(
-      'SELECT * FROM blockers WHERE cycle_id = ? AND resolved_at IS NULL ORDER BY ordinal ASC'
-    ).all(cycleId);
-  } finally {
-    db.close();
+  } catch {
+    return [];
   }
 }
 
@@ -488,7 +514,7 @@ async function setPosition(position, opts = {}) {
   const statePath = _statePath(opts.projectRoot);
   const db = openStateDb(dbPath);
   try {
-    _applyFreshnessGuard(db, statePath);
+    await _applyFreshnessGuard(db, statePath);
     _dualWrite(db, statePath, position.cycleId, () => {
       db.prepare(`
         INSERT INTO state_position
@@ -535,17 +561,22 @@ function getPosition(opts = {}) {
   if (BACKEND !== 'sqlite') {
     return null;
   }
-  const dbPath = _resolveDbPath(opts);
-  const db = openStateDb(dbPath, { readonly: true });
+  // BUG-06: wrap in try/catch — openStateDb(readonly) throws on a missing file.
   try {
-    if (opts.cycleId) {
-      return db.prepare('SELECT * FROM state_position WHERE cycle_id = ?').get(opts.cycleId) || null;
+    const dbPath = _resolveDbPath(opts);
+    const db = openStateDb(dbPath, { readonly: true });
+    try {
+      if (opts.cycleId) {
+        return db.prepare('SELECT * FROM state_position WHERE cycle_id = ?').get(opts.cycleId) || null;
+      }
+      return db.prepare(
+        'SELECT * FROM state_position ORDER BY updated_at DESC LIMIT 1'
+      ).get() || null;
+    } finally {
+      db.close();
     }
-    return db.prepare(
-      'SELECT * FROM state_position ORDER BY updated_at DESC LIMIT 1'
-    ).get() || null;
-  } finally {
-    db.close();
+  } catch {
+    return null;
   }
 }
 

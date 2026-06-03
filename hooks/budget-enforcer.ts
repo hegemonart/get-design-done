@@ -332,6 +332,7 @@ interface ToolOutput {
   continue: boolean;
   suppressOutput?: boolean;
   message?: string;
+  stopReason?: string;
   modified_tool_input?: ToolInput;
   cached_result?: unknown;
 }
@@ -1046,7 +1047,7 @@ export async function main(): Promise<void> {
     const response: ToolOutput = {
       continue: false,
       suppressOutput: false,
-      message: `gdd-budget-enforcer: rate-limited on anthropic, retry in ${waitSeconds}s (resetAt=${rateState.resetAt})`,
+      stopReason: `gdd-budget-enforcer: rate-limited on anthropic, retry in ${waitSeconds}s (resetAt=${rateState.resetAt})`,
     };
     process.stdout.write(JSON.stringify(response));
     return;
@@ -1121,7 +1122,7 @@ export async function main(): Promise<void> {
         const response: ToolOutput = {
           continue: false,
           suppressOutput: false,
-          message: `Project budget cap reached: $${projClass.spend.toFixed(2)} of $${budget.project_cap_usd.toFixed(2)} (${projClass.pct.toFixed(0)}%). Raise project_cap_usd in .design/budget.json, or set project_cap_enforcement_mode to "warn" to keep going. (Graceful halt — the current stage's earlier spawns already completed; this blocks the next one.)`,
+          stopReason: `Project budget cap reached: $${projClass.spend.toFixed(2)} of $${budget.project_cap_usd.toFixed(2)} (${projClass.pct.toFixed(0)}%). Raise project_cap_usd in .design/budget.json, or set project_cap_enforcement_mode to "warn" to keep going. (Graceful halt — the current stage's earlier spawns already completed; this blocks the next one.)`,
         };
         process.stdout.write(JSON.stringify(response));
         return;
@@ -1162,7 +1163,7 @@ export async function main(): Promise<void> {
       const response: ToolOutput = {
         continue: false,
         suppressOutput: false,
-        message: `Budget cap reached for ${capLabel}. Estimated: $${estCost.toFixed(4)}, cap: $${perSpawnCap.toFixed(2)}. Raise cap in .design/budget.json or retry after next task.`,
+        stopReason: `Budget cap reached for ${capLabel}. Estimated: $${estCost.toFixed(4)}, cap: $${perSpawnCap.toFixed(2)}. Raise cap in .design/budget.json or retry after next task.`,
       };
       process.stdout.write(JSON.stringify(response));
       return;
@@ -1187,7 +1188,7 @@ export async function main(): Promise<void> {
       const response: ToolOutput = {
         continue: false,
         suppressOutput: false,
-        message: `Budget cap reached for per-phase (${phase}). Cumulative: $${(phaseSpend + estCost).toFixed(4)}, cap: $${budget.per_phase_cap_usd.toFixed(2)}. Raise cap in .design/budget.json or retry after next phase.`,
+        stopReason: `Budget cap reached for per-phase (${phase}). Cumulative: $${(phaseSpend + estCost).toFixed(4)}, cap: $${budget.per_phase_cap_usd.toFixed(2)}. Raise cap in .design/budget.json or retry after next phase.`,
       };
       process.stdout.write(JSON.stringify(response));
       return;

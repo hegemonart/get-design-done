@@ -33,6 +33,7 @@ import {
   renameSync,
   unlinkSync,
   existsSync,
+  statSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -176,7 +177,16 @@ function migrationActive(statePath: string): boolean {
   const backend = _loadBackend();
   if (backend === null || backend.BACKEND !== 'sqlite') return false;
   const sqliteSibling = join(dirname(statePath), 'state.sqlite');
-  return existsSync(sqliteSibling);
+  if (!existsSync(sqliteSibling)) return false;
+  // BUG-07: a DIRECTORY named state.sqlite would cause existsSync to return true,
+  // and then every mutate() would throw when trying to open it as a database.
+  // Guard: if the path is a directory, treat migration as inactive.
+  try {
+    if (statSync(sqliteSibling).isDirectory()) return false;
+  } catch {
+    return false;
+  }
+  return true;
 }
 
 /**

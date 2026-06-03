@@ -13,9 +13,32 @@
 
 const fs = require('fs');
 const path = require('path');
-const { matches } = require(path.join(__dirname, '..', 'scripts', 'lib', 'glob-match.cjs'));
 
-const REPO_ROOT = path.resolve(__dirname, '..');
+/**
+ * Walk up from startDir to find the package root by looking for a
+ * package.json with name '@hegemonart/get-design-done'. Returns null
+ * when the root cannot be found (e.g. in unusual installed layouts).
+ * Mirrors the pattern used by gdd-fact-force.js / gdd-risk-gate.js
+ * (Phase 56+) to be robust against esbuild/installed layouts that
+ * may relocate or rewrite __dirname.
+ */
+function findPackageRoot(startDir) {
+  let dir = startDir;
+  for (let i = 0; i < 12; i++) {
+    try {
+      const pkg = require(path.join(dir, 'package.json'));
+      if (pkg && pkg.name === '@hegemonart/get-design-done') return dir;
+    } catch { /* not this level */ }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
+
+const REPO_ROOT = findPackageRoot(__dirname) || path.resolve(__dirname, '..');
+
+const { matches } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'glob-match.cjs'));
 
 function loadProtectedPaths(cwd) {
   const defaultFile = path.join(REPO_ROOT, 'reference', 'protected-paths.default.json');

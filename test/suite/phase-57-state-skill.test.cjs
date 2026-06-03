@@ -86,10 +86,16 @@ test('57-F: _assertReadonly throws for denied tokens (always-on)', () => {
   }
   // Empty query throws.
   assert.throws(() => _assertReadonly(''), /empty query/i);
-  // Non-denied, non-SELECT also throws.
+  // Non-denied, non-SELECT, non-WITH first tokens must throw.
   assert.throws(
-    () => _assertReadonly('WITH x AS (SELECT 1) SOMETHING'),
-    /not SELECT/i
+    () => _assertReadonly('EXPLAIN SELECT 1'),
+    /not SELECT/i,
+    'EXPLAIN must be rejected'
+  );
+  // WITH ... SELECT CTE must be ALLOWED (BUG-11 fix; engine readonly blocks write CTEs).
+  assert.doesNotThrow(
+    () => _assertReadonly('WITH cte AS (SELECT 1) SELECT * FROM cte'),
+    'WITH ... SELECT CTE must be allowed'
   );
 });
 
@@ -383,10 +389,11 @@ test('57-F: backupCycle creates .bak.0 when sqlite exists (SQLite-specific)', ()
   }
 });
 
-test('57-F: recover returns degraded when BACKEND is markdown (SQLite-specific gate)', () => {
+test('57-F: recover returns degraded when BACKEND is markdown (SQLite-specific gate)', async () => {
+  // recover() is now async (BUG-03 fix) - must be awaited.
   // This tests the degrade path. Even when BACKEND==='sqlite' it degrades when
   // migrate-to-sqlite is not ready. We test the degrade message shape.
-  const result = recover({ dbPath: path.join(os.tmpdir(), 'nonexistent-57f.sqlite') });
+  const result = await recover({ dbPath: path.join(os.tmpdir(), 'nonexistent-57f.sqlite') });
   // The result must always be an object with {recovered, message}.
   assert.equal(typeof result.recovered, 'boolean', 'recover must return {recovered:boolean}');
   assert.equal(typeof result.message, 'string', 'recover must return {message:string}');

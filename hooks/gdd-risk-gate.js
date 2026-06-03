@@ -2,6 +2,9 @@
 'use strict';
 /**
  * hooks/gdd-risk-gate.js — PreToolUse:Write|Edit|MultiEdit|Bash risk gate (Phase 56, RISK-02).
+ * Payload shape locked to RiskAssessmentPayload (events.schema.json): event_id, tool_name,
+ * risk_score, suggested_action, reasons (required). Optional: agent, decision_context.
+ * additionalProperties:false — do NOT add breakdown/paths/score/tool to the payload.
  *
  * Quantifies the confidence/risk of a writer action with the PURE scorer
  * `scripts/lib/risk/compute-risk.cjs` (executor A), emits a `risk_assessment`
@@ -39,6 +42,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { randomUUID } = require('node:crypto');
 
 // ── Package-root walk-up: locate scripts/lib/risk/compute-risk.cjs ──────────
 // Start at this file's dir and climb until we find the risk module (or a
@@ -325,7 +329,14 @@ async function main() {
       );
     } catch { /* swallow */ }
     emitHookFired('allow', { reason: 'scorer-error' });
-    emitRiskAssessment({ tool, agent: agent || undefined, error: 'scorer-error', suggested_action: 'allow' }, sessionId);
+    emitRiskAssessment({
+      event_id: randomUUID(),
+      tool_name: tool,
+      risk_score: 0,
+      suggested_action: 'allow',
+      reasons: [],
+      agent: agent || undefined,
+    }, sessionId);
     process.stdout.write(JSON.stringify(ALLOW));
     return;
   }
@@ -337,13 +348,12 @@ async function main() {
   // distribution. Best-effort.
   emitRiskAssessment(
     {
-      tool,
-      agent: agent || undefined,
-      score: assessment.score,
+      event_id: randomUUID(),
+      tool_name: tool,
+      risk_score: assessment.score,
       suggested_action: action,
-      reasons: assessment.reasons,
-      breakdown: assessment.breakdown,
-      paths: assessment.breakdown && assessment.breakdown.paths,
+      reasons: Array.isArray(assessment.reasons) ? assessment.reasons : [],
+      agent: agent || undefined,
     },
     sessionId,
   );
