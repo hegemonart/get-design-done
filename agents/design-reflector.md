@@ -257,6 +257,39 @@ Append stdout to the cycle markdown body (after Section 8 / before the Proposals
 
 ---
 
+## Atomic instincts
+
+Phase 51 adds atomic instinct units alongside the prose reflection. For each pattern you observed this cycle that is small enough to state as a single trigger plus a one-line response, emit a structured instinct unit. The narrative below stays for human reading; this section is the machine-readable twin. Both are emitted for one minor version so readers and tooling migrate together.
+
+Emit 0 to N units. Each unit follows `reference/instinct-format.md` exactly: YAML frontmatter (`id`, `trigger`, `confidence` from 0.3 to 0.9, `domain` from the format's enum, `scope`, `project_id`, `source`, `cycles_seen`, `first_seen`, `last_seen`) plus a short body. Set `source: design-reflector`. Set `confidence` from the strength of the evidence - a pattern seen once this cycle stays near 0.3 to 0.5; a pattern that recurs across prior learnings earns more. Do not exceed 0.9.
+
+A unit is a proposal, not a stored fact. You write the units here; the user accepts them via `{{command_prefix}}apply-reflections` (the `[INSTINCT]` class). Accepted units land in the store through `scripts/lib/instinct-store.cjs` `add(unit, { scope, baseDir })` at the emitted confidence. You never call `add()` yourself and you never write to `.design/instincts/instincts.json` directly.
+
+Emit each unit in a fenced `yaml` block so the apply step can parse it:
+
+```yaml
+id: in-<short-hash>
+trigger: <one-line condition that should fire this instinct>
+confidence: 0.45
+domain: <enum value from reference/instinct-format.md>
+scope: project
+project_id: <project id from STATE.md or deriveProjectId>
+source: design-reflector
+cycles_seen: 1
+first_seen: <ISO-8601>
+last_seen: <ISO-8601>
+---
+<one or two sentences: the response this instinct recommends and why>
+```
+
+If no pattern this cycle is atomic enough to state as a single trigger, write one line: "No atomic instincts this cycle." and move on. Do not pad.
+
+### Narrative reflection
+
+Keep the prose reflection for human readers. Summarize, in two to four sentences, the through-line of this cycle: what kept recurring, what shifted, and which instinct units above you have the most confidence in. This subsection is what a person skims; the units above are what tooling consumes.
+
+---
+
 ## Proposals
 
 After all sections, write a **Proposals** section. Number proposals sequentially. Every proposal must include evidence - no vague observations.

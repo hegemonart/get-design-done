@@ -4,6 +4,52 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.51.0] - 2026-06-03
+
+### Phase 51 - Instinct-Based Learnings
+
+GDD's reflection loop was extractive, not predictive: `/gdd:extract-learnings` wrote a prose `LEARNINGS.md` that no
+downstream agent read. Phase 51 restructures learnings into atomic, confidence-weighted instinct units that are
+queryable, deduplicable, promotable, and surfaced back into agent context. Adapted from ecc's continuous-learning v2
+(project-vs-global scope). Planned and executed via the GSD pipeline (3 parallel executor subagents). No new runtime
+dependency, no new egress.
+
+### Breaking changes
+
+- **Reflection output gains atomic instinct units.** `design-reflector` now emits a `## Atomic instincts` section
+  (YAML units per `reference/instinct-format.md`) alongside a `## Narrative reflection` (dual-emit for one minor
+  version), and `/gdd:apply-reflections` gains an `[INSTINCT]` proposal class (accept/reject/defer/edit). Consumers of
+  the reflection format should read both sections.
+- **A new instinct store + schema.** `scripts/lib/instinct-store.cjs` is the source of truth (`.design/instincts/instincts.json`
+  project + `~/.claude/gdd/global-instincts.json` global); `reference/schemas/instinct.schema.json` is wired into
+  `validate:schemas` and enforces the unit shape (confidence 0.3-0.9, domain enum, scope, sha8 project_id).
+
+### Added
+
+- **`reference/instinct-format.md`** + **`reference/schemas/instinct.schema.json`**: the atomic instinct unit (YAML
+  frontmatter `id`/`trigger`/`confidence`/`domain`/`scope`/`project_id`/`source`/`cycles_seen`/`first_seen`/`last_seen`
+  with a prose body), the K=2/M=2 promotion gate, the Beta(2,8) prior, and TTL decay.
+- **`scripts/lib/instinct-store.cjs`**: JSON-canonical store with OPTIONAL FTS5 acceleration via
+  `probeOptional('better-sqlite3')` (the Phase 19.5 design-search pattern, so no dependency is added). Exports
+  `add`/`list`/`query`/`get`/`promote`/`touch`/`decay`/`deriveProjectId`; atomic writes; worktree-safe.
+- **`/gdd:instinct`** skill: `list` / `query "<keyword>"` (FTS5 or in-memory scan) / `promote <id>` (project to global,
+  gated on `cycles_seen >= 2` across `>= 2` distinct project ids; user-confirmed).
+- **Decision-injector integration**: `gdd-decision-injector.js` surfaces a top-3 `## Relevant instincts` block in
+  agent context (non-fatal; skipped when no store is present).
+- **TTL decay**: instincts not surfaced in 6 cycles decay (`confidence *= 0.9`); below 0.2 they archive. Wired into the
+  cleanup sweep. Three `instinct_*` event types seeded into `events.schema.json`. `extract-learnings` dual-emits.
+
+### Notes
+
+- 6-manifest lockstep at **v1.51.0** + `OFF_CADENCE_VERSIONS.add('1.51.0')` + 37 `manifests-version.txt` baselines.
+  Re-locked: skill-list (89), registry (176), phase-42 count (113), the events-schema sha256 snapshot,
+  resilience-primitives (40, +instinct-store.cjs), the phase-28.5 distribution + warn count (5 -> 8; apply-reflections
+  was trimmed back to <=110), skill-graph regenerated. Tarball golden 912 -> 917 (+5; the cleanup/injector/schema edits
+  are same-path).
+- Out of scope: cross-project federation, auto-skill-generation from instincts, embedding-based clustering, cross-runtime sync.
+
+---
+
 ## [1.50.1] - 2026-06-03
 
 ### Fixed

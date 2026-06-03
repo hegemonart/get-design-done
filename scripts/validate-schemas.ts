@@ -215,6 +215,15 @@ export const PAIRS: readonly Pair[] = [
     data: null,
     required: false,
   },
+  {
+    name: 'instinct',
+    schema: 'reference/schemas/instinct.schema.json',
+    // Phase-51 instinct units live at .design/instincts/instincts.json (runtime),
+    // not a tracked subject file, so schema-compile only here; per-unit conformance
+    // is enforced by test/suite/phase-51-store.test.cjs (Ajv-validates units).
+    data: null,
+    required: false,
+  },
 ];
 
 const USE_NPX: boolean = !process.argv.includes('--no-npx');

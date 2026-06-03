@@ -152,6 +152,7 @@ dist/claude-code/.claude/skills/health/SKILL.md
 dist/claude-code/.claude/skills/health/health-mcp-detection.md
 dist/claude-code/.claude/skills/health/health-skill-length-report.md
 dist/claude-code/.claude/skills/help/SKILL.md
+dist/claude-code/.claude/skills/instinct/SKILL.md
 dist/claude-code/.claude/skills/list-assumptions/SKILL.md
 dist/claude-code/.claude/skills/list-pins/SKILL.md
 dist/claude-code/.claude/skills/live/SKILL.md
@@ -348,6 +349,7 @@ reference/i18n.md
 reference/iconography.md
 reference/image-optimization.md
 reference/information-architecture.md
+reference/instinct-format.md
 reference/intel-schema.md
 reference/interaction.md
 reference/known-failure-modes.md
@@ -419,6 +421,7 @@ reference/schemas/events.schema.json
 reference/schemas/generated.d.ts
 reference/schemas/hooks.schema.json
 reference/schemas/insight-line.schema.json
+reference/schemas/instinct.schema.json
 reference/schemas/intel.schema.json
 reference/schemas/iteration-budget.schema.json
 reference/schemas/live-session.schema.json
@@ -597,6 +600,7 @@ scripts/lib/install/runtime-artifact-layout.cjs
 scripts/lib/install/runtime-homes.cjs
 scripts/lib/install/runtime-slash.cjs
 scripts/lib/install/runtimes.cjs
+scripts/lib/instinct-store.cjs
 scripts/lib/intel-store/index.cjs
 scripts/lib/intel-store/index.d.cts
 scripts/lib/issue-reporter/cli-flag-report.cjs
@@ -839,6 +843,7 @@ skills/health/SKILL.md
 skills/health/health-mcp-detection.md
 skills/health/health-skill-length-report.md
 skills/help/SKILL.md
+skills/instinct/SKILL.md
 skills/list-assumptions/SKILL.md
 skills/list-pins/SKILL.md
 skills/live/SKILL.md

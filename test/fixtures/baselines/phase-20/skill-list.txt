@@ -28,6 +28,7 @@ figma-write
 graphify
 health
 help
+instinct
 list-assumptions
 list-pins
 live

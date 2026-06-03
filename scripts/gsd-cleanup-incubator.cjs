@@ -230,6 +230,39 @@ function archiveSlug(input) {
 }
 
 /**
+ * Phase 51 — instinct TTL/decay sweep. Delegates to the SIBLING module
+ * scripts/lib/instinct-store.cjs (referenced by name, never reimplemented):
+ * its `decay()` multiplies each stale unit's confidence by 0.9 and archives
+ * units that fall below 0.2 to `.design/instincts/archive/`.
+ *
+ * Fully non-fatal: if the store module is absent (sibling not yet installed)
+ * or its data file is missing/corrupt, the sweep is silently skipped — the
+ * incubator cleanup must never fail because the instinct store is unavailable.
+ *
+ * @param {{baseDir: string, now?: Date}} input
+ * @returns {{ran: boolean, result: unknown}} `ran:false` when the store is
+ *   absent/unusable; otherwise the store's decay() return value verbatim.
+ */
+function decayInstincts(input) {
+  const baseDir = input && input.baseDir;
+  const now = input && input.now instanceof Date ? input.now : undefined;
+  try {
+    // Sibling module — resolved relative to this script. Absent in installs
+    // that predate Phase 51's instinct store.
+    // eslint-disable-next-line node/no-missing-require, global-require
+    const store = require('./lib/instinct-store.cjs');
+    if (!store || typeof store.decay !== 'function') return { ran: false, result: null };
+    const args = { scope: 'project', baseDir };
+    if (now) args.now = now;
+    const result = store.decay(args);
+    return { ran: true, result };
+  } catch {
+    // Store missing or decay failed — skip silently, keep cleanup non-fatal.
+    return { ran: false, result: null };
+  }
+}
+
+/**
  * Convert a Date to a `YYYYMMDD-HHMMSS` string. Deterministic for tests.
  *
  * @param {Date} date
@@ -340,6 +373,18 @@ function main(argv) {
         console.log(`skipped: ${r.slug} (${r.status})`);
       }
     }
+    // Phase 51: instinct TTL/decay sweep runs alongside the incubator archive.
+    // Non-fatal: a missing/unusable instinct store never fails cleanup.
+    if (!args.dryRun) {
+      const decayed = decayInstincts({ baseDir: args.baseDir, now: new Date() });
+      if (decayed.ran) {
+        console.log('instinct decay: swept (confidence*=0.9 for stale; archived <0.2).');
+      } else {
+        console.log('instinct decay: skipped (store unavailable).');
+      }
+    } else {
+      console.log('[dry-run] instinct decay: would sweep (skipped under --dry-run).');
+    }
     return 0;
   } catch (err) {
     console.error(`error: ${err && err.message ? err.message : String(err)}`);
@@ -359,6 +404,7 @@ module.exports = {
   parseFrontmatter,
   formatTimestamp,
   isCapabilityGap,
+  decayInstincts,
   parseArgs,
   main,
   DEFAULT_TTL_DAYS,
