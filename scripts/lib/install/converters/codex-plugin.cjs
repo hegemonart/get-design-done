@@ -306,9 +306,12 @@ function buildManifest(sources) {
     category,
     capabilities: ['Read', 'Write'],
     websiteURL: homepage || '',
+    // Codex uses /gdd- prefix uniformly (not /gdd: like Claude Code).
+    // Both lines use the same prefix to avoid the documented inconsistency
+    // (audit P1 #4 — committed manifest had mixed /gdd: and $gdd-).
     defaultPrompt: [
-      'Run /gdd:brief to start a design cycle.',
-      'Use $gdd-explore to audit a screen.',
+      'Run /gdd-brief to start a design cycle.',
+      'Run /gdd-explore to audit a screen.',
     ],
     brandColor: '#10A37F',
   };
