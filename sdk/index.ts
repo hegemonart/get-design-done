@@ -17,3 +17,4 @@ export * from './state/index.ts';
 export * from './event-stream/index.ts';
 export * from './errors/index.ts';
 export * from './cli/index.ts';
+export * from './fingerprint/index.ts';

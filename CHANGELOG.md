@@ -4,6 +4,55 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.53.0] - 2026-06-03
+
+### Phase 53 - Semantic Mapper Engine (Louvain Batching + neighborMap + Fingerprint Incremental)
+
+Phase 52 gave mappers a typed graph; Phase 53 makes them smart about scale and re-runs. Three Understand-Anything
+patterns adapted onto the Phase 52 schema: Louvain community batching so each parallel mapper sees files that import
+each other, a neighborMap sidecar so cross-batch edges emit without rereading other batches, and SHA-256 fingerprinting
+so re-runs only re-discover what actually changed. All dep-free (Node builtins; no `graphology`, no embeddings). Planned
+and executed via the GSD pipeline (4 parallel executors + 1 integration executor).
+
+### Breaking changes
+
+- **`/gdd:discover` becomes incremental by default.** It now fingerprints the current graph against the rolling
+  fingerprint store, classifies the delta (SKIP / PARTIAL_UPDATE / ARCHITECTURE_UPDATE / FULL_UPDATE), and dispatches
+  mappers per decision instead of always re-mapping everything. Pass `--full` to force a full re-discover. First runs
+  (no prior fingerprint store) classify as FULL automatically. The fingerprint store lives at `.design/fingerprints/`
+  and follows the Phase 49 worktree-redirect (never written into a worktree-local `.design/`).
+
+### Added
+
+- **Louvain batching**: `scripts/lib/mappers/compute-batches.mjs` (dep-free two-phase modularity maximization,
+  deterministic lexicographic seed, `MAX_COMMUNITY_SIZE=35` sub-split, small-batch merger, `count-fallback` on any
+  error) + `scripts/lib/mappers/graph-adjacency.mjs` (shared adjacency/degree builder). Non-code node groups
+  (token / motion / a11y) emit as `mergeable:false` batches.
+- **neighborMap sidecar**: `scripts/lib/mappers/neighbor-map.mjs` (`buildNeighborMap`) - 1-hop external neighbors per
+  batched file, ranked by degree, capped at 50, with graph-harvested exported symbols (no source reads).
+- **Fingerprint engine**: `sdk/fingerprint/index.ts` (`fingerprint`/`compareFingerprints` via `node:crypto`; per-type
+  component/token/motion signatures; `NONE`/`COSMETIC`/`STRUCTURAL` with a structure-only sub-hash) +
+  `sdk/fingerprint/classify.cjs` (4-action decision matrix) + `sdk/fingerprint/store.cjs` (`current.json` + rolling
+  `cycle-NNN.json` N=5, atomic-write, worktree-redirect, optional FTS5 since-cycle via `probeOptional` with a
+  JSON-scan fallback).
+- **Incremental wiring**: `scripts/lib/mappers/incremental-discover.cjs` (`planIncremental`) composes the above and is
+  wired additively into `scripts/lib/explore-parallel-runner` (community batches before the rolling semaphore;
+  concurrency from `resolveConcurrency`); `/gdd:discover` + `/gdd:explore` gain `--incremental` / `--full`.
+- **Graph-context reviewer**: `agents/design-context-reviewer.md` (Haiku tier; 9 checks; hard-reject on schema /
+  referential / uniqueness breakage, soft-warn otherwise via the health-mirror surface) + `agents/design-context-reviewer-gate.md`
+  (suppresses the reviewer on <5% change).
+
+### Notes
+
+- 6-manifest lockstep at **v1.53.0** + `OFF_CADENCE_VERSIONS.add('1.53.0')` + 37 `manifests-version.txt` baselines.
+  Re-locked: agent-list (60 -> 62; +design-context-reviewer +gate) + the design-* current baseline (28 -> 30) + the
+  agent-frontmatter snapshot; the phase-28.5 distribution (discover 72 -> 78, explore 105 -> 107; warn count unchanged
+  at 10); the explore post-migration baseline; skills.json `argument_hint` for discover/explore (then
+  generate-skill-frontmatter + build:skills). Tarball golden 934 -> 944 (+10). No new reference docs, so the registry is
+  unchanged. **No new runtime dependency.**
+
+---
+
 ## [1.52.0] - 2026-06-03
 
 ### Phase 52 - Typed DesignContext Graph Schema (KEYSTONE)

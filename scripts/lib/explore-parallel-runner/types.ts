@@ -109,6 +109,35 @@ export interface ExploreRunnerOptions {
   readonly pollIntervalMs?: number;
   /** Override the file-watch timeout (ms). Default 600_000 (10 min). */
   readonly timeoutMs?: number;
+  /**
+   * Phase 53 (DISC-01) — OPTIONAL incremental batching. When supplied with a
+   * Phase-52 DesignContext `graph`, the runner runs the change classifier
+   * (`scripts/lib/mappers/incremental-discover.cjs#planIncremental`) FIRST,
+   * groups the graph into Louvain community batches, attaches a per-batch
+   * neighborMap sidecar, and dispatches only the batches the classifier elects
+   * to re-map (SKIP=0, PARTIAL=affected, FULL=all). The mapper SPEC roster is
+   * unchanged — batching is metadata threaded onto the result so the explore
+   * stage can scope each mapper to its community; the rolling semaphore still
+   * spawns the spec roster at the tuned concurrency.
+   *
+   * BACKWARD-COMPATIBLE: when `incremental` is absent (or `graph` is missing),
+   * the runner behaves EXACTLY as before — no batching, no classifier, the
+   * Phase-21 partition-then-spawn path runs untouched.
+   */
+  readonly incremental?: {
+    /** Phase-52 DesignContext graph ({ nodes, edges }). Required to batch. */
+    readonly graph: unknown;
+    /** Prior fingerprint snapshot (store.readCurrent().fingerprints). Absent ⇒ bootstrap ⇒ FULL. */
+    readonly prevFingerprints?: unknown;
+    /** The `--full` opt-out: force a FULL re-map regardless of the classifier. */
+    readonly forceFull?: boolean;
+    /** Forwarded to computeBatches (resolution, maxCommunitySize, configCwd, …). */
+    readonly computeBatchesOpts?: unknown;
+    /** buildNeighborMap cap (default 50). */
+    readonly neighborCap?: number;
+    /** Forwarded into classify's projectStats.thresholds. */
+    readonly thresholds?: unknown;
+  };
 }
 
 /**
@@ -135,5 +164,34 @@ export interface ExploreRunnerResult {
     readonly input_tokens: number;
     readonly output_tokens: number;
     readonly usd_cost: number;
+  };
+  /**
+   * Phase 53 (DISC-01) — present ONLY when `ExploreRunnerOptions.incremental`
+   * was supplied. Carries the classifier verdict + the community batch plan so
+   * the explore stage can scope each mapper to its community and skip re-mapping
+   * unchanged batches. Absent (undefined) on the backward-compatible default
+   * path — existing consumers that never set `incremental` never see this key.
+   */
+  readonly batching?: {
+    /** SKIP | PARTIAL_UPDATE | ARCHITECTURE_UPDATE | FULL_UPDATE (post `--full`). */
+    readonly action: string;
+    /** Batching method actually used. */
+    readonly method: 'louvain' | 'count-fallback';
+    /** Modularity of the Louvain partition (null on the count-fallback). */
+    readonly modularity: number | null;
+    /** Every community batch (opaque ids + members). */
+    readonly batches: ReadonlyArray<{
+      readonly id: string;
+      readonly members: readonly string[];
+      readonly mergeable: boolean;
+      readonly kind: string;
+      readonly source: string;
+    }>;
+    /** The batch ids elected for re-map this cycle (SKIP ⇒ empty). */
+    readonly batchesToMap: readonly string[];
+    /** Per-batch neighborMap sidecar, keyed by batch id (selected batches only). */
+    readonly neighborMaps: Readonly<Record<string, unknown>>;
+    /** The change classifier's full result (structuralCount, pct, hints, reason, …). */
+    readonly classification: Readonly<Record<string, unknown>>;
   };
 }

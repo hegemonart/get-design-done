@@ -1,7 +1,7 @@
 ---
 name: discover
 description: "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after /gdd:scan when a fast-path context build is wanted instead of the full /gdd:explore. Activates for requests involving detecting an existing design system, inventorying tokens and components, or onboarding a brownfield repo."
-argument-hint: "[--auto]"
+argument-hint: "[--auto] [--incremental] [--full]"
 user-invocable: true
 ---
 
@@ -27,6 +27,12 @@ Full procedure detail: `./discover-procedure.md`.
 ## Auto Mode
 
 When `--auto` is passed to the builder: if `tailwind.config.{js,cjs,mjs,ts}` exists -> Tailwind-only project (skip CSS file grep, parse tailwind.config for palette/spacing/font, use those as the baseline style signal). Else fall through to the existing CSS file grep logic. Detail: `./discover-procedure.md` §Auto Mode.
+
+---
+
+## Incremental Mode (Phase 53, default)
+
+`--incremental` is the DEFAULT after Phase 53; pass `--full` to opt out and re-map everything. Incremental runs the change classifier FIRST (via the fingerprint store at `.design/fingerprints/`): it fingerprints the current DesignContext graph, diffs each node against the prior cycle, and dispatches mappers per the verdict. SKIP (cosmetic-only / no-op) dispatches 0 mappers; PARTIAL re-maps only the affected community batches; ARCHITECTURE re-batches the dir-reshaped subset; FULL (or `--full`, or a first run with no prior store) re-maps all batches. The batching + classifier engine lives in `explore` (`scripts/lib/explore-parallel-runner` + `scripts/lib/mappers/incremental-discover.cjs`); this flag selects the path. Detail: `./discover-procedure.md` §Incremental Mode.
 
 ---
 

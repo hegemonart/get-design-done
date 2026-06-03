@@ -26,6 +26,10 @@ import { resolve as resolvePath } from 'node:path';
 
 import { getLogger } from '../logger/index.ts';
 import { resolveConcurrency } from '../parallelism-engine/concurrency-tuner.cjs';
+// Phase 53 (DISC-01): the incremental batching composer. CJS, imported the same
+// way as concurrency-tuner.cjs above. Only invoked when opts.incremental.graph
+// is supplied — the default explore path never loads its ESM/TS dependencies.
+import { planIncremental } from '../mappers/incremental-discover.cjs';
 
 import {
   isParallelismSafe,
@@ -130,6 +134,58 @@ export async function run(
 
   const outputPath: string = resolvePath(cwd, '.design/DESIGN-PATTERNS.md');
 
+  // --- Phase 53 (DISC-01): incremental batching ----------------------------
+  //
+  // ONLY runs when a Phase-52 graph is supplied. Groups the graph into Louvain
+  // community batches, runs the change classifier against the prior fingerprint
+  // snapshot, and elects which batches to re-map (SKIP=0, PARTIAL=affected,
+  // FULL=all). The result rides on `batching`; the spec roster + rolling
+  // semaphore below are UNCHANGED. Backward-compatible: absent graph ⇒ undefined
+  // batching ⇒ the Phase-21 path is byte-for-byte the same. Never throws —
+  // batching is advisory metadata, and a planning failure must not abort mappers.
+  let batching: ExploreRunnerResult['batching'] = undefined;
+  if (opts.incremental && opts.incremental.graph !== undefined && opts.incremental.graph !== null) {
+    try {
+      const plan = await planIncremental({
+        graph: opts.incremental.graph,
+        prevFingerprints: opts.incremental.prevFingerprints,
+        opts: {
+          ...(opts.incremental.forceFull !== undefined ? { forceFull: opts.incremental.forceFull } : {}),
+          ...(opts.incremental.computeBatchesOpts !== undefined ? { computeBatchesOpts: opts.incremental.computeBatchesOpts } : {}),
+          ...(opts.incremental.neighborCap !== undefined ? { neighborCap: opts.incremental.neighborCap } : {}),
+          ...(opts.incremental.thresholds !== undefined ? { thresholds: opts.incremental.thresholds } : {}),
+        },
+      });
+      batching = Object.freeze({
+        action: plan.action,
+        method: plan.method,
+        modularity: plan.modularity,
+        batches: Object.freeze(plan.batches.map((b: { id: string; members: string[]; mergeable: boolean; kind: string; source: string }) => Object.freeze({
+          id: b.id,
+          members: Object.freeze([...b.members]),
+          mergeable: b.mergeable,
+          kind: b.kind,
+          source: b.source,
+        }))),
+        batchesToMap: Object.freeze(plan.batchesToMap.map((b: { id: string }) => b.id)),
+        neighborMaps: Object.freeze({ ...plan.neighborMaps }),
+        classification: Object.freeze({ ...plan.classification }),
+      });
+      logger.info('explore.runner.batching', {
+        action: plan.action,
+        method: plan.method,
+        batch_count: plan.batches.length,
+        batches_to_map: plan.batchesToMap.length,
+        structural_count: plan.classification.structuralCount,
+      });
+    } catch (err) {
+      // Planning failure degrades to "no batching" — the mappers still run.
+      const message: string = err instanceof Error ? err.message : String(err);
+      logger.warn('explore.runner.batching_failed', { message });
+      batching = undefined;
+    }
+  }
+
   logger.info('explore.runner.started', {
     mapper_count: specs.length,
     concurrency,
@@ -154,6 +210,7 @@ export async function run(
       parallel_count: 0,
       serial_count: 0,
       total_usage: { input_tokens: 0, output_tokens: 0, usd_cost: 0 },
+      ...(batching !== undefined ? { batching } : {}),
     });
   }
 
@@ -294,5 +351,6 @@ export async function run(
       output_tokens: totalOutput,
       usd_cost: totalCost,
     },
+    ...(batching !== undefined ? { batching } : {}),
   });
 }

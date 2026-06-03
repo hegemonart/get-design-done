@@ -633,6 +633,14 @@ OFF_CADENCE_VERSIONS.add('1.51.0');
 // Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.52.0');
 
+// 1.53.0 -> Phase 53 (Semantic Mapper Engine). Minor on 1.52.0. Adds dep-free Louvain community batching
+// (scripts/lib/mappers/compute-batches.mjs + graph-adjacency.mjs), a neighborMap sidecar (neighbor-map.mjs),
+// a SHA-256 fingerprint engine (sdk/fingerprint/index.ts) + 4-action change classifier + rolling store
+// (sdk/fingerprint/classify.cjs + store.cjs), incremental discover wiring (explore-parallel-runner +
+// /gdd:discover --incremental default / --full opt-out), and a design-context-reviewer agent + gate. No new
+// dependency (node:crypto + optional better-sqlite3 via probeOptional). Planned/executed via parallel GSD subagents.
+OFF_CADENCE_VERSIONS.add('1.53.0');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

@@ -135,7 +135,7 @@
       "name": "discover",
       "frontmatter_name": "discover",
       "description": "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after {{command_prefix}}scan when a fast-path context build is wanted instead of the full {{command_prefix}}explore. Activates for requests involving detecting an existing design system, inventorying tokens and components, or onboarding a brownfield repo.",
-      "argument_hint": "[--auto]",
+      "argument_hint": "[--auto] [--incremental] [--full]",
       "user_invocable": true
     },
     {
@@ -153,7 +153,7 @@
     {
       "name": "explore",
       "description": "Stage 2 of 5 - unified exploration merging inventory grep + design interview. Probes 6 connections, scans the codebase, conducts the AskUserQuestion interview, and writes .design/DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md. Use after {{command_prefix}}brief to map the existing system and lock decisions before planning. Activates for requests involving researching design direction, gathering references, or exploring visual options.",
-      "argument_hint": "[--skip-interview] [--skip-scan]",
+      "argument_hint": "[--skip-interview] [--skip-scan] [--incremental] [--full]",
       "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__probe_connections, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__add_decision",
       "next_skills": [
         "plan"

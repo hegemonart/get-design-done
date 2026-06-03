@@ -24,6 +24,8 @@ agents/design-component-generator.md
 agents/design-context-builder.md
 agents/design-context-checker-gate.md
 agents/design-context-checker.md
+agents/design-context-reviewer-gate.md
+agents/design-context-reviewer.md
 agents/design-debt-crawler.md
 agents/design-discussant.md
 agents/design-doc-writer.md
@@ -649,6 +651,11 @@ scripts/lib/manifest/schemas/harnesses.schema.json
 scripts/lib/manifest/schemas/prose-denylist.schema.json
 scripts/lib/manifest/schemas/skills.schema.json
 scripts/lib/manifest/skills.json
+scripts/lib/mappers/compute-batches.mjs
+scripts/lib/mappers/graph-adjacency.mjs
+scripts/lib/mappers/incremental-discover.cjs
+scripts/lib/mappers/incremental-discover.d.cts
+scripts/lib/mappers/neighbor-map.mjs
 scripts/lib/mcp-tools-lint/index.cjs
 scripts/lib/mcp-tools-lint/index.d.cts
 scripts/lib/migration/codemod-gen.cjs
@@ -745,6 +752,9 @@ sdk/event-stream/index.ts
 sdk/event-stream/reader.ts
 sdk/event-stream/types.ts
 sdk/event-stream/writer.ts
+sdk/fingerprint/classify.cjs
+sdk/fingerprint/index.ts
+sdk/fingerprint/store.cjs
 sdk/index.ts
 sdk/mcp/gdd-mcp/README.md
 sdk/mcp/gdd-mcp/schemas/gdd_context_query.schema.json
