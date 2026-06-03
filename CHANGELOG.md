@@ -4,6 +4,51 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.57.0] - 2026-06-03
+
+### Phase 57 - SQLite State Backbone (Cross-Session Query Layer)
+
+GDD project state lives in per-file markdown (STATE.md blocks, recall, instincts). Cross-cycle queries ("every decision
+tagged accessibility across the last five cycles") require fan-out greps and are effectively infeasible. Phase 57 adds an
+opt-in `.design/state.sqlite` as an indexed query layer over that state, while markdown stays the human-editable source of
+truth. It is **built with zero new dependency**: SQLite is reached through the existing opportunistic
+`probeOptional('better-sqlite3')` runtime probe (the same pattern Phase 51 uses for the instinct store), with a guaranteed
+markdown / JS-scan fallback whenever the module is absent. Migration is opt-in (`--migrate-state`) in v1.57.0, dual-writes
+for one minor version, and is fully reversible (`/gdd:state demigrate`). When better-sqlite3 is not installed, GDD behaves
+exactly as before. Planned and executed via the GSD pipeline (3 + 1 + 2 parallel executors with one reconciliation pass).
+
+### Breaking changes
+
+- **Opt-in SQLite state backbone.** Running `node scripts/lib/state/migrate-to-sqlite.cjs --migrate-state` builds
+  `.design/state.sqlite` (14 tables plus FTS5) from your STATE.md. After migration, state mutations dual-write: SQLite is
+  the authoritative store and STATE.md is rendered from it byte-for-byte (the existing `gdd-state` `read`/`mutate`/`transition`
+  API is unchanged). Without migration, or when better-sqlite3 is absent, nothing changes - markdown stays authoritative.
+  Markdown is always human-editable; a hand-edit is detected on the next write and folded back into SQLite.
+- **New `/gdd:state` skill** with three subcommands: `query "<sql>"` (engine-level read-only SELECT over the
+  decisions/blockers/plans tables), `recover` (rebuild a corrupt `state.sqlite` from markdown), and `demigrate` (drop
+  `state.sqlite` and fall back to the markdown-only source of truth).
+
+### Added
+
+- **`scripts/lib/state/`** - `state-backend.cjs` (`probeOptional('better-sqlite3')` + FTS5 probe -> `{Database, BACKEND}`;
+  WAL / busy_timeout / foreign_keys pragmas; engine-level readonly opens), `state-store.cjs` (dual-backend dispatch; the
+  SQLite-authoritative -> render-markdown -> write-STATE.md transaction; hand-edit freshness guard), `migrate-to-sqlite.cjs`
+  (idempotent UPSERT migration, `--migrate-state` opt-in, `--dry-run`), `render-markdown.cjs` (byte-equal STATE.md
+  reconstruction from SQLite via the proven serializer), `query-surface.cjs` (readonly SQL + first-token denylist, recover,
+  demigrate, cap-10 `.bak` rotation).
+- **`sdk/state/schema.sql`** - 14 tables (state_position, decisions, blockers, must_haves, plans, findings, design_debt,
+  recall_records, instincts, sessions, worktree_state, conflict_incidents, plus `_meta`/`_block_meta`) with FTS5 virtual
+  tables on decisions/findings/recall/instincts.
+- **Consumers read SQLite when migrated** - `gdd_state__get` and the dashboard data plane read SQLite-direct (markdown
+  scrape fallback; the MCP tool schema is unchanged), and the Phase 56 fact-force gate gains an FTS5 tier-0 lookup with the
+  grep fallback intact.
+
+### Changed
+
+- **`sdk/state/index.ts`** routes `read`/`mutate`/`transition` through the SQLite dual-write path only when migration is
+  active for the resolved state file (a sibling `state.sqlite` exists); otherwise the markdown path runs byte-identically.
+  The new SQLite sibling lock (`state.sqlite.lock`) is always acquired before `STATE.md.lock`.
+
 ## [1.56.0] - 2026-06-03
 
 ### Phase 56 - Risk-Scoring + Fact-Forcing Gate (Quantified Action Confidence)

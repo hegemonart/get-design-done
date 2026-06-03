@@ -230,3 +230,51 @@ function getErrnoCode(err: unknown): string | undefined {
 function sleep(ms: number): Promise<void> {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
+
+// ---------------------------------------------------------------------------
+// Phase 57 (Plan 57-06 Round 2-D): SQLite sibling lock.
+//
+// R9 requirement: when both STATE.md.lock and state.sqlite.lock are needed,
+// acquire state.sqlite.lock BEFORE STATE.md.lock (deadlock-free ordering).
+//
+// The SQLite lock file is `${sqlitePath}.lock` (i.e. state.sqlite.lock),
+// using the SAME acquire algorithm and the SAME {pid,host,acquired_at}
+// payload as the existing STATE.md.lock. This reuses the entire acquire()
+// code path — callers just pass the SQLite path instead of the markdown path.
+//
+// Callers in sdk/state/index.ts follow the mandated ordering:
+//   1. acquireSqliteLock(state.sqlite)   → releaseSqlite
+//   2. acquire(STATE.md)                  → releaseMarkdown
+//   3. ... do work ...
+//   4. releaseMarkdown()
+//   5. releaseSqlite()
+//
+// This function is a thin alias for acquire() with documentation that
+// enforces the ordering contract. It is exported separately so consumers
+// can't accidentally use it without understanding the ordering requirement.
+// ---------------------------------------------------------------------------
+
+/**
+ * Acquire the advisory lock for `state.sqlite` at `${sqlitePath}.lock`.
+ *
+ * Uses the SAME acquire algorithm and `{pid, host, acquired_at}` payload
+ * as the existing `acquire()` for STATE.md.lock.
+ *
+ * ORDERING RULE (R9, deadlock-free): when both locks are needed, ALWAYS
+ * acquire `state.sqlite.lock` BEFORE `STATE.md.lock`. Never acquire them
+ * in the opposite order.
+ *
+ * @param sqlitePath  absolute path to `state.sqlite` (NOT the `.lock` file —
+ *                    the lock file is derived as `${sqlitePath}.lock`).
+ * @param opts        same AcquireOptions as `acquire()`.
+ * @throws LockAcquisitionError when `maxWaitMs` elapses without acquiring.
+ */
+export async function acquireSqliteLock(
+  sqlitePath: string,
+  opts: AcquireOptions = {},
+): Promise<LockRelease> {
+  // Delegate entirely to the existing acquire() implementation. The lock
+  // file ends up at `${sqlitePath}.lock` (e.g. `.design/state.sqlite.lock`),
+  // exactly matching R9's specification.
+  return acquire(sqlitePath, opts);
+}

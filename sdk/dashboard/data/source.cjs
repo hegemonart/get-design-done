@@ -58,6 +58,10 @@ function tryRequire(relPath) {
 const designContextQuery = tryRequire('scripts/lib/design-context-query.cjs');
 const eventChain = tryRequire('scripts/lib/event-chain.cjs');
 const healthMirror = tryRequire('scripts/lib/health-mirror/index.cjs');
+// Phase 57 (Round 3-E): state-store provides backendName() so the dashboard
+// model can surface whether it read from SQLite or markdown. Soft-loaded so
+// a missing module degrades without crashing. Never throws.
+const stateStore = tryRequire('scripts/lib/state/state-store.cjs');
 
 // ---------------------------------------------------------------------------
 // .ts shared libs — dynamic import(pathToFileURL), memoized.
@@ -211,23 +215,54 @@ function scrapeEventsFile(eventsPath) {
 
 /**
  * Load STATE.md-derived fields: status, phase(stage), cycle, decisions[],
- * blockers[]. Tries the typed sdk/state read() first, then the file scrape.
+ * blockers[], backend. Tries the typed sdk/state read() first (which is
+ * already migration-active-aware for Phase 57: when BACKEND==='sqlite' and
+ * a sibling state.sqlite exists, the dual-write path ensures STATE.md is
+ * byte-equal with SQLite so read() returns the canonical view), then the
+ * file-scrape fallback. Never throws.
+ *
+ * The `backend` field reflects the active state-store backend:
+ *   'sqlite'   — better-sqlite3 + FTS5 available and migration active
+ *   'markdown' — markdown floor (the universal default and CI surface)
  *
  * @param {string} root
  * @param {string[]} degraded
  * @returns {Promise<{status:string|null, phase:string|null, cycle:string|null,
- *           decisions:Array, blockers:Array}>}
+ *           decisions:Array, blockers:Array, backend:'sqlite'|'markdown'}>}
  */
 async function loadState(root, degraded) {
   const statePath = path.join(root, '.design', 'STATE.md');
-  const empty = { status: null, phase: null, cycle: null, decisions: [], blockers: [] };
+  const empty = {
+    status: null, phase: null, cycle: null,
+    decisions: [], blockers: [],
+    backend: /** @type {'sqlite'|'markdown'} */ ('markdown'),
+  };
+
+  // Determine the active backend for this specific state path (Phase 57 R3-E).
+  // The migration-active gate is:
+  //   BACKEND==='sqlite' AND existsSync(<statePath-sibling>/state.sqlite)
+  //
+  // We use state-store.backendName() to check the global probe result, then
+  // confirm by checking whether a sibling state.sqlite exists next to STATE.md.
+  // This mirrors the migrationActive() logic in sdk/state/index.ts exactly.
+  const globalBackend =
+    (stateStore && typeof stateStore.backendName === 'function')
+      ? /** @type {'sqlite'|'markdown'} */ (stateStore.backendName())
+      : 'markdown';
+  const sqliteSibling = path.join(root, '.design', 'state.sqlite');
+  const activeBackend = /** @type {'sqlite'|'markdown'} */ (
+    globalBackend === 'sqlite' && fs.existsSync(sqliteSibling) ? 'sqlite' : 'markdown'
+  );
 
   if (!fs.existsSync(statePath)) {
     degraded.push('state: .design/STATE.md not found');
-    return empty;
+    return { ...empty, backend: activeBackend };
   }
 
   // 1) Typed lib read() — the in-process shared surface (R1).
+  // Phase 57: sdk/state read() is already migration-active-aware; when
+  // BACKEND==='sqlite' and state.sqlite sibling exists, STATE.md is kept
+  // byte-equal by the dual-write path, so no separate SQLite read needed.
   try {
     const stateMod = await importState();
     if (stateMod && typeof stateMod.read === 'function') {
@@ -239,6 +274,7 @@ async function loadState(root, degraded) {
         cycle: (parsed.frontmatter && parsed.frontmatter.cycle) || null,
         decisions: Array.isArray(parsed.decisions) ? parsed.decisions : [],
         blockers: Array.isArray(parsed.blockers) ? parsed.blockers : [],
+        backend: activeBackend,
       };
     }
     degraded.push('state: sdk/state import unavailable — using file scrape');
@@ -246,7 +282,7 @@ async function loadState(root, degraded) {
     degraded.push(`state: typed read failed (${errMsg(err)}) — using file scrape`);
   }
 
-  // 2) File-scrape fallback.
+  // 2) File-scrape fallback (ultimate fallback; never throws).
   const scraped = scrapeStateFile(statePath);
   if (scraped) {
     return {
@@ -255,6 +291,7 @@ async function loadState(root, degraded) {
       cycle: scraped.cycle,
       decisions: scraped.decisions,
       blockers: scraped.blockers,
+      backend: 'markdown',
     };
   }
   degraded.push('state: scrape fallback failed');
@@ -508,6 +545,7 @@ function errMsg(err) {
  *   sessions: Array,
  *   degraded: string[],
  *   root: string,
+ *   backend: 'sqlite'|'markdown',
  * }>}
  */
 async function loadDashboardModel(opts = {}) {
@@ -564,6 +602,7 @@ async function loadDashboardModel(opts = {}) {
     sessions,
     degraded,
     root,
+    backend: stateRes.backend,
   };
 }
 
