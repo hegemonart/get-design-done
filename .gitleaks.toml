@@ -45,6 +45,12 @@ paths = [
   '''test/suite/figma-extract-pull\.test\.cjs''',
   '''test/suite/figma-extract-styles\.test\.cjs''',
   '''test/suite/figma-extract-health\.test\.cjs''',
+  # Phase 56 (risk scorer) — exercises the SECRET_SHAPED_RE detector in
+  # scripts/lib/risk/tables.cjs by flowing AKIA-shaped + PEM + sk- sentinels
+  # (e.g. `AKIA1234567890ABCDEF`) through computeRisk and asserting the
+  # secret-shaped input raises the score. The fake tokens existing in source
+  # IS the test — same pattern as redact.test.cjs + figma-extract-*.test.cjs.
+  '''test/suite/phase-56-risk\.test\.cjs''',
 ]
 regexes = [
   # Placeholder tokens used in reference docs and examples
