@@ -18,7 +18,9 @@ harness-freshness.cjs
 hedge-ensemble.cjs
 incubator-author.cjs
 instinct-store.cjs
+mapper-spawn.cjs
 mmr-rerank.cjs
+new-addendum.cjs
 parse-contract.cjs
 probe-optional.cjs
 pseudonymize.cjs

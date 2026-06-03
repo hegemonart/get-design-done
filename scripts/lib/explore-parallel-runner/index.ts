@@ -30,6 +30,12 @@ import { resolveConcurrency } from '../parallelism-engine/concurrency-tuner.cjs'
 // way as concurrency-tuner.cjs above. Only invoked when opts.incremental.graph
 // is supplied — the default explore path never loads its ESM/TS dependencies.
 import { planIncremental } from '../mappers/incremental-discover.cjs';
+// Phase 54 (REG-01): stack detection + addendum composition. Both CJS, imported
+// the same way. The pre-spawn step (composeMapperSpecs below) calls detectStack
+// ONCE and applyAddendums per spec; both are wrapped in try/catch so a failure
+// degrades to the unmodified Phase-21 spec roster.
+import { detectStack } from '../detect/stack.cjs';
+import { applyAddendums } from '../mapper-spawn.cjs';
 
 import {
   isParallelismSafe,
@@ -106,6 +112,129 @@ export const DEFAULT_MAPPERS: readonly MapperSpec[] = Object.freeze([
 ]);
 
 // ---------------------------------------------------------------------------
+// Phase 54 (REG-01) — pre-spawn stack-addendum composition
+// ---------------------------------------------------------------------------
+
+/** Derive the agent name an addendum's composes_into list matches against. */
+function agentNameOf(spec: MapperSpec): string {
+  // Addendum composes_into uses the AGENT filename (token-mapper,
+  // component-taxonomy-mapper, motion-mapper, visual-hierarchy-mapper), not the
+  // short MapperSpec.name (token, component-taxonomy, ...). Derive it from the
+  // agentPath basename so the registry match keys line up.
+  const base = spec.agentPath
+    .replace(/\\/g, '/')
+    .split('/')
+    .pop()
+    ?.replace(/\.md$/i, '');
+  return base && base.length > 0 ? base : spec.name;
+}
+
+/**
+ * Compose stack-specific guidance into each mapper spec BEFORE spawn.
+ *
+ * Detects the project stack ONCE (detect/stack.cjs#detectStack) and, for each
+ * spec, appends the matching `type:"stack-addendum"` reference bodies to the
+ * prompt (mapper-spawn.cjs#applyAddendums, cap 1 system + 1 framework + 1
+ * motion). The match is keyed by the spec's AGENT name against the registry
+ * `composes_into` list.
+ *
+ * Contract:
+ *   * ADDITIVE + BACKWARD-COMPATIBLE: a spec with no matching addendum (or no
+ *     detected stack) is returned with a byte-for-byte unchanged prompt. When
+ *     NOTHING matches across all specs, the original `specs` array is returned
+ *     unchanged (same reference), so the Phase-21 path is identical.
+ *   * NEVER THROWS: detection / registry / file-read failures degrade to the
+ *     unmodified roster. Dispatch is never blocked by this step.
+ *   * The frozen DEFAULT_MAPPERS entries are never mutated — a spec that gains
+ *     an addendum is returned as a fresh object.
+ *
+ * @returns `{ specs, missingByMapper }` — the (possibly) recomposed roster +
+ *          a per-agent-name list of detected stack values that had NO addendum
+ *          for that mapper (drives the R6 fallback flag / health coverage row).
+ */
+function composeMapperSpecs(
+  specs: readonly MapperSpec[],
+  cwd: string,
+  addendumOpts: ExploreRunnerOptions['addendums'],
+  logger: ReturnType<typeof getLogger>,
+): { specs: readonly MapperSpec[]; missingByMapper: Record<string, string[]> } {
+  const missingByMapper: Record<string, string[]> = {};
+  const opt = addendumOpts ?? {};
+  if (opt.enabled === false) return { specs, missingByMapper };
+
+  try {
+    const root: string = typeof opt.root === 'string' ? opt.root : cwd;
+    const detect = typeof opt.detectStack === 'function' ? opt.detectStack : detectStack;
+    const stack = detect(root) as {
+      ds?: string | null;
+      framework?: string | null;
+      motion_libs?: string[];
+    } | null;
+
+    // Resolve the registry + refDir. Defaults read the shipped registry and the
+    // repo reference/ dir; tests inject both. A missing registry simply yields
+    // no matches (applyAddendums degrades to an empty block).
+    let registry: unknown = opt.registry;
+    const refDir: string =
+      typeof opt.refDir === 'string'
+        ? opt.refDir
+        : resolvePath(cwd, 'reference');
+    if (registry === undefined) {
+      try {
+        // Lazy require so the default path only touches disk when enabled.
+        const { loadRegistry } = require('../reference-registry.cjs') as {
+          loadRegistry: (o: { cwd?: string }) => unknown;
+        };
+        registry = loadRegistry({ cwd });
+      } catch {
+        registry = undefined; // no registry ⇒ no addendums (unchanged prompts)
+      }
+    }
+
+    let anyChanged = false;
+    const recomposed: MapperSpec[] = specs.map((spec) => {
+      const agentName = agentNameOf(spec);
+      // applyAddendums mutates a spec-shaped object's `.prompt` in place; we feed
+      // it a throwaway carrying the AGENT name so the registry match keys align,
+      // then copy the (possibly) augmented prompt back onto a fresh spec.
+      const carrier = { name: agentName, prompt: spec.prompt };
+      const { block, missing } = applyAddendums(carrier, stack, {
+        registry,
+        refDir,
+      }) as { block: string; used: string[]; missing: string[] };
+
+      if (Array.isArray(missing) && missing.length > 0) {
+        missingByMapper[agentName] = missing;
+      }
+      if (block && block.length > 0 && carrier.prompt !== spec.prompt) {
+        anyChanged = true;
+        return Object.freeze({ ...spec, prompt: carrier.prompt });
+      }
+      return spec;
+    });
+
+    if (anyChanged) {
+      logger.info('explore.runner.addendums_composed', {
+        mappers_augmented: recomposed.filter((s, i) => s !== specs[i]).length,
+        ds: stack && stack.ds ? stack.ds : null,
+        framework: stack && stack.framework ? stack.framework : null,
+        motion_libs:
+          stack && Array.isArray(stack.motion_libs) ? stack.motion_libs.length : 0,
+      });
+      return { specs: Object.freeze(recomposed), missingByMapper };
+    }
+    // Nothing matched — return the original roster reference unchanged.
+    return { specs, missingByMapper };
+  } catch (err) {
+    // The addendum step must NEVER break dispatch. Degrade to the unmodified
+    // roster + surface a warn for observability.
+    const message: string = err instanceof Error ? err.message : String(err);
+    logger.warn('explore.runner.addendums_failed', { message });
+    return { specs, missingByMapper };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // run — main orchestrator
 // ---------------------------------------------------------------------------
 
@@ -123,7 +252,7 @@ export const DEFAULT_MAPPERS: readonly MapperSpec[] = Object.freeze([
 export async function run(
   opts: ExploreRunnerOptions,
 ): Promise<ExploreRunnerResult> {
-  const specs: readonly MapperSpec[] = opts.mappers ?? DEFAULT_MAPPERS;
+  const baseSpecs: readonly MapperSpec[] = opts.mappers ?? DEFAULT_MAPPERS;
   const cwd: string = opts.cwd ?? process.cwd();
   // Phase 27.6 D-07: data-driven concurrency default. Falls back to
   // min(cpu-1, 8) when no `parallelism.verdict` events exist in
@@ -131,6 +260,14 @@ export async function run(
   const concurrency: number = opts.concurrency ?? resolveConcurrency();
 
   const logger = getLogger().child('explore.runner');
+
+  // --- Phase 54 (REG-01): compose stack addendums into mapper prompts -------
+  //
+  // Fingerprint the project ONCE and append the matching stack-addendum bodies
+  // to each mapper's prompt BEFORE partitioning / spawn. ADDITIVE +
+  // backward-compatible: no detected stack / no matching addendum ⇒ `specs` is
+  // the unchanged roster reference. NEVER throws (composeMapperSpecs guards).
+  const { specs } = composeMapperSpecs(baseSpecs, cwd, opts.addendums, logger);
 
   const outputPath: string = resolvePath(cwd, '.design/DESIGN-PATTERNS.md');
 

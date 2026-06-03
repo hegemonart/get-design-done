@@ -64,8 +64,25 @@
               "layout",
               "performance",
               "component-spec",
-              "domain-index"
+              "domain-index",
+              "stack-addendum"
             ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "system",
+              "framework",
+              "motion"
+            ],
+            "description": "Phase 54 stack-addendum category. Drives mapper-spawn.cjs composition (1 system + 1 framework + 1 motion cap). Present only on type:stack-addendum entries; classifyEntry also infers it from the path dir, so it is an explicit reinforcement, not strictly required."
+          },
+          "composes_into": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Phase 54 stack-addendum composition targets — the explore mapper names (e.g. token-mapper, component-taxonomy-mapper, motion-mapper) this addendum is appended into pre-spawn. Read by scripts/lib/mapper-spawn.cjs composeAddendums(). Present only on type:stack-addendum entries."
           },
           "tier": {
             "enum": [

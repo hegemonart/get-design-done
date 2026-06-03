@@ -163,6 +163,7 @@ dist/claude-code/.claude/skills/locale/SKILL.md
 dist/claude-code/.claude/skills/map/SKILL.md
 dist/claude-code/.claude/skills/migrate-context/SKILL.md
 dist/claude-code/.claude/skills/migrate/SKILL.md
+dist/claude-code/.claude/skills/new-addendum/SKILL.md
 dist/claude-code/.claude/skills/new-cycle/SKILL.md
 dist/claude-code/.claude/skills/new-cycle/milestone-completeness-rubric.md
 dist/claude-code/.claude/skills/new-project/SKILL.md
@@ -346,6 +347,12 @@ reference/figma-sandbox.md
 reference/first-principles.md
 reference/form-patterns.md
 reference/framer-motion-patterns.md
+reference/frameworks/astro.md
+reference/frameworks/nextjs.md
+reference/frameworks/remix.md
+reference/frameworks/storybook.md
+reference/frameworks/sveltekit.md
+reference/frameworks/vite-react.md
 reference/gdd-runtime-audit.md
 reference/gdd-threat-model.md
 reference/gemini-tools.md
@@ -374,6 +381,10 @@ reference/motion-interpolate.md
 reference/motion-spring.md
 reference/motion-transition-taxonomy.md
 reference/motion.md
+reference/motion/framer-motion.md
+reference/motion/gsap.md
+reference/motion/motion-one.md
+reference/motion/react-spring.md
 reference/multi-author-model.md
 reference/native-platforms.md
 reference/notification-routing.md
@@ -451,6 +462,14 @@ reference/spatial.md
 reference/start-interview.md
 reference/style-vocabulary.md
 reference/surfaces.md
+reference/systems/chakra.md
+reference/systems/css-modules.md
+reference/systems/mui.md
+reference/systems/radix-themes.md
+reference/systems/shadcn.md
+reference/systems/styled-components.md
+reference/systems/tailwind.md
+reference/systems/vanilla-extract.md
 reference/ticket-sync.md
 reference/typography.md
 reference/user-research.md
@@ -527,6 +546,8 @@ scripts/lib/detect/rules/ban-11.cjs
 scripts/lib/detect/rules/ban-12.cjs
 scripts/lib/detect/rules/ban-13.cjs
 scripts/lib/detect/rules/index.cjs
+scripts/lib/detect/stack.cjs
+scripts/lib/detect/stack.d.cts
 scripts/lib/discuss-parallel-runner/aggregator.ts
 scripts/lib/discuss-parallel-runner/discussants.ts
 scripts/lib/discuss-parallel-runner/index.ts
@@ -651,6 +672,8 @@ scripts/lib/manifest/schemas/harnesses.schema.json
 scripts/lib/manifest/schemas/prose-denylist.schema.json
 scripts/lib/manifest/schemas/skills.schema.json
 scripts/lib/manifest/skills.json
+scripts/lib/mapper-spawn.cjs
+scripts/lib/mapper-spawn.d.cts
 scripts/lib/mappers/compute-batches.mjs
 scripts/lib/mappers/graph-adjacency.mjs
 scripts/lib/mappers/incremental-discover.cjs
@@ -661,6 +684,7 @@ scripts/lib/mcp-tools-lint/index.d.cts
 scripts/lib/migration/codemod-gen.cjs
 scripts/lib/mmr-rerank.cjs
 scripts/lib/motion/validate-motion.cjs
+scripts/lib/new-addendum.cjs
 scripts/lib/notify/dispatch.cjs
 scripts/lib/openrouter/catalog-fetcher.cjs
 scripts/lib/parallelism-engine/concurrency-tuner.cjs
@@ -877,6 +901,7 @@ skills/locale/SKILL.md
 skills/map/SKILL.md
 skills/migrate-context/SKILL.md
 skills/migrate/SKILL.md
+skills/new-addendum/SKILL.md
 skills/new-cycle/SKILL.md
 skills/new-cycle/milestone-completeness-rubric.md
 skills/new-project/SKILL.md

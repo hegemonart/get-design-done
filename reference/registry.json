@@ -1,7 +1,7 @@
 {
   "$schema": "./schemas/registry.schema.json",
   "version": 1,
-  "generated_at": "2026-05-20T09:53:00.000Z",
+  "generated_at": "2026-06-03T00:00:00.000Z",
   "entries": [
     {
       "name": "codex-tools",
@@ -1170,6 +1170,168 @@
       "type": "meta-rules",
       "phase": 52,
       "description": "Phase 52 controlled tag vocabulary for DesignContext nodes; validate-design-context.cjs soft-warns on unknown tags."
+    },
+    {
+      "name": "addendum-system-tailwind",
+      "path": "reference/systems/tailwind.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — Tailwind CSS. v4 @theme CSS-custom-property token model vs v3 tailwind.config theme, utility-cluster-as-variant reading, arbitrary-value anti-patterns. Composed into the token + component-taxonomy mappers when detectStack reports ds=tailwind."
+    },
+    {
+      "name": "addendum-system-shadcn",
+      "path": "reference/systems/shadcn.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — shadcn/ui. components.json + cn() helper signature, copy-in (not dependency) component ownership, CSS-variable theming over the Radix primitive layer. Composed into the token + component-taxonomy mappers when detectStack reports ds=shadcn."
+    },
+    {
+      "name": "addendum-system-radix-themes",
+      "path": "reference/systems/radix-themes.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — Radix Themes. The accent/gray scale token system, the 12-step color scales, Theme-prop driven appearance, radius/scaling config. Composed into the token + component-taxonomy mappers when detectStack reports ds=radix-themes."
+    },
+    {
+      "name": "addendum-system-mui",
+      "path": "reference/systems/mui.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — MUI (Material UI). createTheme palette/typography/spacing tokens, the sx prop vs styled() usage, theme.vars CSS-variable mode, slot-based component anatomy. Composed into the token + component-taxonomy mappers when detectStack reports ds=mui."
+    },
+    {
+      "name": "addendum-system-chakra",
+      "path": "reference/systems/chakra.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — Chakra UI. The theme token scales (colors/space/fontSizes/radii), style-prop usage as token references, semantic tokens, recipe/variant anatomy. Composed into the token + component-taxonomy mappers when detectStack reports ds=chakra."
+    },
+    {
+      "name": "addendum-system-vanilla-extract",
+      "path": "reference/systems/vanilla-extract.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — vanilla-extract. The *.css.ts compile-time stylesheet model, createTheme / themeContract token contracts, vars as the token source, recipe() variants. Composed into the token + component-taxonomy mappers when detectStack reports ds=vanilla-extract."
+    },
+    {
+      "name": "addendum-system-styled-components",
+      "path": "reference/systems/styled-components.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — styled-components. The ThemeProvider theme object as the token tree, props-driven dynamic styling, the styled() component boundary, css helper composition. Composed into the token + component-taxonomy mappers when detectStack reports ds=styled-components."
+    },
+    {
+      "name": "addendum-system-css-modules",
+      "path": "reference/systems/css-modules.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "system",
+      "composes_into": ["token-mapper", "component-taxonomy-mapper"],
+      "description": "Phase 54 stack addendum (design-system) — CSS Modules. The *.module.css locally-scoped class model, :root / var() custom-property tokens, composes for variant reuse, no runtime theme object. Composed into the token + component-taxonomy mappers when detectStack reports ds=css-modules."
+    },
+    {
+      "name": "addendum-framework-nextjs",
+      "path": "reference/frameworks/nextjs.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "framework",
+      "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
+      "description": "Phase 54 stack addendum (framework) — Next.js. App Router vs Pages Router layout/route structure, server vs client component split, layout.tsx hierarchy as a screen graph, metadata/loading/error conventions. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=nextjs."
+    },
+    {
+      "name": "addendum-framework-remix",
+      "path": "reference/frameworks/remix.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "framework",
+      "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
+      "description": "Phase 54 stack addendum (framework) — Remix (v2 / React Router v7 framework mode). Nested-route file conventions as a layout tree, loader/action data boundaries, Outlet composition, the route-as-screen mapping. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=remix."
+    },
+    {
+      "name": "addendum-framework-vite-react",
+      "path": "reference/frameworks/vite-react.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "framework",
+      "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
+      "description": "Phase 54 stack addendum (framework) — Vite + React SPA. The client-only render tree, react-router route config as the screen graph, entry-point main.tsx, no server-component split. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=vite-react."
+    },
+    {
+      "name": "addendum-framework-astro",
+      "path": "reference/frameworks/astro.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "framework",
+      "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
+      "description": "Phase 54 stack addendum (framework) — Astro. The .astro component model, island architecture (client:* directives) as the interactivity boundary, file-based pages routing, content collections. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=astro."
+    },
+    {
+      "name": "addendum-framework-sveltekit",
+      "path": "reference/frameworks/sveltekit.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "framework",
+      "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
+      "description": "Phase 54 stack addendum (framework) — SvelteKit. The +page / +layout route file conventions as a layout tree, load functions, slot composition, the .svelte component anatomy. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=sveltekit."
+    },
+    {
+      "name": "addendum-framework-storybook",
+      "path": "reference/frameworks/storybook.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "framework",
+      "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
+      "description": "Phase 54 stack addendum (framework) — Storybook. The *.stories.* files as the canonical component + variant catalogue, args/argTypes as the variant matrix, CSF story structure, the component-in-isolation taxonomy signal. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=storybook."
+    },
+    {
+      "name": "addendum-motion-framer-motion",
+      "path": "reference/motion/framer-motion.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "motion",
+      "composes_into": ["motion-mapper"],
+      "description": "Phase 54 stack addendum (motion) — Framer Motion / motion. Seconds-unit duration trap, the spring-vs-tween default, variants/AnimatePresence/gesture props, mapping onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes framer-motion."
+    },
+    {
+      "name": "addendum-motion-gsap",
+      "path": "reference/motion/gsap.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "motion",
+      "composes_into": ["motion-mapper"],
+      "description": "Phase 54 stack addendum (motion) — GSAP. Seconds-unit duration, the timeline orchestration model, ease string vocabulary, ScrollTrigger gestures, mapping tweens onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes gsap."
+    },
+    {
+      "name": "addendum-motion-motion-one",
+      "path": "reference/motion/motion-one.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "motion",
+      "composes_into": ["motion-mapper"],
+      "description": "Phase 54 stack addendum (motion) — Motion One. The Web Animations API foundation, seconds-unit duration, the animate() signature, spring/glide generators, mapping onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes motion-one."
+    },
+    {
+      "name": "addendum-motion-react-spring",
+      "path": "reference/motion/react-spring.md",
+      "type": "stack-addendum",
+      "phase": 54,
+      "kind": "motion",
+      "composes_into": ["motion-mapper"],
+      "description": "Phase 54 stack addendum (motion) — react-spring. The physics-first (no-duration) model: tension/friction/mass instead of a duration, useSpring/useTransition hooks, the gesture-driven imperative api, reconciling physics springs with the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes react-spring."
     }
   ]
 }

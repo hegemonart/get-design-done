@@ -18,6 +18,7 @@ writes:
 
 # motion-mapper
 
+<!-- {{addendum_block}}: a `## Stack-specific guidance` block for the detected DS / framework / motion library is appended here at spawn time by scripts/lib/mapper-spawn.cjs. When present, follow it as an extension of the rules below. -->
 ## Role
 
 You inventory motion and animation patterns. Zero session memory. You do not modify source code and do not spawn other agents.
