@@ -1,8 +1,8 @@
 {
   "name": "get-design-done",
   "short_name": "gdd",
-  "version": "1.58.1",
-  "description": "Agent-orchestrated 5-stage design pipeline (Brief → Explore → Plan → Design → Verify) for AI coding agents. 61 specialized agents, 94 skills, 42 connection integrations (Figma, Refero, Preview, Storybook, Chromatic, Graphify, Linear, Jira, Notion, …), bidirectional Figma write-back, queryable intel store for O(1) design-surface lookups, opt-in SQLite state backbone, and a reflector-driven self-improvement loop. Two MCP servers (`gdd-state` for typed STATE mutators, `gdd-mcp` for 13 read-only project-priming tools), tier-aware agent routing with cost telemetry, defense-in-depth hooks (protected paths, MCP circuit breaker, injection scanner, budget enforcer), and a cross-runtime install layer for Claude Code, Codex, Cursor, OpenCode, Gemini, Copilot, and more.",
+  "version": "1.59.1",
+  "description": "Agent-orchestrated 5-stage design pipeline (Brief → Explore → Plan → Design → Verify) for AI coding agents. 61 specialized agents, 95 skills, 42 connection integrations (Figma, Refero, Preview, Storybook, Chromatic, Graphify, Linear, Jira, Notion, …), bidirectional Figma write-back, queryable intel store for O(1) design-surface lookups, opt-in SQLite state backbone, and a reflector-driven self-improvement loop. Two MCP servers (`gdd-state` for typed STATE mutators, `gdd-mcp` for 13 read-only project-priming tools), tier-aware agent routing with cost telemetry, defense-in-depth hooks (protected paths, MCP circuit breaker, injection scanner, budget enforcer), and a cross-runtime install layer for Claude Code, Codex, Cursor, OpenCode, Gemini, Copilot, and more.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
@@ -56,5 +56,19 @@
   ],
   "skills": [
     "./skills/"
-  ]
+  ],
+  "mcpServers": {
+    "gdd-mcp": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/bin/gdd-mcp"
+      ]
+    },
+    "gdd-state": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/bin/gdd-state-mcp"
+      ]
+    }
+  }
 }

@@ -2,7 +2,7 @@
 
 This file is the connection specification for the `gdd-state` MCP server within the get-design-done pipeline. `gdd-state` is a **local stdio MCP server** that ships with the plugin. It exposes 11 typed tools for reading and mutating `.design/STATE.md` and emits typed telemetry events on every successful mutation. Starting in Phase 20+, `gdd-state` is the **sole mutation surface** for STATE.md — stage SKILLs stop using `Read+regex+Write` and call these tools instead.
 
-Unlike the remote/desktop connections (Figma, Refero, Preview, …), `gdd-state` is an **internal** connection: it does not reach out to any external service. It wraps the existing `scripts/lib/gdd-state/` module (see Plans 20-01, 20-02, 20-04) and emits events via `scripts/lib/event-stream/` (Plan 20-06). Every mutation tool emits a `state.mutation` event; `transition_stage` additionally emits `state.transition` on both pass and gate-veto.
+Unlike the remote/desktop connections (Figma, Refero, Preview, …), `gdd-state` is an **internal** connection: it does not reach out to any external service. It wraps the existing `sdk/state/` module (see Plans 20-01, 20-02, 20-04) and emits events via `sdk/event-stream/` (Plan 20-06). Every mutation tool emits a `state.mutation` event; `transition_stage` additionally emits `state.transition` on both pass and gate-veto.
 
 ---
 
@@ -10,7 +10,7 @@ Unlike the remote/desktop connections (Figma, Refero, Preview, …), `gdd-state`
 
 **Prerequisites:**
 
-- The `@hegemonart/get-design-done` plugin installed (the server script ships in `scripts/mcp-servers/gdd-state/`).
+- The `@hegemonart/get-design-done` plugin installed (the server script ships in `sdk/mcp/gdd-state/`).
 - Node 22+ with `--experimental-strip-types` (the server is a TypeScript file run directly via strip-types — no build step).
 
 ### Option A — Project-scoped install (dev repo)
@@ -18,7 +18,7 @@ Unlike the remote/desktop connections (Figma, Refero, Preview, …), `gdd-state`
 For local development against the plugin source tree:
 
 ```
-claude mcp add gdd-state --transport stdio "node --experimental-strip-types ./scripts/mcp-servers/gdd-state/server.ts"
+claude mcp add gdd-state --transport stdio "node --experimental-strip-types ./sdk/mcp/gdd-state/server.ts"
 ```
 
 ### Option B — Plugin-installed, global resolution
@@ -26,7 +26,7 @@ claude mcp add gdd-state --transport stdio "node --experimental-strip-types ./sc
 When the plugin is installed globally via `npm i -g @hegemonart/get-design-done`:
 
 ```
-claude mcp add gdd-state --transport stdio "node --experimental-strip-types $(npm root -g)/@hegemonart/get-design-done/scripts/mcp-servers/gdd-state/server.ts"
+claude mcp add gdd-state --transport stdio "node --experimental-strip-types $(npm root -g)/@hegemonart/get-design-done/sdk/mcp/gdd-state/server.ts"
 ```
 
 Restart the Claude Code session after install.
@@ -105,7 +105,7 @@ or
 }
 ```
 
-`kind` is one of `validation`, `state_conflict`, `operation_failed`, `unknown` — matching the GDDError taxonomy in `scripts/lib/gdd-errors/`. Callers branch on `kind` to decide whether to retry, surface to the operator, or fall back. Full Draft-07 schemas live at `scripts/mcp-servers/gdd-state/schemas/*.schema.json` and the combined manifest is at `reference/schemas/mcp-gdd-state-tools.schema.json`.
+`kind` is one of `validation`, `state_conflict`, `operation_failed`, `unknown` — matching the GDDError taxonomy in `sdk/errors/`. Callers branch on `kind` to decide whether to retry, surface to the operator, or fall back. Full Draft-07 schemas live at `sdk/mcp/gdd-state/schemas/*.schema.json` and the combined manifest is at `reference/schemas/mcp-gdd-state-tools.schema.json`.
 
 **Scoped out of Phase 20:**
 
@@ -131,10 +131,10 @@ Stage SKILL rewrites in Plans 20-07 through 20-11 will switch each skill from `R
 
 ## Fallback Behavior
 
-If the `gdd-state` MCP is **not_configured** (ToolSearch returned empty), skills fall back to the pre-Phase-20 path by importing the `scripts/lib/gdd-state/` module directly:
+If the `gdd-state` MCP is **not_configured** (ToolSearch returned empty), skills fall back to the pre-Phase-20 path by importing the `sdk/state/` module directly:
 
 ```ts
-import { read, mutate, transition } from '@hegemonart/get-design-done/scripts/lib/gdd-state/index.js';
+import { read, mutate, transition } from '@hegemonart/get-design-done/sdk/state/index.js';
 ```
 
 This path bypasses the event stream (no `state.mutation` or `state.transition` events are emitted) but preserves mutation safety through the same lockfile + atomic-rename protocol. It exists for two reasons:
@@ -171,7 +171,7 @@ preview: available
 
 ## Caveats and Pitfalls
 
-- **Do not run multiple `gdd-state` instances against the same `.design/`.** The module's lockfile (see `scripts/lib/gdd-state/lockfile.ts`) guarantees per-process safety, but spawning two separate MCP servers against the same STATE.md wastes locks and produces duplicate events. One server per Claude Code session is the design contract.
+- **Do not run multiple `gdd-state` instances against the same `.design/`.** The module's lockfile (see `sdk/state/lockfile.ts`) guarantees per-process safety, but spawning two separate MCP servers against the same STATE.md wastes locks and produces duplicate events. One server per Claude Code session is the design contract.
 
 - **Event ordering follows successful mutation, not request receipt.** `appendEvent()` is called only after `mutate()` returns successfully. A failed mutation produces a `{success:false, error}` response with no event emitted. The `state.transition` event is a deliberate exception: gate vetoes emit `state.transition` with `pass:false` because gate failures are themselves observable telemetry.
 

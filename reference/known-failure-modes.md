@@ -223,12 +223,12 @@ on them fail with a clear connection-refused class of error.
 id: KFM-008
 pattern: '(MCP.*(unreachable|ECONNREFUSED|not connected)|mcp.*server.*not.*running|connection refused.*ws://)'
 diagnosis: 'An MCP server (Figma, GDD-state, or GDD-tools) is not reachable; the plugin cannot route tool calls through it.'
-remedy: 'Start the relevant MCP server (see scripts/mcp-servers/) and confirm `claude mcp list` shows it as connected.'
+remedy: 'Start the relevant MCP server (see sdk/mcp/) and confirm `claude mcp list` shows it as connected.'
 severity: medium
 propose_report: true
 symptom: 'A command depending on an MCP server fails with `MCP unreachable`, `ECONNREFUSED`, `mcp server not running`, or `connection refused ws://...`. Tool calls routed through MCP never reach their target.'
 root_cause: 'The local MCP transport (WebSocket or stdio bridge) is not bound. The MCP server process is either not started, crashed silently, or is listening on a different port than the client expects.'
-fix: '1) Run `claude mcp list` and check the status column for the failing server. 2) If it shows `disconnected`, start it: `scripts/mcp-servers/<name>.cjs` or the launcher script for that server. 3) Confirm the port matches the value in `mcp.json` or `.mcp.json`. 4) Re-run the failing command. If the server crashes on start, this is a maintainer report path (propose_report:true).'
+fix: '1) Run `claude mcp list` and check the status column for the failing server. 2) If it shows `disconnected`, start it: `sdk/mcp/<name>/server.ts` or the launcher script for that server. 3) Confirm the port matches the value in `mcp.json` or `.mcp.json`. 4) Re-run the failing command. If the server crashes on start, this is a maintainer report path (propose_report:true).'
 related_phases: [27.7, 33.6]
 first_observed_cycle: 'pre-30.5'
 ```

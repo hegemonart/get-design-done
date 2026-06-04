@@ -767,6 +767,7 @@ skills/analyze-dependencies/SKILL.md
 skills/apply-reflections/SKILL.md
 skills/apply-reflections/apply-reflections-procedure.md
 skills/audit/SKILL.md
+skills/bandit-reset/SKILL.md
 skills/bandit-status/SKILL.md
 skills/benchmark/SKILL.md
 skills/bootstrap-ds/SKILL.md

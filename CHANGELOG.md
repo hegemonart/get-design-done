@@ -4,6 +4,38 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.1] - 2026-06-04
+
+First point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. The two bundled MCP servers now come up for users automatically, plus the cheapest correctness/honesty fixes.
+
+### MCP servers register automatically on Claude Code
+
+The two bundled MCP servers - `gdd-state` (typed STATE mutators) and `gdd-mcp` (read-only project-priming tools) - are now declared under `mcpServers` in `.claude-plugin/plugin.json`, so a fresh Claude Code marketplace install exposes both servers' tools with no manual `--register-mcp` step. They launch through the plugin-local `bin/` trampolines via `${CLAUDE_PLUGIN_ROOT}`, so the git-clone install path works without `npm install`.
+
+### Added
+
+- **`/gdd:bandit-reset`** - a confirm-then-reset maintenance skill for the bandit posterior (`.design/telemetry/posterior.json`): backs the file up to `posterior.json.bak`, then clears it to a fresh envelope. The mutation companion to the read-only `/gdd:bandit-status`. Resolves the previously-dangling `/gdd:bandit-reset` reference. (Skill count 94 → 95.)
+
+### Fixed
+
+- **Installer parity** - `get-design-done --register-mcp` now registers BOTH `gdd-mcp` and `gdd-state` for Claude Code and Codex (previously `gdd-mcp` only). `--no-register-mcp` is unchanged.
+- **MCP launch warning** - the servers no longer print a `MODULE_TYPELESS_PACKAGE_JSON` warning on startup (suppressed in the dev/source launch path; the compiled npm-install path is unaffected).
+- **`gdd-sdk audit`** now degrades gracefully with no active cycle (no `.design/STATE.md`): it prints a "no active cycle" notice, runs the static checks, and exits 0 instead of throwing.
+- **Dead path references** - repointed stale `scripts/mcp-servers/...` and `scripts/lib/{gdd-state,event-stream,gdd-errors}/...` references (relocated to `sdk/...` in v1.33.0) to their live locations, including a broken `claude mcp add` command in the `gdd-state` connection doc.
+
+### Changed
+
+- Removed two dead npm scripts (`typecheck:session-runner`, `validate:skill-surface`) and pointed the `gdd-sdk` script at the Windows-safe `bin/gdd-sdk` trampoline.
+- Regenerated `reference/schemas/generated.d.ts` from source schemas.
+
+### Breaking changes
+
+None.
+
+5,013/5,013 tests pass.
+
+---
+
 ## [1.58.1] - 2026-06-04
 
 ### Hotfix - restore committed skills/ for Claude Code marketplace install
@@ -1828,7 +1860,7 @@ The `gsd-build/get-shit-done` rug-pull in May 2026 (TÂCHES drained $GSD Solana 
 - **`.design/graph/`** replaces upstream's `.planning/graphs/` location (per D-02 - aligns with the rest of GDD's `.design/` artifact convention).
 - **`connections/graphify.md`** rewritten for native CLI (no external `graphifyy` dependency).
 - **`reference/start-interview.md`** updated to reference `/gdd:discuss` (our equivalent) instead of `/gsd-discuss-phase`.
-- **`README.md`** at the `gsd-build/get-shit-done (MIT — see NOTICE)` citation gains the redux-pointer parenthetical "(now archived; community continuation at `open-gsd/get-shit-done-redux`)". Citation preserved verbatim - only annotated for reader clarity.
+- **`README.md`** at the `gsd-build/get-shit-done (MIT - see NOTICE)` citation gains the redux-pointer parenthetical "(now archived; community continuation at `open-gsd/get-shit-done-redux`)". Citation preserved verbatim - only annotated for reader clarity.
 - **Graphify enable/disable state** (D-09) lives in `.design/config.json` at `{ "graphify": { "enabled": bool } }`. Read directly by `gdd-graph` via fs; no `config-set` / `config-get` CLI subcommand.
 
 ### Removed
@@ -1858,7 +1890,7 @@ The `gsd-build/get-shit-done` rug-pull in May 2026 (TÂCHES drained $GSD Solana 
 
 ### Attribution preservation
 
-Phase 27 / Phase 28.5 / Phase 28.7 attribution subsections in `NOTICE` are preserved verbatim per D-06. The architectural ports they describe are historical MIT-licensed code transplants; this release removes a runtime touchpoint, **NOT** a historical port. The `gsd-build/get-shit-done (MIT — see NOTICE)` citation in `README.md` is preserved verbatim; only the redux-pointer parenthetical was added.
+Phase 27 / Phase 28.5 / Phase 28.7 attribution subsections in `NOTICE` are preserved verbatim per D-06. The architectural ports they describe are historical MIT-licensed code transplants; this release removes a runtime touchpoint, **NOT** a historical port. The `gsd-build/get-shit-done (MIT - see NOTICE)` citation in `README.md` is preserved verbatim; only the redux-pointer parenthetical was added.
 
 ---
 
@@ -1880,7 +1912,7 @@ Decimal sub-phase building on Phase 30's `/gdd:report-issue` triage gate. Expand
 ### Changed
 
 - **Reflector capability-gap aggregator** (`scripts/lib/reflector-capability-gap-aggregator.cjs`) - adds lazy-loaded `proposeKfmDraftsForClusters(clusters, options)` export that invokes the KFM proposer as an additional pass after Phase 29 aggregation. Phase 29's existing 5 proposal classes are untouched (additive).
-- **Authority-watcher agent prompt** (`agents/design-authority-watcher.md`) - gains a new `Step 7.5 — Emit kfm-candidate events` section documenting the whitelist patterns + payload shape. Phase 13.2's existing fetch/diff/classify/write loop is unchanged.
+- **Authority-watcher agent prompt** (`agents/design-authority-watcher.md`) - gains a new `Step 7.5 - Emit kfm-candidate events` section documenting the whitelist patterns + payload shape. Phase 13.2's existing fetch/diff/classify/write loop is unchanged.
 - **OFF_CADENCE_VERSIONS** (`tests/semver-compare.test.cjs`) - registers `'1.30.5'` per Phase 29/30 precedent.
 
 ### Documentation
@@ -3345,7 +3377,7 @@ Closes two unrelated risks before the Phase 15–19 reference-library expansion 
 **Safety hooks**
 - `hooks/gdd-bash-guard.js` - PreToolUse:Bash guard. 45 dangerous-pattern regexes across 10 families (filesystem destruction, permission escalation, pipe-to-shell, git destruction, system mutation, process nuking, credential exfil, shell obfuscation, path traversal, npm/docker/firewall abuse). `scripts/lib/dangerous-patterns.cjs` normalizes Unicode NFKC + strips ANSI escapes + strips zero-width / bidi overrides before matching so obfuscated attacks (`rm\u200B -rf /`, bidi overrides, hex-encoded `\x72\x6d\x20\x2d\x72\x66`) fail closed.
 - `hooks/gdd-protected-paths.js` + `reference/protected-paths.default.json` - PreToolUse:Edit|Write|Bash guard blocking mutation of `reference/**`, `skills/**`, `commands/**`, `hooks/**`, `.design/archive/**`, `.design/config.json`, `.design/telemetry/**`, `.git/**`, both plugin manifests. User additions in `.design/config.json.protected_paths` MERGE into the default list - users cannot reduce the default-protected set. `scripts/lib/glob-match.cjs` ships a dependency-free `**` glob matcher.
-- `scripts/lib/blast-radius.cjs` - `estimate({touchedPaths, diffStats})` + `estimateMCPCalls({toolCalls})` preflight called by `design-executor` before the first Edit/Write of each task. Defaults: `max_files_per_task: 10`, `max_lines_per_task: 400`, `max_mcp_calls_per_task: 30`. Zero-value limits disable that ceiling. `design-executor` gains a new `## Preflight — Blast-Radius Check` section.
+- `scripts/lib/blast-radius.cjs` - `estimate({touchedPaths, diffStats})` + `estimateMCPCalls({toolCalls})` preflight called by `design-executor` before the first Edit/Write of each task. Defaults: `max_files_per_task: 10`, `max_lines_per_task: 400`, `max_mcp_calls_per_task: 30`. Zero-value limits disable that ceiling. `design-executor` gains a new `## Preflight - Blast-Radius Check` section.
 
 **Injection-scanner extension**
 - `scripts/injection-patterns.cjs` extended from 7 to 22 patterns: classic prompt-injection verbs (incl. `forget previous`), **invisible-Unicode** (zero-width, BOM, bidi overrides), **HTML-comment instruction hijacks** (`<!-- system: …`, hidden divs/spans, zero-font-size tricks), **secret-exfil triggers** (`curl $OPENAI_API_KEY`, `cat .env`, `tar ~ | nc`, `process.env._KEY fetch`, SSH private-key reads). Single source of truth consumed by `hooks/gdd-read-injection-scanner.js`.
@@ -3452,7 +3484,7 @@ Cherry-picked from `c11cd7b` on `claude/upbeat-fermi-199627` - the Figma MCP fix
 
 - **URL entry point**: detect `https://api.anthropic.com/v1/design/h/<hash>` in agent prompt (native "Send to local coding agent" flow); `WebFetch` with `Content-Type` routing - HTML parsed directly, ZIP downloaded and extracted
 - **ZIP bundle**: extract to `.design/handoff/`, find primary HTML + readme, parse normally, clean up after
-- **PDF format**: `pdftotext` text extraction; grep for token values; all decisions tagged `(tentative — text-only)` since no CSS is present
+- **PDF format**: `pdftotext` text extraction; grep for token values; all decisions tagged `(tentative - text-only)` since no CSS is present
 - **PPTX format**: slide XML text extraction (`ppt/slides/*.xml`); same tentative-only tagging as PDF
 - Updated synthesizer parsing algorithm step 1 with format dispatch before parsing
 - Updated probe pattern: URL detection takes priority over file path lookup

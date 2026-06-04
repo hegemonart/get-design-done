@@ -160,6 +160,108 @@ export interface DesignConfigJson {
 
 export type ConfigSchema = DesignConfigJson;
 
+// ---- design-context.schema.json ----
+/**
+ * The canonical typed knowledge graph of a design system, persisted at .design/context-graph.json. Nodes are design entities (tokens, components, screens, patterns); edges are typed relationships between them (uses-token, composes, transitions-to). Built by a two-phase mapper: a deterministic extract pass emits node/edge skeletons, then an LLM summary pass fills each node summary. Validated structurally by scripts/validate-design-context.cjs and queried by scripts/lib/design-context-query.cjs.
+ */
+export interface DesignContextGraph {
+  /**
+   * Schema version of this graph document (e.g. "52.0").
+   */
+  schema_version: string;
+  /**
+   * ISO-8601 timestamp the graph was last assembled (optional).
+   */
+  generated_at?: string;
+  /**
+   * All design entities in the graph. Node ids must be unique.
+   */
+  nodes: Node[];
+  /**
+   * All typed relationships. Every source/target must resolve to a node id.
+   */
+  edges: Edge[];
+  [k: string]: unknown;
+}
+export interface Node {
+  /**
+   * Stable unique identifier for the node (referenced by edge source/target).
+   */
+  id: string;
+  /**
+   * The kind of design entity this node represents.
+   */
+  type:
+    | 'token'
+    | 'component'
+    | 'variant'
+    | 'state'
+    | 'motion-fragment'
+    | 'a11y-pattern'
+    | 'screen'
+    | 'layer'
+    | 'pattern'
+    | 'anti-pattern';
+  /**
+   * Human-readable name of the entity.
+   */
+  name: string;
+  /**
+   * One-line LLM-authored description of what the entity is and does. A stub summary (empty or identical to name) is flagged by the validator as a soft warning.
+   */
+  summary: string;
+  /**
+   * Controlled-vocabulary tags grouping the node by concern (see reference/design-context-tag-vocab.md). Unknown tags are a soft warning, not a hard error.
+   */
+  tags?: string[];
+  /**
+   * Coarse complexity bucket for the entity.
+   */
+  complexity: 'simple' | 'moderate' | 'complex';
+  /**
+   * Optional finer classification. For token nodes one of color/spacing/typography/radius/shadow; for layer nodes one of Atomic/Molecular/Organism/Template. Free-form for other node types.
+   */
+  subtype?: string;
+  [k: string]: unknown;
+}
+export interface Edge {
+  /**
+   * Node id the edge originates from.
+   */
+  source: string;
+  /**
+   * Node id the edge points to.
+   */
+  target: string;
+  /**
+   * The kind of relationship between source and target.
+   */
+  type:
+    | 'uses-token'
+    | 'composes'
+    | 'extends'
+    | 'transitions-to'
+    | 'depends-on'
+    | 'mirrors'
+    | 'conflicts-with'
+    | 'referenced-by'
+    | 'tested-by'
+    | 'documented-by'
+    | 'consumes-context'
+    | 'provides-context';
+  /**
+   * Whether the relationship reads source-to-target (forward), target-to-source (backward), or both ways (bidirectional).
+   */
+  direction: 'forward' | 'backward' | 'bidirectional';
+  /**
+   * Relationship strength in the inclusive range 0..1.
+   */
+  weight: number;
+  [k: string]: unknown;
+}
+
+export type DesignContextSchema = DesignContextGraph;
+
 // ---- events.schema.json ----
 /**
  * One line of .design/telemetry/events.jsonl — the append-only telemetry stream produced by Plan 20-06. Each event is a single JSON object followed by a newline. See .planning/phases/20-gdd-sdk-foundation/20-06-PLAN.md.
@@ -168,7 +270,7 @@ export type Event = {
   [k: string]: unknown;
 } & {
   /**
-   * Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick, verify_outcome, rollout_started, rollout_advanced, rollout_stuck, budget_forecast, project_cap_warning, project_cap_halt.
+   * Free-form event type identifier. Pre-registered seeds: state.mutation, state.transition, stage.entered, stage.exited, hook.fired, error, capability_gap, kfm-candidate, router_pick, verify_outcome, rollout_started, rollout_advanced, rollout_stuck, budget_forecast, project_cap_warning, project_cap_halt, live_session_start, live_pick, live_generate, live_accept, live_discard, live_session_end, instinct_emitted, instinct_promoted, instinct_decayed, risk_assessment.
    */
   type: string;
   /**
@@ -265,6 +367,73 @@ export interface AgentInsightLine {
 }
 
 export type InsightLineSchema = AgentInsightLine;
+
+// ---- instinct.schema.json ----
+/**
+ * An atomic, confidence-weighted design instinct learned across cycles. Validates the YAML frontmatter object of an instinct unit (see reference/instinct-format.md). Project-scoped units live at <root>/instincts/instincts.json; promoted global units live at ~/.claude/gdd/global-instincts.json. Persisted + queried by scripts/lib/instinct-store.cjs.
+ */
+export type InstinctUnit = {
+  [k: string]: unknown;
+} & {
+  /**
+   * Kebab-case stable identifier, e.g. "prefer-token-over-hex". Lowercase letters, digits, single hyphens.
+   */
+  id: string;
+  /**
+   * One sentence naming the situation that fires the instinct, e.g. "When a color literal appears in a component, reach for a design token first."
+   */
+  trigger: string;
+  /**
+   * Posterior trust in the instinct. Floor 0.3 (a fresh instinct is advisory, never directive); ceiling 0.9 (no instinct is ever certain). TTL decay multiplies this by 0.9 when the instinct goes unsurfaced.
+   */
+  confidence: number;
+  /**
+   * Lifecycle stage the instinct applies to, aligned to the Phase 50 lifecycle stages.
+   */
+  domain: 'intake' | 'explore' | 'decide' | 'build' | 'verify' | 'operate' | 'utility';
+  /**
+   * project = learned from one repository; global = promoted after the K/M gate across distinct projects.
+   */
+  scope: 'project' | 'global';
+  /**
+   * 8-char hex sha of the normalized git origin the instinct was first learned from. Required for project scope; optional for global (a promoted instinct is no longer tied to one origin).
+   */
+  project_id?: string;
+  /**
+   * Which producer minted the instinct: a reflection pass, the extract-learnings step, or a direct user assertion.
+   */
+  source: 'reflection' | 'extract-learnings' | 'user';
+  /**
+   * How many distinct design cycles have surfaced this instinct. Feeds the K=2 half of the promotion gate.
+   */
+  cycles_seen?: number;
+  /**
+   * Set of distinct project ids that have surfaced this instinct. Its length feeds the M=2 half of the promotion gate.
+   */
+  project_ids?: string[];
+  /**
+   * ISO date (YYYY-MM-DD) the instinct was first recorded.
+   */
+  first_seen?: string;
+  /**
+   * ISO date (YYYY-MM-DD) the instinct was last surfaced. Resets the TTL decay window.
+   */
+  last_seen?: string;
+  /**
+   * Beta posterior success weight. Seeded from the Beta(2,8) prior on promotion.
+   */
+  alpha?: number;
+  /**
+   * Beta posterior failure weight. Seeded from the Beta(2,8) prior on promotion.
+   */
+  beta?: number;
+  /**
+   * Tag recording which prior class seeded the posterior, e.g. "instinct".
+   */
+  prior_class?: string;
+};
+
+export type InstinctSchema = InstinctUnit;
 
 // ---- intel.schema.json ----
 /**
@@ -394,6 +563,57 @@ export interface IterationBudget {
 
 export type IterationBudgetSchema = IterationBudget;
 
+// ---- live-session.schema.json ----
+/**
+ * A single `/gdd:live` session record persisted at .design/live-sessions/<session-id>.json. Captures the pick -> generate -> accept/discard loop as an append-only event log so a session survives a crash or --resume. Written atomically by scripts/lib/live/session-store.cjs.
+ */
+export interface LiveSession {
+  /**
+   * Schema version of this session record (e.g. "47.0").
+   */
+  schema_version: string;
+  /**
+   * Stable id; also the basename of the on-disk file (no path separators).
+   */
+  session_id: string;
+  /**
+   * Lifecycle status. Only in_progress sessions are resumable.
+   */
+  status: 'in_progress' | 'completed' | 'abandoned';
+  /**
+   * ISO-8601 timestamp the session was created.
+   */
+  started_at: string;
+  /**
+   * ISO-8601 timestamp the session was closed; null while in_progress.
+   */
+  ended_at: string | null;
+  /**
+   * The page the element was picked from (optional).
+   */
+  url?: string;
+  /**
+   * Dev-server descriptor (url/port/command, or a plain string). Free-form by design.
+   */
+  dev_server?: string | {} | null;
+  /**
+   * Append-only log of session events, oldest first.
+   */
+  events: {
+    /**
+     * Event kind.
+     */
+    kind: 'pick' | 'generate' | 'accept' | 'discard';
+    /**
+     * ISO-8601 timestamp the event was recorded.
+     */
+    at: string;
+    [k: string]: unknown;
+  }[];
+}
+
+export type LiveSessionSchema = LiveSession;
+
 // ---- marketplace.schema.json ----
 /**
  * Shape of .claude-plugin/marketplace.json — the plugin marketplace descriptor.
@@ -448,7 +668,7 @@ export type McpBudgetSchema = MCPBudget;
 
 // ---- mcp-gdd-state-tools.schema.json ----
 /**
- * Combined manifest of all 11 gdd-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under scripts/mcp-servers/gdd-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.
+ * Combined manifest of all 11 gdd-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under sdk/mcp/gdd-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.
  */
 export interface McpGddStateTools {
   tools: {
@@ -482,11 +702,11 @@ export type McpGddStateToolsSchema = McpGddStateTools;
 
 // ---- mcp-gdd-tools.schema.json ----
 /**
- * Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under scripts/mcp-servers/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).
+ * Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under sdk/mcp/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).
  */
 export interface McpGddTools {
   /**
-   * Per-tool input/output schemas keyed by tool name. Exactly 12 entries (D-03 hard cap).
+   * Per-tool input/output schemas keyed by tool name. Exactly 13 entries (D-03 cap, raised 12 -> 13 in Phase 52 for gdd_context_query).
    */
   tools?: {
     gdd_status?: {
@@ -497,6 +717,22 @@ export interface McpGddTools {
         last_decisions: {}[];
         last_completed_plans: {}[];
         blocker_count: number;
+      };
+    };
+    gdd_context_query?: {
+      input: {
+        op: 'nodes' | 'edges' | 'path' | 'consumers-of' | 'unreachable' | 'cycles' | 'coverage';
+        type?: string;
+        tag?: string;
+        from?: string;
+        to?: string;
+        id?: string;
+      };
+      output: {
+        op: string;
+        graph_present: boolean;
+        path?: string;
+        result: unknown[] | {} | null;
       };
     };
     gdd_phase_current?: {
