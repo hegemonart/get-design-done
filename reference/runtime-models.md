@@ -10,7 +10,7 @@ Single canonical map from Anthropic tier names (`opus|sonnet|haiku`) and runtime
 >
 > Unverified: kilo, copilot, cursor, windsurf, antigravity, augment, trae, codebuddy, cline, opencode.
 >
-> The schema (`reference/schemas/runtime-models.schema.json`) explicitly accepts the placeholder marker so the file ships shape-valid; the unverified-ness is a content gap, not a structural defect.
+> **Provenance status field.** Each row below is annotated with a structured `status` in its section heading: `verified` (confirmed against runtime-author docs), `byok` (BYOK / multi-provider, where the user-configured model may diverge from the Anthropic-default fill), or `unverified` (placeholder fill pending researcher confirmation). The schema (`reference/schemas/runtime-models.schema.json`) accepts an optional `status` enum of exactly these three values, so verified rows MAY omit it and remain shape-valid. The `hooks/budget-enforcer.ts` guard consults this status (or its built-in verified allowlist) so a `byok`/`unverified` row never drives a HARD budget cap: it degrades to advisory enforcement for that spawn. This makes the unverified-ness machine-readable, not just a content gap in prose.
 
 This file is parsed by `scripts/lib/install/parse-runtime-models.cjs` and consumed by:
 
@@ -36,7 +36,7 @@ This file is parsed by `scripts/lib/install/parse-runtime-models.cjs` and consum
 
 ---
 
-## claude - Claude Code
+## claude - Claude Code (status: verified)
 
 Anthropic's first-party runtime. Public tier docs at https://docs.anthropic.com/en/docs/about-claude/models. Seed picks per CONTEXT.md D-02.
 
@@ -66,7 +66,7 @@ Anthropic's first-party runtime. Public tier docs at https://docs.anthropic.com/
 
 ---
 
-## codex - OpenAI Codex CLI
+## codex - OpenAI Codex CLI (status: verified)
 
 OpenAI's Codex CLI runtime. Public tier docs at https://platform.openai.com/docs/models. Seed picks per CONTEXT.md D-02.
 
@@ -96,7 +96,7 @@ OpenAI's Codex CLI runtime. Public tier docs at https://platform.openai.com/docs
 
 ---
 
-## gemini - Gemini CLI
+## gemini - Gemini CLI (status: verified)
 
 Google's Gemini CLI runtime. Public tier docs at https://ai.google.dev/gemini-api/docs/models. Seed picks per CONTEXT.md D-02.
 
@@ -126,7 +126,7 @@ Google's Gemini CLI runtime. Public tier docs at https://ai.google.dev/gemini-ap
 
 ---
 
-## qwen - Qwen Code
+## qwen - Qwen Code (status: verified)
 
 Alibaba's Qwen Code runtime. Public tier docs at https://github.com/QwenLM/qwen-code. Seed picks per CONTEXT.md D-02.
 
@@ -156,7 +156,7 @@ Alibaba's Qwen Code runtime. Public tier docs at https://github.com/QwenLM/qwen-
 
 ---
 
-## kilo - Kilo Code
+## kilo - Kilo Code (status: byok)
 
 Kilo Code adapter - multi-provider, Anthropic-default fill until runtime-author docs confirm. Researcher fill needed (CONTEXT.md D-02).
 
@@ -186,7 +186,7 @@ Kilo Code adapter - multi-provider, Anthropic-default fill until runtime-author 
 
 ---
 
-## copilot - GitHub Copilot CLI
+## copilot - GitHub Copilot CLI (status: byok)
 
 GitHub Copilot CLI - multi-provider routing under the hood. Researcher fill needed (CONTEXT.md D-02).
 
@@ -216,7 +216,7 @@ GitHub Copilot CLI - multi-provider routing under the hood. Researcher fill need
 
 ---
 
-## cursor - Cursor
+## cursor - Cursor (status: byok)
 
 Cursor IDE/CLI - multi-provider routing. Researcher fill needed (CONTEXT.md D-02).
 
@@ -246,7 +246,7 @@ Cursor IDE/CLI - multi-provider routing. Researcher fill needed (CONTEXT.md D-02
 
 ---
 
-## windsurf - Windsurf
+## windsurf - Windsurf (status: byok)
 
 Windsurf (formerly Codeium) - multi-provider Cascade router. Researcher fill needed (CONTEXT.md D-02).
 
@@ -276,7 +276,7 @@ Windsurf (formerly Codeium) - multi-provider Cascade router. Researcher fill nee
 
 ---
 
-## antigravity - Antigravity
+## antigravity - Antigravity (status: unverified)
 
 Antigravity - Google's agentic coding platform. Researcher fill needed (CONTEXT.md D-02).
 
@@ -306,7 +306,7 @@ Antigravity - Google's agentic coding platform. Researcher fill needed (CONTEXT.
 
 ---
 
-## augment - Augment
+## augment - Augment (status: byok)
 
 Augment Code - multi-provider agentic IDE. Researcher fill needed (CONTEXT.md D-02).
 
@@ -336,7 +336,7 @@ Augment Code - multi-provider agentic IDE. Researcher fill needed (CONTEXT.md D-
 
 ---
 
-## trae - Trae
+## trae - Trae (status: unverified)
 
 Trae - single-model session runtime per CONTEXT.md D-02 example. `single_tier: true` annotates the row. Researcher fill needed.
 
@@ -367,7 +367,7 @@ Trae - single-model session runtime per CONTEXT.md D-02 example. `single_tier: t
 
 ---
 
-## codebuddy - CodeBuddy
+## codebuddy - CodeBuddy (status: byok)
 
 CodeBuddy (Tencent) - multi-provider routing. Researcher fill needed (CONTEXT.md D-02).
 
@@ -397,7 +397,7 @@ CodeBuddy (Tencent) - multi-provider routing. Researcher fill needed (CONTEXT.md
 
 ---
 
-## cline - Cline
+## cline - Cline (status: byok)
 
 Cline (formerly Claude Dev) - multi-provider VS Code agent. Researcher fill needed (CONTEXT.md D-02).
 
@@ -427,7 +427,7 @@ Cline (formerly Claude Dev) - multi-provider VS Code agent. Researcher fill need
 
 ---
 
-## opencode - OpenCode
+## opencode - OpenCode (status: byok)
 
 OpenCode - open-source AI coding agent, BYOK multi-provider. Researcher fill needed (CONTEXT.md D-02).
 

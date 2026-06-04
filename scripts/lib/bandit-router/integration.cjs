@@ -35,6 +35,12 @@
 
 const banditRouter = require('../bandit-router.cjs');
 const adaptiveModeLib = require('../adaptive-mode.cjs');
+// Phase 56 (CAL-01) per-agent risk calibration. recordOutcome feeds the same
+// {agent, status} signal it gives the bandit into this table so calibration
+// learns from the post-spawn outcome too. Lazy-tolerant: the call is wrapped in
+// its own best-effort try/catch (D-04) so a calibration write can never break
+// the bandit path.
+const calibration = require('../risk/calibration.cjs');
 
 const DELEGATE_NONE = banditRouter.DELEGATE_NONE; // 'none'
 const VALID_DELEGATES = banditRouter.DEFAULT_DELEGATES; // ['none','gemini','codex','cursor','copilot','qwen']
@@ -290,6 +296,38 @@ function recordOutcome(input) {
       try {
         process.stderr.write(
           '[bandit-integration] recordOutcome swallowed: ' +
+            (err && err.message ? err.message : String(err)) +
+            '\n',
+        );
+      } catch {
+        /* swallow */
+      }
+    }
+  }
+
+  // CAL-01: also fold the same outcome into the per-agent risk calibration
+  // table so the calibration layer (compute-risk feedback) learns from the
+  // identical post-spawn signal the bandit just saw. Independent best-effort
+  // try/catch (D-04): a calibration write failure must NEVER throw into or
+  // break the bandit path above. The bandit signal carries no emitted risk
+  // score, so `risk` degrades to 0 via normalizeRecord; status drives the
+  // correctness axis (completed → applied-correct, anything else → not-correct).
+  // Writes to calibration.DEFAULT_CALIBRATION_PATH ('.design/telemetry/
+  // calibration.json') under baseDir — the module's own canonical location.
+  try {
+    calibration.updateCalibration(
+      input.agent,
+      {
+        accepted: true,
+        post_apply_correct: input.status === 'completed',
+      },
+      { root: input.baseDir, baseDir: input.baseDir },
+    );
+  } catch (err) {
+    if (process.env.GDD_BANDIT_DEBUG === '1') {
+      try {
+        process.stderr.write(
+          '[bandit-integration] recordOutcome calibration swallowed: ' +
             (err && err.message ? err.message : String(err)) +
             '\n',
         );

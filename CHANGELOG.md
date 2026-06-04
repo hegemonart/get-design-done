@@ -4,6 +4,36 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.5] - 2026-06-05
+
+Fifth point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Batch H polish + runtime-model provenance.
+
+### Added
+
+- **Risk-calibration now learns from the bandit feedback loop.** The bandit's post-spawn `recordOutcome` also updates the per-agent calibration table (best-effort), so calibration tracks the same signal that drives routing. (H2)
+- **Runtime-model provenance guard.** `budget-enforcer` no longer applies a HARD budget cap from a BYOK / unverified runtime-model row (it degrades to advisory), and the schema records the provenance. This closes the risk of an unverified placeholder tier hard-blocking a user. (P1)
+
+### Fixed
+
+- **Cursor installs no longer drop co-located skill reference files.** `installMultiArtifact` now carries a skill's sibling `*-procedure.md` reference files alongside `SKILL.md` for Cursor's flat layout, with symmetric uninstall cleanup. (H6)
+
+### Hardening
+
+- Pinned the state backup-guard rotation cap (10 slots) + non-empty corruption check with a dedicated test, and verified `state-store.migrate()` is async with complete JSDoc. (H5/H7)
+
+### Notes
+
+- Batch-H item H8 (the `composes_with` composition-graph backfill) is owned by Phase 58, not this release; no double-implementation here.
+- Documented follow-ups (each a larger-than-a-slice scope cut): calibration `detectDrift` to reflector consumption, SQLite-header corruption detection in the backup guard, the cursor sibling-carry generalized to all flat-layout runtimes, and the structural `status:` key on runtime-model entries (currently blocked by the parser's allowed-key enforcement).
+
+### Breaking changes
+
+None.
+
+5,070/5,070 tests pass.
+
+---
+
 ## [1.59.4] - 2026-06-04
 
 Fourth point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Skill-surface + build hygiene.

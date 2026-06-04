@@ -1,7 +1,7 @@
 {
   "name": "get-design-done",
   "description": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design system.",
-  "version": "1.59.4",
+  "version": "1.59.5",
   "author": {
     "name": "hegemonart"
   },

@@ -191,6 +191,21 @@ const tierResolver = nodeRequire(
   '../scripts/lib/tier-resolver.cjs',
 ) as TierResolverModule;
 
+// Phase 59.5 P1: runtime-models parser for the BYOK/unverified provenance
+// guard. We read the parsed runtime rows to learn a runtime's `status`
+// ("verified" | "byok" | "unverified"). The parser is pure + never invoked
+// for its model-resolution side here; only to classify the runtime so an
+// unverified row never drives a HARD budget cap. Soft-imported defensively:
+// any parser failure degrades to the built-in verified allowlist below.
+interface RuntimeModelsParserModule {
+  parseRuntimeModels(opts?: { cwd?: string }): {
+    runtimes: Array<{ id: string; status?: string }>;
+  };
+}
+const runtimeModelsParser = nodeRequire(
+  '../scripts/lib/install/parse-runtime-models.cjs',
+) as RuntimeModelsParserModule;
+
 // Plan 33.6-03 (SC#6, D-08, D-12): OpenRouter tier-resolver adapter. When the
 // user opts in (`.design/config.json#openrouter_enabled: true` OR
 // `OPENROUTER_API_KEY` present), the hook consults this adapter FIRST for a
@@ -504,6 +519,75 @@ export function loadBudget(): ResolvedBudget {
   } catch {
     return { ...BUDGET_DEFAULTS };
   }
+}
+
+// ── runtime provenance status (Phase 59.5 P1) ───────────────────────────────
+
+/**
+ * Phase 59.5 P1: provenance confidence of a runtime's tier→model row, as
+ * documented in reference/runtime-models.md and enumerated by
+ * reference/schemas/runtime-models.schema.json#status.
+ */
+export type RuntimeStatus = 'verified' | 'byok' | 'unverified';
+
+/**
+ * Built-in verified allowlist: the 4 runtimes whose tier maps are confirmed
+ * against runtime-author docs (the runtime-models.md banner: "4 of 14 ...
+ * verified (claude, codex, gemini, qwen)"). Used as the fallback classifier
+ * when the parsed row carries no structured `status` field yet (the markdown
+ * JSON blocks do not emit `status` at the time of this plan; the schema is
+ * ready, the parser wiring is a deferred follow-up). Once a row DOES carry
+ * `status`, the parsed value takes precedence over this allowlist.
+ */
+const VERIFIED_RUNTIME_IDS: ReadonlySet<string> = new Set([
+  'claude',
+  'codex',
+  'gemini',
+  'qwen',
+]);
+
+/** Per-process memo of runtime-id → parsed `status` (null until first read). */
+let _runtimeStatusMap: Map<string, RuntimeStatus> | null = null;
+
+function isRuntimeStatus(v: unknown): v is RuntimeStatus {
+  return v === 'verified' || v === 'byok' || v === 'unverified';
+}
+
+/**
+ * Resolve a runtime's provenance status. Reads the parsed runtime-models
+ * doc once per process; if a row carries a structured `status` it wins,
+ * otherwise the built-in verified allowlist decides (verified vs unverified).
+ * Fail-open: any parser error → allowlist-only classification. Never throws.
+ *
+ * @param runtimeId runtime id (e.g. 'claude', 'cline'); falsy → 'unverified'.
+ */
+export function runtimeStatus(runtimeId: string | null | undefined): RuntimeStatus {
+  if (typeof runtimeId !== 'string' || runtimeId.length === 0) {
+    return 'unverified';
+  }
+  if (_runtimeStatusMap === null) {
+    _runtimeStatusMap = new Map();
+    try {
+      const parsed = runtimeModelsParser.parseRuntimeModels({ cwd: process.cwd() });
+      const rows = Array.isArray(parsed?.runtimes) ? parsed.runtimes : [];
+      for (const row of rows) {
+        if (row && typeof row.id === 'string' && isRuntimeStatus(row.status)) {
+          _runtimeStatusMap.set(row.id, row.status);
+        }
+      }
+    } catch {
+      // Fail open: parser error degrades to the verified allowlist below.
+    }
+  }
+  const parsedStatus = _runtimeStatusMap.get(runtimeId);
+  if (parsedStatus !== undefined) return parsedStatus;
+  return VERIFIED_RUNTIME_IDS.has(runtimeId) ? 'verified' : 'unverified';
+}
+
+/** True when the runtime row must NOT drive a HARD budget cap (P1 guard). */
+export function isUnverifiedRuntime(runtimeId: string | null | undefined): boolean {
+  const s = runtimeStatus(runtimeId);
+  return s === 'byok' || s === 'unverified';
 }
 
 // ── cumulative phase spend (WR-02) ──────────────────────────────────────────
@@ -1138,7 +1222,40 @@ export async function main(): Promise<void> {
   // no router decision is supplied, behavior is identical to pre-25.
   const perSpawnCap = resolvePerSpawnCap(budget, complexityClass);
 
-  if (budget.enforcement_mode === 'enforce') {
+  // ── Phase 59.5 P1: BYOK/unverified provenance guard ────────────────────────
+  //
+  // Resolve the runtime id (router-supplied `runtime`, else env detection,
+  // else 'claude', same precedence the cost-recording block uses below) so we
+  // can consult its runtime-models provenance `status` BEFORE the hard-cap
+  // branches. When the runtime row is byok/unverified the resolved per-runtime
+  // model is best-effort (the user's actual provider may diverge from the
+  // Anthropic-default fill), so an estimated cost computed against it must NOT
+  // hard-block the user. We degrade enforce-mode to advisory ('warn') for THIS
+  // spawn only: the per-spawn + per-phase 100% caps stop blocking and surface a
+  // stderr warning instead, while the 80% auto-downgrade still applies (a tier
+  // downgrade is non-blocking and strictly cheaper, so it is safe to keep).
+  // Verified runtimes (claude/codex/gemini/qwen) are unaffected (full hard
+  // enforcement). The project-level cap above is intentionally NOT degraded: it
+  // is governed by total ledger spend, not a per-runtime resolved model.
+  const guardRuntimeId =
+    (typeof routerDecision?.runtime === 'string' && routerDecision.runtime.length > 0
+      ? routerDecision.runtime
+      : runtimeDetect.detect()) ?? 'claude';
+  const runtimeIsUnverified = isUnverifiedRuntime(guardRuntimeId);
+  const effectiveEnforcementMode: ResolvedBudget['enforcement_mode'] =
+    budget.enforcement_mode === 'enforce' && runtimeIsUnverified
+      ? 'warn'
+      : budget.enforcement_mode;
+  if (budget.enforcement_mode === 'enforce' && runtimeIsUnverified) {
+    process.stderr.write(
+      `gdd-budget-enforcer WARN: runtime '${guardRuntimeId}' has provenance status ` +
+        `'${runtimeStatus(guardRuntimeId)}' (BYOK/unverified tier→model row); ` +
+        `hard budget caps degraded to advisory for this spawn so an unverified ` +
+        `cost estimate never hard-blocks you.\n`,
+    );
+  }
+
+  if (effectiveEnforcementMode === 'enforce') {
     // Branch C: 100% per-spawn cap hard block (class-specific or per_task).
     if (estCost >= perSpawnCap) {
       writeTelemetry({
@@ -1202,10 +1319,22 @@ export async function main(): Promise<void> {
       toolInput._tier_override = 'haiku';
       toolInput._tier_downgraded = true;
     }
-  } else if (budget.enforcement_mode === 'warn') {
+  } else if (effectiveEnforcementMode === 'warn') {
     if (estCost >= perSpawnCap) {
       process.stderr.write(
         `gdd-budget-enforcer WARN: per-spawn cap will be exceeded ($${estCost.toFixed(4)} >= $${perSpawnCap})\n`,
+      );
+    }
+    // Phase 59.5 P1: when enforce was degraded to advisory for a byok/unverified
+    // runtime, also surface the per-phase breach that the hard branch above
+    // would otherwise have reported (it is skipped for unverified runtimes).
+    if (
+      budget.enforcement_mode === 'enforce' &&
+      phaseSpend + estCost >= budget.per_phase_cap_usd
+    ) {
+      process.stderr.write(
+        `gdd-budget-enforcer WARN: per-phase cap will be exceeded for ${phase} ` +
+          `($${(phaseSpend + estCost).toFixed(4)} >= $${budget.per_phase_cap_usd.toFixed(2)})\n`,
       );
     }
   }
@@ -1230,11 +1359,9 @@ export async function main(): Promise<void> {
     toolInput._tier_override ?? toolInput._default_tier ?? 'sonnet';
   // Runtime tag: prefer the router's explicit `runtime` (D-08) field;
   // fall back to env-var detection; default to 'claude' since the .ts
-  // hook itself only runs inside Claude Code.
-  const runtimeId =
-    (typeof routerDecision?.runtime === 'string' && routerDecision.runtime.length > 0
-      ? routerDecision.runtime
-      : runtimeDetect.detect()) ?? 'claude';
+  // hook itself only runs inside Claude Code. Reuse the id already resolved
+  // for the Phase 59.5 P1 provenance guard above (single resolution source).
+  const runtimeId = guardRuntimeId;
 
   // ── Plan 27.5-02 — bandit consultation ────────────────────────────────────
   //
