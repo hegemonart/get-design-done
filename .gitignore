@@ -45,7 +45,7 @@ REVIEW.md
 .cursor-plugin/marketplace-state.json
 
 # Phase 28.8 (Plan 28-8-X1): Tier-2 distribution bundle output —
-# built from skill-templates/ via scripts/build-distribution-bundles.cjs.
+# built from scripts/skill-templates/ via scripts/build-distribution-bundles.cjs.
 # Not committed: it's a deterministic build artifact, rebuilt on demand.
 # Polish v1.57.3: dist/claude-code/ was a byte-identical duplicate of skills/
 # (Claude Code reads ./skills/ via package.json#skills). Removed to drop
@@ -58,9 +58,9 @@ dist/*.tgz
 # That broke the Claude Code marketplace install path — Claude Code git-clones the
 # plugin (NOT `npm install`), so post-clone `./skills/` was absent and the plugin
 # failed to load any skill. v1.58.1 reverts the gitignore: skills/ stays tracked as
-# a committed build artifact. skill-templates/ remains the canonical editable source
+# a committed build artifact. scripts/skill-templates/ remains the canonical editable source
 # (no source/ wrapper, that win sticks); the build:skills:check drift gate enforces
-# `committed skills/ == compiled(skill-templates/)`. The `prepare` lifecycle still runs
+# `committed skills/ == compiled(scripts/skill-templates/)`. The `prepare` lifecycle still runs
 # `build:skills` on `npm install` (so contributor checkouts stay in sync after edits)
 # but the committed copy is what Claude Code consumes.
 

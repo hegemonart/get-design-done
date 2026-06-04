@@ -31,7 +31,7 @@ the scanner pattern list in lockstep.
 ## Authoring surfaces
 
 - **`skills/` as the authoring source** → **`source/skills/`** (Phase 42, deprecated)
-  → **`skill-templates/`** (v1.58.0, current). Two-step migration:
+  → **`skill-templates/`** (v1.58.0) → **`scripts/skill-templates/`** (v1.59, current). Migration:
 
   - **Phase 42** introduced multi-harness compilation. Skills moved to `source/skills/` with
     placeholders (`{{command_prefix}}` et al.; see `reference/skill-placeholders.md`) and the
@@ -43,10 +43,10 @@ the scanner pattern list in lockstep.
     tarball via `prepack`. Net: 232 tracked files dropped to 116, with no change to end-user
     install experience (the tarball still ships `skills/` pre-built).
 
-  Migration for contributors: **edit `skill-templates/`, never `skills/` directly**. After edits,
+  Migration for contributors: **edit `scripts/skill-templates/`, never `skills/` directly**. After edits,
   `npm run build:skills` regenerates `skills/` locally (or `npm install` does it automatically).
   `.claude-plugin/plugin.json`'s `"skills": ["./skills/"]` is unchanged - the plugin still loads
-  `skills/`, now produced from `skill-templates/`. The `detect-stale-refs.cjs` list is extended to
+  `skills/`, now produced from `scripts/skill-templates/`. The `detect-stale-refs.cjs` list is extended to
   emit warnings on lingering `source/skills/` path references.
 
 ## Scanner scope

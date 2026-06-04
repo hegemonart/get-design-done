@@ -1,6 +1,6 @@
 ---
 name: gdd-new-skill
-description: "Scaffolds a new Phase-28.5 + Phase-50-compliant skill: gathers a name, a multi-paragraph v3 description, a lifecycle stage, an allowed-tools list, and optional composes_with neighbours, then writes skill-templates/<name>/SKILL.md from the pure generator. Use when adding a brand-new gdd skill and you want the frontmatter, length cap, and v3 description form correct from the first commit. Activates for requests involving authoring a skill, scaffolding a command, creating a new SKILL.md, or adding a slash command."
+description: "Scaffolds a new Phase-28.5 + Phase-50-compliant skill: gathers a name, a multi-paragraph v3 description, a lifecycle stage, an allowed-tools list, and optional composes_with neighbours, then writes scripts/skill-templates/<name>/SKILL.md from the pure generator. Use when adding a brand-new gdd skill and you want the frontmatter, length cap, and v3 description form correct from the first commit. Activates for requests involving authoring a skill, scaffolding a command, creating a new SKILL.md, or adding a slash command."
 argument-hint: "<skill-name>"
 tools: Read, Write, Bash, AskUserQuestion
 user-invocable: true
@@ -8,7 +8,7 @@ user-invocable: true
 
 # /gdd:new-skill
 
-**Role:** Interactively scaffold a contract-compliant skill. Gather the fields, then write `skill-templates/<name>/SKILL.md` from the pure generator at `scripts/lib/manifest/scaffolder.cjs`. This skill writes ONE source file. It does NOT touch `scripts/lib/manifest/skills.json` and does NOT run the build; it prints the exact follow-up commands instead.
+**Role:** Interactively scaffold a contract-compliant skill. Gather the fields, then write `scripts/skill-templates/<name>/SKILL.md` from the pure generator at `scripts/lib/manifest/scaffolder.cjs`. This skill writes ONE source file. It does NOT touch `scripts/lib/manifest/skills.json` and does NOT run the build; it prints the exact follow-up commands instead.
 
 Read `reference/skill-authoring-contract.md` first for the length cap, the frontmatter required fields, and the v3 description form.
 
@@ -27,7 +27,7 @@ Either way the answers feed the same record builder. Never block waiting on a TT
 
 ## Step 1 - Gather the fields
 
-1. **name**: the slug from `$ARGUMENTS` if present, else ask. Must match `^[a-z0-9][a-z0-9-._]*$`. Reject `skill-templates/<name>/` collisions.
+1. **name**: the slug from `$ARGUMENTS` if present, else ask. Must match `^[a-z0-9][a-z0-9-._]*$`. Reject `scripts/skill-templates/<name>/` collisions.
 2. **description**: a multi-paragraph v3 form. Sentence one is what the skill does. Sentence two is `Use when <triggers>`. Sentence three is `Activates for requests involving <kw1>, <kw2>, <kw3>.` Keep it 20 to 1024 chars.
 3. **lifecycle stage**: pick one of brief / explore / plan / verify / ship / figma / token / report (free text allowed). This seeds the composition suggestions.
 4. **tools**: a comma list (for example `Read, Write, Bash`). Empty means inherit-all.
@@ -45,7 +45,7 @@ Present the suggestions; let the user accept, edit, or clear them.
 
 ## Step 2 - Length pre-check
 
-Before writing, estimate the body length. If the planned body would exceed about 100 lines, warn the user (the authoring contract warns at 100 and blocks at 250) and suggest extracting domain content into a co-located `skill-templates/<name>/<topic>.md` reference. The generated skeleton is small; the warning is for the prose the user will add next.
+Before writing, estimate the body length. If the planned body would exceed about 100 lines, warn the user (the authoring contract warns at 100 and blocks at 250) and suggest extracting domain content into a co-located `scripts/skill-templates/<name>/<topic>.md` reference. The generated skeleton is small; the warning is for the prose the user will add next.
 
 ## Step 3 - Write the file
 
@@ -66,7 +66,7 @@ process.stdout.write(s.renderSkillMd(rec));
 "
 ```
 
-`buildSkillRecord` throws on an invalid name, an out-of-budget description, or a malformed tools list. Surface the thrown message to the user and re-prompt the offending field. Capture stdout and write it verbatim to `skill-templates/<name>/SKILL.md` via the Write tool.
+`buildSkillRecord` throws on an invalid name, an out-of-budget description, or a malformed tools list. Surface the thrown message to the user and re-prompt the offending field. Capture stdout and write it verbatim to `scripts/skill-templates/<name>/SKILL.md` via the Write tool.
 
 ## Step 4 - Tell the user the follow-up
 

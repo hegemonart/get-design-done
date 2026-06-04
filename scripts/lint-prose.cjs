@@ -5,8 +5,8 @@
 //   node scripts/lint-prose.cjs [paths...] [--json]
 //
 // Denylist source of truth: scripts/lib/manifest/prose-denylist.json (Phase 41.5 SoT) via readProseDenylist().
-// Default scope: README.md, README.*.md, SKILL.md, skill-templates/**/*.md, agents/**/*.md, CHANGELOG.md,
-// reference/**/*.md. The GENERATED skills/ + dist/ trees are NOT scanned (skill-templates/ is the authored copy).
+// Default scope: README.md, README.*.md, SKILL.md, scripts/skill-templates/**/*.md, agents/**/*.md, CHANGELOG.md,
+// reference/**/*.md. The GENERATED skills/ + dist/ trees are NOT scanned (scripts/skill-templates/ is the authored copy).
 //
 // Exclusions (masked position-preserving so file:line:column stays exact):
 //   - fenced code blocks (``` and ~~~), inline `code` spans
@@ -30,7 +30,7 @@ const DEFAULT_GLOBS = [
   'CHANGELOG.md',
 ];
 const DEFAULT_DIRS = [
-  { dir: 'skill-templates', ext: '.md' },
+  { dir: 'scripts/skill-templates', ext: '.md' },
   { dir: 'agents', ext: '.md' },
   { dir: 'reference', ext: '.md' },
 ];

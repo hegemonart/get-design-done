@@ -61,7 +61,7 @@ test('baseline: agent-list matches committed agents/ files', () => {
 test('baseline: skill-list matches committed skills/ directories', () => {
   // v1.58.1: skills/ is committed (reverts v1.58.0 gitignore which broke Claude Code
   // marketplace install). The skill-list baseline tracks the committed Claude render.
-  // skill-templates/ has the same set of slugs (drift gate enforces it) so either dir
+  // scripts/skill-templates/ has the same set of slugs (drift gate enforces it) so either dir
   // would yield the same answer; reading from skills/ matches what end users actually
   // get post-install.
   const expected = readBaselineLines('skill-list.txt');

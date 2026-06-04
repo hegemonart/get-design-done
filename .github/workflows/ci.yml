@@ -69,7 +69,7 @@ jobs:
       - name: Manifest validation (harnesses + skills + prose-denylist schemas)
         run: npm run validate:manifest
 
-      - name: Skill frontmatter drift gate (skill-templates/*/SKILL.md == manifest/skills.json)
+      - name: Skill frontmatter drift gate (scripts/skill-templates/*/SKILL.md == manifest/skills.json)
         run: npm run generate:skill-frontmatter:check
 
       - name: Harness freshness check (tested harnesses warn 60d / fail 180d)
@@ -136,7 +136,10 @@ jobs:
       - name: Validate JSON schemas
         run: npm run validate:schemas
 
-      - name: Skill build drift gate (committed skills/ == compile(skill-templates/))
+      - name: Schema types drift gate (committed reference/schemas/generated.d.ts == codegen output)
+        run: npm run codegen:schemas:check
+
+      - name: Skill build drift gate (committed skills/ == compile(scripts/skill-templates/))
         run: npm run build:skills:check
 
       - name: Plugin validate (schema-only fallback)

@@ -25,7 +25,7 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "description": "Skill id = skill-templates/<name>/ directory name."
+            "description": "Skill id = scripts/skill-templates/<name>/ directory name."
           },
           "frontmatter_name": {
             "type": "string",

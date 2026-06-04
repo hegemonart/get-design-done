@@ -3,19 +3,19 @@
  * test/suite/phase-51-skill.test.cjs — Phase 51 (Instinct-Based Learnings).
  *
  * Covers the SKILL + REFLECTOR + APPLY/EXTRACT surface for atomic instincts:
- *   1. skill-templates/instinct/SKILL.md frontmatter is valid (v3 description
+ *   1. scripts/skill-templates/instinct/SKILL.md frontmatter is valid (v3 description
  *      form, required managed fields) and the body documents the three
  *      subcommands list / query / promote (incl. the K=2 / M=2 gate).
  *   2. agents/design-reflector.md carries both a `## Atomic instincts` section
  *      and a `## Narrative reflection` subsection (the dual-emit contract), and
  *      cites scripts/lib/instinct-store.cjs add().
- *   3. skill-templates/apply-reflections/SKILL.md documents the [INSTINCT]
+ *   3. scripts/skill-templates/apply-reflections/SKILL.md documents the [INSTINCT]
  *      proposal class with the accept / reject / defer / edit flow.
- *   4. skill-templates/extract-learnings/SKILL.md dual-emits atomic instinct
+ *   4. scripts/skill-templates/extract-learnings/SKILL.md dual-emits atomic instinct
  *      units (instinct-candidate patterns) and notes the prose path is kept
  *      read-only for one minor version.
  *
- * Reads skill-templates/ (the authored copy) so the suite is green BEFORE
+ * Reads scripts/skill-templates/ (the authored copy) so the suite is green BEFORE
  * `npm run build:skills` + the skills.json manifest record (both owned by the
  * orchestrator). Structural / prose asserts only — no engine execution.
  */
@@ -26,7 +26,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const SRC_SKILLS = path.join(REPO_ROOT, 'skill-templates');
+const SRC_SKILLS = path.join(REPO_ROOT, 'scripts', 'skill-templates');
 const AGENTS = path.join(REPO_ROOT, 'agents');
 
 const INSTINCT_SKILL = path.join(SRC_SKILLS, 'instinct', 'SKILL.md');

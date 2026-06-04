@@ -199,6 +199,8 @@ Use `[✓]` for complete, `[→]` for current, `[ ]` for pending, `[!]` for gaps
 
 If `$ARGUMENTS` is a stage or command name - invoke it directly, no state check:
 
+> This table lists the common stage and shortcut routes. Every skill in `scripts/lib/manifest/skills.json` is auto-resolvable as `/gdd:<name>`; run `/gdd:help` for the complete, always-current command reference (rendered from the manifest, never a hardcoded subset).
+
 ```
 /gdd:brief     → Skill("get-design-done:gdd-brief")
 /gdd:explore   → Skill("get-design-done:gdd-explore")

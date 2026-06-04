@@ -27,7 +27,7 @@ figma-extract: 64
 figma-write: 50
 graphify: 49
 health: 99
-help: 87
+help: 60
 instinct: 111
 list-assumptions: 61
 list-pins: 27
