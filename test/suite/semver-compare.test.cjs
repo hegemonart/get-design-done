@@ -746,6 +746,10 @@ OFF_CADENCE_VERSIONS.add('1.58.0');
 // install via either path (Claude Code marketplace OR npm) now works.
 OFF_CADENCE_VERSIONS.add('1.58.1');
 
+// v1.59 milestone (Audit Closeout & Honesty Pass) ships as point releases
+// 1.59.1 .. 1.59.6 (there is no 1.59.0) — each is off-cadence from its predecessor.
+OFF_CADENCE_VERSIONS.add('1.59.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
