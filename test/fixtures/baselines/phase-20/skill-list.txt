@@ -46,10 +46,12 @@ note
 openrouter-status
 optimize
 override
+paper-write
 pause
 peer-cli-add
 peer-cli-customize
 peers
+pencil-write
 pin
 plan
 plant-seed

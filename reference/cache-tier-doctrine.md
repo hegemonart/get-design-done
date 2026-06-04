@@ -16,7 +16,7 @@ This doctrine pins the bytes that have to stay stable.
 ## The L0 contract
 
 1. **Two files, no more.** L0 = `reference/meta-rules.md` (framework-invariant rules: required reading, writes protocol, deviation handling, completion markers, context-exhaustion + budget) + `reference/shared-preamble.md` (the aggregator that imports meta-rules and contributes the design-family pillar lists). Any third L0 file requires a doctrine update.
-2. **Byte-stable across cycles.** Section heading text, prose order, ordering of bulleted lists, even whitespace runs — all are load-bearing. An edit that "just rewords a sentence" still invalidates cache for every agent for one session per agent.
+2. **Byte-stable across cycles.** Section heading text, prose order, ordering of bulleted lists, even whitespace runs; all are essential. An edit that "just rewords a sentence" still invalidates cache for every agent for one session per agent.
 3. **CI gate enforces stability.** `scripts/check-cache-tiers.cjs` computes SHA-256 of each L0 file and compares to `test/fixtures/baselines/l0-hashes.json`. Drift fails the build. A real edit requires `--rebaseline` and a baseline-hash commit alongside the L0 edit.
 4. **Pre-warming exists for legitimate L0 edits.** Run `/gdd:warm-cache` after an L0 edit lands to pre-load the new prefix so the next real spawn is a hit rather than a miss.
 
@@ -24,13 +24,13 @@ This doctrine pins the bytes that have to stay stable.
 
 - A new design-pillar list shared by 5 design-family skills → `shared-preamble.md` (L0). Costs cache miss; ratchet the L0 baseline.
 - A new validator rule for a single agent → that agent body (L1). No L0 impact.
-- A per-invocation context block — the brief, the must-haves, the user's specific request → `<required_reading>` (L2). No cache implications either way.
+- A per-invocation context block; the brief, the must-haves, the user's specific request → `<required_reading>` (L2). No cache implications either way.
 - A reference catalog of heuristics, anti-patterns, WCAG thresholds → `reference/*.md` (L3). No cache implications.
 
 ## Verification
 
-- `npm run validate:registry-tiers` — confirms `registry.json` entries' `tier` field is one of L0/L1/L2/L3.
-- `npm run validate:cache-tiers` — confirms L0 file SHA-256 matches the baseline.
+- `npm run validate:registry-tiers` - confirms `registry.json` entries' `tier` field is one of L0/L1/L2/L3.
+- `npm run validate:cache-tiers` - confirms L0 file SHA-256 matches the baseline.
 - Both run in CI as part of the default test suite.
 
 ## When to ratchet

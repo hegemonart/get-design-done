@@ -489,6 +489,7 @@
   "design-research-synthesizer.md": [
     "color",
     "default-tier",
+    "delegate_to",
     "description",
     "model",
     "name",

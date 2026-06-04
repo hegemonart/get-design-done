@@ -24,6 +24,27 @@ You are the design-planner agent. Spawned by the `plan` stage after optional res
 
 Do not start design work, generate code, or modify any file outside `.design/`. Your output is the plan that the `design` stage will execute.
 
+## Output Contract
+
+Emit a single top-of-response fenced ```json block conforming to `reference/output-contracts/planner-decision.schema.json` BEFORE any prose. The envelope captures the typed plan summary so downstream stages can consume it without re-parsing markdown.
+
+The envelope shape:
+
+```json
+{
+  "schema_version": "1.0.0",
+  "plan_id": "<dated slug, e.g. 2026-06-04-dashboard>",
+  "tasks": [
+    { "task_id": "T-1", "summary": "<one line>", "touches": ["<glob>"], "dependencies": [], "parallel_safe": true, "estimated_minutes": 30 }
+  ],
+  "waves": [
+    { "wave": "A", "task_ids": ["T-1"] }
+  ]
+}
+```
+
+After the envelope, continue with the human-readable plan body in prose + markdown tables (the existing format). The DESIGN-PLAN.md file you write continues to include both; the envelope at the top, then the prose. The `parse-contract.cjs#parsePlannerDecision` consumer reads only the envelope; orchestrators and reviewers read the prose.
+
 ---
 
 ## Required Reading

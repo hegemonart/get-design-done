@@ -328,6 +328,20 @@
       "registered_in_phase": "56"
     },
     {
+      "name": "paper-write",
+      "description": "Push design decisions from `.design/DESIGN-CONTEXT.md` into the active paper.design canvas by dispatching the `design-paper-writer` agent in one of three modes (annotate / tokenize / roundtrip). Use when the user has completed a design pipeline cycle and wants the decisions reflected in their paper.design canvas. Operates proposal->confirm with `--dry-run`.",
+      "argument_hint": "<annotate|tokenize|roundtrip> [--dry-run]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Grep, Glob"
+    },
+    {
+      "name": "pencil-write",
+      "description": "Update local `.pen` source files with design decisions from `.design/DESIGN-CONTEXT.md` by dispatching the `design-pencil-writer` agent in one of two modes (annotate / roundtrip). Use when the user has completed a design pipeline cycle and wants the decisions reflected in their `.pen` files. Operates proposal->confirm with `--dry-run`.",
+      "argument_hint": "<annotate|roundtrip> [--dry-run]",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Grep, Glob"
+    },
+    {
       "name": "pause",
       "description": "Write a numbered checkpoint so work can resume in a new session without re-running completed stages.",
       "argument_hint": "[context note]",

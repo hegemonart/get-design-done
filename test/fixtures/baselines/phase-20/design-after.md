@@ -79,6 +79,25 @@ Print the `=== Design stage complete ===` summary (tasks complete/total, deviati
 
 After all tasks finish, if STATE.md `<connections>` has `figma: available`, offer the user the figma-write opt-in prompt (modes: annotate / tokenize / mappings, with optional `--dry-run`). Spawn `design-figma-writer` with the selected mode on "yes"; skip silently on "no". NEVER auto-run without confirmation. Full prompt + dispatch logic: `./design-procedure.md` §Figma Write Dispatch.
 
+## Component Generator Dispatch
+
+If the DESIGN-PLAN has a `task_type: component` task without a matching `src/components/*.tsx`, OR the brief / DESIGN-CONTEXT.md explicitly asks for a new component, AND STATE.md `<connections>` shows a generator connection (`21st-dev: available`, `magic-patterns: available`, `plasmic: available`, `builder-io: available`, or `v0-dev: available`); offer the component-generator opt-in.
+
+```
+Task("design-component-generator", """
+mode: <21st|magic-patterns|plasmic|builder-io|v0-dev>
+component_spec: <DESIGN-PLAN task summary + DESIGN-CONTEXT acceptance criteria>
+required_reading:
+  - .design/STATE.md
+  - .design/DESIGN-PLAN.md
+  - .design/DESIGN-CONTEXT.md
+""")
+```
+
+Sequential (the agent is `parallel-safe: never`). Wait for the agent's `## design-component-generator complete.` marker. Skip silently when no generator connection is available OR no component task is pending. Auto-mode bypasses the prompt; otherwise prompt "Generate component via [tool]? (y/n)" and only spawn on "y".
+
+The dispatch fires AFTER `design-executor` completes the hand-coded plan tasks. The agent's output (component file path + tokens used + provenance) is appended to `.design/DESIGN-SUMMARY.md` as a single `## Generated Components` section so verify can audit it.
+
 <HARD-GATE>
 Do NOT transition to verify (or invoke `/gdd:verify`) until `.design/DESIGN-SUMMARY.md` is committed. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>

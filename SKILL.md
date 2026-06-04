@@ -37,6 +37,8 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `compare` | `get-design-done:gdd-compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md → .design/COMPARE-REPORT.md |
 | `figma-write <mode>` | `get-design-done:gdd-figma-write` | Write design decisions to Figma (annotate/tokenize/mappings) |
 | `figma-extract <file-url-or-key>` | `get-design-done:gdd-figma-extract` | Off-context Figma design-system extraction → compact local digest (DESIGN.md + tokens.json + components.json), zero raw JSON in context |
+| `paper-write <mode>` | `get-design-done:gdd-paper-write` | Write design decisions back into paper.design via MCP (annotate/tokenize/roundtrip) |
+| `pencil-write <mode>` | `get-design-done:gdd-pencil-write` | Write design decisions into git-tracked `.pen` spec files (annotate/roundtrip) |
 | `graphify <subcommand>` | `get-design-done:gdd-graphify` | Manage Graphify knowledge graph (build/query/status/diff) |
 | `discuss [topic] [--all] [--spec] [--cycle <name>]` | `get-design-done:gdd-discuss` | Adaptive design interview - spawns design-discussant; appends D-XX decisions to STATE.md |
 | `list-assumptions [--area]` | `get-design-done:gdd-list-assumptions` | Surface implicit design assumptions baked into the codebase |

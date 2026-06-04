@@ -116,6 +116,13 @@
       "description": "Voice axes, archetypes, tone-by-context, industry-context palettes"
     },
     {
+      "name": "cache-tier-doctrine",
+      "path": "reference/cache-tier-doctrine.md",
+      "type": "meta-rules",
+      "tier": "L3",
+      "description": "Cache-tier doctrine - L0/L1/L2/L3 lifetime tiers for prompt-cache stability, the L0 contract (two files, byte-stable, CI gate), placement rules, verification commands, and the ratchet protocol for legitimate L0 edits."
+    },
+    {
       "name": "checklists",
       "path": "reference/checklists.md",
       "type": "heuristic",

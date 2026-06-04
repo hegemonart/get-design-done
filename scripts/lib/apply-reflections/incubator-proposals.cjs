@@ -30,6 +30,7 @@ const child_process = require('node:child_process');
 const os = require('node:os');
 
 const { validateScope } = require('../../validate-incubator-scope.cjs');
+const touchesPatternMiner = require('../touches-pattern-miner.cjs');
 
 // ---  Constants  ---
 
@@ -441,10 +442,41 @@ function recordOptIn(options) {
   return { optInRecorded: true, at, confirmedBy };
 }
 
+// ---  Touches-pattern proposals (Batch D D8 wire)  ---
+//
+// Surfaces recurring `Touches:` signatures across archived task files as
+// auto-crystallization proposals alongside the incubator drafts. The miner
+// is opt-in via `proposalsRoot` arg (defaults to the touches-pattern-miner
+// default location); when no archive exists yet, returns an empty list.
+
+function discoverTouchesPatternProposals(opts = {}) {
+  const cwd = opts.cwd || process.cwd();
+  const cycleDir = path.join(cwd, opts.cycleDir || touchesPatternMiner.DEFAULT_CYCLE_DIR);
+  if (!fs.existsSync(cycleDir)) return [];
+  try {
+    const mined = touchesPatternMiner.mine({
+      cycleDir,
+      minTasks: opts.minTasks,
+      minCycles: opts.minCycles,
+    });
+    if (!Array.isArray(mined) || mined.length === 0) return [];
+    return mined.map((pattern, i) => ({
+      type: 'touches-pattern',
+      id: `touches-pattern-${i + 1}`,
+      pattern,
+      summary: pattern.signature || pattern.canonical || `Pattern #${i + 1}`,
+    }));
+  } catch (_err) {
+    // Miner is best-effort — never block apply-reflections on its failure.
+    return [];
+  }
+}
+
 // ---  Exports  ---
 
 module.exports = {
   discoverIncubatorDrafts,
+  discoverTouchesPatternProposals,
   renderProposal,
   applyAccept,
   applyReject,

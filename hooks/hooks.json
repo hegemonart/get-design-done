@@ -151,6 +151,15 @@
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-design-quality-check.js\""
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gdd-intel-trigger.js\""
+          }
+        ]
       }
     ],
     "Stop": [

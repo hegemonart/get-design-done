@@ -412,7 +412,7 @@ See [`skills/figma-extract/SKILL.md`](skills/figma-extract/SKILL.md) and [`figma
 
 ### Skill discipline bootstrap (v1.32.0+)
 
-GDD ships 94 skills, but a description-match skill router consults them opportunistically - easy to skip a stage under pressure. v1.32.0 added the forcing function GDD lacked, porting the skill-discipline **mechanism** (not content) from [`obra/superpowers`](https://github.com/obra/superpowers) (MIT):
+GDD ships 96 skills, but a description-match skill router consults them opportunistically - easy to skip a stage under pressure. v1.32.0 added the forcing function GDD lacked, porting the skill-discipline **mechanism** (not content) from [`obra/superpowers`](https://github.com/obra/superpowers) (MIT):
 
 - **SessionStart inject.** A `using-gdd` bootstrap contract is injected at every session start / `/clear` / compact (`hooks/inject-using-gdd.sh`, per-harness: Cursor / Claude Code / SDK). It carries the **1%-rule** ("even a 1% chance a skill applies → invoke it"), a red-flags `Thought → Reality` table, and the skill-priority + instruction-priority order - so the agent is primed to find the right skill before it acts.
 - **`<HARD-GATE>` at every stage transition.** Brief / Explore / Plan / Design / Verify each refuse to advance until the stage's artifact exists and is approved - no free-handing a stage.

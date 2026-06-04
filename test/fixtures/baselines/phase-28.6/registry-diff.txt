@@ -15,6 +15,7 @@ audit-scoring: reference/audit-scoring.md
 authority-feeds: reference/authority-feeds.md
 bandit-integration: reference/bandit-integration.md
 brand-voice: reference/brand-voice.md
+cache-tier-doctrine: reference/cache-tier-doctrine.md
 checklists: reference/checklists.md
 color-theory: reference/color-theory.md
 component-accordion: reference/components/accordion.md

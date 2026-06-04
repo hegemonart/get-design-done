@@ -39,10 +39,10 @@ test('42-build-03: --check (drift gate) passes on the committed tree, no writes'
   assert.equal(code, 0, 'committed skills/ + dist/claude-code/ must match source/skills/');
 });
 
-test('42-build-04: Claude compile reproduces skills/ byte-for-byte (118 files)', () => {
+test('42-build-04: Claude compile reproduces skills/ byte-for-byte (120 files)', () => {
   const cfg = claude();
   const files = walkMd(SRC);
-  assert.equal(files.length, 118);
+  assert.equal(files.length, 120);
   for (const abs of files) {
     const rel = path.relative(SRC, abs);
     const got = compile(fs.readFileSync(abs, 'utf8'), cfg);
