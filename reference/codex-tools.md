@@ -29,7 +29,7 @@ it by adding to `~/.codex/config.toml`:
 [[mcp_servers]]
 name = "gdd-state"
 command = "node"
-args = ["--experimental-strip-types", "<pkg-root>/scripts/mcp-servers/gdd-state/server.ts"]
+args = ["--experimental-strip-types", "<pkg-root>/sdk/mcp/gdd-state/server.ts"]
 ```
 
 All 11 tools exposed by the server appear as `mcp__gdd_state__*` in Codex.

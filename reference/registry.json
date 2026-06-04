@@ -502,7 +502,7 @@
       "path": "reference/schemas/mcp-gdd-tools.schema.json",
       "type": "schema",
       "phase": 27.7,
-      "description": "Draft-07 input/output schemas for the 12 read-only tools in scripts/mcp-servers/gdd-mcp/ (gdd-mcp MCP server)"
+      "description": "Draft-07 input/output schemas for the 12 read-only tools in sdk/mcp/gdd-mcp/ (gdd-mcp MCP server)"
     },
     {
       "name": "meta-rules",

@@ -30,7 +30,7 @@ it by adding to `~/.gemini/settings.json`:
   "mcpServers": {
     "gdd-state": {
       "command": "node",
-      "args": ["--experimental-strip-types", "<pkg-root>/scripts/mcp-servers/gdd-state/server.ts"]
+      "args": ["--experimental-strip-types", "<pkg-root>/sdk/mcp/gdd-state/server.ts"]
     }
   }
 }

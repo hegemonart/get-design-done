@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/mcp-gdd-tools.schema.json",
   "title": "McpGddTools",
-  "description": "Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under scripts/mcp-servers/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).",
+  "description": "Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under sdk/mcp/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).",
   "type": "object",
   "properties": {
     "tools": {
