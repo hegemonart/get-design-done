@@ -117,4 +117,3 @@ npm test
 - `reference/schemas/events.schema.json` - the `capability_gap` event class shipped by Plan 29-01 (the 7-field shape + `TrajectoryRef` definition).
 - `scripts/lib/event-chain.cjs` - `appendChainEvent` (the real emitter API; 29-01 did NOT ship a separate helper file).
 - `scripts/lib/bandit-router.cjs` - Phase 23.5 posterior file producer (the source for scan #2).
-- `.planning/phases/29-capability-gap-self-authoring/CONTEXT.md` - phase decisions (D-02 7-field shape, D-07 hash-pinning, D-08 MCP carve-out, D-11 tmpdir tests).

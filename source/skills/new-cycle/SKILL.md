@@ -7,7 +7,7 @@ tools: Read, Write, AskUserQuestion
 
 # {{command_prefix}}new-cycle
 
-The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pipeline run > Wave > Task**. Each cycle has a goal, tracks its own decisions, and can span many pipeline runs. See `./milestone-completeness-rubric.md` §"Cycle level" for what counts as cycle completion (used by `{{command_prefix}}complete-cycle` to close the cycle).
+The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pipeline run > Wave > Task**. Each cycle has a goal, tracks its own decisions, and can span many pipeline runs. `{{command_prefix}}complete-cycle` closes the cycle once goals are met and a retrospective is captured.
 
 ## Steps
 

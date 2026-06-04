@@ -68,8 +68,7 @@ node -e "process.stdout.write(require('./.claude-plugin/plugin.json').version + 
   > test-fixture/baselines/current/plugin-version.txt
 ```
 
-Then update `BASELINE.md`, run `npm test`, and include the updated
-`current/` in your PR.
+Then run `npm test` and include the updated `current/` in your PR.
 
 ## How to add a pressure scenario
 

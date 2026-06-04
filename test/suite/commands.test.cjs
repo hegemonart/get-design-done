@@ -28,9 +28,9 @@ test('commands: every /gdd: command in README has a skills/ directory with SKILL
   const commands = extractGddCommands(readmeContent);
 
   // Note: some commands (like gdd:help, gdd:next) may not have skill dirs — these are router-level commands.
-  // We only assert on commands that map directly to pipeline stages: scan, discover, plan, design, verify,
-  // style, darkmode, compare.
-  const PIPELINE_COMMANDS = ['scan', 'discover', 'plan', 'design', 'verify', 'style', 'darkmode', 'compare'];
+  // We only assert on commands that map directly to pipeline stages: brief, explore, plan, design, verify,
+  // style, darkmode, compare. (scan + discover were deprecated aliases of explore and have been removed.)
+  const PIPELINE_COMMANDS = ['brief', 'explore', 'plan', 'design', 'verify', 'style', 'darkmode', 'compare'];
 
   for (const cmd of PIPELINE_COMMANDS) {
     if (!commands.includes(cmd)) continue; // Not in README — skip

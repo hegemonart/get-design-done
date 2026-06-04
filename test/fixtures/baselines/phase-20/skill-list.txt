@@ -17,7 +17,6 @@ continue
 darkmode
 debug
 design
-discover
 discuss
 do
 explore
@@ -69,7 +68,6 @@ review-decisions
 roi
 rollout-status
 router
-scan
 settings
 ship
 sketch

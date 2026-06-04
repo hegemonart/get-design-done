@@ -307,7 +307,7 @@ Targets 50–70% per-task token-cost reduction with no quality-floor regression.
 
 ## Commands
 
-GDD ships 96 skills. The most common ones are below; for the full reference see [SKILL.md](SKILL.md).
+GDD ships 94 skills. The most common ones are below; for the full reference see [SKILL.md](SKILL.md).
 
 ### Core Pipeline
 

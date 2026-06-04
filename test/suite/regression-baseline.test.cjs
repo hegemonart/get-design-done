@@ -27,14 +27,18 @@ function gitTrackedFiles(dirPrefix) {
 
 /**
  * List unique direct subdirectory names tracked by git under a given directory prefix.
+ * Top-level files (no `/` in the relative path) are skipped — README.md, etc. live
+ * alongside the skill dirs as documentation, not as skills.
  */
 function gitTrackedSubdirs(dirPrefix) {
   const result = spawnSync('git', ['ls-files', dirPrefix], { cwd: REPO_ROOT, encoding: 'utf8' });
   const output = result.stdout || '';
   const seen = new Set();
   for (const line of output.trim().split('\n').filter(Boolean)) {
-    // e.g. "skills/design/SKILL.md" -> relative to dirPrefix -> "design/SKILL.md" -> first segment "design"
+    // e.g. "skills/design/SKILL.md" -> relative "design/SKILL.md" -> first segment "design"
+    // e.g. "skills/README.md" -> relative "README.md" (no `/`) -> not a subdir, skip.
     const relative = line.slice(dirPrefix.length).replace(/^\//, '');
+    if (!relative.includes('/')) continue;
     const subdir = relative.split('/')[0];
     if (subdir) seen.add(subdir);
   }

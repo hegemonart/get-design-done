@@ -1,14 +1,13 @@
 'use strict';
 // test/suite/phase-49-worktree.test.cjs — Phase 49 (Quick Anti-Slop Floor).
 //
-// Proves scripts/lib/worktree-resolve.cjs redirects `.design`/`.planning`
-// artifact writes to the MAIN repo root when GDD runs inside a git worktree:
+// Proves scripts/lib/worktree-resolve.cjs redirects `.design` artifact writes
+// to the MAIN repo root when GDD runs inside a git worktree:
 //
 //   (a) isWorktree() is true when git-dir !== git-common-dir, false when equal;
 //   (b) resolveRepoRoot() returns the common-dir PARENT in worktree mode and the
 //       toplevel in main-checkout mode;
-//   (c) resolveDesignRoot()/resolvePlanningRoot() compose `<root>/.design` and
-//       `<root>/.planning` correctly off resolveRepoRoot;
+//   (c) resolveDesignRoot() composes `<root>/.design` correctly off resolveRepoRoot;
 //   (d) graceful fallback to cwd when the injected exec throws (git unavailable);
 //   (e) noticeOnce() emits exactly once per process.
 //
@@ -79,11 +78,9 @@ test('49-worktree: resolveRepoRoot returns toplevel in main-checkout mode', () =
   assert.equal(root, MAIN);
 });
 
-test('49-worktree: resolveDesignRoot / resolvePlanningRoot compose off the main root', () => {
+test('49-worktree: resolveDesignRoot composes off the main root', () => {
   const design = wt.resolveDesignRoot(WORKTREE_CWD, fakeGit(WORKTREE_ANSWERS));
-  const planning = wt.resolvePlanningRoot(WORKTREE_CWD, fakeGit(WORKTREE_ANSWERS));
   assert.equal(design, path.join(MAIN, '.design'));
-  assert.equal(planning, path.join(MAIN, '.planning'));
 });
 
 test('49-worktree: graceful fallback to cwd when exec throws (git unavailable)', () => {
@@ -96,10 +93,6 @@ test('49-worktree: graceful fallback to cwd when exec throws (git unavailable)',
   assert.equal(
     wt.resolveDesignRoot(WORKTREE_CWD, boom),
     path.join(path.resolve(WORKTREE_CWD), '.design'),
-  );
-  assert.equal(
-    wt.resolvePlanningRoot(WORKTREE_CWD, boom),
-    path.join(path.resolve(WORKTREE_CWD), '.planning'),
   );
 });
 
@@ -122,7 +115,7 @@ test('49-worktree: noticeOnce emits exactly once per process', () => {
   assert.equal(second, false, 'second call is a no-op');
   assert.equal(third, false, 'third call is a no-op');
   assert.equal(lines.length, 1, 'exactly one line written');
-  assert.match(lines[0], /worktree detected -> \.design\/\.planning redirected to/);
+  assert.match(lines[0], /worktree detected -> \.design redirected to/);
   assert.ok(lines[0].includes(MAIN), 'notice names the target main root');
   // Reset so a real worktree run later in this process is unaffected.
   wt._resetNoticeForTests();

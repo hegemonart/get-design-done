@@ -8,7 +8,8 @@ const { spawnSync } = require('node:child_process');
 const ROOT = path.resolve(__dirname, '..', '..');
 const SRC = path.join(ROOT, 'source', 'skills');
 const SKILLS = path.join(ROOT, 'skills');
-const CCBUNDLE = path.join(ROOT, 'dist', 'claude-code', '.claude', 'skills');
+// Polish v1.57.3: dist/claude-code/ removed as a byte-identical duplicate of skills/.
+// The bundle is now a build-only artifact; the npm tarball ships skills/ directly.
 
 const orch = require('../../scripts/build-skills.cjs');
 const { compile } = require('../../scripts/lib/build/factory.cjs');
@@ -39,10 +40,10 @@ test('42-build-03: --check (drift gate) passes on the committed tree, no writes'
   assert.equal(code, 0, 'committed skills/ + dist/claude-code/ must match source/skills/');
 });
 
-test('42-build-04: Claude compile reproduces skills/ byte-for-byte (120 files)', () => {
+test('42-build-04: Claude compile reproduces skills/ byte-for-byte (116 files)', () => {
   const cfg = claude();
   const files = walkMd(SRC);
-  assert.equal(files.length, 120);
+  assert.equal(files.length, 116);
   for (const abs of files) {
     const rel = path.relative(SRC, abs);
     const got = compile(fs.readFileSync(abs, 'utf8'), cfg);
@@ -57,17 +58,23 @@ test('42-build-05: compileAll is deterministic / byte-stable', () => {
   assert.deepEqual([...a.entries()].sort(), [...b.entries()].sort());
 });
 
-test('42-build-06: dist/claude-code/ bundle mirrors skills/ exactly', () => {
-  const bundleFiles = walkMd(CCBUNDLE).map((f) => path.relative(CCBUNDLE, f)).sort();
-  const skillFiles = walkMd(SKILLS).map((f) => path.relative(SKILLS, f)).sort();
-  assert.deepEqual(bundleFiles, skillFiles, 'bundle file set must equal skills/ file set');
-  for (const rel of skillFiles) {
-    assert.equal(
-      fs.readFileSync(path.join(CCBUNDLE, rel), 'utf8'),
-      fs.readFileSync(path.join(SKILLS, rel), 'utf8'),
-      `bundle drift in ${rel}`,
-    );
-  }
+test('42-build-06: dist/claude-code/ is NOT committed (polish v1.57.3 removed the duplicate)', () => {
+  // Polish v1.57.3: dist/claude-code/ was a byte-identical mirror of skills/
+  // (Claude Code reads ./skills/ via package.json#skills, making the bundle
+  // pure duplication). Removed to drop ~120 files from the npm tarball.
+  // The directory may exist locally as a build artifact (gitignored), but
+  // package.json#files must not include it and it must not be git-tracked.
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  assert.ok(
+    !pkg.files.includes('dist/claude-code/'),
+    'package.json#files must not include dist/claude-code/ (removed in polish v1.57.3)',
+  );
+  const tracked = spawnSync('git', ['ls-files', 'dist/claude-code/'], { cwd: ROOT, encoding: 'utf8' });
+  assert.equal(
+    (tracked.stdout || '').trim(),
+    '',
+    'dist/claude-code/ must not be git-tracked (added to .gitignore in polish v1.57.3)',
+  );
 });
 
 test('42-build-07: codex compile substitutes the flat /gdd- prefix (multi-harness proof)', () => {

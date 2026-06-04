@@ -4,6 +4,54 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.57.3] - 2026-06-04
+
+### Polish residuals - closes remaining POLISH-PLAN items + dist/ deduplication
+
+Continuation of the v1.57.2 grooming wave. Closes the open POLISH-PLAN items that v1.57.2 deferred, plus a structural cleanup the user noticed during PR review. Additive only; no breaking changes. 5,007/5,007 tests pass.
+
+### Removed
+
+- **`agents/prototype-gate.md`** - orphan agent (no skill dispatched it, no hook fired it). Functionality is absorbed by `sketch-wrap-up` and `spike-wrap-up`.
+- **`skills/scan/` + `skills/discover/`** + their `source/skills/` mirrors. Deprecated aliases of `/gdd:explore` for several releases; the root SKILL.md command table no longer carries them. Counts drop 96 -> 94 skills.
+- **`hooks/run-hook.cmd`** - obsolete after the v1.57.2 `.sh` -> `.cjs` SessionStart hook port (all 4 SessionStart hooks now run via `node`, no Windows-bash wrapper needed).
+- **`scripts/lib/worktree-resolve.cjs#resolvePlanningRoot`** - unused export per the audit. Zero production callers across `scripts/ sdk/ hooks/ agents/ skills/`.
+- **`skills/new-cycle/milestone-completeness-rubric.md`** - plugin-internal release-process rubric that was shipping to users via `skills/`. Moved to `docs/MAINTAINER-NOTES.md` so it stops landing in user `~/.claude/skills/` installs.
+- **6 stale `docs/i18n/README.*.md` translations** (de / fr / it / ja / ko / zh-CN). Frozen at v1.24.0 per the v1.57.2 audit. The English README will be rewritten separately. Removed the multilingual nav line from the main README.
+- **`dist/claude-code/` from `package.json#files` + git tracking** - the directory was a byte-identical duplicate of `skills/` (120 files; Claude Code reads `./skills/` directly via `package.json#skills`). `dist/` now fully gitignored; the on-disk dir is a deterministic build artifact rebuilt by `npm run build:skills` on demand. Saves ~120 duplicate-file entries from every npm tarball (tarball-manifest baseline shrank 1001 -> 879 lines).
+- **`.DS_Store` macOS cruft** swept from `skills/`, `test/`, `dist/` + added `**/.DS_Store` to `.gitignore`.
+
+### Added
+
+- **`scripts/check-codex-plugin-drift.cjs`** + `npm run validate:codex-plugin` + `test/suite/codex-plugin-drift.test.cjs` - new CI gate that asserts the committed `.codex-plugin/plugin.json` and `.cursor-plugin/plugin.json` byte-match the generator output from `scripts/build-distribution-bundles.cjs`. Mirrors the baseline-ratchet pattern of `check-feature-counts.cjs`; supports `--rebaseline` for legitimate generator changes. Closes the "committed vs generated SoT" open question from POLISH-PLAN.md by making the generator authoritative and the committed snapshot a verified mirror.
+- **`source/skills/README.md`** + **`skills/README.md`** - documents `source/skills/` as the canonical home for skill BODY content. `scripts/lib/manifest/skills.json` remains the SoT for universal frontmatter fields (`name`, `description`, `argument-hint`, `tools`, `user-invocable`, `disable-model-invocation`). `skills/` is a byte-stable build artifact (npm distribution path); `dist/<harness>/` is a build-time output for non-Claude harness channels.
+- **`docs/MAINTAINER-NOTES.md`** - relocated home for `milestone-completeness-rubric.md` (moved from `skills/new-cycle/`).
+- **Phase 58 entry in `.planning/ROADMAP.md`** - Composition-Graph Mandatory Rollout. Goal: backfill `composes_with` on the remaining 74 of 96 skills (this release added 13 more, bringing the total from 9 to 22 wired skills). Scope: 6 plans across 3 waves (audit + allowlist; backfill + contract bump + scaffolder; closeout). Target v1.58.0.
+- **`composes_with` edges on 13 additional high-traffic skills** (`scripts/lib/manifest/skills.json`): apply-reflections, brief, compare, complete-cycle, darkmode, debug, discuss, explore, figma-extract, figma-write, live, map, new-cycle, new-project, progress. `reference/skill-graph.md` regenerated (96 -> 94 nodes after scan/discover removal, 34 edges, 0 cycles).
+- **`connections/cursor.md`** got a documented sibling-drop fix (followup from v1.57.2's H6 documentation).
+
+### Changed
+
+- **`source/skills/style/SKILL.md`** - removed user-facing `.planning/STATE.md` reference (was "a pre-roadmap decision recorded in `.planning/STATE.md`" -> now neutral "deliberate namespace decision"). Built artifacts in `skills/` and `dist/claude-code/` propagated.
+- **`reference/model-tiers.md`** - softened the agent-name prefix convention (`gdd-*` = housekeeping; `design-*` = pipeline) into a soft naming hint rather than enforced rule. Added explicit "prefix is not a tier signal" clarifier above the Per-Agent Tier Map. Fixed gdd-intel-updater rationale that mentioned `.planning/intel/` (the agent actually writes `.design/intel/`).
+- **`agents/README.md` Naming Convention** - replaced the implicit "all agents use `design-` prefix" claim with neutral language acknowledging the mix of `design-*` / `gdd-*` / bare prefixes. No enforcement; no expected pattern.
+- **`reference/runtime-models.md`** - the 10 unverified entries (kilo, copilot, cursor, windsurf, antigravity, augment, trae, codebuddy, cline, opencode) reformatted: dropped the `<TODO: confirm at ...>` URL wrapper, kept the plain URL, added explicit `"verified": false` field on provenance. The 4 verified entries (claude, codex, gemini, qwen) get `"verified": true`. Schema (`reference/schemas/runtime-models.schema.json`) gained the optional `verified` boolean field.
+- **`scripts/lib/manifest/skills.json` + `reference/skill-graph.md`** - graph regenerated (now 94 skills, 34 composition edges, 0 cycles).
+- **`.github/workflows/release.yml`** - added `cursor-marketplace` channel to the distribution-bundles build step (was missing from the release CI; the converter existed but wasn't wired into the release run).
+- **Skill count claims** synchronized to filesystem truth across all 5 surfaces (plugin.json + marketplace.json + README.md): 96 -> 94 skills.
+- **`scripts/build-skills.cjs` `--check` mode** - dropped the `dist/claude-code/` drift assertion (the dir is no longer committed; only `skills/` is the canonical built artifact under git).
+- **`test/suite/phase-42-build.test.cjs` 42-build-06** - repurposed from "dist/claude-code/ mirrors skills/" to "dist/claude-code/ is NOT committed" (preserves the gate against accidental re-introduction).
+
+### Test infrastructure
+
+- Forward-propagated `manifests-version.txt` baselines from `1.57.2` -> `1.57.3` across 37 phase fixture dirs.
+- `semver-compare.test.cjs` registers `OFF_CADENCE_VERSIONS.add('1.57.3')` with multi-line rationale comment matching the v1.57.2 pattern.
+- Tarball manifest baseline regenerated via `npm pack --dry-run --json` (1001 -> 879 lines after dist/claude-code/ removal + scan/discover/prototype-gate/milestone-rubric deletes).
+- Skill frontmatter regenerated via `npm run generate:skill-frontmatter` (3 drifted entries on bootstrap-ds, compare, synthesize).
+- 23 test failures from the deletes (count drift, baseline drift, em-dash lint, codex-plugin-drift) all resolved.
+
+---
+
 ## [1.57.2] - 2026-06-04
 
 ### Polish wave - 24 commits closing the v1.57 audit + 5 new CI gates

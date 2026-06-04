@@ -17,7 +17,6 @@ continue: 24
 darkmode: 76
 debug: 41
 design: 118
-discover: 78
 discuss: 96
 do: 45
 explore: 118
@@ -68,7 +67,6 @@ review-decisions: 42
 roi: 54
 rollout-status: 35
 router: 89
-scan: 92
 settings: 87
 ship: 48
 sketch: 78

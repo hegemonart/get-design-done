@@ -85,7 +85,7 @@ The table IS the output. No follow-up prose. Users act on it: `(opt-in disabled)
 
 - `./../peer-cli-add/peer-cli-protocol.md` - ACP/ASP handshake + adapter scaffold (procedure ref shared with peer-cli-add/customize).
 - `./reference/peer-cli-capabilities.md` (Plan 27-05) - full capability matrix doc.
-- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05), `scripts/lib/install/runtimes.cjs` (Plan 27-11), `skills/peer-cli-customize/SKILL.md`, `skills/peer-cli-add/SKILL.md`, `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-10.
+- `scripts/lib/peer-cli/registry.cjs` (Plan 27-05), `scripts/lib/install/runtimes.cjs` (Plan 27-11), `skills/peer-cli-customize/SKILL.md`, `skills/peer-cli-add/SKILL.md`.
 
 ## Record
 

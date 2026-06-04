@@ -117,4 +117,3 @@ Body is written to a tmp file to avoid arg-length and shell-escaping. URL parsed
 - [SKILL.md](./SKILL.md) - entry contract.
 - `reference/pseudonymization-rules.md` - full R1..R8 rule catalog (Plan 30-01).
 - `reference/known-failure-modes.md` - triage catalogue (Plan 30-03).
-- `.planning/phases/30-issue-reporter/CONTEXT.md` - phase decisions D-01..D-15.

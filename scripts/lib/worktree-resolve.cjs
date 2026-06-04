@@ -2,9 +2,9 @@
 /**
  * scripts/lib/worktree-resolve.cjs — Phase 49 (Quick Anti-Slop Floor).
  *
- * Redirect `.design/` and `.planning/` writes to the MAIN repo root when GDD
- * runs inside a git WORKTREE. A worktree has its own ephemeral checkout dir; a
- * naive `process.cwd()`-relative `.design/STATE.md` write would land inside the
+ * Redirect `.design/` writes to the MAIN repo root when GDD runs inside a git
+ * WORKTREE. A worktree has its own ephemeral checkout dir; a naive
+ * `process.cwd()`-relative `.design/STATE.md` write would land inside the
  * throwaway worktree and get lost (or leak) when the worktree is removed. We
  * detect the worktree, resolve the main repo root, and point artifact writes
  * there so state survives across worktree lifecycles.
@@ -167,17 +167,6 @@ function resolveDesignRoot(cwd = process.cwd(), exec) {
   return path.join(resolveRepoRoot(cwd, exec), '.design');
 }
 
-/**
- * Absolute `.planning` root in the MAIN repo (worktree-safe).
- *
- * @param {string} [cwd=process.cwd()]
- * @param {(cmd: string, args: string[]) => string} [exec]
- * @returns {string}
- */
-function resolvePlanningRoot(cwd = process.cwd(), exec) {
-  return path.join(resolveRepoRoot(cwd, exec), '.planning');
-}
-
 /** One-shot guard so the redirect notice prints at most once per process. */
 let NOTICE_EMITTED = false;
 
@@ -193,7 +182,7 @@ let NOTICE_EMITTED = false;
 function noticeOnce(targetRoot, write) {
   if (NOTICE_EMITTED) return false;
   NOTICE_EMITTED = true;
-  const line = `worktree detected -> .design/.planning redirected to ${targetRoot}\n`;
+  const line = `worktree detected -> .design redirected to ${targetRoot}\n`;
   try {
     if (typeof write === 'function') {
       write(line);
@@ -215,7 +204,6 @@ module.exports = {
   isWorktree,
   resolveRepoRoot,
   resolveDesignRoot,
-  resolvePlanningRoot,
   noticeOnce,
   _resetNoticeForTests,
 };
