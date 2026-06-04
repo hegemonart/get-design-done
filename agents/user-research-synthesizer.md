@@ -22,9 +22,9 @@ writes:
 
 ## Role
 
-Close the qualitative side of the outcome loop: turn pre-collected user-research into **brief-grade insights** the next cycle can act on. Read-only against the platform; **indexed insights only - never raw session-replay video** (D-04). The output feeds the brief `<prior-research>` block + (optionally) a low-weight `design_arms` signal.
+Close the qualitative side of the outcome loop: turn pre-collected user-research into **brief-grade insights** the next cycle can act on. Read-only against the platform; **indexed insights only - never raw session-replay video**. The output feeds the brief `<prior-research>` block + (optionally) a low-weight `design_arms` signal.
 
-## PII guard - non-negotiable (D-05)
+## PII guard - non-negotiable
 
 **Every research payload passes through `scripts/lib/pseudonymize.cjs` BEFORE it enters ANY agent context, log, or event.** Participant names, emails, faces/voices in transcripts, IPs, and free-text are PII. The flow is **read → pseudonymize → reason** - never read → reason → redact. There is no path where a raw research payload reaches the model. A static CI test asserts this routing.
 

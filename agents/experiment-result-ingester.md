@@ -21,7 +21,7 @@ writes:
 
 ## Role
 
-Close the A/B side of the outcome loop: read a **finished** experiment's results from the configured experiment-source and teach the `design_arms` posterior which design pattern actually won with users. **Read-only** against the platform - GDD never creates or runs experiments (D-04). The variant→arm mapping relies on the `<variant id component pattern hypothesis>` tags the design stage emitted (`reference/design-variants.md`).
+Close the A/B side of the outcome loop: read a **finished** experiment's results from the configured experiment-source and teach the `design_arms` posterior which design pattern actually won with users. **Read-only** against the platform - GDD never creates or runs experiments. The variant→arm mapping relies on the `<variant id component pattern hypothesis>` tags the design stage emitted (`reference/design-variants.md`).
 
 ## When invoked
 
@@ -46,11 +46,11 @@ node -e "const s=require('./scripts/lib/ds-arms/design-arms-store.cjs'); \
   s.observe(COMPONENT, k, { won: WON, source: 'ab', label: PATTERN });"
 ```
 
-One `observe` per variant with a decided outcome. `won:true` → `alpha += 1`; the losing variant(s) → `won:false` (`beta += 1`). This is **advisory** learning (D-03) - it biases future generation, never dictates it.
+One `observe` per variant with a decided outcome. `won:true` → `alpha += 1`; the losing variant(s) → `won:false` (`beta += 1`). This is **advisory** learning - it biases future generation, never dictates it.
 
 ## Step 4 - Emit the event
 
-Emit an `experiment_result` typed event into the Phase 22 chain (`.design/intel/insights.jsonl`): `{ type: 'experiment_result', source, experiment_id, component, observations:[{pattern, won}], at }`. No PII (experiment IDs + pattern slugs only).
+Emit an `experiment_result` typed event into the intel chain (`.design/intel/insights.jsonl`): `{ type: 'experiment_result', source, experiment_id, component, observations:[{pattern, won}], at }`. No PII (experiment IDs + pattern slugs only).
 
 ## Record
 

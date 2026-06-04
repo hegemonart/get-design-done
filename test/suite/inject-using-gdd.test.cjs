@@ -11,31 +11,18 @@ const { join } = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const REPO_ROOT = join(__dirname, '..', '..');
-const SCRIPT = join(REPO_ROOT, 'hooks', 'inject-using-gdd.sh');
+const SCRIPT = join(REPO_ROOT, 'hooks', 'inject-using-gdd.cjs');
 const HOOKS_JSON = join(REPO_ROOT, 'hooks', 'hooks.json');
 const SKILL = join(REPO_ROOT, 'skills', 'using-gdd', 'SKILL.md');
 
 // The 1%-rule marker the round-trip proves the escaped payload decodes to.
 const MARKER = '1% chance';
 
-// Bash-spawn skip: the emitter is a .sh invoked via bash. On Windows, bash may
-// be absent or unreliable to spawn from node:test (msys/git-bash path quirks).
-// Mirror cli-events.test.cjs's SKIP_PLATFORM pattern: skip the bash-spawn tests
-// with a reason when bash cannot be invoked, but keep the hooks.json no-cascade
-// + schema-shape (on captured output) assertions platform-independent.
-const BASH = (() => {
-  // Honor an explicit override first (CI / local shells set this).
-  const fromEnv = process.env.GDD_BASH || process.env.BASH;
-  const candidates = [fromEnv, 'bash'].filter(Boolean);
-  for (const cand of candidates) {
-    try {
-      const r = spawnSync(cand, ['--version'], { encoding: 'utf8', timeout: 5000, windowsHide: true });
-      if (r.status === 0) return cand;
-    } catch { /* try next */ }
-  }
-  return null;
-})();
-const SKIP_BASH = BASH ? false : 'bash not spawnable on this platform';
+// The emitter is now a Node CJS module (was .sh, ported in the Windows-hooks
+// port wave). Node is a hard dependency of the plugin so SKIP_BASH is gone —
+// kept the flag name as `SKIP_BASH` so downstream rebases see a clean diff,
+// but the value is always `false` since node is always spawnable.
+const SKIP_BASH = false;
 
 // Spawn the emitter under a controlled env. We DELETE both plugin-root vars from
 // the inherited env first, then set only the one(s) the branch needs, so a stray
@@ -46,7 +33,7 @@ function runEmitter(envOverrides) {
   delete env.CLAUDE_PLUGIN_ROOT;
   delete env.COPILOT_CLI;
   Object.assign(env, envOverrides);
-  const r = spawnSync(BASH, [SCRIPT], {
+  const r = spawnSync(process.execPath, [SCRIPT], {
     encoding: 'utf8',
     timeout: 10000,
     windowsHide: true,
@@ -164,8 +151,12 @@ test('32-02: existing SessionStart entries are preserved alongside the inject en
   const cmds = (hooks.hooks.SessionStart || [])
     .flatMap((b) => (b.hooks || []).map((h) => h.command || ''))
     .join('\n');
-  for (const keep of ['bootstrap.sh', 'update-check.sh', 'first-run-nudge.sh', 'gdd-sessionstart-recap.js']) {
-    assert.ok(cmds.includes(keep), `existing SessionStart entry lost: ${keep}`);
+  // Match either the bash form (legacy) or the Node form (current). The four
+  // SessionStart .sh hooks were ported to .cjs to fix Windows-without-Git-Bash;
+  // hooks.json now points at the .cjs entries. Tests should match either to
+  // tolerate downstream forks that keep the .sh path.
+  for (const keep of [/bootstrap\.(cjs|sh)/, /update-check\.(cjs|sh)/, /first-run-nudge\.(cjs|sh)/, /gdd-sessionstart-recap\.js/]) {
+    assert.match(cmds, keep, `existing SessionStart entry lost: ${keep}`);
   }
-  assert.ok(cmds.includes('inject-using-gdd.sh'), 'inject-using-gdd.sh entry missing from SessionStart');
+  assert.match(cmds, /inject-using-gdd\.(cjs|sh)/, 'inject-using-gdd entry missing from SessionStart');
 });

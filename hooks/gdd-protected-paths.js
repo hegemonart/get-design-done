@@ -59,28 +59,160 @@ function loadProtectedPaths(cwd) {
 }
 
 /**
- * Extract a target path from a Bash command, best-effort.
- * Returns an array of candidate paths; empty if none parsed.
+ * Tokenise a string of shell-style args into individual arguments, honoring
+ * single/double quotes and basic backslash escapes. Used by the bash target
+ * extractor to get reliable arg arrays for destructive coreutils.
+ */
+function parseShellArgs(s) {
+  const args = [];
+  let current = '';
+  let inQuote = null;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (inQuote) {
+      if (ch === inQuote) {
+        inQuote = null;
+        args.push(current);
+        current = '';
+      } else if (ch === '\\' && i + 1 < s.length && (s[i + 1] === inQuote || s[i + 1] === '\\')) {
+        current += s[++i];
+      } else {
+        current += ch;
+      }
+    } else if (ch === '"' || ch === "'") {
+      if (current) { args.push(current); current = ''; }
+      inQuote = ch;
+    } else if (/\s/.test(ch)) {
+      if (current) { args.push(current); current = ''; }
+    } else if (ch === '\\' && i + 1 < s.length) {
+      current += s[++i];
+    } else {
+      current += ch;
+    }
+  }
+  if (current) args.push(current);
+  return args;
+}
+
+/**
+ * Extract destructive-op file targets from one shell pipeline segment
+ * (already split on `&&`/`||`/`;`/`|`). Catches:
+ *  - rm / cp / mv / mkdir / touch / rmdir / chmod / chown / ln / tee
+ *    with ALL their non-flag args (not just the first).
+ *  - git rm / mv / restore / checkout — same treatment.
+ *  - sed -i <args> file1 [file2 ...]
+ *  - > file and >> file redirects appearing anywhere in the segment.
+ *
+ * `sudo ` prefix is stripped before dispatch.
+ */
+function extractTargetsFromSegment(seg) {
+  const targets = [];
+  const cleaned = seg.replace(/^sudo\s+/, '');
+
+  // git destructive subcommands
+  const gitMatch = cleaned.match(/^git\s+(rm|mv|restore|checkout)\b(.*)$/);
+  if (gitMatch) {
+    const args = parseShellArgs(gitMatch[2]);
+    for (const arg of args) {
+      if (!arg.startsWith('-')) targets.push(arg);
+    }
+  }
+
+  // sed -i: only treat as destructive when -i is present
+  if (/^sed\b/.test(cleaned) && /(?:^|\s)-i(?:\b|=)/.test(cleaned)) {
+    const tokens = parseShellArgs(cleaned).slice(1); // drop 'sed'
+    let i = 0;
+    while (i < tokens.length) {
+      const tok = tokens[i];
+      // BSD `sed -i ''` consumes an extra empty-string arg
+      if (tok === '-i' && i + 1 < tokens.length && tokens[i + 1] === '') {
+        i += 2;
+        continue;
+      }
+      if (tok.startsWith('-')) { i++; continue; }
+      // First non-flag arg may be either an in-line sed script or a file;
+      // path matcher will simply not match a non-path. Be permissive: queue all.
+      targets.push(tok);
+      i++;
+    }
+  }
+
+  // Coreutils destructive verbs
+  const coreutilsMatch = cleaned.match(/^(rm|cp|mv|mkdir|touch|rmdir|chmod|chown|ln|tee)\b(.*)$/);
+  if (coreutilsMatch) {
+    const args = parseShellArgs(coreutilsMatch[2]);
+    for (const arg of args) {
+      if (!arg.startsWith('-')) targets.push(arg);
+    }
+  }
+
+  // Redirect targets: > file or >> file (appear anywhere in the segment)
+  const redirects = seg.matchAll(/(?:^|[^&>])>>?\s*([^\s|;&]+)/g);
+  for (const m of redirects) targets.push(m[1]);
+
+  return targets;
+}
+
+/**
+ * Extract all candidate file paths a Bash command may mutate. Walks the
+ * command string in three passes:
+ *
+ *   1. Recursively process every `$(...)` and `\`...\`` subshell. The
+ *      subshell is evaluated by the shell and its OUTPUT substitutes into
+ *      the parent command — but the inner commands themselves ALSO run,
+ *      so anything destructive inside is a target.
+ *   2. Strip subshells from the outer command to simplify splitting.
+ *   3. Split outer command on `&&`, `||`, `;`, `|` and feed each segment
+ *      to extractTargetsFromSegment.
+ *
+ * Previous implementation called String.prototype.match() (returns only
+ * the first match) and a single regex with a `[^\\s|;&>]+` capture group.
+ * That missed:
+ *   - chained commands (`rm safe.txt && rm secret`)
+ *   - multi-arg destructive verbs (`rm a b c` — only `a` was extracted)
+ *   - subshell content (`rm $(echo secret)`)
+ *   - backtick command substitution (`rm \`echo secret\``)
+ *
+ * xargs bypass — `find protected -print0 | xargs -0 rm` — is NOT closed
+ * here, because the targets come from stdin which we can't model without
+ * a full pipeline shape analysis. The `find` segment will be checked but
+ * the subsequent xargs+rm segment carries no explicit path. Project policy
+ * should rely on `find <protected-dir>` being blocked at the upstream
+ * segment via the .git/** / reference/** globs, plus general operator
+ * caution. Future enhancement: scan pipeline for xargs-with-destructive
+ * verbs and require the upstream stage to not reference protected globs.
  */
 function extractBashTargets(command) {
   if (!command) return [];
-  const targets = [];
-  // rm / cp / mv / mkdir trailing arg(s)
-  const rmMatch = command.match(/\b(rm|cp|mv|mkdir|touch|rmdir|chmod|chown)\s+(?:-[A-Za-z]+\s+)*([^\s|;&>]+)/);
-  if (rmMatch) targets.push(rmMatch[2]);
-  // redirect / tee
-  const redirectMatch = command.match(/[>|]\s*(?:tee\s+)?([^\s|;&]+)$/);
-  if (redirectMatch) targets.push(redirectMatch[1]);
-  // sed -i <path> (BSD and GNU variants)
-  const sedMatch = command.match(/\bsed\s+-i(?:\s*['"][^'"]*['"])?\s+(?:-[A-Za-z]+\s+)*(?:['"][^'"]*['"]\s+)?([^\s|;&]+)/);
-  if (sedMatch) targets.push(sedMatch[1]);
-  // git rm / git mv
-  const gitMatch = command.match(/\bgit\s+(rm|mv|restore|checkout)\s+(?:-[A-Za-z]+\s+)*([^\s|;&]+)/);
-  if (gitMatch) targets.push(gitMatch[2]);
 
-  return targets
-    .filter(Boolean)
-    .map(p => p.replace(/^['"]|['"]$/g, ''));
+  const targets = [];
+
+  // 1. Recursive subshell scan.
+  const SUBSHELL_RE = /\$\(([^()]*)\)|`([^`]*)`/g;
+  let m;
+  while ((m = SUBSHELL_RE.exec(command)) !== null) {
+    targets.push(...extractBashTargets(m[1] !== undefined ? m[1] : m[2]));
+  }
+
+  // 2. Strip subshells from outer command.
+  const stripped = command.replace(SUBSHELL_RE, '');
+
+  // 3. Split on shell separators and process each segment.
+  const segments = stripped.split(/\s*(?:&&|\|\||;|\|)\s*/);
+  for (const segment of segments) {
+    const seg = segment.trim();
+    if (!seg) continue;
+    targets.push(...extractTargetsFromSegment(seg));
+  }
+
+  // Dedup + strip surrounding quotes.
+  return [
+    ...new Set(
+      targets
+        .filter(Boolean)
+        .map((p) => p.replace(/^['"]|['"]$/g, '')),
+    ),
+  ];
 }
 
 async function main() {

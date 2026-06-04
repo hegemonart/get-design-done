@@ -82,7 +82,7 @@ When the budget-enforcer hook resolves which tier to spawn an agent at, it walks
 
 1. **`.design/budget.json.tier_overrides[{agent_name}]`** - per-project configuration. Wins over frontmatter. Use this knob when the project has budget constraints that differ from the plugin defaults.
 2. **Agent frontmatter `default-tier`** (this file's per-agent map) - plugin default. Set at authoring time.
-3. **Hardcoded fallback `"sonnet"`** - belt-and-suspenders in `hooks/budget-enforcer.js` for agents that somehow lack the frontmatter field. Should never fire in practice after Phase 10.1.
+3. **Hardcoded fallback `"sonnet"`** - belt-and-suspenders in `hooks/budget-enforcer.ts` for agents that somehow lack the frontmatter field. Should never fire in practice after Phase 10.1.
 
 Plus two modifiers that can override the above at spawn time:
 
@@ -108,7 +108,7 @@ Phase 11's reflector encodes these heuristics. This section documents the philos
 
 ## Integration Points
 
-- **`hooks/budget-enforcer.js`** (Plan 10.1-01 Task 04) - implements the precedence chain above. `resolveTier(agent, agentDefaultTier, overrides)` is the concrete function.
+- **`hooks/budget-enforcer.ts`** (Plan 10.1-01 Task 04) - implements the precedence chain above. `resolveTier(agent, agentDefaultTier, overrides)` is the concrete function.
 - **`skills/router/SKILL.md`** (Plan 10.1-01 Task 03) - consults this file's tier map + `reference/model-prices.md` to produce `estimated_cost_usd` pre-spawn.
 - **`skills/optimize/SKILL.md`** (Plan 10.1-04) - advisory command; may suggest tier moves based on telemetry + this doc's heuristics.
 - **`agents/design-reflector.md`** (Phase 11, already merged) - may propose edits to this file + paired frontmatter updates. Proposals land in `.design/reflections/` for user review.

@@ -8,21 +8,21 @@
       "path": "reference/codex-tools.md",
       "type": "meta-rules",
       "phase": 21,
-      "description": "Phase 21 cross-harness tool map — Claude Code → OpenAI Codex CLI tool-name equivalents for the gdd-sdk runner (Read→read_file, Write/Edit→apply_patch, Bash→shell, etc.)"
+      "description": "Cross-harness tool map — Claude Code → OpenAI Codex CLI tool-name equivalents for the gdd-sdk runner (Read→read_file, Write/Edit→apply_patch, Bash→shell, etc.)"
     },
     {
       "name": "gemini-tools",
       "path": "reference/gemini-tools.md",
       "type": "meta-rules",
       "phase": 21,
-      "description": "Phase 21 cross-harness tool map — Claude Code → Gemini CLI tool-name equivalents for the gdd-sdk runner"
+      "description": "Cross-harness tool map — Claude Code → Gemini CLI tool-name equivalents for the gdd-sdk runner"
     },
     {
       "name": "error-recovery",
       "path": "reference/error-recovery.md",
       "type": "meta-rules",
       "phase": 20,
-      "description": "Phase 20 resilience recovery protocol — rate-limit + 429 + context-overflow retry guidance for the SDK runner (jittered-backoff / rate-guard / error-classifier / iteration-budget integration)"
+      "description": "Resilience recovery protocol — rate-limit + 429 + context-overflow retry guidance for the SDK runner (jittered-backoff / rate-guard / error-classifier / iteration-budget integration)"
     },
     {
       "name": "component-authoring",
@@ -50,14 +50,14 @@
       "path": "reference/peer-protocols.md",
       "type": "meta-rules",
       "phase": 27,
-      "description": "Phase 27 ACP + ASP protocol cheat sheet for peer-CLI delegation — line-delimited JSON-RPC framing, initialize/prompt/threadStart/turn lifecycle, per-peer ACP entry points, error-path resolution semantics"
+      "description": "ACP + ASP protocol cheat sheet for peer-CLI delegation — line-delimited JSON-RPC framing, initialize/prompt/threadStart/turn lifecycle, per-peer ACP entry points, error-path resolution semantics"
     },
     {
       "name": "pseudonymization-rules",
       "path": "reference/pseudonymization-rules.md",
       "type": "meta-rules",
       "phase": 30,
-      "description": "Phase 30 pseudonymization rule catalog (R1..R8) — replaces git identity, paths, hostname, repo origin, env-var values, email, IPs; defines stable per-user pseudonym derivation. Consumed by /gdd:update --show-privacy-diff at 30-07."
+      "description": "Pseudonymization rule catalog (R1..R8) — replaces git identity, paths, hostname, repo origin, env-var values, email, IPs; defines stable per-user pseudonym derivation. Consumed by /gdd:update --show-privacy-diff."
     },
     {
       "name": "DEPRECATIONS",
@@ -107,13 +107,20 @@
       "path": "reference/bandit-integration.md",
       "type": "meta-rules",
       "phase": 27.5,
-      "description": "Phase 27.5 bandit production-integration cheat sheet — consultBandit + recordOutcome shim signatures, adaptive_mode gate semantics, reward function (Phase 23.5 D-08 unchanged), posterior path .design/telemetry/posterior.json, call-site map (budget-enforcer + session-runner + design-reflector Section 8)"
+      "description": "Bandit production-integration cheat sheet — consultBandit + recordOutcome shim signatures, adaptive_mode gate semantics, reward function, posterior path .design/telemetry/posterior.json, call-site map (budget-enforcer + session-runner + design-reflector Section 8)"
     },
     {
       "name": "brand-voice",
       "path": "reference/brand-voice.md",
       "type": "heuristic",
       "description": "Voice axes, archetypes, tone-by-context, industry-context palettes"
+    },
+    {
+      "name": "cache-tier-doctrine",
+      "path": "reference/cache-tier-doctrine.md",
+      "type": "meta-rules",
+      "tier": "L3",
+      "description": "Cache-tier doctrine - L0/L1/L2/L3 lifetime tiers for prompt-cache stability, the L0 contract (two files, byte-stable, CI gate), placement rules, verification commands, and the ratchet protocol for legitimate L0 edits."
     },
     {
       "name": "checklists",
@@ -475,7 +482,7 @@
       "name": "insight-line.schema",
       "path": "reference/schemas/insight-line.schema.json",
       "type": "schema",
-      "tier": "haiku",
+      "tier": "L2",
       "description": "JSONL schema for agent run-end insight lines written to .design/intel/insights.jsonl"
     },
     {
@@ -495,7 +502,7 @@
       "path": "reference/schemas/mcp-gdd-tools.schema.json",
       "type": "schema",
       "phase": 27.7,
-      "description": "Phase 27.7 — Draft-07 input/output schemas for the 12 read-only tools in scripts/mcp-servers/gdd-mcp/ (gdd-mcp MCP server)"
+      "description": "Draft-07 input/output schemas for the 12 read-only tools in scripts/mcp-servers/gdd-mcp/ (gdd-mcp MCP server)"
     },
     {
       "name": "meta-rules",
@@ -509,105 +516,105 @@
       "path": "reference/model-prices.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 router — links to per-runtime price sub-tables under reference/prices/<runtime>.md (claude/codex/gemini/qwen canonical, 10 stubs); read by scripts/lib/budget-enforcer.cjs"
+      "description": "Router — links to per-runtime price sub-tables under reference/prices/<runtime>.md (claude/codex/gemini/qwen canonical, 10 stubs); read by scripts/lib/budget-enforcer.cjs"
     },
     {
       "name": "prices-claude",
       "path": "reference/prices/claude.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Anthropic Claude Code pricing (canonical Anthropic table preserved from v1.25 model-prices.md; haiku/sonnet/opus rows + size_budget token ranges)"
+      "description": "Sub-table — Anthropic Claude Code pricing (canonical Anthropic table preserved from v1.25 model-prices.md; haiku/sonnet/opus rows + size_budget token ranges)"
     },
     {
       "name": "prices-codex",
       "path": "reference/prices/codex.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — OpenAI Codex CLI pricing (gpt-5/gpt-5-mini/gpt-5-nano seed; provenance <TODO> at https://openai.com/api/pricing/)"
+      "description": "Sub-table — OpenAI Codex CLI pricing (gpt-5/gpt-5-mini/gpt-5-nano seed; provenance <TODO> at https://openai.com/api/pricing/)"
     },
     {
       "name": "prices-gemini",
       "path": "reference/prices/gemini.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Google Gemini CLI pricing (gemini-2.5-pro/flash/flash-lite seed; provenance <TODO> at https://ai.google.dev/pricing)"
+      "description": "Sub-table — Google Gemini CLI pricing (gemini-2.5-pro/flash/flash-lite seed; provenance <TODO> at https://ai.google.dev/pricing)"
     },
     {
       "name": "prices-qwen",
       "path": "reference/prices/qwen.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Alibaba Qwen CLI pricing (qwen3-max/plus/flash seed; provenance <TODO> at https://www.alibabacloud.com/help/en/model-studio/billing-for-models)"
+      "description": "Sub-table — Alibaba Qwen CLI pricing (qwen3-max/plus/flash seed; provenance <TODO> at https://www.alibabacloud.com/help/en/model-studio/billing-for-models)"
     },
     {
       "name": "prices-kilo",
       "path": "reference/prices/kilo.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Kilo Code pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — Kilo Code pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-copilot",
       "path": "reference/prices/copilot.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — GitHub Copilot CLI pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — GitHub Copilot CLI pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-cursor",
       "path": "reference/prices/cursor.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Cursor pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — Cursor pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-windsurf",
       "path": "reference/prices/windsurf.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Windsurf pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — Windsurf pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-antigravity",
       "path": "reference/prices/antigravity.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Antigravity pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — Antigravity pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-augment",
       "path": "reference/prices/augment.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Augment Code pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — Augment Code pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-trae",
       "path": "reference/prices/trae.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Trae pricing (stub; possibly single_tier runtime; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — Trae pricing (stub; possibly single_tier runtime; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-codebuddy",
       "path": "reference/prices/codebuddy.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Tencent CodeBuddy pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
+      "description": "Sub-table — Tencent CodeBuddy pricing (stub; runtime adapter authors fill with provenance citation in a later cycle)"
     },
     {
       "name": "prices-cline",
       "path": "reference/prices/cline.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — Cline pricing (stub; BYO-API-key runtime, default model pricing only)"
+      "description": "Sub-table — Cline pricing (stub; BYO-API-key runtime, default model pricing only)"
     },
     {
       "name": "prices-opencode",
       "path": "reference/prices/opencode.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 D-08 sub-table — OpenCode pricing (stub; BYO-API-key runtime, default model pricing only)"
+      "description": "Sub-table — OpenCode pricing (stub; BYO-API-key runtime, default model pricing only)"
     },
     {
       "name": "model-tiers",
@@ -620,13 +627,13 @@
       "path": "reference/runtime-models.md",
       "type": "data",
       "phase": 26,
-      "description": "Phase 26 per-runtime tier→model adapter source-of-truth (D-01) — 14 runtimes (claude/codex/gemini/qwen/kilo/copilot/cursor/windsurf/antigravity/augment/trae/codebuddy/cline/opencode), each row carries opus|sonnet|haiku tier map, high|medium|low reasoning-class alias, and provenance (URL + retrieval timestamp + last-validated cycle); validated against reference/schemas/runtime-models.schema.json"
+      "description": "Per-runtime tier→model adapter source-of-truth — 14 runtimes (claude/codex/gemini/qwen/kilo/copilot/cursor/windsurf/antigravity/augment/trae/codebuddy/cline/opencode), each row carries opus|sonnet|haiku tier map, high|medium|low reasoning-class alias, and provenance (URL + retrieval timestamp + last-validated cycle); validated against reference/schemas/runtime-models.schema.json"
     },
     {
       "name": "motion",
       "path": "reference/motion.md",
       "type": "domain-index",
-      "description": "Phase 45 domain-index: motion navigation - indexes easings, spring, transition-taxonomy, interpolate, advanced, framer-motion-patterns.",
+      "description": "Domain-index: motion navigation - indexes easings, spring, transition-taxonomy, interpolate, advanced, framer-motion-patterns.",
       "phase": 45
     },
     {
@@ -700,14 +707,14 @@
       "path": "reference/peer-cli-capabilities.md",
       "type": "meta-rules",
       "phase": 27,
-      "description": "Phase 27 peer-CLI delegation capability matrix — which peer (codex/copilot/cursor/gemini/qwen) claims which agent role, protocol (ACP/ASP), tie-break order, and opt-in gating semantics"
+      "description": "Peer-CLI delegation capability matrix — which peer (codex/copilot/cursor/gemini/qwen) claims which agent role, protocol (ACP/ASP), tie-break order, and opt-in gating semantics"
     },
     {
       "name": "perf-budget",
       "path": "reference/perf-budget.md",
       "type": "meta-rules",
       "phase": 27.6,
-      "description": "Phase 27.6 per-agent token-cost budget reference and CI regression-gate documentation; budgets sourced from current p50 + 25% buffer (D-05), CI gate fails on >25% regression vs baseline across 3 cycles (D-01); thresholds configurable via .design/budget.json"
+      "description": "Per-agent token-cost budget reference and CI regression-gate documentation; budgets sourced from current p50 + 25% buffer, CI gate fails on >25% regression vs baseline across 3 cycles; thresholds configurable via .design/budget.json"
     },
     {
       "name": "performance",
@@ -775,7 +782,7 @@
       "name": "start-interview",
       "path": "reference/start-interview.md",
       "type": "preamble",
-      "description": "Locked 5-question interview consumed by /gdd:start (Phase 14.7) — pain, target-area, budget, framework/DS confirmation, Figma/canvas workflow"
+      "description": "Locked 5-question interview consumed by /gdd:start — pain, target-area, budget, framework/DS confirmation, Figma/canvas workflow"
     },
     {
       "name": "style-vocabulary",
@@ -799,7 +806,7 @@
       "name": "typography",
       "path": "reference/typography.md",
       "type": "domain-index",
-      "description": "Phase 45 domain-index: typography navigation - indexes type-scale heuristics, variable-fonts-loading, proportion-systems.",
+      "description": "Domain-index: typography navigation - indexes type-scale heuristics, variable-fonts-loading, proportion-systems.",
       "phase": 45
     },
     {
@@ -847,329 +854,329 @@
       "path": "reference/skill-authoring-contract.md",
       "type": "meta-rules",
       "phase": 28.5,
-      "description": "Phase 28.5 skill-authoring contract — adapted from mattpocock/skills (MIT). SKILL.md <=100-line cap (warn >=100, block >=250 in CI), 1024-char description cap, <what>. Use when <triggers>. form (lax-mode default per Phase 33 A/B pending), frontmatter required fields, progressive-disclosure one-level-deep rule. Validator at scripts/validate-skill-length.cjs."
+      "description": "Skill-authoring contract — adapted from mattpocock/skills (MIT). SKILL.md <=100-line cap (warn >=100, block >=250 in CI), 1024-char description cap, <what>. Use when <triggers>. form (lax-mode default), frontmatter required fields, progressive-disclosure one-level-deep rule. Validator at scripts/validate-skill-length.cjs."
     },
     {
       "name": "skill-metadata",
       "path": "reference/skill-metadata.md",
       "type": "meta-rules",
       "phase": 46,
-      "description": "Phase 46 skill-metadata single source of truth: scripts/lib/manifest/skills.json record shape, the generate-skill-frontmatter.cjs forward/extract/check modes, the skills.json to generator to build:skills to skills/+dist build chain, the six managed frontmatter keys (canonical order, always-quoted strings) vs extra_frontmatter passthrough, the 20..1024 description budget (validate-skill-length.cjs + lint-agentskills-spec.cjs R4, lint:agentskills CI gate), and the pin metadata catalogue consumer."
+      "description": "Skill-metadata single source of truth: scripts/lib/manifest/skills.json record shape, the generate-skill-frontmatter.cjs forward/extract/check modes, the skills.json to generator to build:skills to skills/+dist build chain, the six managed frontmatter keys (canonical order, always-quoted strings) vs extra_frontmatter passthrough, the 20..1024 description budget (validate-skill-length.cjs + lint-agentskills-spec.cjs R4, lint:agentskills CI gate), and the pin metadata catalogue consumer."
     },
     {
       "name": "live-mode-integration",
       "path": "reference/live-mode-integration.md",
       "type": "meta-rules",
       "phase": 47,
-      "description": "Phase 47 live-mode contract for /gdd:live: the seven-stage pick to generate to accept loop, the Claude Preview MCP surface (preview_eval injects scripts/lib/live/runtime.cjs RUNTIME_JS, hot-swap via the data-gdd-variant marker), the six live_* telemetry events vs the four on-disk session kinds, the .design/live-sessions session file (scripts/lib/live/session-store.cjs + live-session.schema.json), the dev-time bandit feed (bandit-feed.cjs into design-variants), degraded screenshot-only mode gated on capability_matrix.mcp_support (harness-mode.cjs), and the scope guard (scope-guard.cjs)."
+      "description": "Live-mode contract for /gdd:live: the seven-stage pick to generate to accept loop, the Claude Preview MCP surface (preview_eval injects scripts/lib/live/runtime.cjs RUNTIME_JS, hot-swap via the data-gdd-variant marker), the six live_* telemetry events vs the four on-disk session kinds, the .design/live-sessions session file (scripts/lib/live/session-store.cjs + live-session.schema.json), the dev-time bandit feed (bandit-feed.cjs into design-variants), degraded screenshot-only mode gated on capability_matrix.mcp_support (harness-mode.cjs), and the scope guard (scope-guard.cjs)."
     },
     {
       "name": "capability-gap-stage-gate",
       "path": "reference/capability-gap-stage-gate.md",
       "type": "meta-rules",
       "phase": 29,
-      "description": "Phase 29 Stage-0 → Stage-1 capability-gap gate specification. Defaults K=3 stable clusters across M=10 cycles with closed-form posterior stddev(Beta(α,β)) < 0.05 (Laplace prior matches Phase 23.5). D-01 lock: gate emits a one-time user-facing prompt on crossing — NEVER an auto-stage-flip. Overridable via .design/config.json capability_gap_gate.{K,M,stddev_threshold}. Test fixtures at tests/reflector-capability-gap-aggregation.test.cjs."
+      "description": "Stage-0 → Stage-1 capability-gap gate specification. Defaults K=3 stable clusters across M=10 cycles with closed-form posterior stddev(Beta(α,β)) < 0.05 (Laplace prior matches bandit reward function). Locked behavior: gate emits a one-time user-facing prompt on crossing — NEVER an auto-stage-flip. Overridable via .design/config.json capability_gap_gate.{K,M,stddev_threshold}. Test fixtures at tests/reflector-capability-gap-aggregation.test.cjs."
     },
     {
       "name": "known-failure-modes",
       "path": "reference/known-failure-modes.md",
       "type": "meta-rules",
       "phase": 30,
-      "description": "Phase 30 triage gate catalogue — locally-fixable failure modes (id/pattern/diagnosis/remedy/severity, with optional propose_report whitelist flag per D-11) consulted by scripts/lib/issue-reporter/triage-matcher.cjs before the report-issue consent prompt (D-07/D-11)."
+      "description": "Triage gate catalogue — locally-fixable failure modes (id/pattern/diagnosis/remedy/severity, with optional propose_report whitelist flag) consulted by scripts/lib/issue-reporter/triage-matcher.cjs before the report-issue consent prompt."
     },
     {
       "name": "gdd-threat-model",
       "path": "reference/gdd-threat-model.md",
       "type": "heuristic",
       "phase": 33.5,
-      "description": "Phase 33.5 STRIDE threat model of GDD's own runtime attack surface — hooks, the gdd-state + gdd-mcp MCP servers, the peer-CLI broker, the WebSocket event-stream transport, and issue-reporter outbound; maps each residual risk to the 33.5 plan that closes it."
+      "description": "STRIDE threat model of GDD's own runtime attack surface — hooks, the gdd-state + gdd-mcp MCP servers, the peer-CLI broker, the WebSocket event-stream transport, and issue-reporter outbound; maps each residual risk to the plan that closes it."
     },
     {
       "name": "gdd-runtime-audit",
       "path": "reference/gdd-runtime-audit.md",
       "type": "heuristic",
       "phase": 33.5,
-      "description": "Phase 33.5 static security audit of GDD's shipped runtime surface (hooks/scripts/sdk/bin) — outbound-network call sites, secret-handling sites, and external-input surfaces; human-readable companion to scripts/security/outbound-allowlist.json (the canonical active-egress allowlist the 33.5-04 scan-outbound-network.cjs gate consumes) and reference/gdd-threat-model.md."
+      "description": "Static security audit of GDD's shipped runtime surface (hooks/scripts/sdk/bin) — outbound-network call sites, secret-handling sites, and external-input surfaces; human-readable companion to scripts/security/outbound-allowlist.json (the canonical active-egress allowlist the scan-outbound-network.cjs gate consumes) and reference/gdd-threat-model.md."
     },
     {
       "name": "openrouter-tier-mapping",
       "path": "reference/openrouter-tier-mapping.md",
       "type": "heuristic",
       "phase": 33.6,
-      "description": "Phase 33.6 OpenRouter tier-mapping heuristic — maps GDD opus/sonnet/haiku onto OpenRouter catalog ids via closed-vs-open + pricing buckets (high/medium/low), with the .design/config.json#openrouter_tier_overrides escape hatch (override wins) and graceful-null → native fallback."
+      "description": "OpenRouter tier-mapping heuristic — maps GDD opus/sonnet/haiku onto OpenRouter catalog ids via closed-vs-open + pricing buckets (high/medium/low), with the .design/config.json#openrouter_tier_overrides escape hatch (override wins) and graceful-null → native fallback."
     },
     {
       "name": "prices-openrouter",
       "path": "reference/prices.openrouter.md",
       "type": "data",
       "phase": 33.6,
-      "description": "Phase 33.6 catalog-derived OpenRouter price sub-table — per-model prompt/completion $/tok snapshot of .design/cache/openrouter-models.json; derived view, the dynamic catalog is the source of truth (D-11 registry round-trip)."
+      "description": "Catalog-derived OpenRouter price sub-table — per-model prompt/completion $/tok snapshot of .design/cache/openrouter-models.json; derived view, the dynamic catalog is the source of truth (registry round-trip)."
     },
     {
       "name": "native-platforms",
       "path": "reference/native-platforms.md",
       "type": "heuristic",
       "phase": 34.1,
-      "description": "Phase 34.1 token-bridge spec — maps the canonical CSS-token form (Phase 23) to SwiftUI Color/Font/ViewModifier, Jetpack Compose Color/Shapes/Typography/MaterialTheme, and Flutter ThemeData/ColorScheme/TextTheme, with the precision contract (color hex→8-bit channels exact, dimension px→pt/dp/logical px) defining token-identity for the round-trip."
+      "description": "Token-bridge spec — maps the canonical CSS-token form to SwiftUI Color/Font/ViewModifier, Jetpack Compose Color/Shapes/Typography/MaterialTheme, and Flutter ThemeData/ColorScheme/TextTheme, with the precision contract (color hex→8-bit channels exact, dimension px→pt/dp/logical px) defining token-identity for the round-trip."
     },
     {
       "name": "email-design",
       "path": "reference/email-design.md",
       "type": "heuristic",
       "phase": 34.2,
-      "description": "Phase 34.2 email-constraint catalogue — table-based layout (not flexbox/grid/position), inline styles (not a <style> block), MSO conditional comments for Outlook, dark-mode color-scheme/prefers-color-scheme handling, ~600px max-width, image/alt rules, and top-20-client quirks; the authority the email-executor generates against and the design-verifier email branch audits against, and the rule-id source for scripts/lib/email/validate-email-html.cjs."
+      "description": "Email-constraint catalogue — table-based layout (not flexbox/grid/position), inline styles (not a <style> block), MSO conditional comments for Outlook, dark-mode color-scheme/prefers-color-scheme handling, ~600px max-width, image/alt rules, and top-20-client quirks; the authority the email-executor generates against and the design-verifier email branch audits against, and the rule-id source for scripts/lib/email/validate-email-html.cjs."
     },
     {
       "name": "print-design",
       "path": "reference/print-design.md",
       "type": "heuristic",
       "phase": 34.3,
-      "description": "Phase 34.3 print-constraint catalogue — @page size/margin/marks (the print box model), bleed box + crop/registration marks, CMYK color-space awareness (subtractive, not screen RGB), font embedding/outlining (print RIPs have no web fonts), and 300dpi raster-fallback guidance; the authority the pdf-executor generates against and the design-verifier print branch audits against, and the rule-id source for scripts/lib/print/validate-print-css.cjs."
+      "description": "Print-constraint catalogue — @page size/margin/marks (the print box model), bleed box + crop/registration marks, CMYK color-space awareness (subtractive, not screen RGB), font embedding/outlining (print RIPs have no web fonts), and 300dpi raster-fallback guidance; the authority the pdf-executor generates against and the design-verifier print branch audits against, and the rule-id source for scripts/lib/print/validate-print-css.cjs."
     },
     {
       "name": "pr-review-integration",
       "path": "reference/pr-review-integration.md",
       "type": "heuristic",
       "phase": 35.1,
-      "description": "Phase 35.1 PR-inline contract — the gh-CLI shapes agents/pr-commenter.md posts against: inline review comments (gh api pulls/{n}/comments with path+line), the summary review (event=COMMENT), the gdd/design-review check-run (gh api check-runs with name/head_sha/conclusion/output.summary carrying audit pillar scores + verify pass/fail + a11y result), Preview/Chromatic screenshot-pair attachment (degrade-to-text), mandatory scripts/lib/redact.cjs on every outbound body, the GDD_DISABLE_PR_COMMENTER kill-switch, and the consent-driven branch-protection setup (scripts/apply-branch-protection.sh; GDD registers the check, never force-edits protection)."
+      "description": "PR-inline contract — the gh-CLI shapes agents/pr-commenter.md posts against: inline review comments (gh api pulls/{n}/comments with path+line), the summary review (event=COMMENT), the gdd/design-review check-run (gh api check-runs with name/head_sha/conclusion/output.summary carrying audit pillar scores + verify pass/fail + a11y result), Preview/Chromatic screenshot-pair attachment (degrade-to-text), mandatory scripts/lib/redact.cjs on every outbound body, the GDD_DISABLE_PR_COMMENTER kill-switch, and the consent-driven branch-protection setup (scripts/apply-branch-protection.sh; GDD registers the check, never force-edits protection)."
     },
     {
       "name": "notification-routing",
       "path": "reference/notification-routing.md",
       "type": "heuristic",
       "phase": 35.2,
-      "description": "Phase 35.2 notification-backplane routing contract — event→channel routing (verify_fail/audit_pass/ship → slack/discord, overridable via .design/config.json#notifications.routing), the mandatory scripts/lib/redact.cjs chokepoint on every outbound body, per-channel kill-switches (GDD_DISABLE_SLACK/GDD_DISABLE_DISCORD), and the injectable-fetchImpl + degrade-to-noop transport consumed by scripts/lib/notify/dispatch.cjs (allowlisted under the 33.5 outbound gate)."
+      "description": "Notification-backplane routing contract — event→channel routing (verify_fail/audit_pass/ship → slack/discord, overridable via .design/config.json#notifications.routing), the mandatory scripts/lib/redact.cjs chokepoint on every outbound body, per-channel kill-switches (GDD_DISABLE_SLACK/GDD_DISABLE_DISCORD), and the injectable-fetchImpl + degrade-to-noop transport consumed by scripts/lib/notify/dispatch.cjs (allowlisted under the outbound gate)."
     },
     {
       "name": "ticket-sync",
       "path": "reference/ticket-sync.md",
       "type": "heuristic",
       "phase": 35.3,
-      "description": "Phase 35.3 ticket-sync contract — the STATE <ticket_links> cycle→ticket map, the bidirectional read (decision-injector surfaces linked-ticket comments on .design open) + write (transition + redacted summary on cycle completion) flow via MCP tools (mcp__linear__* / mcp__atlassian__*; no SDK, no raw HTTP), the default status-transition map, tracker-wins conflict resolution, the mandatory scripts/lib/redact.cjs chokepoint, and the GDD_DISABLE_LINEAR/GDD_DISABLE_JIRA kill-switches. Consumed by agents/ticket-sync-agent.md."
+      "description": "Ticket-sync contract — the STATE <ticket_links> cycle→ticket map, the bidirectional read (decision-injector surfaces linked-ticket comments on .design open) + write (transition + redacted summary on cycle completion) flow via MCP tools (mcp__linear__* / mcp__atlassian__*; no SDK, no raw HTTP), the default status-transition map, tracker-wins conflict resolution, the mandatory scripts/lib/redact.cjs chokepoint, and the GDD_DISABLE_LINEAR/GDD_DISABLE_JIRA kill-switches. Consumed by agents/ticket-sync-agent.md."
     },
     {
       "name": "export-formats",
       "path": "reference/export-formats.md",
       "type": "heuristic",
       "phase": 35.5,
-      "description": "Phase 35.5 /gdd:export contract — the source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots), the three formats (self-contained HTML via scripts/lib/export/build-html.cjs, Paged.js-compatible print PDF rendered by the user, Notion page via the Notion MCP), mandatory scripts/lib/redact.cjs + the --pseudonymize opt-in (scripts/lib/pseudonymize.cjs), and the --pr hand-off to pr-commenter. No bundled PDF/markdown runtime (D-02)."
+      "description": "/gdd:export contract — the source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots), the three formats (self-contained HTML via scripts/lib/export/build-html.cjs, Paged.js-compatible print PDF rendered by the user, Notion page via the Notion MCP), mandatory scripts/lib/redact.cjs + the --pseudonymize opt-in (scripts/lib/pseudonymize.cjs), and the --pr hand-off to pr-commenter. No bundled PDF/markdown runtime."
     },
     {
       "name": "finance",
       "path": "reference/domains/finance-patterns.md",
       "type": "heuristic",
       "phase": 36.1,
-      "description": "Phase 36.1 Tier-3 domain pack — finance/fintech UI patterns: data-table density (tabular-nums), trading-interface conventions (colorblind-safe gain/loss), regulatory disclosure placement (Reg-T, MiFID II), PCI-DSS PAN masking, number-formatting precision, real-time data states. Carries Detection signals (keywords + deps) + an Audit checklist consumed by design-context-builder Step 0F + design-auditor."
+      "description": "Tier-3 domain pack — finance/fintech UI patterns: data-table density (tabular-nums), trading-interface conventions (colorblind-safe gain/loss), regulatory disclosure placement (Reg-T, MiFID II), PCI-DSS PAN masking, number-formatting precision, real-time data states. Carries Detection signals (keywords + deps) + an Audit checklist consumed by design-context-builder Step 0F + design-auditor."
     },
     {
       "name": "healthcare",
       "path": "reference/domains/healthcare-patterns.md",
       "type": "heuristic",
       "phase": 36.1,
-      "description": "Phase 36.1 Tier-3 domain pack — healthcare/clinical UI patterns: HIPAA-aware PHI isolation (no PHI in URLs/logs/analytics), idle auto-logout, audit-trail-as-UI, MyChart-class flows, WCAG 2.1 AAA, medical-data visualization. Surfaces risk, does not certify compliance. Detection signals + Audit checklist for Step 0F + design-auditor."
+      "description": "Tier-3 domain pack — healthcare/clinical UI patterns: HIPAA-aware PHI isolation (no PHI in URLs/logs/analytics), idle auto-logout, audit-trail-as-UI, MyChart-class flows, WCAG 2.1 AAA, medical-data visualization. Surfaces risk, does not certify compliance. Detection signals + Audit checklist for Step 0F + design-auditor."
     },
     {
       "name": "gaming",
       "path": "reference/domains/gaming-patterns.md",
       "type": "heuristic",
       "phase": 36.1,
-      "description": "Phase 36.1 Tier-3 domain pack — game UI/HUD patterns: diegetic/non-diegetic/spatial/meta HUD taxonomy, vestibular + photosensitive safety (3 flashes/sec, reduced-motion + in-game toggles), ESRB/PEGI age-gates, input-model adaptation (controller/touch/KBM), TV-safe area. Detection signals + Audit checklist for Step 0F + design-auditor."
+      "description": "Tier-3 domain pack — game UI/HUD patterns: diegetic/non-diegetic/spatial/meta HUD taxonomy, vestibular + photosensitive safety (3 flashes/sec, reduced-motion + in-game toggles), ESRB/PEGI age-gates, input-model adaptation (controller/touch/KBM), TV-safe area. Detection signals + Audit checklist for Step 0F + design-auditor."
     },
     {
       "name": "civic",
       "path": "reference/domains/civic-patterns.md",
       "type": "heuristic",
       "phase": 36.1,
-      "description": "Phase 36.1 Tier-3 domain pack — civic/government UI patterns: Section 508 + WCAG 2.1 AA hard floor, multi-language gov forms (EN/ES/zh-Hans), Plain Writing Act (grade 6-8), USWDS, session-timeout warnings, one-thing-per-page forms. Detection signals + Audit checklist for Step 0F + design-auditor."
+      "description": "Tier-3 domain pack — civic/government UI patterns: Section 508 + WCAG 2.1 AA hard floor, multi-language gov forms (EN/ES/zh-Hans), Plain Writing Act (grade 6-8), USWDS, session-timeout warnings, one-thing-per-page forms. Detection signals + Audit checklist for Step 0F + design-auditor."
     },
     {
       "name": "conversational-ui",
       "path": "reference/conversational-ui.md",
       "type": "heuristic",
       "phase": 36.3,
-      "description": "Phase 36.3 Tier-3 conversational-UI patterns (voice + chatbot): voice-flow no-input/no-match reprompts + confirmation + human handoff, multi-turn dialogue (context carryover, slot-filling, repair), prompt-as-UX (the assistant persona/tone/boundaries as a versioned design artifact), chatbot empty-states + suggested replies, voice-first onboarding, error recovery + accessibility (transcripts/captions). Carries Detection signals + an Audit checklist; loaded by design-context-builder for the conversational project type. CLI/REPL UX out of scope."
+      "description": "Tier-3 conversational-UI patterns (voice + chatbot): voice-flow no-input/no-match reprompts + confirmation + human handoff, multi-turn dialogue (context carryover, slot-filling, repair), prompt-as-UX (the assistant persona/tone/boundaries as a versioned design artifact), chatbot empty-states + suggested replies, voice-first onboarding, error recovery + accessibility (transcripts/captions). Carries Detection signals + an Audit checklist; loaded by design-context-builder for the conversational project type. CLI/REPL UX out of scope."
     },
     {
       "name": "ds-bootstrap-rubric",
       "path": "reference/ds-bootstrap-rubric.md",
       "type": "heuristic",
       "phase": 37.2,
-      "description": "Phase 37.2 greenfield DS emission rules for /gdd:bootstrap-ds + agents/ds-generator.md: primary→9 OKLCH tints (native oklch(), no color library), never >2 brand colors, neutrals + semantic colors, modular type scale (ratio 1.2/1.25/1.333), 4pt/8pt spacing, radius + motion defaults, the 3 variants (conservative/balanced/bold), role-named CSS-custom-property emission + framework mapping, and button/input/card proof scaffolding. Deterministic math in scripts/lib/ds/token-scale.cjs."
+      "description": "Greenfield DS emission rules for /gdd:bootstrap-ds + agents/ds-generator.md: primary→9 OKLCH tints (native oklch(), no color library), never >2 brand colors, neutrals + semantic colors, modular type scale (ratio 1.2/1.25/1.333), 4pt/8pt spacing, radius + motion defaults, the 3 variants (conservative/balanced/bold), role-named CSS-custom-property emission + framework mapping, and button/input/card proof scaffolding. Deterministic math in scripts/lib/ds/token-scale.cjs."
     },
     {
       "name": "design-variants",
       "path": "reference/design-variants.md",
       "type": "heuristic",
       "phase": 38,
-      "description": "Phase 38 design-variants schema + the design_arms outcome loop: /gdd:design --variants N emits N hypothesis-tagged competing variants (<variant id component pattern hypothesis>); each (component_type, variant_pattern_hash) is a Beta(2,8) arm in scripts/lib/ds-arms/design-arms-store.cjs that learns which patterns win with USERS from A/B (experiment-result-ingester) + user-research (user-research-synthesizer) outcomes. Advisory not directive (the user always wins, D-03). Distinct from the routing bandit."
+      "description": "Design-variants schema + the design_arms outcome loop: /gdd:design --variants N emits N hypothesis-tagged competing variants (<variant id component pattern hypothesis>); each (component_type, variant_pattern_hash) is a Beta(2,8) arm in scripts/lib/ds-arms/design-arms-store.cjs that learns which patterns win with USERS from A/B (experiment-result-ingester) + user-research (user-research-synthesizer) outcomes. Advisory not directive (the user always wins). Distinct from the routing bandit."
     },
     {
       "name": "rollout-coordination",
       "path": "reference/rollout-coordination.md",
       "type": "heuristic",
       "phase": 38.5,
-      "description": "Phase 38.5 rollout-coordination contract: the <rollout_status> STATE block (unrolled/staging-only/canary-N%/prod-100%), stuck detection (default 14 days), linear deployed_pct weighting feeding design_arms via verify_outcome (a 10%-rolled variant counts 0.1), and the rollout_started/advanced/stuck/verify_outcome events. Classifier scripts/lib/rollout/rollout-status.cjs; agent agents/rollout-coordinator.md; skill /gdd:rollout-status. Read-only — GDD never drives the rollout."
+      "description": "Rollout-coordination contract: the <rollout_status> STATE block (unrolled/staging-only/canary-N%/prod-100%), stuck detection (default 14 days), linear deployed_pct weighting feeding design_arms via verify_outcome (a 10%-rolled variant counts 0.1), and the rollout_started/advanced/stuck/verify_outcome events. Classifier scripts/lib/rollout/rollout-status.cjs; agent agents/rollout-coordinator.md; skill /gdd:rollout-status. Read-only — GDD never drives the rollout."
     },
     {
       "name": "shadcn-v2",
       "path": "reference/migrations/shadcn-v2.md",
       "type": "heuristic",
       "phase": 39.1,
-      "description": "Phase 39.1 migration rule library — shadcn/ui v1→v2 (Tailwind v4 alignment, OKLCH CSS vars, sonner, Radix React-19 refs). Migration-rules table (id/kind/from→to) + Detection + Impact; consumed by agents/ds-migration-planner.md + scripts/lib/migration/codemod-gen.cjs (proposal-only)."
+      "description": "Migration rule library — shadcn/ui v1→v2 (Tailwind v4 alignment, OKLCH CSS vars, sonner, Radix React-19 refs). Migration-rules table (id/kind/from→to) + Detection + Impact; consumed by agents/ds-migration-planner.md + scripts/lib/migration/codemod-gen.cjs (proposal-only)."
     },
     {
       "name": "tailwind-v4",
       "path": "reference/migrations/tailwind-v4.md",
       "type": "heuristic",
       "phase": 39.1,
-      "description": "Phase 39.1 migration rule library — Tailwind CSS v3→v4 (@import directive, CSS-first @theme, renamed shadow/blur/radius/ring scale, opacity slash syntax, default border color). Rules + Detection + Impact; codemod-gen-consumable."
+      "description": "Migration rule library — Tailwind CSS v3→v4 (@import directive, CSS-first @theme, renamed shadow/blur/radius/ring scale, opacity slash syntax, default border color). Rules + Detection + Impact; codemod-gen-consumable."
     },
     {
       "name": "mui-v6",
       "path": "reference/migrations/mui-v6.md",
       "type": "heuristic",
       "phase": 39.1,
-      "description": "Phase 39.1 migration rule library — MUI (Material UI) v5→v6 (Grid2-as-default, cssVariables theme, extendTheme/CssVarsProvider de-prefixing, theme.vars). Rules + Detection + Impact; codemod-gen-consumable."
+      "description": "Migration rule library — MUI (Material UI) v5→v6 (Grid2-as-default, cssVariables theme, extendTheme/CssVarsProvider de-prefixing, theme.vars). Rules + Detection + Impact; codemod-gen-consumable."
     },
     {
       "name": "material-3-to-4",
       "path": "reference/migrations/material-3-to-4.md",
       "type": "heuristic",
       "phase": 39.1,
-      "description": "Phase 39.1 migration rule library — Material Design token migration (M3→next), grounded in the real M2→M3 token-system patterns (md.sys.color/typescale roles, @material/web mwc-→md-) — no fabricated M4 spec. Rules + Detection + Impact; codemod-gen-consumable."
+      "description": "Migration rule library — Material Design token migration (M3→next), grounded in the real M2→M3 token-system patterns (md.sys.color/typescale roles, @material/web mwc-→md-) — no fabricated M4 spec. Rules + Detection + Impact; codemod-gen-consumable."
     },
     {
       "name": "cost-governance",
       "path": "reference/cost-governance.md",
       "type": "heuristic",
       "phase": 39.2,
-      "description": "Phase 39.2 cost-governance contract: the per-cycle forecast model (best/typical/worst from mean ± k·σ, cyclesToCap) via scripts/lib/budget/cost-forecast.cjs; the project_cap hard-halt (disabled by default, graceful PreToolUse:Agent block, warn 50/80 + halt 100) via scripts/lib/budget/project-cap.cjs + hooks/budget-enforcer.ts; the ROI dashboard (shipped = surviving >=14d, cost-per-shipped-commit) via scripts/lib/budget/roi.cjs; and the budget_forecast/project_cap_warning/project_cap_halt events. Agent agents/cost-forecaster.md; skills /gdd:budget + /gdd:roi. Read/report-only — the hook only blocks, never spends."
+      "description": "Cost-governance contract: the per-cycle forecast model (best/typical/worst from mean ± k·σ, cyclesToCap) via scripts/lib/budget/cost-forecast.cjs; the project_cap hard-halt (disabled by default, graceful PreToolUse:Agent block, warn 50/80 + halt 100) via scripts/lib/budget/project-cap.cjs + hooks/budget-enforcer.ts; the ROI dashboard (shipped = surviving >=14d, cost-per-shipped-commit) via scripts/lib/budget/roi.cjs; and the budget_forecast/project_cap_warning/project_cap_halt events. Agent agents/cost-forecaster.md; skills /gdd:budget + /gdd:roi. Read/report-only — the hook only blocks, never spends."
     },
     {
       "name": "multi-author-model",
       "path": "reference/multi-author-model.md",
       "type": "meta-rules",
       "phase": 40,
-      "description": "Phase 40 team-collaboration contract: multi-writer STATE.md via a git-merge-driver with per-section semantic merge (scripts/lib/collab/section-merge.cjs — union by D-id, conflict only on same-id divergence); decision attribution line-suffix [author= co-author=] (attribution.cjs); the async review queue proposed->reviewing->approved->locked with hard locks + audited /gdd:unlock-decision (review-queue.cjs); the multi-writer advisory-lock policy (lock-policy.cjs, 30s/100ms backoff in team mode); sectional handoff gdd_cycle_mode designer|dev|full (cycle-mode.cjs); the permission model (permissions.cjs) + CI gate; decision-journal-exporter (pseudonymized, write-only Notion) + pr-commenter D-XX threading; opt-in cross-machine sync (sync-backend.cjs, defaults to git). Agents conflict-resolver + decision-journal-exporter; skills /gdd:review-decisions + /gdd:unlock-decision."
+      "description": "Team-collaboration contract: multi-writer STATE.md via a git-merge-driver with per-section semantic merge (scripts/lib/collab/section-merge.cjs — union by decision id, conflict only on same-id divergence); decision attribution line-suffix [author= co-author=] (attribution.cjs); the async review queue proposed->reviewing->approved->locked with hard locks + audited /gdd:unlock-decision (review-queue.cjs); the multi-writer advisory-lock policy (lock-policy.cjs, 30s/100ms backoff in team mode); sectional handoff gdd_cycle_mode designer|dev|full (cycle-mode.cjs); the permission model (permissions.cjs) + CI gate; decision-journal-exporter (pseudonymized, write-only Notion) + pr-commenter decision threading; opt-in cross-machine sync (sync-backend.cjs, defaults to git). Agents conflict-resolver + decision-journal-exporter; skills /gdd:review-decisions + /gdd:unlock-decision."
     },
     {
       "name": "cli-localization",
       "path": "reference/cli-localization.md",
       "type": "meta-rules",
       "phase": 40.5,
-      "description": "Phase 40.5 CLI-localization contract: locale resolution (config.locale > env LANG > en) + fallback chain locale->base->en + flat-JSON message tables via scripts/lib/i18n/index.cjs; tables at scripts/lib/i18n/messages/{en,ru,uk,de,fr,zh,ja}.json (en source-complete, ru full, 5 placeholders with en fallback); the opt-in description_i18n frontmatter (descriptionFor falls back to English); /gdd:locale skill; warn-only completeness; the add-a-locale contribution path (translate table + NOTICE credit + PR). Distinct from reference/i18n.md (which covers USER-design i18n)."
+      "description": "CLI-localization contract: locale resolution (config.locale > env LANG > en) + fallback chain locale->base->en + flat-JSON message tables via scripts/lib/i18n/index.cjs; tables at scripts/lib/i18n/messages/{en,ru,uk,de,fr,zh,ja}.json (en source-complete, ru full, 5 placeholders with en fallback); the opt-in description_i18n frontmatter (descriptionFor falls back to English); /gdd:locale skill; warn-only completeness; the add-a-locale contribution path (translate table + NOTICE credit + PR). Distinct from reference/i18n.md (which covers USER-design i18n)."
     },
     {
       "name": "skill-placeholders",
       "path": "reference/skill-placeholders.md",
       "type": "meta-rules",
       "phase": 42,
-      "description": "Phase 42 multi-harness skill-placeholder catalogue: the four placeholders ({{command_prefix}}/{{model}}/{{config_file}}/{{ask_instruction}}) + per-harness substitution table + the \\{{...}} escape + the <!-- harness-only: a,b --> block rule. Skills authored once in source/skills/, compiled per-harness by scripts/build-skills.cjs via scripts/lib/build/factory.cjs reading scripts/lib/manifest/harnesses.json."
+      "description": "Multi-harness skill-placeholder catalogue: the four placeholders ({{command_prefix}}/{{model}}/{{config_file}}/{{ask_instruction}}) + per-harness substitution table + the \\{{...}} escape + the <!-- harness-only: a,b --> block rule. Skills authored once in source/skills/, compiled per-harness by scripts/build-skills.cjs via scripts/lib/build/factory.cjs reading scripts/lib/manifest/harnesses.json."
     },
     {
       "name": "color",
       "path": "reference/color.md",
       "type": "domain-index",
       "phase": 45,
-      "description": "Phase 45 domain-index: color + contrast navigation - color-theory, palette-catalog, contrast-advanced, style-vocabulary."
+      "description": "Domain-index: color + contrast navigation - color-theory, palette-catalog, contrast-advanced, style-vocabulary."
     },
     {
       "name": "spatial",
       "path": "reference/spatial.md",
       "type": "domain-index",
       "phase": 45,
-      "description": "Phase 45 domain-index: layout/spacing/composition - composition, proportion-systems, css-grid-layout, visual-hierarchy-layout, gestalt, image-optimization, data-visualization, surfaces."
+      "description": "Domain-index: layout/spacing/composition - composition, proportion-systems, css-grid-layout, visual-hierarchy-layout, gestalt, image-optimization, data-visualization, surfaces."
     },
     {
       "name": "interaction",
       "path": "reference/interaction.md",
       "type": "domain-index",
       "phase": 45,
-      "description": "Phase 45 domain-index: interaction + a11y + components - accessibility, component-authoring, form-patterns, information-architecture, onboarding-progressive-disclosure, emotional-design, components/."
+      "description": "Domain-index: interaction + a11y + components - accessibility, component-authoring, form-patterns, information-architecture, onboarding-progressive-disclosure, emotional-design, components/."
     },
     {
       "name": "responsive",
       "path": "reference/responsive.md",
       "type": "domain-index",
       "phase": 45,
-      "description": "Phase 45 domain-index: responsive + i18n + platforms - i18n, rtl-cjk-cultural, platforms, native-platforms, performance, css-grid-layout."
+      "description": "Domain-index: responsive + i18n + platforms - i18n, rtl-cjk-cultural, platforms, native-platforms, performance, css-grid-layout."
     },
     {
       "name": "ux-writing",
       "path": "reference/ux-writing.md",
       "type": "domain-index",
       "phase": 45,
-      "description": "Phase 45 domain-index: UX-writing + voice - brand-voice, style-vocabulary, anti-patterns."
+      "description": "Domain-index: UX-writing + voice - brand-voice, style-vocabulary, anti-patterns."
     },
     {
       "name": "copy-quality",
       "path": "reference/copy-quality.md",
       "type": "heuristic",
       "phase": 48,
-      "description": "Phase 48 copy-quality pillar rubric: microcopy (button/CTA labels, error messages, empty states, ARIA/alt text, loading copy), voice alignment, i18n overflow lens."
+      "description": "Copy-quality pillar rubric: microcopy (button/CTA labels, error messages, empty states, ARIA/alt text, loading copy), voice alignment, i18n overflow lens."
     },
     {
       "name": "debt-categories",
       "path": "reference/debt-categories.md",
       "type": "taxonomy",
       "phase": 48,
-      "description": "Phase 48 design-debt taxonomy: debt classes (color-literal, untokenized-component, anti-pattern, contrast, density-spacing, typography-drift, a11y-text) + visible-delta x effort x prevalence priority scoring."
+      "description": "Design-debt taxonomy: debt classes (color-literal, untokenized-component, anti-pattern, contrast, density-spacing, typography-drift, a11y-text) + visible-delta x effort x prevalence priority scoring."
     },
     {
       "name": "brief-quality-rubric",
       "path": "reference/brief-quality-rubric.md",
       "type": "output-contract",
       "phase": 48,
-      "description": "Phase 48 brief-quality rubric: 5 anti-patterns (vague verbs, missing audience, immeasurable success criteria, scope creep, missing anti-goals) the brief-auditor surfaces."
+      "description": "Brief-quality rubric: 5 anti-patterns (vague verbs, missing audience, immeasurable success criteria, scope creep, missing anti-goals) the brief-auditor surfaces."
     },
     {
       "name": "visual-tells",
       "path": "reference/visual-tells.md",
       "type": "heuristic",
       "phase": 49,
-      "description": "Phase 49 visual-tells catalog: 8 default-AI-aesthetic categories (default-AI-hero, gradient-spam, isometric-illustration-fallback, centered-everything-syndrome, inter-everything, purple-violet-default, glassmorphism-spam, decorative-motion-without-intent) with diagnostic regex + remediation; backs the gdd-design-quality-check hook."
+      "description": "Visual-tells catalog: 8 default-AI-aesthetic categories (default-AI-hero, gradient-spam, isometric-illustration-fallback, centered-everything-syndrome, inter-everything, purple-violet-default, glassmorphism-spam, decorative-motion-without-intent) with diagnostic regex + remediation; backs the gdd-design-quality-check hook."
     },
     {
       "name": "reviewer-confidence-gate",
       "path": "reference/reviewer-confidence-gate.md",
       "type": "meta-rules",
       "phase": 49,
-      "description": "Phase 49 reviewer confidence gate: 4-question Pre-Report Gate + confidence 0.0-1.0 field; HIGH/CRITICAL require >=0.8 + cited proof, <0.5 stays Tentative and never reaches design-fixer."
+      "description": "Reviewer confidence gate: 4-question Pre-Report Gate + confidence 0.0-1.0 field; HIGH/CRITICAL require >=0.8 + cited proof, <0.5 stays Tentative and never reaches design-fixer."
     },
     {
       "name": "anti-slop-rubric",
       "path": "reference/anti-slop-rubric.md",
       "type": "heuristic",
       "phase": 50,
-      "description": "Phase 50 verb-based anti-slop rubric: 5 orthogonal axes (Directness, Distinctness, Hierarchy, Authenticity, Density), 1-10 each; sum below 35/50 routes a finding to design-debt-crawler as aesthetic-slop. Lens-tag, not a pillar."
+      "description": "Verb-based anti-slop rubric: 5 orthogonal axes (Directness, Distinctness, Hierarchy, Authenticity, Density), 1-10 each; sum below 35/50 routes a finding to design-debt-crawler as aesthetic-slop. Lens-tag, not a pillar."
     },
     {
       "name": "skill-graph",
       "path": "reference/skill-graph.md",
       "type": "meta-rules",
       "phase": 50,
-      "description": "Phase 50 auto-generated skill composition graph (mermaid): skills grouped by lifecycle stage with composes_with and next_skills edges; regenerated by scripts/generate-skill-graph.cjs and drift-gated in CI."
+      "description": "Auto-generated skill composition graph (mermaid): skills grouped by lifecycle stage with composes_with and next_skills edges; regenerated by scripts/generate-skill-graph.cjs and drift-gated in CI."
     },
     {
       "name": "instinct-format",
       "path": "reference/instinct-format.md",
       "type": "meta-rules",
       "phase": 51,
-      "description": "Phase 51 instinct unit format: YAML frontmatter (id, trigger, confidence 0.3-0.9, domain, scope, project_id, source, cycles_seen, first/last_seen) + body; promotion gate K=2/M=2; Beta(2,8) prior; TTL decay. Stored via scripts/lib/instinct-store.cjs."
+      "description": "Instinct unit format: YAML frontmatter (id, trigger, confidence 0.3-0.9, domain, scope, project_id, source, cycles_seen, first/last_seen) + body; promotion gate K=2/M=2; Beta(2,8) prior; TTL decay. Stored via scripts/lib/instinct-store.cjs."
     },
     {
       "name": "design-context-schema",
       "path": "reference/design-context-schema.md",
       "type": "schema",
       "phase": 52,
-      "description": "Phase 52 (KEYSTONE) typed DesignContext graph: 10 node types + 12 edge types, Node/Edge/Fragment/Graph shapes, two-phase mapper pattern. Schema at reference/schemas/design-context.schema.json."
+      "description": "Typed DesignContext graph (keystone): 10 node types + 12 edge types, Node/Edge/Fragment/Graph shapes, two-phase mapper pattern. Schema at reference/schemas/design-context.schema.json."
     },
     {
       "name": "design-context-tag-vocab",
       "path": "reference/design-context-tag-vocab.md",
       "type": "meta-rules",
       "phase": 52,
-      "description": "Phase 52 controlled tag vocabulary for DesignContext nodes; validate-design-context.cjs soft-warns on unknown tags."
+      "description": "Controlled tag vocabulary for DesignContext nodes; validate-design-context.cjs soft-warns on unknown tags."
     },
     {
       "name": "addendum-system-tailwind",
@@ -1178,7 +1185,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — Tailwind CSS. v4 @theme CSS-custom-property token model vs v3 tailwind.config theme, utility-cluster-as-variant reading, arbitrary-value anti-patterns. Composed into the token + component-taxonomy mappers when detectStack reports ds=tailwind."
+      "description": "Stack addendum (design-system) — Tailwind CSS. v4 @theme CSS-custom-property token model vs v3 tailwind.config theme, utility-cluster-as-variant reading, arbitrary-value anti-patterns. Composed into the token + component-taxonomy mappers when detectStack reports ds=tailwind."
     },
     {
       "name": "addendum-system-shadcn",
@@ -1187,7 +1194,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — shadcn/ui. components.json + cn() helper signature, copy-in (not dependency) component ownership, CSS-variable theming over the Radix primitive layer. Composed into the token + component-taxonomy mappers when detectStack reports ds=shadcn."
+      "description": "Stack addendum (design-system) — shadcn/ui. components.json + cn() helper signature, copy-in (not dependency) component ownership, CSS-variable theming over the Radix primitive layer. Composed into the token + component-taxonomy mappers when detectStack reports ds=shadcn."
     },
     {
       "name": "addendum-system-radix-themes",
@@ -1196,7 +1203,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — Radix Themes. The accent/gray scale token system, the 12-step color scales, Theme-prop driven appearance, radius/scaling config. Composed into the token + component-taxonomy mappers when detectStack reports ds=radix-themes."
+      "description": "Stack addendum (design-system) — Radix Themes. The accent/gray scale token system, the 12-step color scales, Theme-prop driven appearance, radius/scaling config. Composed into the token + component-taxonomy mappers when detectStack reports ds=radix-themes."
     },
     {
       "name": "addendum-system-mui",
@@ -1205,7 +1212,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — MUI (Material UI). createTheme palette/typography/spacing tokens, the sx prop vs styled() usage, theme.vars CSS-variable mode, slot-based component anatomy. Composed into the token + component-taxonomy mappers when detectStack reports ds=mui."
+      "description": "Stack addendum (design-system) — MUI (Material UI). createTheme palette/typography/spacing tokens, the sx prop vs styled() usage, theme.vars CSS-variable mode, slot-based component anatomy. Composed into the token + component-taxonomy mappers when detectStack reports ds=mui."
     },
     {
       "name": "addendum-system-chakra",
@@ -1214,7 +1221,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — Chakra UI. The theme token scales (colors/space/fontSizes/radii), style-prop usage as token references, semantic tokens, recipe/variant anatomy. Composed into the token + component-taxonomy mappers when detectStack reports ds=chakra."
+      "description": "Stack addendum (design-system) — Chakra UI. The theme token scales (colors/space/fontSizes/radii), style-prop usage as token references, semantic tokens, recipe/variant anatomy. Composed into the token + component-taxonomy mappers when detectStack reports ds=chakra."
     },
     {
       "name": "addendum-system-vanilla-extract",
@@ -1223,7 +1230,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — vanilla-extract. The *.css.ts compile-time stylesheet model, createTheme / themeContract token contracts, vars as the token source, recipe() variants. Composed into the token + component-taxonomy mappers when detectStack reports ds=vanilla-extract."
+      "description": "Stack addendum (design-system) — vanilla-extract. The *.css.ts compile-time stylesheet model, createTheme / themeContract token contracts, vars as the token source, recipe() variants. Composed into the token + component-taxonomy mappers when detectStack reports ds=vanilla-extract."
     },
     {
       "name": "addendum-system-styled-components",
@@ -1232,7 +1239,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — styled-components. The ThemeProvider theme object as the token tree, props-driven dynamic styling, the styled() component boundary, css helper composition. Composed into the token + component-taxonomy mappers when detectStack reports ds=styled-components."
+      "description": "Stack addendum (design-system) — styled-components. The ThemeProvider theme object as the token tree, props-driven dynamic styling, the styled() component boundary, css helper composition. Composed into the token + component-taxonomy mappers when detectStack reports ds=styled-components."
     },
     {
       "name": "addendum-system-css-modules",
@@ -1241,7 +1248,7 @@
       "phase": 54,
       "kind": "system",
       "composes_into": ["token-mapper", "component-taxonomy-mapper"],
-      "description": "Phase 54 stack addendum (design-system) — CSS Modules. The *.module.css locally-scoped class model, :root / var() custom-property tokens, composes for variant reuse, no runtime theme object. Composed into the token + component-taxonomy mappers when detectStack reports ds=css-modules."
+      "description": "Stack addendum (design-system) — CSS Modules. The *.module.css locally-scoped class model, :root / var() custom-property tokens, composes for variant reuse, no runtime theme object. Composed into the token + component-taxonomy mappers when detectStack reports ds=css-modules."
     },
     {
       "name": "addendum-framework-nextjs",
@@ -1250,7 +1257,7 @@
       "phase": 54,
       "kind": "framework",
       "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
-      "description": "Phase 54 stack addendum (framework) — Next.js. App Router vs Pages Router layout/route structure, server vs client component split, layout.tsx hierarchy as a screen graph, metadata/loading/error conventions. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=nextjs."
+      "description": "Stack addendum (framework) — Next.js. App Router vs Pages Router layout/route structure, server vs client component split, layout.tsx hierarchy as a screen graph, metadata/loading/error conventions. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=nextjs."
     },
     {
       "name": "addendum-framework-remix",
@@ -1259,7 +1266,7 @@
       "phase": 54,
       "kind": "framework",
       "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
-      "description": "Phase 54 stack addendum (framework) — Remix (v2 / React Router v7 framework mode). Nested-route file conventions as a layout tree, loader/action data boundaries, Outlet composition, the route-as-screen mapping. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=remix."
+      "description": "Stack addendum (framework) — Remix (v2 / React Router v7 framework mode). Nested-route file conventions as a layout tree, loader/action data boundaries, Outlet composition, the route-as-screen mapping. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=remix."
     },
     {
       "name": "addendum-framework-vite-react",
@@ -1268,7 +1275,7 @@
       "phase": 54,
       "kind": "framework",
       "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
-      "description": "Phase 54 stack addendum (framework) — Vite + React SPA. The client-only render tree, react-router route config as the screen graph, entry-point main.tsx, no server-component split. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=vite-react."
+      "description": "Stack addendum (framework) — Vite + React SPA. The client-only render tree, react-router route config as the screen graph, entry-point main.tsx, no server-component split. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=vite-react."
     },
     {
       "name": "addendum-framework-astro",
@@ -1277,7 +1284,7 @@
       "phase": 54,
       "kind": "framework",
       "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
-      "description": "Phase 54 stack addendum (framework) — Astro. The .astro component model, island architecture (client:* directives) as the interactivity boundary, file-based pages routing, content collections. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=astro."
+      "description": "Stack addendum (framework) — Astro. The .astro component model, island architecture (client:* directives) as the interactivity boundary, file-based pages routing, content collections. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=astro."
     },
     {
       "name": "addendum-framework-sveltekit",
@@ -1286,7 +1293,7 @@
       "phase": 54,
       "kind": "framework",
       "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
-      "description": "Phase 54 stack addendum (framework) — SvelteKit. The +page / +layout route file conventions as a layout tree, load functions, slot composition, the .svelte component anatomy. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=sveltekit."
+      "description": "Stack addendum (framework) — SvelteKit. The +page / +layout route file conventions as a layout tree, load functions, slot composition, the .svelte component anatomy. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=sveltekit."
     },
     {
       "name": "addendum-framework-storybook",
@@ -1295,7 +1302,7 @@
       "phase": 54,
       "kind": "framework",
       "composes_into": ["component-taxonomy-mapper", "visual-hierarchy-mapper"],
-      "description": "Phase 54 stack addendum (framework) — Storybook. The *.stories.* files as the canonical component + variant catalogue, args/argTypes as the variant matrix, CSF story structure, the component-in-isolation taxonomy signal. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=storybook."
+      "description": "Stack addendum (framework) — Storybook. The *.stories.* files as the canonical component + variant catalogue, args/argTypes as the variant matrix, CSF story structure, the component-in-isolation taxonomy signal. Composed into the component-taxonomy + visual-hierarchy mappers when detectStack reports framework=storybook."
     },
     {
       "name": "addendum-motion-framer-motion",
@@ -1304,7 +1311,7 @@
       "phase": 54,
       "kind": "motion",
       "composes_into": ["motion-mapper"],
-      "description": "Phase 54 stack addendum (motion) — Framer Motion / motion. Seconds-unit duration trap, the spring-vs-tween default, variants/AnimatePresence/gesture props, mapping onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes framer-motion."
+      "description": "Stack addendum (motion) — Framer Motion / motion. Seconds-unit duration trap, the spring-vs-tween default, variants/AnimatePresence/gesture props, mapping onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes framer-motion."
     },
     {
       "name": "addendum-motion-gsap",
@@ -1313,7 +1320,7 @@
       "phase": 54,
       "kind": "motion",
       "composes_into": ["motion-mapper"],
-      "description": "Phase 54 stack addendum (motion) — GSAP. Seconds-unit duration, the timeline orchestration model, ease string vocabulary, ScrollTrigger gestures, mapping tweens onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes gsap."
+      "description": "Stack addendum (motion) — GSAP. Seconds-unit duration, the timeline orchestration model, ease string vocabulary, ScrollTrigger gestures, mapping tweens onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes gsap."
     },
     {
       "name": "addendum-motion-motion-one",
@@ -1322,7 +1329,7 @@
       "phase": 54,
       "kind": "motion",
       "composes_into": ["motion-mapper"],
-      "description": "Phase 54 stack addendum (motion) — Motion One. The Web Animations API foundation, seconds-unit duration, the animate() signature, spring/glide generators, mapping onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes motion-one."
+      "description": "Stack addendum (motion) — Motion One. The Web Animations API foundation, seconds-unit duration, the animate() signature, spring/glide generators, mapping onto the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes motion-one."
     },
     {
       "name": "addendum-motion-react-spring",
@@ -1331,7 +1338,7 @@
       "phase": 54,
       "kind": "motion",
       "composes_into": ["motion-mapper"],
-      "description": "Phase 54 stack addendum (motion) — react-spring. The physics-first (no-duration) model: tension/friction/mass instead of a duration, useSpring/useTransition hooks, the gesture-driven imperative api, reconciling physics springs with the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes react-spring."
+      "description": "Stack addendum (motion) — react-spring. The physics-first (no-duration) model: tension/friction/mass instead of a duration, useSpring/useTransition hooks, the gesture-driven imperative api, reconciling physics springs with the instant/quick/standard/slow/narrative duration classes. Composed into the motion mapper when detectStack reports motion_libs includes react-spring."
     }
   ]
 }

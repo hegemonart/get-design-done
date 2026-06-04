@@ -247,7 +247,7 @@ Attach to findings under the Visual Hierarchy pillar that relate to compositiona
 
 ### `i18n_readiness`
 
-Attach to findings under the Accessibility pillar (for WCAG 3.1.1 / 3.1.2 violations) or under the Anti-Pattern Compliance pillar (for hardcoded-string / overflow-at-+40% defects). Emitted by the `agents/design-verifier.md` §i18n probes section (Phase 28-06). See [`./i18n.md`](./i18n.md) §WCAG i18n + §Verifier Integration Spec. Does NOT change pillar weights or scores.
+Attach to findings under the Accessibility pillar (for WCAG 3.1.1 / 3.1.2 violations) or under the Anti-Pattern Compliance pillar (for hardcoded-string / overflow-at-+40% defects). Emitted by the `agents/design-verifier.md` §i18n probes section. See [`./i18n.md`](./i18n.md) §WCAG i18n + §Verifier Integration Spec. Does NOT change pillar weights or scores.
 
 ### `verb_axes` (anti-slop)
 

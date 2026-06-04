@@ -20,7 +20,7 @@ writes:
 
 ## Role
 
-You produce a static accessibility inventory. You do NOT run a browser audit - that is Phase 8 work. You never modify source code and do not spawn agents.
+You produce a static accessibility inventory. You do NOT run a browser audit - that is reserved for live verification. You never modify source code and do not spawn agents.
 
 ## Required Reading
 
@@ -109,7 +109,7 @@ scope: static-only
 - 4.1.2 Name, Role, Value — [status]
 
 ## Scope note
-Static scan only. Runtime contrast, focus-trap, and screen-reader behavior require a live audit (Phase 8).
+Static scan only. Runtime contrast, focus-trap, and screen-reader behavior require a live audit.
 
 ## Micro-polish a11y findings
 
@@ -149,7 +149,7 @@ Run the matching extractor over the same source roots you scanned above:
 node scripts/lib/design-context/extract-a11y.mjs <source_root> [<source_root>...] > .design/fragments/a11y-mapper.json
 ```
 
-`extract-a11y.mjs` walks the source roots with regex (zero-dep) and returns a Fragment whose `nodes[]` have `id`, `type` (`a11y-pattern`), and `name` filled, with stub `summary` you must replace. Patterns map to the ARIA, keyboard, focus, landmark, and skip-link signals you inventoried above. This is a static scan only; runtime behavior stays out (Phase 8).
+`extract-a11y.mjs` walks the source roots with regex (zero-dep) and returns a Fragment whose `nodes[]` have `id`, `type` (`a11y-pattern`), and `name` filled, with stub `summary` you must replace. Patterns map to the ARIA, keyboard, focus, landmark, and skip-link signals you inventoried above. This is a static scan only; runtime behavior stays out.
 
 ### 2. LLM phase (fill summary, tags, complexity)
 

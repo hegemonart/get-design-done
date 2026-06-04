@@ -12,6 +12,7 @@ reads-only: false
 writes:
   - ".design/DESIGN-CONTEXT.md"
   - ".design/context-graph.json"
+delegate_to: gemini-research
 ---
 
 @reference/shared-preamble.md

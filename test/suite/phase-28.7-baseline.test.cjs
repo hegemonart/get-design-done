@@ -11,7 +11,8 @@
  *   - phase-28.6/manifests-version.txt forward-propagated to current version
  *   - phase-28/manifests-version.txt forward-propagated to current version
  *   - scripts/lib/install/converters/ inventory matches baseline
- *     (exactly 14 .cjs files: 13 runtime converters + shared.cjs)
+ *     (exactly 16 .cjs files: 13 per-runtime + shared.cjs +
+ *     codex-plugin.cjs + cursor-marketplace.cjs Tier-2 converters)
  *   - NO scripts/lib/install/converters/hermes.cjs (D-03 + D-10 guard)
  *   - runtime-homes.cjs + runtime-artifact-layout.cjs + runtime-slash.cjs
  *     all exist and require cleanly
@@ -75,15 +76,19 @@ const CLAIMED_RUNTIMES = Object.freeze([
   'cline',
 ]);
 
-// The 14 expected files in scripts/lib/install/converters/:
-// 13 per-runtime (claude excluded — claude is the source format) + shared.cjs.
+// The 16 expected files in scripts/lib/install/converters/:
+// 13 per-runtime (claude excluded — claude is the source format) + shared.cjs
+// + 2 Tier-2 distribution-channel converters: codex-plugin.cjs (Codex
+// marketplace) and cursor-marketplace.cjs (Cursor marketplace).
 const EXPECTED_CONVERTER_FILES = Object.freeze([
   'antigravity.cjs',
   'augment.cjs',
   'cline.cjs',
   'codebuddy.cjs',
+  'codex-plugin.cjs',
   'codex.cjs',
   'copilot.cjs',
+  'cursor-marketplace.cjs',
   'cursor.cjs',
   'gemini.cjs',
   'kilo.cjs',
@@ -133,27 +138,19 @@ describe('Phase 28.7-10: CHANGELOG + OFF_CADENCE registration', () => {
   });
 });
 
-describe('Phase 28.7-10: converter inventory (13 runtime + shared, NO hermes)', () => {
-  // TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-  // Phase 28.8 Plan B1 adds scripts/lib/install/converters/cursor-marketplace.cjs
-  // (Tier-2 distribution-channel converter, separate from the Tier-1
-  // cursor.cjs file-drop converter per CONTEXT D-05 additive). The 28.7-10
-  // inventory baseline and EXPECTED_CONVERTER_FILES list both expect
-  // exactly 14 .cjs files; the new converter brings the count to 15.
-  // Wave D's atomic rotation will update both the baseline file and the
-  // EXPECTED list per CONTEXT D-08.
-  test('28.7-10: scripts/lib/install/converters/ contains exactly the expected 14 files', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); count drifted to 15 with cursor-marketplace.cjs Tier-2 converter per Plan B1' }, () => {
+describe('Phase 28.7-10: converter inventory (13 runtime + shared + 2 Tier-2, NO hermes)', () => {
+  test('28.7-10: scripts/lib/install/converters/ contains exactly the expected 16 files', () => {
     const actual = fs.readdirSync(CONVERTERS_DIR).filter((f) => f.endsWith('.cjs')).sort();
     const expected = [...EXPECTED_CONVERTER_FILES].sort();
     assert.deepEqual(actual, expected, `converter dir contents diverge from baseline:\n  actual:   ${actual.join(', ')}\n  expected: ${expected.join(', ')}`);
   });
 
-  test('28.7-10: NO scripts/lib/install/converters/hermes.cjs (D-03 + D-10 guard)', () => {
+  test('28.7-10: NO scripts/lib/install/converters/hermes.cjs (runtime-list invariant)', () => {
     const hermesPath = path.join(CONVERTERS_DIR, 'hermes.cjs');
-    assert.equal(fs.existsSync(hermesPath), false, `hermes.cjs must NOT exist (Phase 24 D-02 runtime-list invariant; Phase 28.7 D-03/D-10)`);
+    assert.equal(fs.existsSync(hermesPath), false, 'hermes.cjs must NOT exist (runtime-list invariant)');
   });
 
-  test('28.7-10: converter-inventory.txt baseline matches actual converter dir contents', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); converter-inventory.txt lacks cursor-marketplace.cjs per Plan B1' }, () => {
+  test('28.7-10: converter-inventory.txt baseline matches actual converter dir contents', () => {
     const baseline = readBaseline('converter-inventory.txt')
       .split(/\r?\n/)
       .map((s) => s.trim())

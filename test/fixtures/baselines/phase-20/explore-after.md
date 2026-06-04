@@ -61,6 +61,16 @@ Run the canonical scan grep/glob inventory (POSIX ERE, preserving PLAT-01/02): c
 - **Project-local skills**: read `./.claude/skills/design-*-conventions.md` -> include in DESIGN-CONTEXT.md `<project_conventions>` (these override defaults).
 - **Global skills**: `~/.claude/gdd/global-skills/*.md` (other than README) -> prepend to `<project_conventions>` under `<global_conventions>` sub-block. Project-local D-XX wins on conflict.
 
+## Step 2.6 - Graph review (gate then reviewer)
+
+Runs only when Step 2's mapper batch + synthesizer produced `.design/context-graph.json`. Skip the whole step if the file is absent (pre-Phase-52 project, or `--skip-scan`).
+
+1. **Gate first (cheap Haiku check).** Spawn `design-context-reviewer-gate` via `Task()` with the classifier signal from Step 2's incremental batching pass: `change_pct` (fingerprint classifier `pct`), `classifier_action` (`SKIP` / `PARTIAL_UPDATE` / `ARCHITECTURE_UPDATE` / `FULL_UPDATE`), and `graph_path: ".design/context-graph.json"`. Gate emits a single-line `{spawn, rationale}` JSON decision then `## GATE COMPLETE`.
+2. **If `spawn: false`**: record `mcp__gdd_state__set_status: "explore_graph_review_skipped"`, log the gate `rationale` (e.g., "project change 3% < 5% threshold"), set telemetry `lazy_skipped: true`. Done - proceed to Step 3.
+3. **If `spawn: true`**: spawn `design-context-reviewer` via `Task()` with `<required_reading>` pointing at `.design/STATE.md`, `.design/context-graph.json`, `reference/design-context-schema.md`, `reference/design-context-tag-vocab.md`. The reviewer runs `scripts/validate-design-context.cjs --json` as the deterministic floor (checks 1/2/3/5) then layers the semantic checks (4/6/7/8/9) and returns the 9-check verdict inline (`APPROVED` or `REJECT`).
+4. **Capture verdict (read-only contract).** The reviewer does NOT write `.design/DESIGN-CONTEXT-REVIEW.md` - it is `reads-only: true, writes: []`. WARN findings surface through `scripts/lib/health-mirror#getHealthChecks` as `status: 'warn'`; a hard-reject maps to `status: 'fail'`. Record the overall verdict via `mcp__gdd_state__set_status: "explore_graph_review_approved"` (or `"_rejected"`).
+5. **On REJECT**: record `mcp__gdd_state__add_blocker` with the reviewer's blocking-issues list verbatim. Do not advance to Step 3 until the synthesizer or the implicated mapper is re-run. On `APPROVED` (with or without WARNs): proceed.
+
 ---
 
 ## Step 3 - Design interview (unless `--skip-interview`)
@@ -80,6 +90,7 @@ Full interview protocol + JSON line schema: `./explore-procedure.md` §Step 3.
 ## Step 4 - Close out explore
 
 - If the synthesizer / mapper batch ran in Step 2: `mcp__gdd_state__update_progress` with `task_progress: "<done>/<total>"`, `status: "explore_mappers_done"`.
+- If Step 2.6 ran the graph review: ensure the verdict status is recorded (`explore_graph_review_approved` / `_rejected` / `_skipped`); on `_rejected` do NOT checkpoint until re-run.
 - `mcp__gdd_state__checkpoint` - bumps `last_checkpoint`.
 - Stage advance to `plan` happens at the next stage's entry (plan owns its own `transition_stage`); do not edit frontmatter directly.
 

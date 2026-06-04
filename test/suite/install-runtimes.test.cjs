@@ -103,14 +103,13 @@ test('runtimes: listRuntimes returns the same length as listRuntimeIds', () => {
   assert.equal(listRuntimes().length, listRuntimeIds().length);
 });
 
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace`, which causes
-// the strict deep-equal against the alphabetised phase-24 baseline file to
-// drift (baseline has 14 ids; module now has 15). The baseline file at
-// test/fixtures/baselines/phase-24/runtimes.txt is intentionally NOT modified
-// in this plan — Wave D handles version + baseline rotation atomically per
-// CONTEXT D-08. Re-enable this assertion after Wave D's baseline bump.
-test('runtimes: matches Phase 24 baseline file', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08)' }, () => {
+// Phase 28.8 (Plans B1, C1) added two Tier-2 distribution-channel entries
+// (`cursor-marketplace` + `codex-plugin`) on top of the original 14 Tier-1
+// install targets, bringing the registry to 16 entries. The phase-24
+// baseline file at test/fixtures/baselines/phase-24/runtimes.txt was
+// regenerated to the full 16-entry id set; this test now asserts the
+// alphabetised full-registry equality against that updated baseline.
+test('runtimes: matches Phase 24 baseline file (Phase 28.8 B1/C1 — full registry, 16 entries)', () => {
   const fs = require('node:fs');
   const baselinePath = path.join(__dirname, '../..', 'test', 'fixtures', 'baselines', 'phase-24', 'runtimes.txt');
   const baselineIds = fs.readFileSync(baselinePath, 'utf8').split('\n').map((s) => s.trim()).filter(Boolean);

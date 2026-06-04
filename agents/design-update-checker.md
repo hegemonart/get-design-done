@@ -1,11 +1,11 @@
 ---
 name: design-update-checker
-description: Cold-path enrichment agent for /gdd:check-update --prompt. Reads .design/update-cache.json plus a release body supplied in the prompt, classifies the delta (major|minor|patch|off-cadence), and returns a 3-5-line human-friendly "what this release changes for you" summary. Does not write any file. Haiku-tier summarizer per Phase 10.1 D-14/D-18.
+description: Cold-path enrichment agent for /gdd:check-update --prompt. Reads .design/update-cache.json plus a release body supplied in the prompt, classifies the delta (major|minor|patch|off-cadence), and returns a 3-5-line human-friendly "what this release changes for you" summary. Does not write any file. Haiku-tier summarizer.
 tools: Read, Grep, Glob
 color: yellow
 model: haiku
 default-tier: haiku
-tier-rationale: "Pure summarization + classification over a bounded 500-char input; Haiku is correct tier per Phase 10.1 D-14 table (Haiku = verifiers/checkers/summarizers)"
+tier-rationale: "Pure summarization + classification over a bounded 500-char input; Haiku is correct tier for verifiers/checkers/summarizers"
 parallel-safe: always
 typical-duration-seconds: 8
 reads-only: true
@@ -30,7 +30,7 @@ You have zero session memory. One invocation = one release summarized. Everythin
 
 Before producing output you MUST read:
 
-1. `.design/update-cache.json` - canonical delta classification, `current_tag`, `latest_tag`, `changelog_excerpt` (up to 500 chars of the release body). Written by `hooks/update-check.sh` (Phase 13.3 plan 02).
+1. `.design/update-cache.json` - canonical delta classification, `current_tag`, `latest_tag`, `changelog_excerpt` (up to 500 chars of the release body). Written by `hooks/update-check.sh`.
 2. Any `release_body` string supplied in the spawning prompt context - may be fuller than the 500-char cache excerpt. Prefer it over `changelog_excerpt` when both are present.
 
 If `.design/update-cache.json` does not exist, return exactly:
@@ -49,7 +49,7 @@ From the spawning prompt (`/gdd:check-update --prompt` in plan 13.3-04) you rece
 |-------|------|---------|--------|
 | `current_tag` | string | `v1.0.7` | installed plugin version |
 | `latest_tag` | string | `v1.0.7.3` | GitHub Releases latest tag |
-| `delta` | enum | `major` \| `minor` \| `patch` \| `off-cadence` | pre-classified by the hot-path hook per D-10 |
+| `delta` | enum | `major` \| `minor` \| `patch` \| `off-cadence` | pre-classified by the hot-path hook |
 | `release_body` | string (markdown) | release-notes markdown, up to a few thousand chars | optional; fuller than the cached excerpt |
 
 When `release_body` is absent, fall back to `changelog_excerpt` from the cache. When both are missing, emit the fallback message above.
@@ -87,7 +87,7 @@ Bullets must name concrete user impact (new command, changed behavior, fixed bug
 
 ## Classification boundary
 
-Do NOT reclassify the delta. The hot-path script (`hooks/update-check.sh`) already wrote `delta` into `.design/update-cache.json` per D-10 (4-segment semver compare). Echo the incoming delta verbatim.
+Do NOT reclassify the delta. The hot-path script (`hooks/update-check.sh`) already wrote `delta` into `.design/update-cache.json` (4-segment semver compare). Echo the incoming delta verbatim.
 
 If the incoming delta looks wrong given the release body (e.g. body headlines a breaking change but `delta` is `patch`), note the discrepancy in a single inline line after the bullets - but do **not** override the field. Example:
 

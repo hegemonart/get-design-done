@@ -7,10 +7,7 @@ This is the canonical template for the design pipeline's runtime state file.
 - Every subsequent stage (discover, plan, design, verify) reads `.design/STATE.md` at entry and updates it at completion, per the Write Contract below.
 - `.design/` is gitignored (not distributed with the plugin); only this template ships.
 
-**Distinction from `.planning/STATE.md`:**
-- `.planning/STATE.md` is GSD development state - used by the developers building this plugin.
-- `.design/STATE.md` is pipeline runtime state - used by the pipeline when it runs in a user's project.
-- Keep them strictly separate. Cross-references between them are deferred to Phase 6 per CONTEXT.md.
+`.design/` is the runtime state for the design pipeline as it runs in a user's project. The plugin's own internal development workspace lives outside this directory and never reaches a user install.
 
 ---
 
@@ -47,7 +44,7 @@ skipped_stages: ""
 <decisions>
 <!-- Filled by discover stage. Format: -->
 <!-- D-01: [decision text] (locked | tentative) -->
-<!-- Phase 40 (team mode): an optional attribution suffix records provenance for multi-author merges: -->
+<!-- In team mode, an optional attribution suffix records provenance for multi-author merges: -->
 <!-- D-01: [decision text] (locked | tentative) [author=<git-user> co-author=<gdd-instance-id>] -->
 <!-- The suffix is optional + backward-compatible; see reference/multi-author-model.md. -->
 </decisions>
@@ -59,7 +56,7 @@ skipped_stages: ""
 </must_haves>
 
 <prototyping>
-<!-- Phase 25: appended by sketch-wrap-up / spike-wrap-up + the prototype-gate. -->
+<!-- Appended by sketch-wrap-up / spike-wrap-up + the prototype-gate. -->
 <!-- Three child element types, each on its own line: -->
 <!-- <sketch slug="…" cycle="…" decision="D-XX" status="resolved"/> -->
 <!-- <spike slug="…" cycle="…" decision="D-XX" verdict="yes|no|partial" status="resolved"/> -->
@@ -69,7 +66,7 @@ skipped_stages: ""
 </prototyping>
 
 <quality_gate>
-<!-- Phase 25 (Plan 25-03): written by the quality-gate skill (Stage 4.5). -->
+<!-- Written by the quality-gate skill (Stage 4.5). -->
 <!-- Houses a single most-recent <run/> entry — append-mode would be overkill. -->
 <!-- Format: -->
 <!-- <run started_at="…" completed_at="…" status="pass|fail|timeout|skipped" iteration="N" commands_run="lint,typecheck,test"/> -->
@@ -173,22 +170,22 @@ Discover stage populates with observable behaviors. Verify stage updates status.
 
 ### `<prototyping>`
 
-Phase 25 surface (D-01). A checkpoint log - NOT a stage. Tracks sketch and spike outcomes plus cycle-scoped skip suppressions for the prototype gate.
+A checkpoint log - NOT a stage. Tracks sketch and spike outcomes plus cycle-scoped skip suppressions for the prototype gate.
 
 - `<sketch slug=… cycle=… decision=D-XX status=resolved/>` - written by `sketch-wrap-up` after a sketch resolves into a D-XX decision.
 - `<spike slug=… cycle=… decision=D-XX verdict=yes|no|partial status=resolved/>` - written by `spike-wrap-up` after a spike resolves; `verdict` captures the answer.
-- `<skipped at=… cycle=… reason=…/>` - written by the prototype gate when the user declines to sketch/spike at a firing point. Cycle-scoped suppression (D-02): a `<skipped/>` entry suppresses re-asking for the rest of the named cycle.
+- `<skipped at=… cycle=… reason=…/>` - written by the prototype gate when the user declines to sketch/spike at a firing point. The entry provides cycle-scoped suppression: it suppresses re-asking for the rest of the named cycle.
 
 The block is **optional** - fresh STATE.md files do not carry it. The serializer omits the block entirely when no entries exist; appending the first entry is what materializes the block.
 
 ### `<quality_gate>`
 
-Phase 25 surface (Plan 25-03 / D-06..D-09). Captures the most recent run of the Stage 4.5 quality gate (lint / typecheck / test / visual-regression) between Design and Verify. The block houses a single self-closing `<run/>` element - append-mode is overkill, so each gate completion overwrites the entry.
+Captures the most recent run of the Stage 4.5 quality gate (lint / typecheck / test / visual-regression) between Design and Verify. The block houses a single self-closing `<run/>` element - append-mode is overkill, so each gate completion overwrites the entry.
 
 - `started_at` - ISO 8601 at which the parallel command run entered.
 - `completed_at` - ISO 8601 at which the gate produced its terminal status.
-- `status` - `pass | fail | timeout | skipped`. `pass` clears the verify-entry gate; `fail` blocks; `timeout` warns + proceeds (D-07); `skipped` indicates the detection chain resolved zero commands.
-- `iteration` - non-negative integer fix-loop count (D-08). `1` = single clean pass; `N === max_iters` with `status === 'fail'` = bounded exhaustion.
+- `status` - `pass | fail | timeout | skipped`. `pass` clears the verify-entry gate; `fail` blocks; `timeout` warns + proceeds; `skipped` indicates the detection chain resolved zero commands.
+- `iteration` - non-negative integer fix-loop count. `1` = single clean pass; `N === max_iters` with `status === 'fail'` = bounded exhaustion.
 - `commands_run` - comma-separated names of the commands actually executed in Step 2 (e.g., `lint,typecheck,test`). Empty string when `status === 'skipped'`.
 
 The block is **optional** - fresh STATE.md files do not carry it. The serializer omits the block entirely when `quality_gate === null`; the SKILL writes the first `<run/>` to materialize it.
@@ -245,7 +242,7 @@ Every stage that runs in the pipeline MUST follow this contract when reading and
 
 ---
 
-## Notes for Phase 2 implementors
+## Notes for implementors
 
 - Do not add new top-level XML sections without updating this template.
 - The write contract is non-negotiable - stages that skip the read-at-entry step break resume.

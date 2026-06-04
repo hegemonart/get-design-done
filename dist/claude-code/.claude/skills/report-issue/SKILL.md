@@ -15,7 +15,7 @@ If invoked without an error context (the user just typed `/gdd:report-issue` col
 
 ## Steps
 
-0. **Kill-switch** (D-08). Call `isDisabled()` from `scripts/lib/issue-reporter/kill-switch.cjs` FIRST. Either env (`GDD_DISABLE_ISSUE_REPORTER=1`) OR config (`.design/config.json` with `{ "issue_reporter": false }`) makes the command unavailable. Surface the disable line via `getDisableReason()` ('env' wins when both set) and stop. No draft, no triage, no payload. `gsd-health` mirrors the same line for at-a-glance verification.
+0. **Kill-switch** (D-08). Call `isDisabled()` from `scripts/lib/issue-reporter/kill-switch.cjs` FIRST. Either env (`GDD_DISABLE_ISSUE_REPORTER=1`) OR config (`.design/config.json` with `{ "issue_reporter": false }`) makes the command unavailable. Surface the disable line via `getDisableReason()` ('env' wins when both set) and stop. No draft, no triage, no payload. `/gdd:health` mirrors the same line for at-a-glance verification.
 1. **Triage**. Call `matchKnownFailure(errorContext)` from `scripts/lib/issue-reporter/triage-matcher.cjs` (Plan 30-03). If `matched === true` and `--force-report` is NOT set: print the suggested diagnosis + remedy, stop. Do NOT write a draft. (D-07)
 2. **Assemble**. Call `assemble(commandName, errorContext, trajectoryRef?, capabilityGapEvent?)` from `scripts/lib/issue-reporter/payload-assembly.cjs` (Plan 30-02). This layers Phase 22 redact → Phase 30 pseudonymize, computes the fingerprint, and renders bilingual disclaimer + sections.
 3. **Draft**. Call `writeDraft({title, body, fingerprint})` from `scripts/lib/issue-reporter/draft-writer.cjs`. Print the absolute path: `Draft written to .design/issue-drafts/<timestamp>-<fp8>.md`. The file persists across decline - the user keeps their work either way. (D-04)
@@ -48,6 +48,6 @@ Available on `/gdd:report-issue`. Overrides the triage gate (Step 1) but does NO
 - **No `EDITOR` set.** The path is printed; open it in whatever editor you prefer, save, then return to the consent prompt.
 - **Triage matched something irrelevant.** Pass `--force-report` to bypass the gate. Consent is still required.
 - **`gh` not installed (D-10).** After consent, the payload is copied to your clipboard and an issue-template URL is printed. Paste into the URL to file manually. Install `gh` later and the existing draft can be re-submitted.
-- **Command unavailable / disabled (D-08).** Run `gsd-health`. The `issue reporter:` line shows the active disable surface - either `disabled by env (GDD_DISABLE_ISSUE_REPORTER=1)` or `disabled by config (.design/config.json: issue_reporter=false)`. Unset the env var or flip the config key to re-enable.
+- **Command unavailable / disabled (D-08).** Run `/gdd:health`. The `issue reporter:` line shows the active disable surface - either `disabled by env (GDD_DISABLE_ISSUE_REPORTER=1)` or `disabled by config (.design/config.json: issue_reporter=false)`. Unset the env var or flip the config key to re-enable.
 
 See [report-issue-procedure.md](./report-issue-procedure.md) for the full procedure with rationale per decision (D-02, D-03, D-04, D-05, D-07, D-11).

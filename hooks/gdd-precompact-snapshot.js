@@ -25,13 +25,26 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const SNAPSHOT_DIR = path.resolve(process.cwd(), '.design', 'snapshots');
-const STATE_MD_PATH = path.resolve(process.cwd(), '.design', 'STATE.md');
-const EVENTS_PATH = path.resolve(process.cwd(), '.design', 'telemetry', 'events.jsonl');
 const RETENTION_COUNT = 10;
 const EVENTS_TAIL_COUNT = 50;
 const DECISIONS_TAIL_COUNT = 10;
 const SCHEMA_VERSION = '1.0.0';
+
+/**
+ * Resolve the bundle of paths the hook reads/writes, anchored at `cwd`.
+ *
+ * Originally these resolved at module load via `process.cwd()`, which is
+ * the wrong anchor when Claude Code invokes the hook from a worktree
+ * (the harness's cwd at module load can differ from the project root).
+ * Resolving against `payload.cwd` matches how 8 sibling hooks already work.
+ */
+function computePaths(cwd) {
+  return {
+    snapshotDir: path.resolve(cwd, '.design', 'snapshots'),
+    stateMdPath: path.resolve(cwd, '.design', 'STATE.md'),
+    eventsPath: path.resolve(cwd, '.design', 'telemetry', 'events.jsonl'),
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Harness detection (D-10)
@@ -66,13 +79,13 @@ function getAppendEvent() {
 // STATE.md tolerant parser — extracts frontmatter + decisions + blockers
 // ---------------------------------------------------------------------------
 
-function readStateSections() {
-  if (!fs.existsSync(STATE_MD_PATH)) {
+function readStateSections(paths) {
+  if (!fs.existsSync(paths.stateMdPath)) {
     return { frontmatter: {}, decisions: [], blockers: [], session: '' };
   }
   let body;
   try {
-    body = fs.readFileSync(STATE_MD_PATH, 'utf8');
+    body = fs.readFileSync(paths.stateMdPath, 'utf8');
   } catch {
     return { frontmatter: {}, decisions: [], blockers: [], session: '' };
   }
@@ -124,11 +137,11 @@ function readStateSections() {
 // Events tail reader — JSONL-tolerant (malformed lines are skipped)
 // ---------------------------------------------------------------------------
 
-function readEventsTail(count) {
-  if (!fs.existsSync(EVENTS_PATH)) return [];
+function readEventsTail(paths, count) {
+  if (!fs.existsSync(paths.eventsPath)) return [];
   let body;
   try {
-    body = fs.readFileSync(EVENTS_PATH, 'utf8');
+    body = fs.readFileSync(paths.eventsPath, 'utf8');
   } catch {
     return [];
   }
@@ -149,16 +162,16 @@ function readEventsTail(count) {
 // Retention prune — LRU by mtime, keep last RETENTION_COUNT (D-08)
 // ---------------------------------------------------------------------------
 
-function pruneSnapshots() {
+function pruneSnapshots(paths) {
   let files;
   try {
-    files = fs.readdirSync(SNAPSHOT_DIR);
+    files = fs.readdirSync(paths.snapshotDir);
   } catch {
     return;
   }
   const jsonFiles = files
     .filter((f) => f.endsWith('.json') && f !== 'last-recap.json')
-    .map((f) => ({ name: f, full: path.join(SNAPSHOT_DIR, f), mtime: 0 }));
+    .map((f) => ({ name: f, full: path.join(paths.snapshotDir, f), mtime: 0 }));
 
   for (const entry of jsonFiles) {
     try {
@@ -186,35 +199,43 @@ function pruneSnapshots() {
 async function main() {
   const harness = detectHarness();
   if (harness === 'codex') {
-    // D-10: Codex has no PreCompact event; emit notice + exit. Phase 45 dep
-    // for full `pre-large-context-action` interception.
+    // D-10: Codex has no PreCompact event; emit notice + exit. Tracked in
+    // the runtime-parity matrix; full pre-large-context-action interception
+    // is on the roadmap.
     process.stderr.write(
       '[gdd-precompact-snapshot] this harness does not emit PreCompact; snapshots disabled\n',
     );
     process.exit(0);
   }
 
-  // Drain stdin (Claude Code may pipe a hook event JSON; we don't need it
-  // but draining avoids EPIPE on the parent's writer side).
+  // Drain stdin and extract payload.cwd. Claude Code pipes a hook-event JSON
+  // envelope including the project cwd; we need it to anchor SNAPSHOT_DIR and
+  // friends correctly when the harness's process.cwd() at module load may not
+  // match (e.g. when invoked from a worktree). Draining also avoids EPIPE on
+  // the writer side. Falls back to process.cwd() when stdin is empty or
+  // malformed (unit tests, direct invocation).
+  let buf = '';
   try {
-    if (!process.stdin.isTTY) {
-      // Best-effort, non-blocking — we have nothing time-sensitive in stdin.
-      process.stdin.on('error', () => {
-        /* swallow */
-      });
-      process.stdin.resume();
-    }
+    for await (const chunk of process.stdin) buf += chunk;
   } catch {
-    /* swallow */
+    /* swallow — empty stdin is fine */
   }
+  let payload = {};
+  try {
+    payload = JSON.parse(buf || '{}');
+  } catch {
+    /* malformed stdin → fall through with empty payload */
+  }
+  const cwd = (payload && typeof payload.cwd === 'string') ? payload.cwd : process.cwd();
+  const paths = computePaths(cwd);
 
   const ts = new Date().toISOString().replace(/[:.]/g, '-');
-  const snapshotPath = path.join(SNAPSHOT_DIR, ts + '.json');
+  const snapshotPath = path.join(paths.snapshotDir, ts + '.json');
   const tmpPath = snapshotPath + '.tmp';
 
   // Ensure snapshot dir exists (mkdir -p semantics).
   try {
-    fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
+    fs.mkdirSync(paths.snapshotDir, { recursive: true });
   } catch {
     /* swallow — write will fail loudly below if truly missing */
   }
@@ -240,8 +261,8 @@ async function main() {
   }
 
   try {
-    const sections = readStateSections();
-    const events = readEventsTail(EVENTS_TAIL_COUNT);
+    const sections = readStateSections(paths);
+    const events = readEventsTail(paths, EVENTS_TAIL_COUNT);
     const decisions = sections.decisions.slice(-DECISIONS_TAIL_COUNT);
     const cycleId =
       sections.frontmatter && sections.frontmatter.milestone
@@ -280,7 +301,7 @@ async function main() {
     }
 
     // Retention prune (T-27.6.05-04 DoS mitigation).
-    pruneSnapshots();
+    pruneSnapshots(paths);
 
     // Best-effort event emit.
     const appendEvent = getAppendEvent();

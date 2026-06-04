@@ -3,14 +3,14 @@
  * aggregate-agent-metrics.ts — Incremental per-agent aggregator.
  *
  * Reads: .design/telemetry/costs.jsonl (append-only ledger from
- *        hooks/budget-enforcer.js)
+ *        hooks/budget-enforcer.ts)
  *        agents/{agent}.md (frontmatter source for default-tier, parallel-safe,
  *        reads-only, typical-duration-seconds)
  * Writes: .design/agent-metrics.json (atomic overwrite via tmp-file + rename)
  *         .design/telemetry/phase-totals.json (same, WR-02)
  *
  * Invoked:
- *   1. Detached child of hooks/budget-enforcer.js after every telemetry write.
+ *   1. Detached child of hooks/budget-enforcer.ts after every telemetry write.
  *   2. Directly by /gdd:optimize skill as an explicit refresh step.
  *   3. Manually: `node --experimental-strip-types scripts/aggregate-agent-metrics.ts`
  *   4. With `--help` to print usage (used by the Plan 20-00 smoke check).
@@ -242,7 +242,7 @@ function printHelp(): void {
       `        .design/telemetry/phase-totals.json\n` +
       `\n` +
       `Invoked:\n` +
-      `  - Detached child of hooks/budget-enforcer.js after every telemetry row.\n` +
+      `  - Detached child of hooks/budget-enforcer.ts after every telemetry row.\n` +
       `  - Directly by /gdd:optimize as an explicit refresh step.\n` +
       `  - Manually, on demand.\n`,
   );

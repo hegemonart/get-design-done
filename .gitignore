@@ -30,10 +30,14 @@ scripts/apply-branch-protection.sh
 # Transient review/audit artifacts
 REVIEW.md
 
-# Claude local state (private — do not distribute)
-.claude/memory/
-.claude/settings.local.json
-.claude/worktrees/
+# Claude / GSD local harness state (private — do not distribute)
+# Excludes the entire .claude/ dir: GSD framework install, memory, hooks,
+# settings, worktrees, scheduled tasks, install-state JSON. None of it
+# belongs in the published repo. (Prior to v1.57.2 this exclude was a
+# narrow set of 3 subdirs and the rest leaked into a PR; widening to the
+# whole dir is the durable fix.) The .claude-plugin/ dir is separate
+# (legitimate plugin manifest) and stays tracked.
+.claude/
 
 # Phase 28.8 D-16: maintainer-local Cursor Marketplace publish state.
 # Tracks application status across submit → review → publish cycle.

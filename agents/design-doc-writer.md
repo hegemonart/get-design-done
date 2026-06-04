@@ -7,7 +7,7 @@ model: sonnet
 default-tier: sonnet
 tier-rationale: "Produces polished prose documentation; Sonnet's style quality is sufficient"
 size_budget: XL
-size_budget_rationale: "Phase 19.5 Record contract added ~11 lines; base doc-writer body is 250-line tier"
+size_budget_rationale: "Record contract added ~11 lines; base doc-writer body is 250-line tier"
 parallel-safe: always
 typical-duration-seconds: 45
 reads-only: false

@@ -1,6 +1,6 @@
 ---
 name: gdd-graph-refresh
-description: "Refreshes the knowledge graph at .design/graph/graph.json from .design/intel/ slices using the native bin/gdd-graph CLI. Run after gdd-intel-updater to keep the semantic graph current. Phase 30.6 simplified this agent: intel and graph now share a single {from,to,kind,weight?} schema, so no translation step is needed."
+description: "Refreshes the knowledge graph at .design/graph/graph.json from .design/intel/ slices using the native bin/gdd-graph CLI. Run after gdd-intel-updater to keep the semantic graph current. Intel and graph share a single {from,to,kind,weight?} schema, so no translation step is needed."
 tools: Bash, Read, Write
 color: green
 default-tier: haiku
@@ -16,7 +16,7 @@ writes:
 
 # gdd-graph-refresh
 
-**Role:** Refresh the project knowledge graph at `.design/graph/graph.json` from the intel store at `.design/intel/`. Reads intel slices and (re)builds the graph via the native `bin/gdd-graph build` command. Phase 30.6 simplification: intel and graph share a single `{from,to,kind,weight?}` edge schema (D-03.b), so there is no longer a translation step - `gdd-graph build` ingests intel slices directly.
+**Role:** Refresh the project knowledge graph at `.design/graph/graph.json` from the intel store at `.design/intel/`. Reads intel slices and (re)builds the graph via the native `bin/gdd-graph build` command. Intel and graph share a single `{from,to,kind,weight?}` edge schema, so there is no translation step - `gdd-graph build` ingests intel slices directly.
 
 ## When to invoke
 
@@ -44,7 +44,7 @@ If `false`: print "Graphify not enabled in .design/config.json - skipping refres
 
 ### Step 3 - Rebuild graph from intel slices
 
-Phase 30.6 simplification: with shared `{from,to,kind,weight?}` schema between intel and graph (D-03.b), the canonical refresh is a single `build` invocation. No per-node iteration, no translation step.
+With the shared `{from,to,kind,weight?}` schema between intel and graph, the canonical refresh is a single `build` invocation. No per-node iteration, no translation step.
 
 ```bash
 node bin/gdd-graph build

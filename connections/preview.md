@@ -107,10 +107,10 @@ When preview is `not_configured` or `unavailable`, stages degrade gracefully —
 
 **verify stage (`skills/verify/SKILL.md` + `agents/design-verifier.md`):**
 
-- Skip Phase 4B screenshot evidence loop entirely
+- Skip Stage 4B screenshot evidence loop entirely
 - Keep existing `? VISUAL` static analysis path for H-02, H-06, H-07 heuristics
-- Mark all Phase 4B checks: `[SKIPPED — browser not available]`
-- Design-verifier continues to Phase 5 gap analysis with partial scores
+- Mark all Stage 4B checks: `[SKIPPED — browser not available]`
+- Design-verifier continues to Stage 5 gap analysis with partial scores
 
 **compare stage (`skills/compare/SKILL.md`):**
 

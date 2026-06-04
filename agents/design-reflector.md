@@ -5,7 +5,7 @@ tools: Read, Write, Bash, Grep, Glob
 color: purple
 model: inherit
 default-tier: opus
-tier-rationale: "Phase 11 strategic reflector; reads telemetry + proposes plugin-level changes"
+tier-rationale: "Strategic reflector; reads telemetry + proposes plugin-level changes"
 size_budget: XL
 parallel-safe: never
 typical-duration-seconds: 60
@@ -24,7 +24,7 @@ You are a post-cycle reflection agent. You analyze what happened in a design cyc
 
 ## Event-Stream Mode (Phase 20 onwards)
 
-The reflector now reads proposals from `.design/telemetry/events.jsonl` - the append-only event stream introduced by Plan 20-06. It filters entries where `type === 'reflection.proposal'`. Each matching line is a JSON object whose `payload` carries fields like `{ source: <skill|hook>, proposal_kind: <string>, rationale: <string>, ... }` emitted by the producing skill or hook.
+The reflector reads proposals from `.design/telemetry/events.jsonl` - the append-only event stream. It filters entries where `type === 'reflection.proposal'`. Each matching line is a JSON object whose `payload` carries fields like `{ source: <skill|hook>, proposal_kind: <string>, rationale: <string>, ... }` emitted by the producing skill or hook.
 
 Read flow:
 
@@ -33,17 +33,17 @@ Read flow:
 3. Collect every entry where `type === 'reflection.proposal'`. Render each payload into the appropriate Proposals section below.
 4. Cross-reference the event's `stage`, `cycle`, and `_meta.source` fields when citing evidence.
 
-Legacy grep-based parsing of skill outputs is preserved as a fallback for skills that haven't yet migrated to emit `reflection.proposal` events (Phase 22 scope). If no `reflection.proposal` events are present in the stream, run the legacy harvest across `.design/learnings/*.md` and `.design/intel/` exactly as before - both paths produce the same Proposals section format.
+Legacy grep-based parsing of skill outputs is preserved as a fallback for skills that haven't yet migrated to emit `reflection.proposal` events. If no `reflection.proposal` events are present in the stream, run the legacy harvest across `.design/learnings/*.md` and `.design/intel/` exactly as before - both paths produce the same Proposals section format.
 
-## Capability-gap pattern scan (Phase 29 Plan 02)
+## Capability-gap pattern scan
 
-During the reflection pass, also run the capability-gap pattern scan to detect recurring patterns lacking a dedicated executable owner. The scan emits `capability_gap` events with `source: "reflector_pattern"` for Plan 29-03 to aggregate.
+During the reflection pass, also run the capability-gap pattern scan to detect recurring patterns lacking a dedicated executable owner. The scan emits `capability_gap` events with `source: "reflector_pattern"` for downstream aggregation.
 
 ```
 node -e "console.log(JSON.stringify(require('./scripts/lib/reflector/capability-gap-scan.cjs').runCapabilityGapScan(), null, 2))"
 ```
 
-The scan reads three signal sources: `.design/intel/*.md` `Touches:` clusters, `.design/telemetry/posterior.json` high-usage arms with no specialized agent, and recent `.design/gep/events.jsonl` decision sequences. MCP-probe failures (`outcome === 'connection-error'`, `agent === 'mcp-probe'`, or `mcp_probe: true`) do NOT trigger gap events (CONTEXT D-08). See @skills/reflect/procedures/capability-gap-scan.md for the full contract.
+The scan reads three signal sources: `.design/intel/*.md` `Touches:` clusters, `.design/telemetry/posterior.json` high-usage arms with no specialized agent, and recent `.design/gep/events.jsonl` decision sequences. MCP-probe failures (`outcome === 'connection-error'`, `agent === 'mcp-probe'`, or `mcp_probe: true`) do NOT trigger gap events. See @skills/reflect/procedures/capability-gap-scan.md for the full contract.
 
 Cite the returned `emittedEventIds` in the run summary under a `## Capability gaps emitted` heading. The threshold knob is `reflector.capability_gap_threshold` in `.design/config.json` (default `N=3`, integer ≥ 1).
 
@@ -54,10 +54,10 @@ The orchestrating stage supplies a `<required_reading>` block in the prompt. Rea
 Minimum expected inputs (skip gracefully if absent, note what's missing):
 - `.design/STATE.md` - cycle identity, decisions, session history
 - `.design/DESIGN-VERIFICATION.md` - cycle outcome scores + gaps
-- `.design/learnings/*.md` - structured learnings from Phase 10 extract
-- `.design/telemetry/costs.jsonl` - per-agent-spawn cost data (Phase 10.1)
-- `.design/agent-metrics.json` - aggregated agent performance data (Phase 10.1)
-- `.design/learnings/question-quality.jsonl` - discussant answer quality log (Phase 11)
+- `.design/learnings/*.md` - structured learnings from extract
+- `.design/telemetry/costs.jsonl` - per-agent-spawn cost data
+- `.design/agent-metrics.json` - aggregated agent performance data
+- `.design/learnings/question-quality.jsonl` - discussant answer quality log
 - `.design/cycles/<slug>/CYCLE-SUMMARY.md` - if present
 
 ## Output
@@ -66,13 +66,13 @@ Before writing any `.design/` artifact, resolve the main repo root via `scripts/
 
 Write `.design/reflections/<cycle-slug>.md`. If `--dry-run` is set in the spawning prompt, print proposals to stdout only - do not write the file.
 
-If the capability-gap pattern scan emitted any events during this run, include a `## Capability gaps emitted` heading listing each `event_id` with the source signal kind (`intel` | `posterior` | `trajectory`) and the `suggested_kind` (`agent` | `skill`) per event. Plan 29-03 reads these events from `.design/gep/events.jsonl` to cluster recurring `capability_gap` events for `/gdd:apply-reflections`.
+If the capability-gap pattern scan emitted any events during this run, include a `## Capability gaps emitted` heading listing each `event_id` with the source signal kind (`intel` | `posterior` | `trajectory`) and the `suggested_kind` (`agent` | `skill`) per event. Downstream consumers read these events from `.design/gep/events.jsonl` to cluster recurring `capability_gap` events for `/gdd:apply-reflections`.
 
 Terminate with `## REFLECTION COMPLETE`.
 
 ## Reflection Sections
 
-Write these sections in order. If source data is missing, write the section heading and a single note: "Source not found - requires <phase-N> artifacts."
+Write these sections in order. If source data is missing, write the section heading and a single note: "Source not found - requires upstream artifacts."
 
 ---
 
@@ -94,7 +94,7 @@ After listing standard surprises, apply the **Four Principles Checks** from `ref
 
 Scan STATE.md `<decisions>` block for D-XX codes. Cross-reference `.design/learnings/` files from prior cycles if present. Flag decisions that: (a) appeared in multiple sessions of the same cycle, or (b) appear under the same keyword in learnings from ≥2 prior cycles. These are candidates for `reference/` additions.
 
-**Per-author patterns (Phase 40, team mode).** When decisions carry the `[author= co-author=]` attribution suffix (see `reference/multi-author-model.md`), parse it with `scripts/lib/collab/attribution.cjs` (`parseDecisionsBlock` + `groupByAuthor`) and add a brief **Per-author patterns** sub-note: who locks decisions early, whose decisions get reverted or unlocked most, and any author whose decisions cluster around a recurring keyword. Skip silently when no decision is attributed (single-author projects).
+**Per-author patterns (team mode).** When decisions carry the `[author= co-author=]` attribution suffix (see `reference/multi-author-model.md`), parse it with `scripts/lib/collab/attribution.cjs` (`parseDecisionsBlock` + `groupByAuthor`) and add a brief **Per-author patterns** sub-note: who locks decisions early, whose decisions get reverted or unlocked most, and any author whose decisions cluster around a recurring keyword. Skip silently when no decision is attributed (single-author projects).
 
 ### 3. Agent Performance
 
@@ -122,29 +122,29 @@ Read `.design/telemetry/costs.jsonl` (if exists). Aggregate per agent:
 - Sustained underspend: < 40% of allocation for ≥3 cycles → `[BUDGET]` proposal to lower cap
 - Consistent cap breaches: `cap_hit: true` ≥3 times → `[BUDGET]` proposal
 
-If `.design/budget.json` doesn't exist: note "budget.json not found - Phase 10.1 budget governance required."
+If `.design/budget.json` doesn't exist: note "budget.json not found - budget governance required."
 
-### 7. Cross-runtime cost arbitrage (Phase 26 - D-09)
+### 7. Cross-runtime cost arbitrage
 
-**Why this exists:** Phase 24 ships gdd to 14 runtimes (claude, codex, gemini, qwen, …). The same `(agent, tier)` pair can cost dramatically different amounts depending on which runtime executed the spawn - runtime-author pricing varies, and the user may already be paying for one runtime via subscription while paying per-token in another. This section surfaces those arbitrage opportunities as **structured, measurable signals** - never hand-wavy assumptions.
+**Why this exists:** gdd ships to 14 runtimes (claude, codex, gemini, qwen, …). The same `(agent, tier)` pair can cost dramatically different amounts depending on which runtime executed the spawn - runtime-author pricing varies, and the user may already be paying for one runtime via subscription while paying per-token in another. This section surfaces those arbitrage opportunities as **structured, measurable signals** - never hand-wavy assumptions.
 
-**Data source:** `.design/telemetry/events.jsonl` - filter entries where `type === 'cost.update'`. Each cost row is tagged with `payload.runtime` (Plan 26-05) so spawns from different runtimes are attributable apples-to-apples. The reflector reads cost events from this stream alongside Section 6's `costs.jsonl` rollup; events.jsonl is authoritative for runtime attribution.
+**Data source:** `.design/telemetry/events.jsonl` - filter entries where `type === 'cost.update'`. Each cost row is tagged with `payload.runtime` so spawns from different runtimes are attributable apples-to-apples. The reflector reads cost events from this stream alongside Section 6's `costs.jsonl` rollup; events.jsonl is authoritative for runtime attribution.
 
 **The rule:**
 
-For each `(agent, tier)` pair observed in the last 5 cycles (D-09 default window):
+For each `(agent, tier)` pair observed in the last 5 cycles (default window):
 
 1. Bucket cost events by `(agent, tier, runtime, cycle)` and sum within each bucket. Sum-then-average is critical: a cycle that ran 4 design-verifier spawns in claude and 1 in codex must NOT inflate claude's per-cycle average by a factor of 4. Sum the 4 spawns into one cycle-sum, then average across the cycles where the runtime appeared.
 2. Compute `avg_cost_per_cycle` per `(agent, tier, runtime)` triple, restricted to the recency window.
 3. For each pair that has ≥2 runtimes in the window, find the cheapest and most expensive runtime. Compute `delta_pct = (max_avg - min_avg) / min_avg`.
-4. If `delta_pct > 0.5` (50%, D-09 starting heuristic), emit a structured `cost_arbitrage` proposal.
+4. If `delta_pct > 0.5` (50%, starting heuristic), emit a structured `cost_arbitrage` proposal.
 
 **Important guardrails (failure modes the rule must avoid):**
 
 - **Mixed-runtime cycles must not crash or double-count.** A single cycle where some agent spawns ran in CC and others in Codex is normal - runtime attribution is per-spawn (`payload.runtime`), never per-cycle.
 - **Single-runtime-only history is silent.** If only one runtime has events for an `(agent, tier)` pair in the window, no arbitrage can be computed - emit nothing rather than a misleading "no comparison available" proposal.
 - **Zero-cost denominators are skipped.** A runtime that averaged $0 in the window would produce `delta_pct: Infinity`; skip the pair rather than emit a useless signal.
-- **The 50% threshold is a starting heuristic.** Bandit-style learning over arbitrage outcomes (was the proposal applied? did costs drop?) is **Phase 23.5+ territory** - it lives in the bandit posterior, NOT here. This section's job is to surface measurement signals; tier-selection learning is a separate data product.
+- **The 50% threshold is a starting heuristic.** Bandit-style learning over arbitrage outcomes (was the proposal applied? did costs drop?) is bandit-posterior territory - it lives in the bandit posterior, NOT here. This section's job is to surface measurement signals; tier-selection learning is a separate data product.
 
 **Helper:** `scripts/lib/cost-arbitrage.cjs` exports `analyze(events, options) → proposals[]` implementing the above rule deterministically. The executor agent following this skill loads `events.jsonl`, parses each line as JSON (skipping malformed lines), and passes the array of envelopes to `analyze()`. No re-derivation of the rule in prose - call the helper.
 
@@ -165,17 +165,17 @@ For each `(agent, tier)` pair observed in the last 5 cycles (D-09 default window
 }
 ```
 
-Render each `cost_arbitrage` entry into the Proposals section as a `[BUDGET]`-tagged proposal carrying the structured payload verbatim - `/gdd:apply-reflections` will route it to the runtime-routing layer (Phase 26's tier-resolver / runtime-detect) rather than to `.design/budget.json`.
+Render each `cost_arbitrage` entry into the Proposals section as a `[BUDGET]`-tagged proposal carrying the structured payload verbatim - `/gdd:apply-reflections` will route it to the runtime-routing layer (tier-resolver / runtime-detect) rather than to `.design/budget.json`.
 
 ---
 
-### 8. Bandit-arbitrage analysis (Phase 27.5 - D-10)
+### 8. Bandit-arbitrage analysis
 
-**Why this exists:** Phase 27.5 (v1.27.5) wired the bandit posterior + delegate dimension into production. The posterior now accumulates per-`(agent, bin, delegate, tier)` win-rates from real spawns. Once the posterior has enough data, the bandit's best-arm tier for an agent may differ from that agent's frontmatter `default-tier:` - a measurement signal that the frontmatter is stale. This section surfaces that signal as a `[FRONTMATTER]` proposal.
+**Why this exists:** The bandit posterior + delegate dimension is wired into production. The posterior accumulates per-`(agent, bin, delegate, tier)` win-rates from real spawns. Once the posterior has enough data, the bandit's best-arm tier for an agent may differ from that agent's frontmatter `default-tier:` - a measurement signal that the frontmatter is stale. This section surfaces that signal as a `[FRONTMATTER]` proposal.
 
 **Data sources:**
 
-- `.design/telemetry/posterior.json` - the bandit posterior file written by Phase 23.5's `bandit-router.cjs` + Phase 27.5-02/03's production callers. Path matches `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`. If the file does not exist, skip this section with note "posterior.json not found - Phase 27.5 wiring required."
+- `.design/telemetry/posterior.json` - the bandit posterior file written by `bandit-router.cjs` + production callers. Path matches `bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`. If the file does not exist, skip this section with note "posterior.json not found - bandit wiring required."
 - `agents/*.md` - read each agent's frontmatter `default-tier:` value. The reflector already parses frontmatter in Section 3 ("Agent Performance"); reuse that parse pass and build a `{agent: defaultTier}` map keyed by the agent's `name:` field.
 
 **The rule:**
@@ -185,7 +185,7 @@ For each `(agent, bin)` slice in the posterior (defaulting to `delegate='none'` 
 1. Compute per-tier posterior mean = `α / (α + β)` and stddev = `sqrt(αβ / ((α+β)² · (α+β+1)))`.
 2. Identify `posterior_best_tier = argmax(mean)` across the tiers present in the slice.
 3. Gates (all must hold to emit):
-    - `sum(arm.count)` across the slice's tier rows >= 3 (D-10's "3+ cycles" proxy).
+    - `sum(arm.count)` across the slice's tier rows >= 3 ("3+ cycles" proxy).
     - `(best_mean - second_best_mean) / second_best_mean >= 0.5` (50% delta heuristic).
     - `stddev(best_tier) < 0.05` (credible interval narrow enough).
     - `frontmatter[agent].default-tier !== posterior_best_tier` (the actual stale signal).
@@ -196,7 +196,7 @@ For each `(agent, bin)` slice in the posterior (defaulting to `delegate='none'` 
 - **Single-tier-only history is silent.** If only one tier has been pulled for `(agent, bin)`, no comparison is possible - emit nothing rather than a misleading "winner" proposal.
 - **Wide credible intervals are silent.** Bandit posteriors are noisy early on; the 0.05 stddev gate ensures we only surface signals where the bandit is confident.
 - **The 50% threshold is a starting heuristic.** Same discipline as cost-arbitrage Section 7 - bandit-learning over which arbitrage proposals were APPLIED (and whether the posterior subsequently shifted) is a separate (future) phase.
-- **delegateFilter='none' is the v1.27.5 default.** Arbitrage analysis on the 5 peer-delegate slices is left for a future plan; current peer data is too sparse to credibly disagree with frontmatter.
+- **delegateFilter='none' is the current default.** Arbitrage analysis on the 5 peer-delegate slices is left for a future plan; current peer data is too sparse to credibly disagree with frontmatter.
 
 **Helper:** `scripts/lib/bandit-arbitrage.cjs` exports `analyze(posterior, options) → proposals[]` implementing the above rule deterministically. The executor agent following this skill loads the posterior via `bandit-router.loadPosterior()`, builds the `{agent: defaultTier}` map from `agents/*.md` frontmatter, and passes both to `analyze()`. No re-derivation of the rule in prose - call the helper.
 
@@ -221,14 +221,14 @@ Render each `bandit_arbitrage` entry into the Proposals section as a `[FRONTMATT
 
 ---
 
-### 9. Capability gaps observed (Phase 29 - D-01 / D-03)
+### 9. Capability gaps observed
 
-**Why this exists:** Plans 29-01 and 29-02 emit `capability_gap` events to `.design/gep/events.jsonl` whenever `/gdd:fast`, `gdd-router`, or the reflector pattern-detection pass identifies a lookup-fail with no dedicated owner. This section surfaces those events as clusters in the cycle markdown and evaluates the Stage-0 → Stage-1 gate per `reference/capability-gap-stage-gate.md`.
+**Why this exists:** Capability-gap detectors emit `capability_gap` events to `.design/gep/events.jsonl` whenever `/gdd:fast`, `gdd-router`, or the reflector pattern-detection pass identifies a lookup-fail with no dedicated owner. This section surfaces those events as clusters in the cycle markdown and evaluates the Stage-0 → Stage-1 gate per `reference/capability-gap-stage-gate.md`.
 
 **Data sources:**
 
-- `.design/gep/events.jsonl` - the Phase 22 causal event chain. Rows where `type === 'capability_gap'` (or `outcome === 'capability_gap'`) are aggregated by `payload.context_hash`.
-- `.design/config.json` (optional) - `capability_gap_gate.{K, M, stddev_threshold}` overrides. Defaults: `K=3`, `M=10`, `stddev_threshold=0.05` per D-03.
+- `.design/gep/events.jsonl` - the causal event chain. Rows where `type === 'capability_gap'` (or `outcome === 'capability_gap'`) are aggregated by `payload.context_hash`.
+- `.design/config.json` (optional) - `capability_gap_gate.{K, M, stddev_threshold}` overrides. Defaults: `K=3`, `M=10`, `stddev_threshold=0.05`.
 
 **The mechanism:**
 
@@ -247,19 +247,19 @@ node scripts/lib/reflections-cycle-writer.cjs \
 
 Append stdout to the cycle markdown body (after Section 8 / before the Proposals header). If `--history=<path>` is wired by a future cycle-aggregator, add the flag. For Stage 0 (this phase), per-cycle cluster aggregation alone is the deliverable - gate evaluation surfaces additively when history is present.
 
-**Important discipline (D-01 lock):**
+**Important discipline:**
 
-- This section NEVER auto-flips `capability_gap_gate.stage` or any other runtime state. The output is markdown only; the user opts in via Plan 29-05's apply-reflections extension.
-- The shim is read-only with respect to `.design/config.json`. The only state-mutating writer is the user-driven opt-in path (deferred to 29-05).
-- `evidence_refs[]` content is rendered as-is in the markdown table examples column - per the plan's threat model T-29.03-04, evidence refs are trusted-content (file:line or event-id strings from the 29-01 schema).
+- This section NEVER auto-flips `capability_gap_gate.stage` or any other runtime state. The output is markdown only; the user opts in via the apply-reflections extension.
+- The shim is read-only with respect to `.design/config.json`. The only state-mutating writer is the user-driven opt-in path.
+- `evidence_refs[]` content is rendered as-is in the markdown table examples column - evidence refs are trusted-content (file:line or event-id strings from the capability-gap schema).
 
-**Helper:** `scripts/lib/reflector-capability-gap-aggregator.cjs` exports `aggregateCapabilityGaps`, `renderGapsSection`, `evaluateStageGate`. The shim wraps these for invocation from the agent prompt; tests in `tests/reflector-capability-gap-aggregation.test.cjs` cover the helper directly with synthetic fixtures (D-11).
+**Helper:** `scripts/lib/reflector-capability-gap-aggregator.cjs` exports `aggregateCapabilityGaps`, `renderGapsSection`, `evaluateStageGate`. The shim wraps these for invocation from the agent prompt; tests in `tests/reflector-capability-gap-aggregation.test.cjs` cover the helper directly with synthetic fixtures.
 
 ---
 
 ## Atomic instincts
 
-Phase 51 adds atomic instinct units alongside the prose reflection. For each pattern you observed this cycle that is small enough to state as a single trigger plus a one-line response, emit a structured instinct unit. The narrative below stays for human reading; this section is the machine-readable twin. Both are emitted for one minor version so readers and tooling migrate together.
+Alongside the prose reflection, emit atomic instinct units. For each pattern you observed this cycle that is small enough to state as a single trigger plus a one-line response, emit a structured instinct unit. The narrative below stays for human reading; this section is the machine-readable twin. Both are emitted for one minor version so readers and tooling migrate together.
 
 Emit 0 to N units. Each unit follows `reference/instinct-format.md` exactly: YAML frontmatter (`id`, `trigger`, `confidence` from 0.3 to 0.9, `domain` from the format's enum, `scope`, `project_id`, `source`, `cycles_seen`, `first_seen`, `last_seen`) plus a short body. Set `source: design-reflector`. Set `confidence` from the strength of the evidence - a pattern seen once this cycle stays near 0.3 to 0.5; a pattern that recurs across prior learnings earns more. Do not exceed 0.9.
 
@@ -337,7 +337,7 @@ For each keyword cluster meeting threshold:
 
 ## Discussant Question Quality (generates [QUESTION] proposals)
 
-Read `.design/learnings/question-quality.jsonl` (if exists). If it doesn't exist: skip and note "question-quality.jsonl not found - requires at least one discuss session with Phase 11 discussant."
+Read `.design/learnings/question-quality.jsonl` (if exists). If it doesn't exist: skip and note "question-quality.jsonl not found - requires at least one discuss session with the discussant."
 
 Aggregate per `question_id` across all entries:
 - Compute: `(count_skipped + count_low) / total_asks`
@@ -355,9 +355,9 @@ For each flagged question, emit a `[QUESTION]` proposal:
 
 ## Budget Analysis (generates [BUDGET] proposals)
 
-Read `.design/telemetry/costs.jsonl` (if exists). If it doesn't exist: skip and note "costs.jsonl not found - Phase 10.1 telemetry required."
+Read `.design/telemetry/costs.jsonl` (if exists). If it doesn't exist: skip and note "costs.jsonl not found - telemetry required."
 
-Read `.design/budget.json` to get per-agent cap allocations. If it doesn't exist: skip budget analysis and note "budget.json not found - Phase 10.1 budget governance required."
+Read `.design/budget.json` to get per-agent cap allocations. If it doesn't exist: skip budget analysis and note "budget.json not found - budget governance required."
 
 Aggregate per agent across cycles:
 - **Sustained overspend**: `est_cost_usd` > (budget allocation × 1.2) in ≥3 consecutive cycles → propose raising cap

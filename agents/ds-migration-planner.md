@@ -20,13 +20,13 @@ writes:
 
 ## Role
 
-Turn a breaking design-system version bump into a reviewable, impact-ordered migration plan + ready-to-review codemod scaffolds. **Proposal-only (D-01)** - GDD detects, plans, and generates; the user reviews each codemod and runs it with their own tool (jscodeshift / ast-grep). GDD never auto-applies a migration.
+Turn a breaking design-system version bump into a reviewable, impact-ordered migration plan + ready-to-review codemod scaffolds. **Proposal-only** - GDD detects, plans, and generates; the user reviews each codemod and runs it with their own tool (jscodeshift / ast-grep). GDD never auto-applies a migration.
 
 ## When invoked
 
 When the user wants to migrate a DS across a major (or `design-context-builder` detects a dep major behind the installed one). Supported libraries: shadcn (`reference/migrations/shadcn-v2.md`), Tailwind (`tailwind-v4.md`), MUI (`mui-v6.md`), Material tokens (`material-3-to-4.md`).
 
-## Step 1 - Detect DS + version (package.json only, D-03)
+## Step 1 - Detect DS + version (package.json only)
 
 ```bash
 node -e "const p=require('./package.json'); const d={...p.dependencies,...p.devDependencies}; console.log(JSON.stringify({ tailwind:d.tailwindcss, mui:d['@mui/material'], radix:Object.keys(d).filter(k=>k.startsWith('@radix-ui/')).length, material:d['@material/web']||d['@angular/material'] }))"
@@ -36,9 +36,9 @@ Resolve the DS + the from→to version boundary from the dep version. Ambiguous 
 
 ## Step 2 - Load the rule library
 
-Read `reference/migrations/<ds>.md`. Its `## Migration rules` table is the authoritative rule set (id · kind · from→to · note); `## Impact notes` flags high-visual-delta vs mechanical. **No matching library** (a long-tail DS) → emit a starter rule-library template for the user to author their own (D-05); do not guess rules.
+Read `reference/migrations/<ds>.md`. Its `## Migration rules` table is the authoritative rule set (id · kind · from→to · note); `## Impact notes` flags high-visual-delta vs mechanical. **No matching library** (a long-tail DS) → emit a starter rule-library template for the user to author their own; do not guess rules.
 
-## Step 3 - Impact-scored per-component plan (D-04)
+## Step 3 - Impact-scored per-component plan
 
 For each affected component, score `impact = visual_delta × usage_frequency × tests_affected`:
 

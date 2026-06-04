@@ -30,16 +30,13 @@ test('phase-23.5 baseline: bandit-router shipped + exports the contract', () => 
   assert.equal(m.DEFAULT_POSTERIOR_PATH, '.design/telemetry/posterior.json');
 });
 
-test('phase-23.5 baseline: hedge-ensemble shipped + exports the contract', () => {
-  const fp = join(REPO_ROOT, 'scripts/lib/hedge-ensemble.cjs');
-  assert.ok(existsSync(fp));
-  const m = require(fp);
-  for (const fn of ['loss', 'vote', 'weights', 'loadWeights', 'saveWeights']) {
-    assert.equal(typeof m[fn], 'function', `hedge-ensemble missing ${fn}`);
-  }
-  assert.equal(m.DEFAULT_VOTE_THRESHOLD, 0.5);
-  assert.equal(m.DEFAULT_WEIGHTS_PATH, '.design/telemetry/hedge-weights.json');
-});
+// hedge-ensemble.cjs was deleted (Batch D D9): the AdaNormalHedge module
+// shipped but was never wired into adaptive_mode='hedge' or any production
+// path. With zero callers and zero realistic plan to wire it, keeping the
+// module + the bandit-router/integration bridge was speculative debt.
+//
+// adaptive_mode.cjs's isHedgeEnabled() now always returns false; the
+// adaptive_mode enum no longer accepts 'hedge'.
 
 test('phase-23.5 baseline: mmr-rerank shipped + exports the contract', () => {
   const fp = join(REPO_ROOT, 'scripts/lib/mmr-rerank.cjs');
@@ -96,7 +93,6 @@ test('phase-23.5 baseline: phase-20 resilience baseline lists all four new .cjs'
   );
   for (const f of [
     'bandit-router.cjs',
-    'hedge-ensemble.cjs',
     'mmr-rerank.cjs',
     'adaptive-mode.cjs',
   ]) {

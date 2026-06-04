@@ -92,7 +92,7 @@ You MAY:
 
 ## Why this agent exists
 
-Per 10.1-CONTEXT decision **D-21** (Lazy Checker Spawning): "Cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn full checker. Gate agent: reads DIFF of changed files, applies heuristic (design-system paths touched? copy strings touched? token files touched?), returns `{spawn: true|false, rationale: '...'}`. If false, skip full checker, log as `lazy_skipped: true` in telemetry." This gate is the verifier-specific instance of that pattern - full `design-verifier` is an XL-size spawn and the most expensive single agent in the pipeline, so gating it behind a cheap Haiku diff-scan yields the largest single cost win in Phase 10.1.
+Lazy Checker Spawning: cheap Haiku gate agents at `agents/*-gate.md` decide whether to spawn the full checker. The gate agent reads the DIFF of changed files, applies a heuristic (design-system paths touched? copy strings touched? token files touched?), and returns `{spawn: true|false, rationale: '...'}`. If false, the full checker is skipped and logged as `lazy_skipped: true` in telemetry. This gate is the verifier-specific instance of that pattern - full `design-verifier` is an XL-size spawn and the most expensive single agent in the pipeline, so gating it behind a cheap Haiku diff-scan yields the largest single cost win for lazy-spawn savings.
 
 ## Record
 

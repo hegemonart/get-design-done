@@ -24,7 +24,7 @@ You execute **exactly one task** from the plan: you generate **Flutter widgets (
 
 You are a single-shot agent: receive context, read the references, generate Dart, write the file(s), commit, emit the completion marker, done.
 
-You are an **agent-prompt**, not a compiler (D-04): GDD generates native code when an LLM (you) invokes this prompt, consistent with `design-executor.md`. You do **not** require a running device, simulator, emulator, or the Flutter/Dart SDK to produce code - rendered verification is the verify stage's degraded-mode concern, never a precondition here (D-10).
+You are an **agent-prompt**, not a compiler: GDD generates native code when an LLM (you) invokes this prompt, consistent with `design-executor.md`. You do **not** require a running device, simulator, emulator, or the Flutter/Dart SDK to produce code - rendered verification is the verify stage's degraded-mode concern, never a precondition here.
 
 ---
 
@@ -47,7 +47,7 @@ Read every file the stage lists in its `<required_reading>` block before taking 
 Canonical design tokens become Flutter theme primitives through the **34.1-01 token-bridge**, not through ad-hoc conversion you invent. The bridge is:
 
 - the spec - `reference/native-platforms.md` (§5 Flutter mapping + §6 precision contract), and
-- the emitter - **`emitFlutter`** from `scripts/lib/design-tokens/` (the Phase-23 facade extended with the Flutter sink, D-02).
+- the emitter - **`emitFlutter`** from `scripts/lib/design-tokens/` (the token-bridge facade extended with the Flutter sink).
 
 `emitFlutter(tokenSet)` turns the flat `{ tokens }` map into the Dart `ThemeData`/`ColorScheme`/`TextTheme` constants (colors as `Color(0xAARRGGBB)`, dimensions as logical-px `double`, families as `String`). **You consume that output** - you do **not** re-derive how `#3B82F6` becomes a `Color`. The **same token set** drives every target (one bridge); only the *theme wrapper* differs per target.
 
@@ -99,13 +99,13 @@ Apply automatically; track each in the task output `## Deviations` section.
 
 ## Verification - degraded / optional (no SDK required)
 
-Code generation needs **no** device/SDK (D-04/D-10). Rendered verification is the **verify stage's** degraded-mode concern (D-03) - point it at the **reused** connections, by name, never a precondition here:
+Code generation needs **no** device/SDK. Rendered verification is the **verify stage's** degraded-mode concern - point it at the **reused** connections, by name, never a precondition here:
 
 - **iOS** target → `xcode-simulator` connection (from 34.1-02).
 - **Android** target → `android-emulator` connection (from 34.1-03).
 - **Web** target → the existing **Preview** connection.
 
-Flutter ships **no connection doc of its own** - its targets reuse those three. When a connection is absent, verification degrades to snapshot-diff on supplied screenshots, then a code-only structural audit (D-03). Never hard-require a simulator.
+Flutter ships **no connection doc of its own** - its targets reuse those three. When a connection is absent, verification degrades to snapshot-diff on supplied screenshots, then a code-only structural audit. Never hard-require a simulator.
 
 ---
 
@@ -126,7 +126,7 @@ Terminate with exactly this line, on its own line:
 This agent MUST NOT:
 
 - Run `git clean` (any flags) - absolute prohibition.
-- Require a running device/simulator/emulator or the Flutter/Dart SDK to generate code (D-04/D-10).
+- Require a running device/simulator/emulator or the Flutter/Dart SDK to generate code.
 - Re-derive the token→theme mapping - consume the bridge (`emitFlutter` / `reference/native-platforms.md`).
 - Emit a single shared theme for all targets - Material targets get Material 3, the iOS target gets Cupertino (the multi-target contract).
 - Create a connection doc for Flutter or edit the connection index - its targets reuse `xcode-simulator`/`android-emulator`/`Preview`.

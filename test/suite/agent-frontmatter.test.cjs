@@ -10,8 +10,14 @@ const REQUIRED_FIELDS = ['name', 'description', 'tools', 'color'];
 // Phase 7 additions — enable when Phase 7 ships:
 // const PHASE7_FIELDS = ['parallel-safe', 'typical-duration-seconds', 'reads-only', 'writes'];
 
+// Widened from `f.startsWith('design-')` — the original filter left 31 agents
+// uncovered (a11y-mapper, motion-mapper, token-mapper, visual-hierarchy-mapper,
+// component-taxonomy-mapper, all gdd-* agents, quality-gate-runner,
+// prototype-gate, both component-benchmark-* agents, all the *-executor
+// agents, etc.). All agent files in agents/ share the same frontmatter
+// contract; the prefix was an accident of when the test was authored.
 const agentFiles = fs.readdirSync(AGENTS_DIR)
-  .filter(f => f.startsWith('design-') && f.endsWith('.md'))
+  .filter(f => f.endsWith('.md') && f !== 'README.md')
   .sort();
 
 assert.ok(agentFiles.length > 0, 'No agent files found — check AGENTS_DIR path');

@@ -36,6 +36,10 @@
     {
       "glob": "sdk/cli/commands/dashboard.ts",
       "justification": "Dashboard web launcher (Phase 55) — `gdd dashboard --web` runs an EPHEMERAL LOCAL node:http server (createServer, bound to 127.0.0.1 on an OS-assigned port via listen(0,'127.0.0.1')) that serves a single self-contained, read-only DesignContext graph HTML to the user's own browser, then exits on SIGINT (or skips serving entirely under --once). This is an INBOUND loopback server, not outbound egress: no fetch/.get/.request, no remote bind, no client connection, no secret forwarded. Read-only by design (no state mutation). The browser-open is a child_process spawn of the platform opener (open/start/xdg-open), not a networking CLI."
+    },
+    {
+      "glob": "hooks/update-check.cjs",
+      "justification": "SessionStart update-check hook — polls the GitHub Releases API (https://api.github.com/repos/hegemonart/get-design-done/releases/latest) via node:https with a 3s timeout, anonymous (no API token), to detect newer plugin versions. Result is cached for 24h at .design/update-cache.json. Silent-on-failure (exits 0 on every error path per D-04). Read-only, user-passive, advisory-only — the hook NEVER writes outside .design/ and NEVER spawns the upgrader itself. Ported from the original update-check.sh (which used curl) to fix Windows-without-Git-Bash hooks; the egress profile is identical to the bash version."
     }
   ]
 }

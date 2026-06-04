@@ -8,7 +8,10 @@
  *
  * Quantifies the confidence/risk of a writer action with the PURE scorer
  * `scripts/lib/risk/compute-risk.cjs` (executor A), emits a `risk_assessment`
- * telemetry event, and routes by the scorer's `suggested_action`:
+ * telemetry event, writes a rolling-50 calibration row via
+ * `scripts/lib/risk/calibration.cjs` updateCalibration() (Phase 56 CAL-01 — this
+ * closes the calibration loop end-to-end: production traffic, not just tests,
+ * drives detectDrift), and routes by the scorer's `suggested_action`:
  *
  *   allow                -> { continue: true }                                  (silent)
  *   review               -> { continue: true, hookSpecificOutput: { … } }       (advisory, non-blocking)
@@ -82,6 +85,85 @@ let _riskLoadError = null;
     _riskLoadError = err && err.message ? err.message : String(err);
   }
 })();
+
+// ── Calibration sibling resolver (same walk-up shape as the risk module) ────
+// scripts/lib/risk/calibration.cjs is the rolling-50 per-agent calibration
+// store (Phase 56 CAL-01). We call updateCalibration AFTER scoring so the
+// store grows over time with real per-agent (risk, accepted) outcomes — that
+// is what wires the calibration loop end-to-end (under_scoring / over_scoring
+// drift becomes detectable from real traffic, not just from synthetic tests).
+const CAL_REL = path.join('scripts', 'lib', 'risk', 'calibration.cjs');
+
+function findCalibrationModule(startDir) {
+  let dir = startDir;
+  for (let i = 0; i < 64; i++) {
+    const candidate = path.join(dir, CAL_REL);
+    try {
+      if (fs.existsSync(candidate)) return candidate;
+    } catch { /* keep climbing */ }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
+
+let _cal = null;
+let _calLoadError = null;
+(function loadCal() {
+  try {
+    const modPath = findCalibrationModule(__dirname);
+    if (!modPath) {
+      _calLoadError = `calibration.cjs not found above ${__dirname}`;
+      return;
+    }
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    _cal = require(modPath);
+  } catch (err) {
+    _calLoadError = err && err.message ? err.message : String(err);
+  }
+})();
+
+// ── Calibration write (best-effort, never throws) ───────────────────────────
+// Records one (agent, risk, accepted) outcome for the rolling-50 window.
+//
+// The signal we can KNOW at PreToolUse time:
+//   * action === 'block' -> definitive accepted:false (the hook rejected the
+//     call; the user never sees the tool run).
+//   * action ∈ {allow, review, require_confirmation} -> accepted:true at the
+//     PreToolUse boundary. The action proceeds past the risk gate; a later
+//     hook may still block, and the user may later /gdd:override or undo, but
+//     for THIS gate's calibration loop "the risk gate let it through" IS the
+//     acceptance signal. user_undo / post_apply_correct are deliberately left
+//     null (unresolved) — a future PostToolUse pass can resolve them later.
+//
+// Agent gate: a calibration row needs an agent key. When the agent is unknown
+// (the common case for a generic PreToolUse hook) we skip the write rather
+// than pool everything into an 'unknown' bucket that would render drift
+// detection meaningless. The risk_assessment event still fires either way.
+//
+// Always best-effort: a calibration write must NEVER break a tool call.
+function recordCalibration(agent, assessment, cwd) {
+  try {
+    if (!_cal || typeof _cal.updateCalibration !== 'function') return;
+    if (!agent || typeof agent !== 'string') return;
+    const action = assessment && assessment.suggested_action;
+    if (!action) return;
+    const score = typeof assessment.score === 'number' ? assessment.score : 0;
+    _cal.updateCalibration(
+      agent,
+      {
+        risk: score,
+        accepted: action !== 'block',
+        user_undo: false,
+        post_apply_correct: null,
+      },
+      { root: cwd || process.cwd() },
+    );
+  } catch {
+    /* swallow — calibration writes must never throw into the gate */
+  }
+}
 
 // ── Best-effort `risk_assessment` event emit ────────────────────────────────
 // The firehose (`appendEvent`, sdk/event-stream) is the sink the wire-in tests
@@ -358,6 +440,14 @@ async function main() {
     sessionId,
   );
 
+  // Update the rolling-50 per-agent calibration window with this outcome
+  // (Phase 56 CAL-01). Best-effort; no-op when the agent is unknown. This is
+  // what closes the calibration loop end-to-end: the store accrues real
+  // (risk, accepted) pairs across the writer agent's actions, so detectDrift
+  // can flag under_scoring / over_scoring from production traffic rather than
+  // only from synthetic test calls.
+  recordCalibration(agent, assessment, cwd);
+
   // Mirror the decision onto the hook.fired row (allow|review|confirm|block).
   const firedDecision = action === 'block' ? 'block' : 'allow';
   emitHookFired(firedDecision, { suggested_action: action, score: assessment.score });
@@ -404,6 +494,8 @@ if (require.main === module) {
 // Exported for tests — pure helpers + the resolver. main() owns the I/O + contract.
 module.exports = {
   findRiskModule,
+  findCalibrationModule,
+  recordCalibration,
   buildMergedTables,
   compileFileSensitivityExtra,
   isReadOnlyAgent,

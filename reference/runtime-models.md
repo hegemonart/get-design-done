@@ -1,6 +1,16 @@
 # Runtime Models - Per-Runtime Tier→Model Adapter Map
 
-**Phase 26 source-of-truth (D-01).** Single canonical map from canonical Anthropic tier names (`opus|sonnet|haiku`) and runtime-neutral reasoning-class aliases (`high|medium|low`, D-10) to concrete model identifiers for each of the 14 runtimes the multi-runtime installer ships to (Phase 24 D-02).
+Single canonical map from Anthropic tier names (`opus|sonnet|haiku`) and runtime-neutral reasoning-class aliases (`high|medium|low`) to concrete model identifiers for each of the 14 runtimes the multi-runtime installer ships to.
+
+> ## ⚠️ Verification status
+>
+> 4 of 14 runtime entries below are **verified** against their author docs (claude, codex, gemini, qwen).
+>
+> 10 entries are **unverified** placeholder fills (Anthropic-default mapping where the runtime is BYOK / multi-provider; or single-tier marker when only one model is exposed). Their `source_url` is prefixed with `<TODO: confirm at …>`. Treat these tier names as best-effort; the resolved model may differ for users whose runtime config diverges from the published default.
+>
+> Unverified: kilo, copilot, cursor, windsurf, antigravity, augment, trae, codebuddy, cline, opencode.
+>
+> The schema (`reference/schemas/runtime-models.schema.json`) explicitly accepts the placeholder marker so the file ships shape-valid; the unverified-ness is a content gap, not a structural defect.
 
 This file is parsed by `scripts/lib/install/parse-runtime-models.cjs` and consumed by:
 

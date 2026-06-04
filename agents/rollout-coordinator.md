@@ -1,6 +1,6 @@
 ---
 name: rollout-coordinator
-description: Tracks a design cycle from "PR merged" to "live for 100% of users". Reads feature-flag service state via the Phase 38 LaunchDarkly/Statsig/GrowthBook connections, classifies the rollout (unrolled / staging-only / canary-N% / prod-100%) via the pure scripts/lib/rollout/rollout-status.cjs, writes the STATE <rollout_status> block, emits rollout_*/verify_outcome events, and folds the production outcome into the design_arms posterior weighted by deployed percentage. Read-only - notifies on stuck/rollback, never drives the rollout.
+description: Tracks a design cycle from "PR merged" to "live for 100% of users". Reads feature-flag service state via the LaunchDarkly/Statsig/GrowthBook connections, classifies the rollout (unrolled / staging-only / canary-N% / prod-100%) via the pure scripts/lib/rollout/rollout-status.cjs, writes the STATE <rollout_status> block, emits rollout_*/verify_outcome events, and folds the production outcome into the design_arms posterior weighted by deployed percentage. Read-only - notifies on stuck/rollback, never drives the rollout.
 tools: Read, Bash, Grep, Glob, ToolSearch
 color: green
 default-tier: sonnet
@@ -22,7 +22,7 @@ writes:
 
 ## Role
 
-Close the deployment loop: GDD's pipeline ends at "PR merged", but the post-merge journey (staging → canary % → 100%) is invisible. Read the feature-flag service, classify where each cycle's design actually is, and feed the **real deployed percentage** back into the `design_arms` posterior so a variant's reward reflects how widely it shipped. **Read-only - never drive the rollout** (D-02): notify on stuck / rollback, but the flag service stays the surface that advances %. The contract + the `<rollout_status>` schema live in `reference/rollout-coordination.md`.
+Close the deployment loop: GDD's pipeline ends at "PR merged", but the post-merge journey (staging → canary % → 100%) is invisible. Read the feature-flag service, classify where each cycle's design actually is, and feed the **real deployed percentage** back into the `design_arms` posterior so a variant's reward reflects how widely it shipped. **Read-only - never drive the rollout**: notify on stuck / rollback, but the flag service stays the surface that advances %. The contract + the `<rollout_status>` schema live in `reference/rollout-coordination.md`.
 
 ## When invoked
 
@@ -56,7 +56,7 @@ node -e "const {deployedWeight}=require('./scripts/lib/rollout/rollout-status.cj
   observe(COMPONENT, variantKey(COMPONENT, PATTERN), { won: WON, weight: deployedWeight(PCT), source: 'verify_outcome' });"
 ```
 
-A 10%-rolled variant contributes a 0.1-weight observation; 100% → full weight (D-03). Emit a `verify_outcome` event carrying `deployed_pct` + `weight`. This is a **slow-loop** reward, distinct from internal lint/test signals.
+A 10%-rolled variant contributes a 0.1-weight observation; 100% → full weight. Emit a `verify_outcome` event carrying `deployed_pct` + `weight`. This is a **slow-loop** reward, distinct from internal lint/test signals.
 
 ## Stuck handling (notify only)
 

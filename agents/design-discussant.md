@@ -92,7 +92,7 @@ Rewrite STATE.md after each confirmed area so a crash does not lose work.
 After each question-answer exchange, append one JSON object to `.design/learnings/question-quality.jsonl` (create file if it doesn't exist):
 
 ```json
-{"ts":"<iso-timestamp>","question_id":"Q-NN","question_text":"<verbatim question>","answer_summary":"<one sentence>","quality":"high|medium|low|skipped","evidence":"<why — e.g. user said skip, answer < 10 words, answer overridden by D-15>","cycle":"<active-cycle-slug>"}
+{"ts":"<iso-timestamp>","question_id":"Q-NN","question_text":"<verbatim question>","answer_summary":"<one sentence>","quality":"high|medium|low|skipped","evidence":"<why — e.g. user said skip, answer < 10 words, answer overridden by a later decision>","cycle":"<active-cycle-slug>"}
 ```
 
 **Quality classification** (automatic, no user interaction):
@@ -101,7 +101,7 @@ After each question-answer exchange, append one JSON object to `.design/learning
 - `medium` - answer ≥ 10 words but contains "maybe", "probably", "I think", "not sure", "I guess"
 - `high` - specific, actionable, no hedging language
 
-Write quality log after every exchange. This data feeds `design-reflector`'s question-quality analysis in Phase 11.
+Write quality log after every exchange. This data feeds `design-reflector`'s question-quality analysis.
 
 ## Constraints
 

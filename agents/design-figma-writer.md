@@ -153,8 +153,8 @@ Build a numbered operation list based on mode. Do not execute yet.
 
 ```
 Proposed annotations (N operations):
-1. Layer "Button/Primary" → add comment: "Background: brand-primary-500 (#1A73E8) per D-03"
-2. Layer "Typography/H1" → add comment: "Font: Inter 32/40 per D-07"
+1. Layer "Button/Primary" → add comment: "Background: brand-primary-500 (#1A73E8) per color decision"
+2. Layer "Typography/H1" → add comment: "Font: Inter 32/40 per typography decision"
 ... (one line per annotation)
 ```
 

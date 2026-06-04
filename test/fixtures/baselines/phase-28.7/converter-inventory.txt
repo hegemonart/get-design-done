@@ -2,8 +2,10 @@ antigravity.cjs
 augment.cjs
 cline.cjs
 codebuddy.cjs
+codex-plugin.cjs
 codex.cjs
 copilot.cjs
+cursor-marketplace.cjs
 cursor.cjs
 gemini.cjs
 kilo.cjs

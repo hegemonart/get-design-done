@@ -323,9 +323,9 @@ test('converters-wave4: gemini.cjs cites reference/gemini-tools.md per D-06', ()
   );
 });
 
-// ── Wave B completeness invariant — all 13 runtime converters present ────
+// ── Wave B completeness invariant — all 13 runtime converters + 2 Tier-2 ─
 
-test('converters-wave4: Wave B complete — 13 runtime converter files exist', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); converters dir now has 15 .cjs files (13 Tier-1 + shared.cjs + cursor-marketplace.cjs Tier-2 per Plan B1)' }, () => {
+test('converters-wave4: Wave B complete — 13 runtime + 2 Tier-2 converter files exist', () => {
   const converterDir = path.join(
     __dirname,
     '../..',
@@ -337,8 +337,8 @@ test('converters-wave4: Wave B complete — 13 runtime converter files exist', {
   const files = fs
     .readdirSync(converterDir)
     .filter((f) => f.endsWith('.cjs'));
-  // 13 runtimes + shared.cjs = 14 .cjs files
-  assert.equal(files.length, 14, 'expected 14 .cjs files (13 runtimes + shared.cjs)');
+  // 13 runtimes + shared.cjs + codex-plugin.cjs + cursor-marketplace.cjs = 16 .cjs files
+  assert.equal(files.length, 16, 'expected 16 .cjs files (13 runtimes + shared.cjs + 2 Tier-2)');
   // Each of the 13 runtimes must have a converter file.
   const expectedRuntimes = [
     'cursor',
@@ -361,8 +361,11 @@ test('converters-wave4: Wave B complete — 13 runtime converter files exist', {
       'missing converter file: ' + rt + '.cjs'
     );
   }
-  // Hermes intentionally absent (D-10).
-  assert.equal(files.includes('hermes.cjs'), false, 'hermes.cjs must NOT exist (D-10)');
+  // Tier-2 distribution-channel converters must be present.
+  assert.ok(files.includes('codex-plugin.cjs'), 'codex-plugin.cjs (Tier-2) must exist');
+  assert.ok(files.includes('cursor-marketplace.cjs'), 'cursor-marketplace.cjs (Tier-2) must exist');
+  // Hermes intentionally absent.
+  assert.equal(files.includes('hermes.cjs'), false, 'hermes.cjs must NOT exist');
   // Claude intentionally absent (passthrough handled by layout, no converter).
   assert.equal(files.includes('claude.cjs'), false, 'claude.cjs must NOT exist (passthrough)');
 });

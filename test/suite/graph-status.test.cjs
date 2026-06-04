@@ -67,7 +67,11 @@ test('30.6-02: status returns full shape when graph present and valid', async ()
   try {
     const g = join(dir, 'graph.json');
     writeFileSync(g, JSON.stringify(validGraph()));
-    const r = statusGraph({ graphPath: g });
+    // Pass an intelPath that lives inside the tmp dir to isolate this test
+    // from any .design/intel/graph.json that may exist in the repo root
+    // (the function's default would otherwise read it and falsely report
+    // stale=true based on the repo's intel mtime).
+    const r = statusGraph({ graphPath: g, intelPath: join(dir, 'intel-not-present.json') });
     assert.equal(r.configured, true);
     assert.equal(r.exists, true);
     assert.equal(r.nodeCount, 1);

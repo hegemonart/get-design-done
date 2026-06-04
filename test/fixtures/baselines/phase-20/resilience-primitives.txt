@@ -15,7 +15,6 @@ event-chain.cjs
 failure-mode-matcher.cjs
 glob-match.cjs
 harness-freshness.cjs
-hedge-ensemble.cjs
 incubator-author.cjs
 instinct-store.cjs
 mapper-spawn.cjs

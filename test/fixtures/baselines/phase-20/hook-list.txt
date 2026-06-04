@@ -1,12 +1,13 @@
 _hook-emit.js
 budget-enforcer.ts
 context-exhaustion.ts
-first-run-nudge.sh
+first-run-nudge.cjs
 gdd-a11y-gate.js
 gdd-bash-guard.js
 gdd-decision-injector.js
 gdd-design-quality-check.js
 gdd-fact-force.js
+gdd-intel-trigger.js
 gdd-mcp-circuit-breaker.js
 gdd-precompact-snapshot.js
 gdd-protected-paths.js
@@ -16,6 +17,6 @@ gdd-sessionstart-recap.js
 gdd-trajectory-capture.js
 gdd-turn-closeout.js
 hooks.json
-inject-using-gdd.sh
+inject-using-gdd.cjs
 run-hook.cmd
-update-check.sh
+update-check.cjs

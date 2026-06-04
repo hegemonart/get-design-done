@@ -28,18 +28,18 @@ You are the network-fetching agent for the authority-watcher phase. You read the
 The orchestrating skill supplies a `<required_reading>` block in the prompt. Read every listed file before acting - this is mandatory. Minimum expected inputs (skip gracefully if absent, note what is missing):
 
 - `reference/authority-feeds.md` - the curated whitelist you fetch from.
-- `.design/authority-snapshot.json` - prior snapshot (absent = first run per D-15).
+- `.design/authority-snapshot.json` - prior snapshot (absent = first run).
 - `.design/STATE.md` - for cycle slug if present (non-fatal if absent).
 
 ## Flags
 
 Flags are supplied by the orchestrating skill in the prompt (the skill parses `/gdd:watch-authorities` user arguments):
 
-- `--refresh` → re-seed snapshot from current feed state without surfacing anything (D-23 recovery mode; behaves identically to first run).
-- `--since <ISO8601 date>` → surface entries whose `published` date is newer than the given boundary regardless of snapshot state (D-15 escape hatch + D-23 backlog surfacing).
+- `--refresh` → re-seed snapshot from current feed state without surfacing anything (recovery mode; behaves identically to first run).
+- `--since <ISO8601 date>` → surface entries whose `published` date is newer than the given boundary regardless of snapshot state (first-run escape hatch + backlog surfacing).
 - `--feed <feed-id>` → fetch only the single named feed (debugging / spot-check).
 
-The `--schedule` flag is handled by the skill (Plan 13.2-03), not by this agent. If you receive it, ignore.
+The `--schedule` flag is handled by the skill, not by this agent. If you receive it, ignore.
 
 ## Step 1 - Load Whitelist
 
@@ -76,7 +76,7 @@ published = block.created_at   // used only for --since filtering
 
 Parse the structured reply into entries with the same field names as the arena branch.
 
-**Polite-crawl:** between requests to the **same host** (by `URL.host`), sleep 250ms (D-11). Distinct hosts may fetch back-to-back without delay. A per-feed inline `min-delay-ms:` override in the whitelist (if present) supersedes the default.
+**Polite-crawl:** between requests to the **same host** (by `URL.host`), sleep 250ms. Distinct hosts may fetch back-to-back without delay. A per-feed inline `min-delay-ms:` override in the whitelist (if present) supersedes the default.
 
 **Errors are non-fatal.** On WebFetch or parse failure, push `{ feed-id, error: "<one-sentence>" }` into `fetch_notes` and continue. A single failing feed must not block the other ~25.
 
@@ -90,7 +90,7 @@ hash = sha256(title + "\n" + summary)
 
 Use `Bash` to invoke `printf '%s\n%s' "$title" "$summary" | shasum -a 256 | awk '{print $1}'` (or the Node `crypto.createHash('sha256').update(title+"\n"+summary).digest('hex')` equivalent). Output MUST be a 64-char lowercase hex string - the schema at `reference/schemas/authority-snapshot.schema.json` enforces `^[0-9a-f]{64}$`.
 
-**New-entry rule** (D-13):
+**New-entry rule:**
 - Entry is new if its `id` is not present in `prior.feeds[feed-id].entries`, OR
 - Entry is new if its `id` IS present but the `hash` differs from the stored one (content changed).
 
@@ -100,9 +100,9 @@ Use `Bash` to invoke `printf '%s\n%s' "$title" "$summary" | shasum -a 256 | awk 
 
 ## Step 5 - Classify
 
-Apply the decision table below to each new entry. Emit `{ ...entry, classification, rationale }` where `rationale` is a ≤1-sentence deterministic trace of which rule matched (e.g., "title matched `/added|updated|removed/i` → spec-change"). Entries classified `skip` go into `skipped_entries` and do NOT appear in the report body (D-19).
+Apply the decision table below to each new entry. Emit `{ ...entry, classification, rationale }` where `rationale` is a ≤1-sentence deterministic trace of which rule matched (e.g., "title matched `/added|updated|removed/i` → spec-change"). Entries classified `skip` go into `skipped_entries` and do NOT appear in the report body.
 
-**Classification decision table (D-17):**
+**Classification decision table:**
 
 | Source kind | Default classification |
 |---|---|
@@ -115,7 +115,7 @@ Apply the decision table below to each new entry. Emit `{ ...entry, classificati
 
 The skip row is evaluated LAST and overrides the kind-based row - a component-system release titled "Sponsored: shipping our new sponsor tier" still ends up `skip`.
 
-### OpenRouter catalog drift (Phase 33.6, SC#8)
+### OpenRouter catalog drift
 
 Beyond the design-authority feeds above, the **OpenRouter model catalog** (`.design/cache/openrouter-models.json`, fetched by `scripts/lib/openrouter/catalog-fetcher.cjs`) is a **weekly-diff feed**. Diff the prior vs current catalog via `scripts/lib/authority-watcher/index.cjs#diffOpenRouterCatalog(prevModels, currModels, { overrides })`, which classifies each delta as `new-model` / `pricing-change` / `deprecated` / `withdrawn`. To keep the report actionable and quiet, **surface ONLY `deprecated`/`withdrawn` entries whose id matches a configured `.design/config.json#openrouter_tier_overrides` pin** - i.e. the user pinned a model that is going away. `new-model` and `pricing-change` deltas are classified (returned, `surfaced:false`) but never surfaced as alerts (noise control). When OpenRouter is not configured (no catalog), this feed is silently skipped.
 
@@ -125,7 +125,7 @@ For each feed, merge the newly-fetched entries into `feeds[feed-id].entries`:
 - Preserve the prior entries for ids not seen this run (stale entries persist until pruned).
 - For ids seen this run, overwrite the prior record with `{ id, hash }` from the fresh fetch.
 - Append order: existing retained entries first (oldest → newest), then new arrivals.
-- **Prune: keep only the last 200 entries per feed** (D-14). This is a hard cap; the schema at `reference/schemas/authority-snapshot.schema.json` rejects >200 via `maxItems:200`, so pruning MUST happen before the write call.
+- **Prune: keep only the last 200 entries per feed.** This is a hard cap; the schema at `reference/schemas/authority-snapshot.schema.json` rejects >200 via `maxItems:200`, so pruning MUST happen before the write call.
 
 Set `feeds[feed-id].last_fetched_at` to the current ISO8601 UTC timestamp. Set top-level `generated_at` to the same. Serialize with 2-space indentation.
 
@@ -177,7 +177,7 @@ N entries surfaced across M feeds. K skipped.
 ```
 
 **Rules:**
-- Classification sections ordered by weight: `spec-change` → `heuristic-update` → `pattern-guidance` → `craft-tip` (D-21).
+- Classification sections ordered by weight: `spec-change` → `heuristic-update` → `pattern-guidance` → `craft-tip`.
 - Omit a section entirely when its count is zero (signal density).
 - The **Skipped** footer line is ALWAYS present - even when K=0 - for Plan 13.2-04 diff-test determinism.
 - If `fetch_notes` is non-empty, append a `Fetch notes:` block after the Skipped line, one bullet per note:
@@ -188,7 +188,7 @@ N entries surfaced across M feeds. K skipped.
   ```
 - Entry line format is exact: `- **[Title](url)** — feed: <feed-title> — *<rationale>*`. Em-dash (`—`), italicized rationale, no trailing period unless the rationale itself ends one.
 
-## Step 7.5 - Emit `kfm-candidate` events (Phase 30.5-03 D-06)
+## Step 7.5 - Emit `kfm-candidate` events
 
 After classifying the new entries (Step 5) but BEFORE writing the snapshot (Step 6), evaluate every NEW entry against the failure-mode-article whitelist. The whitelist patterns (case-insensitive) are:
 
@@ -221,9 +221,9 @@ Event payload shape - validates against `reference/schemas/events.schema.json` d
 
 **Excerpt cap.** `raw_excerpt` MUST be ≤500 chars (the schema rejects longer). Truncate with a single-char ellipsis when the source summary exceeds 500.
 
-**One event per matched entry.** Do NOT emit duplicates within a single run; if `event_id` is already present in the stream from a prior run, the writer's dedup logic handles it (Plan 22 event-chain).
+**One event per matched entry.** Do NOT emit duplicates within a single run; if `event_id` is already present in the stream from a prior run, the writer's dedup logic handles it.
 
-**No catalogue writes.** This step ONLY emits events. The Phase 30.5-03 reflector consumes them into `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md` drafts; the user reviews via `/gdd:apply-reflections` and accepts/rejects per Plan 30.5-03 Task 1. Authority-watcher NEVER writes to `reference/known-failure-modes.md` directly (D-06 + Phase 11 SC-8).
+**No catalogue writes.** This step ONLY emits events. The reflector consumes them into `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md` drafts; the user reviews via `/gdd:apply-reflections` and accepts/rejects. Authority-watcher NEVER writes to `reference/known-failure-modes.md` directly.
 
 Programmatic helper available at `scripts/lib/authority-watcher/index.cjs` - `classifyArticles(articles) → events`. Callers in test harnesses use the helper directly; the agent emits events via the Bash equivalent.
 
@@ -238,7 +238,7 @@ When `X > 0`, the suffix `X kfm-candidate events emitted` is appended; when `X =
 
 ## Do Not
 
-- Do NOT modify `agents/design-reflector.md`. Reflector integration is Plan 13.2-03's scope and lives in `skills/reflect/SKILL.md` only.
+- Do NOT modify `agents/design-reflector.md`. Reflector integration lives in `skills/reflect/SKILL.md` only.
 - Do NOT fetch URLs that are not listed in `reference/authority-feeds.md`. The whitelist is the allow-list.
 - Do NOT spawn subagents - you have no `Task` tool for a reason.
 - Do NOT commit on behalf of the user. `.design/authority-snapshot.json` and `.design/authority-report.md` both live under gitignored `.design/`.

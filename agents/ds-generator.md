@@ -32,7 +32,7 @@ By `/gdd:bootstrap-ds` (the skill collects the brand input). Also reachable when
 - **primary** (required) - a brand color (hex / rgb / `oklch()`). Convert to OKLCH `{l, c, h}`.
 - **secondary** (optional) - a second brand color. Emitted only if supplied (rubric ≤2-colors rule).
 - **tone tags** (optional) - e.g. `calm`, `corporate`, `editorial`, `playful`, `bold` → maps to the type ratio + chroma treatment per the rubric.
-- **target framework** (optional) - `web` (default) / `native-ios` / `native-android` / `flutter` (Phase 34 routing). Detect from the project if absent.
+- **target framework** (optional) - `web` (default) / `native-ios` / `native-android` / `flutter`. Detect from the project if absent.
 
 ## Step 1 - Resolve the primary to OKLCH
 
@@ -53,7 +53,7 @@ node -e "const t=require('./scripts/lib/ds/token-scale.cjs'); \
 
 Vary chroma (×0.8 / ×1.0 / ×1.15-clamped), type ratio (1.2 / 1.25 / 1.333), and radius (4 / 8 / 12) per the rubric. Emit neutrals (low-chroma ramp) + semantic colors (success/warning/danger/info at fixed hues) the same way. Verify text/surface pairings clear WCAG AA (`reference/color-theory.md`).
 
-## Step 3 - Present + pick (D-02)
+## Step 3 - Present + pick
 
 Show the 3 variants compactly (the `500` primary, the type ratio, the spacing baseline, the radius, a one-line feel). The user picks ONE. Do not scaffold before the pick.
 

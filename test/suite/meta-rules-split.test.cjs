@@ -22,7 +22,9 @@ const SIGNATURE_PHRASES = [
   /Only write files declared in your frontmatter `writes:` list/,
   /Return a structured blocker to STATE\.md/,
   /Execution agent → `## EXECUTION COMPLETE`/,
-  /A PostToolUse hook at `hooks\/context-exhaustion\.js`/,
+  // The hook file was renamed .js -> .ts in the Plan 20-13 TS conversion;
+  // accept either extension so this test survives further refactors.
+  /A PostToolUse hook at `hooks\/context-exhaustion\.(?:js|ts)`/,
 ];
 
 test('meta-rules: reference/meta-rules.md exists and contains all 5 subsections verbatim', () => {

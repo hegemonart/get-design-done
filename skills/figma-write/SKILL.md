@@ -34,6 +34,17 @@ Read `.design/STATE.md` and `.design/DESIGN-CONTEXT.md` before dispatching the a
 
 ## Dispatch
 
-<agent>design-figma-writer</agent>
+```
+Task("design-figma-writer", """
+mode: <annotate|tokenize|mappings>
+dry_run: <true|false>
+confirm_shared: <true|false>
+required_reading:
+  - .design/STATE.md
+  - .design/DESIGN-CONTEXT.md
+""")
+```
 
-Pass through all flags and arguments from the invocation to the agent.
+Pass `mode` from the first positional argument; `dry_run` from `--dry-run`;
+`confirm_shared` from `--confirm-shared`. Wait for the agent's completion
+marker before returning.

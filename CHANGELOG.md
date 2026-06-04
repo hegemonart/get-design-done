@@ -4,6 +4,89 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.57.2] - 2026-06-04
+
+### Polish wave - 24 commits closing the v1.57 audit + 5 new CI gates
+
+A single grooming wave: closes ~80% of the gap between what the plugin claims and what it does, plus structural CI gates that prevent the same drift from coming back. 5,007/5,007 tests pass; all 16 CI checks green. No breaking changes - additive only.
+
+### Fixed (8 ship-blockers)
+
+- **`scripts/injection-patterns.cjs` was excluded from the npm tarball** via `.npmignore`. `hooks/gdd-read-injection-scanner.ts` calls `createRequire()` to load it at runtime, so the scanner was a silent no-op for every shipped install (PostToolUse:Read security check disabled). Now in `package.json#files`; verified via `npm pack --dry-run`.
+- **`gdd-sdk stage audit` errored without hinting at the real top-level subcommand.** The error now suggests "did you mean `gdd-sdk audit`?" - `audit` is a top-level subcommand, not a pipeline stage.
+- **Codex Plugin Generator shipped `longDescription: "<div align=\"center\">"`** (the README's HTML wrapper). The README-first-paragraph scan now skips HTML wrappers, GitHub callouts, nav rows, and badge clusters.
+- **2 hooks (`gdd-sessionstart-recap.js`, `gdd-precompact-snapshot.js`) resolved paths at module load** via `process.cwd()` instead of `payload.cwd` - broken in worktrees. Now thread `payload.cwd` through a `computePaths()` factory.
+- **`hooks/gdd-mcp-circuit-breaker.js` substring-matched `'timeout'` / `'failed'` against the entire stringified MCP response.** False-positives on legitimate successful Figma payloads (e.g. a node literally named "TimeoutBanner" or a summary line "2 of 5 nodes failed to update"). Now uses the structured `isError` / `is_error` envelope as the primary signal and only inspects dedicated error-message fields for timeout-vs-error classification. +4 regression tests.
+- **Windows SessionStart hooks (4 `.sh` scripts) failed without Git Bash on PATH.** Ported `scripts/bootstrap.sh`, `hooks/update-check.sh`, `hooks/first-run-nudge.sh`, `hooks/inject-using-gdd.sh` to Node `.cjs` modules. `hooks/hooks.json` rewired to `node …cjs`. One source of truth, no drift surface.
+- **`hooks/gdd-protected-paths.js` had 4 bypass vectors** in `extractBashTargets()`: chained commands (`rm safe.txt && rm reference/protected.md` extracted only `safe.txt`), multi-arg destructive verbs, `$(…)` subshell substitution, `` `…` `` backtick substitution. Rewrote as a 3-pass walker that recurses into subshells, splits on `&&`/`||`/`;`/`|`, and collects ALL non-flag args per segment. +12 regression tests.
+- **`skills/figma-write/SKILL.md` used invented `<agent>design-figma-writer</agent>` dispatch syntax** that Claude Code does not parse. The entire Figma write-back skill was a silent no-op since it was first authored. Replaced with the canonical `Task("design-figma-writer", "...")` block. Added `test/suite/skill-dispatch-syntax.test.cjs` regression gate that sweeps every SKILL.md.
+
+### Added (5 new CI gates - structural drift prevention)
+
+- **`npm run validate:feature-counts`** (`scripts/check-feature-counts.cjs`): walks the filesystem and asserts every shipped surface's count claims (`plugin.json` / `marketplace.json` / `README.md` / `SKILL.md`) match reality (61 agents / 96 skills / 42 connections / 13 MCP tools).
+- **`npm run validate:registry-tiers`** (`scripts/validate-registry-tiers.cjs`): asserts every `registry.json` entry's `tier` field is one of `L0|L1|L2|L3`. Detects model-tier paste-errors (haiku/sonnet/opus accidentally placed in the cache-tier slot).
+- **`npm run validate:no-internal-refs`** (`scripts/validate-no-internal-refs.cjs`): ratcheted baseline at 1,749 hits across 286 files. Fails when any file regresses beyond its baseline count of Phase NN / Plan NN-MM / .planning/ / D-NN references. `--rebaseline` ratchets after legitimate cleanup.
+- **`npm run validate:cache-tiers`** (`scripts/check-cache-tiers.cjs`): SHA-256 of `reference/meta-rules.md` + `reference/shared-preamble.md` (the L0 cache prefix imported by 58 of 62 agents). Drift fails the build. See `reference/cache-tier-doctrine.md`.
+- **`npm run validate:skill-surface`** (`test/suite/skill-surface-sync.test.cjs`): asserts every `skills/` dir on disk is documented in at least one of SKILL.md's three surfaces (argument-hint / Command Reference table / Jump Mode).
+
+### Added (Batch D wirings - 8 aspirational features made real)
+
+- **`skills/paper-write/`** (new): paper.design canvas write-back (modes: annotate / tokenize / roundtrip). Modeled on `skills/figma-write/`.
+- **`skills/pencil-write/`** (new): pencil.dev `.pen` file write-back (modes: annotate / roundtrip). File-based - no MCP.
+- **`hooks/gdd-intel-trigger.js`** (new): PostToolUse hook that fires `scripts/build-intel.cjs --incremental` in the background when Edit/Write touches `(skills|agents|reference|source/skills)/.*\.(md|json)`. 5-minute lock dedups rapid sequential edits. Opt-out via `GDD_DISABLE_INTEL_TRIGGER=1`.
+- **`design-component-generator` dispatch** wired into `skills/design/SKILL.md`. Fires opt-in when STATE.md `<connections>` shows a generator connection available (21st-dev / magic-patterns / plasmic / builder-io / v0-dev) and the plan has a `task_type: component` task without matching `src/components/*.tsx`.
+- **`design-context-reviewer` + gate** wired into `skills/explore/` Step 2.6. Cheap Haiku gate runs first; full 9-check graph review fires only when gate says "review needed".
+- **`design-research-synthesizer` opts into peer-CLI delegation** (`delegate_to: gemini-research`) - first agent in the 61-agent fleet. Bandit posterior now collects real arm data on `(design-research-synthesizer, *, gemini)` tuples.
+- **`touches-pattern-miner` wired into `apply-reflections`**: archived task-file `Touches:` signatures now surface as auto-crystallization proposals via `discoverTouchesPatternProposals()`.
+- **`design-planner` + `design-verifier` emit JSON output contracts** per `reference/output-contracts/{planner,verifier}-decision.schema.json` (fenced ```json block before the prose body). Typed envelope consumption by `scripts/lib/parse-contract.cjs#parsePlannerDecision` / `parseVerifierDecision`. DESIGN-PLAN.md and DESIGN-VERIFICATION.md continue to include both formats.
+
+### Added (Batch H - Phase 57 wire-ups)
+
+- **Phase 56 calibration loop wired end-to-end.** `hooks/gdd-risk-gate.js` now calls `updateCalibration` after every scored decision (allow/block/review/require_confirmation → accepted true/false). `detectDrift` now fires from production traffic, not synthetic data. +9 regression tests.
+- **`scripts/lib/state/query-surface.cjs` backup-guard hardening**: `_safeBackup(srcPath, bakPath)` returns true only when the backup file exists AND is non-empty after `copyFileSync`. `backupCycle()`, `demigrate()`, `recover()` now gate `fs.unlinkSync` behind it. +7 regression tests covering happy path / missing source / zero-byte copy / mocked failing copy.
+- **`scripts/lib/state/state-store.cjs` `migrate()` async + JSDoc.** The underlying `migrateToSqlite` was already async; the wrapper now awaits it. Comprehensive JSDoc covers degraded paths, error semantics, idempotency, opt-in via `force`, dual-channel result shapes. +4 sqlite-path regression tests.
+
+### Removed
+
+- **`scripts/lib/audit-aggregator/index.cjs`** (219 LOC + 15 unit tests). Shipped in Plan 23-04; zero production callers across `scripts/ sdk/ hooks/ agents/ skills/`. With Phase 56 risk-gate owning post-action consolidation and design-verifier owning audit aggregation natively, the module was dead-on-arrival.
+- **`scripts/lib/hedge-ensemble.cjs`** (AdaNormalHedge implementation). Shipped in Plan 23.5-02; never wired into `adaptive_mode='hedge'` or any production path. `isHedgeEnabled()` now always returns false.
+
+### Changed (manifests + docs)
+
+- **Manifest count claims synchronized across all 11 surfaces** to filesystem truth: 61 agents / 96 skills / 42 connections / 13 MCP tools. plugin.json + marketplace.json descriptions trimmed from 2000+ chars to ~700 (dropped sprawling per-version history - see CHANGELOG for that).
+- **README rewritten from 968 lines to 623 lines.** Removed 30 per-version "Highlights" chronicle sections (all verified present in CHANGELOG before deletion). Product surface kept verbatim; release chronicle moves to CHANGELOG.
+- **agents/README.md authoring contract cleaned**: 13 Phase NN refs + 11 Plan NN-MM refs + 3 dangling `.planning/phases/` cross-refs + 4 CONTEXT D-NN shorthand refs removed.
+- **L0 cache prefix sanitized**: `reference/shared-preamble.md` "GSD Agent" → "GDD Agent" identity (every agent's first byte block). `reference/meta-rules.md` Phase NN refs stripped from the commit-scope guidance that propagates into every user repo.
+- **`reference/STATE-TEMPLATE.md` HTML comments scrubbed** - three `<!-- Phase 25 -->` comments inside the `==== BEGIN/END TEMPLATE ====` block were being copied verbatim into every user's `.design/STATE.md` at scan entry.
+- **`reference/registry.json` description-field sweep**: ~90 "Phase NN" prefixes stripped from description fields that load into router prompts.
+- **7 schema files cleaned of Phase / .planning refs** in description fields (they ship via `generated.d.ts` to user IDE autocomplete).
+- **9 skill `description:` frontmatter fields cleaned** (router LLM-signal surface): bandit-status, openrouter-status, state, override, peers, debug, report-issue, scan, discover.
+- **`agents/design-verifier.md` H2 headings renamed** `## Phase 1..5` → `## Stage 1..5` (those headings bleed into user `.design/DESIGN-VERIFICATION.md` output and collided with internal GDD-roadmap nomenclature).
+- **`gsd-health` references** in `skills/report-issue/SKILL.md`, `source/skills/report-issue/SKILL.md`, `scripts/lib/issue-reporter/report-flow.cjs` → `/gdd:health` (the actual command).
+- **`benchmark` agents output paths** moved from `.planning/benchmarks/` to `.design/benchmarks/` (`.planning/` is the plugin's own development workspace and must never appear in a user repo's writes).
+- **`connections/connections.md` matrix stage columns** `scan|discover` → `brief|explore` (the actual current 5-stage pipeline).
+- **`runtime-models.md` added "Verification status" banner** flagging 10 of 14 entries as unverified placeholder fills (BYOK / multi-provider; Anthropic-default mapping).
+- **`reference/cache-tier-doctrine.md`** (new): codifies the L0/L1/L2/L3 cache-tier contract that the new gates enforce.
+- **`reference/intel-schema.md`** documented the `agent-tiers.json` slice and softened the misleading "kept current" claim.
+- **`agents/design-research-synthesizer.md`** + **`agents/design-planner.md`** + **`agents/design-verifier.md`** gained delegate_to / Output Contract sections (see "Added" above).
+- **42nd connection added**: `connections/cursor.md` documents the cursor install path + the documented sibling-drop limitation (Cursor `installMultiArtifact` doesn't enumerate `<skill>/<sibling>.md` files; the fix requires extending the StagedArtifact contract and is deferred with explicit doc trail).
+- **`hooks/budget-enforcer.js` → `.ts` references updated** across 11 docs files (Plan 20-13 conversion landed; docs lagged).
+- **Pipeline phrasing corrected**: `brief → plan → implement → verify` (4 surfaces) → `brief → explore → plan → design → verify` (the actual 5-stage pipeline).
+- **2 stale "Executor B pending" / "Executor A hasn't run" strings** updated to present tense (the SQLite migration shipped in v1.57.0).
+- **Composition graph edges added** for 5 high-traffic skills (compare, complete-cycle, darkmode, new-cycle, new-project) via `scripts/lib/manifest/skills.json`. `reference/skill-graph.md` regenerated.
+
+### Test infrastructure
+
+- **`startsWith('design-')` filter widened to all agents** in 5 test files. Coverage jumped from 30 design-* agents to 61 (all). `agent-frontmatter` alone went from 60 tests to 122.
+- **7 Phase 28.8 baseline skips closed.** Disambiguated "runtime" (14 Tier-1 install targets) vs "registry entry" (16 entries with 2 Tier-2 channels codex-plugin + cursor-marketplace).
+- **`insight-line.schema tier:"haiku"` paste-error fixed** to L2 + new CI gate prevents recurrence.
+
+### Security
+
+- 3 CodeQL alerts closed: `scripts/bootstrap.cjs` git arg-injection (added `--` separator + leading-`-` validation), `scripts/build-distribution-bundles.cjs` multi-character HTML strip (loop iteration + `/s` flag).
+
+---
+
 ## [1.57.1] - 2026-06-03
 
 ### Fixed
@@ -28,6 +111,14 @@ degrade real users who have the module). No new dependency; the markdown floor i
   no `event_id`, extra fields); `hooks/gdd-risk-gate.js` now emits the schema-correct shape, and an Ajv validation test
   guards it. The **dashboard risk column** read the wrong fields and case-mismatched the action vocabulary, so it was
   permanently blank; it is now wired and case-correct.
+- **The Phase 56 calibration loop was unwired.** `scripts/lib/risk/calibration.cjs` was a complete library - rolling-50
+  window, `updateCalibration`, `detectDrift`, `recordRiskOutcome` - but no caller invoked it outside its own tests, so
+  drift detection could only fire from synthetic data. `hooks/gdd-risk-gate.js` now calls `updateCalibration` on every
+  scored call when the writer agent is known (`payload.agent` or `GDD_AGENT`): `block` records `accepted:false`; `allow`,
+  `review`, and `require_confirmation` record `accepted:true`. The store accrues from real traffic, so `detectDrift` flags
+  `under_scoring` / `over_scoring` from production behaviour. Best-effort (a calibration write never breaks a tool call);
+  no-op when the agent is unknown so an "unknown" bucket cannot pool the signal. `user_undo` / `post_apply_correct` are
+  left unresolved at the PreToolUse boundary by design; a later PostToolUse pass can resolve them.
 - **`budget-enforcer` PreToolUse blocks** used `message` instead of `stopReason`, so the block reason was invisible to
   the user; they now use `stopReason`. The **read-injection scanner** loads its pattern file fail-open (a missing file
   no longer crashes the hook). Three package-root walk-ups now match the scoped package name.

@@ -1,6 +1,6 @@
 ---
 name: component-benchmark-synthesizer
-description: Reads a raw harvest file from .planning/benchmarks/raw/<component>.md and emits a canonical component spec at reference/components/<name>.md using the locked TEMPLATE.md shape. Spawned by /gdd:benchmark after harvesting.
+description: Reads a raw harvest file from .design/benchmarks/raw/<component>.md and emits a canonical component spec at reference/components/<name>.md using the locked TEMPLATE.md shape. Spawned by /gdd:benchmark after harvesting.
 tools: Read, Write, Grep, Glob
 color: green
 default-tier: sonnet
@@ -19,7 +19,7 @@ writes:
 ## Role
 
 You are the synthesis agent for the component benchmark corpus. You read a raw harvest
-file at `.planning/benchmarks/raw/<component>.md` (produced by `component-benchmark-harvester`)
+file at `.design/benchmarks/raw/<component>.md` (produced by `component-benchmark-harvester`)
 and emit a canonical component spec at `reference/components/<name>.md`, following
 `reference/components/TEMPLATE.md` exactly.
 
@@ -32,7 +32,7 @@ that signal in the spec so future agents know what is non-negotiable.
 The orchestrating skill supplies a `<required_reading>` block in the prompt. Read every
 listed file before acting. Minimum expected inputs:
 
-- `.planning/benchmarks/raw/<component>.md` - the raw harvest to synthesize
+- `.design/benchmarks/raw/<component>.md` - the raw harvest to synthesize
 - `reference/components/TEMPLATE.md` - the locked spec shape you must follow
 - `reference/anti-patterns.md` - for cross-linking anti-pattern entries
 

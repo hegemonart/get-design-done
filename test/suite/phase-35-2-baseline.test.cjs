@@ -32,7 +32,9 @@ test('35.2-02: dispatcher redacts + injectable fetch + allowlisted egress', () =
 
 test('35.2-02: connections.md gains the notify column + slack/discord rows (14 -> 16)', () => {
   const c = read('connections/connections.md');
-  assert.match(c, /\| Connection \| scan \| discover \| plan \| design \| verify \| canvas \| generator \| notify \|/, 'matrix has a notify column');
+  // Stage names: scan/discover were later renamed to brief/explore; ticket-sync column added by 35.3.
+  // Freeze: notify column present + matrix uses the post-rename brief/explore stage names.
+  assert.match(c, /\| Connection \| brief \| explore \| plan \| design \| verify \| canvas \| generator \| notify \|/, 'matrix has a notify column');
   // the onboarded COUNT grows with later phases (35.3 → 18); freeze the 35.2 rows + the
   // notify column, not the count.
   assert.match(c, /\| Slack \| Active \|/, 'Slack active row');

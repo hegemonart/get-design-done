@@ -7,7 +7,7 @@ model: inherit
 default-tier: sonnet
 tier-rationale: "Emits structured findings from code inspection; Sonnet balances depth with cost"
 size_budget: XXL
-size_budget_rationale: "Phase 17 added Component Conformance addendum (+54 lines for spec-grep detection + conformance scoring algorithm)"
+size_budget_rationale: "Component Conformance addendum adds ~54 lines for spec-grep detection + conformance scoring algorithm"
 parallel-safe: always
 typical-duration-seconds: 45
 reads-only: false
@@ -31,7 +31,7 @@ You run once per verify session. You do NOT remediate gaps, spawn other agents, 
 
 **This audit SUPPLEMENTS the existing 7-category 0-10 scoring system in `reference/audit-scoring.md`. It does NOT replace it.**
 
-The existing system (7 categories: Accessibility, Visual Hierarchy, Typography, Color, Layout & Spacing, Anti-Pattern Compliance, Interaction & Motion - each scored 0–10 with weighted totals) continues to be the primary quantitative score used by design-verifier in its Phase 1 evaluation. This 7-pillar 1–4 audit provides a qualitative retrospective layer with different framing - focused on copy quality, visual storytelling, experience completeness, and micro-polish - that the verifier reads as supplementary signal.
+The existing system (7 categories: Accessibility, Visual Hierarchy, Typography, Color, Layout & Spacing, Anti-Pattern Compliance, Interaction & Motion - each scored 0–10 with weighted totals) continues to be the primary quantitative score used by design-verifier in its Stage 1 evaluation. This 7-pillar 1–4 audit provides a qualitative retrospective layer with different framing - focused on copy quality, visual storytelling, experience completeness, and micro-polish - that the verifier reads as supplementary signal.
 
 Do not compute a weighted 0–100 score. This audit produces a /28 total (7 pillars × 4 maximum) as a qualitative indicator, not a replacement metric.
 
@@ -45,7 +45,7 @@ Minimum expected files:
 - `.design/DESIGN-CONTEXT.md` - goals, brand direction, design decisions (D-XX)
 - `.design/DESIGN-PLAN.md` - planned tasks and acceptance criteria
 - `.design/tasks/` - what was actually done (glob all task files)
-- **Domain-index navigation (Phase 45):** the 7 entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` index every fragment below. For a pillar, load the relevant domain index first, then drill into the specific fragments it lists only as the pillar needs them - this is the cheap navigation layer over the detailed fragments.
+- **Domain-index navigation:** the 7 entry-points `reference/{typography,color,spatial,motion,interaction,responsive,ux-writing}.md` index every fragment below. For a pillar, load the relevant domain index first, then drill into the specific fragments it lists only as the pillar needs them - this is the cheap navigation layer over the detailed fragments.
 - `reference/audit-scoring.md` - existing 7-category scoring rubric (understand, do not duplicate)
 - `reference/anti-slop-rubric.md` - the five verb axes scored after the pillar pass (see Anti-slop scoring section)
 - `reference/visual-tells.md` - default-AI tell catalog; each tell names the verb axis it degrades
@@ -73,7 +73,7 @@ Minimum expected files:
 
 ## 7-Pillar Scoring System
 
-> **Scoring contract: v2** (`scoring_contract_version: v2`) - 7 pillars; copy deepened in Phase 48 via `reference/copy-quality.md` + `agents/copy-auditor.md`; 8th pillar slot reserved, unscored. The pillar count and slot 7 (Micro-Polish) name are read by `design-verifier` by name; do not renumber existing pillars.
+> **Scoring contract: v2** (`scoring_contract_version: v2`) - 7 pillars; copy deepened via `reference/copy-quality.md` + `agents/copy-auditor.md`; 8th pillar slot reserved, unscored. The pillar count and slot 7 (Micro-Polish) name are read by `design-verifier` by name; do not renumber existing pillars.
 
 **Score definitions (1–4 per pillar):**
 
@@ -90,7 +90,7 @@ Minimum expected files:
 
 **What this measures:** The quality and specificity of text content - button labels, empty states, error messages, loading copy, ARIA strings, alt text, form copy, and voice alignment. Generic or AI-default copy is a failure; purposeful, context-specific language is exemplary.
 
-**Detailed rubric:** `reference/copy-quality.md` is the source of truth for this pillar - it holds the per-category criteria (CTAs, errors, empty states, loading/skeleton, ARIA text, alt text, form labels/helper/validation, voice/tone), the failure patterns, the internationalization lens (hardcoded-string probe + `+40%` expansion-overflow check, per Phase 28 i18n), and the canonical 1-4 Scoring Guide table. Read it before scoring Copy. For a deep, evidence-rich Copy pass, the verify stage may spawn `agents/copy-auditor.md`, which scores this pillar against `reference/copy-quality.md` and writes `.design/COPY-AUDIT.md`; when that supplement exists, fold its score and top finding into this pillar rather than re-deriving them. Keep the 1-4 scale below either way.
+**Detailed rubric:** `reference/copy-quality.md` is the source of truth for this pillar - it holds the per-category criteria (CTAs, errors, empty states, loading/skeleton, ARIA text, alt text, form labels/helper/validation, voice/tone), the failure patterns, the internationalization lens (hardcoded-string probe + `+40%` expansion-overflow check), and the canonical 1-4 Scoring Guide table. Read it before scoring Copy. For a deep, evidence-rich Copy pass, the verify stage may spawn `agents/copy-auditor.md`, which scores this pillar against `reference/copy-quality.md` and writes `.design/COPY-AUDIT.md`; when that supplement exists, fold its score and top finding into this pillar rather than re-deriving them. Keep the 1-4 scale below either way.
 
 **Audit method:**
 
@@ -285,7 +285,7 @@ grep -rEn "confirm\b|Confirm\b|areYouSure|destructive|danger" src/ --include="*.
 Collect findings from the micro-polish sections of the mapper outputs (`.design/map/motion.md`, `.design/map/tokens.md`, `.design/map/visual-hierarchy.md`, `.design/map/a11y.md`). If those files are not yet available, run targeted grep passes:
 
 ```bash
-# BAN-NN anti-patterns — Phase 41: run the deterministic detector instead of hand-grepping each
+# BAN-NN anti-patterns: run the deterministic detector instead of hand-grepping each
 # rule. One pass, --json, every BAN rule (transition:all, will-change:all, gradient text, bounce
 # easing, scale(0), naked outline:none, pure-black dark mode, disabled zoom, tinted image outline),
 # each finding linked to its reference/anti-patterns.md paragraph. Offline + zero-LLM.
@@ -495,7 +495,7 @@ This audit is **code-only**. No Playwright-MCP and no dev server screenshot capt
 - **Color (Pillar 3):** Color palette harmony and dark mode visual quality require a rendered view. Code analysis checks for token usage and known anti-patterns but cannot assess harmony.
 - **Typography (Pillar 4):** Font rendering and scale legibility require visual inspection. Code analysis checks class usage but cannot assess the rendered result.
 
-**Recommendation:** Run design-verifier Phase 4 (Visual UAT) to supplement these code-only findings with human visual inspection.
+**Recommendation:** Run design-verifier Stage 4 (Visual UAT) to supplement these code-only findings with human visual inspection.
 ```
 
 ---

@@ -17,7 +17,7 @@ These are the four files converted in Plan 20-00. Every one consumes at least on
 | `tests/helpers.ts` | Shared test fixtures (scaffoldDesignDir, readFrontmatter, countLines, mockMCP) | `require('./helpers.ts')` from `tests/*.test.cjs` under `node --test --experimental-strip-types` |
 | `scripts/validate-schemas.ts` | ajv-cli runner + structural fallback for every `reference/schemas/*.schema.json` pair | `npm run validate:schemas` |
 | `scripts/validate-frontmatter.ts` | Frontmatter hygiene validator for `agents/*.md` | `npm run validate:frontmatter` |
-| `scripts/aggregate-agent-metrics.ts` | Incremental per-agent telemetry aggregator | Detached child of `hooks/budget-enforcer.js`; `/gdd:optimize` refresh step; manual `npm`-free invocation `node --experimental-strip-types scripts/aggregate-agent-metrics.ts` |
+| `scripts/aggregate-agent-metrics.ts` | Incremental per-agent telemetry aggregator | Detached child of `hooks/budget-enforcer.ts`; `/gdd:optimize` refresh step; manual `npm`-free invocation `node --experimental-strip-types scripts/aggregate-agent-metrics.ts` |
 
 ## Tier-2 (opportunistic)
 
@@ -34,9 +34,9 @@ Tier-2 conversions:
 
 ## Hooks
 
-**Hooks stay as `.js` until Plan 20-13** — the rewrite-once policy. Plan 20-13 owns `hooks/budget-enforcer.js`, `hooks/context-exhaustion.js`, and `hooks/gdd-read-injection-scanner.js` conversions because those files also become event-stream consumers there. Converting them now would mean rewriting them twice.
+**Hooks were converted to `.ts` in Plan 20-13** — the rewrite-once policy held. Plan 20-13 converted `hooks/budget-enforcer.ts`, `hooks/context-exhaustion.ts`, and `hooks/gdd-read-injection-scanner.ts` together with their event-stream-consumer rewrite, so the files were only rewritten once rather than touched twice.
 
-Plan 20-00 does update one single line in `hooks/budget-enforcer.js`: the detached-child spawn arg targeting `scripts/aggregate-agent-metrics.ts` (needed because the aggregator filename changed in Task 6). That is the only hook edit allowed in Plan 20-00.
+Plan 20-00 had earlier updated one single line in `hooks/budget-enforcer.ts` (then `.js`): the detached-child spawn arg targeting `scripts/aggregate-agent-metrics.ts` (needed because the aggregator filename changed in Task 6). That was the only hook edit landed in Plan 20-00; the full `.ts` conversion followed in Plan 20-13.
 
 ## New-file checklist
 

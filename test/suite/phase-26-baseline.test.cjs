@@ -54,17 +54,20 @@ test('phase-26 baseline: reference/runtime-models.md exists', () => {
   assert.ok(fs.existsSync(target), 'Plan 26-01 must ship reference/runtime-models.md');
 });
 
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace` (Tier-2
-// distribution channel). Per-runtime price sub-tables exist for install
-// targets only; the new Tier-2 entry has no price row. Wave D's atomic
-// update will either add the row or restrict the iteration per CONTEXT D-08.
-test('phase-26 baseline: reference/prices/ has the 14 sub-tables (D-08)', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry has no reference/prices/ row per Plan B1' }, () => {
+// Phase 28.8 (Plans B1, C1) added two Tier-2 distribution-channel entries
+// (`cursor-marketplace` + `codex-plugin`). Per-runtime price sub-tables exist
+// for Tier-1 install targets only; Tier-2 channels are out-of-band bundles
+// without per-user cost rows. Filter them out before asserting on the price
+// sub-table set.
+test('phase-26 baseline: reference/prices/ has the 14 Tier-1 sub-tables (D-08; Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
   const dir = path.join(REPO_ROOT, 'reference', 'prices');
   assert.ok(fs.existsSync(dir), 'reference/prices/ directory must exist');
-  // Cross-check against runtimes.cjs canonical list.
+  // Cross-check against runtimes.cjs canonical list, filtering Tier-2 channels.
+  const TIER2_KINDS = new Set(['cursor-marketplace', 'codex-plugin']);
   const { RUNTIMES } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'install', 'runtimes.cjs'));
-  for (const r of RUNTIMES) {
+  const tier1 = RUNTIMES.filter((r) => !TIER2_KINDS.has(r.kind));
+  assert.equal(tier1.length, 14, 'expected 14 Tier-1 install targets');
+  for (const r of tier1) {
     const target = path.join(dir, `${r.id}.md`);
     assert.ok(fs.existsSync(target), `reference/prices/${r.id}.md must exist (D-08)`);
   }

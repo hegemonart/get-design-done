@@ -16,8 +16,10 @@ const TIER_LIMITS = {
   S: 150,  // Phase 10.1 Haiku gate agents — tight cap enforces lean diff-scanners
 };
 
+// Widened from `f.startsWith('design-')` — see agent-frontmatter.test.cjs
+// for the rationale; same fix for size-budget coverage.
 const agentFiles = fs.readdirSync(AGENTS_DIR)
-  .filter(f => f.startsWith('design-') && f.endsWith('.md'))
+  .filter(f => f.endsWith('.md') && f !== 'README.md')
   .sort();
 
 for (const agentFile of agentFiles) {

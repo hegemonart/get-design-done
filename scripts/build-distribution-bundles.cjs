@@ -245,12 +245,48 @@ function loadAncillarySources(sourceRoot) {
   if (fs.existsSync(readmePath)) {
     try {
       const raw = fs.readFileSync(readmePath, 'utf8');
-      // First non-empty, non-heading paragraph.
+      // Find the first paragraph in README.md that is actual marketing
+      // prose — not a heading, not an HTML wrapper (<div align="center">),
+      // not a language-nav row, not a badge cluster, not a callout block.
+      //
+      // The longDescription field on the Codex/Cursor marketplace cards
+      // is shown as the long-form pitch to humans; before this fix the
+      // generator would happily emit `"<div align=\"center\">"` or the
+      // i18n nav row as the longDescription.
       const paragraphs = raw.split(/\n\s*\n/);
       for (const p of paragraphs) {
         const trimmed = p.trim();
-        if (!trimmed || trimmed.startsWith('#')) continue;
-        sources.readmeFirstPara = trimmed.replace(/\s+/g, ' ');
+        if (!trimmed) continue;
+        // Markdown heading
+        if (trimmed.startsWith('#')) continue;
+        // GitHub callout marker (e.g. `> [!IMPORTANT]`)
+        if (/^>\s*\[!/.test(trimmed)) continue;
+        // Language navigation row (uses ` · ` middle-dot separator)
+        if (trimmed.includes(' · ')) continue;
+        // Fenced code block
+        if (trimmed.startsWith('```')) continue;
+        // Strip HTML tags + markdown link/image syntax and check that
+        // enough prose remains. A `<div ...>...</div>` wrapper, a badge
+        // cluster (`![](url)![](url)`), or a pure-link block all reduce
+        // to whitespace-only or under 20 chars of prose.
+        //
+        // CodeQL: multi-character sanitization. Strip nested/malformed
+        // HTML tags iteratively until the regex makes no more progress,
+        // so a `<script\nfoo>` or `<<script>` cannot survive the strip.
+        let proseOnly = trimmed;
+        let prev;
+        do {
+          prev = proseOnly;
+          proseOnly = proseOnly.replace(/<[^>]*>?/gs, '');
+        } while (proseOnly !== prev);
+        proseOnly = proseOnly
+          .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+          .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+          .replace(/[*_`]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (proseOnly.length < 20) continue;
+        sources.readmeFirstPara = proseOnly;
         break;
       }
     } catch {

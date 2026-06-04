@@ -2,12 +2,11 @@
 name: verify-procedure
 type: meta-rules
 version: 1.0.0
-phase: 28.5
 tags: [verify, procedure, extracted, pipeline-stage, gap-loop, must-have, quality-gate]
 last_updated: 2026-05-18
 ---
 
-Source: extracted from `skills/verify/SKILL.md` (Phase 28.5 rework - D-10 extract-then-link).
+Source: extracted from `skills/verify/SKILL.md` to keep the SKILL focused on the essential workflow.
 The skill's essential workflow stays in `../skills/verify/SKILL.md`; this file holds the
 detail the agent reaches for when executing a specific step (state integration, quality-gate
 decision tree, agent spawn protocols, gap-response loop, must-have flipping).
@@ -28,9 +27,9 @@ methodology, agent prompts, and gap-loop semantics.
 1. `mcp__gdd_state__transition_stage` with `to: "verify"`.
 2. `mcp__gdd_state__get` → snapshot `state`. Read `state.must_haves` - this is the verification checklist; each M-XX starts at `status: pending` and will be flipped to `pass` or `fail` as verification concludes.
 
-#### Step 2.5 - Quality-gate gate (D-08, D-09)
+#### Step 2.5 - Quality-gate gate
 
-Before resume detection, inspect `state.quality_gate` from the same snapshot. The Stage 4.5 quality-gate skill (see `skills/quality-gate/SKILL.md`) writes a single `<run/>` element capturing the most recent run; this step is the verify-side consumer of that result. Three branches, evaluated in order:
+Before resume detection, inspect `state.quality_gate` from the same snapshot. The quality-gate skill (see `skills/quality-gate/SKILL.md`) writes a single `<run/>` element capturing the most recent run; this step is the verify-side consumer of that result. Three branches, evaluated in order:
 
 - **`state.quality_gate?.run?.status === "fail"`** → Refuse to advance. The fix loop in `quality-gate/SKILL.md` Step 4 reached `max_iters` without converging, and the verify stage MUST NOT paper over it. Print a blocker reason that includes the iteration count and the `commands_run` field from the run, then call:
 
@@ -43,9 +42,9 @@ Before resume detection, inspect `state.quality_gate` from the same snapshot. Th
 
   Exit immediately with the failure surface visible to the user. Do NOT call `mcp__gdd_state__update_progress` to open the verify stage; the gate refused entry, so the stage was never opened.
 
-- **`state.quality_gate?.run?.status === "timeout"` OR `=== "skipped"`** → Print a one-line warning naming the status and the `commands_run` value, then continue normally. Per D-07 these are signals, not walls: a slow test suite must not hostage the pipeline, and a project with no detectable quality commands must not block verify entry. The warning surfaces the degraded state without halting.
+- **`state.quality_gate?.run?.status === "timeout"` OR `=== "skipped"`** → Print a one-line warning naming the status and the `commands_run` value, then continue normally. These are signals, not walls: a slow test suite must not hostage the pipeline, and a project with no detectable quality commands must not block verify entry. The warning surfaces the degraded state without halting.
 
-- **`state.quality_gate?.run?.status === "pass"` OR `state.quality_gate === null`** → Continue silently. `pass` is the happy path; `null` means the gate has never been run for this cycle (the user skipped Stage 4.5 entirely, which is permitted - verify only *checks* the gate result, never *runs* the gate itself, per the 25-07 out-of-scope clause).
+- **`state.quality_gate?.run?.status === "pass"` OR `state.quality_gate === null`** → Continue silently. `pass` is the happy path; `null` means the gate has never been run for this cycle (the user skipped the quality-gate stage entirely, which is permitted - verify only *checks* the gate result, never *runs* the gate itself).
 
 This step is a pure read against the snapshot already loaded in Step 2 - no extra MCP call is required.
 
@@ -93,7 +92,7 @@ Step P2 — Live tool call:
 Record the preview probe result via `mcp__gdd_state__probe_connections` (batched with the storybook and chromatic probes below — one call per stage, see "Batched connections write" at the end of this section).
 ```
 
-When `preview: available`, the design-verifier agent runs Phase 4B - Screenshot Evidence to resolve `? VISUAL` heuristic flags with real screenshot evidence. See `agents/design-verifier.md` Phase 4B for the screenshot evidence loop.
+When `preview: available`, the design-verifier agent runs Stage 4B - Screenshot Evidence to resolve `? VISUAL` heuristic flags with real screenshot evidence. See `agents/design-verifier.md` Stage 4B for the screenshot evidence loop.
 
 ### Probe Storybook connection
 
@@ -202,7 +201,7 @@ Initialize iteration counter to 0 (used for fix loop limit in Step 3).
 
 Three agents run in sequence. Each waits for its completion marker before the next is spawned.
 
-**Note on lazy gates (Plan 10.1-04 / D-21):** Each full checker is preceded by a cheap Haiku gate that reads the diff and may return `{spawn: false}` to short-circuit. When gated out, `lazy_skipped: true` is appended to `.design/telemetry/costs.jsonl`. Gates: `design-verifier-gate` (before 1b), `design-integration-checker-gate` (before 1c). `design-context-checker-gate` is wired into `skills/discover/SKILL.md` Step 1.75.
+**Note on lazy gates:** Each full checker is preceded by a cheap Haiku gate that reads the diff and may return `{spawn: false}` to short-circuit. When gated out, `lazy_skipped: true` is appended to `.design/telemetry/costs.jsonl`. Gates: `design-verifier-gate` (before 1b), `design-integration-checker-gate` (before 1c). `design-context-checker-gate` is wired into `skills/discover/SKILL.md` Step 1.75.
 
 ### 1a. Run design-auditor first (retrospective 7-pillar audit)
 
@@ -274,9 +273,9 @@ Task("design-verifier", """
 You are the design-verifier agent. Run the 5-phase verification against completed design work.
 
 DESIGN-AUDIT.md (above) contains a retrospective 7-pillar qualitative audit from design-auditor.
-Read it as supplementary signal — incorporate the priority fix list into your Phase 5 gap analysis
+Read it as supplementary signal — incorporate the priority fix list into your Stage 5 gap analysis
 where relevant. The auditor's 1-4 scores complement your 0-10 category scores; they do not
-replace your Phase 1 category scoring.
+replace your Stage 1 category scoring.
 
 Context:
   auto_mode: <true|false>
@@ -432,7 +431,7 @@ Task("design-fixer", """
 @.design/DESIGN-CONTEXT.md
 </required_reading>
 
-Fix all BLOCKER and MAJOR gaps from ## Phase 5 - Gaps in DESIGN-VERIFICATION.md.
+Fix all BLOCKER and MAJOR gaps from ## Stage 5 - Gaps in DESIGN-VERIFICATION.md.
 For each gap: apply the targeted fix to the file/location in the gap's Location field.
 After each fix, make an atomic commit: fix(design-gap-GNN): [gap title].
 

@@ -10,7 +10,7 @@ This directory contains connection specifications for external tools and MCPs th
 
 | Connection | Status | Spec File | Notes |
 |-----------|--------|-----------|-------|
-| gdd-state | Active | [`connections/gdd-state.md`](connections/gdd-state.md) | Local stdio MCP shipped with the plugin; required for STATE.md mutation in Phase 20+ (skills fall back to direct module import when not registered) |
+| gdd-state | Active | [`connections/gdd-state.md`](connections/gdd-state.md) | Local stdio MCP shipped with the plugin; required for STATE.md mutation (skills fall back to direct module import when not registered) |
 | Figma | Active | [`connections/figma.md`](connections/figma.md) | Auto-detects any Figma MCP variant (remote reads+writes, desktop reads-only); prefix resolved at probe time |
 | Refero | Active | [`connections/refero.md`](connections/refero.md) | Uses `mcp__refero__*` tools (verify names via ToolSearch) |
 | Preview | Active | [`connections/preview.md`](connections/preview.md) | Uses `mcp__Claude_Preview__*` tools |
@@ -24,31 +24,31 @@ This directory contains connection specifications for external tools and MCPs th
 | 21st.dev Magic MCP | Active | [`connections/21st-dev.md`](connections/21st-dev.md) | Uses `mcp__21st*` tools; `TWENTY_FIRST_API_KEY` required |
 | Magic Patterns | Active | [`connections/magic-patterns.md`](connections/magic-patterns.md) | Claude connector (`mcp__magic_patterns*`) + API key fallback |
 | OpenRouter | Active | [`connections/openrouter.md`](connections/openrouter.md) | Model-router (no MCP); env: `OPENROUTER_API_KEY` (optional `OPENROUTER_BASE_URL`); opt-in tier-resolution overlay, graceful-degrade-to-native |
-| Xcode Simulator | Active | [`connections/xcode-simulator.md`](connections/xcode-simulator.md) | **Optional** (macOS-only); CLI: `simctl` (no MCP); native-iOS rendered evidence for verify; degrade-to-code-only when absent (D-03) |
-| Android Emulator | Active | [`connections/android-emulator.md`](connections/android-emulator.md) | **Optional**; CLI: `adb` / `emulator` (no MCP); native-Android rendered evidence for verify; degrade-to-code-only when absent (D-03) |
-| Litmus | Active | [`connections/litmus.md`](connections/litmus.md) | **Optional** render-test (email; Email-on-Acid alternative); cross-client rendered screenshots for verify; degrade-to-static-validator / code-only when absent (D-03) |
-| Print-Renderer | Active | [`connections/print-renderer.md`](connections/print-renderer.md) | **Optional** print render-test (Paged.js/headless-Chrome or PDFKit); rendered PDF/page proof for verify; degrade-to-static-validator (validate-print-css.cjs) / code-only when absent (D-03) |
-| Lazyweb | Active | [`connections/lazyweb.md`](connections/lazyweb.md) | **Free** bearer-token MCP `lazyweb_search` / `lazyweb_health` (ToolSearch-only probe; copy-command setup, no auto-run); discover **Tier 1** — tried first (D-01) |
-| Mobbin | Active | [`connections/mobbin.md`](connections/mobbin.md) | **Paid** HTTP MCP `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` (ToolSearch-only probe; auto-run-safe, OAuth); discover **Tier 2** — mobile/flow-level (D-01) |
+| Xcode Simulator | Active | [`connections/xcode-simulator.md`](connections/xcode-simulator.md) | **Optional** (macOS-only); CLI: `simctl` (no MCP); native-iOS rendered evidence for verify; degrade-to-code-only when absent |
+| Android Emulator | Active | [`connections/android-emulator.md`](connections/android-emulator.md) | **Optional**; CLI: `adb` / `emulator` (no MCP); native-Android rendered evidence for verify; degrade-to-code-only when absent |
+| Litmus | Active | [`connections/litmus.md`](connections/litmus.md) | **Optional** render-test (email; Email-on-Acid alternative); cross-client rendered screenshots for verify; degrade-to-static-validator / code-only when absent |
+| Print-Renderer | Active | [`connections/print-renderer.md`](connections/print-renderer.md) | **Optional** print render-test (Paged.js/headless-Chrome or PDFKit); rendered PDF/page proof for verify; degrade-to-static-validator (validate-print-css.cjs) / code-only when absent |
+| Lazyweb | Active | [`connections/lazyweb.md`](connections/lazyweb.md) | **Free** bearer-token MCP `lazyweb_search` / `lazyweb_health` (ToolSearch-only probe; copy-command setup, no auto-run); explore **Tier 1** — tried first |
+| Mobbin | Active | [`connections/mobbin.md`](connections/mobbin.md) | **Paid** HTTP MCP `claude mcp add mobbin --transport http https://api.mobbin.com/mcp` (ToolSearch-only probe; auto-run-safe, OAuth); explore **Tier 2** — mobile/flow-level |
 | Slack | Active | [`connections/slack.md`](connections/slack.md) | **Notify** (Team Surfaces) — `SLACK_WEBHOOK_URL` incoming webhook; routed+redacted pipeline events; `GDD_DISABLE_SLACK` kill-switch; degrade-to-noop |
 | Discord | Active | [`connections/discord.md`](connections/discord.md) | **Notify** (Team Surfaces) — `DISCORD_WEBHOOK_URL` channel webhook; parity with Slack; `GDD_DISABLE_DISCORD` kill-switch; degrade-to-noop |
 | Linear | Active | [`connections/linear.md`](connections/linear.md) | **Ticket-sync** (Team Surfaces) — `mcp__linear__*` (ToolSearch probe); bidirectional cycle↔issue; redact + `GDD_DISABLE_LINEAR` kill-switch; degrade-to-noop |
 | Jira | Active | [`connections/jira.md`](connections/jira.md) | **Ticket-sync** (Team Surfaces) — Atlassian MCP `mcp__atlassian__*` (ToolSearch probe); parity with Linear; `GDD_DISABLE_JIRA` kill-switch; degrade-to-noop |
 | Notion | Active | [`connections/notion.md`](connections/notion.md) | **Export** write-path (not a pipeline stage) — `mcp__notion__*` (ToolSearch probe); `/gdd:export --format notion`; redact + `GDD_DISABLE_NOTION` kill-switch; degrade-to-HTML |
-| Lottie | Active | [`connections/lottie.md`](connections/lottie.md) | **Optional** motion verify (Lottie JSON); static floor = `validate-motion.cjs` (MO-* warnings + perf budget); player opt-in; WARN-never-block, degrade-to-static/code-only (36.2, D-02/D-03) |
-| Rive | Active | [`connections/rive.md`](connections/rive.md) | **Optional** motion verify (Rive `.riv`); size + RIVE-header floor; deep state-machine graph via opt-in Rive runtime, else manual-review advisory; WARN-never-block (36.2, D-02/D-04) |
-| Framer | Active | [`connections/framer.md`](connections/framer.md) | **AI-native** (Wave 2, canvas) — read frames + write proposals; MCP probe; degrade-to-code-only (37.1) |
-| Penpot | Active | [`connections/penpot.md`](connections/penpot.md) | **AI-native** (Wave 2, canvas) — open-source Figma alt; self-hosted-vs-cloud probe; degrade-to-code-only (37.1) |
-| Webflow | Active | [`connections/webflow.md`](connections/webflow.md) | **AI-native** (Wave 2, generator) — read site structure as an adaptation source (not CMS authoring); degrade-to-code-only (37.1) |
-| v0.dev | Active | [`connections/v0-dev.md`](connections/v0-dev.md) | **AI-native** (Wave 2, generator) — Vercel v0; MCP-first → REST + `V0_API_KEY`; component-generator `v0` impl (37.1) |
-| Plasmic | Active | [`connections/plasmic.md`](connections/plasmic.md) | **AI-native** (Wave 2, dual) — canvas read + code emission; component-generator `plasmic` impl (37.1) |
-| Builder.io | Active | [`connections/builder-io.md`](connections/builder-io.md) | **AI-native** (Wave 2, generator) — Visual Copilot, pull-only this phase; component-generator `builder-io` impl (37.1) |
-| LaunchDarkly | Active | [`connections/launchdarkly.md`](connections/launchdarkly.md) | **Outcome** (experiment-source) — read-only A/B results (`LAUNCHDARKLY_API_KEY`/MCP); `experiment-result-ingester` → `design_arms`; `GDD_DISABLE_LAUNCHDARKLY`; degrade-to-noop (38) |
-| Statsig | Active | [`connections/statsig.md`](connections/statsig.md) | **Outcome** (experiment-source) — read-only experiment/pulse results (`STATSIG_API_KEY`/MCP); → `design_arms`; `GDD_DISABLE_STATSIG`; degrade-to-noop (38) |
-| GrowthBook | Active | [`connections/growthbook.md`](connections/growthbook.md) | **Outcome** (experiment-source) — read-only results (`GROWTHBOOK_API_KEY`, self-hosted/cloud, /MCP); → `design_arms`; `GDD_DISABLE_GROWTHBOOK`; degrade-to-noop (38) |
-| UserTesting | Active | [`connections/usertesting.md`](connections/usertesting.md) | **Outcome** (user-research) — read-only test reports; **pseudonymize-first** → `user-research-synthesizer` → brief `<prior-research>`; `GDD_DISABLE_USERTESTING`; degrade-to-noop (38) |
-| Maze | Active | [`connections/maze.md`](connections/maze.md) | **Outcome** (user-research) — read-only usability metrics; **pseudonymize-first** → `user-research-synthesizer`; `GDD_DISABLE_MAZE`; degrade-to-noop (38) |
-| Hotjar | Active | [`connections/hotjar.md`](connections/hotjar.md) | **Outcome** (user-research) — read-only indexed insights (no raw video); **pseudonymize-first** → `user-research-synthesizer`; `GDD_DISABLE_HOTJAR`; degrade-to-noop (38) |
+| Lottie | Active | [`connections/lottie.md`](connections/lottie.md) | **Optional** motion verify (Lottie JSON); static floor = `validate-motion.cjs` (MO-* warnings + perf budget); player opt-in; WARN-never-block, degrade-to-static/code-only |
+| Rive | Active | [`connections/rive.md`](connections/rive.md) | **Optional** motion verify (Rive `.riv`); size + RIVE-header floor; deep state-machine graph via opt-in Rive runtime, else manual-review advisory; WARN-never-block |
+| Framer | Active | [`connections/framer.md`](connections/framer.md) | **AI-native** (canvas) — read frames + write proposals; MCP probe; degrade-to-code-only |
+| Penpot | Active | [`connections/penpot.md`](connections/penpot.md) | **AI-native** (canvas) — open-source Figma alt; self-hosted-vs-cloud probe; degrade-to-code-only |
+| Webflow | Active | [`connections/webflow.md`](connections/webflow.md) | **AI-native** (generator) — read site structure as an adaptation source (not CMS authoring); degrade-to-code-only |
+| v0.dev | Active | [`connections/v0-dev.md`](connections/v0-dev.md) | **AI-native** (generator) — Vercel v0; MCP-first → REST + `V0_API_KEY`; component-generator `v0` impl |
+| Plasmic | Active | [`connections/plasmic.md`](connections/plasmic.md) | **AI-native** (dual) — canvas read + code emission; component-generator `plasmic` impl |
+| Builder.io | Active | [`connections/builder-io.md`](connections/builder-io.md) | **AI-native** (generator) — Visual Copilot, pull-only currently; component-generator `builder-io` impl |
+| LaunchDarkly | Active | [`connections/launchdarkly.md`](connections/launchdarkly.md) | **Outcome** (experiment-source) — read-only A/B results (`LAUNCHDARKLY_API_KEY`/MCP); `experiment-result-ingester` → `design_arms`; `GDD_DISABLE_LAUNCHDARKLY`; degrade-to-noop |
+| Statsig | Active | [`connections/statsig.md`](connections/statsig.md) | **Outcome** (experiment-source) — read-only experiment/pulse results (`STATSIG_API_KEY`/MCP); → `design_arms`; `GDD_DISABLE_STATSIG`; degrade-to-noop |
+| GrowthBook | Active | [`connections/growthbook.md`](connections/growthbook.md) | **Outcome** (experiment-source) — read-only results (`GROWTHBOOK_API_KEY`, self-hosted/cloud, /MCP); → `design_arms`; `GDD_DISABLE_GROWTHBOOK`; degrade-to-noop |
+| UserTesting | Active | [`connections/usertesting.md`](connections/usertesting.md) | **Outcome** (user-research) — read-only test reports; **pseudonymize-first** → `user-research-synthesizer` → brief `<prior-research>`; `GDD_DISABLE_USERTESTING`; degrade-to-noop |
+| Maze | Active | [`connections/maze.md`](connections/maze.md) | **Outcome** (user-research) — read-only usability metrics; **pseudonymize-first** → `user-research-synthesizer`; `GDD_DISABLE_MAZE`; degrade-to-noop |
+| Hotjar | Active | [`connections/hotjar.md`](connections/hotjar.md) | **Outcome** (user-research) — read-only indexed insights (no raw video); **pseudonymize-first** → `user-research-synthesizer`; `GDD_DISABLE_HOTJAR`; degrade-to-noop |
 
 ---
 
@@ -56,8 +56,8 @@ This directory contains connection specifications for external tools and MCPs th
 
 Each cell describes what the connection contributes at that pipeline stage, or `—` if it is not used.
 
-| Connection | scan | discover | plan | design | verify | canvas | generator | notify | ticket-sync |
-|-----------|------|----------|------|--------|--------|--------|-----------|--------|------------|
+| Connection | brief | explore | plan | design | verify | canvas | generator | notify | ticket-sync |
+|-----------|-------|---------|------|--------|--------|--------|-----------|--------|------------|
 | gdd-state | STATE mutation (init position, probe_connections, add_decision) | STATE mutation (add_decision, add_must_have, transition gate) | STATE mutation (locked decisions, must_haves, transition gate) | STATE mutation (update_progress, resolve_blocker, transition gate) | STATE mutation (must_have pass/fail, add_blocker, set_status) | — | — | — | — |
 | Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | write tokens/annotations/Code Connect via `use_figma` (FWR-01..04) | — | — | — | — | — |
 | Refero | — | reference search via `mcp__refero__search`; fallback → awesome-design-md (CONN-05) | — | — | — | — | — | — | — |
@@ -66,35 +66,35 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 | Chromatic | — | — | change-risk scoping (CHR-02) | — | visual delta narration (CHR-01) | — | — | — | — |
 | Graphify | — | — | dependency scoping (GRF-03) | — | orphan detection (GRF-04) | — | — | — | — |
 | Pinterest | probe only | visual reference search via `pinterest_search`; fallback → Refero → awesome-design-md | — | — | — | — | — | — | — |
-| Claude Design | bundle probe → `claude_design: available` | synthesizer handoff mode — parses bundle → D-XX decisions; discussant `--from-handoff` confirms | — (skipped in handoff) | — (skipped in handoff) | Handoff Faithfulness section; bidirectional write-back via figma-writer `implementation-status` mode | — | — | — | — |
+| Claude Design | bundle probe → `claude_design: available` | synthesizer handoff mode — parses bundle → decisions; discussant `--from-handoff` confirms | — (skipped in handoff) | — (skipped in handoff) | Handoff Faithfulness section; bidirectional write-back via figma-writer `implementation-status` mode | — | — | — | — |
 | paper.design | — | canvas read: `get_selection`, `get_jsx`, `get_computed_styles` | — | paper-writer: annotate/tokenize/roundtrip | `get_screenshot` for `? VISUAL` | ✓ | — | — | — |
 | pencil.dev | `.pen` discovery | `.pen` as canonical design source | — | pencil-writer: annotate/roundtrip | spec-vs-impl diff | ✓ | — | — | — |
 | 21st.dev | — | prior-art gate: marketplace search before greenfield build | — | component-generator (21st impl) | — | — | ✓ | — | — |
 | Magic Patterns | — | — | — | component-generator (magic-patterns impl) | preview_url → `? VISUAL` check | — | ✓ | — | — |
 | OpenRouter | — | — | — | — | — | — | ✓ (model-router: tier→model resolution, all stages) | — | — |
-| Xcode Simulator | — | — | — | native iOS code-gen target (swift-executor / emitSwift) | rendered SwiftUI snapshot when simulator available, else degrade to code-only structural audit (D-03) | — | — | — | — |
-| Android Emulator | — | — | — | native Android code-gen target (compose-executor / emitCompose) | rendered Compose screenshot when emulator available, else degrade to code-only structural audit (D-03) | — | — | — | — |
-| Litmus | — | — | — | email render-test target (email-executor) | cross-client rendered evidence when Litmus available, else degrade to the static email-HTML validator / code-only (D-03) | — | — | — | — |
-| Print-Renderer | — | — | — | print render-test target (pdf-executor) | rendered PDF/page evidence when the print-render is available, else degrade to the static print-CSS validator / code-only (D-03) | — | — | — | — |
-| Lottie | — | — | — | — | Lottie-export motion check: `validate-motion.cjs` (MO-FR/DUR/IMG/BUDGET) when present, WARN-never-block (D-02) | — | — | — | — |
-| Rive | — | — | — | — | Rive-export motion check: size + RIVE-header floor; state-machine graph via opt-in runtime, else manual-review advisory; WARN (D-02/D-04) | — | — | — | — |
+| Xcode Simulator | — | — | — | native iOS code-gen target (swift-executor / emitSwift) | rendered SwiftUI snapshot when simulator available, else degrade to code-only structural audit | — | — | — | — |
+| Android Emulator | — | — | — | native Android code-gen target (compose-executor / emitCompose) | rendered Compose screenshot when emulator available, else degrade to code-only structural audit | — | — | — | — |
+| Litmus | — | — | — | email render-test target (email-executor) | cross-client rendered evidence when Litmus available, else degrade to the static email-HTML validator / code-only | — | — | — | — |
+| Print-Renderer | — | — | — | print render-test target (pdf-executor) | rendered PDF/page evidence when the print-render is available, else degrade to the static print-CSS validator / code-only | — | — | — | — |
+| Lottie | — | — | — | — | Lottie-export motion check: `validate-motion.cjs` (MO-FR/DUR/IMG/BUDGET) when present, WARN-never-block | — | — | — | — |
+| Rive | — | — | — | — | Rive-export motion check: size + RIVE-header floor; state-machine graph via opt-in runtime, else manual-review advisory; WARN | — | — | — | — |
 | Framer | — | — | — | canvas source (read frames, write proposals) | — | ✓ | — | — | — |
 | Penpot | — | — | — | canvas source (read boards/components) | — | ✓ | — | — | — |
 | Webflow | — | — | — | structure / adaptation source | — | — | ✓ | — | — |
 | v0.dev | — | — | — | component-generator (v0 impl) | — | — | ✓ | — | — |
 | Plasmic | — | — | — | component-generator (plasmic impl) + canvas read | — | ✓ | ✓ | — | — |
 | Builder.io | — | — | — | component-generator (builder-io impl) | — | — | ✓ | — | — |
-| Lazyweb | — | reference search via `lazyweb_search` (**Tier 1 — free, tried first**; D-01); complements refero/pinterest | — | — | — | — | — | — | — |
-| Mobbin | — | reference search via mobbin tools (**Tier 2 — paid, mobile/flow-level**; D-01); complements refero/lazyweb | — | — | — | — | — | — | — |
-| Slack | — | — | — | — | — | — | — | verify-fail/audit-pass/ship → Slack webhook (routed, redacted, degrade-to-noop; D-04/D-05) | — |
+| Lazyweb | — | reference search via `lazyweb_search` (**Tier 1 — free, tried first**); complements refero/pinterest | — | — | — | — | — | — | — |
+| Mobbin | — | reference search via mobbin tools (**Tier 2 — paid, mobile/flow-level**); complements refero/lazyweb | — | — | — | — | — | — | — |
+| Slack | — | — | — | — | — | — | — | verify-fail/audit-pass/ship → Slack webhook (routed, redacted, degrade-to-noop) | — |
 | Discord | — | — | — | — | — | — | — | parity with Slack — events → Discord webhook (routed, redacted, degrade-to-noop) | — |
-| Linear | — | — | — | — | — | — | — | — | bidirectional cycle↔issue: read comments (decision-injector) + transition + redacted summary on completion (D-03) |
+| Linear | — | — | — | — | — | — | — | — | bidirectional cycle↔issue: read comments (decision-injector) + transition + redacted summary on completion |
 | Jira | — | — | — | — | — | — | — | — | parity with Linear — Atlassian MCP; transition + redacted summary on completion |
 
 **Column definitions:**
 
-- **scan** — what the connection provides when the scan stage runs (design tokens, source metadata)
-- **discover** — what the connection provides during discovery (visual references, design decisions)
+- **brief** — what the connection provides when the brief stage runs (design tokens, source metadata)
+- **explore** — what the connection provides during exploration (visual references, design decisions)
 - **plan** — what the connection contributes to planning artifacts
 - **design** — what the connection provides during design execution
 - **verify** — what the connection checks or surfaces during verification
@@ -235,7 +235,7 @@ Step G1 — Bash: test -n "$DISCORD_WEBHOOK_URL"
   → non-empty                      → discord: available
 ```
 
-Note: Lazyweb + Mobbin probes are ToolSearch-only (no live call). The discover stage resolves reference sources **cost-aware (D-01): Lazyweb (free) → Mobbin / Refero (paid, whichever is bound + subscribed) → Pinterest → awesome-design-md → WebFetch.**
+Note: Lazyweb + Mobbin probes are ToolSearch-only (no live call). The explore stage resolves reference sources **cost-aware: Lazyweb (free) → Mobbin / Refero (paid, whichever is bound + subscribed) → Pinterest → awesome-design-md → WebFetch.**
 
 ---
 
@@ -294,7 +294,7 @@ Note: First Chromatic run has no baseline — all stories become new snapshots. 
 **Graphify probe (execute at agent entry, before using graph):**
 
 ```
-Step G1 — Config check (per D-09 direct read, no CLI subcommand):
+Step G1 — Config check (direct read, no CLI subcommand):
   Bash: node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
   → false → graphify: not_configured
   → true  → proceed to Step G2
@@ -328,19 +328,18 @@ To add a new connection to the pipeline:
 
 4. **Declare the MCP.** If the connection uses an MCP server, ensure the server is declared in `.claude-plugin/plugin.json` or documented as a user-supplied MCP in the spec file. For read+write remote MCPs, use `connections/figma.md` as the model. For read-only remote MCPs with headless / API-key-free setup, use `connections/pinterest.md`.
 
-5. **Wire into stage skills (Phase 2+ work).** Update the relevant stage `SKILL.md` files to probe the connection at entry and write its status to `.design/STATE.md <connections>`.
+5. **Wire into stage skills.** Update the relevant stage `SKILL.md` files to probe the connection at entry and write its status to `.design/STATE.md <connections>`.
 
-6. **Update relevant agents (Phase 2+ work).** If agents will use the connection's tools, list the MCP tools in the agent's `tools` frontmatter field.
+6. **Update relevant agents.** If agents will use the connection's tools, list the MCP tools in the agent's `tools` frontmatter field.
 
 ---
 
 ## Notes
 
-- `connections/` is infrastructure scaffolding introduced in Phase 1. Stage integration (wiring detection and graceful degradation into each stage) is Phase 2 work.
-- Phase 8 added five new active connections. Linear and GitHub remain planned for a future phase.
-- Phase 14 added four AI-native design tool connections (paper.design, pencil.dev, 21st.dev, Magic Patterns) and the canvas/generator capability columns.
-- Phase 20 added `gdd-state` — a local stdio MCP server shipped with the plugin that owns STATE.md mutation across every pipeline stage. Unlike external connections, `gdd-state` is required (fallback to direct module import preserves mutation safety but loses event telemetry). See [`connections/gdd-state.md`](connections/gdd-state.md).
-- The capability matrix columns map to the five pipeline stages: `scan | discover | plan | design | verify`, plus `canvas` and `generator` sub-categories.
+- `connections/` is the infrastructure scaffolding that catalogs external integrations. Stage integration wires detection and graceful degradation into each pipeline stage.
+- AI-native design tool connections (paper.design, pencil.dev, 21st.dev, Magic Patterns) populate the canvas/generator capability columns.
+- `gdd-state` is a local stdio MCP server shipped with the plugin that owns STATE.md mutation across every pipeline stage. Unlike external connections, `gdd-state` is required (fallback to direct module import preserves mutation safety but loses event telemetry). See [`connections/gdd-state.md`](connections/gdd-state.md).
+- The capability matrix columns map to the five pipeline stages: `brief | explore | plan | design | verify`, plus `canvas` and `generator` sub-categories.
 
 ---
 

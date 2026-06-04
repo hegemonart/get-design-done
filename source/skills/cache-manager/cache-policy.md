@@ -21,7 +21,7 @@ The two layers (D-08):
 
 ## Deterministic Input-Hash Algorithm (Layer B)
 
-The canonical reference implementation (the single source of truth; `hooks/budget-enforcer.js` imports the same primitive via a shared helper):
+The canonical reference implementation (the single source of truth; `hooks/budget-enforcer.ts` imports the same primitive via a shared helper):
 
 ```js
 // Deterministic cache-key primitive (reference implementation)

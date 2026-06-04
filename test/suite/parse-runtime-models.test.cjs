@@ -24,17 +24,16 @@ const {
 } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'install', 'parse-runtime-models.cjs'));
 const { listRuntimeIds } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'install', 'runtimes.cjs'));
 
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace` (Tier-2
-// distribution channel). The parser's KNOWN_RUNTIME_IDS list and the
-// reference/runtime-models.md content cover install-target runtimes only,
-// so the new Tier-2 entry won't appear there. Wave D's atomic update will
-// either add a cursor-marketplace row to runtime-models.md or restrict
-// the comparison to install-target runtimes per CONTEXT D-08.
-test('parse-runtime-models: KNOWN_RUNTIME_IDS matches install/runtimes.cjs RUNTIMES list', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry not in KNOWN_RUNTIME_IDS per Plan B1' }, () => {
-  const installerIds = listRuntimeIds();
+// Phase 28.8 (Plans B1, C1) added two Tier-2 distribution-channel entries
+// (`cursor-marketplace` + `codex-plugin`) to the runtimes.cjs registry.
+// The parser's KNOWN_RUNTIME_IDS list and reference/runtime-models.md cover
+// Tier-1 install targets only (Tier-2 channels are out-of-band bundles
+// without per-user model rows). Filter the Tier-2 ids before comparing.
+const TIER2_IDS = ['codex-plugin', 'cursor-marketplace'];
+test('parse-runtime-models: KNOWN_RUNTIME_IDS matches install/runtimes.cjs Tier-1 install targets (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
+  const tier1Installer = listRuntimeIds().filter((id) => !TIER2_IDS.includes(id));
   // Order-independent equality.
-  assert.deepEqual([...KNOWN_RUNTIME_IDS].sort(), [...installerIds].sort());
+  assert.deepEqual([...KNOWN_RUNTIME_IDS].sort(), [...tier1Installer].sort());
   assert.equal(KNOWN_RUNTIME_IDS.length, 14);
 });
 
@@ -50,10 +49,14 @@ test('parse-runtime-models: reference/runtime-models.md parses cleanly', () => {
   assert.equal(result.runtimes.length, 14, 'all 14 runtimes present');
 });
 
-test('parse-runtime-models: every runtime ID from runtimes.cjs is present in the markdown', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry not in runtime-models.md per Plan B1' }, () => {
+test('parse-runtime-models: every Tier-1 runtime ID from runtimes.cjs is present in the markdown (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
+  // runtime-models.md covers Tier-1 install targets only; Phase 28.8's
+  // Tier-2 distribution-channel entries (`cursor-marketplace`,
+  // `codex-plugin`) have no per-user model row.
   const result = parseRuntimeModels({ cwd: REPO_ROOT });
   const ids = result.runtimes.map((r) => r.id).sort();
-  assert.deepEqual(ids, [...listRuntimeIds()].sort());
+  const tier1Installer = listRuntimeIds().filter((id) => !TIER2_IDS.includes(id)).sort();
+  assert.deepEqual(ids, tier1Installer);
 });
 
 test('parse-runtime-models: claude seed picks (D-02) are locked', () => {
@@ -258,13 +261,18 @@ test('parse-runtime-models: rejects duplicate runtime id', () => {
   assert.throws(() => parseRuntimeModelsFromString(md), /duplicate runtime id 'claude'/);
 });
 
-test('parse-runtime-models: schema file exists and is valid JSON', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); runtime-models.schema.json enum lacks cursor-marketplace Tier-2 entry per Plan B1' }, () => {
+test('parse-runtime-models: schema file exists and is valid JSON (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
+  // runtime-models.schema.json enumerates Tier-1 install-target runtime ids
+  // only; Phase 28.8's Tier-2 distribution-channel entries
+  // (`cursor-marketplace`, `codex-plugin`) are not part of the model-row
+  // schema. Filter Tier-2 ids out of the comparison.
   const schemaPath = path.join(REPO_ROOT, 'reference', 'schemas', 'runtime-models.schema.json');
   assert.ok(fs.existsSync(schemaPath));
   const s = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
   assert.equal(s.$schema, 'http://json-schema.org/draft-07/schema#');
+  const tier1Installer = listRuntimeIds().filter((id) => !TIER2_IDS.includes(id)).sort();
   assert.deepEqual(
-    s.definitions.runtimeEntry.properties.id.enum.sort(),
-    [...listRuntimeIds()].sort(),
+    [...s.definitions.runtimeEntry.properties.id.enum].sort(),
+    tier1Installer,
   );
 });

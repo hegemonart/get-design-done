@@ -19,7 +19,8 @@ const PROFILE_MODEL_MAP = {
 test('model-profiles: agents with model:inherit use appropriate convention', () => {
   const agentsDir = path.join(REPO_ROOT, 'agents');
   const agentFiles = fs.readdirSync(agentsDir)
-    .filter(f => f.startsWith('design-') && f.endsWith('.md'));
+    // Widened from `f.startsWith('design-')` — see agent-frontmatter.test.cjs.
+    .filter(f => f.endsWith('.md') && f !== 'README.md');
 
   for (const f of agentFiles) {
     const fm = readFrontmatter(path.join(agentsDir, f));

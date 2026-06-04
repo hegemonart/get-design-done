@@ -186,9 +186,11 @@ test('31-5-08: must-NOT-ship maintainer-only files are absent (D-09)', () => {
     !actual.includes('scripts/verify-version-sync.cjs'),
     '31-5-08: tarball must NOT include scripts/verify-version-sync.cjs (maintainer-only)',
   );
+  // scripts/bootstrap.sh was replaced by scripts/bootstrap.cjs in the Windows
+  // hooks port — the .cjs is a runtime artifact and MUST ship; the .sh is gone.
   assert.ok(
-    !actual.includes('scripts/bootstrap.sh'),
-    '31-5-08: tarball must NOT include scripts/bootstrap.sh (maintainer-only)',
+    actual.includes('scripts/bootstrap.cjs'),
+    'tarball MUST include scripts/bootstrap.cjs (called from hooks/hooks.json SessionStart)',
   );
   const e2e = startsWithAny('scripts/e2e/');
   assert.equal(

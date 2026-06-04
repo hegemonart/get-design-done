@@ -686,6 +686,20 @@ OFF_CADENCE_VERSIONS.add('1.57.0');
 // -root walk-ups use the scoped name. No new dependency. Markdown floor (the CI surface) unchanged.
 OFF_CADENCE_VERSIONS.add('1.57.1');
 
+// 1.57.2 -> polish-wave patch (no new features). Single grooming wave closing the v1.57 audit-flagged debt:
+// 8 critical bug fixes (injection scanner shipping, gdd-sdk stage CLI helpful error, Codex generator HTML
+// wrapper, worktree-aware hook path resolution, MCP circuit-breaker substring false-positive, Windows
+// SessionStart .sh -> .cjs port, protected-paths regex bypass closure with 12 regression tests, figma-write
+// dispatch syntax fix) + 5 new CI gates (validate:feature-counts, validate:registry-tiers,
+// validate:no-internal-refs, validate:cache-tiers, validate:skill-surface) + Batch D aspirational-feature
+// wirings (paper-write + pencil-write skills, gdd-intel-trigger hook, calibration loop end-to-end,
+// design-context-reviewer + gate wired into explore, JSON output contracts on planner+verifier, peer-CLI
+// delegation opt-in on design-research-synthesizer) + agents/README authoring contract cleanup + 90+ Phase NN
+// strip from registry.json + 7 schema cleanups + Windows-without-Git-Bash compatibility + L0 cache-prefix
+// identity scrub + README rewrite 968 -> 623 lines (chronicle moves to CHANGELOG). 5,007/5,007 tests pass.
+// No new dependency. Additive only.
+OFF_CADENCE_VERSIONS.add('1.57.2');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
