@@ -27,7 +27,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `plan` | `get-design-done:plan` | Stage 3 of 5 - decompose into tasks → DESIGN-PLAN.md |
 | `design` | `get-design-done:design` | Stage 4 of 5 - execute tasks → DESIGN-SUMMARY.md |
 | `verify` | `get-design-done:verify` | Stage 5 of 5 - score + audit → DESIGN-VERIFICATION.md |
-| `handoff <path>` | inline | Skip scan/discover/plan; initialize from Claude Design bundle; route to verify |
+| `handoff <path>` | `get-design-done:gdd-handoff` | Skip scan/discover/plan; initialize from Claude Design bundle; route to verify |
 | `map` | `get-design-done:gdd-map` | Parallel codebase mapping - spawns 5 mappers → `.design/map/*.md` + `.design/DESIGN-MAP.md` |
 | `next` | `get-design-done:gdd-next` | Route to the next pipeline stage based on STATE.md |
 | `help` | `get-design-done:gdd-help` | List all commands with one-line descriptions |
@@ -207,7 +207,7 @@ If `$ARGUMENTS` is a stage or command name - invoke it directly, no state check:
 /gdd:plan      → Skill("get-design-done:plan")          # stage 3-of-5
 /gdd:design    → Skill("get-design-done:design")        # stage 4-of-5
 /gdd:verify    → Skill("get-design-done:verify")        # stage 5-of-5
-/gdd:handoff   → [Handoff Routing] (inline — see ## Handoff Routing above)
+/gdd:handoff   → Skill("get-design-done:gdd-handoff")
 /gdd:map       → Skill("get-design-done:gdd-map")       # parallel codebase mapping
 /gdd:next      → Skill("get-design-done:gdd-next")
 /gdd:help      → Skill("get-design-done:gdd-help")

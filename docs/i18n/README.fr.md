@@ -4,6 +4,8 @@
 
 [English](../../README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Français** · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
+> Remarque : cette traduction peut être en retard sur la version anglaise. La version de référence est [README.md](../../README.md) (translation may lag behind English; see README.md for the canonical version).
+
 **Un pipeline de qualité design pour agents de code IA : brief → exploration → plan → implémentation → vérification.**
 
 **Get Design Done garde l'UI générée par IA liée à votre brief, votre design system, vos références et vos quality gates. Fonctionne avec Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy et Cline.**

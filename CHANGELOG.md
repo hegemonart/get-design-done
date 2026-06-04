@@ -4,6 +4,38 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.6] - 2026-06-05
+
+Sixth and final point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Product-surface docs, the handoff skill, and the fact-gate. **Milestone complete.**
+
+### Added
+
+- **Real `/gdd:handoff` skill** (`skills/handoff/`), replacing the phantom command the README and Jump Mode advertised with no skill behind it. A thin wrapper that initializes a cycle from a Claude Design bundle and routes to verify. (Skill count 95 to 96.)
+- **`docs/KNOWLEDGE-BASE.md`**, a navigable index of the reference library, linked from the README.
+
+### Changed
+
+- **Product-first README** (623 to 402 lines): rewritten from the readme-redesign draft, leading with what the tool does and how to start. The 6-badge block and the i18n language nav are preserved verbatim; release-chronicle prose now lives only in this CHANGELOG.
+- **Honest multi-runtime claim**: the full 14-runtime breadth list carries an explicit caveat (the full design-quality gate is Claude Code; hooks are Claude-only; MCP works on ~3 runtimes; the rest are install-supported but untested).
+- **i18n lag banners** added to all 6 localized READMEs (translations may lag the canonical English).
+
+### Fixed (fact-gate)
+
+- Removed 3 phantom commands from the README that had no backing skill (`/gdd:scan`, `/gdd:set-profile`, `/gdd:run-skill`); every `/gdd:` command in the README now resolves to a real skill in the manifest.
+- Corrected stale counts to the shipped reality: **64 agents, 96 skills, 39 connection integrations, 13 read-only MCP tools, 14 runtimes**, and the knowledge-base "222 reference files" figure to the actual 189.
+
+### Milestone v1.59 complete
+
+Six point releases (1.59.1 to 1.59.6) closed out the v1.58.1 audit: MCP servers auto-register, the connection / skill / agent counts are honest and gated, agent model/tier routing is coherent, the skill-authoring surface ships to npm, the Batch-H polish landed, and every command / count / runtime claim in the README now resolves against the code.
+
+### Breaking changes
+
+None.
+
+5,070/5,070 tests pass.
+
+---
+
 ## [1.59.5] - 2026-06-05
 
 Fifth point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Batch H polish + runtime-model provenance.

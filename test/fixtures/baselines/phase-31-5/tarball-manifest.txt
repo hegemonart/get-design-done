@@ -712,6 +712,7 @@ scripts/skill-templates/fast/SKILL.md
 scripts/skill-templates/figma-extract/SKILL.md
 scripts/skill-templates/figma-write/SKILL.md
 scripts/skill-templates/graphify/SKILL.md
+scripts/skill-templates/handoff/SKILL.md
 scripts/skill-templates/health/SKILL.md
 scripts/skill-templates/health/health-mcp-detection.md
 scripts/skill-templates/health/health-skill-length-report.md
@@ -930,6 +931,7 @@ skills/fast/SKILL.md
 skills/figma-extract/SKILL.md
 skills/figma-write/SKILL.md
 skills/graphify/SKILL.md
+skills/handoff/SKILL.md
 skills/health/SKILL.md
 skills/health/health-mcp-detection.md
 skills/health/health-skill-length-report.md
