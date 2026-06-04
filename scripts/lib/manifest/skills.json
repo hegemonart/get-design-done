@@ -219,6 +219,19 @@
       "description": "Manage the Graphify knowledge graph for the current project. Build, query, status, diff. When available, design-planner and design-integration-checker use the graph for pre-search consultation."
     },
     {
+      "name": "handoff",
+      "description": "Handoff-first entry point that initializes a cycle from a Claude Design handoff bundle (URL, ZIP, HTML, PDF, or PPTX), skips the explore/plan stages, and routes straight to post-handoff verify. Thin wrapper over the Handoff Routing logic in the root pipeline router and the claude-design connection. Use when a Claude Design bundle was sent or dropped into the project and you want to implement and verify it without re-running discovery, or when arguments start with handoff or contain --from-handoff.",
+      "argument_hint": "<bundle-path-or-url>",
+      "user_invocable": true,
+      "tools": "Read, Write, Bash, Glob, Grep, Task",
+      "composes_with": [
+        "verify"
+      ],
+      "next_skills": [
+        "verify"
+      ]
+    },
+    {
       "name": "health",
       "description": "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions. Activates for requests involving checking .design artifact health, staleness, token drift, or broken state transitions.",
       "tools": "Read, Bash, Glob, Grep, mcp__gdd_state__get",
