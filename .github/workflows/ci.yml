@@ -47,6 +47,7 @@ jobs:
             --exclude-path .planning
             --exclude-path .claude
             --exclude-path test/fixtures/baselines
+            --exclude-path test/suite/fixtures
             '**/*.md'
           fail: true
 
@@ -135,7 +136,7 @@ jobs:
       - name: Validate JSON schemas
         run: npm run validate:schemas
 
-      - name: Skill build determinism gate (compile is byte-stable + on-disk skills/ matches skill-templates/)
+      - name: Skill build drift gate (committed skills/ == compile(skill-templates/))
         run: npm run build:skills:check
 
       - name: Plugin validate (schema-only fallback)

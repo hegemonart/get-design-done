@@ -736,6 +736,16 @@ OFF_CADENCE_VERSIONS.add('1.57.3');
 // No new dependency. Additive only.
 OFF_CADENCE_VERSIONS.add('1.58.0');
 
+// 1.58.1 -> hotfix for v1.58.0: skills/ was gitignored as a "build artifact" but that
+// broke the Claude Code marketplace install path (Claude Code git-clones the plugin
+// without running `npm install`, so `./skills/` was absent post-clone). v1.58.1 reverts
+// the gitignore: skills/ is committed again so git-clone-based installs work out of the
+// box. skill-templates/ stays canonical (no source/ wrapper, that win persists), and the
+// drift gate goes back to enforcing `committed skills/ == compile(skill-templates/)`.
+// `prepare` lifecycle still regenerates skills/ on contributor `npm install`. End-user
+// install via either path (Claude Code marketplace OR npm) now works.
+OFF_CADENCE_VERSIONS.add('1.58.1');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {
