@@ -5,10 +5,17 @@ doc here is the editable truth - the per-skill prose, examples, procedure files
 (`*-procedure.md`, `*-rules.md`, emitters, etc.) all live here.
 
 The user-facing `skills/` directory at the repo root is a **build artifact**, not source.
-It's gitignored and regenerated automatically:
+It is **committed** (since v1.58.1, NOT gitignored) and regenerated from this directory:
 
-- on `npm install` (via the `prepare` lifecycle script) - so developer clones work immediately
+- on `npm install` (via the `prepare` lifecycle script) - so contributor clones rebuild it from source
 - on `npm pack` / `npm publish` (via `prepack`) - so the published tarball ships pre-built skills
+- on demand via `node scripts/build-skills.cjs`, with the `build:skills:check` drift gate (CI)
+  failing the build whenever the committed `skills/` no longer matches `scripts/skill-templates/`
+
+It stays in git because the Claude Code marketplace install path git-clones the plugin
+**without** running `npm install`, so `./skills/` must already exist post-clone. v1.58.0
+briefly gitignored it and broke that path; v1.58.1 restored it as a committed, drift-gated
+build output.
 
 End users installing `@hegemonart/get-design-done` from the npm registry receive a tarball
 with `skills/` already built; no build step runs on their machine.
@@ -45,8 +52,9 @@ only to seed the manifest from current sources when reconciling drift.
    `npm run generate:skill-frontmatter`.
 3. **Edit non-managed frontmatter** -> modify `scripts/skill-templates/<slug>/SKILL.md` directly; the generator
    preserves it.
-4. **Regenerate the built surface** -> `npm run build:skills`. This rewrites the gitignored
-   `skills/<slug>/SKILL.md` byte-for-byte from the templates.
+4. **Regenerate the built surface** -> `npm run build:skills`. This rewrites the committed
+   `skills/<slug>/SKILL.md` byte-for-byte from the templates; commit the regenerated `skills/`
+   alongside your template edit so the `build:skills:check` drift gate stays green.
 5. **Verify the build** -> `npm run build:skills:check` (CI gate) confirms compile determinism
    and that the on-disk `skills/` matches what `scripts/skill-templates/` would generate.
 
