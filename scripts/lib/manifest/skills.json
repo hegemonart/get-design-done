@@ -31,7 +31,7 @@
     },
     {
       "name": "bandit-reset",
-      "description": "Confirm-then-reset the per-(agent, bin, delegate) bandit posterior - backs up .design/telemetry/posterior.json to posterior.json.bak, then clears it to a fresh empty envelope. Phase 23.5 (v1.27.5) mutation companion to read-only bandit-status. Use when the posterior is corrupted/unparseable, after a major agent/skill roster change invalidates accumulated arms, or when you deliberately want to rebootstrap adaptive routing from informed priors.",
+      "description": "Confirm-then-reset the per-(agent, bin, delegate) bandit posterior - backs up .design/telemetry/posterior.json to posterior.json.bak, then clears it to a fresh empty envelope. Mutation companion to read-only bandit-status. Use when the posterior is corrupted/unparseable, after a major agent/skill roster change invalidates accumulated arms, or when you deliberately want to rebootstrap adaptive routing from informed priors.",
       "argument_hint": "[--yes to skip the confirmation prompt]",
       "tools": "Read, Write, Bash, AskUserQuestion",
       "disable_model_invocation": true

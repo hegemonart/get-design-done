@@ -65,6 +65,10 @@ const DISABLE_INVOCATION_WHITELIST = new Set([
   // tier-mapping diagnostic (/gdd:openrouter-status), user-invoked only — never
   // auto-spawned by the model. Mirrors the cache-manager no-spawn discipline.
   'openrouter-status',
+  // Phase 59.1 (A5): bandit-reset is a destructive maintenance skill
+  // (/gdd:bandit-reset) that clears the bandit posterior — user-invoked only,
+  // never model-auto-spawned. Mirrors the bandit-status no-spawn discipline.
+  'bandit-reset',
 ]);
 
 function parseArgs(argv) {

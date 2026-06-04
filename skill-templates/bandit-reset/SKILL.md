@@ -1,6 +1,6 @@
 ---
 name: gdd-bandit-reset
-description: "Confirm-then-reset the per-(agent, bin, delegate) bandit posterior - backs up .design/telemetry/posterior.json to posterior.json.bak, then clears it to a fresh empty envelope. Phase 23.5 (v1.27.5) mutation companion to read-only bandit-status. Use when the posterior is corrupted/unparseable, after a major agent/skill roster change invalidates accumulated arms, or when you deliberately want to rebootstrap adaptive routing from informed priors."
+description: "Confirm-then-reset the per-(agent, bin, delegate) bandit posterior - backs up .design/telemetry/posterior.json to posterior.json.bak, then clears it to a fresh empty envelope. Mutation companion to read-only bandit-status. Use when the posterior is corrupted/unparseable, after a major agent/skill roster change invalidates accumulated arms, or when you deliberately want to rebootstrap adaptive routing from informed priors."
 argument-hint: "[--yes to skip the confirmation prompt]"
 tools: Read, Write, Bash, AskUserQuestion
 disable-model-invocation: true
@@ -31,7 +31,7 @@ No posterior file found at `.design/telemetry/posterior.json` — nothing to res
 The next bandit pull with `adaptive_mode: full` will bootstrap a fresh posterior from informed priors. See `reference/bandit-integration.md`.
 ```
 
-If present, count the arms (`arms.length`, treating a missing/non-array `arms` as `0`) so the confirmation and receipt can report what will be cleared. A corrupted/unparseable file is still resettable — report `arms: unknown (file unparseable)` and continue.
+If present, count the arms (`arms.length`, treating a missing/non-array `arms` as `0`) so the confirmation and receipt can report what will be cleared. A corrupted/unparseable file is still resettable - report `arms: unknown (file unparseable)` and continue.
 
 ### 2. Require explicit confirmation
 
@@ -51,7 +51,7 @@ Then skip to Section 5 (Record) with `reset: false`.
 
 ### 3. Back up the current posterior
 
-Copy the live posterior to `.design/telemetry/posterior.json.bak` (sibling backup) BEFORE clearing it, so the previous state is always recoverable. Overwrite any existing `.bak` from a prior reset. If the backup write fails, ABORT before clearing — never clear without a successful backup.
+Copy the live posterior to `.design/telemetry/posterior.json.bak` (sibling backup) BEFORE clearing it, so the previous state is always recoverable. Overwrite any existing `.bak` from a prior reset. If the backup write fails, ABORT before clearing; never clear without a successful backup.
 
 ### 4. Clear to a fresh empty envelope
 
@@ -86,6 +86,6 @@ Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-re
 
 ## Cross-references
 
-- `{{command_prefix}}bandit-status` (Phase 27.5) - read-only companion; inspect the posterior before/after a reset.
+- `{{command_prefix}}bandit-status` - read-only companion; inspect the posterior before/after a reset.
 - `./reference/bandit-integration.md` - operator guide; interpretation patterns and when a reset is warranted.
-- `scripts/lib/bandit-router.cjs` (Phase 23.5) - posterior shape, `DEFAULT_POSTERIOR_PATH`, `SCHEMA_VERSION`, `loadPosterior()`, `savePosterior()`, `reset()`.
+- `scripts/lib/bandit-router.cjs` - posterior shape, `DEFAULT_POSTERIOR_PATH`, `SCHEMA_VERSION`, `loadPosterior()`, `savePosterior()`, `reset()`.
