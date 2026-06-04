@@ -4,6 +4,39 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.58.1] - 2026-06-04
+
+### Hotfix - restore committed skills/ for Claude Code marketplace install
+
+v1.58.0 gitignored `skills/` on the premise that it was a pure build artifact that the `prepare` lifecycle could regenerate on `npm install`. That assumption held for the npm install path (registry tarball already contains pre-built `skills/`) and for dev clones (`npm install` runs `prepare`), but **broke the Claude Code marketplace install path**: Claude Code installs plugins by git-cloning the source repo without running `npm install`, so post-clone `./skills/` was absent and the plugin failed to load any skill.
+
+v1.58.1 reverts the gitignore. `skills/` is committed again as a build artifact. The CI drift gate goes back to enforcing `committed skills/ == compile(skill-templates/)`. End users now get a working plugin via either install path (Claude Code marketplace OR `npm install`).
+
+### What stays from v1.58.0 (the architectural wins persist)
+
+- `skill-templates/` is the canonical editable source (no more `source/` wrapper).
+- `prepare` lifecycle runs `npm run build:skills` on `npm install` so contributor checkouts stay in sync after edits to `skill-templates/`.
+- `prepack` lifecycle chains `build:sdk && build:skills` so the npm tarball still ships a freshly-built `skills/`.
+
+### What changed back from v1.58.0
+
+- **`.gitignore`** no longer excludes `skills/`. 116 files re-tracked.
+- **`scripts/build-skills.cjs --check`** is back to the original Phase 42 drift-gate semantics ("committed === generated"), instead of the v1.58.0 determinism gate.
+- **`regression-baseline.test.cjs`** reads the skill-list from `skills/` again (was `skill-templates/` in v1.58.0).
+- **CI yml** label restored to "Skill build drift gate".
+
+### Migration
+
+No action needed. Contributors continue to edit `skill-templates/<slug>/SKILL.md` and run `npm run build:skills` (or just `npm install`) to regenerate the committed `skills/`. End users see no change.
+
+5,007/5,007 tests pass.
+
+### Breaking changes
+
+None.
+
+---
+
 ## [1.58.0] - 2026-06-04
 
 ### Architectural cleanup - kill the skills/ <-> source/skills/ duplication
