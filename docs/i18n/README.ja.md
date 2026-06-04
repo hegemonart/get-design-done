@@ -4,6 +4,8 @@
 
 [English](../../README.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
+> 注記: この翻訳は英語版より遅れている場合があります。正式な版は [README.md](../../README.md) です (translation may lag behind English; see README.md for the canonical version)。
+
 **AI コーディングエージェントのためのデザイン品質パイプライン: ブリーフ → 探索 → 計画 → 実装 → 検証。**
 
 **Get Design Done は、AI が生成した UI をあなたのブリーフ、デザインシステム、リファレンス、品質ゲートに結びつけたまま進めます。Claude Code、OpenCode、Gemini CLI、Kilo、Codex、Copilot、Cursor、Windsurf、Antigravity、Augment、Trae、Qwen Code、CodeBuddy、Cline で動作します。**

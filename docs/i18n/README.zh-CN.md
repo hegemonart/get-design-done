@@ -4,6 +4,8 @@
 
 [English](../../README.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
+> 说明:此翻译可能落后于英文版本。规范版本以 [README.md](../../README.md) 为准 (translation may lag behind English; see README.md for the canonical version)。
+
 **面向 AI 编码智能体的设计质量流水线:简报 → 探索 → 规划 → 实现 → 验证。**
 
 **Get Design Done 让 AI 生成的 UI 始终贴住你的简报、设计系统、参考资料与质量闸门。支持 Claude Code、OpenCode、Gemini CLI、Kilo、Codex、Copilot、Cursor、Windsurf、Antigravity、Augment、Trae、Qwen Code、CodeBuddy 与 Cline。**

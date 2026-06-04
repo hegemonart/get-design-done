@@ -4,6 +4,8 @@
 
 [English](../../README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
+> 참고: 이 번역은 영어 버전보다 늦을 수 있습니다. 기준이 되는 버전은 [README.md](../../README.md) 입니다 (translation may lag behind English; see README.md for the canonical version).
+
 **AI 코딩 에이전트를 위한 디자인 품질 파이프라인: 브리프 → 탐색 → 계획 → 구현 → 검증.**
 
 **Get Design Done은 AI가 생성한 UI가 브리프, 디자인 시스템, 레퍼런스, 품질 게이트에 계속 묶여 있도록 합니다. Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline에서 동작합니다.**
