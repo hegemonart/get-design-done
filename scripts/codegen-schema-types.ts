@@ -9,9 +9,13 @@
  * Invoked: `npm run codegen:schemas` (requires repo-root cwd, which npm sets
  * automatically). If invoked directly, `--repo-root <path>` can override.
  *
+ * --check : no writes; regenerate in-memory and diff against the committed
+ *   reference/schemas/generated.d.ts. Exit 1 on any byte drift, 0 when in
+ *   sync. This is the CI drift gate (mirrors scripts/build-skills.cjs --check).
+ *
  * Exit codes:
- *   0 — success
- *   1 — any read/parse/compile failure
+ *   0 - success / in sync
+ *   1 - any read/parse/compile failure, or drift in --check mode
  */
 import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, join, dirname, basename } from 'node:path';
@@ -60,7 +64,12 @@ function stemToInterfaceName(stem: string): string {
   return `${pascal}Schema`;
 }
 
-async function main(): Promise<void> {
+/**
+ * Build the full generated.d.ts content in-memory. Returns the byte-identical
+ * string that the default (write) mode persists, so --check can diff against
+ * the committed file without touching disk.
+ */
+async function generate(): Promise<{ content: string; count: number }> {
   const entries = readdirSync(SCHEMA_DIR)
     .filter((f) => f.endsWith('.schema.json'))
     .sort();
@@ -109,11 +118,46 @@ async function main(): Promise<void> {
     }
   }
 
+  return { content: chunks.join(''), count: entries.length };
+}
+
+async function main(): Promise<void> {
+  const checkMode = process.argv.slice(2).includes('--check');
+  const { content, count } = await generate();
+
+  if (checkMode) {
+    // Drift gate: compare in-memory output against the committed file. No writes.
+    let current: string | null = null;
+    try {
+      current = readFileSync(OUTPUT_PATH, 'utf8');
+    } catch {
+      console.error(
+        `codegen-schema-types --check: DRIFT - ${OUTPUT_PATH} is missing (run \`npm run codegen:schemas\` and commit).`,
+      );
+      process.exit(1);
+    }
+    // Normalize line endings before comparing. The committed file is stored with
+    // LF in git, but on a Windows checkout (core.autocrlf) it materializes as
+    // CRLF in the working tree, while the generator always emits LF. Comparing
+    // raw bytes would false-positive on every line in any CRLF environment, so
+    // the gate must be EOL-agnostic - it tests content drift, not line endings.
+    const norm = (s: string): string => s.replace(/\r\n/g, '\n');
+    if (norm(current) !== norm(content)) {
+      console.error(
+        'codegen-schema-types --check: DRIFT detected (run `npm run codegen:schemas` and commit).',
+      );
+      console.error(`  ${OUTPUT_PATH} does not match codegen output for ${count} schema(s).`);
+      process.exit(1);
+    }
+    console.error(
+      `codegen-schema-types --check: OK - generated.d.ts matches codegen output (${count} schema(s)).`,
+    );
+    return;
+  }
+
   mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
-  writeFileSync(OUTPUT_PATH, chunks.join(''), 'utf8');
-  console.log(
-    `codegen-schema-types: wrote ${OUTPUT_PATH} (${entries.length} schema(s))`,
-  );
+  writeFileSync(OUTPUT_PATH, content, 'utf8');
+  console.log(`codegen-schema-types: wrote ${OUTPUT_PATH} (${count} schema(s))`);
 }
 
 /**

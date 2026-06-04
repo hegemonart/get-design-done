@@ -136,6 +136,9 @@ jobs:
       - name: Validate JSON schemas
         run: npm run validate:schemas
 
+      - name: Schema types drift gate (committed reference/schemas/generated.d.ts == codegen output)
+        run: npm run codegen:schemas:check
+
       - name: Skill build drift gate (committed skills/ == compile(scripts/skill-templates/))
         run: npm run build:skills:check
 
