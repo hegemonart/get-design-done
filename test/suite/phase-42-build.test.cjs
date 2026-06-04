@@ -6,7 +6,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const SRC = path.join(ROOT, 'source', 'skills');
+const SRC = path.join(ROOT, 'skill-templates');
 const SKILLS = path.join(ROOT, 'skills');
 // Polish v1.57.3: dist/claude-code/ removed as a byte-identical duplicate of skills/.
 // The bundle is now a build-only artifact; the npm tarball ships skills/ directly.
@@ -37,7 +37,7 @@ test('42-build-02: parseArgs handles --check / --harness / --zip', () => {
 
 test('42-build-03: --check (drift gate) passes on the committed tree, no writes', () => {
   const code = orch.main(['--check']);
-  assert.equal(code, 0, 'committed skills/ + dist/claude-code/ must match source/skills/');
+  assert.equal(code, 0, 'committed skills/ + dist/claude-code/ must match skill-templates/');
 });
 
 test('42-build-04: Claude compile reproduces skills/ byte-for-byte (116 files)', () => {

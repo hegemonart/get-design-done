@@ -24,7 +24,7 @@ const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const TOOLS_DIR = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'tools');
-const SKILL_PATH = path.join(REPO_ROOT, 'source', 'skills', 'context', 'SKILL.md');
+const SKILL_PATH = path.join(REPO_ROOT, 'skill-templates', 'context', 'SKILL.md');
 const QUERY_ENGINE = path.join(REPO_ROOT, 'scripts', 'lib', 'design-context-query.cjs');
 
 const OPS = ['nodes', 'edges', 'path', 'consumers-of', 'unreachable', 'cycles', 'coverage'];
@@ -159,7 +159,7 @@ test('52: tools/index TOOL_COUNT === 13', async () => {
 // ---------------------------------------------------------------------------
 
 test('52: context SKILL.md frontmatter is valid and documents the query ops', () => {
-  assert.ok(fs.existsSync(SKILL_PATH), 'source/skills/context/SKILL.md missing');
+  assert.ok(fs.existsSync(SKILL_PATH), 'skill-templates/context/SKILL.md missing');
   const text = fs.readFileSync(SKILL_PATH, 'utf8');
 
   const fm = text.match(/^---\n([\s\S]*?)\n---/);

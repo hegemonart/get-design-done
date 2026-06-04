@@ -15,7 +15,7 @@
  * we lock the current footprint as a baseline and gate REGRESSION.
  *
  * Behavior:
- *   - Walks shipped surfaces (skills/ source/skills/ agents/
+ *   - Walks shipped surfaces (skills/ skill-templates/ agents/
  *     reference/ connections/ docs/ hooks/) for *.md / *.json files.
  *   - Counts hits per file matching:
  *       /\bPhase \d+(\.\d+)?\b/g
@@ -41,7 +41,7 @@ const BASELINE_PATH = path.join(ROOT, 'test', 'fixtures', 'baselines', 'internal
 
 const ROOTS = [
   'skills',
-  'source/skills',
+  'skill-templates',
   'agents',
   'reference',
   'connections',

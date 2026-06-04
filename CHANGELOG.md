@@ -4,6 +4,45 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.58.0] - 2026-06-04
+
+### Architectural cleanup - kill the skills/ <-> source/skills/ duplication
+
+Previous layout (Phase 42) committed BOTH the editable templates (`source/skills/`) AND the rendered Claude Code surface (`skills/`) - 232 tracked files for 116 distinct skills, identical content modulo a single `{{command_prefix}}` placeholder substitution. Pure git churn.
+
+v1.58.0 makes `skill-templates/` (renamed from `source/skills/`; the gratuitous `source/` wrapper held only `skills/` and is gone) the single source of truth. `skills/` is gitignored and regenerated on demand. **End-user install experience is unchanged** - the npm tarball still ships `skills/` pre-built at the root; no build step runs on consumer machines.
+
+5,007/5,007 tests pass.
+
+### Breaking changes
+
+- **For contributors only:** the editable skill source path moved from `source/skills/<slug>/SKILL.md` to `skill-templates/<slug>/SKILL.md`. Forks with in-flight edits under `source/skills/` should `git mv` their changes to `skill-templates/`. No runtime contract changes; no API changes; end users installing from npm see no behavior difference.
+
+### Changed
+
+- **`source/skills/` -> `skill-templates/`** (renamed). The `source/` wrapper held only `skills/` inside and added nothing semantically. The new name is self-documenting.
+- **`skills/` is now gitignored.** Regenerated automatically by two npm lifecycle hooks:
+  - `prepare` (runs on `npm install` from a fresh git clone, and again on `npm publish`) -> dev clones work immediately, no extra steps.
+  - `prepack` (chains `build:sdk` -> `build:skills`) -> the published tarball always contains a freshly-built `skills/`.
+- **`build:skills:check` semantics flip** from "committed `skills/` matches source compile" to "compile is deterministic + on-disk `skills/` matches `skill-templates/`". Still catches manual edits to the build dir; no longer gates against a committed copy that doesn't need to exist.
+- **`scripts/build-skills.cjs` writes progress to stderr** (was stdout). Required for `npm pack --json` to produce parseable JSON when `prepack` runs first.
+
+### Migration for contributors
+
+Anyone editing skill content must now point at `skill-templates/<slug>/SKILL.md` instead of `source/skills/<slug>/SKILL.md`. After edits, `npm run build:skills` regenerates the local `skills/` (or just run `npm install`, which fires `prepare`). The CI `build:skills:check` gate catches any regression. End users running `npm install @hegemonart/get-design-done` see no change - the tarball contents are byte-identical to v1.57.3 for the same skill bodies.
+
+### Internal refactor scope
+
+- ~40 test + script + reference files updated: `source/skills/` -> `skill-templates/`.
+- `package.json#scripts` added `"prepare": "node scripts/build-skills.cjs"` + chained `prepack`.
+- `.gitignore` adds `skills/`.
+- `internal-refs.json` rebaselined (1749 -> 1682 hits; cleaner after removing duplicate path entries).
+- `STYLE.md` regenerated.
+- `reference/DEPRECATIONS.md` documents both the Phase 42 migration (`skills/` -> `source/skills/`) and the v1.58.0 follow-up (`source/skills/` -> `skill-templates/` + ungitignore).
+- `skill-templates/README.md` rewritten as the single canonical source-of-truth doc.
+
+---
+
 ## [1.57.3] - 2026-06-04
 
 ### Polish residuals - closes remaining POLISH-PLAN items + dist/ deduplication

@@ -1,6 +1,6 @@
 # Skill Placeholders - Multi-Harness Source Compilation
 
-> Phase 42. Skills are authored once in `source/skills/` with placeholders and compiled per-harness into
+> Phase 42. Skills are authored once in `skill-templates/` with placeholders and compiled per-harness into
 > `dist/<bundle>/<config-dir>/skills/...` by `scripts/build-skills.cjs` (the pure transform lives in
 > `scripts/lib/build/factory.cjs`; the per-harness values in `scripts/lib/build/harness-configs.cjs`,
 > which reads the Phase 41.5 manifest root `scripts/lib/manifest/harnesses.json`). The Claude-Code
@@ -68,4 +68,4 @@ scope (a maintenance trap) - see the Phase 42 CONTEXT.
 ## Validation
 
 `test/suite/phase-42-placeholders.test.cjs` asserts that every placeholder actually used across
-`source/skills/` is documented in this file, and that `source/skills/` mirrors the `skills/` skill count.
+`skill-templates/` is documented in this file, and that `skill-templates/` mirrors the `skills/` skill count.

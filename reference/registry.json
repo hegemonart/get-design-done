@@ -1071,7 +1071,7 @@
       "path": "reference/skill-placeholders.md",
       "type": "meta-rules",
       "phase": 42,
-      "description": "Multi-harness skill-placeholder catalogue: the four placeholders ({{command_prefix}}/{{model}}/{{config_file}}/{{ask_instruction}}) + per-harness substitution table + the \\{{...}} escape + the <!-- harness-only: a,b --> block rule. Skills authored once in source/skills/, compiled per-harness by scripts/build-skills.cjs via scripts/lib/build/factory.cjs reading scripts/lib/manifest/harnesses.json."
+      "description": "Multi-harness skill-placeholder catalogue: the four placeholders ({{command_prefix}}/{{model}}/{{config_file}}/{{ask_instruction}}) + per-harness substitution table + the \\{{...}} escape + the <!-- harness-only: a,b --> block rule. Skills authored once in skill-templates/, compiled per-harness by scripts/build-skills.cjs via scripts/lib/build/factory.cjs reading scripts/lib/manifest/harnesses.json."
     },
     {
       "name": "color",

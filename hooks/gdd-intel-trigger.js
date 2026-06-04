@@ -4,7 +4,7 @@
  * hooks/gdd-intel-trigger.js — D5 (PostToolUse on Edit|Write)
  *
  * On every Edit/Write that touches a design-authoritative surface
- * (skills/**, agents/**, reference/**, source/skills/**), spawn a
+ * (skills/**, agents/**, reference/**, skill-templates/**), spawn a
  * background, detached refresh of the .design/intel/ store so downstream
  * consumers (router, planner, audits) see the latest extracts without the
  * user paying for a full rebuild on the next /gdd run.
@@ -14,7 +14,7 @@
  *      camelCase field names (tool_name/toolName, tool_input/toolInput,
  *      file_path/filePath/path).
  *   2. If the edited path matches
- *        ^(skills|agents|reference|source/skills)/.*\.(md|json)$
+ *        ^(skills|agents|reference|skill-templates)/.*\.(md|json)$
  *      (path-separator-agnostic), schedule a background refresh.
  *   3. Otherwise no-op — write {continue:true} and exit 0.
  *   4. Always exit 0. Never block. Never surface errors. Errors only ever

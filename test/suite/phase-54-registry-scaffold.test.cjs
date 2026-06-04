@@ -16,7 +16,7 @@
  *   3. The /gdd:new-addendum scaffolder (scripts/lib/new-addendum.cjs) rejects
  *      bad names ('../x', 'A', '') + bad kinds, accepts a good one ('my-lib'),
  *      and the rendered skeleton carries the 4 mandatory sections.
- *   4. source/skills/new-addendum/SKILL.md exists with the contract frontmatter.
+ *   4. skill-templates/new-addendum/SKILL.md exists with the contract frontmatter.
  *   5. The gsd-health stack_addendums coverage row is present + graceful-absent.
  *   6. SC#9 backward-compat: at the wiring layer, an absent / null detected
  *      stack leaves spec.prompt byte-for-byte unchanged (re-asserting B's
@@ -285,8 +285,8 @@ test('54-09: targetPathFor maps each kind to its reference subdir', () => {
 // 4. The /gdd:new-addendum SKILL.md exists with the contract frontmatter
 // ---------------------------------------------------------------------------
 
-test('54-09: source/skills/new-addendum/SKILL.md exists with contract frontmatter', () => {
-  const skillPath = path.join(REPO_ROOT, 'source', 'skills', 'new-addendum', 'SKILL.md');
+test('54-09: skill-templates/new-addendum/SKILL.md exists with contract frontmatter', () => {
+  const skillPath = path.join(REPO_ROOT, 'skill-templates', 'new-addendum', 'SKILL.md');
   assert.ok(fs.existsSync(skillPath), 'new-addendum SKILL.md exists');
   const text = fs.readFileSync(skillPath, 'utf8');
   const fm = text.match(/^---\n([\s\S]*?)\n---/);

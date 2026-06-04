@@ -36,7 +36,7 @@ Commands:
   query <op>       Typed STATE.md read operations.
   audit            Probe connections + dry-run verify.
   init             Bootstrap a new project.
-  build skills     Compile per-harness skill bundles from source/skills/.
+  build skills     Compile per-harness skill bundles from skill-templates/.
   dashboard        Open the GDD dashboard (TUI; --web for the browser graph).
 
 Use 'gdd-sdk <command> -h' for command-specific flags.

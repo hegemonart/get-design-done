@@ -11,10 +11,10 @@
  *      (description quoted, canonical key order, byte-for-byte round trip).
  *   5. suggestComposesWith returns plausible same-stage matches and excludes
  *      self + unrelated skills.
- *   6. source/skills/new-skill/SKILL.md exists with valid frontmatter.
- *   7. source/skills/health/SKILL.md mentions "v3 description form".
+ *   6. skill-templates/new-skill/SKILL.md exists with valid frontmatter.
+ *   7. skill-templates/health/SKILL.md mentions "v3 description form".
  *
- * Reads source/skills/ (the authored copy) so the suite is green BEFORE
+ * Reads skill-templates/ (the authored copy) so the suite is green BEFORE
  * `npm run build:skills` (which the orchestrator runs after adding the
  * new-skill manifest record).
  */
@@ -27,7 +27,7 @@ const path = require('node:path');
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const SCAFFOLDER = path.join(REPO_ROOT, 'scripts', 'lib', 'manifest', 'scaffolder.cjs');
 const GENERATOR = path.join(REPO_ROOT, 'scripts', 'generate-skill-frontmatter.cjs');
-const SRC_SKILLS = path.join(REPO_ROOT, 'source', 'skills');
+const SRC_SKILLS = path.join(REPO_ROOT, 'skill-templates');
 
 const { buildSkillRecord, renderSkillMd, suggestComposesWith } = require(SCAFFOLDER);
 const { splitFrontmatter, recordFromFrontmatter, frontmatterFromRecord } = require(GENERATOR);
@@ -206,7 +206,7 @@ test('50: suggestComposesWith returns [] for an unknown-stage name', () => {
 // Source artifacts — new-skill SKILL.md + health surfacing
 // ---------------------------------------------------------------------------
 
-test('50: source/skills/new-skill/SKILL.md exists with valid frontmatter', () => {
+test('50: skill-templates/new-skill/SKILL.md exists with valid frontmatter', () => {
   const abs = path.join(SRC_SKILLS, 'new-skill', 'SKILL.md');
   assert.ok(fs.existsSync(abs), 'new-skill SKILL.md must exist');
   const text = readSrc('new-skill');
