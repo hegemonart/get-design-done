@@ -750,6 +750,7 @@ OFF_CADENCE_VERSIONS.add('1.58.1');
 // 1.59.1 .. 1.59.6 (there is no 1.59.0) — each is off-cadence from its predecessor.
 OFF_CADENCE_VERSIONS.add('1.59.1');
 OFF_CADENCE_VERSIONS.add('1.59.2');
+OFF_CADENCE_VERSIONS.add('1.59.3');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
