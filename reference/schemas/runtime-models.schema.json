@@ -47,6 +47,11 @@
           "type": "boolean",
           "description": "When true, the runtime exposes a single model that maps to all three tiers (D-02). Downstream consumers (router, budget-enforcer) may render a UI affordance noting tier-selection has no cost effect for this runtime."
         },
+        "status": {
+          "type": "string",
+          "enum": ["verified", "byok", "unverified"],
+          "description": "Provenance confidence of this runtime's tier map. 'verified' = confirmed against runtime-author docs (claude, codex, gemini, qwen). 'byok' = BYOK / multi-provider runtime whose user-configured model may diverge from the Anthropic-default fill. 'unverified' = placeholder fill pending researcher confirmation. Optional: rows omitting this field are treated as unverified-unless-stated by consumers, and verified rows MAY omit it. The budget-enforcer guard reads this (or its built-in verified allowlist) so a byok/unverified row never drives a HARD budget cap (degrades to advisory)."
+        },
         "tier_to_model": {
           "type": "object",
           "additionalProperties": false,
