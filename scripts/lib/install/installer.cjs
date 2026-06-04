@@ -335,6 +335,58 @@ function listSourceSkills(skillsRoot) {
 }
 
 /**
+ * Enumerate co-located sibling `*.md` reference files for a skill.
+ *
+ * A skill source directory may ship reference files next to SKILL.md
+ * (e.g. `<name>-procedure.md`, `<name>-rules.md`, `cache-policy.md`).
+ * SKILL.md references these via relative links; if they are not installed
+ * the links resolve to nothing. This returns the top-level sibling `.md`
+ * files only (NOT SKILL.md itself, NOT files in nested subdirectories).
+ *
+ * Best-effort: any fs error yields an empty list (never throws). A single
+ * unreadable skill dir must not crash the whole install.
+ *
+ * @param {string} skillSrcDir  absolute path to `<skillsRoot>/<name>`
+ * @returns {string[]} basenames of sibling `.md` files (excluding SKILL.md)
+ */
+function listSiblingRefFiles(skillSrcDir) {
+  let entries;
+  try {
+    entries = fs.readdirSync(skillSrcDir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  return entries
+    .filter((ent) => {
+      if (!ent.isFile()) return false;
+      if (ent.name === 'SKILL.md') return false;
+      return ent.name.toLowerCase().endsWith('.md');
+    })
+    .map((ent) => ent.name);
+}
+
+/**
+ * Wrap a passthrough sibling reference file's content with a plugin
+ * fingerprint header so foreign-file protection + uninstall can recognize
+ * it as plugin-owned. Idempotent: re-wrapping a file that already carries
+ * the fingerprint returns it unchanged.
+ *
+ * The fingerprint matches `merge.cjs#GDD_ADAPTER_FINGERPRINT`, the same
+ * marker every SKILL converter injects via `shared.ensureAdapterHeader`,
+ * so `isPluginOwned` treats the sibling as owned.
+ *
+ * @param {string} raw  source sibling file content
+ * @returns {string}
+ */
+function fingerprintSiblingRef(raw) {
+  const text = typeof raw === 'string' ? raw : '';
+  if (isPluginOwned(text)) return text;
+  const header =
+    '<!-- gdd: auto-generated from Claude SKILL.md. Reference adapter -->\n\n';
+  return header + text;
+}
+
+/**
  * Install all artifacts for a `multi-artifact` runtime.
  *
  * Resolves the per-runtime layout from `runtime-artifact-layout.cjs`,
@@ -395,6 +447,48 @@ function installMultiArtifact(runtime, configDir, dryRun, opts) {
         action: writeResult.action,
         ...(writeResult.reason ? { reason: writeResult.reason } : {}),
       });
+
+      // Batch H6: carry co-located sibling `*.md` reference files alongside
+      // SKILL.md. The skills layout only stages SKILL.md per skill, so
+      // reference siblings (e.g. `<name>-procedure.md`) are otherwise lost.
+      // Scoped to cursor (the audited flat-layout runtime); other runtimes
+      // keep their prior single-SKILL.md behavior. Siblings are passthrough
+      // copies fingerprinted so foreign-file protection + uninstall treat
+      // them as plugin-owned. Broader skillsKind-runtime carry is deferred
+      // (see converters/cursor.cjs KNOWN LIMITATION).
+      if (kind.kind === 'skills' && runtime.id === 'cursor' && item.srcPath) {
+        const skillSrcDir = path.dirname(item.srcPath);
+        const skillDestDir = path.dirname(destPath);
+        for (const sibling of listSiblingRefFiles(skillSrcDir)) {
+          let rawSibling;
+          try {
+            rawSibling = fs.readFileSync(
+              path.join(skillSrcDir, sibling),
+              'utf8',
+            );
+          } catch (err) {
+            perFile.push({
+              kind: 'skill-ref',
+              path: path.join(skillDestDir, sibling),
+              action: 'skipped-foreign',
+              reason: `Could not read sibling ${sibling}: ${err.message}`,
+            });
+            continue;
+          }
+          const siblingDest = path.join(skillDestDir, sibling);
+          const siblingWrite = writeFingerprinted(
+            siblingDest,
+            fingerprintSiblingRef(rawSibling),
+            dryRun,
+          );
+          perFile.push({
+            kind: 'skill-ref',
+            path: siblingDest,
+            action: siblingWrite.action,
+            ...(siblingWrite.reason ? { reason: siblingWrite.reason } : {}),
+          });
+        }
+      }
     }
   }
 
@@ -489,7 +583,45 @@ function uninstallMultiArtifact(runtime, configDir, dryRun, opts) {
 
       // If we removed a SKILL.md, remember to trim its now-empty parent.
       if (kind.kind === 'skills') {
-        skillDirsToTrim.push(path.dirname(destPath));
+        const skillDestDir = path.dirname(destPath);
+        skillDirsToTrim.push(skillDestDir);
+
+        // Batch H6: symmetric cleanup for the sibling reference files the
+        // cursor install carries alongside SKILL.md. Remove only the
+        // plugin-owned siblings so a now-empty dir can be trimmed below;
+        // user-authored siblings are left in place (foreign-file discipline).
+        if (runtime.id === 'cursor') {
+          for (const sibling of listSiblingRefFiles(skillDestDir)) {
+            const siblingPath = path.join(skillDestDir, sibling);
+            let siblingContent;
+            try {
+              siblingContent = fs.readFileSync(siblingPath, 'utf8');
+            } catch (err) {
+              perFile.push({
+                kind: 'skill-ref',
+                path: siblingPath,
+                action: 'skipped-foreign',
+                reason: `Could not read sibling ${sibling}: ${err.message}`,
+              });
+              continue;
+            }
+            if (!isPluginOwned(siblingContent)) {
+              perFile.push({
+                kind: 'skill-ref',
+                path: siblingPath,
+                action: 'skipped-foreign',
+                reason: `Existing ${sibling} was not authored by this plugin; not removing.`,
+              });
+              continue;
+            }
+            if (!dryRun) fs.unlinkSync(siblingPath);
+            perFile.push({
+              kind: 'skill-ref',
+              path: siblingPath,
+              action: 'removed',
+            });
+          }
+        }
       }
     }
   }
