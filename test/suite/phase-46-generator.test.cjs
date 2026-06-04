@@ -36,7 +36,7 @@ const {
 } = gen;
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const SRC = path.join(ROOT, 'skill-templates');
+const SRC = path.join(ROOT, 'scripts', 'skill-templates');
 
 // --- Dynamic, count-agnostic discovery (mirrors the generator's listSkillDirs). ---
 function listSkillDirs() {
@@ -61,7 +61,7 @@ const RECORD_BY_NAME = new Map(RECORDS.map((r) => [r.name, r]));
 // Sanity: discovery is non-vacuous (guards against a silently empty source tree
 // that would make every per-skill test trivially pass).
 test('46-generator: discovery is non-vacuous (source dirs and SoT records both present)', () => {
-  assert.ok(DIRS.length > 0, 'expected at least one skill-templates/<id>/SKILL.md');
+  assert.ok(DIRS.length > 0, 'expected at least one scripts/skill-templates/<id>/SKILL.md');
   assert.ok(RECORDS.length > 0, 'expected at least one record in skills.json');
 });
 
@@ -69,7 +69,7 @@ test('46-generator: discovery is non-vacuous (source dirs and SoT records both p
 // 1. SoT <-> source parity (count-agnostic bijection on `name`)
 // ---------------------------------------------------------------------------
 
-test('46-generator: every skill-templates/<id> dir has exactly one skills.json record with name===id', () => {
+test('46-generator: every scripts/skill-templates/<id> dir has exactly one skills.json record with name===id', () => {
   // No duplicate names in the SoT (Map size === array length proves uniqueness).
   assert.equal(
     RECORD_BY_NAME.size,
@@ -78,17 +78,17 @@ test('46-generator: every skill-templates/<id> dir has exactly one skills.json r
   );
   for (const id of DIRS) {
     const rec = RECORD_BY_NAME.get(id);
-    assert.ok(rec, `skill-templates/${id} has no record in skills.json`);
+    assert.ok(rec, `scripts/skill-templates/${id} has no record in skills.json`);
     assert.equal(rec.name, id, `skills.json record for "${id}" has name="${rec.name}"`);
   }
 });
 
-test('46-generator: every skills.json record maps to an existing skill-templates/<name> dir', () => {
+test('46-generator: every skills.json record maps to an existing scripts/skill-templates/<name> dir', () => {
   const dirSet = new Set(DIRS);
   for (const rec of RECORDS) {
     assert.ok(
       dirSet.has(rec.name),
-      `skills.json record "${rec.name}" has no skill-templates/${rec.name}/SKILL.md`,
+      `skills.json record "${rec.name}" has no scripts/skill-templates/${rec.name}/SKILL.md`,
     );
   }
   // Bijection: equal cardinality + both inclusions above => exact 1:1 mapping.

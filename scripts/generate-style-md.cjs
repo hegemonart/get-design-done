@@ -58,9 +58,9 @@ ${phraseRows}
 
 ## Scope
 
-\`lint:prose\` scans: \`README.md\`, \`README.*.md\`, \`SKILL.md\`, \`skill-templates/**/*.md\`,
+\`lint:prose\` scans: \`README.md\`, \`README.*.md\`, \`SKILL.md\`, \`scripts/skill-templates/**/*.md\`,
 \`agents/**/*.md\`, \`CHANGELOG.md\`, \`reference/**/*.md\`. The generated \`skills/\` and \`dist/\`
-trees are NOT scanned (\`skill-templates/\` is the authored copy). Files that are majority Cyrillic are
+trees are NOT scanned (\`scripts/skill-templates/\` is the authored copy). Files that are majority Cyrillic are
 skipped (the denylist is English-only in v1).
 
 ## Skipped (not linted)

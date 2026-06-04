@@ -4,16 +4,16 @@
 // and added nothing). v1.58.0 ALSO gitignored skills/ as a pure build artifact — that broke
 // the Claude Code marketplace install path (Claude Code git-clones the plugin without running
 // `npm install`, so `./skills/` was absent post-clone). v1.58.1 reverts the gitignore:
-// skills/ is committed again so git-clone-based installs work; skill-templates/ remains the
+// skills/ is committed again so git-clone-based installs work; scripts/skill-templates/ remains the
 // canonical editable source; `prepare` still regenerates skills/ on contributor checkouts.
 //
 //   node scripts/build-skills.cjs [--harness <id>] [--check] [--zip]
 //
-// Reads skill-templates/**/*.md, applies the pure factory per harness config, and writes:
+// Reads scripts/skill-templates/**/*.md, applies the pure factory per harness config, and writes:
 //   - skills/**                            (the committed Claude-Code surface, regenerated in place)
 //   - dist/<bundleSlug>/<configDir>/skills/**  (per-harness bundles; build-only artifacts, gitignored)
 //
-// --check : no writes; verify the committed skills/ equals compile(skill-templates/),
+// --check : no writes; verify the committed skills/ equals compile(scripts/skill-templates/),
 //           exit 1 on any byte drift. This is the CI drift gate.
 // --harness <id> : restrict to one harness (skips the skills/ in-place regen unless id === claude).
 // --zip   : after building, tar -czf dist/<bundleSlug>.tgz each bundle (graceful skip if tar absent).
@@ -27,7 +27,7 @@ const { compile } = require('./lib/build/factory.cjs');
 const { CONFIGS, byId, claude } = require('./lib/build/harness-configs.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
-const SRC = path.join(ROOT, 'skill-templates');
+const SRC = path.join(ROOT, 'scripts', 'skill-templates');
 const SKILLS = path.join(ROOT, 'skills');
 const DIST = path.join(ROOT, 'dist');
 
@@ -94,7 +94,7 @@ function runCheck() {
   // v1.58.1: skills/ is committed (reverts v1.58.0 gitignore — Claude Code marketplace
   // git-clones the plugin without running npm install, so `./skills/` MUST exist post-clone).
   // --check is back to its original Phase 42 semantics: gate that committed skills/ matches
-  // compile(skill-templates/). If contributors edit skill-templates/ without re-running
+  // compile(scripts/skill-templates/). If contributors edit scripts/skill-templates/ without re-running
   // `npm run build:skills`, this catches the drift.
   const cfg = claude();
   const map = compileAll(cfg);
@@ -105,7 +105,7 @@ function runCheck() {
     if (driftSkills.length > 10) process.stderr.write('  ...\n');
     return 1;
   }
-  process.stderr.write(`build-skills --check: OK - skills/ matches skill-templates/ (${map.size} files).\n`);
+  process.stderr.write(`build-skills --check: OK - skills/ matches scripts/skill-templates/ (${map.size} files).\n`);
   return 0;
 }
 

@@ -1,4 +1,4 @@
-# `skill-templates/` - Editable Skill Source (Single Source of Truth)
+# `scripts/skill-templates/` - Editable Skill Source (Single Source of Truth)
 
 This directory is the **only** place to edit skill content. Every `SKILL.md` and sibling
 doc here is the editable truth - the per-skill prose, examples, procedure files
@@ -23,32 +23,32 @@ The previous layout (Phase 42) put templates under `source/skills/` AND committe
 rendered `skills/` alongside. That meant 232 tracked files for 116 distinct skills with
 identical content modulo a single placeholder substitution. Pure git churn.
 
-v1.58.0 fixes this: templates are tracked once at `skill-templates/`, the rendered output
+v1.58.0 fixes this: templates are tracked once at `scripts/skill-templates/`, the rendered output
 is generated on demand.
 
 ## Source-of-truth split (what lives where)
 
 | Concern | Source of truth | How it reaches `skills/` |
 |---|---|---|
-| **Body content** (everything below the frontmatter) | `skill-templates/<slug>/SKILL.md` | `scripts/build-skills.cjs` walks `skill-templates/`, applies per-harness placeholder substitution, writes to `skills/` |
-| **Universal frontmatter** (`name`, `description`, `argument-hint`, `tools`, `user-invocable`, `disable-model-invocation`) | `scripts/lib/manifest/skills.json` | `scripts/generate-skill-frontmatter.cjs` writes the managed block into `skill-templates/<slug>/SKILL.md`, then `build:skills` copies it onward |
-| **Non-managed frontmatter** (e.g. `color`, `model`, custom keys) | `skill-templates/<slug>/SKILL.md` itself (preserved verbatim) | carried through both generators unchanged |
+| **Body content** (everything below the frontmatter) | `scripts/skill-templates/<slug>/SKILL.md` | `scripts/build-skills.cjs` walks `scripts/skill-templates/`, applies per-harness placeholder substitution, writes to `skills/` |
+| **Universal frontmatter** (`name`, `description`, `argument-hint`, `tools`, `user-invocable`, `disable-model-invocation`) | `scripts/lib/manifest/skills.json` | `scripts/generate-skill-frontmatter.cjs` writes the managed block into `scripts/skill-templates/<slug>/SKILL.md`, then `build:skills` copies it onward |
+| **Non-managed frontmatter** (e.g. `color`, `model`, custom keys) | `scripts/skill-templates/<slug>/SKILL.md` itself (preserved verbatim) | carried through both generators unchanged |
 
-The forward direction is **`skills.json` -> `skill-templates/` -> `skills/`**.
+The forward direction is **`skills.json` -> `scripts/skill-templates/` -> `skills/`**.
 Treat that direction as canonical; the `--extract` mode of `generate-skill-frontmatter.cjs` exists
 only to seed the manifest from current sources when reconciling drift.
 
 ## Editing protocol
 
-1. **Edit body** -> modify `skill-templates/<slug>/SKILL.md` (anything below the frontmatter delimiter).
+1. **Edit body** -> modify `scripts/skill-templates/<slug>/SKILL.md` (anything below the frontmatter delimiter).
 2. **Edit universal frontmatter** -> modify `scripts/lib/manifest/skills.json`, then run
    `npm run generate:skill-frontmatter`.
-3. **Edit non-managed frontmatter** -> modify `skill-templates/<slug>/SKILL.md` directly; the generator
+3. **Edit non-managed frontmatter** -> modify `scripts/skill-templates/<slug>/SKILL.md` directly; the generator
    preserves it.
 4. **Regenerate the built surface** -> `npm run build:skills`. This rewrites the gitignored
    `skills/<slug>/SKILL.md` byte-for-byte from the templates.
 5. **Verify the build** -> `npm run build:skills:check` (CI gate) confirms compile determinism
-   and that the on-disk `skills/` matches what `skill-templates/` would generate.
+   and that the on-disk `skills/` matches what `scripts/skill-templates/` would generate.
 
 ## Placeholders
 
@@ -68,7 +68,7 @@ Full grammar + the per-harness substitution table: `reference/skill-placeholders
 
 ## What npm ships
 
-`package.json` `files` lists `skills/` (the built surface); `skill-templates/` is repo-only and
+`package.json` `files` lists `skills/` (the built surface); `scripts/skill-templates/` is repo-only and
 is **not** distributed via npm. The `prepack` lifecycle runs `npm run build:skills` so the tarball
 always contains a freshly-built `skills/`.
 

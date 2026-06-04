@@ -13,15 +13,15 @@
  *      .design/context-graph.json exists, grep otherwise) AND retains the
  *      unchanged DEBT-CATALOG contract (output path, confidence gate, priority
  *      scoring), staying within the M (300-line) size budget.
- *   3. skill-templates/migrate-context/SKILL.md frontmatter is valid (v3
+ *   3. scripts/skill-templates/migrate-context/SKILL.md frontmatter is valid (v3
  *      description form, argument-hint, tools) and the body documents the
  *      old-map -> fragments -> merge -> validate flow plus the low-confidence
  *      review gate and the one-minor deprecation banner.
- *   4. skill-templates/progress/SKILL.md surfaces the context-graph coverage line
+ *   4. scripts/skill-templates/progress/SKILL.md surfaces the context-graph coverage line
  *      (cites the design-context-query `coverage` helper + the INTEGRATION-MAP
  *      pointer) while preserving the {{command_prefix}} placeholder.
  *
- * Reads skill-templates/ (the authored copy) so the suite is green BEFORE
+ * Reads scripts/skill-templates/ (the authored copy) so the suite is green BEFORE
  * `npm run build:skills` and the orchestrator-owned skills.json record. The
  * render() assertions execute the real ESM module; everything else is a
  * structural / prose assertion. Hermetic: the absent-file main() test points at
@@ -38,7 +38,7 @@ const { pathToFileURL } = require('node:url');
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const DC_DIR = path.join(REPO_ROOT, 'scripts', 'lib', 'design-context');
 const AGENTS = path.join(REPO_ROOT, 'agents');
-const SRC_SKILLS = path.join(REPO_ROOT, 'skill-templates');
+const SRC_SKILLS = path.join(REPO_ROOT, 'scripts', 'skill-templates');
 
 const DEBT_CRAWLER = path.join(AGENTS, 'design-debt-crawler.md');
 const MIGRATE_SKILL = path.join(SRC_SKILLS, 'migrate-context', 'SKILL.md');

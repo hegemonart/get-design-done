@@ -13,7 +13,7 @@ const os = require('os');
 const { REPO_ROOT } = require('./helpers.ts');
 
 const RUNNER = path.join(REPO_ROOT, 'agents', 'quality-gate-runner.md');
-const QG_SKILL = path.join(REPO_ROOT, 'skill-templates', 'quality-gate', 'SKILL.md');
+const QG_SKILL = path.join(REPO_ROOT, 'scripts', 'skill-templates', 'quality-gate', 'SKILL.md');
 const HOOKS_JSON = path.join(REPO_ROOT, 'hooks', 'hooks.json');
 const HOOK_JS = path.join(REPO_ROOT, 'hooks', 'gdd-a11y-gate.js');
 const DESIGN_FIXER = path.join(REPO_ROOT, 'agents', 'design-fixer.md');

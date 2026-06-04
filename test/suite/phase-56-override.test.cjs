@@ -9,7 +9,7 @@
 //     - high confidence + require_confirmation  -> 'confirm'
 //     - low confidence (< 0.5), non-block       -> 'skip'
 //     - block-risk write (STATE.md large diff)  -> 'override' (any confidence)
-//   * skill-templates/override/SKILL.md exists, documents BOTH modes
+//   * scripts/skill-templates/override/SKILL.md exists, documents BOTH modes
 //     (finding-id + factforce <path>), has valid v3 frontmatter, em-dash-free.
 //   * the scriptable override helper (scripts/lib/risk/override.cjs):
 //     - overrideDecisionEntry shapes an `override`-tagged, approver-audited,
@@ -33,7 +33,7 @@ const { overrideDecisionEntry, setFactForceChecked, isFactForceChecked, OVERRIDE
 const { REPO_ROOT, readFrontmatter } = require('./helpers.ts');
 
 const bigDiff = (n) => Array.from({ length: n }, (_, i) => `line ${i}`).join('\n');
-const SKILL_PATH = path.join(REPO_ROOT, 'skill-templates', 'override', 'SKILL.md');
+const SKILL_PATH = path.join(REPO_ROOT, 'scripts', 'skill-templates', 'override', 'SKILL.md');
 
 // ── The confidence x risk routing matrix (design-fixer Step 2.5) ─────────────
 

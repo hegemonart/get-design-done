@@ -6,15 +6,15 @@
  * scripts/lib/manifest/skills.json is the single source of truth for the
  * universal skill frontmatter fields (description, argument-hint, tools,
  * user-invocable, disable-model-invocation). This script regenerates the
- * frontmatter block of every skill-templates/<name>/SKILL.md from that manifest,
+ * frontmatter block of every scripts/skill-templates/<name>/SKILL.md from that manifest,
  * preserving the markdown body and any non-managed frontmatter lines verbatim.
  *
  * Direction is forward (manifest -> source frontmatter); build-skills.cjs then
- * propagates skill-templates -> skills/ + dist/claude-code/. A CI drift gate
+ * propagates scripts/skill-templates -> skills/ + dist/claude-code/. A CI drift gate
  * (--check) keeps committed frontmatter == generated.
  *
  * Modes:
- *   (no flag)   regenerate skill-templates/<name>/SKILL.md frontmatter from skills.json
+ *   (no flag)   regenerate scripts/skill-templates/<name>/SKILL.md frontmatter from skills.json
  *   --check     exit 1 if any committed frontmatter differs from generated (no writes)
  *   --extract   reverse: read current source frontmatter -> rewrite skills.json
  *               (seed/refresh the SoT from ground truth; idempotent with forward)
@@ -30,7 +30,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SRC = path.join(ROOT, 'skill-templates');
+const SRC = path.join(ROOT, 'scripts', 'skill-templates');
 const SKILLS_JSON = path.join(ROOT, 'scripts', 'lib', 'manifest', 'skills.json');
 
 // Managed frontmatter keys <-> manifest record keys, in canonical emit order.
@@ -177,7 +177,7 @@ function modeForward(check) {
     const rec = map.get(id);
     if (!rec) {
       if (check) { drift.push(`${id} (missing from skills.json)`); continue; }
-      fail(`${id}: present in skill-templates but missing from skills.json — add a record (run --extract)`);
+      fail(`${id}: present in scripts/skill-templates but missing from skills.json — add a record (run --extract)`);
     }
     const abs = path.join(SRC, id, 'SKILL.md');
     const cur = fs.readFileSync(abs, 'utf8').replace(/\r\n/g, '\n');

@@ -3,7 +3,7 @@
  * scripts/lib/manifest/scaffolder.cjs — Phase 50 (Authoring Contract v3).
  *
  * Pure, dependency-free generator behind the `/gdd:new-skill` scaffolder skill.
- * The SKILL.md (skill-templates/new-skill/SKILL.md) drives the interactive
+ * The SKILL.md (scripts/skill-templates/new-skill/SKILL.md) drives the interactive
  * prompts; this module is the deterministic core it (and the test suite) call.
  *
  * Exports:
