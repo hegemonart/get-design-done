@@ -4,6 +4,37 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.4] - 2026-06-04
+
+Fourth point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Skill-surface + build hygiene.
+
+### Changed
+
+- **`skill-templates/` relocated to `scripts/skill-templates/`** (source-dir move, git history preserved; 36 reference updates). The committed `skills/` build output is unchanged, so the `build:skills:check` drift gate stays meaningful.
+- **`/gdd:help` is now complete and dynamic.** It reads `scripts/lib/manifest/skills.json` and renders every skill, replacing a hardcoded ~41-command subset (of 95). Root SKILL.md Jump Mode now notes it is a curated subset and points to `/gdd:help` for the full manifest-rendered reference.
+
+### Added
+
+- **npm-installed users can now author skills.** `package.json#files[]` ships `scripts/skill-templates/`, `scripts/build-skills.cjs`, and `scripts/generate-skill-frontmatter.cjs` (so `/gdd:new-skill` + rebuild work off an `npm install`), plus the figma plugin source (`figma-plugin/`).
+- **`codegen:schemas:check` drift gate** (EOL-agnostic) wired into CI, closing the one previously un-gated generator (`reference/schemas/generated.d.ts`).
+
+### Fixed
+
+- **Stale "gitignored" README claims** corrected: `skills/` has been a committed build artifact since v1.58.1, not gitignored.
+- Pre-existing stale `source/skills` regex in `hooks/gdd-intel-trigger.js` repointed to `scripts/skill-templates`.
+
+### Note
+
+- The "7 Phase-28.8 baseline regen pending" skips named in the plan were already resolved by earlier phases (no such markers remain), so there was nothing to burn down.
+
+### Breaking changes
+
+None.
+
+5,049/5,049 tests pass.
+
+---
+
 ## [1.59.3] - 2026-06-04
 
 Third point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. A routing-coherence pass on agent model/tier declarations.
