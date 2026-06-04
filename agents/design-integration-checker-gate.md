@@ -3,7 +3,6 @@ name: design-integration-checker-gate
 description: "Cheap Haiku gate that reads a diff and decides whether design-integration-checker should spawn. Returns {spawn, rationale}. Short-circuits when no D-XX decisions or reference docs were touched."
 tools: Read, Bash, Grep
 color: blue
-model: inherit
 default-tier: haiku
 tier-rationale: "Cheap diff-scan gate - expensive integration checker spawned only on heuristic hit"
 size_budget: S

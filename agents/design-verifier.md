@@ -3,7 +3,6 @@ name: design-verifier
 description: Goal-backward verification of design outcomes against .design/STATE.md must-haves, NNG heuristics, and audit rubric. Returns pass result or structured gap list. Spawned by the verify stage.
 tools: Read, Write, Bash, Grep, Glob, mcp__Claude_Preview__preview_list, mcp__Claude_Preview__preview_navigate, mcp__Claude_Preview__preview_screenshot, mcp__Claude_Preview__preview_eval, mcp__Claude_Preview__preview_snapshot, mcp__Claude_Preview__preview_inspect
 color: green
-model: inherit
 default-tier: haiku
 tier-rationale: "Verifier runs structured goal-backward checks - cheap Haiku is sufficient and fast"
 size_budget: XXL

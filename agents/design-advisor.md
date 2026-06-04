@@ -3,7 +3,7 @@ name: design-advisor
 description: Researches a single gray area and produces a 5-column comparison table with rationale. Spawned by design-context-builder when a gray area exceeds judgment threshold. Returns inline text - no file output.
 tools: Read, Grep, Glob, WebSearch
 color: blue
-model: sonnet
+model: inherit
 default-tier: opus
 tier-rationale: "Questions prompts to surface ambiguity; wrong advice cascades across downstream spawns"
 parallel-safe: always

@@ -3,7 +3,6 @@ name: design-context-checker
 description: Validates .design/DESIGN-CONTEXT.md across 6 dimensions (copy specificity, color contract, typography scale, spacing scale, must-have testability, goal observability). Returns APPROVED or BLOCKED with per-dimension BLOCK/FLAG/PASS verdicts. Spawned by the discover stage after design-context-builder completes.
 tools: Read, Grep, Glob
 color: cyan
-model: inherit
 default-tier: haiku
 tier-rationale: "Schema-driven completeness check; deterministic rubric, no reasoning density needed"
 size_budget: LARGE

@@ -3,7 +3,6 @@ name: design-context-checker-gate
 description: "Cheap Haiku gate that reads a diff and decides whether design-context-checker should spawn. Spawns only when DESIGN-CONTEXT.md itself was modified."
 tools: Read, Bash, Grep
 color: cyan
-model: inherit
 default-tier: haiku
 tier-rationale: "Cheap diff-scan gate - context checker only runs when DESIGN-CONTEXT.md changed"
 size_budget: S

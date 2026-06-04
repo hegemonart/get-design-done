@@ -3,7 +3,6 @@ name: design-integration-checker
 description: Verifies D-XX design decisions from DESIGN-CONTEXT.md are actually wired through source code via grep-based checks on tokens, colors, spacing, component patterns. Runs AFTER design-verifier in the verify stage. Returns Connected/Orphaned/Missing counts.
 tools: Read, Bash, Grep, Glob
 color: blue
-model: inherit
 default-tier: haiku
 tier-rationale: "Cross-artifact link-integrity scan; structured input, structured output"
 size_budget: LARGE
