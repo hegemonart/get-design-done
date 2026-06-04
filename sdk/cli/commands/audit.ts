@@ -89,6 +89,11 @@ export interface AuditReport {
   readonly connections: readonly ConnectionReport[];
   readonly must_haves: readonly MustHaveReport[];
   readonly baseline?: BaselineReport;
+  // `true` when there is no active cycle (.design/STATE.md absent). The audit
+  // then runs only the static checks that do not require cycle state and exits
+  // 0 with this flag set, rather than failing. Omitted (undefined) on a normal
+  // run with an active cycle.
+  readonly degraded?: boolean;
   readonly summary: {
     readonly connections_ok: boolean;
     readonly must_haves_ok: boolean;
@@ -135,14 +140,23 @@ export async function auditCommand(
 
   const cwd: string =
     typeof flags['cwd'] === 'string' ? (flags['cwd'] as string) : process.cwd();
-  const statePath: string =
-    typeof flags['state-path'] === 'string' && (flags['state-path'] as string).length > 0
-      ? resolvePath(cwd, flags['state-path'] as string)
-      : resolvePath(cwd, '.design', 'STATE.md');
+  const explicitStatePath: boolean =
+    typeof flags['state-path'] === 'string' && (flags['state-path'] as string).length > 0;
+  const statePath: string = explicitStatePath
+    ? resolvePath(cwd, flags['state-path'] as string)
+    : resolvePath(cwd, '.design', 'STATE.md');
 
   if (!existsSync(statePath)) {
-    stderr.write(`gdd-sdk audit: STATE.md not found at ${statePath}\n`);
-    return 3;
+    // An explicit --state-path that does not exist is an arg error: the
+    // caller pointed us at a specific file that should be present.
+    if (explicitStatePath) {
+      stderr.write(`gdd-sdk audit: STATE.md not found at ${statePath}\n`);
+      return 3;
+    }
+    // No active cycle (default .design/STATE.md absent). Graceful degrade:
+    // emit a clear message + a degraded report covering the static checks
+    // that do not require cycle state, then exit 0 — never throw.
+    return emitDegraded(flags, stdout, stderr);
   }
 
   const readFn = deps.readState ?? read;
@@ -216,6 +230,46 @@ export async function auditCommand(
   }
 
   return overallOk ? 0 : 1;
+}
+
+// ---------------------------------------------------------------------------
+// Degraded (no active cycle) path.
+// ---------------------------------------------------------------------------
+
+/**
+ * Emit a degraded audit report when there is no active cycle (no
+ * `.design/STATE.md`). Connections + must-haves are sourced from STATE.md,
+ * so without a cycle there is nothing cycle-bound to evaluate; we report
+ * empty sets and exit 0. The `degraded` flag signals callers (and the JSON
+ * consumers) that this was a no-cycle run, not a clean active-cycle audit.
+ */
+function emitDegraded(
+  flags: Record<string, unknown>,
+  stdout: NodeJS.WritableStream,
+  stderr: NodeJS.WritableStream,
+): number {
+  // Human-facing notice on stderr so JSON on stdout stays machine-parseable.
+  stderr.write('gdd-sdk audit: no active cycle — run /gdd:start\n');
+
+  const report: AuditReport = {
+    connections: Object.freeze([]),
+    must_haves: Object.freeze([]),
+    degraded: true,
+    summary: {
+      connections_ok: true,
+      must_haves_ok: true,
+      baseline_ok: true,
+      overall_ok: true,
+    },
+  };
+
+  if (flags['json'] === true) {
+    stdout.write(JSON.stringify(report, null, 2) + '\n');
+  } else {
+    stdout.write(renderHuman(report));
+  }
+
+  return 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -352,6 +406,12 @@ function parseBaselineStateSync(raw: string): Pick<ParsedState, 'connections' | 
 
 function renderHuman(report: AuditReport): string {
   const lines: string[] = [];
+  if (report.degraded === true) {
+    lines.push('audit: degraded (no active cycle — run /gdd:start)');
+    lines.push('');
+    lines.push('No active cycle: skipped connection + must-have checks.');
+    return lines.join('\n') + '\n';
+  }
   lines.push(`audit: ${report.summary.overall_ok ? 'clean' : 'REGRESSIONS'}`);
   lines.push('');
   lines.push(`connections (${report.summary.connections_ok ? 'ok' : 'degraded'}):`);
