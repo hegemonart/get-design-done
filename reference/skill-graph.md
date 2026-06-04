@@ -9,7 +9,7 @@ is a `composes_with` edge (the source calls the target as sub-orchestration); a 
 a `next_skills` edge (a pipeline hint for what runs next). Stage grouping is best-effort and
 inferred from the skill name; skills with no stage keyword fall under Utility.
 
-Skills: 94. Composition edges: 19 composes_with, 6 next_skills.
+Skills: 95. Composition edges: 19 composes_with, 6 next_skills.
 
 ```mermaid
 flowchart TD
@@ -65,6 +65,7 @@ flowchart TD
     n_add_backlog["add-backlog"]
     n_analyze_dependencies["analyze-dependencies"]
     n_apply_reflections["apply-reflections"]
+    n_bandit_reset["bandit-reset"]
     n_bandit_status["bandit-status"]
     n_budget["budget"]
     n_cache_manager["cache-manager"]
