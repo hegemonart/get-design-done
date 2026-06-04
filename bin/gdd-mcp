@@ -49,7 +49,18 @@ const useCompiled = fs.existsSync(compiled);
 const entry = useCompiled ? compiled : source;
 const nodeArgs = useCompiled
   ? [entry, ...process.argv.slice(2)]
-  : ['--experimental-strip-types', entry, ...process.argv.slice(2)];
+  : [
+      // Dev/source path type-strips the raw .ts. The .ts entry has no sibling
+      // package.json "type", so Node would emit a one-time
+      // MODULE_TYPELESS_PACKAGE_JSON warning. Adding {"type":"module"} is NOT a
+      // fix: it only relocates the warning to transitive .ts imports AND breaks
+      // the esbuild-CJS compiled path below. Suppress that one cosmetic warning
+      // for the server process; the compiled path needs no flag. (Phase 59.1 A4)
+      '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
+      '--experimental-strip-types',
+      entry,
+      ...process.argv.slice(2),
+    ];
 
 const child = spawn(process.execPath, nodeArgs, {
   stdio: 'inherit',

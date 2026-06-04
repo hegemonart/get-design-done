@@ -56,5 +56,19 @@
   ],
   "skills": [
     "./skills/"
-  ]
+  ],
+  "mcpServers": {
+    "gdd-mcp": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/bin/gdd-mcp"
+      ]
+    },
+    "gdd-state": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/bin/gdd-state-mcp"
+      ]
+    }
+  }
 }
