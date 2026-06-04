@@ -56,7 +56,7 @@ What I kept running into: the agent could generate a screen that looked fine in 
 
 So I built Get Design Done: a design pipeline that gives AI coding agents the same kind of structure developers already expect from engineering workflows. It captures the brief, maps the current design system, grounds decisions in references, decomposes the work into atomic tasks, executes those tasks, and verifies the result before you ship.
 
-Behind the scenes: 61 specialized agents, a queryable intel store, tier-aware model routing, 42 optional tool connections, atomic commits, and a no-regret adaptive layer that learns from solidify-with-rollback outcomes. What you use day to day: a few `/gdd:*` commands that keep design work coherent.
+Behind the scenes: 64 specialized agents, a queryable intel store, tier-aware model routing, 42 optional tool connections, atomic commits, and a no-regret adaptive layer that learns from solidify-with-rollback outcomes. What you use day to day: a few `/gdd:*` commands that keep design work coherent.
 
 - **Hegemon**
 
@@ -246,7 +246,7 @@ GDD handles it for you:
 
 Size limits where Claude's quality degrades. Stay under, get consistency.
 
-### 61 Specialized Agents
+### 64 Specialized Agents
 
 Each stage is a thin orchestrator that spawns specialized agents. Heavy lifting happens in fresh 200k contexts, not your main session.
 
@@ -368,7 +368,7 @@ The full per-command reference, including the long tail of memory, distribution,
 
 ## Connections
 
-GDD ships 42 tool connections. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable. Configure with `/gdd:connections`.
+GDD ships 39 tool connections. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable. Configure with `/gdd:connections`.
 
 The connection layer spans these categories:
 

@@ -60,9 +60,15 @@ function listSkills() {
 }
 
 function listConnections() {
+  // Count only genuine integration specs (audit C3 honesty pass, Phase 59.2).
+  // Excluded non-integration files that live in connections/ for discoverability:
+  //   - connections.md     → the index, not a connection
+  //   - cursor.md          → a runtime (see reference/runtimes), not an integration
+  //   - design-corpora.md  → a reference list (benchmark corpora), not an integration
+  const NON_INTEGRATION = new Set(['connections.md', 'cursor.md', 'design-corpora.md']);
   const dir = path.join(ROOT, 'connections');
   return fs.readdirSync(dir)
-    .filter((f) => f.endsWith('.md'))
+    .filter((f) => f.endsWith('.md') && !NON_INTEGRATION.has(f))
     .length;
 }
 

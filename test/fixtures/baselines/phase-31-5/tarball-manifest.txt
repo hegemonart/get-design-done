@@ -32,11 +32,13 @@ agents/design-doc-writer.md
 agents/design-executor.md
 agents/design-figma-writer.md
 agents/design-fixer.md
+agents/design-framer-writer.md
 agents/design-integration-checker-gate.md
 agents/design-integration-checker.md
 agents/design-paper-writer.md
 agents/design-pattern-mapper.md
 agents/design-pencil-writer.md
+agents/design-penpot-writer.md
 agents/design-phase-researcher.md
 agents/design-plan-checker.md
 agents/design-planner.md
@@ -46,6 +48,7 @@ agents/design-start-writer.md
 agents/design-update-checker.md
 agents/design-verifier-gate.md
 agents/design-verifier.md
+agents/design-webflow-reader.md
 agents/ds-generator.md
 agents/ds-migration-planner.md
 agents/email-executor.md
