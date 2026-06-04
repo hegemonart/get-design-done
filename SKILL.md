@@ -2,7 +2,7 @@
 name: get-design-done
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
-argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|live|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|scan|discover|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|pin|unpin|list-pins|new-skill|new-addendum|instinct|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark|recall|timeline|continue|zoom-out]"
+argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|live|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|pin|unpin|list-pins|new-skill|new-addendum|instinct|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark|recall|timeline|continue|zoom-out]"
 user-invocable: true
 ---
 
@@ -14,7 +14,7 @@ Entry point for the get-design-done toolkit. Establishes the `/gdd:` command nam
 Brief → Explore → Plan → Design → Verify  →  next
 ```
 
-The 5-stage pipeline. `scan` and `discover` are now merged into `explore` - their old aliases still route through for backward compatibility.
+The 5-stage pipeline. `scan` and `discover` (previously deprecated aliases of `explore`) have been removed - use `explore` directly.
 
 Each stage produces artifacts in `.design/` inside the current project.
 
@@ -82,8 +82,6 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `sketch-wrap-up [slug]` | `get-design-done:gdd-sketch-wrap-up` | Pick winner + rationale → writes `./.claude/skills/design-<area>-conventions.md` |
 | `spike [hypothesis] [--timebox N]` | `get-design-done:gdd-spike` | Timeboxed feasibility experiment → `.design/spikes/<slug>/` |
 | `spike-wrap-up [slug]` | `get-design-done:gdd-spike-wrap-up` | Capture findings + D-XX decision → `.design/spikes/<slug>/FINDINGS.md` |
-| `scan` *(deprecated)* | `get-design-done:scan` | Alias - use `explore` instead |
-| `discover` *(deprecated)* | `get-design-done:discover` | Alias - use `explore` instead |
 | **Configuration** | | |
 | `settings <profile\|parallelism\|cleanup\|show>` | `get-design-done:gdd-settings` | Manage `.design/config.json` - model profile, parallelism, cleanup |
 | **Maintenance** | | |
@@ -226,8 +224,6 @@ If `$ARGUMENTS` is a stage or command name - invoke it directly, no state check:
 /gdd:plant-seed     → Skill("get-design-done:gdd-plant-seed")
 /gdd:add-backlog    → Skill("get-design-done:gdd-add-backlog")
 /gdd:review-backlog → Skill("get-design-done:gdd-review-backlog")
-/gdd:scan      → Skill("get-design-done:gdd-explore")   # deprecated alias → explore
-/gdd:discover  → Skill("get-design-done:gdd-explore")   # deprecated alias → explore
 # --- Configuration ---
 /gdd:settings        → Skill("get-design-done:gdd-settings")
 # --- Maintenance ---

@@ -79,7 +79,6 @@ See `./../peer-cli-add/peer-cli-protocol.md` §"Edge cases" for: rewire-to-unmat
 - `scripts/validate-frontmatter.ts` (Plan 27-06) - `delegate_to` validation.
 - `scripts/lib/peer-cli/registry.cjs` (Plan 27-05) - capability matrix.
 - `skills/peer-cli-add/SKILL.md` - for adding a NEW peer (this skill rewires among existing peers).
-- `.planning/phases/27-peer-cli-delegation/CONTEXT.md` D-06 - decision lineage.
 
 ## Record
 

@@ -7,8 +7,8 @@
  *     metadata.version + plugins[0].version)
  *   - CHANGELOG `## [<current-version>]` block at top
  *   - OFF_CADENCE_VERSIONS.add('<current-version>')
- *   - 20 skill-private procedure refs at `skills/<owner>/<topic>.md`
- *   - 0 of those 20 still at `reference/<topic>.md`
+ *   - 18 skill-private procedure refs at `skills/<owner>/<topic>.md`
+ *   - 0 of those 18 still at `reference/<topic>.md`
  *   - 0 stale `reference/<moved>.md` cross-links in `skills/`
  *
  * Version-agnostic per D-08 lesson (Phases 25/26/27/27.5/27.6/27.7/28/28.5).
@@ -42,7 +42,8 @@ function escapeRegExp(s) {
 const read = (p) => fs.readFileSync(path.join(REPO_ROOT, p), 'utf8');
 const readBaseline = (p) => fs.readFileSync(path.join(BASELINE_DIR, p), 'utf8');
 
-// D-08 canonical migration table — 20 refs moved from reference/<topic>.md
+// D-08 canonical migration table — 18 refs moved from reference/<topic>.md
+// (scan/discover deleted; previously deprecated aliases of explore)
 // to skills/<owner>/<topic>.md. Order is stable for deterministic test
 // output. Two entries are 2-consumer (cache-policy primary cache-manager,
 // peer-cli-protocol primary peer-cli-add); secondaries cross-link via
@@ -55,15 +56,12 @@ const MIGRATED = Object.freeze({
   'darkmode-audit-procedure.md': 'darkmode',
   'debug-feedback-loops.md': 'debug',
   'design-procedure.md': 'design',
-  'discover-procedure.md': 'discover',
   'explore-procedure.md': 'explore',
   'health-mcp-detection.md': 'health',
   'health-skill-length-report.md': 'health',
-  'milestone-completeness-rubric.md': 'new-cycle',
   'peer-cli-protocol.md': 'peer-cli-add',
   'plan-procedure.md': 'plan',
   'router-rules.md': 'router',
-  'scan-procedure.md': 'scan',
   'start-procedure.md': 'start',
   'style-doc-procedure.md': 'style',
   'threat-modeling.md': 'quality-gate',
@@ -109,7 +107,7 @@ describe('Phase 28.6-04: CHANGELOG + OFF_CADENCE registration', () => {
 });
 
 describe('Phase 28.6-04: skill-private refs co-located at per-skill folders', () => {
-  test('28.6-04: all 20 migrated refs exist at skills/<owner>/<topic>.md', () => {
+  test('28.6-04: all 18 migrated refs exist at skills/<owner>/<topic>.md', () => {
     const missing = [];
     for (const [file, owner] of Object.entries(MIGRATED)) {
       const dest = path.join(REPO_ROOT, 'skills', owner, file);
@@ -118,7 +116,7 @@ describe('Phase 28.6-04: skill-private refs co-located at per-skill folders', ()
     assert.equal(missing.length, 0, `Missing migrated refs at destination:\n  ${missing.join('\n  ')}`);
   });
 
-  test('28.6-04: none of the 20 migrated refs remain at reference/<topic>.md', () => {
+  test('28.6-04: none of the 18 migrated refs remain at reference/<topic>.md', () => {
     const stillThere = [];
     for (const file of Object.keys(MIGRATED)) {
       const src = path.join(REPO_ROOT, 'reference', file);
@@ -157,7 +155,7 @@ describe('Phase 28.6-04: cross-link integrity (no stale reference/ links)', () =
 });
 
 describe('Phase 28.6-04: registry purge', () => {
-  test('28.6-04: registry.json does NOT contain any of the 20 migrated entry names', () => {
+  test('28.6-04: registry.json does NOT contain any of the 18 migrated entry names', () => {
     const registry = JSON.parse(read('reference/registry.json'));
     const names = new Set(registry.entries.map((e) => e.name));
     const movedNames = Object.keys(MIGRATED).map((f) => f.replace(/\.md$/, ''));

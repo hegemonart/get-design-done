@@ -18,5 +18,4 @@ gdd-trajectory-capture.js
 gdd-turn-closeout.js
 hooks.json
 inject-using-gdd.cjs
-run-hook.cmd
 update-check.cjs

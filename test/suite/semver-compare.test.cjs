@@ -700,6 +700,27 @@ OFF_CADENCE_VERSIONS.add('1.57.1');
 // No new dependency. Additive only.
 OFF_CADENCE_VERSIONS.add('1.57.2');
 
+// 1.57.3 -> polish-residuals patch (continuation of v1.57.2 grooming wave). Closes the remaining open
+// POLISH-PLAN items: source/skills/ documented as canonical (skills/ + dist/ are build artifacts);
+// .planning/STATE.md user-facing references scrubbed (.design/STATE.md is the sole user SoT); prefix
+// convention claim softened in agents/README + reference/model-tiers (gdd-* vs design-* is just a name);
+// Phase 58 added to ROADMAP for composes_with mandatory rollout (74 of 96 skills need backfill); Codex +
+// Cursor plugin manifest drift gate added (scripts/check-codex-plugin-drift.cjs + npm script + test).
+// Deleted as orphans / obsolete: agents/prototype-gate.md (functionality absorbed by sketch-wrap-up +
+// spike-wrap-up); skills/scan/ + skills/discover/ + source/skills/scan/ + source/skills/discover/
+// (deprecated aliases of /gdd:explore); hooks/run-hook.cmd (obsolete after .sh -> .cjs port);
+// scripts/lib/worktree-resolve.cjs#resolvePlanningRoot (unused export); skills/new-cycle/milestone-
+// completeness-rubric.md (plugin-internal doc moved to docs/MAINTAINER-NOTES.md); 6 stale i18n READMEs
+// (frozen at v1.24.0; main README will be rewritten separately). Structural cleanup: dist/claude-code/
+// was byte-identical with skills/ (120 dupe files in npm tarball); removed from package.json#files +
+// .gitignore now covers dist/ entirely; .DS_Store globbed out of all paths. 13 more composes_with edges
+// landed on apply-reflections, brief, compare, complete-cycle, darkmode, debug, discuss, explore,
+// figma-extract, figma-write, live, map, new-cycle, new-project, progress (Phase 58 buildout still needs
+// the remaining ~28-skill backfill per ROADMAP.md). Runtime-models 10 unverified entries reformatted:
+// raw URLs + explicit "verified": false field on provenance (was "<TODO: confirm at URL>" wrapper).
+// 5,007/5,007 tests pass. No new dependency. Additive only.
+OFF_CADENCE_VERSIONS.add('1.57.3');
+
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
   for (let i = 1; i < EXPECTED_SEQUENCE.length; i++) {

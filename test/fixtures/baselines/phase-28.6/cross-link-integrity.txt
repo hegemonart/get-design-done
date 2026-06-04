@@ -13,7 +13,6 @@ skills/discover/discover-procedure.md : OK
 skills/explore/explore-procedure.md : OK
 skills/health/health-mcp-detection.md : OK
 skills/health/health-skill-length-report.md : OK
-skills/new-cycle/milestone-completeness-rubric.md : OK
 skills/peer-cli-add/peer-cli-protocol.md : OK
 skills/plan/plan-procedure.md : OK
 skills/router/router-rules.md : OK
@@ -76,7 +75,6 @@ skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-proc
 skills/explore/SKILL.md -> ./explore-procedure.md -> skills/explore/explore-procedure.md : OK
 skills/health/SKILL.md -> ./health-mcp-detection.md -> skills/health/health-mcp-detection.md : OK
 skills/health/SKILL.md -> ./health-skill-length-report.md -> skills/health/health-skill-length-report.md : OK
-skills/new-cycle/SKILL.md -> ./milestone-completeness-rubric.md -> skills/new-cycle/milestone-completeness-rubric.md : OK
 skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
 skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
 skills/peer-cli-add/SKILL.md -> ./peer-cli-protocol.md -> skills/peer-cli-add/peer-cli-protocol.md : OK
@@ -127,7 +125,6 @@ skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-proc
 skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
 skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
 skills/style/SKILL.md -> ./style-doc-procedure.md -> skills/style/style-doc-procedure.md : OK
-skills/turn-closeout/SKILL.md -> ./../new-cycle/milestone-completeness-rubric.md -> skills/new-cycle/milestone-completeness-rubric.md : OK
 skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
 skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK
 skills/verify/SKILL.md -> ./verify-procedure.md -> skills/verify/verify-procedure.md : OK

@@ -24,8 +24,6 @@
  *
  * Exception list — skills that are intentionally NOT user-invocable and
  * therefore never reach a documented surface:
- *   - scan, discover  (deprecated aliases — only present in the table row that
- *     marks them deprecated; treated as intentionally surfaced there)
  *   - connections     (gdd-connections internal wizard skill name)
  *   - router          (deterministic internal routing skill, no model call)
  *   - synthesize      (internal Haiku synthesizer, `user-invocable: false`)
@@ -47,8 +45,6 @@ const { REPO_ROOT } = require('./helpers.ts');
 // Each entry MUST come with a reason so deletions/additions remain auditable.
 // ---------------------------------------------------------------------------
 const EXCEPTIONS = new Map([
-  ['scan', 'deprecated alias — routed via Jump Mode to gdd-explore'],
-  ['discover', 'deprecated alias — routed via Jump Mode to gdd-explore'],
   ['connections', 'internal onboarding wizard (gdd-connections)'],
   ['router', 'internal deterministic router, no user surface'],
   ['synthesize', 'internal Haiku synthesizer (user-invocable: false)'],
@@ -239,17 +235,3 @@ test('skill-surface-sync: Jump Mode targets do not reference deleted skills', ()
   );
 });
 
-test('skill-surface-sync: deprecated entries (scan, discover) remain explicitly tagged in the table', () => {
-  // Defensive: if someone "cleans up" the deprecated row format, the EXCEPTIONS
-  // entry for scan/discover loses its justification. Lock the marker presence
-  // so the deprecation is visible to humans reading the table.
-  const content = readRootSkill();
-  for (const dep of ['scan', 'discover']) {
-    const re = new RegExp(`\\|\\s*\`${dep}\`\\s+\\*\\(deprecated\\)\\*`);
-    assert.match(
-      content,
-      re,
-      `Expected "${dep}" row in Command Reference to retain "*(deprecated)*" marker`
-    );
-  }
-});

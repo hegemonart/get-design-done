@@ -87,15 +87,16 @@ function runCheck() {
   const cfg = claude();
   const map = compileAll(cfg);
   const driftSkills = diffMap(map, SKILLS);
-  const driftBundle = diffMap(map, bundleDir(cfg));
-  if (driftSkills.length || driftBundle.length) {
+  // Polish v1.57.3: dist/claude-code/ removed as a byte-identical duplicate of skills/.
+  // The committed Claude surface (skills/) is the only drift gate now; other harness
+  // bundles remain build-only artifacts produced on demand.
+  if (driftSkills.length) {
     process.stderr.write('build-skills --check: DRIFT detected (run `npm run build:skills` and commit).\n');
     for (const r of driftSkills.slice(0, 10)) process.stderr.write(`  skills/${r}\n`);
-    for (const r of driftBundle.slice(0, 10)) process.stderr.write(`  dist/${cfg.bundleSlug}/${cfg.configDir}/skills/${r}\n`);
-    if (driftSkills.length > 10 || driftBundle.length > 10) process.stderr.write('  ...\n');
+    if (driftSkills.length > 10) process.stderr.write('  ...\n');
     return 1;
   }
-  process.stdout.write(`build-skills --check: OK — skills/ + dist/${cfg.bundleSlug}/ match source/skills/ (${map.size} files).\n`);
+  process.stdout.write(`build-skills --check: OK - skills/ matches source/skills/ (${map.size} files).\n`);
   return 0;
 }
 

@@ -16,7 +16,6 @@ subdirectories are created; this directory is updated in-place on each release.
 | `sample-agent-metrics.json` | Reflector test fixture — agent metrics shape |
 | `sample-costs.jsonl` | Reflector test fixture — costs.jsonl shape |
 | `expected-reflection-proposals.json` | Reflector test fixture — expected proposal shape |
-| `BASELINE.md` | Smoke test manifest |
 
 ## When to relock
 
@@ -65,5 +64,7 @@ fi
 rm -rf "\$TMPDIR"
 ```
 
-Then update `BASELINE.md` (locked date, version, invariant counts), verify
-`npm test` passes locally, and include the baseline commit in your PR.
+Then verify `npm test` passes locally and include the baseline commit in your PR.
+The .txt manifests (`agent-list.txt`, `skill-list.txt`, `connection-list.txt`,
+`plugin-version.txt`) are the canonical baseline surface — no separate markdown
+summary needs maintaining (the per-file counts are visible via `wc -l`).

@@ -1,6 +1,6 @@
 ---
 name: gdd-bootstrap-ds
-description: "Bootstraps a design system for a GREENFIELD project that has none - no Figma, no tokens, no component library. Takes a brand input (primary color + optional secondary + tone tags + target framework) and emits a coherent OKLCH token system (color tints, modular type scale, 4pt/8pt spacing, radius + motion defaults) in 3 variants to pick from, then scaffolds proof components (button/input/card). Use at the start of a brand-new project, or when /gdd:discover finds no existing design system. Never invents a brand; never overwrites an existing DS."
+description: "Bootstraps a design system for a GREENFIELD project that has none - no Figma, no tokens, no component library. Takes a brand input (primary color + optional secondary + tone tags + target framework) and emits a coherent OKLCH token system (color tints, modular type scale, 4pt/8pt spacing, radius + motion defaults) in 3 variants to pick from, then scaffolds proof components (button/input/card). Use at the start of a brand-new project, or when /gdd:explore finds no existing design system. Never invents a brand; never overwrites an existing DS."
 argument-hint: "[--primary <color>] [--secondary <color>] [--tone <tags>] [--framework web|native-ios|native-android|flutter]"
 user-invocable: true
 tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, Task

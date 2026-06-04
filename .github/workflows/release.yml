@@ -235,9 +235,48 @@ jobs:
         # supply-chain incident (2026-05-19), invalidating our prior NPM_TOKEN.
         run: npm publish --provenance --access public
 
+  build-tier2-bundles:
+    name: "Build Tier-2 distribution bundles (cursor-marketplace + codex-plugin)"
+    needs: [detect-version, release-smoke-test]
+    if: needs.detect-version.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the freshly-created tag
+        uses: actions/checkout@v6
+        with:
+          ref: v${{ needs.detect-version.outputs.version }}
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build all Tier-2 bundles (cursor-marketplace, codex-plugin, agentskills-io)
+        # Phase 28.8 (Plan 28-8-X1): scripts/build-distribution-bundles.cjs fans
+        # canonical skills/ into dist/cursor-marketplace/, dist/codex-plugin/, and
+        # dist/agentskills-io/ via per-channel converters. Running without
+        # --channel emits ALL channels deterministically (same input -> same
+        # bytes on consecutive runs). The release workflow needs all three so
+        # the cursor-marketplace + codex-plugin webhooks (wired in
+        # marketplace-publish below) have artifacts to upload.
+        run: npm run build:bundles
+
+      - name: Upload Tier-2 bundles as workflow artifact
+        # Persist dist/ as a build artifact so marketplace-publish (or a manual
+        # download) can consume the deterministic output without rebuilding.
+        uses: actions/upload-artifact@v4
+        with:
+          name: tier2-bundles-v${{ needs.detect-version.outputs.version }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 90
+
   marketplace-publish:
     name: "Marketplace publish (placeholder)"
-    needs: [detect-version, release-smoke-test, npm-publish]
+    needs: [detect-version, release-smoke-test, npm-publish, build-tier2-bundles]
     if: needs.detect-version.outputs.changed == 'true'
     runs-on: ubuntu-latest
     steps:

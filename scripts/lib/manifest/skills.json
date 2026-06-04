@@ -43,7 +43,7 @@
     },
     {
       "name": "bootstrap-ds",
-      "description": "Bootstraps a design system for a GREENFIELD project that has none - no Figma, no tokens, no component library. Takes a brand input (primary color + optional secondary + tone tags + target framework) and emits a coherent OKLCH token system (color tints, modular type scale, 4pt/8pt spacing, radius + motion defaults) in 3 variants to pick from, then scaffolds proof components (button/input/card). Use at the start of a brand-new project, or when {{command_prefix}}discover finds no existing design system. Never invents a brand; never overwrites an existing DS.",
+      "description": "Bootstraps a design system for a GREENFIELD project that has none - no Figma, no tokens, no component library. Takes a brand input (primary color + optional secondary + tone tags + target framework) and emits a coherent OKLCH token system (color tints, modular type scale, 4pt/8pt spacing, radius + motion defaults) in 3 variants to pick from, then scaffolds proof components (button/input/card). Use at the start of a brand-new project, or when {{command_prefix}}explore finds no existing design system. Never invents a brand; never overwrites an existing DS.",
       "argument_hint": "[--primary <color>] [--secondary <color>] [--tone <tags>] [--framework web|native-ios|native-android|flutter]",
       "user_invocable": true,
       "tools": "Read, Write, Bash, Glob, Grep, AskUserQuestion, Task"
@@ -82,7 +82,7 @@
     },
     {
       "name": "compare",
-      "description": "Compute the delta between the `DESIGN.md` baseline (from scan) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`. Activates for requests involving diffing a design baseline against verification output, or a before-after design delta.",
+      "description": "Compute the delta between the `DESIGN.md` baseline (from explore) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`. Activates for requests involving diffing a design baseline against verification output, or a before-after design delta.",
       "argument_hint": "",
       "user_invocable": true,
       "composes_with": [
@@ -149,16 +149,6 @@
       ],
       "next_skills": [
         "verify"
-      ]
-    },
-    {
-      "name": "discover",
-      "frontmatter_name": "discover",
-      "description": "Stage 1.5 of 4 orchestrator that probes Figma / Refero / Pinterest connections, spawns design-context-builder (auto-detect + interview) and (via lazy gate) design-context-checker (6-dimension validator), producing .design/DESIGN-CONTEXT.md. Use after {{command_prefix}}scan when a fast-path context build is wanted instead of the full {{command_prefix}}explore. Activates for requests involving detecting an existing design system, inventorying tokens and components, or onboarding a brownfield repo.",
-      "argument_hint": "[--auto] [--incremental] [--full]",
-      "user_invocable": true,
-      "composes_with": [
-        "explore"
       ]
     },
     {
@@ -536,16 +526,6 @@
       "tools": "Read, Bash, Grep"
     },
     {
-      "name": "scan",
-      "frontmatter_name": "scan",
-      "description": "Pre-pipeline initializer that maps an existing repo's design system (colors, typography, spacing, components, tokens), runs the anti-pattern audit, scores the 7 weighted categories, and writes DESIGN.md + .design/DESIGN-DEBT.md. Use when starting work in any new or existing repo before {{command_prefix}}discover. Activates for requests involving a fast read-only anti-pattern sweep, a quick design lint, or spotting slop without a full audit.",
-      "argument_hint": "[--quick] [--full]",
-      "user_invocable": true,
-      "composes_with": [
-        "explore"
-      ]
-    },
-    {
       "name": "settings",
       "description": "Manage .design/config.json settings. Subcommands: profile, parallelism, cleanup, show.",
       "argument_hint": "<profile <name>|parallelism <key> <value>|cleanup|show>",
@@ -628,7 +608,7 @@
     {
       "name": "synthesize",
       "frontmatter_name": "synthesize",
-      "description": "Streaming synthesizer - collapses N parallel-agent markdown outputs into one compact merged summary via a single Haiku 4.5 call. Invoked inline by orchestrators (skills/map/, skills/discover/, skills/plan/) after parallel spawns return. Not user-invocable.",
+      "description": "Streaming synthesizer - collapses N parallel-agent markdown outputs into one compact merged summary via a single Haiku 4.5 call. Invoked inline by orchestrators (skills/map/, skills/explore/, skills/plan/) after parallel spawns return. Not user-invocable.",
       "tools": "Read, Task",
       "user_invocable": false,
       "disable_model_invocation": true

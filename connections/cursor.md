@@ -49,7 +49,6 @@ This is a systemic limitation of the current `multi-artifact` install pipeline (
 - `explore/explore-procedure.md`
 - `health/health-mcp-detection.md`
 - `health/health-skill-length-report.md`
-- `new-cycle/milestone-completeness-rubric.md`
 - `peer-cli-add/peer-cli-protocol.md`
 - `plan/plan-procedure.md`
 - `quality-gate/threat-modeling.md`
