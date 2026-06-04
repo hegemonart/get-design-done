@@ -3,7 +3,6 @@ name: design-context-reviewer-gate
 description: "Cheap Haiku gate that reads a change signal and decides whether design-context-reviewer should spawn. Suppresses the reviewer when project change is below 5 percent."
 tools: Read, Bash, Grep
 color: cyan
-model: inherit
 default-tier: haiku
 tier-rationale: "Cheap change-signal gate - graph reviewer only runs when the graph changed enough to matter"
 size_budget: S

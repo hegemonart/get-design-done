@@ -3,7 +3,6 @@ name: prototype-gate
 description: "Cheap Haiku gate that scores sketch / spike signals from the active brief / context / plan and emits a JSON verdict recommending whether to prototype before continuing."
 tools: Read, Bash, Grep
 color: yellow
-model: inherit
 default-tier: haiku
 tier-rationale: "Signal-counting rubric over a few small inputs - no synthesis, no writes, no agent spawning. Belongs on Haiku to keep gate latency cheap (≤ 2 s typical)."
 size_budget: S

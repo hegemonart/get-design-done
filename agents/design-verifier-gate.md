@@ -3,7 +3,6 @@ name: design-verifier-gate
 description: "Cheap Haiku gate that reads a diff and decides whether design-verifier should spawn. Returns {spawn, rationale}. Short-circuits verifier spawns on small or copy-only changes that don't touch design-system surfaces."
 tools: Read, Bash, Grep
 color: green
-model: inherit
 default-tier: haiku
 tier-rationale: "Cheap diff-scan gate - expensive verifier spawned only on heuristic hit"
 size_budget: S

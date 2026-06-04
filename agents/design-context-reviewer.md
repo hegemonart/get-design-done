@@ -3,7 +3,6 @@ name: design-context-reviewer
 description: "Reviews the merged .design/context-graph.json after mapper assembly across 9 checks (schema validity, referential integrity, completeness, layer coverage, id uniqueness, summary quality, edge-expectation consistency, type-prefix consistency, coverage-vs-stack). Hard-rejects on critical breakage; soft-warns on advisory issues. Spawned by the explore stage after the synthesizer merges all fragments."
 tools: Read, Grep, Glob
 color: cyan
-model: inherit
 default-tier: haiku
 tier-rationale: "Schema-driven graph review on top of a deterministic validator; rubric-bound, no reasoning density needed"
 size_budget: LARGE

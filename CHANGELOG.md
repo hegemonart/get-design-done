@@ -4,6 +4,31 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.3] - 2026-06-04
+
+Third point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. A routing-coherence pass on agent model/tier declarations.
+
+### Added
+
+- **Model-vs-default-tier coherence check** in `scripts/validate-frontmatter.ts`. The CI frontmatter gate now errors when an agent declares a literal `model` that contradicts its `default-tier` (for example `model: sonnet` under `default-tier: opus`), and emits a non-failing advisory when a haiku-tier agent uses `model: inherit` (which would defeat the cheap-gate cost intent).
+
+### Fixed
+
+- **Two tier contradictions corrected.** `design-advisor` (was `model: sonnet` under an opus-tier rationale, now `model: inherit`) and `design-plan-checker` (dropped the contradicting `model: sonnet`; it resolves via `default-tier: haiku`).
+- **Cheap-gate cost governance restored.** Stripped the redundant `model: inherit` from 10 haiku-tier gate/checker agents (`design-context-checker`, `design-context-reviewer`, `design-integration-checker`, `design-verifier`, their four `-gate` variants, `prototype-gate`, `quality-gate-runner`) so they resolve to the cheap haiku model instead of inheriting the session model.
+
+### Note
+
+- The rest of the original 59.3 plan was already shipped by earlier phases: peer-CLI `delegate_to`, the intel-updater PostToolUse hook, the context-reviewer wiring in explore, the planner/verifier output-contracts, and the `audit-aggregator` / `hedge-ensemble` dead-code removal. `touches-pattern-miner` was retained because it has a live caller (`incubator-proposals`); it is not dead code.
+
+### Breaking changes
+
+None.
+
+5,049/5,049 tests pass.
+
+---
+
 ## [1.59.2] - 2026-06-04
 
 Second point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Wires the AI-native Wave-2 connections and reconciles the connection count to the honest number.

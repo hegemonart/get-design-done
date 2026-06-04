@@ -214,6 +214,34 @@ export function isDefaultTier(v: unknown): v is DefaultTier {
 }
 
 /**
+ * Phase 59.3 (Plan 59-03, Wave A) - `model` vs `default-tier` coherence.
+ *
+ * The optional agent `model` field pins the literal model an agent runs on.
+ * Valid values: `inherit` (use the session model), or a literal tier
+ * (`opus` | `sonnet` | `haiku`). `default-tier` is the routing tier the agent
+ * declares it needs. When an agent pins a LITERAL model that names a DIFFERENT
+ * tier than `default-tier`, the two annotations contradict each other (e.g.
+ * `model: sonnet` + `default-tier: opus` asks for opus-tier routing while
+ * hard-pinning the sonnet model). That is a real, gate-failing incoherence.
+ *
+ * `inherit` is never a contradiction with `default-tier`: it defers to the
+ * session model rather than naming a competing tier.
+ */
+export type ModelValue = 'inherit' | DefaultTier;
+
+export const MODEL_VALUES: readonly ModelValue[] = [
+  'inherit',
+  'opus',
+  'sonnet',
+  'haiku',
+];
+
+/** Type guard for a valid `model` value (`inherit` or a literal tier). */
+export function isModelValue(v: unknown): v is ModelValue {
+  return typeof v === 'string' && MODEL_VALUES.includes(v as ModelValue);
+}
+
+/**
  * Validate the optional `reasoning-class` field and its equivalence with
  * `default-tier` when both are present. Returns an array of violation
  * messages; an empty array means the agent passes the Plan 26-08 rules.
@@ -273,6 +301,97 @@ export function validateReasoningClass(
   }
 
   return violations;
+}
+
+/**
+ * Phase 59.3 (Plan 59-03, Wave A) - validate the optional `model` field
+ * against `default-tier`. Returns an array of HARD-ERROR violation messages
+ * (mirrors validateReasoningClass); an empty array means the agent passes the
+ * coherence axis. Hard errors fail the gate (non-zero exit). Advisory warnings
+ * are emitted separately via modelTierWarnings() and do NOT affect the exit
+ * code.
+ *
+ * Rules (CONTEXT Wave A):
+ *   1. `model` is OPTIONAL. Absence is fine (no error, no warn).
+ *   2. `model: inherit` is always coherent vs `default-tier` (it defers to the
+ *      session model rather than naming a competing tier). No error here.
+ *   3. ERROR when `model` is present AND model !== 'inherit' AND `default-tier`
+ *      is present AND model !== default-tier. A literal model naming a tier
+ *      that differs from default-tier is a real contradiction.
+ *
+ * Invalid-enum shape for `model` / `default-tier` is intentionally NOT raised
+ * here: this validator owns only the cross-field coherence axis. A malformed
+ * literal that is neither `inherit` nor a known tier simply cannot equal a
+ * valid `default-tier`, so it surfaces as a coherence ERROR (the correct
+ * gate-failing outcome) without this helper duplicating enum checks.
+ *
+ * The `agentName` argument is used in error messages to surface which agent
+ * is misconfigured when the validator runs against the full roster.
+ */
+export function validateModelTier(
+  fm: Record<string, unknown>,
+  agentName: string,
+): string[] {
+  const violations: string[] = [];
+  const hasModel = 'model' in fm && !isMissing(fm['model']);
+  const hasTier = 'default-tier' in fm && !isMissing(fm['default-tier']);
+
+  // Rule 1: model absent -> nothing to coordinate.
+  if (!hasModel) return violations;
+
+  const rawModel = String(fm['model']);
+
+  // Rule 2: inherit defers to the session model; never contradicts a tier.
+  if (rawModel === 'inherit') return violations;
+
+  // Rule 3: a literal model only contradicts when default-tier is present and
+  // names a different tier.
+  if (!hasTier) return violations;
+
+  const rawTier = String(fm['default-tier']);
+  if (rawModel !== rawTier) {
+    violations.push(
+      `model/default-tier: contradiction for agent "${agentName}" - model="${rawModel}" pins a literal tier that differs from default-tier="${rawTier}". A literal model must match default-tier, or use model="inherit" to defer to the session model.`,
+    );
+  }
+
+  return violations;
+}
+
+/**
+ * Phase 59.3 (Plan 59-03, Wave A) - advisory (NON-failing) warnings for the
+ * `model` vs `default-tier` axis. Returns warning strings that the CLI emits
+ * as GitHub-Actions `::warning::` annotations / stderr notes; they do NOT
+ * increment the violation count and do NOT change the exit code.
+ *
+ * Rule (CONTEXT Wave A):
+ *   - WARN when `model === 'inherit'` AND `default-tier === 'haiku'`. A haiku
+ *     gate that inherits the (potentially opus/sonnet) session model defeats
+ *     the cheap-gate cost intent. This is advisory, not a hard error: after
+ *     this milestone's A2/A3 fixes, zero agents are in this state, so the warn
+ *     never fires on a clean roster, but it stays as drift insurance.
+ *
+ * `model === 'inherit'` with any non-haiku default-tier is FINE (no warn).
+ */
+export function modelTierWarnings(
+  fm: Record<string, unknown>,
+  agentName: string,
+): string[] {
+  const warnings: string[] = [];
+  const hasModel = 'model' in fm && !isMissing(fm['model']);
+  const hasTier = 'default-tier' in fm && !isMissing(fm['default-tier']);
+  if (!hasModel || !hasTier) return warnings;
+
+  const rawModel = String(fm['model']);
+  const rawTier = String(fm['default-tier']);
+
+  if (rawModel === 'inherit' && rawTier === 'haiku') {
+    warnings.push(
+      `model/default-tier: advisory for agent "${agentName}" - model="inherit" on a default-tier="haiku" gate inherits the session model, which defeats the cheap-gate cost intent. Consider model="haiku" to pin the cheap tier.`,
+    );
+  }
+
+  return warnings;
 }
 
 /**
@@ -381,6 +500,27 @@ function main(): void {
     for (const msg of classViolations) {
       console.log(`${f}:${msg}`);
       violations++;
+    }
+
+    // Plan 59-03 (Wave A) - model vs default-tier coherence (hard errors).
+    const modelTierViolations = validateModelTier(
+      fm as Record<string, unknown>,
+      agentName,
+    );
+    for (const msg of modelTierViolations) {
+      console.log(`${f}:${msg}`);
+      violations++;
+    }
+
+    // Plan 59-03 (Wave A) - model vs default-tier advisories (NON-failing).
+    // Emitted as GitHub-Actions ::warning:: annotations on stderr so they are
+    // visible in CI without contributing to the violation count / exit code.
+    const modelTierAdvisories = modelTierWarnings(
+      fm as Record<string, unknown>,
+      agentName,
+    );
+    for (const msg of modelTierAdvisories) {
+      console.error(`::warning file=${f}::${msg}`);
     }
 
     // Plan 27-06 — peer-CLI delegate_to validation (additive optional field).

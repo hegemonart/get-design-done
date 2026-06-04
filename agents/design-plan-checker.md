@@ -3,7 +3,6 @@ name: design-plan-checker
 description: Validates DESIGN-PLAN.md will achieve DESIGN-CONTEXT.md brief goals before execution. Goal-backward check on plan structure, not on code. Spawned by the plan stage after design-planner completes.
 tools: Read, Bash, Grep, Glob
 color: green
-model: sonnet
 default-tier: haiku
 tier-rationale: "Checks plan artifact against a fixed schema; boolean + gap-list output fits Haiku"
 parallel-safe: always

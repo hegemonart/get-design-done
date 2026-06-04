@@ -3,7 +3,6 @@ name: quality-gate-runner
 description: "Cheap Haiku classifier that ingests {command, exit_code, stderr} tuples from the quality-gate skill's parallel run and emits a JSON verdict - pass/fail plus per-bucket failure groupings (lint / type / test / visual / a11y). Read-only. Does not run commands itself."
 tools: Read, Bash, Grep
 color: amber
-model: inherit
 default-tier: haiku
 tier-rationale: "Pattern-match exit codes and bucket stderr into five named categories - no synthesis, no rewrites, no spawning. Belongs on Haiku to keep classification cost trivial relative to the actual command runs."
 size_budget: S
