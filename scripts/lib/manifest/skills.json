@@ -84,13 +84,19 @@
       "name": "compare",
       "description": "Compute the delta between the `DESIGN.md` baseline (from scan) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`. Activates for requests involving diffing a design baseline against verification output, or a before-after design delta.",
       "argument_hint": "",
-      "user_invocable": true
+      "user_invocable": true,
+      "composes_with": [
+        "verify"
+      ]
     },
     {
       "name": "complete-cycle",
       "description": "Cycle closeout command that marks CYCLES.md entry complete, archives pipeline artifacts to .design/archive/cycle-N/, generates EXPERIENCE.md, rebuilds the search index, and resets STATE.md. Use when a design cycle has shipped and you're ready to start the next one.",
       "argument_hint": "[<retrospective note>]",
-      "tools": "Read, Write, Bash, AskUserQuestion"
+      "tools": "Read, Write, Bash, AskUserQuestion",
+      "composes_with": [
+        "audit"
+      ]
     },
     {
       "name": "connections",
@@ -118,7 +124,10 @@
       "name": "darkmode",
       "description": "Audit a project's dark mode implementation - detects architecture (CSS custom props, Tailwind `dark:` prefix, or JS class toggle), runs architecture-specific contrast / token-override / anti-pattern / meta-property checks, and writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`. Use when the user wants to verify dark mode quality without re-running the full design pipeline. Read-only - no score writeback to `DESIGN.md`. Activates for requests involving auditing dark mode, checking dark-theme contrast, or dark-mode anti-patterns.",
       "argument_hint": "",
-      "user_invocable": true
+      "user_invocable": true,
+      "composes_with": [
+        "audit"
+      ]
     },
     {
       "name": "debug",
@@ -294,13 +303,19 @@
       "name": "new-cycle",
       "description": "Start a new design cycle. Creates cycle scope in STATE.md, initializes .design/CYCLES.md entry. Each cycle has its own goal and tracks its own decisions/tasks/pipeline runs.",
       "argument_hint": "[<goal>]",
-      "tools": "Read, Write, AskUserQuestion"
+      "tools": "Read, Write, AskUserQuestion",
+      "composes_with": [
+        "brief"
+      ]
     },
     {
       "name": "new-project",
       "description": "Initialize a new get-design-done project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage.",
       "argument_hint": "[--name <project-name>]",
       "tools": "Read, Write, AskUserQuestion, Bash, Glob",
+      "composes_with": [
+        "brief"
+      ],
       "next_skills": [
         "brief"
       ]
