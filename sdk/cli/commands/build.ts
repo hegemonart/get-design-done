@@ -1,7 +1,7 @@
 // sdk/cli/commands/build.ts — Phase 42 (COMPILE-06).
 //
 // `gdd-sdk build skills [--harness <id>] [--zip] [--check]` — compile the per-harness skill bundles
-// from source/skills/ via the orchestrator scripts/build-skills.cjs. The orchestrator is a separate
+// from skill-templates/ via the orchestrator scripts/build-skills.cjs. The orchestrator is a separate
 // dep-free CJS process (no bundling entanglement with the SDK); we resolve it relative to the package
 // root and spawn it, forwarding stdout/stderr.
 //
@@ -30,7 +30,7 @@ const BUILD_FLAGS: readonly FlagSpec[] = [
 
 export const BUILD_USAGE = `gdd-sdk build skills [flags]
 
-Compile per-harness skill bundles from source/skills/ into dist/<bundle>/ (and regenerate the
+Compile per-harness skill bundles from skill-templates/ into dist/<bundle>/ (and regenerate the
 committed Claude-Code surface skills/). One source, N provider bundles.
 
 Flags:

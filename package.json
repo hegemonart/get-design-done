@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.57.3",
+  "version": "1.58.0",
   "description": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -55,7 +55,8 @@
     "generate:skill-frontmatter": "node scripts/generate-skill-frontmatter.cjs",
     "generate:skill-frontmatter:check": "node scripts/generate-skill-frontmatter.cjs --check",
     "build:sdk": "node scripts/build-sdk-bins.cjs",
-    "prepack": "npm run build:sdk",
+    "prepare": "node scripts/build-skills.cjs",
+    "prepack": "npm run build:sdk && npm run build:skills",
     "postpack": "node scripts/build-sdk-bins.cjs --clean",
     "test": "node --test --experimental-strip-types \"test/suite/**/*.test.cjs\" \"test/suite/**/*.test.ts\"",
     "test:behavior": "node scripts/run-behavior-tests.cjs",

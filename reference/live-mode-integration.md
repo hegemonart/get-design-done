@@ -9,7 +9,7 @@ last_updated: 2026-06-03
 
 # Live Mode Integration
 
-This file is the meta-rules companion to the `gdd-live` skill (`source/skills/live/SKILL.md`). It describes how `/gdd:live` turns a running dev server into a live design surface: the user picks a DOM element, the agent generates N variants in one batch, the variants hot-swap in place, the user accepts or discards, and the whole session persists. For the SKILL.md structural contract (line cap, description budget, frontmatter), see `./skill-authoring-contract.md`. The variants themselves are grounded in the Phase 45 domain indexes (`./spatial.md`, `./interaction.md`, `./color.md`, `./typography.md`, `./motion.md`).
+This file is the meta-rules companion to the `gdd-live` skill (`skill-templates/live/SKILL.md`). It describes how `/gdd:live` turns a running dev server into a live design surface: the user picks a DOM element, the agent generates N variants in one batch, the variants hot-swap in place, the user accepts or discards, and the whole session persists. For the SKILL.md structural contract (line cap, description budget, frontmatter), see `./skill-authoring-contract.md`. The variants themselves are grounded in the Phase 45 domain indexes (`./spatial.md`, `./interaction.md`, `./color.md`, `./typography.md`, `./motion.md`).
 
 There is NO bundled browser automation. The skill drives the Claude Preview MCP at runtime; the modules under `scripts/lib/live/` are pure and dependency-free.
 

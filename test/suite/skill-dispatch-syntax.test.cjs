@@ -11,7 +11,7 @@
  * fenced code block containing it). Any skill that contains
  * `<agent>X</agent>` is broken.
  *
- * Scope: skills/*\/SKILL.md and source/skills/*\/SKILL.md.
+ * Scope: skills/*\/SKILL.md and skill-templates/*\/SKILL.md.
  */
 
 const test = require('node:test');
@@ -31,7 +31,7 @@ function listSkillMds(root) {
 
 const SKILL_PATHS = [
   ...listSkillMds(path.join(REPO_ROOT, 'skills')),
-  ...listSkillMds(path.join(REPO_ROOT, 'source', 'skills')),
+  ...listSkillMds(path.join(REPO_ROOT, 'skill-templates')),
 ];
 
 test('skill-dispatch: no skill uses the invented `<agent>X</agent>` dispatch syntax', () => {

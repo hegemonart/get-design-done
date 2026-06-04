@@ -45,7 +45,7 @@ REVIEW.md
 .cursor-plugin/marketplace-state.json
 
 # Phase 28.8 (Plan 28-8-X1): Tier-2 distribution bundle output —
-# built from skills/ via scripts/build-distribution-bundles.cjs.
+# built from skill-templates/ via scripts/build-distribution-bundles.cjs.
 # Not committed: it's a deterministic build artifact, rebuilt on demand.
 # Polish v1.57.3: dist/claude-code/ was a byte-identical duplicate of skills/
 # (Claude Code reads ./skills/ via package.json#skills). Removed to drop
@@ -53,6 +53,17 @@ REVIEW.md
 # are build-only artifacts now.
 dist/
 dist/*.tgz
+
+# v1.58.0 (refactor/skill-templates-no-dup): the committed Claude-render skills/
+# was a byte-identical duplicate of source/skills/ modulo placeholder substitution
+# (~232 tracked files for 116 distinct skills). skill-templates/ at repo root is
+# now the single source of truth; skills/ is regenerated:
+#   - on `npm install`               (via `prepare` lifecycle) → dev clones work immediately
+#   - on `npm pack` / `npm publish`  (via `prepack`)            → tarball ships skills/ pre-built
+# End users installing from registry receive pre-built skills/ in the tarball; no build
+# step runs on their machine. tarball-manifest.txt and package.json#files still list
+# skills/ — only the IN-GIT duplication is eliminated.
+skills/
 
 # macOS cruft anywhere in the tree
 **/.DS_Store

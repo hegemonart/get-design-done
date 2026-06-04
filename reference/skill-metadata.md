@@ -10,7 +10,7 @@ last_updated: 2026-06-02
 # Skill Metadata Single Source of Truth
 
 `scripts/lib/manifest/skills.json` is the one place skill frontmatter is authored. A
-generator projects it onto every `source/skills/<id>/SKILL.md`, the build step compiles
+generator projects it onto every `skill-templates/<id>/SKILL.md`, the build step compiles
 those into the shipped trees, and CI gates keep the three copies identical. This doc
 explains the file, the generator, and the description budget. For the structural rules a
 SKILL.md body must follow (line cap, progressive disclosure, frontmatter required fields),
@@ -20,7 +20,7 @@ see `./skill-authoring-contract.md`.
 
 The file is a JSON object: a `schema_version` integer and a `skills` array. Each array
 element is one skill record. Only `name` is required (it must equal the
-`source/skills/<id>/` directory name); every other field is optional and omitted when it
+`skill-templates/<id>/` directory name); every other field is optional and omitted when it
 has no value.
 
 ```json
@@ -50,7 +50,7 @@ Metadata flows in one direction, and a `*:check` gate guards each hop:
 ```text
 skills.json
   -> generate-skill-frontmatter      (npm run generate:skill-frontmatter)
-  -> source/skills/<id>/SKILL.md
+  -> skill-templates/<id>/SKILL.md
   -> build:skills                     (npm run build:skills)
   -> skills/  +  dist/claude-code/
 ```
@@ -64,7 +64,7 @@ skills.json
 - `--check`: the CI drift gate. It writes nothing and exits non-zero when any committed
   frontmatter differs from what the manifest would generate.
 
-`scripts/build-skills.cjs` then propagates `source/skills/` into the committed `skills/`
+`scripts/build-skills.cjs` then propagates `skill-templates/` into the committed `skills/`
 tree and `dist/claude-code/`; its own check mode asserts that the built output equals the
 committed output. So the contract is: edit `skills.json`, regenerate, build. Never
 hand-edit a managed frontmatter line in `SKILL.md`, because the drift gate will fail.

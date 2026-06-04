@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const ROOT = path.resolve(__dirname, '..', '..');
-const SRC = path.join(ROOT, 'source', 'skills');
+const SRC = path.join(ROOT, 'skill-templates');
 const SKILLS = path.join(ROOT, 'skills');
 const CATALOGUE = path.join(ROOT, 'reference', 'skill-placeholders.md');
 const { placeholdersUsed, PLACEHOLDERS } = require('../../scripts/lib/build/factory.cjs');
@@ -23,12 +23,12 @@ function skillDirs(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort();
 }
 
-test('42-ph-01: source/skills mirrors the skills/ skill set', () => {
+test('42-ph-01: skill-templates mirrors the skills/ skill set', () => {
   assert.deepEqual(skillDirs(SRC), skillDirs(SKILLS));
   assert.equal(walkMd(SRC).length, walkMd(SKILLS).length);
 });
 
-test('42-ph-02: every placeholder USED in source/skills is documented in the catalogue', () => {
+test('42-ph-02: every placeholder USED in skill-templates is documented in the catalogue', () => {
   const doc = fs.readFileSync(CATALOGUE, 'utf8');
   const used = new Set();
   for (const f of walkMd(SRC)) for (const p of placeholdersUsed(fs.readFileSync(f, 'utf8'))) used.add(p);
@@ -47,7 +47,11 @@ test('42-ph-03: catalogue documents all four canonical placeholders + escape + h
   assert.ok(doc.includes('harness-only'), 'harness-only block must be documented');
 });
 
-test('42-ph-04: no stray /gdd: survived the migration in source/skills (all templatized)', () => {
-  const stray = walkMd(SRC).filter((f) => fs.readFileSync(f, 'utf8').includes('/gdd:'));
+test('42-ph-04: no stray /gdd: survived the migration in skill-templates (all templatized)', () => {
+  const stray = walkMd(SRC)
+    // skill-templates/README.md documents placeholder grammar — it intentionally cites the
+    // resolved Claude rendering ("/gdd:") as an example. Not a template itself.
+    .filter((f) => !f.endsWith('skill-templates' + require('node:path').sep + 'README.md'))
+    .filter((f) => fs.readFileSync(f, 'utf8').includes('/gdd:'));
   assert.deepEqual(stray, [], 'every /gdd: must have become {{command_prefix}}');
 });

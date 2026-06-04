@@ -12,7 +12,7 @@ const { REPO_ROOT, readFrontmatter } = require('./helpers.ts');
 
 const BRIEF_AUDITOR = path.join(REPO_ROOT, 'agents', 'brief-auditor.md');
 const RUBRIC = path.join(REPO_ROOT, 'reference', 'brief-quality-rubric.md');
-const BRIEF_SKILL = path.join(REPO_ROOT, 'source', 'skills', 'brief', 'SKILL.md');
+const BRIEF_SKILL = path.join(REPO_ROOT, 'skill-templates', 'brief', 'SKILL.md');
 
 // The 8 required agent frontmatter fields (validate:frontmatter contract).
 const REQUIRED_FRONTMATTER = [
