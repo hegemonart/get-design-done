@@ -189,8 +189,20 @@ function cloneOrUpdate(repoUrl, target) {
     return;
   }
 
+  // Defense in depth: refuse repoUrl / target arguments that look like git
+  // CLI flags (e.g. --upload-pack=evil). Even though both args originate
+  // from compile-time constants in resolveContext(), a future refactor
+  // could let env-derived values reach this point — fail closed.
+  if (typeof repoUrl !== 'string' || repoUrl.startsWith('-') ||
+      typeof target !== 'string' || target.startsWith('-')) {
+    log(`refusing suspicious clone args for ${repoUrl} -> ${target}`);
+    return;
+  }
+
   log(`cloning ${repoUrl} -> ${target}`);
-  const r = spawnSync('git', ['clone', '--quiet', '--depth', '1', repoUrl, target], {
+  // Use `--` to terminate option parsing so a malicious URL that looks
+  // like a flag is treated as a positional arg by git.
+  const r = spawnSync('git', ['clone', '--quiet', '--depth', '1', '--', repoUrl, target], {
     stdio: ['ignore', 'ignore', 'ignore'],
     windowsHide: true,
   });

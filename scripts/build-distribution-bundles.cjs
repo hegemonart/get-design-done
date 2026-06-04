@@ -269,8 +269,17 @@ function loadAncillarySources(sourceRoot) {
         // enough prose remains. A `<div ...>...</div>` wrapper, a badge
         // cluster (`![](url)![](url)`), or a pure-link block all reduce
         // to whitespace-only or under 20 chars of prose.
-        const proseOnly = trimmed
-          .replace(/<[^>]+>/g, '')
+        //
+        // CodeQL: multi-character sanitization. Strip nested/malformed
+        // HTML tags iteratively until the regex makes no more progress,
+        // so a `<script\nfoo>` or `<<script>` cannot survive the strip.
+        let proseOnly = trimmed;
+        let prev;
+        do {
+          prev = proseOnly;
+          proseOnly = proseOnly.replace(/<[^>]*>?/gs, '');
+        } while (proseOnly !== prev);
+        proseOnly = proseOnly
           .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
           .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
           .replace(/[*_`]/g, '')
