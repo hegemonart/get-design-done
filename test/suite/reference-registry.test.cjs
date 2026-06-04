@@ -62,13 +62,30 @@ test('registry: find(name) returns the entry', () => {
 });
 
 test('registry: missingInRegistry detects a new file', () => {
-  const stub = path.join(REPO_ROOT, 'reference', '_tmp-test-orphan.md');
-  fs.writeFileSync(stub, '# tmp\n', 'utf8');
+  // Validate against an isolated temp copy (mirrors the danglingInRegistry test
+  // below) so we never write into the real reference/ dir. A concurrent test
+  // that scans the real reference/ (pipeline-smoke-14.5) would otherwise catch
+  // the transient orphan and report false drift. (Phase 59.3 deflake.)
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-reg-orphan-'));
   try {
-    const v = validateRegistry({ cwd: REPO_ROOT });
-    assert.ok(v.missingInRegistry.includes('reference/_tmp-test-orphan.md'));
+    fs.mkdirSync(path.join(dir, 'reference'), { recursive: true });
+    const reg = JSON.parse(fs.readFileSync(REG_PATH, 'utf8'));
+    fs.writeFileSync(path.join(dir, 'reference', 'registry.json'), JSON.stringify(reg), 'utf8');
+    // Seed every registered file as a stub so only our orphan is "missing".
+    for (const e of reg.entries) {
+      if (e.path.endsWith('.md') || e.path.endsWith('.json')) {
+        const target = path.join(dir, e.path);
+        fs.mkdirSync(path.dirname(target), { recursive: true });
+        fs.writeFileSync(target, 'stub\n', 'utf8');
+      }
+    }
+    // The orphan: a reference/*.md present on disk but absent from the registry.
+    fs.writeFileSync(path.join(dir, 'reference', '_tmp-test-orphan.md'), '# tmp\n', 'utf8');
+    const v = validateRegistry({ cwd: dir });
+    assert.ok(v.missingInRegistry.includes('reference/_tmp-test-orphan.md'),
+      `expected orphan detected, got ${JSON.stringify(v.missingInRegistry)}`);
   } finally {
-    fs.unlinkSync(stub);
+    fs.rmSync(dir, { recursive: true, force: true });
   }
 });
 
