@@ -4,6 +4,7 @@ builder-io.md
 chromatic.md
 claude-design.md
 connections.md
+cursor.md
 design-corpora.md
 discord.md
 figma.md

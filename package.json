@@ -94,6 +94,7 @@
     "scan:outbound": "node scripts/scan-outbound-network.cjs",
     "scan:ws-bind": "node scripts/scan-ws-bind.cjs",
     "test:size-budget": "node --test test/suite/agent-size-budget.test.cjs",
+    "validate:skill-surface": "node --test test/suite/skill-surface-sync.test.cjs",
     "release:extract-changelog": "node scripts/extract-changelog-section.cjs",
     "verify:version-sync": "node scripts/verify-version-sync.cjs",
     "typecheck:session-runner": "tsc --noEmit",

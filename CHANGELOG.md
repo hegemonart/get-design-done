@@ -28,6 +28,14 @@ degrade real users who have the module). No new dependency; the markdown floor i
   no `event_id`, extra fields); `hooks/gdd-risk-gate.js` now emits the schema-correct shape, and an Ajv validation test
   guards it. The **dashboard risk column** read the wrong fields and case-mismatched the action vocabulary, so it was
   permanently blank; it is now wired and case-correct.
+- **The Phase 56 calibration loop was unwired.** `scripts/lib/risk/calibration.cjs` was a complete library - rolling-50
+  window, `updateCalibration`, `detectDrift`, `recordRiskOutcome` - but no caller invoked it outside its own tests, so
+  drift detection could only fire from synthetic data. `hooks/gdd-risk-gate.js` now calls `updateCalibration` on every
+  scored call when the writer agent is known (`payload.agent` or `GDD_AGENT`): `block` records `accepted:false`; `allow`,
+  `review`, and `require_confirmation` record `accepted:true`. The store accrues from real traffic, so `detectDrift` flags
+  `under_scoring` / `over_scoring` from production behaviour. Best-effort (a calibration write never breaks a tool call);
+  no-op when the agent is unknown so an "unknown" bucket cannot pool the signal. `user_undo` / `post_apply_correct` are
+  left unresolved at the PreToolUse boundary by design; a later PostToolUse pass can resolve them.
 - **`budget-enforcer` PreToolUse blocks** used `message` instead of `stopReason`, so the block reason was invisible to
   the user; they now use `stopReason`. The **read-injection scanner** loads its pattern file fail-open (a missing file
   no longer crashes the hook). Three package-root walk-ups now match the scoped package name.

@@ -4,8 +4,10 @@ claude
 cline
 codebuddy
 codex
+codex-plugin
 copilot
 cursor
+cursor-marketplace
 gemini
 kilo
 opencode

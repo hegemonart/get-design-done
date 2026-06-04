@@ -29,20 +29,21 @@ test('runtime-models: parser succeeds against the canonical reference file', () 
   assert.ok(parsed.runtimes.length >= 1, 'at least one runtime entry expected');
 });
 
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace` (Tier-2
-// distribution channel). The runtime-models.md content covers install-
-// target runtimes only; the new Tier-2 entry has no models row. Wave D's
-// atomic update will add the row or restrict comparison per CONTEXT D-08.
-test('runtime-models: every runtime ID from runtimes.cjs is represented', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry not in runtime-models.md per Plan B1' }, () => {
+// Phase 28.8 (Plans B1, C1) added two Tier-2 distribution-channel entries
+// (`cursor-marketplace` + `codex-plugin`). runtime-models.md covers Tier-1
+// install-target runtimes only — the Tier-2 channels have no per-user
+// model row. Filter Tier-2 kinds out of the iteration before asserting.
+const TIER2_KINDS = new Set(['cursor-marketplace', 'codex-plugin']);
+test('runtime-models: every Tier-1 runtime ID from runtimes.cjs is represented (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
   const parsed = parseRuntimeModels({ cwd: REPO_ROOT });
   const have = new Set(parsed.runtimes.map((r) => r.id));
-  const want = RUNTIMES.map((r) => r.id);
+  const want = RUNTIMES.filter((r) => !TIER2_KINDS.has(r.kind)).map((r) => r.id);
+  assert.equal(want.length, 14, 'expected 14 Tier-1 install targets');
   for (const id of want) {
     assert.ok(have.has(id), `runtime-models.md is missing entry for runtime '${id}'`);
   }
   // Cross-check: parser's KNOWN_RUNTIME_IDS list should also match
-  // the canonical runtimes.cjs list (one source of truth, mirrored).
+  // the canonical runtimes.cjs Tier-1 set (one source of truth, mirrored).
   for (const id of want) {
     assert.ok(
       KNOWN_RUNTIME_IDS.includes(id),

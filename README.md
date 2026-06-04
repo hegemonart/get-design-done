@@ -56,7 +56,7 @@ What I kept running into: the agent could generate a screen that looked fine in 
 
 So I built Get Design Done: a design pipeline that gives AI coding agents the same kind of structure developers already expect from engineering workflows. It captures the brief, maps the current design system, grounds decisions in references, decomposes the work into atomic tasks, executes those tasks, and verifies the result before you ship.
 
-Behind the scenes: 61 specialized agents, a queryable intel store, tier-aware model routing, 41 optional tool connections, atomic commits, and a no-regret adaptive layer that learns from solidify-with-rollback outcomes. What you use day to day: a few `/gdd:*` commands that keep design work coherent.
+Behind the scenes: 61 specialized agents, a queryable intel store, tier-aware model routing, 42 optional tool connections, atomic commits, and a no-regret adaptive layer that learns from solidify-with-rollback outcomes. What you use day to day: a few `/gdd:*` commands that keep design work coherent.
 
 - **Hegemon**
 
@@ -96,7 +96,7 @@ Closes the **outbound** half of multi-runtime: gdd agents now OPTIONALLY delegat
 - **`delegate_to:` agent frontmatter** - additive optional field; values are `<peer>-<role>` per matrix or `none` for explicit opt-out. Session-runner tries delegate first; transparent fallback on peer-absent OR peer-error. `peer_call_failed` event logs to `events.jsonl` for reflector telemetry. v1.27.0 ships the field but no agent in the fleet uses it yet - opt-in per agent via `/gdd:run-skill peer-cli-customize`.
 - **Bandit posterior `delegate?` dimension** - Phase 23.5's `(agent_type, touches_size_bin)` arm space expands to `(agent_type, touches_size_bin, delegate)` where `delegate ∈ {none, gemini, codex, cursor, copilot, qwen}`. Existing priors carry forward as the `none` arm (no behavior change for unconfigured agents); 5 delegation arms start neutral. Reward signal unchanged (two-stage lexicographic). The bandit measures and learns which delegations actually pay off over cycles.
 - **Event chain `runtime_role` + `peer_id` tags** - additive Phase 22 extension. `events.jsonl` rows optionally tag `runtime_role: "host" | "peer"` (defaults `"host"` for back-compat) and `peer_id`. 3 new event types: `peer_call_started`, `peer_call_complete`, `peer_call_failed`. costs.jsonl threads the same fields so v1.26's cross-runtime cost-arbitrage reflector extends to host-vs-peer arbitrage naturally.
-- **`/gdd:peers` discoverability + skills for setup** - `/gdd:peers` shows a single-command capability matrix (peer × installed? × allowlisted? × claimed roles × posterior delta vs local). `peer-cli-customize` rewires per-agent `delegate_to:` mappings; `peer-cli-add` walks the verification ladder for adding a brand-new peer (model-ID `-preview`-suffix trap, Windows `.cmd` quirks, 3-file footprint). Install-time peer-detection helpers (`detectInstalledPeers()`) ship in `runtimes.cjs` ready for the interactive nudge (deferred to a 1.27.x patch).
+- **`/gdd:peers` discoverability + skills for setup** - `/gdd:peers` shows a single-command capability matrix (peer × installed? × allowlisted? × claimed roles × posterior delta vs local). `peer-cli-customize` rewires per-agent `delegate_to:` mappings; `peer-cli-add` walks the verification ladder for adding a brand-new peer (model-ID `-preview`-suffix trap, Windows `.cmd` quirks, 3-file footprint). Install-time peer-detection helpers (`detectInstalledPeers()`) ship in `runtimes.cjs` and v1.27.1's post-install interactive nudge wires them through `@clack/prompts` (silent skip when no peers detected or non-TTY; opt-in writes `.design/config.json#peer_cli.enabled_peers`).
 
 See [docs/PEER-DELEGATION.md](docs/PEER-DELEGATION.md) for the ops guide (when delegation fires, fallback diagnostics, broker lifecycle, Windows quirks) and [reference/peer-protocols.md](reference/peer-protocols.md) for the ACP + ASP protocol cheat sheet.
 
@@ -590,7 +590,7 @@ Each stage is a thin orchestrator that spawns specialized agents. Heavy lifting 
 | Verify | spawns auditor + verifier + checker | design-auditor (6-pillar score), design-verifier (goal-backward), design-integration-checker (D-XX → code) |
 | Reflect | reads telemetry + learnings | design-reflector (opus), design-authority-watcher, design-update-checker |
 
-### 41 Tool Connections
+### 42 Tool Connections
 
 All optional - the pipeline degrades gracefully when any connection is unavailable:
 
@@ -768,7 +768,7 @@ Targets 50–70% per-task token-cost reduction with no quality-floor regression.
 
 ## Connections
 
-GDD ships with 41 tool connections. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable. Configure with `/gdd:connections`.
+GDD ships with 42 tool connections. All are optional; the pipeline degrades gracefully to fallbacks when any connection is unavailable. Configure with `/gdd:connections`.
 
 | Connection | Purpose | Probe |
 |------------|---------|-------|

@@ -204,6 +204,42 @@ function query(sql, opts = {}) {
 }
 
 // ---------------------------------------------------------------------------
+// _safeBackup(srcPath, bakPath) - H5 backup-guard.
+//
+// Copy srcPath to bakPath, then verify the backup exists AND is non-empty
+// AFTER the copy. Returns true only when the backup is a faithful non-empty
+// copy of the source. Callers MUST check the return value before unlinking
+// the source - the dangerous pattern is `copy → unconditional unlink`, where
+// a silent copy failure (or zero-byte destination) means the unlink deletes
+// the only remaining data.
+//
+// Defensive: never throws. Returns false on any error or empty backup.
+//
+// @param {string} srcPath path to source file (must exist)
+// @param {string} bakPath path for the backup (created/overwritten)
+// @returns {boolean} true iff bakPath exists and is non-empty after copy
+// ---------------------------------------------------------------------------
+
+function _safeBackup(srcPath, bakPath) {
+  try {
+    fs.copyFileSync(srcPath, bakPath);
+  } catch {
+    return false;
+  }
+  // Post-copy verification: the backup must EXIST and be NON-EMPTY.
+  // copyFileSync can silently produce a 0-byte file in some failure modes
+  // (interrupted IO, full disk after open). An empty backup is not a backup;
+  // unlinking the source after one would destroy the data.
+  try {
+    const st = fs.statSync(bakPath);
+    if (!st.isFile() || st.size === 0) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // rotateBak(dbPath) - shift .bak.0..9, cap at 10.
 // ---------------------------------------------------------------------------
 
@@ -248,12 +284,10 @@ function backupCycle(opts = {}) {
   }
   rotateBak(dbPath);
   const bak0 = `${dbPath}.bak.0`;
-  try {
-    fs.copyFileSync(dbPath, bak0);
+  if (_safeBackup(dbPath, bak0)) {
     return { backed_up: true, path: bak0 };
-  } catch (err) {
-    return { backed_up: false, message: `backupCycle: copy failed: ${err.message}` };
   }
+  return { backed_up: false, message: `backupCycle: copy failed or backup is empty at ${bak0}` };
 }
 
 // ---------------------------------------------------------------------------
@@ -283,9 +317,18 @@ function demigrate(opts = {}) {
     };
   }
   // Take a backup before removing.
+  // H5 backup-guard: only unlink when the backup is a faithful non-empty copy.
+  // If the copy failed (or produced a 0-byte file), refuse to unlink the source -
+  // we'd be deleting the only remaining data.
   rotateBak(dbPath);
   const bak0 = `${dbPath}.bak.0`;
-  try { fs.copyFileSync(dbPath, bak0); } catch { /* best-effort backup */ }
+  if (!_safeBackup(dbPath, bak0)) {
+    return {
+      demigrated: false,
+      message: `demigrate: refusing to remove ${dbPath} - backup at ${bak0} ` +
+        `is missing or empty after copyFileSync (would lose data).`,
+    };
+  }
   try {
     fs.unlinkSync(dbPath);
   } catch (err) {
@@ -331,10 +374,23 @@ async function recover(opts = {}) {
   const dbPath = opts.dbPath || backend.sqlitePath(opts.projectRoot || process.cwd());
 
   // Step 1: Rotate existing (possibly corrupt) file to .bak.0.
+  // H5 backup-guard: only unlink the source after a verified non-empty backup.
+  // For recover() the source MAY already be corrupt - so an empty/failed backup
+  // is still significant signal. We refuse to unlink when the backup is missing
+  // OR zero bytes, so the operator retains a copy of the corrupt file for
+  // diagnostics. The caller can manually delete and retry once the backup
+  // location is writable.
   if (fs.existsSync(dbPath)) {
     rotateBak(dbPath);
     const bak0 = `${dbPath}.bak.0`;
-    try { fs.copyFileSync(dbPath, bak0); } catch { /* best-effort */ }
+    if (!_safeBackup(dbPath, bak0)) {
+      return {
+        recovered: false,
+        message: `recover: refusing to remove ${dbPath} - backup at ${bak0} ` +
+          `is missing or empty after copyFileSync (would lose corrupt file ` +
+          `before rebuild). Resolve disk/permission issues and retry.`,
+      };
+    }
     try { fs.unlinkSync(dbPath); } catch (err) {
       return { recovered: false, message: `recover: could not remove corrupt ${dbPath}: ${err.message}` };
     }
@@ -400,5 +456,6 @@ module.exports = {
   // Expose internals for testing.
   _assertReadonly,
   _firstToken,
+  _safeBackup,
   DENIED_TOKENS,
 };

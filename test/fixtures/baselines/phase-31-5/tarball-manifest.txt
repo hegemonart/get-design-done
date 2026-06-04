@@ -79,6 +79,7 @@ connections/builder-io.md
 connections/chromatic.md
 connections/claude-design.md
 connections/connections.md
+connections/cursor.md
 connections/design-corpora.md
 connections/discord.md
 connections/figma.md

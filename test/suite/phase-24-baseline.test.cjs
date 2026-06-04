@@ -54,20 +54,27 @@ test('phase-24 baseline: install lib exports stable surface', () => {
   for (const k of expectInstaller) assert.ok(k in installer, `installer export missing: ${k}`);
 });
 
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace` (kind:
-// 'cursor-marketplace' — a Tier-2 distribution channel, NOT a runtime
-// install target). Phase 24's baseline expected exactly 14 runtime
-// install-targets; the count drifts to 15 with the Tier-2 addition.
-// Baseline rotation is intentionally deferred to Wave D per CONTEXT D-08.
-// Re-enable these assertions (and update both the count + the baseline
-// runtimes.txt file) at Plan 28-8-Z1.
-test('phase-24 baseline: 14 runtimes shipped', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); count drifted to 15 with cursor-marketplace Tier-2 entry per Plan B1' }, () => {
-  const { RUNTIMES } = require('../../scripts/lib/install/runtimes.cjs');
-  assert.equal(RUNTIMES.length, 14);
+// Phase 28.8 (Plans B1, C1) added two Tier-2 distribution-channel entries
+// (`cursor-marketplace` + `codex-plugin`) on top of the 14 Tier-1 runtime
+// install targets. Two semantic counts coexist:
+//   - 14 Tier-1 runtimes (per-user install targets)
+//   - 16 total registry entries (14 install targets + 2 Tier-2 channels)
+// This file asserts the registry-level count (16) and exact id set, and
+// asserts the Tier-1 install-target count (14) separately by filtering.
+const TIER2_IDS = ['codex-plugin', 'cursor-marketplace'];
+
+test('phase-24 baseline: 14 Tier-1 runtime install targets shipped (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
+  const { listRuntimeIds } = require('../../scripts/lib/install/runtimes.cjs');
+  const tier1 = listRuntimeIds().filter((id) => !TIER2_IDS.includes(id));
+  assert.equal(tier1.length, 14);
 });
 
-test('phase-24 baseline: runtimes.txt baseline matches module exactly', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08)' }, () => {
+test('phase-24 baseline: 16 total registry entries shipped (Phase 28.8 B1/C1 — full registry)', () => {
+  const { RUNTIMES } = require('../../scripts/lib/install/runtimes.cjs');
+  assert.equal(RUNTIMES.length, 16);
+});
+
+test('phase-24 baseline: runtimes.txt baseline matches module exactly (Phase 28.8 B1/C1 — full registry)', () => {
   const { listRuntimeIds } = require('../../scripts/lib/install/runtimes.cjs');
   const baselinePath = path.join(REPO_ROOT, 'test', 'fixtures', 'baselines', 'phase-24', 'runtimes.txt');
   const baseline = fs.readFileSync(baselinePath, 'utf8').split('\n').map((s) => s.trim()).filter(Boolean);

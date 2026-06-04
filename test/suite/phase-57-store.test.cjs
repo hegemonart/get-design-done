@@ -139,9 +139,11 @@ test('57-A: markdown floor - migrate returns {migrated:false,backend:markdown}',
   const { spawnSync } = require('node:child_process');
   const script = `
     const store = require(${JSON.stringify(storePath)});
-    const result = store.migrate();
-    const ok = result.migrated === false && result.backend === 'markdown';
-    process.exit(ok ? 0 : 1);
+    (async () => {
+      const result = await store.migrate();
+      const ok = result.migrated === false && result.backend === 'markdown';
+      process.exit(ok ? 0 : 1);
+    })().catch(() => process.exit(1));
   `;
   const result = spawnSync(process.execPath, ['-e', script], {
     encoding: 'utf8',

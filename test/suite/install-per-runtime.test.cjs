@@ -147,16 +147,17 @@ const EXPECTED = {
   },
 };
 
-// Sanity guard — Plan 28.7-09 covers exactly the 14 locked runtimes.
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Phase 28.8 Plan B1 adds the 15th entry `cursor-marketplace` — a Tier-2
-// distribution channel, not a per-user install target. The EXPECTED table
-// covers install targets only; deferring the listRuntimeIds() filter to
-// Wave D's atomic baseline rotation per CONTEXT D-08.
-test('install-per-runtime: EXPECTED table covers all 14 runtimes', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); listRuntimeIds() now returns 15 with cursor-marketplace Tier-2 per Plan B1' }, () => {
-  const ids = listRuntimeIds().sort();
+// Sanity guard — Plan 28.7-09 covers the 14 Tier-1 install-target runtimes.
+// Phase 28.8 (Plans B1, C1) added two Tier-2 distribution-channel entries
+// (`cursor-marketplace` + `codex-plugin`) that are not per-user install
+// targets. The EXPECTED table covers install targets only, so we filter
+// the Tier-2 ids out of listRuntimeIds() before the deep-equal compare.
+const TIER2_IDS = ['codex-plugin', 'cursor-marketplace'];
+test('install-per-runtime: EXPECTED table covers all 14 Tier-1 runtimes (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
+  const ids = listRuntimeIds().filter((id) => !TIER2_IDS.includes(id)).sort();
   const covered = Object.keys(EXPECTED).sort();
-  assert.deepEqual(covered, ids, 'EXPECTED must list every locked runtime');
+  assert.equal(ids.length, 14, 'expected 14 Tier-1 install targets');
+  assert.deepEqual(covered, ids, 'EXPECTED must list every locked Tier-1 runtime');
 });
 
 // ── 14× file-shape tests ──────────────────────────────────────────────────
@@ -394,16 +395,15 @@ test('install-per-runtime: --dry-run writes nothing to disk', () => {
 
 // ── models.json emission per runtime ─────────────────────────────────────
 
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Phase 28.8 Plan B1's cursor-marketplace entry has no per-user configDir
-// and is not an install target; installRuntime(id, ...) throws for that id
-// because the dispatch table covers only claude-marketplace + multi-artifact
-// kinds. Wave D's atomic update will either filter listRuntimeIds() to
-// install-targets-only or extend the dispatch with a Tier-2 no-op branch.
-test('install-per-runtime: models.json emitted for every runtime', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry is not an install target per Plan B1' }, () => {
-  // Quick smoke — install all 14 into separate tmpdirs and assert models.json
-  // either lands successfully or is skipped-no-data (research tail).
-  for (const id of listRuntimeIds()) {
+// Phase 28.8 (Plans B1, C1) — `cursor-marketplace` + `codex-plugin` are
+// Tier-2 distribution channels with no per-user configDir; installRuntime
+// is not designed to dispatch them (no claude-marketplace/multi-artifact
+// branch). Iterate Tier-1 install targets only.
+test('install-per-runtime: models.json emitted for every Tier-1 runtime (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
+  // Quick smoke — install all 14 Tier-1 runtimes into separate tmpdirs and
+  // assert models.json either lands successfully or is skipped-no-data
+  // (research tail).
+  for (const id of listRuntimeIds().filter((rid) => !TIER2_IDS.includes(rid))) {
     const cfg = mkTmpConfigDir(`models-${id}`);
     placeSourceMarker(cfg, REPO_ROOT);
     const result = installRuntime(id, { configDir: cfg, scope: 'global' });
@@ -428,16 +428,18 @@ test('install-per-runtime: models.json emitted for every runtime', { skip: 'Phas
 
 // ── Cross-runtime path uniqueness ────────────────────────────────────────
 
-// TODO(Phase 28.8 Wave D, Plan 28-8-Z1): baseline regen.
-// Same gating as models.json: cursor-marketplace is not an install target.
-test('install-per-runtime: no two runtimes share a destination path', { skip: 'Phase 28.8 Wave D baseline regen pending (CONTEXT D-08); cursor-marketplace Tier-2 entry is not an install target per Plan B1' }, () => {
-  // Install all 14 runtimes into 14 distinct tmpdirs and collect the
+// Phase 28.8 (Plans B1, C1) — same gating as models.json: the Tier-2
+// distribution-channel entries (`cursor-marketplace`, `codex-plugin`)
+// are not install targets. Iterate Tier-1 only.
+test('install-per-runtime: no two Tier-1 runtimes share a destination path (Phase 28.8 B1/C1 — Tier-2 filtered)', () => {
+  // Install all 14 Tier-1 runtimes into 14 distinct tmpdirs and collect the
   // (runtime, dest) pairs. Per Plan 28.7-09 the cross-runtime guarantee
   // is: each runtime writes to a unique tmpdir AND no two runtimes
   // write to a path that would collide if shared.
+  const tier1Ids = listRuntimeIds().filter((rid) => !TIER2_IDS.includes(rid));
   const seen = new Map(); // configDir → runtime
   const writePaths = new Map(); // basename-of-primary-artifact → runtime
-  for (const id of listRuntimeIds()) {
+  for (const id of tier1Ids) {
     const cfg = mkTmpConfigDir(`pathuniq-${id}`);
     placeSourceMarker(cfg, REPO_ROOT);
     assert.equal(seen.has(cfg), false, `${id}: tmpdir collision (mkdtempSync should be unique)`);
@@ -463,8 +465,8 @@ test('install-per-runtime: no two runtimes share a destination path', { skip: 'P
       writePaths.set(relDest, id);
     }
   }
-  // 14 distinct tmpdirs created.
-  assert.equal(seen.size, listRuntimeIds().length);
+  // 14 distinct tmpdirs created (one per Tier-1 install target).
+  assert.equal(seen.size, tier1Ids.length);
   // Each runtime's installed primary file actually exists in its OWN cfg.
   for (const [cfg, id] of seen) {
     const exp = EXPECTED[id];

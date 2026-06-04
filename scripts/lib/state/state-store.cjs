@@ -654,19 +654,60 @@ function _currentCycleId(db) {
 }
 
 // ---------------------------------------------------------------------------
-// migrate - lazy delegate to migrate-to-sqlite.cjs.
+// migrate - async lazy delegate to migrate-to-sqlite.cjs.
 // ---------------------------------------------------------------------------
 
 /**
- * Run migration from markdown STATE.md to SQLite.
- * Delegates to ./migrate-to-sqlite.cjs.
- * If that module cannot be loaded, returns a structured message and a no-op.
+ * Run migration from markdown `.design/STATE.md` to the SQLite state database.
  *
- * @param {{ statePath?: string, dbPath?: string, projectRoot?: string,
- *           dryRun?: boolean, upsertOnly?: boolean }} [migrateOpts]
- * @returns {{ migrated: boolean, backend: string, message?: string }}
+ * This function is the public store-level entry point for the
+ * `--migrate-state` flow. It lazy-loads `./migrate-to-sqlite.cjs` on first call
+ * and delegates to whichever export it exposes (`migrateToSqlite`,
+ * `migrate`, or `migrateState`), in priority order. The underlying
+ * `migrateToSqlite` is itself async (it dynamically imports
+ * `sdk/state/parser.ts` and uses node:fs/promises for IO), so this wrapper
+ * is async and always returns a Promise.
+ *
+ * The function NEVER throws on infrastructure failures:
+ *   - `BACKEND === 'markdown'` (no better-sqlite3) → resolves with
+ *     `{ migrated: false, backend: 'markdown', message: ... }`.
+ *   - `require('./migrate-to-sqlite.cjs')` failed → resolves with
+ *     `{ migrated: false, backend: 'sqlite', message: ... }`.
+ *   - The delegate module loaded but exposes no recognized export → resolves
+ *     with `{ migrated: false, backend: 'sqlite', message: ... }`.
+ *
+ * Errors thrown by the delegate (parser failure, schema mismatch, etc.) are
+ * propagated as a rejected Promise - callers should `await` and handle.
+ *
+ * Idempotent: calling `migrate()` repeatedly on a clean database is safe
+ * (the underlying migration uses `INSERT ... ON CONFLICT ... DO UPDATE`).
+ * Migration is opt-in: the delegate refuses to write unless `force:true` or
+ * the CLI `--migrate-state` flag is set (a notice is returned instead).
+ *
+ * Dual-channel result shapes:
+ *   - markdown floor:   { migrated: false, backend: 'markdown', message }
+ *   - sqlite path:      { migrated: boolean, tables: {...counts}, dryRun,
+ *                         skipped, reason }
+ * The caller MUST inspect `migrated` (the boolean) — never `backend` alone —
+ * to decide whether the operation actually performed writes.
+ *
+ * @async
+ * @param {object} [migrateOpts] options forwarded to the delegate
+ * @param {string} [migrateOpts.statePath]    explicit path to STATE.md
+ * @param {string} [migrateOpts.dbPath]       explicit path to state.sqlite
+ * @param {string} [migrateOpts.projectRoot]  project root for path lookup
+ * @param {boolean} [migrateOpts.dryRun]      wrap writes in BEGIN/ROLLBACK
+ * @param {boolean} [migrateOpts.force]       same as `--migrate-state` flag
+ * @param {boolean} [migrateOpts.upsertOnly]  re-parse + UPSERT without wiping
+ *                                            unrelated rows (used by the R8
+ *                                            freshness guard)
+ * @returns {Promise<{ migrated: boolean, backend?: string, message?: string,
+ *   tables?: object, dryRun?: boolean, skipped?: boolean, reason?: string }>}
+ *   Resolves with the migration result; rejects only on delegate exceptions.
+ * @see migrate-to-sqlite.cjs for the underlying transactional implementation
+ * @see render for the reverse direction (SQLite → STATE.md)
  */
-function migrate(migrateOpts = {}) {
+async function migrate(migrateOpts = {}) {
   if (BACKEND !== 'sqlite') {
     return {
       migrated: false,
@@ -682,14 +723,15 @@ function migrate(migrateOpts = {}) {
       message: 'migrate-to-sqlite.cjs could not be loaded (require failed)',
     };
   }
+  // Delegate is async; await so callers see the resolved result, not a Promise.
   if (typeof mod.migrateToSqlite === 'function') {
-    return mod.migrateToSqlite(migrateOpts);
+    return await mod.migrateToSqlite(migrateOpts);
   }
   if (typeof mod.migrate === 'function') {
-    return mod.migrate(migrateOpts);
+    return await mod.migrate(migrateOpts);
   }
   if (typeof mod.migrateState === 'function') {
-    return mod.migrateState(migrateOpts);
+    return await mod.migrateState(migrateOpts);
   }
   return {
     migrated: false,

@@ -273,6 +273,145 @@ test('56-02: compileFileSensitivityExtra drops malformed entries + compiles stri
 //
 // Tagged dbg-C per the debug-fix session that introduced it.
 
+// ── calibration loop wiring: hook updates the rolling-50 store per real call ──
+//
+// Phase 57 polish (H2): recordRiskOutcome existed in scripts/lib/risk/calibration.cjs
+// but no caller invoked it, so detectDrift could only fire from synthetic tests.
+// The risk gate now writes a rolling-50 calibration row on EVERY scored call when
+// the agent is known — under_scoring / over_scoring drift now derives from
+// production traffic. These tests pin the wiring end-to-end.
+
+test('57-H2: scored call writes a calibration row when GDD_AGENT is set (accepted:true on allow)', () => {
+  withRun(
+    { tool_name: 'Write', tool_input: { file_path: 'README.md', content: 'x' } },
+    ({ res, dir }) => {
+      assert.equal(res.status, 0);
+      const calPath = join(dir, '.design', 'telemetry', 'calibration.json');
+      assert.ok(existsSync(calPath), 'calibration.json must be written under cwd/.design/telemetry');
+      const store = JSON.parse(readFileSync(calPath, 'utf8'));
+      assert.equal(store.schema_version, '56.0');
+      const row = store.agents['design-fixer'];
+      assert.ok(row, 'design-fixer agent row must be present');
+      assert.equal(row.window.length, 1, 'one outcome recorded');
+      assert.equal(row.window[0].accepted, true, 'allow band records accepted:true');
+      assert.equal(typeof row.window[0].risk, 'number');
+      assert.ok(row.window[0].risk >= 0 && row.window[0].risk <= 1);
+    },
+    { env: { GDD_AGENT: 'design-fixer' } },
+  );
+});
+
+test('57-H2: blocked call writes accepted:false to the calibration store', () => {
+  withRun(
+    { tool_name: 'Edit', tool_input: { file_path: '.planning/STATE.md', new_string: bigDiff(300) } },
+    ({ res, stdout, dir }) => {
+      assert.equal(res.status, 0);
+      assert.equal(stdout.continue, false, 'this scenario must block to validate the accepted:false path');
+      const calPath = join(dir, '.design', 'telemetry', 'calibration.json');
+      assert.ok(existsSync(calPath));
+      const store = JSON.parse(readFileSync(calPath, 'utf8'));
+      const row = store.agents['design-fixer'];
+      assert.ok(row);
+      assert.equal(row.window.length, 1);
+      assert.equal(row.window[0].accepted, false, 'block band records accepted:false');
+      assert.equal(row.override_rate, 1, 'one block -> override_rate is 1.0');
+    },
+    { env: { GDD_AGENT: 'design-fixer' } },
+  );
+});
+
+test('57-H2: multiple scored calls accumulate in the rolling window for one agent', () => {
+  // Same tmp cwd across two runs -> the store grows.
+  const dir = mkdtempSync(join(tmpdir(), 'gdd-riskgate-roll-'));
+  try {
+    runHook({ tool_name: 'Write', tool_input: { file_path: 'README.md', content: 'a' } }, { dir, env: { GDD_AGENT: 'design-fixer' } });
+    runHook({ tool_name: 'Write', tool_input: { file_path: 'docs/guide.md', content: 'b' } }, { dir, env: { GDD_AGENT: 'design-fixer' } });
+    const store = JSON.parse(readFileSync(join(dir, '.design', 'telemetry', 'calibration.json'), 'utf8'));
+    assert.equal(store.agents['design-fixer'].window.length, 2, 'two scored calls -> two window entries');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('57-H2: no agent known -> no calibration row written (avoids meaningless "unknown" bucket)', () => {
+  withRun(
+    { tool_name: 'Write', tool_input: { file_path: 'README.md', content: 'x' } },
+    ({ res, dir }) => {
+      assert.equal(res.status, 0);
+      const calPath = join(dir, '.design', 'telemetry', 'calibration.json');
+      assert.ok(!existsSync(calPath), 'calibration.json must NOT be written when agent is unknown');
+    },
+    // Explicitly UNSET GDD_AGENT (and any other agent signal).
+    { env: { GDD_AGENT: '' } },
+  );
+});
+
+test('57-H2: a read-only agent never triggers a calibration write (it short-circuits before scoring)', () => {
+  withRun(
+    { tool_name: 'Edit', tool_input: { file_path: '.planning/STATE.md', new_string: 'one line' } },
+    ({ res, dir }) => {
+      assert.equal(res.status, 0);
+      const calPath = join(dir, '.design', 'telemetry', 'calibration.json');
+      assert.ok(!existsSync(calPath), 'read-only agents bypass scoring -> no calibration row');
+    },
+    { env: { GDD_AGENT: 'design-context-checker' } },
+  );
+});
+
+test('57-H2: recordCalibration unit — assessment shape + tmp root produces a valid store', () => {
+  const mod = require('../../hooks/gdd-risk-gate.js');
+  const root = mkdtempSync(join(tmpdir(), 'gdd-riskgate-unit-'));
+  try {
+    // allow band
+    mod.recordCalibration('agent-x', { score: 0.1, suggested_action: 'allow', reasons: [] }, root);
+    // block band
+    mod.recordCalibration('agent-x', { score: 0.9, suggested_action: 'block', reasons: ['big'] }, root);
+    const store = JSON.parse(readFileSync(join(root, '.design', 'telemetry', 'calibration.json'), 'utf8'));
+    const row = store.agents['agent-x'];
+    assert.equal(row.window.length, 2);
+    assert.equal(row.window[0].accepted, true);
+    assert.equal(row.window[1].accepted, false);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('57-H2: recordCalibration is a no-op when the agent is empty / falsy', () => {
+  const mod = require('../../hooks/gdd-risk-gate.js');
+  const root = mkdtempSync(join(tmpdir(), 'gdd-riskgate-noop-'));
+  try {
+    mod.recordCalibration('', { score: 0.5, suggested_action: 'review', reasons: [] }, root);
+    mod.recordCalibration(undefined, { score: 0.5, suggested_action: 'review', reasons: [] }, root);
+    mod.recordCalibration(null, { score: 0.5, suggested_action: 'review', reasons: [] }, root);
+    const calPath = join(root, '.design', 'telemetry', 'calibration.json');
+    assert.ok(!existsSync(calPath), 'no calibration.json when agent is missing');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('57-H2: recordCalibration never throws on a malformed assessment', () => {
+  const mod = require('../../hooks/gdd-risk-gate.js');
+  const root = mkdtempSync(join(tmpdir(), 'gdd-riskgate-mal-'));
+  try {
+    // These must all silently no-op, not throw.
+    assert.doesNotThrow(() => mod.recordCalibration('a', null, root));
+    assert.doesNotThrow(() => mod.recordCalibration('a', {}, root));
+    assert.doesNotThrow(() => mod.recordCalibration('a', { score: 'nope', suggested_action: 'allow' }, root));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('57-H2: findCalibrationModule resolves the calibration sibling via walk-up', () => {
+  const mod = require('../../hooks/gdd-risk-gate.js');
+  const found = mod.findCalibrationModule(join(REPO_ROOT, 'hooks'));
+  assert.ok(
+    found && found.endsWith(join('scripts', 'lib', 'risk', 'calibration.cjs')),
+    `findCalibrationModule must locate the sibling; got: ${found}`,
+  );
+});
+
 test('56-02 dbg-C: a REAL emitted risk_assessment payload validates against events.schema.json', () => {
   // Load ajv (must be present — it is a dev-dep on the project).
   let Ajv;
