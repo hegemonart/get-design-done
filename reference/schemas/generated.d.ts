@@ -1043,6 +1043,10 @@ export interface RuntimeEntry {
    */
   single_tier?: boolean;
   /**
+   * Provenance confidence of this runtime's tier map. 'verified' = confirmed against runtime-author docs (claude, codex, gemini, qwen). 'byok' = BYOK / multi-provider runtime whose user-configured model may diverge from the Anthropic-default fill. 'unverified' = placeholder fill pending researcher confirmation. Optional: rows omitting this field are treated as unverified-unless-stated by consumers, and verified rows MAY omit it. The budget-enforcer guard reads this (or its built-in verified allowlist) so a byok/unverified row never drives a HARD budget cap (degrades to advisory).
+   */
+  status?: 'verified' | 'byok' | 'unverified';
+  /**
    * Map of canonical Anthropic tier names (D-03) to the runtime's concrete model identifier. All three keys are required even when single_tier=true (assign the same model three times).
    */
   tier_to_model: {
