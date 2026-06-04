@@ -362,6 +362,20 @@
     "typical-duration-seconds",
     "writes"
   ],
+  "design-framer-writer.md": [
+    "color",
+    "default-tier",
+    "description",
+    "model",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
   "design-integration-checker-gate.md": [
     "color",
     "default-tier",
@@ -419,6 +433,20 @@
     "writes"
   ],
   "design-pencil-writer.md": [
+    "color",
+    "default-tier",
+    "description",
+    "model",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
+  "design-penpot-writer.md": [
     "color",
     "default-tier",
     "description",
@@ -543,6 +571,20 @@
     "writes"
   ],
   "design-verifier.md": [
+    "color",
+    "default-tier",
+    "description",
+    "model",
+    "name",
+    "parallel-safe",
+    "reads-only",
+    "size_budget",
+    "tier-rationale",
+    "tools",
+    "typical-duration-seconds",
+    "writes"
+  ],
+  "design-webflow-reader.md": [
     "color",
     "default-tier",
     "description",

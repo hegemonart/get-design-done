@@ -4,6 +4,30 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.2] - 2026-06-04
+
+Second point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Wires the AI-native Wave-2 connections and reconciles the connection count to the honest number.
+
+### Added
+
+- **Three backing agents** for the AI-native Wave-2 connections that were marked "Active" but had no agent behind them: `design-framer-writer` (Framer canvas), `design-penpot-writer` (Penpot canvas), and `design-webflow-reader` (Webflow site structure as an adaptation source). Their capability-matrix "Active" status is now genuine rather than cosmetic. Agent count 61 to 64.
+
+### Changed
+
+- **Honest connection count.** The feature-count gate now counts only genuine integration specs (39), excluding the three non-integration files that live in `connections/` for discoverability: the `connections.md` index, the `cursor.md` runtime, and the `design-corpora.md` reference list. Every marketing surface (plugin.json, marketplace.json, README) now claims 39 connection integrations instead of 42, and the onboarding probe count is reconciled to 39 to match the capability-matrix rows.
+
+### Note
+
+- The v0/Plasmic/Builder.io component-generator dispatch and the `paper-write` / `pencil-write` skills were already shipped (Phase 37.1 and prior), so this release adds only the missing canvas/reader agents plus the count reconciliation.
+
+### Breaking changes
+
+None.
+
+5,028/5,028 tests pass.
+
+---
+
 ## [1.59.1] - 2026-06-04
 
 First point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. The two bundled MCP servers now come up for users automatically, plus the cheapest correctness/honesty fixes.

@@ -24,11 +24,13 @@ design-doc-writer.md
 design-executor.md
 design-figma-writer.md
 design-fixer.md
+design-framer-writer.md
 design-integration-checker-gate.md
 design-integration-checker.md
 design-paper-writer.md
 design-pattern-mapper.md
 design-pencil-writer.md
+design-penpot-writer.md
 design-phase-researcher.md
 design-plan-checker.md
 design-planner.md
@@ -38,6 +40,7 @@ design-start-writer.md
 design-update-checker.md
 design-verifier-gate.md
 design-verifier.md
+design-webflow-reader.md
 ds-generator.md
 ds-migration-planner.md
 email-executor.md
