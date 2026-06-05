@@ -6,9 +6,9 @@
 
 > 注記: この翻訳は英語版より遅れている場合があります。正式な版は [README.md](../../README.md) です (translation may lag behind English; see README.md for the canonical version)。
 
-**AI コーディングエージェントのためのデザイン品質パイプライン: ブリーフ → 探索 → 計画 → 実装 → 検証。**
+**AI コーディングエージェントのためのデザイン品質パイプライン: ブリーフ -> 探索 -> 計画 -> デザイン -> 検証。**
 
-**Get Design Done は、AI が生成した UI をあなたのブリーフ、デザインシステム、リファレンス、品質ゲートに結びつけたまま進めます。Claude Code、OpenCode、Gemini CLI、Kilo、Codex、Copilot、Cursor、Windsurf、Antigravity、Augment、Trae、Qwen Code、CodeBuddy、Cline で動作します。**
+**Get Design Done は、AI が生成した UI をあなたのブリーフ、デザインシステム、ローカルなデザイン知識、品質ゲートに結びつけたまま進めます。Claude Code 向けに作られ、Codex、Cursor、Gemini、OpenCode、Copilot、Windsurf などにもインストールできます。**
 
 [![npm version](https://img.shields.io/npm/v/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
 [![npm downloads](https://img.shields.io/npm/dm/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
@@ -17,612 +17,315 @@
 [![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
-<br>
-
 ```bash
 npx @hegemonart/get-design-done@latest
 ```
 
 **macOS、Linux、Windows で動作します。**
 
-<br>
-
-*「AI コーディングエージェントは UI を速く出荷します。Get Design Done は、それがデザインとして出荷されるようにします。」*
-
-<br>
-
-[なぜ作ったか](#なぜ作ったか) · [仕組み](#仕組み) · [コマンド](#コマンド) · [接続](#接続) · [なぜ動くか](#なぜ動くか)
+[インストール](#インストール) · [はじめに](#はじめに) · [ユースケース](#ユースケース) · [仕組み](#仕組み) · [コマンド](#コマンド) · [接続](#接続) · [安全性](#安全性とプライバシー)
 
 </div>
 
 ---
 
-> [!IMPORTANT]
-> ### Claude Design バンドルをすでにお持ちですか?
->
-> [claude.ai/design](https://claude.ai/design) でデザインをエクスポートした場合、ステージ 1〜3 を完全にスキップできます:
->
-> ```
-> /gdd:handoff ./my-design.html
-> ```
->
-> バンドルの CSS カスタムプロパティを D-XX デザイン決定としてパースし、Handoff Faithfulness スコアリングを伴う検証パスを実行し、オプションで実装ステータスを Figma に書き戻します。
+## これは何か
 
----
+Get Design Done は、AI コーディングエージェントがあなたのプロダクトにふさわしい UI を出荷できるよう支援します。
 
-## なぜ作ったか
+「この画面をもっと良くして」といった漠然とした依頼を、追跡可能なデザインワークフローに変えます。ブリーフ、探索、計画、デザイン、検証。
 
-私は AI コーディングエージェントで出荷するデザイナーです。コード側のワークフローは成熟しています。仕様、タスク、テスト、コミット、レビューのループ。デザイン側はそうではありませんでした。
+センスだけでエージェントに即興させる代わりに、GDD は構造化されたプロセス、ローカルなデザイン知識、プロジェクト固有のメモリ、任意のデザインツール接続、そして作業を出荷する前の検証を与えます。
 
-繰り返し直面した問題はこうでした。エージェントは単体ではよく見える画面を生成できますが、作業そのものは *切り離されています*。トークンは既存システムと一致しません。コントラスト比は WCAG を下回ります。階層は画面ごとに再発明されます。古いアンチパターンが新しいコンポーネントに入り込みます。そして元のブリーフに対して出力を検証するものがないため、問題は PR レビューやハンドオフ後に遅れて見つかります。
+## なぜ存在するのか
 
-そこで Get Design Done を作りました。AI コーディングエージェントに、開発者がエンジニアリングワークフローで当然期待している構造を与えるデザインパイプラインです。ブリーフを捕捉し、現在のデザインシステムをマッピングし、判断をリファレンスに接地し、作業を原子的なタスクに分解し、そのタスクを実行し、出荷前に結果を検証します。
+AI エージェントは UI を素早く生み出します。難しいのは、その UI を一貫させることです。
 
-舞台裏には 37 個の専門エージェント、クエリ可能なインテルストア、ティア対応モデルルーティング、12 個の任意ツール接続、原子的コミット、solidify-with-rollback の結果から学習する no-regret 適応レイヤーがあります。日常的に使うのは、デザイン作業を一貫させる数個の `/gdd:*` コマンドです。
+デザインワークフローがないと、生成されたインターフェイスは漂流します:
 
-— **Hegemon**
+- 色とスペーシングがシステムと一致しなくなる
+- コンポーネントが再発明される
+- コントラストとアクセシビリティが退行する
+- 階層が画面ごとに変わる
+- 実装が元のブリーフと一致しなくなる
 
----
+GDD は AI コーディングワークフローに欠けているデザインの規律を加えます。問題を捕捉し、現在のデザインシステムをマッピングし、スコープを絞った変更を計画し、それを原子的なステップで実行し、ブリーフ、トークン、アクセシビリティ、デザイン品質ルーブリックに照らして結果を検証します。
 
-AI 生成デザインは AI 生成コードと同じ失敗形態を持ちます。望むものを記述し、もっともらしいものを受け取り、しかし出力をブリーフに戻すシステムがないため、規模を拡大すると崩れます。
+舞台裏では、64 個の専門エージェント、クエリ可能なインテルストア、ティア対応モデルルーティング、39 個の任意ツール接続が動いています。日常的に使うのは、ひと握りの `/gdd:*` コマンドです。
 
-Get Design Done はデザイン作業のためのコンテキストエンジニアリングレイヤーです。「この UI を良くして」を、追跡可能なサイクルに変えます: ブリーフ → インベントリ → リファレンス → 計画 → 実装 → 検証。
+## インストール
 
----
+### npm
 
-## 得られるもの
+```bash
+npx @hegemonart/get-design-done@latest
+```
 
-- **ブリーフに接地したデザイン作業** — 各サイクルは問題、対象ユーザー、制約、成功指標、必須要件から始まります。
-- **デザインシステム抽出** — GDD は変更を計画する前に、トークン、タイポグラフィ、スペーシング、コンポーネント、モーション、アクセシビリティ、ダークモード、デザイン負債をインベントリします。
-- **リファレンスに支えられた判断** — エージェントは組み込みのデザインリファレンスに加え、任意で Figma、Refero、Pinterest、Storybook、Chromatic、Preview、Claude Design、paper.design、pencil.dev、Graphify、21st.dev Magic、Magic Patterns 接続を使います。
-- **原子的な実行** — デザインタスクは依存関係ごとに分解され、安全な wave で実行され、独立してコミットされます。
-- **出荷前の検証** — 監査はブリーフ適合、トークン統合、WCAG コントラスト、コンポーネント適合、モーション一貫性、ダークモードアーキテクチャ、デザインアンチパターンをチェックします。
-- **検証失敗時のロールバック** — solidify-with-rollback は各タスクが定着する前に検証します。失敗した作業は自動的に戻されます。
+### Claude Code
 
----
+```bash
+/plugin marketplace add hegemonart/get-design-done
+/plugin install get-design-done@get-design-done
+/reload-plugins
+```
 
-## 誰のためか
+### Codex
 
-GDD は、AI コーディングエージェントで UI を出荷し、最初のスクリーンショットを超えて結果が保つことを求めるエンジニア、デザイナー、デザインエンジニア、創業者、プロダクトビルダーのためのものです。
+```bash
+codex plugin marketplace add hegemonart/get-design-done
+```
 
-トークンが一致すること、コントラストが WCAG を通過すること、モーションが一貫すること、コンポーネントがシステムに従うこと、最終実装が依頼内容にまだ一致していることを重視するなら使う価値があります。
+### agentskills.io
 
-デザイナーである必要はありません。パイプラインがデザインの規律をエージェントワークフローに持ち込みます。コンテキストを抽出し、足りない判断だけを尋ね、作業をリファレンスに接地し、通常は遅すぎる段階で見つかる問題を先に捕捉します。
+[agentskills.io](https://agentskills.io) スキルレジストリから Get Design Done を参照してインストールできます。
 
-### v1.24.0 ハイライト — マルチランタイム・インストーラー
+### ランタイム直接インストーラー
 
-- **`@clack/prompts` 対話型マルチセレクト** — `npx @hegemonart/get-design-done` をフラグなしで実行すると、サポートされる 14 ランタイム(Claude Code、OpenCode、Gemini CLI、Kilo、Codex、Copilot、Cursor、Windsurf、Antigravity、Augment、Trae、Qwen Code、CodeBuddy、Cline)用の洗練されたチェックボックス UI と Global / Local ラジオボタンが表示されます。
-- **冪等 + 外部 AGENTS.md 安全** — インストーラーを再実行してもエントリは重複せず、ランタイム固有の指示ファイルを上書きしません。ファイルが書き込まれる前に確認ステップで diff が表示されます。
-- **スクリプト CI インターフェイスを保持** — 既存のすべてのフラグ(`--claude`、`--cursor`、`--all`、`--global`、`--local`、`--uninstall`、`--config-dir`)は変更なく動作し続けます。インタラクティブモードはランタイムフラグが渡されない場合のみアクティブ化されます。
-- **マルチセレクト・アンインストール** — ランタイムフラグなしの `--uninstall` も対話型マルチセレクトに入り、どのランタイムから削除するかを選びます。
+```bash
+# Claude Code
+npx @hegemonart/get-design-done --claude --global
+npx @hegemonart/get-design-done --claude --local
 
-### 以前のリリース
+# その他のランタイム
+npx @hegemonart/get-design-done --codex --global
+npx @hegemonart/get-design-done --cursor --global
+npx @hegemonart/get-design-done --gemini --global
 
-- **v1.23.5** — No-Regret 適応レイヤー(Thompson サンプリングバンディット + AdaNormalHedge アンサンブル + MMR リランク; informed-prior ブートストラップで単一ユーザー可能、opt-in テレメトリ不要)。
-- **v1.23.0** — SDK ドメインプリミティブ(solidify-with-rollback ゲート、JSON 出力契約、`Touches:` パターン自動結晶化)。
-- **v1.22.0** — SDK 観測可能性(約 24 のタイプ付きイベント、ツールコールごとのトラジェクトリ、追記専用イベントチェーン、シークレットスクラバー)。
-- **v1.21.0** — ヘッドレス SDK(Claude Code なしで完全パイプラインを実行する `gdd-sdk` CLI、並列リサーチャー、クロスハーネス MCP)。
-- **v1.20.0** — SDK 基盤(レジリエンスプリミティブ、ロックファイル安全な `STATE.md`、11 のタイプ付きツールを持つ `gdd-state` MCP サーバー、TypeScript 基盤)。
+# マルチランタイムインストール
+npx @hegemonart/get-design-done --all --global
 
-完全なリリースノートは [CHANGELOG.md](CHANGELOG.md) を参照。
-
----
-
-<p align="center">
-  <strong>Supported by</strong>
-</p>
-
-<div align="center">
-  <a href="https://www.humbleteam.com/" aria-label="Humbleteam">
-    <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam logo" width="180">
-  </a>
-  <br>
-  <sub>Product design partner for ambitious startups and AI products.</sub>
-</div>
-
----
+# 書き込みせずにプレビュー
+npx @hegemonart/get-design-done --dry-run
+```
 
 ## はじめに
 
-```bash
-npx @hegemonart/get-design-done@latest
-```
-
-インストーラーは以下の選択を促します:
-1. **ランタイム** — Claude Code、OpenCode、Gemini、Kilo、Codex、Copilot、Cursor、Windsurf、Antigravity、Augment、Trae、Qwen Code、CodeBuddy、Cline、またはすべて(対話型マルチセレクト)
-2. **場所** — Global(すべてのプロジェクト)または Local(現在のプロジェクトのみ)
-
-確認:
-
-```
-/gdd:help
-```
-
-> [!TIP]
-> 摩擦のない自動化体験のために、Claude Code を `--dangerously-skip-permissions` で実行することを推奨します。GDD は自律的なマルチステージ実行のために設計されています。
-
-### 最新の状態を保つ
-
-GDD は頻繁にリリースされます。インストーラーを再実行してください(冪等で、登録済みマーケットプレイスエントリをその場で更新します):
+軽量な初回パスを実行:
 
 ```bash
-npx @hegemonart/get-design-done@latest
+/gdd:start
 ```
 
-または Claude Code 内から:
-
-```
-/gdd:update
-```
-
-`/gdd:update` は適用前に changelog をプレビューします。`reference/` 下のローカル修正は保持されます — 構造的更新後に再ステッチが必要な場合は `/gdd:reapply-patches` を実行します。
-
-<details>
-<summary><strong>非対話型インストール(Docker、CI、スクリプト)</strong></summary>
+または完全なデザインサイクルを実行:
 
 ```bash
-npx @hegemonart/get-design-done --claude --global
-npx @hegemonart/get-design-done --claude --local
-npx @hegemonart/get-design-done --opencode --global
-npx @hegemonart/get-design-done --gemini --global
-npx @hegemonart/get-design-done --kilo --global
-npx @hegemonart/get-design-done --codex --global
-npx @hegemonart/get-design-done --copilot --global
-npx @hegemonart/get-design-done --cursor --global
-npx @hegemonart/get-design-done --windsurf --global
-npx @hegemonart/get-design-done --antigravity --global
-npx @hegemonart/get-design-done --augment --global
-npx @hegemonart/get-design-done --trae --global
-npx @hegemonart/get-design-done --qwen --global
-npx @hegemonart/get-design-done --codebuddy --global
-npx @hegemonart/get-design-done --cline --global
-
-# すべてのランタイム
-npx @hegemonart/get-design-done --all --global
-
-# ドライラン
-npx @hegemonart/get-design-done --dry-run
-
-# カスタム設定ディレクトリ
-CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done
-```
-
-</details>
-
-<details>
-<summary><strong>代替: Claude Code CLI</strong></summary>
-
-```bash
-claude plugin marketplace add hegemonart/get-design-done
-claude plugin install get-design-done@get-design-done
-```
-
-</details>
-
-### Tier-2 Distribution Channels (v1.28.8+)
-
-上記のフェーズ28.7のファイルドロップインストールパス（デフォルトで引き続き動作）に加え、v1.28.8 は 3 つの新しい Tier-2 配信チャネルを追加します:
-
-- **agentskills.io によるクロスランタイム互換性。** 当方の `skills/` は [agentskills.io](https://agentskills.io) 仕様に準拠しています。agentskills.io 互換を宣言するランタイム（Codex、Kilo、Augment、Hermes、Qwen）はこのチャネル経由で直接スキルを利用できます。
-- **Cursor Marketplace。** Cursor のマーケットプレイス UI からインストール。公開は Cursor チームレビュー承認待ち — `docs/cursor-marketplace-field-test.md` を参照。
-- **Codex Plugin。** Codex の GitHub URL プラグイン追加経由でインストール:
-
-  ```bash
-  codex plugin marketplace add hegemonart/get-design-done
-  ```
-
-詳細は [README.md](README.md)（英語、正本）を参照してください。
-
-### Capability-Gap テレメトリ + 自己オーサリング (v1.29.0+)
-
-リフレクター・ループは「ケイパビリティ・ルックアップ失敗」シグナルをファーストクラスのテレメトリとして追跡するようになりました。十分な繰り返し発生するギャップが浮上したら、レビュー対象として新しい agent / skill を提案として下書きできます。
-
-**ステージ 0 — テレメトリ（即時リリース）。** 3 つのルックアップ失敗ポイントが型付き `capability_gap` イベントを発行します: `skills/fast` のスキル不一致パス、`gdd-router` の未解決インテント・パス、リフレクターのパターン検出パス。表示は `gdd-events --type capability_gap`。
-
-**ステージ 1 — 自己オーサリング（データがゲートを越えたらオプトイン）。** K=3 個の安定したクラスタが M=10 サイクルで現れると、`/gdd:apply-reflections` がステージ 1 を有効化するかを一度だけ尋ねます。リフレクターは Phase 28.5 準拠の frontmatter を持つインキュベーター・アーティファクトを `.design/reflections/incubator/<slug>/` に下書きします。4 つのアクション: `accept` / `reject` / `defer` / `edit`。厳密に proposal-only — `/gdd:apply-reflections` が唯一の人間ゲートです (Phase 11 SC-8)。
-
-スコープ・ガード: オーサリングは `agents/` と `skills/` に限定され、ランタイム / トランスポート / フックは対象外です。詳細は [README.md](README.md)（英語、正本）を参照してください。
-
-
-## 仕組み
-
-> **既存のコードベースから始めますか?** まず `/gdd:map` を実行してください。5 つの専門マッパー(tokens、components、visual hierarchy、a11y、motion)が並列にディスパッチされ、`.design/map/` に構造化された JSON を書き込みます。
-
-### 1. Brief(ブリーフ)
-
-```
 /gdd:brief
-```
-
-スキャンや探索の前にデザイン問題を捕捉します。`AskUserQuestion` を介して 1 度に 1 つの質問形式で — 未回答セクションについてのみ: 問題、対象者、制約、成功指標、スコープ。
-
-**生成:** `.design/BRIEF.md`
-
----
-
-### 2. Explore(探索)
-
-```
 /gdd:explore
-```
-
-現在のコードベースのデザインシステムをインベントリします — 色、タイポグラフィ、間隔、コンポーネント、モーション、a11y、ダークモード。5 つの並列マッパーと `design-discussant` インタビューが 3 つの成果物を生成します。接続プローブが 12 の外部ツールの可用性を検出します。
-
-**生成:** `.design/DESIGN.md`、`.design/DESIGN-DEBT.md`、`.design/DESIGN-CONTEXT.md`、`.design/map/{tokens,components,a11y,motion,visual-hierarchy}.{md,json}`
-
----
-
-### 3. Plan(計画)
-
-```
 /gdd:plan
-```
-
-Explore 出力を原子的でウェーブ協調型、依存関係分析済みのデザインタスクに分解します。各タスクは明示的な `Touches:` パス、並列安全タグ、受け入れ基準を持ちます。`design-planner`(opus)が作成し、`design-plan-checker`(haiku)が実行前にゲートチェックします。
-
-**生成:** `.design/DESIGN-PLAN.md`
-
----
-
-### 4. Design(実行)
-
-```
 /gdd:design
-```
-
-タスクをウェーブ順に実行します。各タスクは専用の `design-executor` エージェントを取得し、新しい 200k コンテキスト、原子 git コミット、コンテキスト内ルールに従った自動偏差処理を持ちます。並列安全タスクは worktree で実行されます。
-
-**Solidify-with-rollback**(v1.23.0) — すべてのタスクは固定前に検証(typecheck + build + ターゲットテスト)。検証失敗 → `git stash` 巻き戻し。
-
-**生成:** タスクごとに `.design/tasks/task-NN.md`、タスクごとに原子 git コミット
-
-```
-┌────────────────────────────────────────────────────────────────────┐
-│  WAVE 実行                                                         │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  WAVE 1(並列)             WAVE 2(並列)            WAVE 3        │
-│  ┌─────────┐ ┌─────────┐    ┌─────────┐ ┌─────────┐    ┌─────────┐ │
-│  │ Task 01 │ │ Task 02 │ →  │ Task 03 │ │ Task 04 │ →  │ Task 05 │ │
-│  └─────────┘ └─────────┘    └─────────┘ └─────────┘    └─────────┘ │
-│       │           │              ↑           ↑              ↑      │
-│       └───────────┴──────────────┴───────────┴──────────────┘      │
-│              Touches: パスが依存関係分析を駆動                     │
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### 5. Verify(検証)
-
-```
 /gdd:verify
 ```
 
-ブリーフに対して検証 — 必達項目、NN/g ヒューリスティック、監査ルーブリック、トークン統合。3 つのエージェントが順次実行: `design-auditor`(6 軸 1〜4 スコア)、`design-verifier`(目標逆方向)、`design-integration-checker`(D-XX 決定をコードへ grep)。失敗時には構造化されたギャップリストを生成し、`design-fixer` 経由で verify→fix ループに入ります。
+自然言語ルーティングの場合:
 
-**生成:** `.design/DESIGN-VERIFICATION.md`、問題発見時は修正コミット
-
----
-
-### 6. Ship → Reflect → 次のサイクル
-
-```
-/gdd:ship                    # 綺麗な PR ブランチを生成(.design/ コミットをフィルター)
-/gdd:reflect                 # design-reflector がテレメトリ + 学習を読み込む
-/gdd:apply-reflections       # reflector の提案を確認し選択的に適用
-/gdd:complete-cycle          # サイクル成果物をアーカイブ + EXPERIENCE.md を書く
-/gdd:new-cycle               # 新しいデザインサイクルを開く
+```bash
+/gdd:do improve the checkout page hierarchy, spacing, and empty states
 ```
 
-または自動ルーティング:
+## ユースケース
 
-```
-/gdd:next                    # 状態を自動検出して次のステップを実行
-```
+### 既存の画面を改善する
 
-各サイクルはブリーフ、スキャン、計画、実行、検証、サイクルごとの 100〜200 行の `EXPERIENCE.md`(目標 / 行った決定 / 学習 / 廃棄したもの / 次のサイクルへの引き継ぎ)を取得し、これは decision-injector フックの最優先ソースになります。
+画面は技術的には機能しているが、視覚的に一貫性がない、不明瞭、またはデザインが不十分に感じられるときに GDD を使います。
 
----
-
-### Fast モード
-
-```
-/gdd:fast "<task>"
+```bash
+/gdd:do improve the settings page layout and component hierarchy
 ```
 
-完全なパイプラインを必要としない単一ファイルの些細な修正用。ルーター、キャッシュマネージャ、テレメトリをスキップ。同じ原子コミット保証。
+### AI の出力をデザインシステムに戻す
 
+エージェントが、もっともらしく見えるがトークン、スペーシング、状態、コンポーネントと一致しない UI を生成したときに使います。
+
+```bash
+/gdd:verify
 ```
-/gdd:quick
+
+### 出荷前の監査
+
+PR、リリース、デザインハンドオフの前に検証を実行します。
+
+```bash
+/gdd:audit
 ```
 
-GDD 保証が必要だがオプションのゲート(phase-researcher、assumptions analyzer、integration-checker)をスキップする一時的なタスク用。`/gdd:fast` より安全; フルパイプラインより速い。
+### ダークモードを修正する
 
----
+```bash
+/gdd:darkmode
+```
 
-## なぜ動くか
+### デザインハンドオフをインポートする
 
-### コンテキストエンジニアリング
+```bash
+/gdd:handoff ./my-design.html
+```
 
-AI コーディング CLI は十分なコンテキストを与えれば強力です。多くの人はそうしません。
+これは Claude Design バンドルをパースし、CSS カスタムプロパティをデザイン決定として抽出し、ハンドオフ忠実度チェックを実行します。
 
-GDD があなたのために処理します:
+### 小さく焦点を絞った修正をする
+
+```bash
+/gdd:fast "fix contrast in pricing cards"
+```
+
+## 何が違うのか
+
+### ローカルなデザイン知識
+
+GDD はデザイン作業のための広範なローカルリファレンスライブラリを同梱しています。基本的なデザイン判断のために、エージェントはライブの Web 検索に頼らずにこれを利用できます。
+
+アクセシビリティ、WCAG、タイポグラフィ、スペーシング、グリッド、色、コントラスト、サーフェス、モーション、UX ライティング、フォーム、空の状態、視覚的階層、ダークモード、レスポンシブ挙動、i18n、リサーチ手法、監査スコアリング、デザインアンチパターンを網羅します。
+
+エージェントは空のプロンプトから始めるわけではありません。計画、実装、検証の各段階で適用できる共有のデザイン語彙と具体的な標準を備えています。
+
+完全なマップ: [docs/KNOWLEDGE-BASE.md](docs/KNOWLEDGE-BASE.md)
+
+### プロジェクト固有のメモリ
+
+GDD は各サイクルを地に足のついたものに保つ `.design/` ワークスペースを作成します:
+
+| アーティファクト | 目的 |
+| --- | --- |
+| `.design/BRIEF.md` | 問題、対象ユーザー、スコープ、成功指標 |
+| `.design/DESIGN.md` | 現在のデザインシステムスナップショット |
+| `.design/DESIGN-CONTEXT.md` | 決定、制約、リファレンス |
+| `.design/DESIGN-PLAN.md` | 原子的な実装計画 |
+| `.design/DESIGN-VERIFICATION.md` | 最終監査とギャップレポート |
+| `.design/intel/` | クエリ可能なプロジェクト知識: トークン、コンポーネント、関係、決定 |
+| `.design/archive/` | 完了したサイクルの履歴と学習 |
+
+長く使うほど、エージェントが再発見しなければならないことは減ります。
+
+### 出荷前の検証
+
+GDD は UI が「完成したように見える」段階で止まりません。
+
+検証ステージは、結果が次のものと依然一致しているかをチェックします:
+
+- 元のブリーフ
+- デザインシステムのトークン
+- アクセシビリティの閾値
+- コンポーネントの慣習
+- 視覚的階層
+- モーションとインタラクションのルール
+- 記録されたデザイン決定
+
+ギャップが現れると、GDD はレビューを雰囲気任せにする代わりに、構造化された修正リストを生成します。
+
+### スキル挙動テスト
+
+GDD 自身のスキルは、敵対的なプレッシャーシナリオ(時間的プレッシャー、サンクコスト、権威、スコープ最小化)の下で試され、屈するのではなく規律を保つことが確認されます。プレッシャーシナリオの追加方法は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+
+## 仕組み
+
+```text
+Brief -> Explore -> Plan -> Design -> Verify -> Ship
+```
+
+| ステージ | コマンド | 出力 |
+| --- | --- | --- |
+| Brief | `/gdd:brief` | デザイン問題を捕捉 |
+| Explore | `/gdd:explore` | UI システム、負債、トークン、コンポーネントをマッピング |
+| Plan | `/gdd:plan` | 原子的なデザインタスクを作成 |
+| Design | `/gdd:design` | 検証付きでタスクを実行 |
+| Verify | `/gdd:verify` | 最終結果を監査 |
+
+### 主要な出力
 
 | ファイル | 役割 |
-|----------|------|
-| `.design/BRIEF.md` | サイクルの問題、対象者、成功指標 |
+| --- | --- |
+| `.design/BRIEF.md` | サイクルの問題、対象ユーザー、成功指標 |
 | `.design/DESIGN.md` | 現在のデザインシステムスナップショット |
-| `.design/DESIGN-CONTEXT.md` | D-XX 決定、インタビュー回答、上下流の制約 |
-| `.design/DESIGN-PLAN.md` | 原子タスク、ウェーブ振付、依存関係 |
-| `.design/DESIGN-VERIFICATION.md` | 検証結果、ギャップリスト、Handoff Faithfulness スコア |
-| `.design/intel/` | クエリ可能なナレッジレイヤー |
-| `.design/archive/cycle-N/EXPERIENCE.md` | サイクルごとの振り返り、サイクル間メモリ |
-| `.design/telemetry/events.jsonl` | ステージ間のタイプ付きイベントストリーム |
-| `.design/telemetry/posterior.json` | バンディット事後分布(`adaptive_mode != static` の場合) |
-
-Claude の品質低下境界に合わせたサイズ制限。その下に留まれば、一貫した卓越性が得られます。
-
-### 37 の専門エージェント
-
-各ステージは薄いオーケストレーターが専門エージェントをスポーンするパターンです。重い作業は新しい 200k コンテキストで起こり、メインセッションを占有しません。
-
-| ステージ | オーケストレーター | エージェント |
-|---------|------------------|-------------|
-| Brief | 1 質問インタビュー | (サブエージェントなし) |
-| Explore | 5 マッパー + discussant をスポーン | 5 並列マッパー、design-discussant、research-synthesizer |
-| Plan | リサーチャー + planner + checker をスポーン | design-phase-researcher(オプション)、design-planner(opus)、design-plan-checker(haiku) |
-| Design | ウェーブ調整 + worktree 隔離 | タスクごとに design-executor、solidify 失敗時に design-fixer |
-| Verify | auditor + verifier + checker をスポーン | design-auditor、design-verifier、design-integration-checker |
-| Reflect | テレメトリ + 学習を読み込む | design-reflector(opus)、design-authority-watcher、design-update-checker |
-
-### 12 のツール接続
-
-すべてオプション — どの接続も使用できないときパイプラインは優雅にフォールバックします:
-
-- **Figma**(読み取り + 書き込み + Code Connect)
-- **Refero** — デザインリファレンス検索
-- **Pinterest** — ビジュアルリファレンスへの接地
-- **Claude Design** — ハンドオフバンドルインポート
-- **Storybook** — コンポーネント仕様の参照
-- **Chromatic** — ビジュアル回帰ベースライン diff
-- **Preview** — Playwright + Claude Preview MCP ランタイムスクリーンショット
-- **paper.design** — MCP キャンバス読み書き
-- **pencil.dev** — git 追跡 `.pen` 仕様ファイル
-- **Graphify** — ナレッジグラフエクスポート
-- **21st.dev Magic** — greenfield ビルド前の先例検索
-- **Magic Patterns** — DS-aware コンポーネント生成
-
-### 組み込みデザインリファレンス
-
-プラグインは **18 以上のリファレンスファイル** を出荷します — NN/g 10、Don Norman 感情デザイン、Dieter Rams 10 原則、Disney 12(モーション)、Sonner / Emil Kowalski のコンポーネント作成レンズ、Peak-End、Loss Aversion、Cognitive Load、Aesthetic-Usability、Doherty、Flow、35 のコンポーネント仕様、gestalt、ビジュアル階層、ブランドボイス、161 産業別パレット、67 UI 美学、12 モーションイージング、8 トランジションファミリー、WCAG 2.1 AA、プラットフォーム(iOS/Android/web/visionOS/watchOS)、RTL/CJK、フォームパターン、アンチパターンカタログ。
-
-### 原子的な git コミット
-
-```
-abc123f docs(08-02): complete user-card token plan
-def456g feat(08-02): unify card surface tokens with --color-bg-elevated
-hij789k feat(08-02): replace inline padding with --space-* scale
-lmn012o test(08-02): assert card.spec passes WCAG contrast 4.5:1
-```
-
-git bisect が失敗したタスクを正確に見つけます。各タスクは独立してリバート可能です。Solidify-with-rollback がタスクレベルの検証ゲートを追加するため、壊れたタスク 3 が verify 実行前にタスク 4〜10 を破壊することはありません。
-
-### 自己改善ループ
-
-各サイクル後、`design-reflector`(opus)が `events.jsonl`、`agent-metrics.json`、`learnings/` を読み、diff を提案します — ティアオーバーライド、並列化ルール、リファレンス追加、frontmatter 更新。`/gdd:apply-reflections` が適用前に diff を表示して尋ねます。
-
-**No-Regret 適応レイヤー**(v1.23.5)はその上に Thompson サンプリングバンディット + AdaNormalHedge アンサンブル + MMR リランクを重ね、informed-prior ブートストラップにより単一ユーザーで実用可能です。
-
-### コストガバナンス
-
-- **`gdd-router` スキル** — 決定論的な意図 → fast / quick / full ルーティング、モデルコールなし。
-- **`gdd-cache-manager`** — Layer-B 明示的キャッシュ、SHA-256 入力ハッシュ、5 分 TTL 認識。
-- **`budget-enforcer` PreToolUse フック** — `.design/budget.json` からティアオーバーライド、ハードキャップ、遅延スポーンゲートを強制。
-- **スポーンごとのコストテレメトリ** — `.design/telemetry/costs.jsonl` 行が `/gdd:optimize` 推奨に供給。
-
-目標: 品質下限の回帰なしにタスクごとのトークンコスト 50〜70% 削減。
-
----
+| `.design/DESIGN-CONTEXT.md` | デザイン決定と制約 |
+| `.design/DESIGN-PLAN.md` | 原子的タスク、ウェーブ、依存関係 |
+| `.design/DESIGN-VERIFICATION.md` | 検証結果とギャップリスト |
+| `.design/intel/` | このプロジェクトのクエリ可能な知識レイヤー |
 
 ## コマンド
 
+GDD は 96 個のスキルを出荷します。以下は大半のユーザーが日常的に必要とするものです。完全なリファレンスは [SKILL.md](SKILL.md) を参照してください。
+
 ### コアパイプライン
 
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:brief` | ステージ 1 — デザインブリーフを捕捉 |
-| `/gdd:explore` | ステージ 2 — コードベースインベントリ + インタビュー |
-| `/gdd:plan` | ステージ 3 — DESIGN-PLAN.md を生成 |
-| `/gdd:design` | ステージ 4 — ウェーブで実行 |
-| `/gdd:verify` | ステージ 5 — ブリーフに対して検証 |
-| `/gdd:ship` | 綺麗な PR ブランチを生成 |
-| `/gdd:next` | STATE.md ベースで次のステージへ自動ルーティング |
-| `/gdd:do <text>` | 自然言語ルーター |
-| `/gdd:fast <text>` | パイプラインなしの一発些細修正 |
-| `/gdd:quick` | GDD 保証ありでオプションゲートをスキップする一時的タスク |
+| コマンド | 目的 |
+| --- | --- |
+| `/gdd:brief` | デザインブリーフを捕捉 |
+| `/gdd:explore` | 現在の UI システムをインベントリ |
+| `/gdd:plan` | デザイン計画を生成 |
+| `/gdd:design` | 計画を実行 |
+| `/gdd:verify` | 結果を検証 |
+| `/gdd:ship` | 綺麗な PR ブランチを準備 |
+| `/gdd:next` | 次のステージへ自動ルーティング |
 
-### 初回 + オンボーディング
+### 日常的な利用
 
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:start` | 初回証明パス — リポジトリ内のデザイン課題上位 3 件 |
-| `/gdd:new-project` | GDD プロジェクト初期化 |
-| `/gdd:connections` | 12 の外部統合のためのオンボーディングウィザード |
+| コマンド | 目的 |
+| --- | --- |
+| `/gdd:do <task>` | 自然言語ルーター |
+| `/gdd:fast <task>` | 小さく焦点を絞った修正 |
+| `/gdd:quick` | 軽量タスクフロー |
+| `/gdd:audit` | デザイン品質監査 |
+| `/gdd:darkmode` | ダークモード監査 |
+| `/gdd:style <component>` | コンポーネントスタイルのハンドオフ |
+| `/gdd:health` | パイプライン状態を診断 |
+| `/gdd:progress` | 現在のサイクル進捗を表示 |
+| `/gdd:resume` | チェックポイントから再開 |
 
-### サイクルライフサイクル
+### デザインツールとハンドオフ
 
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:new-cycle` | 新しいデザインサイクル |
-| `/gdd:complete-cycle` | サイクル成果物をアーカイブ + EXPERIENCE.md |
-| `/gdd:pause` / `/gdd:resume` | 番号付きチェックポイント |
-| `/gdd:continue` | `/gdd:resume` のエイリアス |
-| `/gdd:timeline` | サイクル + git log の物語的振り返り |
-
-### 反復 + 決定
-
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:discuss [topic]` | 適応型デザインインタビュー |
-| `/gdd:list-assumptions` | 計画前に隠れたデザイン仮定を表面化 |
-| `/gdd:sketch [idea]` | マルチバリアント HTML モックアップ |
-| `/gdd:spike [idea]` | タイムボックス付き実現可能性実験 |
-| `/gdd:sketch-wrap-up` / `/gdd:spike-wrap-up` | 発見をプロジェクトローカルスキルにパッケージング |
-| `/gdd:audit` | 検証 + 監査 + リフレクターラッパー |
-| `/gdd:reflect` | オンデマンドリフレクター実行 |
-| `/gdd:apply-reflections` | リフレクター提案を確認し選択的に適用 |
-
-### メモリ + ナレッジレイヤー
-
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:recall <query>` | FTS5 検索 |
-| `/gdd:extract-learnings` | サイクル成果物からパターン/決定/教訓を採掘 |
-| `/gdd:note <text>` | 摩擦のないアイデアキャプチャ |
-| `/gdd:plant-seed <idea>` | トリガー条件付き前向きアイデア |
-| `/gdd:analyze-dependencies` | トークンファンアウト、コンポーネントコールグラフ、決定追跡可能性 |
-| `/gdd:skill-manifest` | すべての GDD スキルとエージェントをリスト |
-| `/gdd:graphify` | プロジェクトナレッジグラフを構築/クエリ/diff |
-| `/gdd:watch-authorities` | デザイン権威フィード diff |
-
-### 接続
-
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:figma-write` | デザイン決定を Figma に書き戻す |
+| コマンド | 目的 |
+| --- | --- |
+| `/gdd:connections` | 任意の統合を構成 |
+| `/gdd:figma-extract` | Figma のデザインシステムコンテキストを抽出 |
+| `/gdd:figma-write` | 決定とステータスを Figma に書き戻す |
 | `/gdd:handoff <bundle>` | Claude Design バンドルをインポート |
-| `/gdd:darkmode` | ダークモード実装監査 |
-| `/gdd:compare` | DESIGN.md と DESIGN-VERIFICATION.md の差分を計算 |
-| `/gdd:style <Component>` | コンポーネントハンドオフドキュメント生成 |
+| `/gdd:sketch <idea>` | マルチバリアントの HTML モックアップを生成 |
+| `/gdd:spike <idea>` | タイムボックス付き実現可能性パス |
 
-### 診断 + フォレンジック
-
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:scan` | コードベースデザインシステムインベントリ |
-| `/gdd:map` | 5 並列コードベースマッパー |
-| `/gdd:debug [desc]` | 症状駆動デザイン調査 |
-| `/gdd:health` | `.design/` 成果物の健康レポート |
-| `/gdd:progress` | パイプライン位置を表示 |
-| `/gdd:stats` | サイクル統計 |
-| `/gdd:optimize` | ルールベースコスト分析 |
-| `/gdd:warm-cache` | Anthropic キャッシュ事前ウォーミング |
-
-### 配布 + 更新
-
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:update` | GDD を更新、changelog プレビュー |
-| `/gdd:reapply-patches` | 構造的更新後にローカル修正を再ステッチ |
-| `/gdd:check-update` | 手動更新チェック |
-| `/gdd:settings` | `.design/config.json` を構成 |
-| `/gdd:set-profile <profile>` | モデルプロファイルを切り替え |
-| `/gdd:undo` | 安全なデザイン変更巻き戻し |
-| `/gdd:pr-branch` | 綺麗な PR ブランチ |
-
-### バックログ + ノート
-
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:todo` | デザインタスクの追加/リスト/選択 |
-| `/gdd:add-backlog <idea>` | 将来のサイクルのためにデザインアイデアを駐車 |
-| `/gdd:review-backlog` | 駐車項目をレビュー |
-
-### ヘルプ
-
-| コマンド | 役割 |
-|---------|------|
-| `/gdd:help` | 完全なコマンドリストと使用法 |
-| `/gdd:bandit-reset` | Anthropic モデルリリース時に適応レイヤー事後分布をリセット |
-
----
+完全なコマンドリファレンス: [SKILL.md](SKILL.md)
 
 ## 接続
 
-GDD は 12 のツール接続を出荷します。すべてオプション。`/gdd:connections` で構成。
+GDD は外部ツールなしで動作しますが、39 個の任意の統合に接続できます。すべて任意であり、いずれかの接続が利用できないときパイプラインはフォールバックへ優雅に縮退します。
 
-| 接続 | 目的 | プローブ |
-|------|------|---------|
-| **Figma** | トークン/コンポーネント/スクリーンショット読み取り; アノテーション/Code Connect/実装ステータス書き込み | `mcp__figma__get_metadata` + `use_figma` |
-| **Refero** | デザインリファレンス検索 | `mcp__refero__search` |
-| **Pinterest** | ブランド + スタイルのビジュアルリファレンス | OAuth + MCP |
-| **Claude Design** | ハンドオフバンドルインポート | URL またはローカルファイル |
-| **Storybook** | ポート 6006 のコンポーネント仕様参照 | HTTP プローブ |
-| **Chromatic** | ビジュアル回帰ベースライン diff | API キー |
-| **Preview** | Playwright + Claude Preview MCP | `mcp__Claude_Preview__preview_*` |
-| **paper.design** | MCP キャンバス読み書き | `mcp__paper__use_paper` |
-| **pencil.dev** | git 追跡 `.pen` 仕様 | リポジトリ内 `.pen` ファイル |
-| **Graphify** | ナレッジグラフエクスポート | `mcp__graphify__*` |
-| **21st.dev Magic** | greenfield 前の先例検索 | `mcp__magic__search` |
-| **Magic Patterns** | DS-aware コンポーネント生成 | `mcp__magic-patterns__generate` |
+接続レイヤーは次のカテゴリーにまたがります:
 
-完全な接続詳細は [`connections/connections.md`](connections/connections.md) を参照。
+- **デザインサーフェス** - Figma(読み取り + 書き込み + Code Connect)、paper.design、pencil.dev、Penpot、Framer、Webflow、Plasmic
+- **リファレンスとリサーチ** - Refero、Pinterest、Lazyweb、Mobbin、Claude Design ハンドオフ
+- **コンポーネント生成** - 21st.dev Magic、Magic Patterns、v0.dev、Builder.io
+- **コンポーネント仕様とビジュアル QA** - Storybook、Chromatic、Preview(Playwright + Claude Preview MCP)
+- **ナレッジグラフ** - Graphify
+- **ネイティブおよび非 Web 出力** - Xcode Simulator、Android Emulator、Litmus / Email-on-Acid、印刷レンダラー
+- **モーション検証** - Lottie、Rive
+- **チームサーフェス** - Slack、Discord、Linear、Jira、Notion、GitHub PR
 
----
+統合の構成:
 
-## 構成
-
-GDD はプロジェクト設定を `.design/config.json` に保存します。`/gdd:new-project` 中に構成するか `/gdd:settings` で更新します。
-
-### モデルプロファイル
-
-| プロファイル | 計画 | 実行 | 検証 |
-|-------------|------|------|------|
-| `quality` | Opus | Opus | Sonnet |
-| `balanced`(デフォルト) | Opus | Sonnet | Sonnet |
-| `budget` | Sonnet | Sonnet | Haiku |
-| `inherit` | Inherit | Inherit | Inherit |
-
-```
-/gdd:set-profile budget
+```bash
+/gdd:connections
 ```
 
-### 適応モード
+プローブパターンを含む完全な接続リストは [connections/connections.md](connections/connections.md) を参照してください。
 
-`.design/budget.json#adaptive_mode` 階段(v1.23.5):
+## 要件
 
-| モード | 役割 |
-|--------|------|
-| `static`(デフォルト) | Phase 10.1 動作 |
-| `hedge` | AdaNormalHedge アンサンブル + MMR リランクを有効化。最も安全な導入。 |
-| `full` | バンディットルーター + Hedge + MMR がすべてアクティブ |
+- Node.js 22 または 24
+- Git
+- サポートされる AI コーディングランタイム
 
-### 並列化
+## マルチランタイムサポート
 
-| 設定 | デフォルト | 制御内容 |
-|------|----------|---------|
-| `parallelism.enabled` | `true` | worktree で独立したタスクを実行 |
-| `parallelism.min_estimated_savings_seconds` | `30` | この閾値以下では並列化をスキップ |
-| `parallelism.max_concurrent_workers` | `4` | 同時 worker のハードキャップ |
+GDD は 14 の AI コーディングランタイムにインストールできます: Claude Code、Codex、Cursor、Gemini CLI、OpenCode、Kilo、Copilot、Windsurf、Antigravity、Augment、Trae、Qwen Code、CodeBuddy、Cline。同じソーススキルとエージェントが、ランタイムごとのコンバーターによって各ランタイムのネイティブレイアウト(`skills/`、`command/`、`agents/`、または `.clinerules`)へコンパイルされるため、パイプラインはエディターをまたいであなたとともに移動します。
 
-### 品質ゲート
+Claude Code が旗艦です。完全な体験はそこで端から端まで動きます。すべてのエージェント、多層防御フック、MCP 連携の接続です。他のランタイムでは同じスキルとエージェントがそのネイティブな形で得られ、MCP 連携の接続は MCP 対応ホストで有効化され、フックレイヤーは Claude Code 固有です。
 
-| 設定 | デフォルト | 制御内容 |
-|------|----------|---------|
-| `solidify.rollback_mode` | `"stash"` | `stash` / `hard` / `none` |
-| `solidify.commands` | 自動検出 | typecheck / build / test コマンドの上書き |
-| `verify.iterations_max` | `3` | verify→fix ループ上限 |
-| `connection.figma_writeback` | `proposal` | `proposal` / `auto` |
+## 安全性とプライバシー
 
----
+GDD はデフォルトでローカルファーストです。プロジェクトのアーティファクトを `.design/` 下に書き込み、任意の統合は構成されたときのみ使用し、課題報告は同意ゲート付きに保ちます。
 
-## セキュリティ
+プラグインには、保護パス、危険コマンドのブロック、インジェクションスキャン、MCP サーキットブレーカー、予算強制のための多層防御フックが含まれます。GDD はまた、安全なプロジェクト内省のための 13 個の読み取り専用 MCP ツールを公開します。
 
-### 組み込み強化
-
-GDD は Phase 14.5 から多層防御を出荷します:
-
-- **`hooks/gdd-bash-guard.js`** — PreToolUse:Bash が約 50 の危険なパターンをブロック(`rm -rf /`、`chmod 777`、`curl | sh`、`git reset --hard`、フォーク爆弾)、Unicode NFKC + ANSI 正規化後。
-- **`hooks/gdd-protected-paths.js`** — PreToolUse:Edit/Write/Bash が `protected_paths` glob リストを強制。
-- **`hooks/gdd-read-injection-scanner.ts`** — インバウンド Read コンテンツの不可視 Unicode、HTML コメント、シークレット流出パターンをスキャン。
-- **`scripts/lib/blast-radius.cjs`** — `design-executor` のプリフライトが `max_files_per_task: 10` / `max_lines_per_task: 400` を超えるタスクを拒否。
-- **`hooks/gdd-mcp-circuit-breaker.js`** — `use_figma` / `use_paper` / `use_pencil` での連続タイムアウトループを切断。
-
-### 機密ファイルの保護
-
-ランタイムの deny リストに機密パスを追加:
+機密パスをランタイムの deny リストに追加してください:
 
 ```json
 {
@@ -631,7 +334,6 @@ GDD は Phase 14.5 から多層防御を出荷します:
       "Read(.env)",
       "Read(.env.*)",
       "Read(**/secrets/*)",
-      "Read(**/*credential*)",
       "Read(**/*.pem)",
       "Read(**/*.key)"
     ]
@@ -639,77 +341,58 @@ GDD は Phase 14.5 から多層防御を出荷します:
 }
 ```
 
-> [!IMPORTANT]
-> GDD は LLM システムプロンプトになるマークダウンファイルを生成するため、`.design/` 成果物に流れるユーザー制御テキストは潜在的な間接プロンプトインジェクションベクトルです。インジェクションスキャナーが複数のレイヤーで捕捉しますが、多層防御がベストプラクティスです。
+参照: [SECURITY.md](SECURITY.md) · [PRIVACY.md](PRIVACY.md)
 
----
+## 更新
 
-## トラブルシューティング
-
-**インストール後にコマンドが見つからない?**
-- ランタイムを再起動
-- `~/.claude/skills/get-design-done/`(グローバル)または `./.claude/skills/get-design-done/`(ローカル)を確認
-- `/gdd:help` で登録を確認
-
-**パイプラインがステージの途中で停止?**
-- `/gdd:resume` — 最新の番号付きチェックポイントから復元
-- `/gdd:health` — `.design/` 成果物の問題を診断
-- `/gdd:progress --forensic` — 6 チェック整合性監査
-
-**コスト超過?**
-- `/gdd:optimize` — ルールベース推奨
-- `/gdd:set-profile budget` — 予算ティアに切り替え
-- `.design/budget.json` で `adaptive_mode: "full"` を設定 — バンディットが 5〜10 サイクル内に学習
-
-**最新版に更新?**
 ```bash
 npx @hegemonart/get-design-done@latest
 ```
 
-**Docker / コンテナ?**
+または Claude Code 内から:
 
 ```bash
-CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done
+/gdd:update
 ```
 
-### アンインストール
+完全なリリース履歴は [CHANGELOG.md](CHANGELOG.md) を参照してください。
+
+## トラブルシューティング
+
+### コマンドが表示されない
+
+ランタイムを再起動して実行:
 
 ```bash
-# グローバルアンインストール(ランタイムごと)
-npx @hegemonart/get-design-done --claude --global --uninstall
-npx @hegemonart/get-design-done --opencode --global --uninstall
-# ... 14 のランタイムに対して同じ --<runtime> --global --uninstall パターン
-
-# マルチセレクト対話型アンインストール(ランタイムフラグなし)
-npx @hegemonart/get-design-done --uninstall
-
-# ローカルアンインストール
-npx @hegemonart/get-design-done --claude --local --uninstall
-# ... --local フラグ
+/gdd:help
 ```
 
-他の構成を保持しながらすべての GDD コマンド、エージェント、フック、設定を削除します。
+### パイプラインが詰まっている
 
----
+```bash
+/gdd:health
+/gdd:resume
+```
 
-## フィードバックチャンネル(v1.30.0+)
+### コストが高すぎる
 
-GDD は、`/gdd:report-issue` スラッシュコマンドによる同意ベースの GitHub Issue リポーターを搭載しました。
+```bash
+/gdd:optimize
+```
 
-- **何をするか。** 問題や機能不足の報告をガイドし、送信前にペイロードのプレビューを表示します。ローカルファースト、同意ベース、自動モードなし。
-- **疑似匿名化であり、匿名化ではありません。** 直接識別子(ユーザー名、ホスト名、絶対パス、Git アイデンティティ、環境変数の値、メールアドレス、IP アドレス)は安定した疑似識別子に置き換えられますが、メンテナーがデバッグできるよう内部相関は保持されます。サイドチャネルデータ(文体、コードパターン、リポジトリのフィンガープリント)による再識別の可能性は残ります。送信前に完全なペイロードを確認し、Issue ごとに明示的に同意します。
-- **キルスイッチ。** ネットワーク呼び出しの前に送信を停止するには、`GDD_DISABLE_ISSUE_REPORTER=1`(環境変数)または `.design/config.json` に `{ "issue_reporter": false }` を設定します。
-- **`gh` 不在時のフォールバック。** GitHub CLI がインストールされていない場合、ペイロードは `.design/issue-drafts/` のディスクに書き込まれ、Issue テンプレート URL がクリップボードにコピーされます。
+## コントリビュート
 
-詳細は英語版の [`README.md`](README.md)、ルールカタログ(R1..R8)は [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md)、既知の失敗モードは [`reference/known-failure-modes.md`](reference/known-failure-modes.md) を参照してください。
+```bash
+npm install
+npm test
+npm run typecheck
+```
 
-**v1.30.5 アップデート** — カタログは22エントリに拡張(v1.30.0は10件)、新しい決定論的ファジーマッチャー(`scripts/lib/failure-mode-matcher.cjs`)が信頼度スコア付きの上位N候補を返します。Reflector + authority-watcher は `/gdd:apply-reflections`(6番目の提案クラス)経由で新エントリを提案できます — 厳密に提案のみ、すべてのエントリはユーザーレビューを通過します。
-
----
+参照: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## ライセンス
 
-MIT ライセンス。詳細は [LICENSE](LICENSE) を参照。
+MIT ライセンス。詳細は [LICENSE](LICENSE) を参照してください。サードパーティの帰属表示は [NOTICE](NOTICE) に記載されています。
 
 ---
 
