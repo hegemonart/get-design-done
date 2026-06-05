@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-04T11:14:37.566Z",
+  "generated_at": "2026-06-05T02:57:20.446Z",
   "counts": {
     "skills/analyze-dependencies/SKILL.md": 2,
     "skills/apply-reflections/apply-reflections-procedure.md": 26,
@@ -266,14 +266,6 @@
     "connections/v0-dev.md": 1,
     "connections/xcode-simulator.md": 12,
     "docs/BANDIT-INTEGRATION.md": 31,
-    "docs/codex-plugin-field-test.md": 24,
-    "docs/cursor-marketplace-field-test.md": 11,
-    "docs/i18n/README.de.md": 2,
-    "docs/i18n/README.fr.md": 8,
-    "docs/i18n/README.it.md": 4,
-    "docs/i18n/README.ja.md": 4,
-    "docs/i18n/README.ko.md": 5,
-    "docs/i18n/README.zh-CN.md": 6,
     "docs/MULTI-RUNTIME-MODELS.md": 19,
     "docs/PEER-DELEGATION.md": 15,
     "docs/PERF-OPTIMIZATION.md": 29,

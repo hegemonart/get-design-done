@@ -6,9 +6,9 @@
 
 > Nota: questa traduzione può essere in ritardo rispetto alla versione inglese. La versione di riferimento è [README.md](../../README.md) (translation may lag behind English; see README.md for the canonical version).
 
-**Una pipeline di qualità del design per agenti di coding IA: brief → esplorazione → piano → implementazione → verifica.**
+**Una pipeline di qualità del design per agenti di coding IA: brief -> esplorazione -> piano -> implementazione -> verifica.**
 
-**Get Design Done mantiene l'UI generata dall'IA allineata al tuo brief, al tuo design system, ai tuoi riferimenti e ai tuoi quality gate. Funziona con Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy e Cline.**
+**Get Design Done mantiene l'UI generata dall'IA allineata al tuo brief, al tuo design system, alla tua conoscenza di design locale e ai tuoi quality gate. Costruito per Claude Code, e si installa su Codex, Cursor, Gemini, OpenCode, Copilot, Windsurf e altro.**
 
 [![npm version](https://img.shields.io/npm/v/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
 [![npm downloads](https://img.shields.io/npm/dm/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
@@ -17,612 +17,315 @@
 [![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
-<br>
-
 ```bash
 npx @hegemonart/get-design-done@latest
 ```
 
 **Funziona su macOS, Linux e Windows.**
 
-<br>
-
-*«Gli agenti di coding IA rilasciano UI in fretta. Get Design Done si assicura che rilascino design.»*
-
-<br>
-
-[Perché l'ho costruito](#perché-lho-costruito) · [Come funziona](#come-funziona) · [Comandi](#comandi) · [Connessioni](#connessioni) · [Perché funziona](#perché-funziona)
+[Installazione](#installazione) · [Per iniziare](#per-iniziare) · [Casi d'uso](#casi-duso) · [Come funziona](#come-funziona) · [Comandi](#comandi) · [Connessioni](#connessioni) · [Sicurezza](#sicurezza-e-privacy)
 
 </div>
 
 ---
 
-> [!IMPORTANT]
-> ### Hai già un bundle Claude Design?
->
-> Se hai esportato un design da [claude.ai/design](https://claude.ai/design), puoi saltare interamente le fasi 1–3:
->
-> ```
-> /gdd:handoff ./my-design.html
-> ```
->
-> Analizza le proprietà CSS personalizzate del bundle in decisioni di design D-XX, esegue il pass di verifica con scoring Handoff Faithfulness e opzionalmente scrive lo stato di implementazione su Figma.
+## Cos'è
 
----
+Get Design Done aiuta gli agenti di coding IA a rilasciare UI che appartiene al tuo prodotto.
 
-## Perché l'ho costruito
+Trasforma richieste vaghe come "migliora questa schermata" in un workflow di design tracciabile: brief, esplorazione, piano, implementazione, verifica.
 
-Sono un designer che rilascia con agenti di coding IA. Il workflow lato codice è maturo: specifiche, task, test, commit, cicli di review. Quello lato design non lo era.
+Invece di chiedere a un agente di improvvisare basandosi solo sul gusto, GDD gli fornisce un processo strutturato, conoscenza di design locale, memoria specifica del progetto, connessioni opzionali agli strumenti di design e una verifica prima che il lavoro venga rilasciato.
 
-Quello in cui mi sono imbattuto continuamente: l'agente poteva generare una schermata che sembrava buona da sola, ma il lavoro era *scollegato*. I token non corrispondevano al sistema esistente. I rapporti di contrasto scendevano sotto WCAG. La gerarchia veniva reinventata per ogni schermata. Vecchi anti-pattern finivano in nuovi componenti. E poiché nulla verificava l'output rispetto al brief originale, i problemi emergevano tardi, in PR review o dopo l'handoff.
+## Perché esiste
 
-Così ho costruito Get Design Done: una pipeline di design che dà agli agenti di coding IA la stessa struttura che gli sviluppatori si aspettano già dai workflow di engineering. Cattura il brief, mappa il design system corrente, ancora le decisioni ai riferimenti, scompone il lavoro in task atomici, esegue quei task e verifica il risultato prima del rilascio.
+Gli agenti IA sono rapidi nel produrre UI. La parte difficile è rendere quella UI coerente.
 
-Dietro le quinte: 37 agenti specializzati, un intel store interrogabile, routing dei modelli per tier, 12 connessioni opzionali, commit atomici e un layer adattivo no-regret che impara dagli esiti solidify-with-rollback. Nell'uso quotidiano vedi pochi comandi `/gdd:*` che mantengono coerente il lavoro di design.
+Senza un workflow di design, le interfacce generate vanno alla deriva:
 
-— **Hegemon**
+- colori e spaziature smettono di corrispondere al sistema
+- i componenti vengono reinventati
+- contrasto e accessibilità regrediscono
+- la gerarchia cambia da schermata a schermata
+- l'implementazione non corrisponde più al brief originale
 
----
+GDD aggiunge la disciplina di design mancante attorno ai workflow di coding IA. Cattura il problema, mappa il design system corrente, pianifica modifiche circoscritte, le esegue in step atomici e verifica il risultato rispetto al brief, ai token, all'accessibilità e alle rubriche di qualità del design.
 
-Il design generato dall'IA ha la stessa modalità di fallimento del codice generato dall'IA: descrivi cosa vuoi, ottieni qualcosa di plausibile, poi crolla a scala perché nessun sistema lega l'output al brief.
+Dietro le quinte: 64 agenti specializzati, un intel store interrogabile, routing dei modelli per tier e 39 connessioni opzionali agli strumenti. Quello che usi giorno per giorno è una manciata di comandi `/gdd:*`.
 
-Get Design Done è il layer di context engineering per il lavoro di design. Trasforma "migliora questa UI" in un ciclo tracciabile: brief → inventario → riferimenti → piano → implementazione → verifica.
+## Installazione
 
----
+### npm
 
-## Cosa ottieni
+```bash
+npx @hegemonart/get-design-done@latest
+```
 
-- **Lavoro di design ancorato al brief** — ogni ciclo parte da problema, pubblico, vincoli, metriche di successo e must-have.
-- **Estrazione del design system** — GDD inventaria token, tipografia, spaziature, componenti, motion, accessibilità, dark mode e debito di design prima di pianificare modifiche.
-- **Decisioni supportate da riferimenti** — gli agenti usano riferimenti di design integrati e connessioni opzionali a Figma, Refero, Pinterest, Storybook, Chromatic, Preview, Claude Design, paper.design, pencil.dev, Graphify, 21st.dev Magic e Magic Patterns.
-- **Esecuzione atomica** — i task di design sono scomposti per dipendenza, eseguiti in wave sicure e committati indipendentemente.
-- **Verifica prima del rilascio** — gli audit controllano aderenza al brief, integrazione dei token, contrasto WCAG, conformità dei componenti, coerenza della motion, architettura dark-mode e anti-pattern di design.
-- **Rollback su validazione fallita** — solidify-with-rollback valida ogni task prima che resti; il lavoro fallito viene revertito automaticamente.
+### Claude Code
 
----
+```bash
+/plugin marketplace add hegemonart/get-design-done
+/plugin install get-design-done@get-design-done
+/reload-plugins
+```
 
-## A chi è rivolto
+### Codex
 
-GDD è per ingegneri, designer, design engineer, founder e product builder che rilasciano UI con agenti di coding IA e vogliono che il risultato regga oltre il primo screenshot.
+```bash
+codex plugin marketplace add hegemonart/get-design-done
+```
 
-Usalo quando ti importa che i token coincidano, che il contrasto passi WCAG, che la motion resti coerente, che i componenti seguano il tuo sistema e che l'implementazione finale corrisponda ancora alla richiesta.
+### agentskills.io
 
-Non devi essere un designer. La pipeline porta disciplina di design dentro il workflow degli agenti: estrae contesto, chiede solo le decisioni mancanti, ancora il lavoro ai riferimenti e intercetta i problemi che di solito emergono troppo tardi.
+Sfoglia e installa Get Design Done dal registro di skill [agentskills.io](https://agentskills.io).
 
-### Highlights v1.24.0 — Installer multi-runtime
+### Installer diretto per runtime
 
-- **Multi-select interattivo `@clack/prompts`** — `npx @hegemonart/get-design-done` senza flag apre ora una UI di checkbox curata per i 14 runtime supportati (Claude Code, OpenCode, Gemini CLI, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline) più una radio Global / Local.
-- **Idempotente + safe per AGENTS.md esterni** — rieseguire l'installer non duplica mai voci e non sovrascrive le istruzioni specifiche del runtime che hai aggiunto. Step di conferma prima di qualsiasi scrittura.
-- **Superficie CI scriptata preservata** — ogni flag esistente (`--claude`, `--cursor`, `--all`, `--global`, `--local`, `--uninstall`, `--config-dir`) continua a funzionare invariato. La modalità interattiva si attiva solo quando non viene passato alcun flag di runtime.
-- **Disinstallazione multi-select** — `--uninstall` senza flag di runtime entra anch'esso in multi-select interattivo per scegliere da quali runtime rimuovere.
+```bash
+# Claude Code
+npx @hegemonart/get-design-done --claude --global
+npx @hegemonart/get-design-done --claude --local
 
-### Release precedenti
+# Altri runtime
+npx @hegemonart/get-design-done --codex --global
+npx @hegemonart/get-design-done --cursor --global
+npx @hegemonart/get-design-done --gemini --global
 
-- **v1.23.5** — Layer adattivo No-Regret (bandit Thompson sampling + ensemble AdaNormalHedge + reranking MMR; utilizzabile single-user via bootstrap con prior informato, senza telemetria condivisa opt-in).
-- **v1.23.0** — Primitive di dominio SDK (gate solidify-with-rollback, contratti di output JSON, auto-cristallizzazione di pattern `Touches:`).
-- **v1.22.0** — Osservabilità SDK (~24 tipi di evento tipizzati, trajectory per tool-call, chain di eventi append-only, scrubber dei segreti).
-- **v1.21.0** — SDK headless (CLI `gdd-sdk` esegue la pipeline completa senza Claude Code, researcher paralleli, MCP cross-harness).
-- **v1.20.0** — Fondamenta SDK (primitive di resilienza, `STATE.md` lockfile-safe, server MCP `gdd-state` con 11 tool tipizzati, fondamenta TypeScript).
+# Installazione multi-runtime
+npx @hegemonart/get-design-done --all --global
 
-Note di rilascio complete in [CHANGELOG.md](CHANGELOG.md).
-
----
-
-<p align="center">
-  <strong>Supported by</strong>
-</p>
-
-<div align="center">
-  <a href="https://www.humbleteam.com/" aria-label="Humbleteam">
-    <img src="docs/assets/sponsors/humbleteam.svg" alt="Humbleteam logo" width="180">
-  </a>
-  <br>
-  <sub>Product design partner for ambitious startups and AI products.</sub>
-</div>
-
----
+# Anteprima senza scrivere
+npx @hegemonart/get-design-done --dry-run
+```
 
 ## Per iniziare
 
-```bash
-npx @hegemonart/get-design-done@latest
-```
-
-L'installer ti chiede di scegliere:
-1. **Runtime** — Claude Code, OpenCode, Gemini, Kilo, Codex, Copilot, Cursor, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline o tutti (multi-select interattivo)
-2. **Posizione** — Global (tutti i progetti) o Local (solo progetto corrente)
-
-Verifica con:
-
-```
-/gdd:help
-```
-
-> [!TIP]
-> Lancia Claude Code con `--dangerously-skip-permissions` per un'esperienza automatizzata senza attriti. GDD è progettato per esecuzione autonoma multi-stage.
-
-### Restare aggiornati
-
-GDD rilascia spesso. Aggiorna rieseguendo l'installer (idempotente):
+Esegui un primo passaggio leggero:
 
 ```bash
-npx @hegemonart/get-design-done@latest
+/gdd:start
 ```
 
-O da Claude Code:
-
-```
-/gdd:update
-```
-
-`/gdd:update` mostra un'anteprima del changelog prima di applicare. Le modifiche locali sotto `reference/` sono preservate — se un update strutturale richiede ri-stitching, esegui `/gdd:reapply-patches`.
-
-<details>
-<summary><strong>Installazione non interattiva (Docker, CI, script)</strong></summary>
+Oppure esegui il ciclo di design completo:
 
 ```bash
-npx @hegemonart/get-design-done --claude --global
-npx @hegemonart/get-design-done --claude --local
-npx @hegemonart/get-design-done --opencode --global
-npx @hegemonart/get-design-done --gemini --global
-npx @hegemonart/get-design-done --kilo --global
-npx @hegemonart/get-design-done --codex --global
-npx @hegemonart/get-design-done --copilot --global
-npx @hegemonart/get-design-done --cursor --global
-npx @hegemonart/get-design-done --windsurf --global
-npx @hegemonart/get-design-done --antigravity --global
-npx @hegemonart/get-design-done --augment --global
-npx @hegemonart/get-design-done --trae --global
-npx @hegemonart/get-design-done --qwen --global
-npx @hegemonart/get-design-done --codebuddy --global
-npx @hegemonart/get-design-done --cline --global
-
-# Tutti i runtime
-npx @hegemonart/get-design-done --all --global
-
-# Dry run
-npx @hegemonart/get-design-done --dry-run
-
-# Directory di config personalizzata
-CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done
-```
-
-</details>
-
-<details>
-<summary><strong>Alternativa: Claude Code CLI</strong></summary>
-
-```bash
-claude plugin marketplace add hegemonart/get-design-done
-claude plugin install get-design-done@get-design-done
-```
-
-</details>
-
-### Tier-2 Distribution Channels (v1.28.8+)
-
-Oltre ai percorsi di installazione file-drop della Fase 28.7 sopra (predefiniti, continuano a funzionare), v1.28.8 aggiunge tre nuovi canali di distribuzione Tier-2:
-
-- **Portabilità cross-runtime tramite agentskills.io.** I nostri `skills/` sono conformi alla specifica [agentskills.io](https://agentskills.io). I runtime che dichiarano compatibilità agentskills.io (Codex, Kilo, Augment, Hermes, Qwen) possono consumare i nostri skills direttamente.
-- **Cursor Marketplace.** Installazione tramite l'interfaccia marketplace di Cursor; pubblicazione in attesa della revisione del team Cursor — vedere `docs/cursor-marketplace-field-test.md`.
-- **Codex Plugin.** Installazione tramite l'aggiunta plugin per URL GitHub di Codex:
-
-  ```bash
-  codex plugin marketplace add hegemonart/get-design-done
-  ```
-
-Per i dettagli completi, vedere [README.md](README.md) (inglese, autorevole).
-
-### Telemetria Capability-Gap + Self-Authoring (v1.29.0+)
-
-Il loop riflettore ora traccia i segnali "capability lookup fallito" come telemetria di prima classe e — una volta che emergono abbastanza lacune ricorrenti — può abbozzare nuovi agent o skill come proposte da revisionare.
-
-**Stadio 0 — telemetria (rilasciato immediatamente).** Tre punti di lookup-fail emettono eventi tipizzati `capability_gap`: percorsi `skills/fast` senza match, percorsi `gdd-router` con intent non risolto, e il pattern-detection pass del riflettore. Visualizza con `gdd-events --type capability_gap`.
-
-**Stadio 1 — self-authoring (opt-in una volta superata la soglia).** Quando K=3 cluster stabili emergono su M=10 cicli di riflessione, `/gdd:apply-reflections` ti chiede una sola volta di abilitare lo Stadio 1. Il riflettore abbozza quindi artefatti incubatore in `.design/reflections/incubator/<slug>/` con frontmatter conforme Phase 28.5. Quattro azioni: `accept` / `reject` / `defer` / `edit`. Strettamente proposal-only — `/gdd:apply-reflections` rimane l'unico gate umano (Phase 11 SC-8).
-
-Scope-guard: l'authoring è limitato ad `agents/` e `skills/` — mai runtimes / transports / hooks. Per i dettagli completi, vedere [README.md](README.md) (inglese, autorevole).
-
-
-## Come funziona
-
-> **Parti da un codebase esistente?** Esegui prima `/gdd:map`. Dispatcha 5 mapper specialisti in parallelo (tokens, components, visual hierarchy, a11y, motion) e scrive JSON strutturato in `.design/map/`.
-
-### 1. Brief
-
-```
 /gdd:brief
-```
-
-Cattura il problema di design prima di qualsiasi scan o esplorazione. Lo skill intervista via `AskUserQuestion`, una domanda alla volta — solo per le sezioni senza risposta: problema, audience, vincoli, metriche di successo, scope.
-
-**Crea:** `.design/BRIEF.md`
-
----
-
-### 2. Explore
-
-```
 /gdd:explore
-```
-
-Inventaria il design system del codebase corrente — colori, tipografia, spaziatura, componenti, motion, a11y, dark-mode. Cinque mapper paralleli + intervista `design-discussant` producono tre artefatti. Le sonde di connessione rilevano la disponibilità di 12 strumenti esterni.
-
-**Crea:** `.design/DESIGN.md`, `.design/DESIGN-DEBT.md`, `.design/DESIGN-CONTEXT.md`, `.design/map/{tokens,components,a11y,motion,visual-hierarchy}.{md,json}`
-
----
-
-### 3. Plan
-
-```
 /gdd:plan
-```
-
-Scompone l'output di Explore in task atomici, coordinati per onde, con analisi delle dipendenze. Ogni task porta percorsi `Touches:` espliciti, tag di sicurezza parallela e criteri di accettazione. `design-planner` (opus) redige; `design-plan-checker` (haiku) gate-checka prima dell'esecuzione.
-
-**Crea:** `.design/DESIGN-PLAN.md`
-
----
-
-### 4. Design
-
-```
 /gdd:design
-```
-
-Esegue i task in ordine di onda. Ogni task ottiene un agente `design-executor` dedicato con un nuovo contesto da 200k, commit git atomico e gestione automatica delle deviazioni secondo regole in-context. I task parallel-safe girano in worktree.
-
-**Solidify-with-rollback** (v1.23.0) — ogni task valida (typecheck + build + test mirato) prima di consolidarsi. Validazione fallita → revert via `git stash`.
-
-**Crea:** un `.design/tasks/task-NN.md` per task, un commit git atomico per task
-
-```
-┌────────────────────────────────────────────────────────────────────┐
-│  ESECUZIONE A ONDE                                                 │
-├────────────────────────────────────────────────────────────────────┤
-│                                                                    │
-│  WAVE 1 (parallelo)         WAVE 2 (parallelo)        WAVE 3       │
-│  ┌─────────┐ ┌─────────┐    ┌─────────┐ ┌─────────┐    ┌─────────┐ │
-│  │ Task 01 │ │ Task 02 │ →  │ Task 03 │ │ Task 04 │ →  │ Task 05 │ │
-│  └─────────┘ └─────────┘    └─────────┘ └─────────┘    └─────────┘ │
-│       │           │              ↑           ↑              ↑      │
-│       └───────────┴──────────────┴───────────┴──────────────┘      │
-│              I percorsi Touches: guidano l'analisi delle dipendenze│
-│                                                                    │
-└────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### 5. Verify
-
-```
 /gdd:verify
 ```
 
-Verifica rispetto al brief — must-have, euristiche NN/g, rubrica di audit, integrazione di token. Tre agenti girano in sequenza: `design-auditor` (score 6 pilastri 1–4), `design-verifier` (goal-backward), `design-integration-checker` (greppa le decisioni D-XX nel codice). Ai fallimenti produce una lista di gap strutturata e entra in un loop verify→fix via `design-fixer`.
+Per il routing in linguaggio naturale:
 
-**Crea:** `.design/DESIGN-VERIFICATION.md`, commit di fix se trovati problemi
-
----
-
-### 6. Ship → Reflect → Ciclo successivo
-
-```
-/gdd:ship                    # Genera un branch PR pulito (filtra commit .design/)
-/gdd:reflect                 # design-reflector legge telemetria + apprendimenti
-/gdd:apply-reflections       # Rivedi e applica selettivamente le proposte
-/gdd:complete-cycle          # Archivia gli artefatti del ciclo + scrive EXPERIENCE.md
-/gdd:new-cycle               # Apre un nuovo ciclo di design
+```bash
+/gdd:do improve the checkout page hierarchy, spacing, and empty states
 ```
 
-O auto-routing:
+## Casi d'uso
 
-```
-/gdd:next                    # Auto-rileva lo stato e lancia il prossimo step
-```
+### Migliorare una schermata esistente
 
-Ogni ciclo ottiene brief, scan, plan, esecuzione, verifica e un `EXPERIENCE.md` di ciclo (~100–200 righe: Goal / Decisioni / Apprendimenti graduati / Cosa è morto / Handoff al ciclo successivo) che diventa la fonte a priorità più alta per l'hook decision-injector.
+Usa GDD quando una schermata funziona tecnicamente ma risulta visivamente incoerente, poco chiara o poco curata nel design.
 
----
-
-### Modalità Fast
-
-```
-/gdd:fast "<task>"
+```bash
+/gdd:do improve the settings page layout and component hierarchy
 ```
 
-Per fix banali su singolo file che non hanno bisogno della pipeline completa. Salta router, cache-manager e telemetria. Stesse garanzie di commit atomico.
+### Riportare l'output dell'IA dentro il design system
 
-```
-/gdd:quick
-```
+Usalo quando un agente ha generato UI che sembra plausibile ma non corrisponde ai tuoi token, spaziature, stati o componenti.
 
-Per task ad-hoc che hanno bisogno delle garanzie GDD ma saltano i gate opzionali (no phase-researcher, no assumptions analyzer, no integration-checker). Più veloce della pipeline completa; più sicuro di `/gdd:fast`.
-
----
-
-## Perché funziona
-
-### Context engineering
-
-Le CLI di coding IA sono potenti **se** le nutri di contesto. La maggior parte delle persone non lo fa.
-
-GDD lo gestisce per te:
-
-| File | A cosa serve |
-|------|--------------|
-| `.design/BRIEF.md` | Problema, audience, metriche di successo del ciclo |
-| `.design/DESIGN.md` | Snapshot del design system attuale (token, componenti, gerarchia) |
-| `.design/DESIGN-CONTEXT.md` | Decisioni D-XX, risposte d'intervista, vincoli a monte/valle |
-| `.design/DESIGN-PLAN.md` | Task atomici, coreografia di onde, dipendenze |
-| `.design/DESIGN-VERIFICATION.md` | Risultato di verifica, lista gap, score Handoff Faithfulness |
-| `.design/intel/` | Knowledge layer interrogabile |
-| `.design/archive/cycle-N/EXPERIENCE.md` | Retrospettiva di ciclo, memoria tra cicli |
-| `.design/telemetry/events.jsonl` | Stream eventi tipizzato tra fasi |
-| `.design/telemetry/posterior.json` | Posterior del bandit (quando `adaptive_mode != static`) |
-
-Limiti di dimensione dove la qualità di Claude degrada. Resta sotto, ottieni coerenza.
-
-### 37 agenti specializzati
-
-Ogni fase è un orchestratore leggero che spawna agenti specializzati.
-
-| Fase | Orchestratore | Agenti |
-|------|---------------|--------|
-| Brief | intervista a una domanda | (no sub-agenti) |
-| Explore | spawna 5 mapper + discussant | 5 mapper paralleli, design-discussant, research-synthesizer |
-| Plan | spawna researcher + planner + checker | design-phase-researcher (opzionale), design-planner (opus), design-plan-checker (haiku) |
-| Design | coordinazione di onde + isolamento worktree | design-executor per task, design-fixer al fallimento solidify |
-| Verify | spawna auditor + verifier + checker | design-auditor, design-verifier, design-integration-checker |
-| Reflect | legge telemetria + apprendimenti | design-reflector (opus), design-authority-watcher, design-update-checker |
-
-### 12 connessioni di strumenti
-
-Tutte opzionali — la pipeline degrada in modo grazioso quando una connessione non è disponibile:
-
-- **Figma** (lettura + scrittura + Code Connect)
-- **Refero** — ricerca riferimenti di design
-- **Pinterest** — ancoraggio di riferimenti visuali
-- **Claude Design** — import di bundle di handoff
-- **Storybook** — lookup di specifiche di componenti
-- **Chromatic** — diff di baseline di regressione visuale
-- **Preview** — screenshot runtime Playwright + Claude Preview MCP
-- **paper.design** — lettura/scrittura canvas MCP
-- **pencil.dev** — file di specifica `.pen` tracciati da git
-- **Graphify** — export di knowledge graph
-- **21st.dev Magic** — ricerca di precedenti prima di build greenfield
-- **Magic Patterns** — generazione di componenti DS-aware
-
-### Riferimenti di design integrati
-
-Il plugin spedisce **18+ file di riferimento** — NN/g 10, design emozionale di Don Norman, 10 principi di Dieter Rams, 12 principi di Disney (motion), lente di authoring di componenti Sonner / Emil Kowalski, Peak-End, Loss Aversion, Cognitive Load, Aesthetic-Usability, Doherty, Flow, 35 specifiche di componenti, gestalt, gerarchia visuale, brand voice, 161 palette per industria, 67 estetiche UI, 12 easing motion, 8 famiglie di transizione, WCAG 2.1 AA, piattaforme (iOS/Android/web/visionOS/watchOS), RTL/CJK, pattern di form, catalogo anti-pattern.
-
-### Commit git atomici
-
-```
-abc123f docs(08-02): complete user-card token plan
-def456g feat(08-02): unify card surface tokens with --color-bg-elevated
-hij789k feat(08-02): replace inline padding with --space-* scale
-lmn012o test(08-02): assert card.spec passes WCAG contrast 4.5:1
+```bash
+/gdd:verify
 ```
 
-git bisect trova il task fallito esatto. Ogni task è revertabile indipendentemente. Solidify-with-rollback aggiunge un gate di validazione a livello task, quindi un task 3 rotto non corrompe i task 4–10 prima che giri verify.
+### Audit prima del rilascio
 
-### Loop di auto-miglioramento
+Esegui la verifica prima di una PR, di un rilascio o di un handoff di design.
 
-Dopo ogni ciclo, `design-reflector` (opus) legge `events.jsonl`, `agent-metrics.json`, `learnings/` e propone diff — override di tier, regole di parallelizzazione, aggiunte di reference, aggiornamenti di frontmatter. `/gdd:apply-reflections` mostra il diff e chiede prima di applicare.
+```bash
+/gdd:audit
+```
 
-Il **layer adattivo No-Regret** (v1.23.5) sovrappone un bandit Thompson sampling + ensemble AdaNormalHedge + reranking MMR, utilizzabile single-user via bootstrap con prior informato.
+### Sistemare la dark mode
 
-### Governance dei costi
+```bash
+/gdd:darkmode
+```
 
-- **Skill `gdd-router`** — routing deterministico intent → fast / quick / full, senza chiamate al modello.
-- **`gdd-cache-manager`** — cache esplicita Layer-B, hash di input SHA-256, awareness TTL 5 minuti.
-- **Hook PreToolUse `budget-enforcer`** — applica override di tier, cap duri, gate di spawn lazy da `.design/budget.json`.
-- **Telemetria di costo per spawn** — le righe `.design/telemetry/costs.jsonl` alimentano i suggerimenti rule-based di `/gdd:optimize`.
+### Importare un handoff di design
 
-Punta a riduzione 50–70% del costo per task senza regressione di qualità.
+```bash
+/gdd:handoff ./my-design.html
+```
 
----
+Questo analizza un bundle Claude Design, estrae le proprietà CSS personalizzate in decisioni di design ed esegue i controlli di fedeltà dell'handoff.
+
+### Fare un piccolo fix mirato
+
+```bash
+/gdd:fast "fix contrast in pricing cards"
+```
+
+## Cosa lo rende diverso
+
+### Conoscenza di design locale
+
+GDD include un'estesa libreria di riferimenti locale per il lavoro di design. Gli agenti possono usarla senza affidarsi alla ricerca web in tempo reale per i giudizi di design di base.
+
+Copre accessibilità, WCAG, tipografia, spaziatura, griglie, colore, contrasto, superfici, motion, UX writing, form, stati vuoti, gerarchia visuale, dark mode, comportamento responsive, i18n, metodi di ricerca, scoring di audit e anti-pattern di design.
+
+L'agente non parte da un prompt vuoto. Ha un vocabolario di design condiviso e standard concreti da applicare durante pianificazione, implementazione e verifica.
+
+Mappa completa: [docs/KNOWLEDGE-BASE.md](docs/KNOWLEDGE-BASE.md)
+
+### Memoria specifica del progetto
+
+GDD crea un workspace `.design/` che mantiene ogni ciclo ben ancorato:
+
+| Artefatto | Scopo |
+| --- | --- |
+| `.design/BRIEF.md` | Problema, audience, scope, metriche di successo |
+| `.design/DESIGN.md` | Snapshot corrente del design system |
+| `.design/DESIGN-CONTEXT.md` | Decisioni, vincoli, riferimenti |
+| `.design/DESIGN-PLAN.md` | Piano di implementazione atomico |
+| `.design/DESIGN-VERIFICATION.md` | Audit finale e report dei gap |
+| `.design/intel/` | Conoscenza di progetto interrogabile: token, componenti, relazioni, decisioni |
+| `.design/archive/` | Storico dei cicli completati e apprendimenti |
+
+Più a lungo lo usi, meno l'agente deve riscoprire.
+
+### Verifica prima del rilascio
+
+GDD non si ferma quando l'UI "sembra finita".
+
+La fase di verifica controlla se il risultato corrisponde ancora a:
+
+- il brief originale
+- i token del design system
+- le soglie di accessibilità
+- le convenzioni dei componenti
+- la gerarchia visuale
+- le regole di motion e interazione
+- le decisioni di design registrate
+
+Quando emergono dei gap, GDD produce una lista di fix strutturata invece di lasciare la review al puro istinto.
+
+### Test di comportamento degli skill
+
+Gli skill stessi di GDD vengono messi alla prova sotto scenari di pressione avversaria (pressione temporale, sunk-cost, autorità, minimizzazione dello scope) per confermare che mantengono la propria disciplina invece di cedere. Vedi [CONTRIBUTING.md](CONTRIBUTING.md) per come aggiungere uno scenario di pressione.
+
+## Come funziona
+
+```text
+Brief -> Explore -> Plan -> Design -> Verify -> Ship
+```
+
+| Fase | Comando | Output |
+| --- | --- | --- |
+| Brief | `/gdd:brief` | Cattura il problema di design |
+| Explore | `/gdd:explore` | Mappa il sistema UI, il debito, i token, i componenti |
+| Plan | `/gdd:plan` | Crea task di design atomici |
+| Design | `/gdd:design` | Esegue i task con validazione |
+| Verify | `/gdd:verify` | Audita il risultato finale |
+
+### Output principali
+
+| File | Cosa fa |
+| --- | --- |
+| `.design/BRIEF.md` | Problema, audience e metriche di successo del ciclo |
+| `.design/DESIGN.md` | Snapshot corrente del design system |
+| `.design/DESIGN-CONTEXT.md` | Decisioni e vincoli di design |
+| `.design/DESIGN-PLAN.md` | Task atomici, onde, dipendenze |
+| `.design/DESIGN-VERIFICATION.md` | Risultato della verifica e lista dei gap |
+| `.design/intel/` | Layer di conoscenza interrogabile per questo progetto |
 
 ## Comandi
 
+GDD include 96 skill. Questi sono quelli di cui la maggior parte degli utenti ha bisogno giorno per giorno. Per il riferimento completo vedi [SKILL.md](SKILL.md).
+
 ### Pipeline principale
 
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:brief` | Fase 1 — cattura il brief di design |
-| `/gdd:explore` | Fase 2 — inventario codebase + intervista |
-| `/gdd:plan` | Fase 3 — produce DESIGN-PLAN.md |
-| `/gdd:design` | Fase 4 — esegue per onde |
-| `/gdd:verify` | Fase 5 — verifica rispetto al brief |
-| `/gdd:ship` | Genera un branch PR pulito |
-| `/gdd:next` | Auto-routing alla prossima fase secondo STATE.md |
-| `/gdd:do <text>` | Router in linguaggio naturale |
-| `/gdd:fast <text>` | Fix banale one-shot, senza pipeline |
-| `/gdd:quick` | Task ad-hoc con garanzie GDD ma gate opzionali saltati |
+| Comando | Scopo |
+| --- | --- |
+| `/gdd:brief` | Cattura il brief di design |
+| `/gdd:explore` | Inventaria il sistema UI corrente |
+| `/gdd:plan` | Produce il piano di design |
+| `/gdd:design` | Esegue il piano |
+| `/gdd:verify` | Verifica il risultato |
+| `/gdd:ship` | Prepara un branch PR pulito |
+| `/gdd:next` | Auto-routing alla fase successiva |
 
-### Primo lancio + onboarding
+### Uso quotidiano
 
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:start` | Percorso prova primo-lancio — top 3 problemi di design nel repo |
-| `/gdd:new-project` | Inizializza un progetto GDD |
-| `/gdd:connections` | Wizard di onboarding per le 12 integrazioni esterne |
+| Comando | Scopo |
+| --- | --- |
+| `/gdd:do <task>` | Router in linguaggio naturale |
+| `/gdd:fast <task>` | Piccolo fix mirato |
+| `/gdd:quick` | Flusso di task leggero |
+| `/gdd:audit` | Audit di qualità del design |
+| `/gdd:darkmode` | Audit della dark mode |
+| `/gdd:style <component>` | Handoff di stile di un componente |
+| `/gdd:health` | Diagnostica lo stato della pipeline |
+| `/gdd:progress` | Mostra l'avanzamento del ciclo corrente |
+| `/gdd:resume` | Riprende dal checkpoint |
 
-### Ciclo di vita
+### Strumenti di design e handoff
 
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:new-cycle` | Nuovo ciclo di design |
-| `/gdd:complete-cycle` | Archivia artefatti del ciclo + EXPERIENCE.md |
-| `/gdd:pause` / `/gdd:resume` | Checkpoint numerati |
-| `/gdd:continue` | Alias per `/gdd:resume` |
-| `/gdd:timeline` | Retrospettiva narrativa tra cicli + git log |
-
-### Iterazione + decisioni
-
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:discuss [topic]` | Intervista di design adattiva |
-| `/gdd:list-assumptions` | Far emergere assunzioni nascoste prima del piano |
-| `/gdd:sketch [idea]` | Mockup HTML multi-variante |
-| `/gdd:spike [idea]` | Esperimento di fattibilità timeboxed |
-| `/gdd:sketch-wrap-up` / `/gdd:spike-wrap-up` | Impacchettare i findings in skill locale |
-| `/gdd:audit` | Wrapper verify + audit + reflector |
-| `/gdd:reflect` | Lancia il reflector on-demand |
-| `/gdd:apply-reflections` | Rivedi e applica selettivamente le proposte |
-
-### Memoria + knowledge layer
-
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:recall <query>` | Ricerca FTS5 |
-| `/gdd:extract-learnings` | Estrai pattern/decisioni/lezioni |
-| `/gdd:note <text>` | Cattura idee senza attriti |
-| `/gdd:plant-seed <idea>` | Idea forward-looking con condizione di trigger |
-| `/gdd:analyze-dependencies` | Token fan-out, call-graph, tracciabilità delle decisioni |
-| `/gdd:skill-manifest` | Lista tutti gli skill e agenti GDD |
-| `/gdd:graphify` | Costruisci/interroga/diff il knowledge graph |
-| `/gdd:watch-authorities` | Diff della whitelist dei feed di autorità |
-
-### Connessioni
-
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:figma-write` | Riscrive le decisioni di design su Figma |
+| Comando | Scopo |
+| --- | --- |
+| `/gdd:connections` | Configura le integrazioni opzionali |
+| `/gdd:figma-extract` | Estrae il contesto del design system da Figma |
+| `/gdd:figma-write` | Riscrive decisioni e stato su Figma |
 | `/gdd:handoff <bundle>` | Importa un bundle Claude Design |
-| `/gdd:darkmode` | Audita l'implementazione dark-mode |
-| `/gdd:compare` | Calcola il delta DESIGN.md vs DESIGN-VERIFICATION.md |
-| `/gdd:style <Component>` | Genera doc di handoff di componente |
+| `/gdd:sketch <idea>` | Genera mockup HTML multi-variante |
+| `/gdd:spike <idea>` | Passaggio di fattibilità timeboxed |
 
-### Diagnostica + forensica
-
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:scan` | Inventario design system del codebase |
-| `/gdd:map` | 5 mapper paralleli del codebase |
-| `/gdd:debug [desc]` | Indagine di design symptom-driven |
-| `/gdd:health` | Report di salute degli artefatti `.design/` |
-| `/gdd:progress` | Posizione nella pipeline |
-| `/gdd:stats` | Statistiche di ciclo |
-| `/gdd:optimize` | Analisi costi rule-based |
-| `/gdd:warm-cache` | Pre-riscalda la cache Anthropic |
-
-### Distribuzione + update
-
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:update` | Aggiorna GDD con preview del changelog |
-| `/gdd:reapply-patches` | Ri-stitch delle modifiche locali `reference/` |
-| `/gdd:check-update` | Check manuale degli update |
-| `/gdd:settings` | Configura `.design/config.json` |
-| `/gdd:set-profile <profile>` | Cambia profilo del modello |
-| `/gdd:undo` | Revert sicuro di cambiamento di design |
-| `/gdd:pr-branch` | Branch PR pulito |
-
-### Backlog + note
-
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:todo` | Aggiungi / lista / scegli task di design |
-| `/gdd:add-backlog <idea>` | Parcheggia idea per ciclo futuro |
-| `/gdd:review-backlog` | Rivedi gli elementi parcheggiati |
-
-### Aiuto
-
-| Comando | Cosa fa |
-|---------|---------|
-| `/gdd:help` | Lista completa dei comandi e uso |
-| `/gdd:bandit-reset` | Resetta il posterior del layer adattivo al rilascio di un nuovo modello Anthropic |
-
----
+Riferimento completo dei comandi: [SKILL.md](SKILL.md)
 
 ## Connessioni
 
-GDD spedisce 12 connessioni di strumenti. Tutte opzionali. Configurate con `/gdd:connections`.
+GDD funziona senza strumenti esterni, ma può connettersi a 39 integrazioni opzionali. Sono tutte opzionali; la pipeline degrada in modo grazioso verso i fallback quando una connessione non è disponibile.
 
-| Connessione | Scopo | Sonda |
-|-------------|-------|-------|
-| **Figma** | Leggi token, componenti, screenshot; scrivi annotazioni, Code Connect, stato di implementazione | `mcp__figma__get_metadata` + `use_figma` |
-| **Refero** | Ricerca riferimenti di design | `mcp__refero__search` |
-| **Pinterest** | Riferimento visuale per brand voice + stile | OAuth + MCP |
-| **Claude Design** | Import di bundle di handoff | URL o file locale |
-| **Storybook** | Lookup specifiche di componenti su porta 6006 | Sonda HTTP |
-| **Chromatic** | Diff di baseline di regressione visuale | API key |
-| **Preview** | Screenshot runtime Playwright + Claude Preview MCP | `mcp__Claude_Preview__preview_*` |
-| **paper.design** | Lettura/scrittura canvas MCP | `mcp__paper__use_paper` |
-| **pencil.dev** | Specifiche `.pen` tracciate da git | File `.pen` nel repo |
-| **Graphify** | Export di knowledge graph | `mcp__graphify__*` |
-| **21st.dev Magic** | Ricerca di precedenti prima di greenfield | `mcp__magic__search` |
-| **Magic Patterns** | Generazione di componenti DS-aware | `mcp__magic-patterns__generate` |
+Il layer di connessione copre queste categorie:
 
-Dettagli completi in [`connections/connections.md`](connections/connections.md).
+- **Superfici di design** - Figma (lettura + scrittura + Code Connect), paper.design, pencil.dev, Penpot, Framer, Webflow, Plasmic
+- **Riferimento e ricerca** - Refero, Pinterest, Lazyweb, Mobbin, handoff Claude Design
+- **Generazione di componenti** - 21st.dev Magic, Magic Patterns, v0.dev, Builder.io
+- **Specifica di componenti e QA visuale** - Storybook, Chromatic, Preview (Playwright + Claude Preview MCP)
+- **Knowledge graph** - Graphify
+- **Output nativo e non-web** - Xcode Simulator, Android Emulator, Litmus / Email-on-Acid, renderer di stampa
+- **Verifica della motion** - Lottie, Rive
+- **Superfici di team** - Slack, Discord, Linear, Jira, Notion, GitHub PR
 
----
+Configura le integrazioni con:
 
-## Configurazione
-
-GDD memorizza le impostazioni di progetto in `.design/config.json`. Configura durante `/gdd:new-project` o aggiorna con `/gdd:settings`.
-
-### Profili di modello
-
-| Profilo | Planning | Esecuzione | Verifica |
-|---------|----------|------------|----------|
-| `quality` | Opus | Opus | Sonnet |
-| `balanced` (default) | Opus | Sonnet | Sonnet |
-| `budget` | Sonnet | Sonnet | Haiku |
-| `inherit` | Inherit | Inherit | Inherit |
-
-```
-/gdd:set-profile budget
+```bash
+/gdd:connections
 ```
 
-### Modalità adattiva
+Per la lista completa delle connessioni con i pattern di sonda, vedi [connections/connections.md](connections/connections.md).
 
-Scala `.design/budget.json#adaptive_mode` (v1.23.5):
+## Requisiti
 
-| Modalità | Cosa fa |
-|----------|---------|
-| `static` (default) | Comportamento Phase 10.1 |
-| `hedge` | Ensemble AdaNormalHedge + reranking MMR attivati. Introduzione più sicura. |
-| `full` | Bandit router + Hedge + MMR tutti attivi |
+- Node.js 22 o 24
+- Git
+- Un runtime di coding IA supportato
 
-### Parallelismo
+## Supporto multi-runtime
 
-| Impostazione | Default | Cosa controlla |
-|--------------|---------|----------------|
-| `parallelism.enabled` | `true` | Eseguire task indipendenti in worktree |
-| `parallelism.min_estimated_savings_seconds` | `30` | Sotto questa soglia salta la parallelizzazione |
-| `parallelism.max_concurrent_workers` | `4` | Cap duro su worker simultanei |
+GDD si installa su 14 runtime di coding IA: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy e Cline. Gli stessi skill e agenti sorgente vengono compilati nel layout nativo di ciascun runtime (`skills/`, `command/`, `agents/` o `.clinerules`) da convertitori specifici per runtime, così la pipeline ti segue tra gli editor.
 
-### Quality gate
+Claude Code è il flagship. L'esperienza completa gira lì da capo a coda: ogni agente, gli hook defense-in-depth e le connessioni supportate da MCP. Sugli altri runtime ottieni gli stessi skill e agenti nella loro forma nativa, le connessioni supportate da MCP si attivano sugli host con capacità MCP e il layer degli hook è specifico di Claude Code.
 
-| Impostazione | Default | Cosa controlla |
-|--------------|---------|----------------|
-| `solidify.rollback_mode` | `"stash"` | `stash` / `hard` / `none` |
-| `solidify.commands` | autodetect | Override comandi typecheck / build / test |
-| `verify.iterations_max` | `3` | Cap del loop verify→fix |
-| `connection.figma_writeback` | `proposal` | `proposal` / `auto` |
+## Sicurezza e privacy
 
----
+GDD è local-first per impostazione predefinita. Scrive gli artefatti di progetto sotto `.design/`, usa le integrazioni opzionali solo quando configurate e mantiene la segnalazione di issue subordinata al consenso.
 
-## Sicurezza
+Il plugin include hook defense-in-depth per percorsi protetti, blocco dei comandi pericolosi, scansione di injection, circuit breaking per MCP e applicazione del budget. GDD espone inoltre 13 tool MCP in sola lettura per un'introspezione sicura del progetto.
 
-### Hardening integrato
-
-GDD spedisce defense-in-depth dalla Phase 14.5:
-
-- **`hooks/gdd-bash-guard.js`** — PreToolUse:Bash blocca circa 50 pattern pericolosi dopo normalizzazione Unicode NFKC + ANSI.
-- **`hooks/gdd-protected-paths.js`** — PreToolUse:Edit/Write/Bash impone la lista glob `protected_paths`.
-- **`hooks/gdd-read-injection-scanner.ts`** — scansiona il contenuto Read in ingresso per Unicode invisibile, commenti HTML, pattern di esfiltrazione di segreti.
-- **`scripts/lib/blast-radius.cjs`** — preflight di `design-executor` rifiuta task sopra `max_files_per_task: 10` / `max_lines_per_task: 400`.
-- **`hooks/gdd-mcp-circuit-breaker.js`** — interrompe loop di timeout consecutivi su `use_figma` / `use_paper` / `use_pencil`.
-
-### Proteggere file sensibili
-
-Aggiungi i percorsi sensibili alla deny list del runtime:
+Aggiungi i percorsi sensibili alla deny list del tuo runtime:
 
 ```json
 {
@@ -631,7 +334,6 @@ Aggiungi i percorsi sensibili alla deny list del runtime:
       "Read(.env)",
       "Read(.env.*)",
       "Read(**/secrets/*)",
-      "Read(**/*credential*)",
       "Read(**/*.pem)",
       "Read(**/*.key)"
     ]
@@ -639,82 +341,63 @@ Aggiungi i percorsi sensibili alla deny list del runtime:
 }
 ```
 
-> [!IMPORTANT]
-> Poiché GDD genera file markdown che diventano prompt di sistema LLM, qualsiasi testo controllato dall'utente che fluisce negli artefatti `.design/` è un potenziale vettore di prompt injection indiretta. Lo scanner di injection cattura tali vettori a più livelli — ma il defense-in-depth resta best practice.
+Leggi: [SECURITY.md](SECURITY.md) · [PRIVACY.md](PRIVACY.md)
 
----
+## Aggiornamento
 
-## Risoluzione problemi
-
-**Comandi non trovati dopo l'installazione?**
-- Riavvia il runtime
-- Verifica `~/.claude/skills/get-design-done/` (globale) o `./.claude/skills/get-design-done/` (locale)
-- `/gdd:help` per confermare la registrazione
-
-**Pipeline bloccata a metà fase?**
-- `/gdd:resume` — ripristina dal checkpoint numerato più recente
-- `/gdd:health` — diagnostica problemi di artefatti `.design/`
-- `/gdd:progress --forensic` — audit di integrità a 6 check
-
-**Sforamento di costi?**
-- `/gdd:optimize` — raccomandazioni rule-based
-- `/gdd:set-profile budget` — passa a tier budget
-- Imposta `adaptive_mode: "full"` in `.design/budget.json` — il bandit imparerà
-
-**Aggiornamento all'ultima versione?**
 ```bash
 npx @hegemonart/get-design-done@latest
 ```
 
-**Docker / container?**
+Oppure da dentro Claude Code:
 
 ```bash
-CLAUDE_CONFIG_DIR=/workspace/.claude npx @hegemonart/get-design-done
+/gdd:update
 ```
 
-### Disinstallazione
+Per lo storico completo dei rilasci, vedi [CHANGELOG.md](CHANGELOG.md).
+
+## Risoluzione problemi
+
+### I comandi non compaiono
+
+Riavvia il tuo runtime ed esegui:
 
 ```bash
-# Disinstallazione globale (per runtime)
-npx @hegemonart/get-design-done --claude --global --uninstall
-npx @hegemonart/get-design-done --opencode --global --uninstall
-# ... stesso pattern --<runtime> --global --uninstall per i 14 runtime
-
-# Disinstallazione interattiva multi-select (senza flag di runtime)
-npx @hegemonart/get-design-done --uninstall
-
-# Disinstallazione locale
-npx @hegemonart/get-design-done --claude --local --uninstall
-# ... con flag --local
+/gdd:help
 ```
 
-Rimuove tutti i comandi, agenti, hook e impostazioni GDD preservando le altre configurazioni.
+### La pipeline è bloccata
 
----
+```bash
+/gdd:health
+/gdd:resume
+```
 
-## Canale di feedback (da v1.30.0)
+### Il costo è troppo alto
 
-GDD ora include un reporter di issue GitHub basato sul consenso esplicito tramite il comando slash `/gdd:report-issue`.
+```bash
+/gdd:optimize
+```
 
-- **Cosa fa.** Ti guida nella segnalazione di un problema o una lacuna funzionale, con un'anteprima del payload prima dell'invio. Local-first, basato sul consenso, senza modalità automatica.
-- **Pseudonimizzazione, NON anonimizzazione.** Gli identificatori diretti (nome utente, hostname, percorsi assoluti, identità Git, valori delle variabili d'ambiente, e-mail, indirizzi IP) vengono sostituiti con pseudonimi stabili — ma la correlazione interna è preservata affinché i maintainer possano fare debugging. I canali laterali (stile di scrittura, pattern di codice, fingerprint del repository) possono ancora re-identificare. Vedi il payload completo prima dell'invio e dai il consenso per ogni issue.
-- **Interruttore di emergenza.** Imposta `GDD_DISABLE_ISSUE_REPORTER=1` (env) o aggiungi `{ "issue_reporter": false }` a `.design/config.json` per fermare l'invio prima di qualsiasi chiamata di rete.
-- **Fallback in assenza di `gh`.** Se la CLI di GitHub non è installata, il payload viene scritto su disco in `.design/issue-drafts/` e l'URL del template di issue viene copiata negli appunti.
+## Contribuire
 
-Vedi [`README.md`](README.md) in inglese per i dettagli completi, [`reference/pseudonymization-rules.md`](reference/pseudonymization-rules.md) per il catalogo delle regole (R1..R8) e [`reference/known-failure-modes.md`](reference/known-failure-modes.md) per i modi di fallimento noti.
+```bash
+npm install
+npm test
+npm run typecheck
+```
 
-**Aggiornamento v1.30.5** — il catalogo ora contiene 22 voci (10 in v1.30.0) e un nuovo matcher fuzzy deterministico (`scripts/lib/failure-mode-matcher.cjs`) restituisce candidati top-N con punteggio di confidenza. Reflector + authority-watcher possono proporre nuove voci tramite `/gdd:apply-reflections` (6a classe di proposta) — strettamente solo proposta, ogni voce passa attraverso la revisione utente.
-
----
+Leggi: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Licenza
 
-Licenza MIT. Vedi [LICENSE](LICENSE) per i dettagli.
+Licenza MIT. Vedi [LICENSE](LICENSE) per i dettagli. Le attribuzioni di terze parti sono elencate in [NOTICE](NOTICE).
 
 ---
 
 <div align="center">
 
-**Claude Code rilascia codice. Get Design Done si assicura che rilasci anche design.**
+**Claude Code rilascia codice. Get Design Done si assicura che rilasci design.**
 
 </div>
