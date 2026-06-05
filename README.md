@@ -6,7 +6,7 @@
 
 **A design-quality pipeline for AI coding agents: brief -> explore -> plan -> design -> verify.**
 
-**Get Design Done keeps AI-generated UI tied to your brief, your design system, your local design knowledge, and your quality gates. Built for Claude Code, with broad install support across 14 AI coding runtimes.**
+**Get Design Done keeps AI-generated UI tied to your brief, your design system, your local design knowledge, and your quality gates. Built for Claude Code, and installs across Codex, Cursor, Gemini, OpenCode, Copilot, Windsurf, and more.**
 
 [![npm version](https://img.shields.io/npm/v/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
 [![npm downloads](https://img.shields.io/npm/dm/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
@@ -313,16 +313,9 @@ For the full connection list with probe patterns, see [connections/connections.m
 
 ## Multi-Runtime Support
 
-GDD installs across 14 AI coding runtimes: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline. Each runtime receives its native artifact layout (`skills/`, `command/`, `agents/`, or `.clinerules`) via per-runtime content converters.
+GDD installs across 14 AI coding runtimes: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline. The same source skills and agents are compiled to each runtime's native layout (`skills/`, `command/`, `agents/`, or `.clinerules`) by per-runtime converters, so the pipeline travels with you across editors.
 
-Be honest about what that breadth means today:
-
-- **Full design-quality gate is Claude Code.** The complete pipeline, with all agents, hooks, and verification, is developed and tested against Claude Code.
-- **Hooks are Claude-only.** The defense-in-depth hooks (protected paths, bash guard, injection scanner, MCP circuit breaker, budget enforcer) run on Claude Code. Other runtimes install the skills and agents but not the hook layer.
-- **MCP-backed connections work on roughly 3 runtimes** (the MCP-capable hosts). On runtimes without MCP support, MCP-only connections fall back to their degraded paths.
-- **The remaining runtimes are install-supported but untested** for the full design-quality flow. Skills and agents are translated to each runtime's shape, but parity with the Claude Code experience is not guaranteed.
-
-The breadth is real: the same source skills are converted to every runtime. The depth of the quality gate is strongest on Claude Code.
+Claude Code is the flagship. The full experience runs there end to end: every agent, the defense-in-depth hooks, and the MCP-backed connections. On the other runtimes you get the same skills and agents in their native shape, MCP-backed connections light up on the MCP-capable hosts, and the hook layer is specific to Claude Code.
 
 ## Safety And Privacy
 
@@ -397,9 +390,7 @@ Read: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
-
-Architecture ported from `gsd-build/get-shit-done` (MIT - see `NOTICE`). Peer-CLI protocol shapes adapted from `greenpolo/cc-multi-cli` (Apache 2.0). Skill-discipline mechanism ported from [`obra/superpowers`](https://github.com/obra/superpowers) (MIT).
+MIT License. See [LICENSE](LICENSE) for details. Third-party attributions are listed in [NOTICE](NOTICE).
 
 ---
 
