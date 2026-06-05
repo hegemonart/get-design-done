@@ -123,7 +123,7 @@ test('cursor-marketplace-doctor: state-not-submitted fixture → state=not-submi
     assert.equal(r.approvedAt, null);
     assert.equal(r.marketplaceUrl, null);
     assert.equal(r.rejectionReason, null);
-    assert.match(r.guidance, /field-test/);
+    assert.match(r.guidance, /cursor\.com\/marketplace\/publish/);
   } finally {
     rmRf(root);
   }

@@ -137,14 +137,14 @@ function readJsonFileSafe(filePath) {
 function buildGuidance(r) {
   switch (r.state) {
     case MARKETPLACE_STATES.NOT_SUBMITTED:
-      return 'submit publisher application at cursor.com/marketplace/publish; see docs/cursor-marketplace-field-test.md';
+      return 'submit publisher application at cursor.com/marketplace/publish';
     case MARKETPLACE_STATES.SUBMITTED_PENDING:
       return 'await Cursor team review approval; no published SLA per D-16';
     case MARKETPLACE_STATES.APPROVED_PUBLISHED:
       return 'plugin is live at ' + (r.marketplaceUrl || '<marketplace-url>');
     case MARKETPLACE_STATES.REJECTED:
       return 'address rejection reason: ' + (r.rejectionReason || '<unspecified>')
-        + '; re-submit per docs/cursor-marketplace-field-test.md';
+        + '; re-submit at cursor.com/marketplace/publish';
     default:
       return '';
   }

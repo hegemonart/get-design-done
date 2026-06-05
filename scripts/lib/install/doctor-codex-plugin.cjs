@@ -20,7 +20,7 @@
  * path is COMPUTED (pure string composition via `os.homedir()`), NOT
  * verified. The maintainer verifies the cache after running the field-
  * test command on a Codex-installed machine (see
- * docs/codex-plugin-field-test.md).
+ * the maintainer field-test notes).
  *
  * Phase 28.8 D-14: the `.claude-plugin/marketplace.json` catalog file is
  * reused from Claude Code's marketplace per Codex's legacy-compatible

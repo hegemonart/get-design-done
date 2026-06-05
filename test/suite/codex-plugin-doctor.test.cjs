@@ -365,18 +365,6 @@ test('codex-plugin-doctor: module exports match the C2 contract', () => {
 // Field-test doc shape (D-03 / D-16 — single-step + contrast with Cursor)
 // ---------------------------------------------------------------------------
 
-test('codex-plugin-doctor-doc: docs/codex-plugin-field-test.md exists + contains the verbatim command', () => {
-  const docPath = path.resolve(__dirname, '../..', 'docs', 'codex-plugin-field-test.md');
-  assert.ok(fs.existsSync(docPath), 'docs/codex-plugin-field-test.md must exist');
-  const doc = fs.readFileSync(docPath, 'utf8');
-  assert.ok(
-    doc.includes('codex plugin marketplace add hegemonart/get-design-done'),
-    'doc must include the verbatim single-step command'
-  );
-  // D-03 + D-16 must be referenced explicitly.
-  assert.match(doc, /D-03/, 'doc must cite D-03 (install-by-URL works today)');
-  assert.match(doc, /D-16/, 'doc must cite D-16 (Codex single-step vs Cursor multi-step)');
-  // Contrast with Cursor's multi-step flow per D-16.
-  assert.match(doc, /Cursor/i, 'doc must contrast with Cursor');
-  assert.match(doc, /single-step/i, 'doc must describe itself as single-step');
-});
+// The codex field-test doc was relocated to .planning/ (local-only) in v1.59.7;
+// the verbatim install command is covered by README (Phase 28.8-Z1) + the doctor
+// script, so the doc-shape assertion was retired with the doc.
