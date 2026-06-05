@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.7] - 2026-06-05
+
+Docs polish following the v1.59 milestone: confident multi-runtime framing, named runtimes, and a full i18n refresh.
+
+### Changed
+
+- **Confident multi-runtime framing.** The README's Multi-Runtime section now leads with "Claude Code is the flagship; the full experience runs there end to end," stating the depth distinction factually (hooks are Claude-specific, MCP-backed connections light up on the MCP-capable hosts) without the prior apologetic "untested / not guaranteed" hedge. The tagline names the main runtimes (Codex, Cursor, Gemini, OpenCode, Copilot, Windsurf, and more) rather than an anonymous count.
+- **All 6 localized READMEs retranslated** from the current product-first English README; the previous translations were stale (old 37-agent / 12-connection structure). Badges, language nav, CLI commands, and the install channels are preserved.
+
+### Removed
+
+- The `gsd-build` / `cc-multi-cli` / `obra-superpowers` "ported from" attribution paragraph from the product README; the attributions remain in `NOTICE`.
+- Two maintainer field-test notes that had leaked into `docs/` (`codex-plugin-field-test.md`, `cursor-marketplace-field-test.md`); the doctor scripts' user-facing guidance was rewired off the dead paths.
+
+### Breaking changes
+
+None.
+
+5,069/5,069 tests pass.
+
+---
+
 ## [1.59.6] - 2026-06-05
 
 Sixth and final point release of the **v1.59 "Audit Closeout & Honesty Pass"** milestone. Product-surface docs, the handoff skill, and the fact-gate. **Milestone complete.**
