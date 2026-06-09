@@ -265,7 +265,7 @@ If `$ARGUMENTS` is a stage or command name - invoke it directly, no state check:
 /gdd:spike           → Skill("get-design-done:gdd-spike")
 /gdd:spike-wrap-up   → Skill("get-design-done:gdd-spike-wrap-up")
 # --- Bootstrap (not slash-routed) ---
-# using-gdd → injected at SessionStart by hooks/inject-using-gdd.sh
+# using-gdd → injected at SessionStart by hooks/inject-using-gdd.cjs
 #   (disable-model-invocation: true). The skill-discipline contract;
 #   not a user-invoked command — see skills/using-gdd/SKILL.md.
 ```

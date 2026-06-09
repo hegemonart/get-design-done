@@ -10,7 +10,7 @@ description: Bandit posterior + production-integration shim cheat sheet - signat
 
 **Phase 27.5 (v1.27.5).** Reference for the bandit production-integration surface. Authoring or modifying a caller of the bandit posterior? Debugging a routing decision at the code level? Start here.
 
-For ops-level guidance (when bandit fires, how to disable, posterior inspection), see `docs/BANDIT-INTEGRATION.md`.
+For ops-level guidance (when bandit fires, how to disable, posterior inspection), use the read-only diagnostic surfaces: `/gdd:bandit-status` (per-arm posterior snapshots) and `/gdd:bandit-reset` (confirm-then-reset). The `adaptive_mode` gate below covers enable/disable.
 
 In-scope modules:
 
@@ -154,7 +154,7 @@ Phase 27.5 wires these consumers:
 
 ## Cross-references
 
-- `docs/BANDIT-INTEGRATION.md` - operator guide (when bandit fires, how to disable, troubleshooting).
+- `/gdd:bandit-status` + `/gdd:bandit-reset` - read-only operator surfaces (when bandit fires, posterior inspection, reset). Disable/enable is the `adaptive_mode` gate in `.design/budget.json` (see above).
 - `reference/peer-protocols.md` - Phase 27 ACP/ASP cheat sheet (peer-CLI delegation transport).
 - `scripts/lib/bandit-router.cjs` - Phase 23.5 primitives surface.
 - `scripts/lib/bandit-router/integration.cjs` - Phase 27.5 production shim.
