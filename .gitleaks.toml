@@ -9,12 +9,14 @@ useDefault = true
 
 [allowlist]
 description = "Known safe paths and placeholder patterns"
+# NOTE: the planning/agent dirs (.planning/, .claude/, .design/) are deliberately
+# NOT blanket-allowlisted here. Secrets leaked into those exact dirs in pushed
+# commits twice historically (S3); a directory-wide allowlist would make a real
+# secret there invisible to gitleaks. Tracked files under them are scanned
+# normally. Only narrow, justified file/path entries are allowlisted below.
 paths = [
-  '''\.planning/''',
-  '''\.claude/''',
   '''test/fixtures/baselines/''',
   '''node_modules/''',
-  '''\.design/''',
   # test/suite/redact.test.cjs contains intentional fake JWTs + PEM blocks
   # used to exercise the Phase 22 secret-scrubber regex registry. The
   # whole point of those test fixtures is for gitleaks-style detectors
