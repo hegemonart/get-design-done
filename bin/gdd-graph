@@ -21,6 +21,7 @@
 'use strict';
 
 const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 
 const SUBCOMMANDS = new Set([
   'build', 'status', 'diff', 'query', 'upsert-node', 'upsert-edge',
@@ -101,7 +102,9 @@ function emitError(subcommand, err, exitCode = 1) {
 async function dispatch(subcommand, parsed) {
   const lib = await import(
     // Resolve via relative require root — bin/ is sibling of scripts/.
-    'file://' + path.resolve(__dirname, '..', 'scripts', 'lib', 'graph', 'index.mjs').replace(/\\/g, '/')
+    // pathToFileURL handles drive letters AND percent/hash chars in the repo
+    // path that a raw 'file://' + concat would mis-parse (WHATWG URL rules).
+    pathToFileURL(path.resolve(__dirname, '..', 'scripts', 'lib', 'graph', 'index.mjs')).href
   );
 
   if (subcommand === 'build') {
