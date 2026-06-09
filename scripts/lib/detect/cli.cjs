@@ -45,13 +45,23 @@ function isUrl(p) {
   return /^https?:\/\//i.test(String(p || ''));
 }
 
-/** Select the detection engine. Returns { mode, warning }. Regex-fast is the dep-free default. */
+/**
+ * Select the detection engine. Returns { mode, warning }.
+ *
+ * There is exactly one engine path: regex over file text (see engine.cjs#run, which takes no
+ * jsdom/DOM parameter and is byte-identical whether or not jsdom is installed). So the truthful
+ * mode is always 'regex-fast'. We still probe jsdom (unless --fast) to surface a one-line hint
+ * that a DOM-aware path is not wired in this build — but we no longer claim a 'dom-aware' mode the
+ * engine does not have.
+ */
 function selectEngine(opts, requireFn) {
   if (opts.fast) return { mode: 'regex-fast', warning: null };
   let hasJsdom = false;
   try { requireFn('jsdom'); hasJsdom = true; } catch { hasJsdom = false; }
-  if (hasJsdom) return { mode: 'dom-aware', warning: null };
-  return { mode: 'regex-fast', warning: 'jsdom not installed — using regex-fast (install jsdom for DOM-aware mode, or pass --fast to silence this).' };
+  // jsdom presence does not change the engine — only emit a hint when it's absent, and never
+  // promise a mode we can't deliver.
+  const warning = hasJsdom ? null : 'jsdom not installed — running regex-fast (the only wired mode; a DOM-aware path is not implemented). Pass --fast to silence this.';
+  return { mode: 'regex-fast', warning };
 }
 
 function renderHuman(result, mode) {
