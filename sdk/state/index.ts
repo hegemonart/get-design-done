@@ -37,6 +37,33 @@ import {
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
+
+// Audit D1: this .ts compiles to CommonJS via tsc (Node16 module mode), where
+// `import.meta` is FORBIDDEN (error TS1470). But under Node's
+// --experimental-strip-types the same file runs as ESM, where the CommonJS
+// globals `require` and `__dirname` are UNDEFINED -- a bare reference to either
+// THROWS a ReferenceError, so we cannot name them directly. We satisfy BOTH
+// targets by probing with `typeof` (safe in ESM) and falling back to the entry
+// script (`process.argv[1]`) when the CJS globals are absent. This mirrors the
+// process.argv[1] anchoring used by sibling `sdk/event-stream/writer.ts` and
+// avoids `import.meta` entirely.
+//   * `_require` -- a CJS-style require, used to load the optional .cjs backend
+//     (state-backend.cjs) and package.json files. In compiled CJS output the
+//     real `require` is used; under strip-types ESM we synthesize one anchored
+//     on the entry script via createRequire.
+//   * `_moduleDir` -- the walk-up anchor formerly spelled `__dirname`. In
+//     compiled CJS `__dirname` is used; under ESM we derive a directory from
+//     the entry script. Either way `_loadBackend` can resolve the optional
+//     native backend in BOTH compiled and source modes.
+const _moduleDir: string =
+  typeof __dirname !== 'undefined'
+    ? __dirname
+    : dirname(process.argv[1] || process.cwd());
+const _require =
+  typeof require !== 'undefined'
+    ? require
+    : createRequire(process.argv[1] || process.cwd());
 
 import { acquire, acquireSqliteLock } from './lockfile.ts';
 import { parse } from './parser.ts';
@@ -69,8 +96,8 @@ function _findPackageRoot(startDir: string): string | null {
     const pkgPath = join(dir, 'package.json');
     if (existsSync(pkgPath)) {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const pkg = require(pkgPath) as { name?: string };
+        // D1: createRequire-bound require (bare `require` is undefined in ESM).
+        const pkg = _require(pkgPath) as { name?: string };
         if (firstWithPkg === null) firstWithPkg = dir;
         if (pkg.name === '@hegemonart/get-design-done') return dir;
       } catch {
@@ -85,9 +112,16 @@ function _findPackageRoot(startDir: string): string | null {
 }
 
 // ---------------------------------------------------------------------------
-// Phase 57: backend probe (loaded once via require, memoized).
-// state-backend.cjs is a CommonJS module; require() works from .ts under
-// Node 22 --experimental-strip-types (only type-erasable syntax is used).
+// Phase 57: backend probe (loaded once via createRequire, memoized).
+// state-backend.cjs is a CommonJS module. Audit D1 correction: a BARE
+// `require()` does NOT work from this .ts under Node's --experimental-strip-
+// types — this module is loaded as ESM, where `require` is undefined and a
+// bare call throws ReferenceError (silently caught below, killing the backend
+// path). We load via `_require` -- the real CJS `require` in compiled output,
+// or a createRequire anchored on the entry script under strip-types ESM --
+// which DOES resolve the optional .cjs backend in both modes. The graceful-null
+// fallback is preserved for the genuinely-absent
+// dependency (e.g. better-sqlite3 not installed).
 // ---------------------------------------------------------------------------
 
 interface StateBackendMod {
@@ -111,12 +145,13 @@ let _backendCache: StateBackendMod | null | false = null;
 function _loadBackend(): StateBackendMod | null {
   if (_backendCache !== null) return _backendCache === false ? null : _backendCache as StateBackendMod;
   try {
-    const pkgRoot = _findPackageRoot(__dirname);
+    const pkgRoot = _findPackageRoot(_moduleDir);
     if (pkgRoot === null) { _backendCache = false; return null; }
     const backendPath = join(pkgRoot, 'scripts', 'lib', 'state', 'state-backend.cjs');
     if (!existsSync(backendPath)) { _backendCache = false; return null; }
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    _backendCache = require(backendPath) as StateBackendMod;
+    // D1: createRequire-bound require so the optional native backend can
+    // actually load from this ESM (.ts strip-types) context.
+    _backendCache = _require(backendPath) as StateBackendMod;
     return _backendCache as StateBackendMod;
   } catch {
     _backendCache = false;
@@ -144,7 +179,7 @@ let _storeCache: StateStoreMod | null | false = null;
 async function _loadStore(): Promise<StateStoreMod | null> {
   if (_storeCache !== null) return _storeCache === false ? null : _storeCache as StateStoreMod;
   try {
-    const pkgRoot = _findPackageRoot(__dirname);
+    const pkgRoot = _findPackageRoot(_moduleDir);
     if (pkgRoot === null) { _storeCache = false; return null; }
     const storePath = join(pkgRoot, 'scripts', 'lib', 'state', 'state-store.cjs');
     if (!existsSync(storePath)) { _storeCache = false; return null; }
@@ -420,12 +455,51 @@ export async function transition(
     throw new TransitionGateFailed(toStage, gateResult.blockers);
   }
   const nowIso: string = new Date().toISOString();
-  const nextState = await mutate(path, (s): ParsedState => {
-    s.frontmatter.stage = toStage;
-    s.frontmatter.last_checkpoint = nowIso;
-    s.position.stage = toStage;
-    s.timestamps[`${toStage}_started_at`] = nowIso;
-    return s;
-  });
-  return { pass: true, blockers: gateResult.blockers, state: nextState };
+  // Audit D4: the gate above was evaluated against a PRE-LOCK read. A
+  // concurrent stage change between that read and the locked mutate could make
+  // the transition invalid (e.g. another writer already advanced the stage, so
+  // `from` is no longer the current stage, or the gate's preconditions no
+  // longer hold). Re-evaluate the gate INSIDE the locked mutate against the
+  // freshly-read `s`, and abort the transition if it no longer holds. The
+  // mutate() lock serializes us against other writers, so this re-check is
+  // race-free: nothing can change `s` between this check and the write.
+  //
+  // We capture the locked re-check failure and re-throw it OUTSIDE mutate so
+  // the caller sees a TransitionGateFailed rather than a generic mutate error.
+  let lockedFailure: TransitionGateFailed | null = null;
+  let lockedBlockers: string[] = gateResult.blockers;
+  try {
+    const nextState = await mutate(path, (s): ParsedState => {
+      const fromNow: string = s.position.stage;
+      if (!isStage(fromNow)) {
+        lockedFailure = new TransitionGateFailed(toStage, [
+          `Invalid transition: from="${fromNow}" is not a recognized Stage (changed under lock)`,
+        ]);
+        throw lockedFailure;
+      }
+      const gateNow = gateFor(fromNow, toStage);
+      if (gateNow === null) {
+        lockedFailure = new TransitionGateFailed(toStage, [
+          `Invalid transition: ${fromNow} → ${toStage} (changed under lock)`,
+        ]);
+        throw lockedFailure;
+      }
+      const resultNow = gateNow(s);
+      if (!resultNow.pass) {
+        lockedFailure = new TransitionGateFailed(toStage, resultNow.blockers);
+        throw lockedFailure;
+      }
+      lockedBlockers = resultNow.blockers;
+      s.frontmatter.stage = toStage;
+      s.frontmatter.last_checkpoint = nowIso;
+      s.position.stage = toStage;
+      s.timestamps[`${toStage}_started_at`] = nowIso;
+      return s;
+    });
+    return { pass: true, blockers: lockedBlockers, state: nextState };
+  } catch (err) {
+    // If the in-lock re-check vetoed, surface the gate failure verbatim.
+    if (lockedFailure !== null && err === lockedFailure) throw lockedFailure;
+    throw err;
+  }
 }

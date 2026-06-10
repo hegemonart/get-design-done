@@ -239,22 +239,51 @@ test('lockfile acquire: stale-detection reclaims a dead-PID lock', async () => {
   } finally { cleanup(); }
 });
 
-test('lockfile acquire: age-based staleness reclaims an old lock', async () => {
+test('lockfile acquire (D3): an ALIVE-PID lock is held regardless of age', async () => {
+  // Audit D3: PID-liveness is authoritative. A lock whose holder is still
+  // alive must NOT be reclaimed on age grounds even with an ancient
+  // acquired_at — otherwise a legitimate long-running mutation loses its lock.
   const { dir, cleanup } = tmpCwd();
   try {
     const lf = loadLockfile();
     const target = path.join(dir, 'sample.json');
     fs.writeFileSync(target, '{}');
 
-    // Plant a lock by our own PID (alive) but with an old acquired_at so
-    // only the age path can reclaim it.
+    // Plant a lock by our own PID (alive) with a year-2000 acquired_at.
     fs.writeFileSync(`${target}.lock`, JSON.stringify({
       pid: process.pid,
       host: os.hostname(),
       acquired_at: '2000-01-01T00:00:00.000Z',
     }));
 
-    const release = await lf.acquire(target, { staleMs: 1_000, maxWaitMs: 500, pollMs: 20 });
+    // staleMs is tiny but the holder is alive → must time out, not reclaim.
+    await assert.rejects(
+      () => lf.acquire(target, { staleMs: 1_000, maxWaitMs: 300, pollMs: 20 }),
+      (err) => err && err.name === 'LockAcquisitionError',
+    );
+    assert.ok(
+      fs.existsSync(`${target}.lock`),
+      'alive-PID lock must survive (not stolen on age)',
+    );
+  } finally { cleanup(); }
+});
+
+test('lockfile acquire (D3): a DEAD-PID lock IS reclaimed regardless of age', async () => {
+  // Complement: a dead holder is reclaimable even with a FRESH timestamp —
+  // age does not matter once liveness is disproven.
+  const { dir, cleanup } = tmpCwd();
+  try {
+    const lf = loadLockfile();
+    const target = path.join(dir, 'sample.json');
+    fs.writeFileSync(target, '{}');
+
+    fs.writeFileSync(`${target}.lock`, JSON.stringify({
+      pid: 999_999_999,
+      host: os.hostname(),
+      acquired_at: new Date().toISOString(), // fresh
+    }));
+
+    const release = await lf.acquire(target, { staleMs: 60_000, maxWaitMs: 500, pollMs: 20 });
     await release();
   } finally { cleanup(); }
 });

@@ -99,7 +99,25 @@ export async function acquire(
 
       const parsed: LockPayload | null = parseLock(existing);
       if (parsed !== null && isStale(parsed, staleMs)) {
-        // Clear stale lock and retry.
+        // Audit D3 (TOCTOU): two waiters could each observe the same stale
+        // lock and both unlink+recreate, or one could unlink a DIFFERENT,
+        // freshly-acquired lock that replaced the stale one in the read→unlink
+        // window. Guard by confirming the on-disk bytes STILL match the exact
+        // stale payload we observed immediately before unlinking; if they
+        // changed (a new holder wrote a fresh lock), abandon the clear and
+        // loop — the next iteration re-reads and re-evaluates the new holder.
+        const confirm: string | null = readLockSafe(lockPath);
+        if (confirm === null) {
+          // Already gone — someone cleared it first. Retry immediately to
+          // race for the wx-create.
+          continue;
+        }
+        if (confirm !== existing) {
+          // A different writer replaced the lock between our read and now.
+          // Do NOT unlink — that would steal a (potentially fresh) lock.
+          await sleep(pollMs);
+          continue;
+        }
         try {
           unlinkSync(lockPath);
         } catch (delErr) {
@@ -108,6 +126,9 @@ export async function acquire(
             // Someone else cleared it first; fall through to retry.
           }
         }
+        // The wx-create on the next iteration is itself atomic (O_CREAT|O_EXCL),
+        // so even if two waiters both reach the unlink, only ONE wins the
+        // recreate; the loser sees EEXIST and re-evaluates.
         continue;
       }
 
@@ -181,13 +202,31 @@ function parseLock(raw: string): LockPayload | null {
 }
 
 function isStale(payload: LockPayload, staleMs: number): boolean {
-  // 1) PID check — if the process is dead, the lock is stale.
-  if (!isPidAlive(payload.pid, payload.host)) return true;
-  // 2) Age check — acquired_at older than staleMs is stale even if the
-  //    PID is reused by something else.
-  const acquiredAt = Date.parse(payload.acquired_at);
-  if (!Number.isFinite(acquiredAt)) return true; // garbage timestamp
-  return Date.now() - acquiredAt > staleMs;
+  // Audit D3: PID-liveness is AUTHORITATIVE. A lock whose holder PID is still
+  // alive on this host is NEVER stale, regardless of age — a legitimate
+  // long-running mutation (e.g. a >60s transaction) must not have its lock
+  // stolen out from under it. The age-based fallback only applies when we
+  // CANNOT confirm liveness: a dead PID, a missing/invalid pid field, a
+  // cross-host holder, or an unsignalable PID.
+  //
+  // Note: `isPidAlive` already returns true for the conservative
+  // can't-introspect cases (different host, EPERM). For those, the holder is
+  // treated as alive and the lock is held until released — we do NOT fall
+  // through to age-staleness, because doing so reintroduces the steal. Stale
+  // reclamation for genuinely-abandoned cross-host/unsignalable locks is left
+  // to manual cleanup, which is strictly safer than racing a live writer.
+  const pidRecorded =
+    typeof payload.pid === 'number' && Number.isInteger(payload.pid) && payload.pid > 0;
+  if (!pidRecorded) {
+    // No usable pid → cannot prove liveness. Fall back to age-staleness.
+    const acquiredAt = Date.parse(payload.acquired_at);
+    if (!Number.isFinite(acquiredAt)) return true; // garbage timestamp
+    return Date.now() - acquiredAt > staleMs;
+  }
+  // A recorded, live PID is decisive: NOT stale at any age.
+  if (isPidAlive(payload.pid, payload.host)) return false;
+  // PID is recorded but confirmed dead (ESRCH on this host) → stale.
+  return true;
 }
 
 /**

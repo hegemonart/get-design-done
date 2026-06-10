@@ -82,8 +82,16 @@ async function acquire(path, opts) {
       // reads (EACCES/EPERM/EBUSY), and clearing under that condition
       // would let two writers race and lose increments.
       if (parsed !== null && isStale(parsed, staleMs)) {
+        // Audit D3 (TOCTOU): confirm the on-disk bytes STILL match the exact
+        // stale payload we just read before unlinking. If a different writer
+        // replaced the lock in the read→unlink window, do NOT unlink (that
+        // would steal a fresh lock); loop and re-evaluate the new holder.
+        const confirm = readLockSafe(lockPath);
+        if (confirm === null) continue; // already gone — race for wx-create
+        if (confirm !== existing) { await sleep(pollMs); continue; }
         // Clear stale lock; race-tolerant — if it's already gone we get
-        // ENOENT, no-op.
+        // ENOENT, no-op. The wx-create below is atomic (O_CREAT|O_EXCL), so
+        // even if two waiters both unlink, only one wins the recreate.
         try { fs.unlinkSync(lockPath); } catch { /* ignore */ }
         continue;
       }
@@ -155,10 +163,23 @@ function parseLock(raw) {
 }
 
 function isStale(payload, staleMs) {
-  if (!isPidAlive(payload.pid, payload.host)) return true;
-  const t = Date.parse(payload.acquired_at);
-  if (!Number.isFinite(t)) return true;
-  return Date.now() - t > staleMs;
+  // Audit D3: PID-liveness is AUTHORITATIVE. A lock whose holder PID is still
+  // alive on this host is NEVER stale, regardless of age — a legitimate
+  // long-running mutation must not have its lock stolen. The age-based
+  // fallback applies ONLY when liveness cannot be confirmed: a dead PID, or a
+  // missing/invalid pid field. (isPidAlive conservatively reports alive for
+  // cross-host and unsignalable holders, so those are also never aged out.)
+  const pidRecorded =
+    typeof payload.pid === 'number' &&
+    Number.isInteger(payload.pid) &&
+    payload.pid > 0;
+  if (!pidRecorded) {
+    const t = Date.parse(payload.acquired_at);
+    if (!Number.isFinite(t)) return true;
+    return Date.now() - t > staleMs;
+  }
+  if (isPidAlive(payload.pid, payload.host)) return false;
+  return true;
 }
 
 function isPidAlive(pid, host) {

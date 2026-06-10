@@ -352,4 +352,86 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
       );
     }
   });
+
+  // -------------------------------------------------------------------------
+  // S8 (audit) — the walk-up must STOP at the first `.git` repo boundary and
+  // NOT resolve to a PARENT repository's GDD marker. Layout under tmp:
+  //
+  //   <outer>/.design/            ← parent project's marker (must NOT win)
+  //   <outer>/nested/.git/        ← repo boundary for the nested checkout
+  //   <outer>/nested/a/b/         ← cwd: no marker between here and .git
+  //
+  // Pre-fix behavior walked past `nested/.git` and returned <outer>, leaking
+  // the parent project's `.design/`. Post-fix it must throw "not found".
+
+  test('S8: walk-up stops at the first .git boundary (no cross-project bleed)', async () => {
+    const outer = tmp('gdd-mcp-s8-outer');
+    fs.mkdirSync(path.join(outer, '.design'), { recursive: true });
+    const nested = path.join(outer, 'nested');
+    fs.mkdirSync(path.join(nested, '.git'), { recursive: true });
+    const deep = path.join(nested, 'a', 'b');
+    fs.mkdirSync(deep, { recursive: true });
+    const realDeep = fs.realpathSync(deep);
+
+    const originalCwd = process.cwd();
+    const savedOverride = process.env.GDD_PROJECT_ROOT;
+    delete process.env.GDD_PROJECT_ROOT;
+    try {
+      process.chdir(realDeep);
+      const shared = await loadShared();
+      let threw = false;
+      let foundPath = null;
+      try {
+        foundPath = shared.resolveProjectRoot();
+      } catch (err) {
+        threw = true;
+        assert.match(
+          err.message,
+          /repo boundary/,
+          'error names the .git repo boundary',
+        );
+      }
+      assert.equal(
+        threw,
+        true,
+        `must NOT resolve to the parent project's .design/ ` +
+          `(got ${foundPath})`,
+      );
+    } finally {
+      process.chdir(originalCwd);
+      if (savedOverride !== undefined)
+        process.env.GDD_PROJECT_ROOT = savedOverride;
+      fs.rmSync(outer, { recursive: true, force: true });
+    }
+  });
+
+  test('S8: a marker AT the .git repo root is still found', async () => {
+    // The boundary guard must not break the legitimate case where the repo
+    // root itself holds the GDD marker alongside `.git`.
+    const root = tmp('gdd-mcp-s8-atroot');
+    fs.mkdirSync(path.join(root, '.git'), { recursive: true });
+    fs.mkdirSync(path.join(root, '.design'), { recursive: true });
+    const deep = path.join(root, 'x', 'y');
+    fs.mkdirSync(deep, { recursive: true });
+    const realDeep = fs.realpathSync(deep);
+
+    const originalCwd = process.cwd();
+    const savedOverride = process.env.GDD_PROJECT_ROOT;
+    delete process.env.GDD_PROJECT_ROOT;
+    try {
+      process.chdir(realDeep);
+      const shared = await loadShared();
+      const found = shared.resolveProjectRoot();
+      assert.equal(
+        fs.realpathSync(found),
+        root,
+        'marker at the repo root (with .git sibling) resolves to root',
+      );
+    } finally {
+      process.chdir(originalCwd);
+      if (savedOverride !== undefined)
+        process.env.GDD_PROJECT_ROOT = savedOverride;
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
 });
