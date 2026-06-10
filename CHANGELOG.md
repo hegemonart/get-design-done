@@ -4,6 +4,31 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.60.0] - 2026-06-10
+
+**Foundation & Honesty** - the subtract-first base the v2.0 work and the upcoming rebrand depend on. Make the catalog enumerable and the capability claims machine-checked *before* building or renaming anything. A pre-flight audit found the catalog already clean (0 content-duplicate skills, 0 orphan skills or agents, a perfect manifest to template to generated bijection, and every count and capability claim already tracing to source), so this release does not manufacture cuts - it removes genuinely dead code and adds the guards that lock the clean state in.
+
+### Removed
+
+- **Dead jsdom/puppeteer detection scaffolding** from `gdd-detect`. The CLI carried soft `try-require` probes for a `jsdom` "DOM-aware" engine and a `puppeteer` URL engine, plus `--fast`/`--puppeteer` flags - none of which were ever wired (the engine is and was pure regex over local files). 1.59.8 stopped the misleading mode label; this release deletes the dead probes and flags outright and rewrites the comments/help to the regex-only reality. `gdd-detect --help` now matches what it does. (A real DOM/URL engine is planned separately; this removal is reversed then.)
+
+### Added
+
+- **Catalog-integrity validator** (`validate:catalog`, wired into CI): exact content-hash duplicate detection across skill templates and agents, near-duplicate description detection (calibrated above the existing distinct-but-parallel writer family, so a future copy-paste clone is caught), a manifest to template to generated three-way bijection check (no orphans in any direction), and description-length sanity. Passes on the current catalog; fails if bloat, dupes, or orphans are introduced later.
+- **Capability-honesty assertion** (in the same CI gate): every MCP server named in the plugin/marketplace manifests resolves to a real `sdk/mcp/<server>/server.ts`, and the advertised read-only MCP-tool count is derived from the actual `gdd_*.ts` tool files rather than hand-typed. Combined with the existing source-derived feature counts, the 64 agents / 96 skills / 39 integrations / 13 MCP-tools / 2 MCP-servers claims are now machine-verified.
+
+### Notes
+
+- Catalog audited clean - no skills or agents were merged or deleted. The integrity guard exists to keep it that way.
+
+### Breaking changes
+
+None.
+
+5,102/5,102 tests pass.
+
+---
+
 ## [1.59.9] - 2026-06-10
 
 New-model-family readiness and cost truth (audit `.planning/audits/SELF-AUDIT-v1.59.7.md` §4). A new or unknown Anthropic model previously degraded cost accounting silently - billed at $0 or the sonnet rate and mis-attributed to the sonnet tier. This release makes unknown models loud and conservative, handles the 1M-context `[1m]` variant, and records context-window size in the model registry.

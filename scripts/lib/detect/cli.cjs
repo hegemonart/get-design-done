@@ -1,38 +1,35 @@
 'use strict';
-// Phase 41 — gdd-detect CLI. Dep-free by default (regex-fast). The DOM-aware (jsdom) and URL
-// (puppeteer) paths are SOFT optionals loaded via try-require — never a package.json dependency, so
-// the SC#10 network-isolation scan stays clean and the plugin keeps its zero-runtime-dep guarantee.
+// Phase 41 — gdd-detect CLI. A regex anti-pattern scanner over LOCAL files: it walks a file or
+// directory and runs each BAN-NN rule's matcher against the file text. There is exactly one engine
+// (regex over file content) and it never touches the network or any optional dependency, so the
+// SC#10 network-isolation scan stays clean and the plugin keeps its zero-runtime-dep guarantee.
 //
-//   gdd-detect <path> [--json] [--fast] [--rule BAN-NN] [--puppeteer]
+//   gdd-detect <path> [--json] [--rule BAN-NN]
 //
 // Exit codes: 0 = clean · 2 = findings · 1 = invocation error.
 
 const engine = require('./engine.cjs');
 
-const HELP = `gdd-detect — scan HTML/CSS/JSX for GDD anti-patterns (BAN-NN).
+const HELP = `gdd-detect — scan local HTML/CSS/JSX for GDD anti-patterns (BAN-NN).
 
 Usage:
   gdd-detect <path> [options]
 
 Arguments:
-  <path>            A file or directory (scanned recursively), or a http(s):// URL (needs --puppeteer).
+  <path>            A file or directory (scanned recursively). Regex anti-pattern scan over local files.
 
 Options:
   --json            Machine-readable JSON output.
-  --fast            Regex-only; do not load jsdom even if present.
   --rule <BAN-NN>   Run a single rule (e.g. --rule BAN-08).
-  --puppeteer       Allow scanning a URL via Puppeteer (an optional, separately-installed dependency).
   -h, --help        This help.
 
 Exit codes: 0 clean · 2 findings · 1 invocation error.`;
 
 function parseArgs(argv) {
-  const opts = { path: null, json: false, fast: false, rule: null, puppeteer: false, help: false };
+  const opts = { path: null, json: false, rule: null, help: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--json') opts.json = true;
-    else if (a === '--fast') opts.fast = true;
-    else if (a === '--puppeteer') opts.puppeteer = true;
     else if (a === '-h' || a === '--help') opts.help = true;
     else if (a === '--rule') opts.rule = argv[++i] || null;
     else if (a.startsWith('--rule=')) opts.rule = a.slice('--rule='.length);
@@ -46,22 +43,11 @@ function isUrl(p) {
 }
 
 /**
- * Select the detection engine. Returns { mode, warning }.
- *
- * There is exactly one engine path: regex over file text (see engine.cjs#run, which takes no
- * jsdom/DOM parameter and is byte-identical whether or not jsdom is installed). So the truthful
- * mode is always 'regex-fast'. We still probe jsdom (unless --fast) to surface a one-line hint
- * that a DOM-aware path is not wired in this build — but we no longer claim a 'dom-aware' mode the
- * engine does not have.
+ * Report the active engine. There is exactly one path: regex over file text (see engine.cjs#run).
+ * Returns { mode } so callers and the --json report can label output truthfully.
  */
-function selectEngine(opts, requireFn) {
-  if (opts.fast) return { mode: 'regex-fast', warning: null };
-  let hasJsdom = false;
-  try { requireFn('jsdom'); hasJsdom = true; } catch { hasJsdom = false; }
-  // jsdom presence does not change the engine — only emit a hint when it's absent, and never
-  // promise a mode we can't deliver.
-  const warning = hasJsdom ? null : 'jsdom not installed — running regex-fast (the only wired mode; a DOM-aware path is not implemented). Pass --fast to silence this.';
-  return { mode: 'regex-fast', warning };
+function selectEngine() {
+  return { mode: 'regex-fast' };
 }
 
 function renderHuman(result, mode) {
@@ -78,14 +64,13 @@ function renderHuman(result, mode) {
 
 /**
  * @param {string[]} argv  process.argv.slice(2)
- * @param {{ cwd?: string, log?: fn, err?: fn, requireFn?: fn }} [io]  injectable for tests
+ * @param {{ cwd?: string, log?: fn, err?: fn }} [io]  injectable for tests
  * @returns {number} exit code
  */
 function main(argv, io) {
   const o = io || {};
   const log = o.log || ((s) => process.stdout.write(s + '\n'));
   const err = o.err || ((s) => process.stderr.write(s + '\n'));
-  const requireFn = o.requireFn || require;
   const cwd = o.cwd || process.cwd();
   const opts = parseArgs(argv);
 
@@ -93,18 +78,13 @@ function main(argv, io) {
   if (!opts.path) { err('gdd-detect: missing <path>. See --help.'); return 1; }
   if (opts.rule && !/^BAN-\d{2}$/i.test(opts.rule)) { err(`gdd-detect: --rule expects a BAN-NN id (got "${opts.rule}").`); return 1; }
 
-  // URL path → Puppeteer (optional, separately installed). Never a stack trace.
+  // URL path is not wired: this is a regex scanner over local files. Never a stack trace.
   if (isUrl(opts.path)) {
-    if (!opts.puppeteer) { err('gdd-detect: scanning a URL requires --puppeteer. Pass --puppeteer (and `npm i -D puppeteer`) to enable URL scans.'); return 1; }
-    let hasPuppeteer = false;
-    try { requireFn('puppeteer'); hasPuppeteer = true; } catch { hasPuppeteer = false; }
-    if (!hasPuppeteer) { err('gdd-detect: --puppeteer given but puppeteer is not installed. Install it with `npm i -D puppeteer` (it stays an optional dependency).'); return 1; }
     err('gdd-detect: URL scanning is not wired in this build; clone the page locally and scan the files instead.');
     return 1;
   }
 
-  const { mode, warning } = selectEngine(opts, requireFn);
-  if (warning && !opts.json) err('gdd-detect: ' + warning);
+  const { mode } = selectEngine();
 
   let result;
   try { result = engine.run(opts.path, { ruleId: opts.rule, cwd }); }

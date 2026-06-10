@@ -757,6 +757,10 @@ OFF_CADENCE_VERSIONS.add('1.59.6');
 OFF_CADENCE_VERSIONS.add('1.59.7');
 OFF_CADENCE_VERSIONS.add('1.59.8');
 OFF_CADENCE_VERSIONS.add('1.59.9');
+// v1.60.0 — Phase 60 "Foundation & Honesty", the v2.0-milestone opener. The
+// 1.59.x point-release arc (1.59.1..1.59.9, no 1.59.0) lands on this minor;
+// registered here following the 1.29.0/1.30.0/1.31.0 on-cadence-minor precedent.
+OFF_CADENCE_VERSIONS.add('1.60.0');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
