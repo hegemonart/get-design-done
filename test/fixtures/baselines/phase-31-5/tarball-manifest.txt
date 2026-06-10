@@ -587,6 +587,7 @@ scripts/lib/mcp-tools-lint/index.cjs
 scripts/lib/mcp-tools-lint/index.d.cts
 scripts/lib/migration/codemod-gen.cjs
 scripts/lib/mmr-rerank.cjs
+scripts/lib/model-id.cjs
 scripts/lib/motion/validate-motion.cjs
 scripts/lib/new-addendum.cjs
 scripts/lib/notify/dispatch.cjs
