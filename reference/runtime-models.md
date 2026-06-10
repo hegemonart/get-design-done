@@ -44,14 +44,14 @@ Anthropic's first-party runtime. Public tier docs at https://docs.anthropic.com/
 {
   "id": "claude",
   "tier_to_model": {
-    "opus":   { "model": "claude-opus-4-8" },
-    "sonnet": { "model": "claude-sonnet-4-6" },
-    "haiku":  { "model": "claude-haiku-4-5" }
+    "opus":   { "model": "claude-opus-4-8", "context_window": 1000000 },
+    "sonnet": { "model": "claude-sonnet-4-6", "context_window": 200000 },
+    "haiku":  { "model": "claude-haiku-4-5", "context_window": 200000 }
   },
   "reasoning_class_to_model": {
-    "high":   { "model": "claude-opus-4-8" },
-    "medium": { "model": "claude-sonnet-4-6" },
-    "low":    { "model": "claude-haiku-4-5" }
+    "high":   { "model": "claude-opus-4-8", "context_window": 1000000 },
+    "medium": { "model": "claude-sonnet-4-6", "context_window": 200000 },
+    "low":    { "model": "claude-haiku-4-5", "context_window": 200000 }
   },
   "provenance": [
     {

@@ -71,6 +71,73 @@ test('parse-runtime-models: claude seed picks (D-02) are locked', () => {
   assert.equal(claude.reasoning_class_to_model.low.model, 'claude-haiku-4-5');
 });
 
+test('parse-runtime-models: claude rows carry context_window metadata (Phase 59-9 — optional field)', () => {
+  const { runtimes } = parseRuntimeModels({ cwd: REPO_ROOT });
+  const claude = runtimes.find((r) => r.id === 'claude');
+  assert.ok(claude, 'claude entry exists');
+  // The 1M-context [1m] opus variant round-trips as recorded metadata.
+  assert.equal(claude.tier_to_model.opus.context_window, 1000000);
+  assert.equal(claude.tier_to_model.sonnet.context_window, 200000);
+  assert.equal(claude.tier_to_model.haiku.context_window, 200000);
+  assert.equal(claude.reasoning_class_to_model.high.context_window, 1000000);
+});
+
+test('parse-runtime-models: a model row WITH context_window parses (optional field allowed)', () => {
+  const md = [
+    '```json',
+    '{ "$schema_version": 1 }',
+    '```',
+    '```json',
+    JSON.stringify({
+      id: 'claude',
+      tier_to_model: {
+        opus: { model: 'claude-opus-4-8', context_window: 1000000 },
+        sonnet: { model: 'x' },
+        haiku: { model: 'x' },
+      },
+      reasoning_class_to_model: {
+        high: { model: 'claude-opus-4-8', context_window: 1000000 },
+        medium: { model: 'x' },
+        low: { model: 'x' },
+      },
+      provenance: [
+        { source_url: 'x', retrieved_at: '2026-04-29T00:00:00.000Z', last_validated_cycle: 'c' },
+      ],
+    }),
+    '```',
+  ].join('\n');
+  const parsed = parseRuntimeModelsFromString(md);
+  const claude = parsed.runtimes.find((r) => r.id === 'claude');
+  assert.equal(claude.tier_to_model.opus.context_window, 1000000);
+});
+
+test('parse-runtime-models: rejects non-positive-integer context_window', () => {
+  const md = [
+    '```json',
+    '{ "$schema_version": 1 }',
+    '```',
+    '```json',
+    JSON.stringify({
+      id: 'claude',
+      tier_to_model: {
+        opus: { model: 'x', context_window: 0 },
+        sonnet: { model: 'x' },
+        haiku: { model: 'x' },
+      },
+      reasoning_class_to_model: {
+        high: { model: 'x' },
+        medium: { model: 'x' },
+        low: { model: 'x' },
+      },
+      provenance: [
+        { source_url: 'x', retrieved_at: '2026-04-29T00:00:00.000Z', last_validated_cycle: 'c' },
+      ],
+    }),
+    '```',
+  ].join('\n');
+  assert.throws(() => parseRuntimeModelsFromString(md), /'context_window' must be a positive integer/);
+});
+
 test('parse-runtime-models: codex seed picks (D-02) are locked', () => {
   const { runtimes } = parseRuntimeModels({ cwd: REPO_ROOT });
   const codex = runtimes.find((r) => r.id === 'codex');

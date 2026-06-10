@@ -121,6 +121,11 @@
           "type": "string",
           "minLength": 1,
           "description": "Optional internal/provider model ID for runtimes whose API identifiers differ from the public name (D-03)."
+        },
+        "context_window": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Optional context-window size (max tokens) for this model, recorded as machine-readable metadata. The Anthropic opus tier ships the 1M-context [1m] variant (1000000). Recorded as fact this cycle; not yet a budgeting driver (deferred — no consumer is wired)."
         }
       }
     }

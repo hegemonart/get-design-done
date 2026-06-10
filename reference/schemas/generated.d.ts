@@ -1115,6 +1115,10 @@ export interface ModelRow {
    * Optional internal/provider model ID for runtimes whose API identifiers differ from the public name (D-03).
    */
   provider_model_id?: string;
+  /**
+   * Optional context-window size (max tokens) for this model, recorded as machine-readable metadata. The Anthropic opus tier ships the 1M-context [1m] variant (1000000). Recorded as fact this cycle; not yet a budgeting driver (deferred — no consumer is wired).
+   */
+  context_window?: number;
 }
 
 export type RuntimeModelsSchema = RuntimeModelsTierToModelMap;
