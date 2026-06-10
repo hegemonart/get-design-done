@@ -204,9 +204,13 @@ test('cursor uninstall leaves a foreign (user-authored) sibling in place', () =>
   assert.ok(fs.existsSync(skillDir), 'dir with surviving foreign file is kept');
 });
 
-test('non-cursor skills runtime (codex) does NOT carry the sibling (scope guard)', () => {
+test('non-cursor skills runtime (codex) ALSO carries the sibling (AR6 generalization)', () => {
+  // AR6 fix (Phase 59.8): sibling-carry was generalized from cursor-only to
+  // EVERY skillsKind runtime. A non-cursor skills runtime (codex) must now
+  // carry the SKILL.md sibling reference file too — otherwise its installed
+  // skills ship dead `./X-procedure.md` relative links.
   const repo = setupFixtureRepo();
-  const cfg = mkTmpDir('codex-no-sibling');
+  const cfg = mkTmpDir('codex-sibling');
   placeSourceMarker(cfg, repo);
 
   installRuntime('codex', { configDir: cfg, scope: 'global' });
@@ -214,10 +218,26 @@ test('non-cursor skills runtime (codex) does NOT carry the sibling (scope guard)
   const skillMd = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
   const siblingMd = path.join(cfg, 'skills', 'gdd-sample', 'sample-procedure.md');
   assert.ok(fs.existsSync(skillMd), 'codex SKILL.md must still land');
-  assert.equal(
+  assert.ok(
     fs.existsSync(siblingMd),
+    'codex must now carry the sibling (AR6: generalized to all skillsKind runtimes)',
+  );
+  const siblingContent = fs.readFileSync(siblingMd, 'utf8');
+  assert.ok(
+    siblingContent.includes('Step 1. Do the thing.'),
+    'codex sibling content must be preserved',
+  );
+  assert.ok(
+    siblingContent.includes('gdd: auto-generated from Claude SKILL.md'),
+    'codex sibling must carry the plugin fingerprint',
+  );
+
+  // Nested-subdir files remain out of scope for sibling-carry.
+  const nested = path.join(cfg, 'skills', 'gdd-sample', 'procedures', 'deep.md');
+  assert.equal(
+    fs.existsSync(nested),
     false,
-    'codex must keep prior behavior: no sibling carry (H6 scoped to cursor)',
+    'nested subdirectory files must NOT be carried by sibling-carry',
   );
 });
 

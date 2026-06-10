@@ -155,7 +155,10 @@ test('installer: claude-marketplace — created → unchanged → removed', () =
   const dir = tmpDir();
   try {
     const r1 = installRuntime('claude', { configDir: dir });
-    assert.ok(['created', 'updated'].includes(r1.action), `unexpected: ${r1.action}`);
+    // B1 fix (Phase 59.8): a FRESH install (no pre-existing settings.json)
+    // must report `created`, not `updated`. The action was previously decided
+    // AFTER the write, so it always read `updated`.
+    assert.equal(r1.action, 'created', `fresh install must be 'created', got ${r1.action}`);
     const settings = JSON.parse(fs.readFileSync(r1.path, 'utf8'));
     assert.ok(settings.extraKnownMarketplaces['get-design-done']);
     assert.equal(settings.enabledPlugins['get-design-done@get-design-done'], true);

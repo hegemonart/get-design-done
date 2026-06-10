@@ -211,6 +211,28 @@ async function main() {
       }
       runtimes = picked.runtimes;
       if (picked.location) location = picked.location;
+    } else if (uninstall) {
+      // B4 fix (Phase 59.8): bare `--uninstall` in a non-TTY context must NOT
+      // silently default to removing claude. The interactive path is the only
+      // safe way to pick what to remove without an explicit flag; in non-TTY
+      // we refuse and require an explicit runtime flag so a scripted/CI
+      // invocation can never destroy an install the operator didn't name.
+      // (See the comment at shouldUseInteractive: bare --uninstall is meant to
+      // trigger the interactive select-which-to-remove flow.)
+      process.stderr.write(
+        [
+          'Refusing to uninstall: no runtime specified and not running in an',
+          'interactive terminal.',
+          '',
+          'Re-run with an explicit runtime flag, e.g.:',
+          '  npx @hegemonart/get-design-done --uninstall --claude',
+          '  npx @hegemonart/get-design-done --uninstall --all',
+          '',
+          'Run with --help to list available runtime flags.',
+          '',
+        ].join('\n'),
+      );
+      process.exit(2);
     } else {
       // Non-TTY zero-flag fallback: back-compat with v1.23.5 behaviour.
       runtimes = ['claude'];
@@ -359,7 +381,7 @@ async function maybeNudgePeerCli({ flags }) {
       '✓ Detected peer CLIs: ' + detectedDisplay,
       '',
       'gdd v1.27.0 introduced optional peer-CLI delegation. With your',
-      'agents\\u2019 frontmatter `delegate_to:` set, gdd can route specific',
+      "agents' frontmatter `delegate_to:` set, gdd can route specific",
       'roles through these peer CLIs (cost or quality wins per Phase 23.5',
       'bandit). You can change this anytime via .design/config.json.',
       '',

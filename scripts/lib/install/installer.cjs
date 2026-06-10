@@ -163,12 +163,17 @@ function installClaudeMarketplace(runtime, configDir, dryRun) {
       dryRun,
     };
   }
+  // B1 fix (Phase 59.8): decide created-vs-updated BEFORE the write. The
+  // settings.json file is written by atomicWrite below, so testing
+  // `existsSync(settingsPath)` afterwards always returned 'updated' (the file
+  // we just wrote exists). Capture the pre-write existence instead.
+  const existedBefore = fs.existsSync(settingsPath);
   const formatted = `${JSON.stringify(next, null, 2)}\n`;
   if (!dryRun) atomicWrite(settingsPath, formatted);
   return {
     runtime: runtime.id,
     path: settingsPath,
-    action: fs.existsSync(settingsPath) ? 'updated' : 'created',
+    action: existedBefore ? 'updated' : 'created',
     dryRun,
   };
 }
@@ -439,6 +444,20 @@ function installMultiArtifact(runtime, configDir, dryRun, opts) {
       continue;
     }
     for (const item of staged) {
+      // AR7 fix (Phase 59.8): never write a 0-byte / empty artifact. The old
+      // agents path staged `content: ''` for every skill name that had no
+      // matching agent file, producing empty `gdd-<name>.md` placeholders.
+      // Even with the layout-side enumeration fix, guard defensively here so
+      // no converter/kind can ever emit an empty file to disk.
+      if (!item.content || !String(item.content).trim()) {
+        perFile.push({
+          kind: kind.kind,
+          path: computeDestPath(configDir, kind, item.name),
+          action: 'skipped-empty',
+          reason: `Refusing to write empty artifact ${item.name}`,
+        });
+        continue;
+      }
       const destPath = computeDestPath(configDir, kind, item.name);
       const writeResult = writeFingerprinted(destPath, item.content, dryRun);
       perFile.push({
@@ -448,15 +467,16 @@ function installMultiArtifact(runtime, configDir, dryRun, opts) {
         ...(writeResult.reason ? { reason: writeResult.reason } : {}),
       });
 
-      // Batch H6: carry co-located sibling `*.md` reference files alongside
-      // SKILL.md. The skills layout only stages SKILL.md per skill, so
-      // reference siblings (e.g. `<name>-procedure.md`) are otherwise lost.
-      // Scoped to cursor (the audited flat-layout runtime); other runtimes
-      // keep their prior single-SKILL.md behavior. Siblings are passthrough
-      // copies fingerprinted so foreign-file protection + uninstall treat
-      // them as plugin-owned. Broader skillsKind-runtime carry is deferred
-      // (see converters/cursor.cjs KNOWN LIMITATION).
-      if (kind.kind === 'skills' && runtime.id === 'cursor' && item.srcPath) {
+      // AR6 fix (Phase 59.8): carry co-located sibling `*.md` reference files
+      // alongside SKILL.md for EVERY skillsKind runtime (cursor, codex,
+      // copilot, antigravity, windsurf, augment, trae, qwen, codebuddy, and
+      // claude global). The skills layout only stages SKILL.md per skill, so
+      // reference siblings (e.g. `<name>-procedure.md`) were otherwise lost on
+      // every runtime except cursor — shipping dead relative links. Siblings
+      // are passthrough copies fingerprinted so foreign-file protection +
+      // uninstall treat them as plugin-owned. Was previously scoped to cursor
+      // only (Batch H6); see converters/cursor.cjs former KNOWN LIMITATION.
+      if (kind.kind === 'skills' && item.srcPath) {
         const skillSrcDir = path.dirname(item.srcPath);
         const skillDestDir = path.dirname(destPath);
         for (const sibling of listSiblingRefFiles(skillSrcDir)) {
@@ -550,8 +570,27 @@ function uninstallMultiArtifact(runtime, configDir, dryRun, opts) {
   const skillDirsToTrim = [];
 
   for (const kind of layout.kinds) {
-    for (const bareName of skillNames) {
-      const itemName = (kind.prefix || '') + bareName;
+    // AR7 fix (Phase 59.8): derive the artifact names from the SAME staging
+    // pass install uses, so uninstall stays symmetric. The `agents` kind
+    // enumerates `agents/*.md` (real agent role names), NOT skill names — the
+    // old `gdd-<skillName>.md` derivation never matched any installed agent
+    // file and left every real agent on disk after `--uninstall`.
+    let stagedNames;
+    try {
+      const staged = kind.stage({
+        skillsRoot,
+        skillNames,
+        scope,
+        runtime: runtime.id,
+        configDir,
+      });
+      stagedNames = staged.map((item) => item.name);
+    } catch {
+      // Fall back to the prior skill-name derivation if staging fails (e.g.
+      // a converter throws); skills/commands kinds match this shape exactly.
+      stagedNames = skillNames.map((n) => (kind.prefix || '') + n);
+    }
+    for (const itemName of stagedNames) {
       const destPath = computeDestPath(configDir, kind, itemName);
       if (!fs.existsSync(destPath)) {
         perFile.push({ kind: kind.kind, path: destPath, action: 'unchanged' });
@@ -586,11 +625,12 @@ function uninstallMultiArtifact(runtime, configDir, dryRun, opts) {
         const skillDestDir = path.dirname(destPath);
         skillDirsToTrim.push(skillDestDir);
 
-        // Batch H6: symmetric cleanup for the sibling reference files the
-        // cursor install carries alongside SKILL.md. Remove only the
-        // plugin-owned siblings so a now-empty dir can be trimmed below;
-        // user-authored siblings are left in place (foreign-file discipline).
-        if (runtime.id === 'cursor') {
+        // AR6 fix (Phase 59.8): symmetric cleanup for the sibling reference
+        // files every skillsKind install carries alongside SKILL.md. Remove
+        // only the plugin-owned siblings so a now-empty dir can be trimmed
+        // below; user-authored siblings are left in place (foreign-file
+        // discipline). Was previously scoped to cursor only (Batch H6).
+        if (kind.kind === 'skills') {
           for (const sibling of listSiblingRefFiles(skillDestDir)) {
             const siblingPath = path.join(skillDestDir, sibling);
             let siblingContent;
@@ -682,11 +722,22 @@ function installCline(runtime, configDir, skillsRoot, skillNames, dryRun) {
   const cline = require('./converters/cline.cjs');
   ensureDir(configDir, dryRun);
 
-  const blocks = skillNames.map((name) => {
+  // B2 fix (Phase 59.8): wrap the per-skill read in try/catch. Previously a
+  // single unreadable SKILL.md threw out of `installCline`, aborting the
+  // entire cline install (and, when cline is one runtime in a multi-runtime
+  // batch, every runtime queued after it). Skip the unreadable skill and keep
+  // going, mirroring the best-effort sibling reads elsewhere in this file.
+  const blocks = [];
+  for (const name of skillNames) {
     const srcPath = path.join(skillsRoot, name, 'SKILL.md');
-    const raw = fs.readFileSync(srcPath, 'utf8');
-    return { name, block: cline.convert(raw, name, { runtime: 'cline' }) };
-  });
+    let raw;
+    try {
+      raw = fs.readFileSync(srcPath, 'utf8');
+    } catch {
+      continue; // unreadable skill — skip, don't abort the whole install
+    }
+    blocks.push({ name, block: cline.convert(raw, name, { runtime: 'cline' }) });
+  }
 
   const desired = cline.buildClinerulesFile(blocks);
   const target = path.join(configDir, '.clinerules');

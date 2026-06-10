@@ -20,11 +20,13 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": true,
         "placeholder_substitution": true,
+        "agents_support": true,
+        "hooks_support": true,
         "install_path": "dist/claude-code/.claude/skills/",
         "status": "tested"
       },
       "last_verified": "2026-06-02",
-      "capability_notes": "Host runtime. Marketplace-registered, end-to-end documented, Phase 42 golden baseline.",
+      "capability_notes": "Host runtime. Marketplace-registered, end-to-end documented, Phase 42 golden baseline. Sole runtime that receives the 64 sub-agents (claude --local installs agents/) and the hook layer (SessionStart / PostToolUse / statusLine).",
       "fragment_links": [
         "reference/runtime-models.md#claude---claude-code"
       ]
@@ -44,6 +46,8 @@
         "command_syntax": "/gdd-<skill>",
         "mcp_support": true,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/codex/.codex/skills/",
         "status": "experimental"
       },
@@ -71,6 +75,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": true,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/gemini/.gemini/skills/",
         "status": "experimental"
       },
@@ -98,6 +104,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/qwen/.qwen/skills/",
         "status": "experimental"
       },
@@ -124,6 +132,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/kilo/.kilo/skills/",
         "status": "untested"
       },
@@ -148,6 +158,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/copilot/.copilot/skills/",
         "status": "experimental"
       },
@@ -174,6 +186,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/cursor/.cursor/skills/",
         "status": "experimental"
       },
@@ -200,6 +214,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/windsurf/.windsurf/skills/",
         "status": "untested"
       },
@@ -224,6 +240,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/antigravity/.antigravity/skills/",
         "status": "untested"
       },
@@ -248,6 +266,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/augment/.augment/skills/",
         "status": "untested"
       },
@@ -272,6 +292,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/trae/.trae/skills/",
         "status": "untested"
       },
@@ -296,6 +318,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/codebuddy/.codebuddy/skills/",
         "status": "untested"
       },
@@ -320,6 +344,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/cline/.cline/skills/",
         "status": "untested"
       },
@@ -344,6 +370,8 @@
         "command_syntax": "/gdd:<skill>",
         "mcp_support": false,
         "placeholder_substitution": true,
+        "agents_support": false,
+        "hooks_support": false,
         "install_path": "dist/opencode/.opencode/skills/",
         "status": "untested"
       },
