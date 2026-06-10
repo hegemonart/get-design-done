@@ -31,6 +31,8 @@ No posterior file found at `.design/telemetry/posterior.json` — nothing to res
 The next bandit pull with `adaptive_mode: full` will bootstrap a fresh posterior from informed priors. See `reference/bandit-integration.md`.
 ```
 
+> Note: the posterior only learns (updates from outcomes) on the SDK / headless `session-runner` path. In interactive Claude Code with `adaptive_mode: full`, the bandit samples from the configured priors but does not currently update them in-session. A reset therefore re-bootstraps the priors the SDK path will subsequently learn from. See `reference/bandit-integration.md` ("Where adaptive routing actually learns").
+
 If present, count the arms (`arms.length`, treating a missing/non-array `arms` as `0`) so the confirmation and receipt can report what will be cleared. A corrupted/unparseable file is still resettable - report `arms: unknown (file unparseable)` and continue.
 
 ### 2. Require explicit confirmation

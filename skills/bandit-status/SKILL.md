@@ -33,9 +33,12 @@ Possible reasons:
 - `adaptive_mode` is `static` or `hedge` (bandit silent — see `.design/budget.json`).
 - No spawns have fired since Phase 27.5 wiring landed.
 - Posterior was cleared via `/gdd:bandit-reset`.
+- You are running in interactive Claude Code: the posterior is updated (learns) only on the SDK / headless `session-runner` path. In interactive `adaptive_mode: full` the bandit samples from configured priors but does not learn from in-session outcomes.
 
-See `reference/bandit-integration.md` for setup guidance.
+See `reference/bandit-integration.md` ("Where adaptive routing actually learns") for setup guidance.
 ```
+
+> Note: the posterior only moves (learns) on the SDK / headless `session-runner` path. In interactive Claude Code with `adaptive_mode: full`, the bandit samples from the configured priors but does not currently update them in-session. See `reference/bandit-integration.md`.
 
 Skip to Section 4 (Record). Parse failure (truncated/corrupted) → emit `Posterior file exists but is unparseable. Run /gdd:bandit-reset to start fresh, or restore from a backup.`
 
