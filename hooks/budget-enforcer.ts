@@ -746,8 +746,28 @@ export function resolveTier(
  */
 function spawnAggregator(): void {
   try {
-    const aggregatorPath = join(
-      process.cwd(),
+    // Opt-out: when GDD_NO_AGGREGATOR is set (truthy), skip the detached
+    // child entirely. Production leaves this unset so the rollups stay
+    // current; tests that scaffold a throwaway temp cwd set it so the
+    // fire-and-forget child doesn't hold a handle on the dir they delete
+    // immediately after (a Windows rmSync EPERM race surfaced once the C3
+    // fix made this spawn actually resolve the script). No effect on the
+    // production code path.
+    const optOut = process.env['GDD_NO_AGGREGATOR'];
+    if (typeof optOut === 'string' && optOut !== '' && optOut !== '0' && optOut !== 'false') {
+      return;
+    }
+    // C3 fix: resolve the aggregator script relative to THIS hook file's
+    // location (the plugin's own tree), not process.cwd(). When an installed
+    // user runs from their project root, cwd is NOT the plugin repo, so
+    // `join(process.cwd(), 'scripts', ...)` never exists and the aggregator
+    // silently never runs — leaving phase-totals.json unbuilt and forcing a
+    // full costs.jsonl re-parse on every spawn. Anchor on the hook file via
+    // the same resolveHookPath() idiom used for createRequire above
+    // (hooks/budget-enforcer.ts → ../scripts/aggregate-agent-metrics.ts).
+    const aggregatorPath = resolve(
+      dirname(resolveHookPath()),
+      '..',
       'scripts',
       'aggregate-agent-metrics.ts',
     );

@@ -24,9 +24,10 @@
  *     `degraded[]` (so gsd-health + the TUI can surface what is missing).
  *   - Absent .design entirely -> every data section null/[] + degraded
  *     populated, still no throw.
- *   - Root resolution: opts.root || GDD_PROJECT_ROOT || package-root walk-up
- *     || cwd. (Package-root walk-up resolves the GDD repo root, where
- *     .design/.planning live.)
+ *   - Root resolution: opts.root || GDD_PROJECT_ROOT || cwd marker walk-up
+ *     (.design/.planning/.claude-plugin) || package-root walk-up. The cwd
+ *     marker walk resolves the USER's project; package-root is a last-resort
+ *     fallback (it would otherwise always pin the installed plugin's own dir).
  *   - The .ts libs (sdk/state, sdk/event-stream) cannot be static-require()d
  *     from a .cjs — they are loaded via dynamic import(pathToFileURL),
  *     memoized once per process. The .cjs libs are require()d directly via the
@@ -101,14 +102,58 @@ function importEventStream() {
 // Root resolution
 // ---------------------------------------------------------------------------
 /**
+ * Walk UP from `startCwd` looking for a GDD project marker — `.design/` OR
+ * `.planning/` OR `.claude-plugin/plugin.json`. First match wins; returns the
+ * directory that holds the marker, or null if none is found before the
+ * filesystem root.
+ *
+ * This mirrors `resolveProjectRoot()` in
+ * `sdk/mcp/gdd-mcp/tools/shared.ts` (the canonical D-05 marker walk) so the
+ * dashboard resolves the USER's project, not the plugin's own install dir.
+ *
+ * @param {string} [startCwd]
+ * @returns {string|null}
+ */
+function cwdMarkerWalk(startCwd = process.cwd()) {
+  let dir = path.resolve(startCwd);
+  // Bound the climb defensively (deep trees / odd mounts).
+  for (let i = 0; i < 64; i++) {
+    if (
+      fs.existsSync(path.join(dir, '.design')) ||
+      fs.existsSync(path.join(dir, '.planning')) ||
+      fs.existsSync(path.join(dir, '.claude-plugin', 'plugin.json'))
+    ) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) return null; // reached filesystem root
+    dir = parent;
+  }
+  return null;
+}
+
+/**
  * Resolve the project root the dashboard reads from:
- *   opts.root || GDD_PROJECT_ROOT (env) || package-root walk-up || cwd.
+ *   opts.root || GDD_PROJECT_ROOT (env) || cwd marker walk-up || package-root.
+ *
+ * D2 fix: `packageRoot()` ALWAYS succeeds (it walks up from __dirname and
+ * lands on the installed plugin's own package.json, e.g.
+ * node_modules/@hegemonart/get-design-done), so when it preceded the cwd
+ * resolution an installed `gdd-dashboard` always showed the PLUGIN's own
+ * (empty) data instead of the user's project. We now resolve the user's
+ * project FIRST via a cwd-upward marker walk (the same D-05 algorithm the
+ * gdd-mcp tools use), and only fall back to the package root as a last
+ * resort. Running the dashboard INSIDE the gdd repo still works — the marker
+ * walk finds the repo's own .design/.planning, which IS the project root.
+ *
  * @param {{root?: string}} [opts]
  * @returns {string}
  */
 function resolveRoot(opts = {}) {
   if (opts.root) return path.resolve(opts.root);
   if (process.env.GDD_PROJECT_ROOT) return path.resolve(process.env.GDD_PROJECT_ROOT);
+  const fromCwd = cwdMarkerWalk();
+  if (fromCwd) return fromCwd;
   try {
     return packageRoot();
   } catch {
@@ -610,6 +655,7 @@ module.exports = {
   loadDashboardModel,
   // Exposed for tests + sibling reuse (executors D/F may want the scrapers).
   resolveRoot,
+  cwdMarkerWalk,
   scrapeStateFile,
   scrapeEventsFile,
 };

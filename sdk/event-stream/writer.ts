@@ -38,46 +38,128 @@ import type { BaseEvent } from './types.ts';
 // anchor createRequire on the repo-root package.json discovered by
 // walking up from `process.cwd()`.
 function _findRepoRoot(): string {
-  let dir = process.cwd();
-  for (let i = 0; i < 8; i++) {
+  return _walkToPackageJson(process.cwd());
+}
+
+/**
+ * Walk up from `startDir` until a directory containing `package.json` is
+ * found; returns `startDir` itself if none is found within the bound.
+ */
+function _walkToPackageJson(startDir: string): string {
+  let dir = startDir;
+  for (let i = 0; i < 12; i++) {
     if (existsSync(join(dir, 'package.json'))) return dir;
     const parent = dirname(dir);
     if (parent === dir) break;
     dir = parent;
   }
-  return process.cwd();
+  return startDir;
 }
 
-// Soft load: if redact.cjs is unreachable from the runtime cwd (e.g. a
-// hook subprocess running in a temp test dir three directories above
-// the plugin root), fall through to the identity function. The writer
-// keeps working — events just aren't scrubbed in that environment.
-// Production callers always run from inside the plugin tree.
-let _redact: (v: unknown) => unknown;
-try {
-  const _root = _findRepoRoot();
-  const _candidate = resolve(_root, 'scripts/lib/redact.cjs');
-  if (existsSync(_candidate)) {
-    const _redactRequire = createRequire(join(_root, 'package.json'));
-    const _mod = _redactRequire(_candidate) as { redact: (v: unknown) => unknown };
-    _redact = _mod.redact;
-  } else {
-    // Fallback: also try walking up from this source file's logical
-    // position (3 dirs above writer.ts → repo root).
-    const _altRoot = resolve(_root, '..', '..');
-    const _altCandidate = resolve(_altRoot, 'scripts/lib/redact.cjs');
-    if (existsSync(_altCandidate)) {
-      const _altRequire = createRequire(join(_altRoot, 'package.json'));
-      const _altMod = _altRequire(_altCandidate) as { redact: (v: unknown) => unknown };
-      _redact = _altMod.redact;
-    } else {
-      _redact = (v) => v;
+// S2 fix: redaction now fails CLOSED. Previously, if redact.cjs could not be
+// resolved from the runtime cwd, `_redact` fell through to the IDENTITY
+// function and every event was written UNSCRUBBED — silently leaking secrets
+// into events.jsonl whenever the writer ran outside the plugin tree (hook
+// subprocesses, temp test dirs, unusual install layouts). That is a fail-open
+// security hole.
+//
+// New contract:
+//   * redact.cjs loads  → normal deep-walk scrubbing (unchanged behavior).
+//   * redact.cjs MISSING → fail closed: `redact` returns an envelope-only
+//     placeholder that DROPS the payload body (replacing it with
+//     `{ _redaction_unavailable: true }`) so no raw payload is ever persisted
+//     unscrubbed. A single visible stderr warning is emitted (once per
+//     process, guarded by `_redactWarned`) so the failure is observable.
+//
+// Resolution is also improved: we try createRequire anchored on THIS module
+// (via the runtime-resolved module path) before the cwd-anchored walk, so it
+// loads in more layouts.
+
+/** Module-level guard so the fail-closed warning prints at most once. */
+let _redactWarned = false;
+
+/** Emit the one-time fail-closed warning to stderr (guarded, best-effort). */
+function _warnRedactUnavailable(): void {
+  if (_redactWarned) return;
+  _redactWarned = true;
+  try {
+    process.stderr.write(
+      '[event-stream] WARNING: scripts/lib/redact.cjs could not be loaded — ' +
+        'failing CLOSED: event payloads are dropped (envelope-only) to avoid ' +
+        'writing unscrubbed secrets. Run the event writer from inside the ' +
+        'plugin tree or set the redact lib on PATH to restore full payloads.\n',
+    );
+  } catch {
+    // If stderr itself is broken we have no recourse; swallow.
+  }
+}
+
+/**
+ * Attempt to load redact.cjs from a set of candidate roots. Returns the
+ * real `redact` function on success, or `null` if no candidate resolves.
+ */
+function _loadRedact(): ((v: unknown) => unknown) | null {
+  const candidates: string[] = [];
+
+  // We cannot use `import.meta.url` (tsc Node16 classifies this .ts as CJS for
+  // typecheck), so we probe several anchors so redact.cjs loads in as many
+  // layouts as possible BEFORE the fail-closed path engages:
+  //
+  // 1) The entry script (`process.argv[1]`). For hook subprocesses (e.g.
+  //    budget-enforcer.ts spawned by the harness) the entry script lives
+  //    INSIDE the plugin tree even when cwd is a detached temp dir — this is
+  //    the same anchor the hook itself uses via resolveHookPath(). Walking up
+  //    from the entry script to its package.json reliably lands on the plugin
+  //    root regardless of cwd.
+  // 2) A cwd-walked repo root (works when cwd IS inside the plugin tree).
+  // 3) The source-relative layout (writer.ts → ../../scripts/lib/redact.cjs).
+  const entry = process.argv[1];
+  if (typeof entry === 'string' && entry.length > 0) {
+    const entryAbs = isAbsolute(entry) ? entry : resolve(entry);
+    const entryRoot = _walkToPackageJson(dirname(entryAbs));
+    candidates.push(resolve(entryRoot, 'scripts/lib/redact.cjs'));
+  }
+  const repoRoot = _findRepoRoot();
+  candidates.push(resolve(repoRoot, 'scripts/lib/redact.cjs'));
+  candidates.push(resolve(repoRoot, '..', '..', 'scripts/lib/redact.cjs'));
+
+  for (const candidate of candidates) {
+    try {
+      if (!existsSync(candidate)) continue;
+      // Anchor createRequire on the candidate file itself so resolution does
+      // not depend on a package.json being present at a particular ancestor.
+      const req = createRequire(candidate);
+      const mod = req(candidate) as { redact?: (v: unknown) => unknown };
+      if (mod && typeof mod.redact === 'function') return mod.redact;
+    } catch {
+      // Try the next candidate.
     }
   }
-} catch {
-  _redact = (v) => v;
+  return null;
 }
-const redact = _redact;
+
+const _realRedact = _loadRedact();
+
+/**
+ * The redaction function used at the write boundary. When the real redactor
+ * loaded, this is it. When it did not, this is the FAIL-CLOSED shim: it warns
+ * once and returns an envelope-only object with the payload body dropped.
+ */
+const redact: (v: unknown) => unknown =
+  _realRedact !== null
+    ? _realRedact
+    : (v: unknown): unknown => {
+        _warnRedactUnavailable();
+        if (v !== null && typeof v === 'object') {
+          // Preserve envelope metadata; drop the payload body entirely so no
+          // raw (potentially secret-bearing) content is persisted.
+          const ev = v as Record<string, unknown>;
+          const out: Record<string, unknown> = { ...ev };
+          out['payload'] = { _redaction_unavailable: true };
+          return out;
+        }
+        return { _redaction_unavailable: true };
+      };
 
 /** Default relative path for the persisted event stream. */
 export const DEFAULT_EVENTS_PATH = '.design/telemetry/events.jsonl';
