@@ -756,6 +756,7 @@ OFF_CADENCE_VERSIONS.add('1.59.5');
 OFF_CADENCE_VERSIONS.add('1.59.6');
 OFF_CADENCE_VERSIONS.add('1.59.7');
 OFF_CADENCE_VERSIONS.add('1.59.8');
+OFF_CADENCE_VERSIONS.add('1.59.9');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

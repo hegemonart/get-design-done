@@ -4,6 +4,32 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.9] - 2026-06-10
+
+New-model-family readiness and cost truth (audit `.planning/audits/SELF-AUDIT-v1.59.7.md` §4). A new or unknown Anthropic model previously degraded cost accounting silently - billed at $0 or the sonnet rate and mis-attributed to the sonnet tier. This release makes unknown models loud and conservative, handles the 1M-context `[1m]` variant, and records context-window size in the model registry.
+
+### Added
+
+- **`scripts/lib/model-id.cjs`** - shared model-id normalization + tiering. `normalizeModelId` strips a bracketed variant suffix (`claude-opus-4-8[1m]` to base `claude-opus-4-8` + variant `1m`); `tierForModelId` resolves a tier via exact id, family pattern (`claude-(opus|sonnet|haiku)`), or an extensible alias map, returning `null` for an unknown family so callers price it conservatively instead of guessing.
+- **`context_window` in the model registry.** `reference/runtime-models.md` now records each Claude model's context window (the `claude-opus-4-8` `[1m]` variant is `1000000`; the others `200000`), allowed additively through both the JSON schema and the hand-rolled `parse-runtime-models.cjs` allowlist, with regenerated types. The 1M-context variant is now recognised as first-class metadata. (Deriving token budgets from it is deferred - this release records the fact.)
+- **`claude-opus-4-8` price + tier mapping.** Added to `reference/prices/claude.md` and mapped as the `opus`/`high` model in `reference/runtime-models.md`; provenance refreshed. The stale tables previously topped out at `claude-opus-4-7`.
+
+### Fixed
+
+- **Unknown / new models are now priced loudly and conservatively.** `budget-enforcer.cjs computeCost` normalizes the model id (so `[1m]` variants match their base row) and, when no price row matches, returns a conservative ceiling computed at the **opus** rate with `cost_estimated: true` and a `cost_lookup_fallback` telemetry event - instead of the old silent `cost_usd: null`. The headless `session-runner` `rateFor` falls back through the resolved tier's rate and uses the opus rate (not sonnet) as its last-resort default, ending the systematic under-billing of frontier models. Tier inference no longer relies on loose substring matching.
+
+### Deferred
+
+- Making `reasoning-class` the canonical routing vocabulary (opus/sonnet/haiku as aliases) and deriving SDK token budgets from `context_window` + tiered >200k long-context pricing - tracked for a later phase; not required for new-family readiness.
+
+### Breaking changes
+
+None.
+
+5,096/5,096 tests pass.
+
+---
+
 ## [1.59.8] - 2026-06-10
 
 Production-wiring repair and security hardening from a 4-agent self-audit (`.planning/audits/SELF-AUDIT-v1.59.7.md`). The theme: real, well-tested library code whose production call-sites silently neutered it. This release makes the wiring either true or honest.
