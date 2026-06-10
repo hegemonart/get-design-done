@@ -91,6 +91,10 @@ interface BudgetEnforcerBackend {
     runtime_used: string | null;
     fallback: boolean;
     reason: string | null;
+    // Phase 59-9: true when the cost is a CONSERVATIVE ESTIMATE (opus ceiling)
+    // for an unknown/new model rather than a table-matched figure. Additive +
+    // optional — absent on the table-matched (branches 1-4) paths.
+    cost_estimated?: boolean;
   };
   modelFromResolved(resolved: unknown, agent: string): string | null;
   // Plan 33.6-03 (SC#6): the canonical cost-row payload builder (the
@@ -947,6 +951,40 @@ function emitCostRecorded(
 }
 
 /**
+ * Phase 59-9: emit a `cost_lookup_fallback` event when the cost backend
+ * could not table-match a model and fell back to the CONSERVATIVE OPUS
+ * CEILING (or, more rarely, returned an unpriced fallback). Makes an
+ * unknown/new model OBSERVABLE in telemetry instead of silently mis-billed
+ * (or billed as $0). Reuses the same BaseEvent envelope + appendEvent path
+ * as every other emit. Fail-open — never throws, never blocks the spawn.
+ */
+function emitCostLookupFallback(
+  payload: {
+    runtime: string;
+    agent: string;
+    model_id: string | null;
+    tier: string | null;
+    reason: string | null;
+    cost_usd: number | null;
+    cost_estimated: boolean;
+  },
+  cycle?: string,
+): void {
+  const ev = {
+    type: 'cost_lookup_fallback',
+    timestamp: new Date().toISOString(),
+    sessionId: getSessionId(),
+    ...(cycle !== undefined && cycle !== 'unknown' ? { cycle } : {}),
+    payload,
+  };
+  try {
+    appendEvent(ev as unknown as HookFiredEvent);
+  } catch {
+    // Fail open.
+  }
+}
+
+/**
  * Plan 27.5-02 / D-03: emit `bandit.tier_selected` event when the bandit
  * is consulted (regardless of whether it overrode the prior tier). The
  * event captures the prior tier, the bandit's pick, the sampled posterior
@@ -1587,6 +1625,28 @@ export async function main(): Promise<void> {
     },
     cycle,
   );
+
+  // Phase 59-9: when the cost was a CONSERVATIVE ESTIMATE (unknown/new model
+  // priced at the opus ceiling) rather than a table-matched figure, emit a
+  // distinct telemetry signal so an unrecognized model is OBSERVABLE rather
+  // than silently mis-billed. Best-effort, never throws (fail-open).
+  if (
+    costLookup.cost_estimated === true ||
+    (costLookup.fallback === true && costLookup.reason === 'model_not_found')
+  ) {
+    emitCostLookupFallback(
+      {
+        runtime: runtimeId,
+        agent,
+        model_id: effectiveModelId ?? costLookup.model,
+        tier: costLookup.tier ?? effectiveTier,
+        reason: costLookup.reason,
+        cost_usd: costLookup.cost_usd,
+        cost_estimated: costLookup.cost_estimated === true,
+      },
+      cycle,
+    );
+  }
 
   // Branch E: standard spawn-allowed (includes tier-downgraded path).
   writeTelemetry({

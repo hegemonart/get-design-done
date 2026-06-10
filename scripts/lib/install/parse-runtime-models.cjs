@@ -78,7 +78,7 @@ function validateModelRow(row, where) {
   if (typeof row.model !== 'string' || row.model.length === 0) {
     throw new Error(`${where}: 'model' must be a non-empty string`);
   }
-  const allowedKeys = new Set(['model', 'provider_model_id']);
+  const allowedKeys = new Set(['model', 'provider_model_id', 'context_window']);
   for (const k of Object.keys(row)) {
     if (!allowedKeys.has(k)) {
       throw new Error(`${where}: unknown key '${k}' (allowed: ${[...allowedKeys].join(', ')})`);
@@ -87,6 +87,14 @@ function validateModelRow(row, where) {
   if (row.provider_model_id !== undefined) {
     if (typeof row.provider_model_id !== 'string' || row.provider_model_id.length === 0) {
       throw new Error(`${where}: 'provider_model_id' must be a non-empty string when present`);
+    }
+  }
+  // Optional context-window size — mirror the schema (integer >= 1). Recorded as
+  // machine-readable metadata (the 1M-context [1m] opus variant); not yet a
+  // budgeting driver (deferred — no consumer wired this cycle).
+  if (row.context_window !== undefined) {
+    if (typeof row.context_window !== 'number' || !Number.isInteger(row.context_window) || row.context_window < 1) {
+      throw new Error(`${where}: 'context_window' must be a positive integer when present`);
     }
   }
 }

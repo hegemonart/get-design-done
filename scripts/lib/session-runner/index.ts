@@ -122,6 +122,21 @@ const adaptiveModeLib = _nodeRequire(
   getMode: (opts?: { baseDir?: string; budgetPath?: string; quiet?: boolean }) => 'static' | 'hedge' | 'full';
 };
 
+// ── Phase 59-9 — model-id normalization + tiering (single source of truth) ───
+//
+// `scripts/lib/model-id.cjs` is the canonical id parser shared with the
+// budget-enforcer. We route BOTH tier-labeling (`tierFromModel`) and pricing
+// (`rateFor`) through it so a new model family is a DATA edit there / in the
+// price tables, never scattered substring logic here. `tierForModelId` returns
+// `null` for an unknown family — callers MUST treat that as "price
+// conservatively + loudly", never as a tier or as free.
+const modelId = _nodeRequire(
+  _resolve(_REPO_ROOT, 'scripts/lib/model-id.cjs'),
+) as {
+  normalizeModelId: (id: string | null | undefined) => { base: string; variant: string | null };
+  tierForModelId: (id: string | null | undefined) => 'opus' | 'sonnet' | 'haiku' | null;
+};
+
 /** Rate-guard provider key for the Anthropic Agent SDK. */
 const RATE_GUARD_PROVIDER = 'anthropic';
 
@@ -144,16 +159,24 @@ const SESSION_RUNNER_DEFAULT_BIN = 'medium';
  *
  * Used at the 4 terminal-emit sites where the final tier isn't already
  * carried on `opts` — we fall back to inspecting `usage.model` (folded
- * during the run loop from SDK chunks). Unknown / empty model names
- * default to 'sonnet' (matches the DEFAULT_MODEL_RATE choice and is
- * the safest middle tier for posterior arms).
+ * during the run loop from SDK chunks). Delegates to the shared
+ * `model-id.cjs` resolver (variant suffix like `[1m]` is stripped, known
+ * ids classified identically to before).
+ *
+ * The shared resolver returns `null` for an UNKNOWN family. For tier
+ * LABELING (telemetry / posterior arms) we map null → 'sonnet' as the
+ * safest middle tier so the bandit arms stay well-defined. This is a
+ * TELEMETRY default only — it does NOT influence PRICING. Pricing of an
+ * unknown family uses the conservative OPUS ceiling, resolved separately in
+ * `rateFor` (see DEFAULT_MODEL_RATE / tier fallback there). Keep the two
+ * concerns distinct: a wrong tier label mis-attributes a posterior arm; a
+ * wrong price under-bills a frontier model.
  */
 function tierFromModel(modelName: string | null | undefined): 'opus' | 'sonnet' | 'haiku' {
-  if (typeof modelName !== 'string' || modelName.length === 0) return 'sonnet';
-  const lower = modelName.toLowerCase();
-  if (lower.includes('opus')) return 'opus';
-  if (lower.includes('haiku')) return 'haiku';
-  return 'sonnet';
+  const tier = modelId.tierForModelId(modelName);
+  // null = unknown family → conservative TELEMETRY default (pricing handled
+  // separately + conservatively in rateFor).
+  return tier ?? 'sonnet';
 }
 
 /**
@@ -539,29 +562,72 @@ function _logPeerCallComplete(args: {
 const RETRY_BACKOFF = { baseMs: 1000, maxMs: 30_000 } as const;
 
 /**
- * Per-million-token USD rates. Unknown models default to the Sonnet
- * rate (safer overestimate — we'd rather cap early than under-bill).
+ * Per-million-token USD rates.
+ *
+ * Canonical price source is `reference/prices/claude.md`; this table mirrors
+ * it for the sync headless path — keep in lockstep.
+ *
+ * Unknown FAMILIES default to the OPUS ceiling (see DEFAULT_MODEL_RATE) — a
+ * conservative overestimate. We'd rather cap early than silently under-bill a
+ * frontier model. Known families fall back to their per-tier representative
+ * rate (PER_TIER_RATE) so a dated/variant sku still prices correctly.
  */
 const MODEL_RATES: Readonly<Record<string, { input: number; output: number }>> = Object.freeze({
+  'claude-opus-4-8': { input: 15, output: 75 },
   'claude-opus-4-7': { input: 15, output: 75 },
   'claude-sonnet-4-5': { input: 3, output: 15 },
   'claude-haiku-4-5': { input: 0.8, output: 4 },
 });
-const DEFAULT_MODEL_RATE = Object.freeze({ input: 3, output: 15 });
 
-/** Resolve a per-M-token rate for a model name, matching prefix when possible. */
+/** Per-tier representative rates (match reference/prices/claude.md). Used as
+ *  the fallback when an exact/prefix MODEL_RATES match is absent but the
+ *  family tier is known. */
+const PER_TIER_RATE: Readonly<Record<'opus' | 'sonnet' | 'haiku', { input: number; output: number }>> =
+  Object.freeze({
+    opus: { input: 15, output: 75 },
+    sonnet: { input: 3, output: 15 },
+    haiku: { input: 1, output: 5 },
+  });
+
+/**
+ * DEFAULT_MODEL_RATE — conservative ceiling for a GENUINELY UNKNOWN family
+ * (tier resolves to null). Set to the OPUS rate, matching this file's own
+ * "safer overestimate" intent. The previous sonnet default UNDER-billed any
+ * frontier model whose id we did not yet recognize.
+ */
+const DEFAULT_MODEL_RATE = Object.freeze({ input: 15, output: 75 });
+
+/**
+ * Resolve a per-M-token rate for a model name.
+ *
+ * Resolution order (conservative + robust):
+ *   1. normalize the id (strip `[1m]`/`[200k]` variant suffix) → work on base;
+ *   2. exact match in MODEL_RATES;
+ *   3. prefix match (e.g. "claude-opus-4-7-20250101" → "claude-opus-4-7");
+ *   4. per-tier fallback via `tierForModelId(base)` (opus/sonnet/haiku → that
+ *      tier's representative rate) — keeps dated/variant skus of a known
+ *      family priced correctly;
+ *   5. ONLY if the tier is null (genuinely unknown family) → DEFAULT_MODEL_RATE
+ *      (opus ceiling — price LOUDLY + CONSERVATIVELY, never $0 or sonnet).
+ */
 function rateFor(modelName: string | null): { input: number; output: number } {
   if (modelName === null || modelName === '') return DEFAULT_MODEL_RATE;
-  // Direct match first.
-  const direct = MODEL_RATES[modelName];
+  const { base } = modelId.normalizeModelId(modelName);
+  if (base === '') return DEFAULT_MODEL_RATE;
+  // (2) Direct match first.
+  const direct = MODEL_RATES[base];
   if (direct !== undefined) return direct;
-  // Prefix match (e.g. "claude-opus-4-7-20250101" → "claude-opus-4-7").
+  // (3) Prefix match.
   for (const key of Object.keys(MODEL_RATES)) {
-    if (modelName.startsWith(key)) {
+    if (base.startsWith(key)) {
       const hit = MODEL_RATES[key];
       if (hit !== undefined) return hit;
     }
   }
+  // (4) Per-tier fallback for a known family.
+  const tier = modelId.tierForModelId(base);
+  if (tier !== null) return PER_TIER_RATE[tier];
+  // (5) Unknown family → conservative opus ceiling.
   return DEFAULT_MODEL_RATE;
 }
 
@@ -1281,3 +1347,8 @@ function buildResult(args: BuildResultArgs): SessionResult {
 // invariant: session-runner consumers can rely on these constants being
 // stable across minor releases.
 export { MODEL_RATES, DEFAULT_MODEL_RATE, RATE_GUARD_PROVIDER };
+
+// Pricing internals exported for regression tests (Phase 59-9 model-cost-truth):
+// verify unknown families resolve to the conservative opus ceiling while known
+// families price correctly via the per-tier fallback.
+export { rateFor, usdCost, tierFromModel, PER_TIER_RATE };

@@ -13,6 +13,17 @@
 | claude-sonnet-4-7 | sonnet | 3.00 | 15.00 | 0.30 |
 | claude-sonnet-4-6 | sonnet | 3.00 | 15.00 | 0.30 |
 | claude-opus-4-7 | opus | 15.00 | 75.00 | 1.50 |
+| claude-opus-4-8 | opus | 15.00 | 75.00 | 1.50 |
+
+> **>200k-input (1M-context) pricing note.** The rates above are the
+> standard (≤200k-input) per-1M-token prices. Anthropic's flagship
+> `claude-opus-4-8` ships a 1M-context (`[1m]`) variant; long-context
+> requests above the 200k-input threshold may be billed at a higher
+> tiered rate. This table tracks only the standard tier today; the
+> >200k tiered figure will be added as a separate row/column once
+> Anthropic publishes it. The parser is positional-by-header and
+> tolerates right-edge columns, so a future `>200k_input_per_1m`
+> column can be appended without breaking cost lookups.
 
 ## size_budget → conservative token ranges
 

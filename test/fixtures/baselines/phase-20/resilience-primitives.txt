@@ -19,6 +19,7 @@ incubator-author.cjs
 instinct-store.cjs
 mapper-spawn.cjs
 mmr-rerank.cjs
+model-id.cjs
 new-addendum.cjs
 parse-contract.cjs
 probe-optional.cjs

@@ -45,7 +45,7 @@ const FIXTURE = Object.freeze({
     {
       id: 'claude',
       tier_to_model: {
-        opus: { model: 'claude-opus-4-7' },
+        opus: { model: 'claude-opus-4-8' },
         sonnet: { model: 'claude-sonnet-4-6' },
         haiku: { model: 'claude-haiku-4-5' },
       },
@@ -88,7 +88,7 @@ const FIXTURE = Object.freeze({
 
 /** Map id → expected models for assertion convenience. */
 const EXPECTED = {
-  claude: { opus: 'claude-opus-4-7', sonnet: 'claude-sonnet-4-6', haiku: 'claude-haiku-4-5' },
+  claude: { opus: 'claude-opus-4-8', sonnet: 'claude-sonnet-4-6', haiku: 'claude-haiku-4-5' },
   codex: { opus: 'gpt-5', sonnet: 'gpt-5-mini', haiku: 'gpt-5-nano' },
   gemini: { opus: 'gemini-2.5-pro', sonnet: 'gemini-2.5-flash', haiku: 'gemini-2.5-flash-lite' },
   qwen: { opus: 'qwen3-max', sonnet: 'qwen3-plus', haiku: 'qwen3-flash' },
@@ -160,7 +160,7 @@ test('(b) missing-tier on claude itself (no fallback possible) → tier_resoluti
   // resolver can't fall back to itself, so this is a true failure.
   const partial = {
     schema_version: 1,
-    runtimes: [{ id: 'claude', tier_to_model: { opus: { model: 'claude-opus-4-7' } } }],
+    runtimes: [{ id: 'claude', tier_to_model: { opus: { model: 'claude-opus-4-8' } } }],
   };
   const { events } = withEventsCapture(() => {
     const got = resolve('claude', 'sonnet', { models: partial });
@@ -327,12 +327,12 @@ test('(e) silent=true suppresses all events', () => {
 test('(e) malformed row (missing tier_to_model) → fallback or null, no throw', () => {
   const malformed = {
     runtimes: [
-      { id: 'claude', tier_to_model: { opus: { model: 'claude-opus-4-7' } } },
+      { id: 'claude', tier_to_model: { opus: { model: 'claude-opus-4-8' } } },
       { id: 'broken' /* no tier_to_model */ },
     ],
   };
   const got = resolve('broken', 'opus', { models: malformed, silent: true });
-  assert.equal(got, 'claude-opus-4-7'); // falls back to claude row
+  assert.equal(got, 'claude-opus-4-8'); // falls back to claude row
 });
 
 // ---------------------------------------------------------------------
