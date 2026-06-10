@@ -25,6 +25,32 @@ const DEFAULT_FILE = path.join(REPO_ROOT, 'reference', 'mcp-budget.default.json'
 
 const TRACKED_TOOL_RE = /^mcp__.*use_(figma|paper|pencil)$/;
 
+// Bounded fallback window (ms) for counting volume when no session id is
+// available on the payload. Without this, `total_calls` would count every row
+// ever appended to the ledger — so after `max_calls_per_task` cumulative calls
+// across ALL sessions for the lifetime of the file, every mutation is blocked
+// forever (and a BLOCKER is appended to STATE.md each time). The volume gate is
+// meant to be PER-TASK; this window keeps the fallback path per-task-ish so a
+// long-lived user is never permanently locked out.
+const SESSIONLESS_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours
+
+/**
+ * Resolve the current session id from the hook payload (Claude Code passes
+ * `session_id`; tolerate `sessionId`), falling back to GDD_SESSION_ID, else
+ * null. A non-null id makes the volume window exact (count only this session's
+ * rows); null falls back to the bounded time window.
+ *
+ * @param {any} payload
+ * @returns {string|null}
+ */
+function resolveSessionId(payload) {
+  const fromPayload = payload && (payload.session_id || payload.sessionId);
+  if (typeof fromPayload === 'string' && fromPayload.length > 0) return fromPayload;
+  const fromEnv = process.env.GDD_SESSION_ID;
+  if (typeof fromEnv === 'string' && fromEnv.length > 0) return fromEnv;
+  return null;
+}
+
 function loadBudget(cwd) {
   let defaults = { max_calls_per_task: 30, max_consecutive_timeouts: 3, reset_on_success: true };
   try {
@@ -106,7 +132,25 @@ function classifyOutcome(toolResponse) {
   return 'error';
 }
 
-function readJsonlTail(filePath) {
+/**
+ * Read the ledger and compute the prior volume + consecutive-timeout state
+ * for the CURRENT task window only — not the whole-file lifetime.
+ *
+ * Window membership for a row:
+ *   - If a current session id is known AND the row carries a `session` field:
+ *     the row counts iff `row.session === sessionId`.
+ *   - Otherwise (sessionless harness/tests, or legacy rows without `session`):
+ *     the row counts iff its timestamp is within SESSIONLESS_WINDOW_MS of now.
+ *
+ * This bounds the volume count so a long-lived ledger can never permanently
+ * trip `volumeBreak`, while keeping rapid same-task calls (the common case and
+ * the existing test scenario) counted together.
+ *
+ * @param {string} filePath
+ * @param {string|null} sessionId
+ * @param {number} nowMs
+ */
+function readJsonlTail(filePath, sessionId, nowMs) {
   if (!fs.existsSync(filePath)) return { lastRow: null, total_calls: 0, consecutive_timeouts: 0 };
   let total = 0;
   let lastTimeoutsChain = 0;
@@ -118,6 +162,25 @@ function readJsonlTail(filePath) {
       if (!t) continue;
       let row;
       try { row = JSON.parse(t); } catch { continue; }
+
+      // Decide whether this row belongs to the current task window.
+      let inWindow;
+      if (sessionId !== null && typeof row.session === 'string' && row.session.length > 0) {
+        inWindow = row.session === sessionId;
+      } else {
+        const rowMs = typeof row.ts === 'string' ? Date.parse(row.ts) : NaN;
+        // Unparseable timestamps fall back to "in window" so we never
+        // under-count; a malformed-ts row is treated as recent.
+        inWindow = Number.isNaN(rowMs) ? true : (nowMs - rowMs) <= SESSIONLESS_WINDOW_MS;
+      }
+
+      if (!inWindow) {
+        // Out-of-window rows reset the streak — a new task/session must not
+        // inherit a stale consecutive-timeout chain.
+        lastTimeoutsChain = 0;
+        continue;
+      }
+
       total++;
       if (row.outcome === 'timeout') lastTimeoutsChain++;
       else lastTimeoutsChain = 0;
@@ -158,7 +221,9 @@ async function main() {
   const budget = loadBudget(cwd);
   const ledgerPath = path.join(cwd, '.design', 'telemetry', 'mcp-budget.jsonl');
 
-  const prior = readJsonlTail(ledgerPath);
+  const sessionId = resolveSessionId(payload);
+  const nowMs = Date.now();
+  const prior = readJsonlTail(ledgerPath, sessionId, nowMs);
   const outcome = classifyOutcome(payload?.tool_response);
   const total_calls = prior.total_calls + 1;
   const consecutive_timeouts = outcome === 'timeout'
@@ -166,12 +231,16 @@ async function main() {
     : (budget.reset_on_success && outcome === 'success' ? 0 : prior.consecutive_timeouts);
 
   const row = {
-    ts: new Date().toISOString(),
+    ts: new Date(nowMs).toISOString(),
     tool,
     outcome,
     consecutive_timeouts,
     total_calls,
   };
+  // Stamp the session id so future calls can scope the volume window exactly.
+  // Omitted when unknown (keeps the row schema stable for the sessionless path,
+  // which relies on the time window instead).
+  if (sessionId !== null) row.session = sessionId;
   appendJsonl(ledgerPath, row);
 
   const timeoutBreak = consecutive_timeouts >= budget.max_consecutive_timeouts;

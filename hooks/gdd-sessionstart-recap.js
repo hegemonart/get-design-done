@@ -57,17 +57,21 @@ function detectHarness() {
 }
 
 // ---------------------------------------------------------------------------
-// Lazy event-stream emit (best-effort)
+// Event emit (best-effort) — delegate to the shared _hook-emit helper, which
+// uses the SDK writer when loadable (modern Node) and an inline JSONL appender
+// otherwise. The previous direct `require('../sdk/event-stream')` resolved to
+// the `.ts` ESM index and threw under plain `node` on Node 22.0–22.17, leaving
+// recap.emitted permanently no-op'd. emitEvent lands the line on every Node.
 // ---------------------------------------------------------------------------
 
-function getAppendEvent() {
+function getEmitEvent() {
   try {
-    const m = require('../sdk/event-stream');
-    if (m && typeof m.appendEvent === 'function') return m.appendEvent;
+    const m = require('./_hook-emit.js');
+    if (m && typeof m.emitEvent === 'function') return m.emitEvent;
   } catch {
-    /* swallow — event-stream is optional infrastructure */
+    /* swallow — telemetry is optional infrastructure */
   }
-  return function noopAppend(_ev) {
+  return function noopEmit(_ev) {
     /* no-op */
   };
 }
@@ -87,9 +91,12 @@ function readStateMd(paths) {
   }
 
   const frontmatter = {};
-  const fmMatch = body.match(/^---\n([\s\S]*?)\n---\n/);
+  // Tolerate CRLF line endings — the STATE.md mutator preserves CRLF, so a
+  // strict `\n`-only anchor fails to match the frontmatter block on Windows
+  // checkouts and the recap silently reports an empty cycle/decisions diff.
+  const fmMatch = body.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
   if (fmMatch) {
-    for (const line of fmMatch[1].split('\n')) {
+    for (const line of fmMatch[1].split(/\r?\n/)) {
       const m = line.match(/^(\w+):\s*(.+)$/);
       if (m) frontmatter[m[1]] = m[2].trim();
     }
@@ -273,9 +280,9 @@ async function main() {
   }
 
   // Best-effort event emit.
-  const appendEvent = getAppendEvent();
+  const emitEvent = getEmitEvent();
   try {
-    appendEvent({
+    emitEvent({
       type: 'recap.emitted',
       timestamp: new Date().toISOString(),
       sessionId: process.env.GDD_SESSION_ID || 'sessionstart-hook',
@@ -300,9 +307,11 @@ async function main() {
   process.exit(0);
 }
 
-try {
-  main();
-} catch (err) {
+// `main` is async: a sync try/catch cannot observe a rejected promise, so a
+// throw inside an `await` boundary would escape as an unhandled rejection and
+// exit non-zero — violating the silent-exit-0 contract for SessionStart hooks.
+// Attach `.catch` so every failure mode is swallowed and we exit 0.
+main().catch((err) => {
   try {
     process.stderr.write(
       '[gdd-sessionstart-recap] uncaught: ' +
@@ -313,4 +322,4 @@ try {
     /* swallow */
   }
   process.exit(0);
-}
+});
