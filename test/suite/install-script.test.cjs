@@ -125,6 +125,58 @@ test('install.cjs --dry-run does not write settings.json', () => {
   }
 });
 
+test('install.cjs bare --uninstall in non-TTY refuses (B4)', () => {
+  // B4 fix (Phase 59.8): a bare `--uninstall` with no runtime flag, run in a
+  // non-interactive (spawned, non-TTY) context, must NOT silently default to
+  // removing claude. It must refuse, print guidance, and exit non-zero.
+  const tmp = mktmp();
+  try {
+    // Seed a real claude install so a regression (silent removal) would be
+    // observable.
+    runInstall({ CLAUDE_CONFIG_DIR: tmp });
+    assert.ok(
+      fs.existsSync(path.join(tmp, 'settings.json')),
+      'precondition: claude install should exist',
+    );
+
+    const result = runInstall({ CLAUDE_CONFIG_DIR: tmp }, ['--uninstall']);
+    assert.notEqual(result.status, 0, 'bare --uninstall in non-TTY must exit non-zero');
+    assert.match(result.stderr, /Refusing to uninstall/);
+    assert.match(result.stderr, /--uninstall --claude|--uninstall --all/);
+
+    // The seeded install must be UNTOUCHED — nothing was removed.
+    const settings = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'settings.json'), 'utf8'),
+    );
+    assert.equal(
+      settings.enabledPlugins['get-design-done@get-design-done'],
+      true,
+      'bare --uninstall must not have removed the claude registration',
+    );
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('install.cjs explicit --uninstall --claude in non-TTY removes the install (B4 escape hatch)', () => {
+  const tmp = mktmp();
+  try {
+    runInstall({ CLAUDE_CONFIG_DIR: tmp });
+    const result = runInstall({ CLAUDE_CONFIG_DIR: tmp }, ['--uninstall', '--claude']);
+    assert.equal(result.status, 0, result.stderr);
+    const settings = JSON.parse(
+      fs.readFileSync(path.join(tmp, 'settings.json'), 'utf8'),
+    );
+    assert.equal(
+      settings.enabledPlugins,
+      undefined,
+      'explicit --uninstall --claude must remove the registration',
+    );
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
 test('install.cjs exits 1 on malformed settings.json', () => {
   const tmp = mktmp();
   try {

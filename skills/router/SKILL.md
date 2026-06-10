@@ -1,6 +1,6 @@
 ---
 name: gdd-router
-description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. Deterministic - no model call. Invoked once at command entry before any Agent spawn. Read by hooks/budget-enforcer.ts."
+description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. A SKILL.md prompt the model executes to emit a routing-decision JSON from rule tables (no separate agent spawn). Optional/advisory - invoked only by the skills that opt into routing; the budget-enforcer hook tolerates its absence. Read by hooks/budget-enforcer.ts."
 argument-hint: "<intent-string> [<target-artifacts-csv>]"
 tools: Read, Bash, Grep
 ---
@@ -69,7 +69,9 @@ Delegate to `skills/cache-manager/SKILL.md` (Plan 10.1-02). The router lists can
 
 ## Integration Point
 
-Every `/gdd:*` SKILL.md's first substantive step is: spawn the router via `Task` or inline invocation; receive the JSON blob; pass it to downstream agents as context so the budget-enforcer hook has the router decision available in tool_input metadata when the first Agent spawn fires.
+The router is **optional and advisory**, not a universal first step. Only the handful of skills that explicitly opt into routing reference it (today: the root pipeline `SKILL.md` / `/gdd:handoff`, and `/gdd:style` documents that it deliberately does *not* invoke the router because it is a leaf invocation). The pipeline stage skills (explore / plan / design / verify) do **not** spawn the router. When a skill does invoke it, the flow is: invoke the router via `Task` or inline invocation; receive the JSON blob; pass it to downstream agents as context so the budget-enforcer hook has the router decision available in tool_input metadata when the first Agent spawn fires.
+
+When no skill supplies a router decision, the budget-enforcer hook reads `tool_input.context.router_decision` as absent and falls back to its legacy back-compat path - the router's absence is tolerated by design, never an error.
 
 ## Failure Modes
 

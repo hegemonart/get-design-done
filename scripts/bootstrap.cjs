@@ -149,6 +149,14 @@ function filesEqual(a, b) {
 }
 
 /**
+ * Network timeout (ms) for the git clone/pull. SessionStart hooks must never
+ * block the harness: without a timeout, a hung network connection would stall
+ * the whole session-start sequence indefinitely. spawnSync kills the child
+ * with `killSignal` once this elapses and reports it as a failure.
+ */
+const GIT_TIMEOUT_MS = 15000;
+
+/**
  * Match the .sh `clone_or_update`:
  *   - target/.git exists  → `git -C target pull --quiet --ff-only`, log on fail
  *   - target exists, no .git → log+skip
@@ -157,8 +165,14 @@ function filesEqual(a, b) {
  * We invoke the `git` CLI directly via spawnSync. spawnSync('git', …) is fine —
  * the prohibition is on spawnSync('bash', …).
  *
+ * Returns true ONLY when the repo is in a good post-condition (pull/clone
+ * succeeded, or a pre-existing non-git dir we intentionally skip). Returns
+ * false when a network op failed or timed out — so the caller can withhold the
+ * success marker and retry next session instead of recording failure as done.
+ *
  * @param {string} repoUrl
  * @param {string} target
+ * @returns {boolean} success
  */
 function cloneOrUpdate(repoUrl, target) {
   let isGitCheckout = false;
@@ -177,16 +191,22 @@ function cloneOrUpdate(repoUrl, target) {
     const r = spawnSync('git', ['-C', target, 'pull', '--quiet', '--ff-only'], {
       stdio: ['ignore', 'ignore', 'ignore'],
       windowsHide: true,
+      timeout: GIT_TIMEOUT_MS,
+      killSignal: 'SIGKILL',
     });
     if (r.error || r.status !== 0) {
-      log(`pull failed for ${target} (continuing)`);
+      const why = r.error && r.error.code === 'ETIMEDOUT' ? 'timed out' : 'failed';
+      log(`pull ${why} for ${target} (continuing)`);
+      return false;
     }
-    return;
+    return true;
   }
 
   if (targetExists) {
     log(`${target} exists and is not a git checkout — skipping`);
-    return;
+    // A pre-existing non-git dir is a stable post-condition, not a failure:
+    // re-running won't change it, so don't force a retry every session.
+    return true;
   }
 
   // Defense in depth: refuse repoUrl / target arguments that look like git
@@ -196,7 +216,7 @@ function cloneOrUpdate(repoUrl, target) {
   if (typeof repoUrl !== 'string' || repoUrl.startsWith('-') ||
       typeof target !== 'string' || target.startsWith('-')) {
     log(`refusing suspicious clone args for ${repoUrl} -> ${target}`);
-    return;
+    return false;
   }
 
   log(`cloning ${repoUrl} -> ${target}`);
@@ -205,10 +225,15 @@ function cloneOrUpdate(repoUrl, target) {
   const r = spawnSync('git', ['clone', '--quiet', '--depth', '1', '--', repoUrl, target], {
     stdio: ['ignore', 'ignore', 'ignore'],
     windowsHide: true,
+    timeout: GIT_TIMEOUT_MS,
+    killSignal: 'SIGKILL',
   });
   if (r.error || r.status !== 0) {
-    log(`clone failed for ${repoUrl}`);
+    const why = r.error && r.error.code === 'ETIMEDOUT' ? 'timed out' : 'failed';
+    log(`clone ${why} for ${repoUrl}`);
+    return false;
   }
+  return true;
 }
 
 /**
@@ -315,7 +340,7 @@ function run(opts = {}) {
   }
 
   // Required library: VoltAgent/awesome-design-md.
-  cloneOrUpdate(
+  const repoOk = cloneOrUpdate(
     'https://github.com/VoltAgent/awesome-design-md.git',
     ctx.awesomeRepoTarget
   );
@@ -332,8 +357,15 @@ function run(opts = {}) {
   // Phase 10.1: .design/budget.json + .design/telemetry/ (D-12).
   ensureDesignDir(cwd);
 
-  // Record success so we don't re-run until the bundled manifest changes.
-  copyManifestToMarker(ctx.manifest, ctx.marker);
+  // Record success ONLY when the network provisioning actually succeeded.
+  // Writing the marker unconditionally records a failed clone as "done" and
+  // never retries — leaving the required library permanently absent. Gating on
+  // repoOk means a transient network failure/timeout is retried next session.
+  if (repoOk) {
+    copyManifestToMarker(ctx.manifest, ctx.marker);
+  } else {
+    log('skipping success marker — provisioning incomplete, will retry next session');
+  }
 
   return 0;
 }

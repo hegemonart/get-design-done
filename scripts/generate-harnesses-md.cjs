@@ -113,10 +113,17 @@ function render() {
   const dates = harnesses.map((h) => h.last_verified).filter(Boolean).sort();
   const lastVerified = dates.length > 0 ? dates[dates.length - 1] : '(never)';
 
-  // Capability matrix table
+  // Capability matrix table.
+  //
+  // AR5/AR8 (Phase 59.8): added the **Agents** and **Hooks** columns so the
+  // matrix is honest about which runtimes receive the sub-agent set and the
+  // hook layer. Only Claude Code gets agents (claude --local installs
+  // `agents/`) and hooks (SessionStart / PostToolUse / statusLine); every
+  // other runtime receives skills only. The README previously implied agents
+  // travel everywhere — these columns make the reality explicit.
   const tableHeader = [
-    '| Harness | Status | Command syntax | Skill discovery | Frontmatter fields | MCP | Placeholders | Install path |',
-    '|---------|--------|---------------|-----------------|-------------------|-----|-------------|-------------|',
+    '| Harness | Status | Command syntax | Skill discovery | Frontmatter fields | MCP | Placeholders | Agents | Hooks | Install path |',
+    '|---------|--------|---------------|-----------------|-------------------|-----|-------------|--------|-------|-------------|',
   ];
 
   const tableRows = harnesses.map((h) => {
@@ -131,6 +138,8 @@ function render() {
       fmtFields(cm.frontmatter_fields_supported),
       fmtBool(cm.mcp_support),
       fmtBool(cm.placeholder_substitution),
+      fmtBool(cm.agents_support),
+      fmtBool(cm.hooks_support),
       cm.install_path || '-',
       '',
     ].join(' | ').trim();
@@ -144,6 +153,9 @@ function render() {
     lines.push('');
     lines.push(`- **Status:** ${cm.status || '-'}`);
     lines.push(`- **Install path:** \`${cm.install_path || '-'}\``);
+    // AR5/AR8 (Phase 59.8): surface agents + hooks reality per harness.
+    lines.push(`- **Agents:** ${fmtBool(cm.agents_support)}`);
+    lines.push(`- **Hooks:** ${fmtBool(cm.hooks_support)}`);
     if (h.capability_notes && h.capability_notes.trim()) {
       lines.push(`- **Notes:** ${h.capability_notes.trim()}`);
     }
@@ -170,6 +182,14 @@ function render() {
 
 ${tableHeader.join('\n')}
 ${tableRows.join('\n')}
+
+> **Agents / Hooks columns:** the GDD sub-agents and the hook layer are
+> **Claude-specific**. Only Claude Code receives the 64 sub-agents (via
+> \`--claude --local\`, which installs \`agents/\`) and the hooks
+> (SessionStart / PostToolUse / statusLine). Every other runtime receives the
+> compiled **skills only** — its source agents and hooks do not travel. The
+> shared skill sources are what get compiled to each runtime; agents and hooks
+> are not.
 
 ## Status legend
 

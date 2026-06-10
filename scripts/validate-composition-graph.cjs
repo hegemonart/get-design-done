@@ -18,8 +18,12 @@
  * `extra_frontmatter` array (passthrough authoring — generate-skill-frontmatter.cjs routes any
  * non-managed key there). Both forms are collected and merged.
  *
- * The live corpus has zero composition edges today, so the graph is empty and this passes; it is a
- * forward guard that arms the moment authors start wiring composes_with edges.
+ * The live corpus now carries composition edges (~24 directed edges across the 96-skill SoT — a
+ * partial ~20% backfill of composes_with / next_skills hints), and the graph validates clean (DAG,
+ * no dangling refs). The FULL backfill of composition edges and any runtime consumption of the graph
+ * (pipeline-hint surfacing, sub-orchestration dispatch) are owned by a later phase (Phase 58/60).
+ * This validator remains a structural guard: it arms on every edge authors wire and fails the build
+ * the moment a cycle or dangling reference is introduced.
  *
  * Exit codes:
  *   0  graph is a valid DAG with no dangling references (clean).

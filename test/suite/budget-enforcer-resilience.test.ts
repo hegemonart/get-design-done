@@ -65,7 +65,10 @@ function runHook(hookPath: string, stdin: string, cwd: string): HookResult {
       cwd,
       input: stdin,
       encoding: 'utf8',
-      env: { ...process.env, GDD_TEST_MODE: '1' },
+      // GDD_NO_AGGREGATOR: don't launch the detached aggregator child; it
+      // inherits cwd=<temp dir> and on Windows holds it open, making the
+      // teardown rmSync throw EPERM. Production-only background rollup.
+      env: { ...process.env, GDD_TEST_MODE: '1', GDD_NO_AGGREGATOR: '1' },
     },
   );
   return {
@@ -251,8 +254,17 @@ test('budget-enforcer: cache-hit short-circuit triggers iteration-budget refund 
     });
     const r = runHook(BUDGET_HOOK, stdin, dir);
     assert.equal(r.status, 0, `nonzero exit: stderr=${r.stderr}`);
-    const parsed = JSON.parse(r.stdout) as { continue: boolean; cached_result?: unknown; message?: string };
-    assert.equal(parsed.continue, false, 'cache-hit must short-circuit');
+    const parsed = JSON.parse(r.stdout) as {
+      continue: boolean;
+      cached_result?: unknown;
+      message?: string;
+      hookSpecificOutput?: { permissionDecision?: string };
+    };
+    assert.equal(
+      parsed.hookSpecificOutput?.permissionDecision,
+      'deny',
+      'cache-hit must block the re-spawn via the supported permissionDecision=deny mechanism',
+    );
     assert.ok(
       typeof parsed.message === 'string' && parsed.message.includes('SkippedCached'),
       `expected SkippedCached message, got: ${parsed.message}`,

@@ -37,7 +37,7 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
    See @skills/reflect/procedures/capability-gap-scan.md for the full procedure.
    The `design-reflector` agent runs the scan automatically as part of its reflection pass; this step lets users dry-run it independently with:
    ```
-   node scripts/lib/reflector/capability-gap-scan.cjs --dry-run
+   node "${CLAUDE_PLUGIN_ROOT}/scripts/lib/reflector/capability-gap-scan.cjs" --dry-run
    ```
    The scan emits `capability_gap` events (`source: "reflector_pattern"`) for recurring patterns lacking a dedicated executable owner; Plan 29-03 aggregates these for `/gdd:apply-reflections`.
 

@@ -4,6 +4,39 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.59.8] - 2026-06-10
+
+Production-wiring repair and security hardening from a 4-agent self-audit (`.planning/audits/SELF-AUDIT-v1.59.7.md`). The theme: real, well-tested library code whose production call-sites silently neutered it. This release makes the wiring either true or honest.
+
+### Fixed
+
+- **The enforcement hook now actually fires and its decisions actually apply.** The PreToolUse/PostToolUse matchers were `Agent`-only; they are now `Task|Agent`, so the budget enforcer and trajectory capture fire regardless of how the harness names the subagent-spawn tool. The hook emitted `modified_tool_input` (a field Claude Code silently ignores), so the haiku auto-downgrade, tier override, and bandit decision never took effect - it now emits the documented `hookSpecificOutput.updatedInput`. The cache path used `continue:false` (which halts the whole turn) plus an ignored `cached_result`; it now blocks the redundant spawn via the supported `permissionDecision:"deny"` without halting.
+- **Dashboard and the metrics aggregator resolve the user's project, not the plugin directory.** Both previously resolved the installed package root first (always succeeds), so an installed `gdd-dashboard` showed the plugin's own empty data and the per-phase cost aggregator never ran for real users (re-parsing the whole ledger on every spawn). They now walk up from the working directory to the project marker first.
+- **Bandit posterior no longer corrupts under parallel agent waves** (per-pid temp files + atomic rename), and `decayArm` preserves an arm's `prior_class` so promoted-incubator arms keep their fairness suppression instead of drifting back to the informed prior.
+- **Hook telemetry actually emits on supported Node** (the plain-`.js` hooks required a `.ts` ESM module that throws under `node`; they now have a loadable path), the MCP circuit breaker counts a bounded per-session window instead of every call ever (it previously locked out Figma writes permanently after 30 lifetime calls), the SessionStart bootstrap clone has a timeout and only records success when it succeeds, and the recap parses CRLF state files.
+- **Installer installs the real agents.** Claude-local agent staging iterated skill names against role-named agent files and matched none - it wrote ~96 empty files and zero of the 64 agents; it now enumerates the agents directory. Skill sibling-procedure files are now carried to every skills-kind runtime (not just Cursor), so delegated procedures no longer ship as dead links. Plugin-file ownership uses an exact-line match instead of a loose substring.
+- **SQLite state backend is reachable from source mode** (`createRequire` instead of a bare `require` that is undefined in the ESM strip-types context), lockfiles check PID liveness before declaring a lock stale (no more stealing a live holder's lock after 60s), and the stage-transition gate is re-checked inside the lock.
+- Minor: `gdd-graph` builds its dynamic-import URL with `pathToFileURL`; `engines.node` floored at `>=22.6.0` (the first release with `--experimental-strip-types`); the `gdd-detect` CLI no longer labels runs `dom-aware` for a DOM path it does not implement.
+
+### Security
+
+- **The design-authority watcher can no longer run a shell on fetched web content.** It fetches ~26 external feeds (including community-postable sources); `Bash` was removed from its tool grant, fetched content is wrapped in explicit untrusted-data delimiters, and the feed allowlist is restated as a hard rule (URLs found inside fetched content are never fetched).
+- **Event-stream redaction fails closed.** If the redactor cannot load, events are now written envelope-only with a visible one-time warning, instead of silently persisting unscrubbed payloads.
+- **Gitleaks no longer blanket-allowlists** `.planning/`, `.claude/`, and `.design/` - the directories that have leaked secrets into commits before; only specific test-fixture files remain allowlisted.
+- The MCP project-root walk stops at the first `.git` boundary (no cross-project bleed into a parent repo's `.design/`); SECURITY.md documents the `GDD_PROJECT_ROOT`/`GDD_STATE_PATH` env overrides.
+
+### Changed
+
+- **Honest capability docs.** HARNESSES.md gains **Agents** and **Hooks** columns reflecting reality (sub-agents install for Claude only; the hook layer is Claude-specific); the README no longer claims agents travel to every runtime. The adaptive-routing docs state plainly that the bandit learns only on the SDK/headless path and that `adaptive_mode` defaults to static. The `quick` and `router` skill descriptions drop claims of mechanisms (a `quick_mode` flag the stages never read; a universal router step) that did not exist.
+
+### Breaking changes
+
+None.
+
+5,079/5,079 tests pass.
+
+---
+
 ## [1.59.7] - 2026-06-05
 
 Docs polish following the v1.59 milestone: confident multi-runtime framing, named runtimes, and a full i18n refresh.

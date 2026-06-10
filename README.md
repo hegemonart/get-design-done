@@ -313,9 +313,9 @@ For the full connection list with probe patterns, see [connections/connections.m
 
 ## Multi-Runtime Support
 
-GDD installs across 14 AI coding runtimes: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline. The same source skills and agents are compiled to each runtime's native layout (`skills/`, `command/`, `agents/`, or `.clinerules`) by per-runtime converters, so the pipeline travels with you across editors.
+GDD installs across 14 AI coding runtimes: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, and Cline. The same source **skills** are compiled to each runtime's native layout (`skills/`, `command/`, or `.clinerules`) by per-runtime converters, so the skill pipeline travels with you across editors. The sub-agents and the hook layer are **Claude-specific** - they do not travel to the other runtimes (see the Agents/Hooks columns in [HARNESSES.md](HARNESSES.md)).
 
-Claude Code is the flagship. The full experience runs there end to end: every agent, the defense-in-depth hooks, and the MCP-backed connections. On the other runtimes you get the same skills and agents in their native shape, MCP-backed connections light up on the MCP-capable hosts, and the hook layer is specific to Claude Code.
+Claude Code is the flagship. The full experience runs there end to end: every sub-agent (installed via `--claude --local` into `agents/`), the defense-in-depth hooks, and the MCP-backed connections. On the other runtimes you get the same **skills** in their native shape, and MCP-backed connections light up on the MCP-capable hosts - but the sub-agents and the hook layer are Claude Code-only.
 
 ## Safety And Privacy
 

@@ -27,9 +27,13 @@ test('phase-22 baseline: trajectory module is shipped', () => {
 test('phase-22 baseline: PostToolUse:Agent trajectory hook is registered', () => {
   const hooksJson = JSON.parse(readFileSync(join(REPO_ROOT, 'hooks/hooks.json'), 'utf8'));
   const post = hooksJson?.hooks?.PostToolUse || [];
+  // 59.8 (A1): matcher broadened to `Task|Agent` so the hook fires whether the
+  // harness names the subagent-spawn tool `Agent` or `Task`. Assert the matcher
+  // still covers `Agent` (alternation-aware) rather than an exact-string match.
   const agentTrajectory = post.find(
     (g) =>
-      g.matcher === 'Agent' &&
+      typeof g.matcher === 'string' &&
+      g.matcher.split('|').includes('Agent') &&
       g.hooks?.some((h) => h.command?.includes('gdd-trajectory-capture.js')),
   );
   assert.ok(agentTrajectory, 'PostToolUse:Agent trajectory hook missing from hooks.json');

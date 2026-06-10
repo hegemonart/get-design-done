@@ -57,6 +57,31 @@ Out of scope: vulnerabilities in *user code that GDD audits* (that is the audite
 project's responsibility), and issues in third-party dependencies that should be
 reported upstream.
 
+## Trusted local configuration — environment overrides
+
+The MCP servers honor a small set of environment variables **verbatim**, as part
+of the **local trust model**: GDD assumes the environment in which its servers run
+is controlled by the same user who controls the project. These overrides are
+deliberate operator escape hatches, not attack surface — they are read at face
+value with no sandboxing or boundary enforcement beyond what is noted below:
+
+| Variable           | Honored by                              | Effect |
+| ------------------ | --------------------------------------- | ------ |
+| `GDD_PROJECT_ROOT` | `gdd-mcp` (`tools/shared.ts`)           | Short-circuits project-root discovery; the path is resolved and returned as-is, bypassing the upward marker walk (and its `.git` repo-boundary guard). |
+| `GDD_STATE_PATH`   | `gdd-mcp` and `gdd-state` (`tools/shared.ts`) | Pins the `STATE.md` location directly. An **absolute** value is accepted as-is; a **relative** value is rejected by `gdd-state` if it uses `..` to escape the project root (`VALIDATION_STATE_PATH_ESCAPE`). |
+
+**Operational guidance:** set these only from trusted local configuration (your shell
+profile, a project-local `.env` you control, or your MCP client config). Do **not** let
+untrusted input (a fetched repo's scripts, a remote agent, CI artifacts from an
+unaudited source) set them — a hostile `GDD_PROJECT_ROOT` / `GDD_STATE_PATH` can
+redirect GDD's reads and writes to an arbitrary location on the local machine. This is
+acceptable within the local trust model and is documented here so the behavior is
+explicit rather than surprising.
+
+Note: independent of these overrides, the `gdd-mcp` project-root walk now stops at the
+first `.git` repository boundary, so a server launched in a nested unrelated checkout no
+longer silently resolves to a *parent* repository's `.design/`/`.planning/`.
+
 ## Maintainer note — enable private vulnerability reporting
 
 GitHub's **"Report a vulnerability"** button only appears once **private vulnerability

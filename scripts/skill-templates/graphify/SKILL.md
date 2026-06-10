@@ -5,7 +5,7 @@ description: "Manage the Graphify knowledge graph for the current project. Build
 
 # gdd-graphify
 
-Thin command wrapper around the GSD graphify tools integration.
+Thin command wrapper around the get-design-done (GDD) graphify tools integration.
 
 ## Usage
 
@@ -30,10 +30,10 @@ Thin command wrapper around the GSD graphify tools integration.
    ```
    STOP.
 4. Execute the requested subcommand via the native CLI:
-   - build:  `node bin/gdd-graph build`
-   - query:  `node bin/gdd-graph query "<term>" --budget 2000`
-   - status: `node bin/gdd-graph status`
-   - diff:   `node bin/gdd-graph diff`
+   - build:  `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" build`
+   - query:  `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" query "<term>" --budget 2000`
+   - status: `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" status`
+   - diff:   `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" diff`
 5. After `build` completes, update `.design/STATE.md` `<connections>`: `graphify: available`
 
 ## Required Reading
@@ -43,7 +43,7 @@ Thin command wrapper around the GSD graphify tools integration.
 
 ## Notes
 
-- Graphify is optional. The native CLI ships in this repo at `bin/gdd-graph` (no external install - Node only).
+- Graphify is optional. The native CLI ships with the plugin at `${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph` (no external install - Node only).
 - Graph is stored at `.design/graph/graph.json` (Ajv-validated against `scripts/lib/graph/schema.json`).
 - Graph covers source code (`src/`, `components/`). It does NOT index `.design/` artifacts by default.
 - Use `query` with node IDs from the graph schema: `component:<name>`, `token:color/<name>`, `decision:D-<nn>`, etc.

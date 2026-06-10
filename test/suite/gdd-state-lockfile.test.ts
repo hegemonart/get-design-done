@@ -121,12 +121,16 @@ test('lockfile: dead-PID lockfile is cleared within pollMs + staleness window', 
   }
 });
 
-test('lockfile: age-older-than-staleMs is cleared (even if PID is alive)', async () => {
+test('lockfile (D3): an ALIVE-PID lock is NOT stale regardless of age', async () => {
+  // Audit D3 contract change: PID-liveness is authoritative. A lock held by a
+  // process that is still alive on this host must NEVER be reclaimed on age
+  // grounds — a legitimate >staleMs mutation (e.g. a long transaction) must
+  // keep its lock. (Previously this scenario stole the lock; that was the bug.)
   const { path, cleanup } = tmpPath();
   try {
     const lockPath = `${path}.lock`;
     // Plant a lock with THIS process's pid (definitely alive) but an
-    // acquired_at timestamp older than staleMs.
+    // acquired_at timestamp far older than staleMs.
     writeFileSync(
       lockPath,
       JSON.stringify({
@@ -137,11 +141,47 @@ test('lockfile: age-older-than-staleMs is cleared (even if PID is alive)', async
       { encoding: 'utf8' },
     );
 
-    // staleMs = 100ms; the planted lock is 60s old → stale on first check.
+    // staleMs = 100ms and the planted lock is 60s old, yet because its PID is
+    // alive the lock is held: acquire() must NOT steal it and must time out.
+    let caught: unknown = null;
+    try {
+      await acquire(path, { maxWaitMs: 300, pollMs: 20, staleMs: 100 });
+    } catch (err) {
+      caught = err;
+    }
+    assert.ok(
+      caught instanceof LockAcquisitionError,
+      'expected LockAcquisitionError — an alive-PID lock must not be aged out',
+    );
+    // The planted lock must still be on disk (not stolen).
+    assert.equal(existsSync(lockPath), true, 'alive-PID lock must survive');
+  } finally {
+    cleanup();
+  }
+});
+
+test('lockfile (D3): a DEAD-PID lock IS reclaimed regardless of age', async () => {
+  // Complement to the above: a dead holder PID is decisive the other way —
+  // the lock is reclaimable even when its timestamp is FRESH (age does not
+  // matter once liveness is disproven).
+  const { path, cleanup } = tmpPath();
+  try {
+    const lockPath = `${path}.lock`;
+    writeFileSync(
+      lockPath,
+      JSON.stringify({
+        pid: LIKELY_DEAD_PID,
+        host: hostname(),
+        acquired_at: new Date().toISOString(), // fresh timestamp
+      }),
+      { encoding: 'utf8' },
+    );
+
+    // Dead PID → reclaimed on the first retry despite a large staleMs.
     const release = await acquire(path, {
       maxWaitMs: 500,
       pollMs: 20,
-      staleMs: 100,
+      staleMs: 60_000,
     });
     await release();
   } finally {

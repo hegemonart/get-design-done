@@ -226,8 +226,20 @@ function commandsKind(destSubpath, prefix, converterPath, runtime) {
 /**
  * Build an `agents` artifact-kind descriptor.
  *
- * claude local only — passthrough copy from `<repo>/agents/*` into
+ * claude local only — passthrough copy from `<repo>/agents/*.md` into
  * `<configDir>/agents/`. No converter.
+ *
+ * AR7 fix (Phase 59.8): the agent set is ENUMERATED from the `agents/`
+ * directory on disk — NOT derived from `ctx.skillNames`. Real agent files
+ * are named after agent roles (`design-planner.md`, `a11y-mapper.md`, …),
+ * which never coincide with skill directory names. The old skill-name-derived
+ * path read `agents/<skillName>.md`, found nothing for any skill, and staged
+ * ~96 empty `gdd-<skillName>.md` artifacts while installing ZERO real agents.
+ *
+ * Enumeration rules:
+ *   - top-level `*.md` files in `agents/` only (no nested dirs),
+ *   - `README.md` is excluded (it is documentation, not an agent),
+ *   - empty / unreadable files are skipped (best-effort; never throws).
  *
  * @param {string} destSubpath
  * @param {string} prefix
@@ -243,13 +255,35 @@ function agentsKind(destSubpath, prefix) {
         path.dirname(ctx.skillsRoot),
         'agents'
       );
-      return ctx.skillNames.map((name) => {
-        const srcPath = path.join(agentsRoot, name + '.md');
-        const raw = fs.existsSync(srcPath)
-          ? fs.readFileSync(srcPath, 'utf8')
-          : '';
-        return { srcPath, content: raw, name: prefix + name };
-      });
+      let entries;
+      try {
+        entries = fs.readdirSync(agentsRoot, { withFileTypes: true });
+      } catch {
+        // No agents/ dir on disk — stage nothing (never throw).
+        return [];
+      }
+      const staged = [];
+      for (const ent of entries) {
+        if (!ent.isFile()) continue;
+        if (!ent.name.toLowerCase().endsWith('.md')) continue;
+        if (ent.name.toLowerCase() === 'readme.md') continue;
+        // Strip any pre-existing gdd-/gsd- prefix on the agent filename before
+        // re-applying `prefix`, so an agent already named `gdd-foo.md` does not
+        // become `gdd-gdd-foo.md`. Real agents ship un-prefixed
+        // (`a11y-mapper.md`); this guard keeps both shapes correct.
+        const fileBase = ent.name.slice(0, -'.md'.length);
+        const bareName = fileBase.replace(/^(gdd-|gsd-)/i, '');
+        const srcPath = path.join(agentsRoot, ent.name);
+        let raw = '';
+        try {
+          raw = fs.readFileSync(srcPath, 'utf8');
+        } catch {
+          continue;
+        }
+        if (!raw.trim()) continue; // skip empty agent files
+        staged.push({ srcPath, content: raw, name: prefix + bareName });
+      }
+      return staged;
     },
   };
 }

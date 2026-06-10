@@ -1,6 +1,6 @@
 {
   "name": "@hegemonart/get-design-done",
-  "version": "1.59.7",
+  "version": "1.59.8",
   "description": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design system.",
   "author": "Hegemon",
   "homepage": "https://github.com/hegemonart/get-design-done",
@@ -10,7 +10,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.6.0"
   },
   "files": [
     ".claude-plugin/",

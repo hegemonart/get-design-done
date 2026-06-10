@@ -25,25 +25,17 @@
  * Pure / side-effect-free: no fs, no env, no path. `convert` is a
  * deterministic string → string transform.
  *
- * KNOWN LIMITATION — sibling .md files (audit batch H6, 2026-06-04):
- *   The Cursor install drops ONLY `skills/<name>/SKILL.md`. Sibling
- *   `.md` files living next to SKILL.md (e.g. `discover-procedure.md`,
- *   `explore-procedure.md`, `cache-policy.md`) are NOT enumerated by
- *   `runtime-artifact-layout.cjs#skillsKind` and therefore NOT installed.
- *   Source SKILL.md files reference siblings via relative paths
- *   (e.g. `./discover-procedure.md`); on Cursor those links resolve to
- *   nothing.
- *
- *   This is a systemic limitation of the current `multi-artifact`
- *   pipeline, not a Cursor-specific bug — it affects every runtime that
- *   uses `skillsKind` (claude global, cursor, codex, copilot, antigravity,
- *   windsurf, augment, trae, qwen, codebuddy). Fix requires extending the
- *   StagedArtifact contract to emit multiple files per skill (one
- *   SKILL.md + N siblings), updating `computeDestPath`, the foreign-file
- *   detection in `detectMultiArtifactInstalled`, and the uninstall
- *   enumeration in `uninstallMultiArtifact`. Tracked as a follow-up
- *   beyond batch H6 scope. See `connections/cursor.md` for user-facing
- *   guidance.
+ * SIBLING .md FILES — RESOLVED (audit AR6, Phase 59.8):
+ *   The install now carries co-located sibling `*.md` reference files
+ *   (e.g. `discover-procedure.md`, `cache-policy.md`) alongside SKILL.md
+ *   for EVERY skillsKind runtime, not just Cursor. The carry happens in
+ *   `installer.cjs#installMultiArtifact` (gated on `kind.kind === 'skills'`
+ *   plus `item.srcPath`), with symmetric removal in `uninstallMultiArtifact`.
+ *   Siblings are passthrough copies fingerprinted via `fingerprintSiblingRef`
+ *   so foreign-file protection + uninstall treat them as plugin-owned. Only
+ *   top-level `*.md` siblings are carried; nested subdirectories are out of
+ *   scope. Previously this was a Batch-H6 cursor-only patch (the audit AR6
+ *   finding); it is now generalized across all skillsKind runtimes.
  */
 
 const shared = require('./shared.cjs');

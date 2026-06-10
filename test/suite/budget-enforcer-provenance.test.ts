@@ -61,7 +61,9 @@ function runHook(stdin: string, cwd: string): HookResult {
       cwd,
       input: stdin,
       encoding: 'utf8',
-      env: { ...process.env, GDD_TEST_MODE: '1' },
+      // GDD_NO_AGGREGATOR: suppress the detached aggregator child so it
+      // doesn't hold the temp cwd open and trip a Windows EPERM on teardown.
+      env: { ...process.env, GDD_TEST_MODE: '1', GDD_NO_AGGREGATOR: '1' },
     },
   );
   return {

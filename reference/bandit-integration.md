@@ -10,7 +10,7 @@ description: Bandit posterior + production-integration shim cheat sheet - signat
 
 **Phase 27.5 (v1.27.5).** Reference for the bandit production-integration surface. Authoring or modifying a caller of the bandit posterior? Debugging a routing decision at the code level? Start here.
 
-For ops-level guidance (when bandit fires, how to disable, posterior inspection), see `docs/BANDIT-INTEGRATION.md`.
+For ops-level guidance (when bandit fires, how to disable, posterior inspection), use the read-only diagnostic surfaces: `/gdd:bandit-status` (per-arm posterior snapshots) and `/gdd:bandit-reset` (confirm-then-reset). The `adaptive_mode` gate below covers enable/disable.
 
 In-scope modules:
 
@@ -104,6 +104,17 @@ Phase 27.5 passes `wallTimeMs: 0` always (D-08 unchanged from Phase 23.5).
 
 ---
 
+## Where adaptive routing actually learns
+
+This is a deliberate design boundary, not a bug - read it before assuming the bandit "learns" in every runtime.
+
+- **The posterior is updated only on the SDK / headless path.** `recordOutcome` (the learning update that moves `alpha`/`beta`) is called from `scripts/lib/session-runner/index.ts` after a session terminates. That path runs in the SDK / headless `session-runner` execution model. It is the only place a reward is folded back into the posterior.
+- **In interactive Claude Code with `adaptive_mode: full`, the bandit samples but does not currently learn from in-session outcomes.** When a plugin/interactive run consults the bandit, `consultBandit` performs a Thompson sample from the *configured priors* (and whatever the SDK path has already written), and `pull()` bumps `last_used` + `count` - but no `recordOutcome` fires from an interactive Claude Code hook, so the success/fail posterior does not move within the interactive session. With an un-seeded posterior, sampling therefore reflects the informed `TIER_PRIOR` (which leans toward the higher tiers, e.g. opus). Wiring `recordOutcome` into an interactive hook is intentionally out of scope for this phase.
+- **`adaptive_mode` defaults to `static` - the feature is opt-in.** Per `scripts/lib/adaptive-mode.cjs`, the default mode is `static`, in which the bandit is fully silent (no reads, no writes) and `default-tier:` is authoritative. Adaptive routing only engages when an operator explicitly sets `adaptive_mode: full` in `.design/budget.json`.
+- **Contextual dimensions are supplied by the caller, not inferred here.** The `bin` (glob-count bucket via `binForGlobCount`) and `delegate` dimensions are passed in at the call site; the router does not derive them from ambient session state.
+
+Net: enable `adaptive_mode: full` and run the SDK/headless `session-runner` path to accumulate a posterior that genuinely reflects observed outcomes. In interactive Claude Code, `full` mode gives you prior-driven Thompson sampling, not in-session reinforcement.
+
 ## `adaptive_mode` gate semantics
 
 Phase 23.5 ladder (D-07):
@@ -154,7 +165,7 @@ Phase 27.5 wires these consumers:
 
 ## Cross-references
 
-- `docs/BANDIT-INTEGRATION.md` - operator guide (when bandit fires, how to disable, troubleshooting).
+- `/gdd:bandit-status` + `/gdd:bandit-reset` - read-only operator surfaces (when bandit fires, posterior inspection, reset). Disable/enable is the `adaptive_mode` gate in `.design/budget.json` (see above).
 - `reference/peer-protocols.md` - Phase 27 ACP/ASP cheat sheet (peer-CLI delegation transport).
 - `scripts/lib/bandit-router.cjs` - Phase 23.5 primitives surface.
 - `scripts/lib/bandit-router/integration.cjs` - Phase 27.5 production shim.

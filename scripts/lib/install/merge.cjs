@@ -111,11 +111,39 @@ function buildAgentsFileContent(runtime, payloadHeader) {
 const GDD_ADAPTER_FINGERPRINT = 'gdd: auto-generated from Claude SKILL.md';
 const CLINERULES_HEADER_FINGERPRINT = '# get-design-done rules';
 
+// B5/S4 fix (Phase 59.8): ownership detection is WHOLE-LINE anchored, not a
+// loose `String.includes` substring scan. The old substring match treated any
+// user-authored file that merely *mentioned* a marker string (e.g. a doc that
+// quotes "get-design-done plugin instructions", or a code fence containing
+// "gdd: auto-generated from Claude SKILL.md") as plugin-owned — so install
+// would overwrite it and uninstall would delete it. We now require the marker
+// to appear on a recognized GENERATED line:
+//
+//   - `<!-- ... <fingerprint> ... -->`  HTML-comment marker line. Both the
+//     Phase-24 plugin fingerprint and the per-runtime/sibling adapter header
+//     are emitted as a standalone HTML comment line; we accept the marker only
+//     when it sits inside an HTML comment that occupies the whole (trimmed)
+//     line. A bare prose mention of the same words no longer qualifies.
+//   - `# get-design-done rules`  cline rules header — must be the exact, whole
+//     trimmed line (a Markdown H1), matching converters/cline.cjs.
+//
+// Scanning line-by-line keeps detection of genuinely plugin-owned files intact
+// (the generated marker line is always present near the top) while refusing to
+// claim ownership of user files that merely contain the words somewhere.
+function isHtmlCommentMarkerLine(line, fingerprint) {
+  const t = line.trim();
+  if (!t.startsWith('<!--') || !t.endsWith('-->')) return false;
+  return t.includes(fingerprint);
+}
+
 function isPluginOwned(content) {
   if (!content || typeof content !== 'string') return false;
-  if (content.includes(PLUGIN_FINGERPRINT)) return true;
-  if (content.includes(GDD_ADAPTER_FINGERPRINT)) return true;
-  if (content.includes(CLINERULES_HEADER_FINGERPRINT)) return true;
+  const lines = content.split(/\r?\n/);
+  for (const line of lines) {
+    if (isHtmlCommentMarkerLine(line, PLUGIN_FINGERPRINT)) return true;
+    if (isHtmlCommentMarkerLine(line, GDD_ADAPTER_FINGERPRINT)) return true;
+    if (line.trim() === CLINERULES_HEADER_FINGERPRINT) return true;
+  }
   return false;
 }
 

@@ -6,22 +6,30 @@
 
 ## Capability matrix
 
-| Harness | Status | Command syntax | Skill discovery | Frontmatter fields | MCP | Placeholders | Install path |
-|---------|--------|---------------|-----------------|-------------------|-----|-------------|-------------|
-| Claude Code (`claude`) | tested | /gdd:<skill> | yes | name, description, argument-hint, tools, disable-model-invocation | yes | yes | dist/claude-code/.claude/skills/ |
-| OpenAI Codex CLI (`codex`) | experimental | /gdd-<skill> | yes | name, description, tools | yes | yes | dist/codex/.codex/skills/ |
-| Gemini CLI (`gemini`) | experimental | /gdd:<skill> | yes | name, description, tools | yes | yes | dist/gemini/.gemini/skills/ |
-| Qwen Code (`qwen`) | experimental | /gdd:<skill> | yes | name, description, tools | no | yes | dist/qwen/.qwen/skills/ |
-| Kilo Code (`kilo`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/kilo/.kilo/skills/ |
-| GitHub Copilot CLI (`copilot`) | experimental | /gdd:<skill> | yes | name, description, tools | no | yes | dist/copilot/.copilot/skills/ |
-| Cursor (`cursor`) | experimental | /gdd:<skill> | yes | name, description, tools | no | yes | dist/cursor/.cursor/skills/ |
-| Windsurf (Cascade) (`windsurf`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/windsurf/.windsurf/skills/ |
-| Antigravity (`antigravity`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/antigravity/.antigravity/skills/ |
-| Augment (`augment`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/augment/.augment/skills/ |
-| Trae (`trae`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/trae/.trae/skills/ |
-| CodeBuddy (`codebuddy`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/codebuddy/.codebuddy/skills/ |
-| Cline (`cline`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/cline/.cline/skills/ |
-| OpenCode (`opencode`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | dist/opencode/.opencode/skills/ |
+| Harness | Status | Command syntax | Skill discovery | Frontmatter fields | MCP | Placeholders | Agents | Hooks | Install path |
+|---------|--------|---------------|-----------------|-------------------|-----|-------------|--------|-------|-------------|
+| Claude Code (`claude`) | tested | /gdd:<skill> | yes | name, description, argument-hint, tools, disable-model-invocation | yes | yes | yes | yes | dist/claude-code/.claude/skills/ |
+| OpenAI Codex CLI (`codex`) | experimental | /gdd-<skill> | yes | name, description, tools | yes | yes | no | no | dist/codex/.codex/skills/ |
+| Gemini CLI (`gemini`) | experimental | /gdd:<skill> | yes | name, description, tools | yes | yes | no | no | dist/gemini/.gemini/skills/ |
+| Qwen Code (`qwen`) | experimental | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/qwen/.qwen/skills/ |
+| Kilo Code (`kilo`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/kilo/.kilo/skills/ |
+| GitHub Copilot CLI (`copilot`) | experimental | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/copilot/.copilot/skills/ |
+| Cursor (`cursor`) | experimental | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/cursor/.cursor/skills/ |
+| Windsurf (Cascade) (`windsurf`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/windsurf/.windsurf/skills/ |
+| Antigravity (`antigravity`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/antigravity/.antigravity/skills/ |
+| Augment (`augment`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/augment/.augment/skills/ |
+| Trae (`trae`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/trae/.trae/skills/ |
+| CodeBuddy (`codebuddy`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/codebuddy/.codebuddy/skills/ |
+| Cline (`cline`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/cline/.cline/skills/ |
+| OpenCode (`opencode`) | untested | /gdd:<skill> | yes | name, description, tools | no | yes | no | no | dist/opencode/.opencode/skills/ |
+
+> **Agents / Hooks columns:** the GDD sub-agents and the hook layer are
+> **Claude-specific**. Only Claude Code receives the 64 sub-agents (via
+> `--claude --local`, which installs `agents/`) and the hooks
+> (SessionStart / PostToolUse / statusLine). Every other runtime receives the
+> compiled **skills only** — its source agents and hooks do not travel. The
+> shared skill sources are what get compiled to each runtime; agents and hooks
+> are not.
 
 ## Status legend
 
@@ -40,13 +48,17 @@ Note: only `tested` harnesses carry a freshness guarantee. All other statuses in
 
 - **Status:** tested
 - **Install path:** `dist/claude-code/.claude/skills/`
-- **Notes:** Host runtime. Marketplace-registered, end-to-end documented, Phase 42 golden baseline.
+- **Agents:** yes
+- **Hooks:** yes
+- **Notes:** Host runtime. Marketplace-registered, end-to-end documented, Phase 42 golden baseline. Sole runtime that receives the 64 sub-agents (claude --local installs agents/) and the hook layer (SessionStart / PostToolUse / statusLine).
 - **Deep dives:** [claude---claude-code](reference/runtime-models.md#claude---claude-code)
 
 ### OpenAI Codex CLI (`codex`)
 
 - **Status:** experimental
 - **Install path:** `dist/codex/.codex/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Notes:** Peer-CLI delegation target (ASP). Flat /gdd- command namespace. MCP auto-registered.
 - **Deep dives:** [codex---openai-codex-cli](reference/runtime-models.md#codex---openai-codex-cli), [tool-name-mapping](reference/codex-tools.md#tool-name-mapping), [codex-asp](reference/peer-cli-capabilities.md#codex-asp), [asp---app-server-protocol-codex](reference/peer-protocols.md#asp---app-server-protocol-codex)
 
@@ -54,66 +66,88 @@ Note: only `tested` harnesses carry a freshness guarantee. All other statuses in
 
 - **Status:** experimental
 - **Install path:** `dist/gemini/.gemini/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [gemini---gemini-cli](reference/runtime-models.md#gemini---gemini-cli), [tool-name-mapping](reference/gemini-tools.md#tool-name-mapping), [gemini-acp](reference/peer-cli-capabilities.md#gemini-acp), [acp---agent-client-protocol](reference/peer-protocols.md#acp---agent-client-protocol)
 
 ### Qwen Code (`qwen`)
 
 - **Status:** experimental
 - **Install path:** `dist/qwen/.qwen/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [qwen---qwen-code](reference/runtime-models.md#qwen---qwen-code), [qwen-acp](reference/peer-cli-capabilities.md#qwen-acp), [acp---agent-client-protocol](reference/peer-protocols.md#acp---agent-client-protocol)
 
 ### Kilo Code (`kilo`)
 
 - **Status:** untested
 - **Install path:** `dist/kilo/.kilo/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [kilo---kilo-code](reference/runtime-models.md#kilo---kilo-code)
 
 ### GitHub Copilot CLI (`copilot`)
 
 - **Status:** experimental
 - **Install path:** `dist/copilot/.copilot/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [copilot---github-copilot-cli](reference/runtime-models.md#copilot---github-copilot-cli), [copilot-acp](reference/peer-cli-capabilities.md#copilot-acp), [acp---agent-client-protocol](reference/peer-protocols.md#acp---agent-client-protocol)
 
 ### Cursor (`cursor`)
 
 - **Status:** experimental
 - **Install path:** `dist/cursor/.cursor/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [cursor---cursor](reference/runtime-models.md#cursor---cursor), [cursor-acp](reference/peer-cli-capabilities.md#cursor-acp), [acp---agent-client-protocol](reference/peer-protocols.md#acp---agent-client-protocol)
 
 ### Windsurf (Cascade) (`windsurf`)
 
 - **Status:** untested
 - **Install path:** `dist/windsurf/.windsurf/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [windsurf---windsurf](reference/runtime-models.md#windsurf---windsurf)
 
 ### Antigravity (`antigravity`)
 
 - **Status:** untested
 - **Install path:** `dist/antigravity/.antigravity/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [antigravity---antigravity](reference/runtime-models.md#antigravity---antigravity)
 
 ### Augment (`augment`)
 
 - **Status:** untested
 - **Install path:** `dist/augment/.augment/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [augment---augment](reference/runtime-models.md#augment---augment)
 
 ### Trae (`trae`)
 
 - **Status:** untested
 - **Install path:** `dist/trae/.trae/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [trae---trae](reference/runtime-models.md#trae---trae)
 
 ### CodeBuddy (`codebuddy`)
 
 - **Status:** untested
 - **Install path:** `dist/codebuddy/.codebuddy/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [codebuddy---codebuddy](reference/runtime-models.md#codebuddy---codebuddy)
 
 ### Cline (`cline`)
 
 - **Status:** untested
 - **Install path:** `dist/cline/.cline/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Notes:** Installs into .clinerules at install time (clinerules-embed special case); dist/cline/ is the compile artifact only.
 - **Deep dives:** [cline---cline](reference/runtime-models.md#cline---cline)
 
@@ -121,4 +155,6 @@ Note: only `tested` harnesses carry a freshness guarantee. All other statuses in
 
 - **Status:** untested
 - **Install path:** `dist/opencode/.opencode/skills/`
+- **Agents:** no
+- **Hooks:** no
 - **Deep dives:** [opencode---opencode](reference/runtime-models.md#opencode---opencode)

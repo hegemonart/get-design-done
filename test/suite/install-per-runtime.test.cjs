@@ -82,12 +82,33 @@ function setupFixtureRepo() {
   );
   // For claude local: also stage an agents/ tree so the `agentsKind`
   // staging picks up at least one entry.
+  //
+  // AR7 regression (Phase 59.8): the agents kind now ENUMERATES agents/ rather
+  // than deriving names from skill names. We seed three shapes:
+  //   - `gdd-sample.md`   — already gdd-prefixed; must NOT become
+  //                         `gdd-gdd-sample.md` (prefix-strip guard).
+  //   - `a11y-mapper.md`  — a real-shaped agent name that does NOT match any
+  //                         skill name; the OLD skill-name-derived path would
+  //                         have missed it entirely.
+  //   - `README.md`       — documentation, must be EXCLUDED.
+  //   - `empty-agent.md`  — empty file, must be SKIPPED (no 0-byte write).
   fs.mkdirSync(path.join(repoRoot, 'agents'), { recursive: true });
   fs.writeFileSync(
     path.join(repoRoot, 'agents', 'gdd-sample.md'),
     '---\nname: gdd-sample\ndescription: Sample agent for tests.\n---\n\n<!-- gdd: auto-generated from Claude SKILL.md. Agent fixture -->\nExecutor agent body.\n',
     'utf8',
   );
+  fs.writeFileSync(
+    path.join(repoRoot, 'agents', 'a11y-mapper.md'),
+    '---\nname: a11y-mapper\ndescription: Real-shaped agent name (no skill match).\n---\n\n<!-- gdd: auto-generated from Claude SKILL.md. Agent fixture -->\nA11y mapper agent body.\n',
+    'utf8',
+  );
+  fs.writeFileSync(
+    path.join(repoRoot, 'agents', 'README.md'),
+    '# Agents\n\nThis README must NOT be installed as an agent.\n',
+    'utf8',
+  );
+  fs.writeFileSync(path.join(repoRoot, 'agents', 'empty-agent.md'), '   \n', 'utf8');
   return repoRoot;
 }
 
@@ -262,6 +283,42 @@ test('install-per-runtime: claude local writes commands/gdd + agents', () => {
   // (claude local commandsKind has no converter — direct copy).
   const cmd = fs.readFileSync(commandPath, 'utf8');
   assert.ok(cmd.includes('gdd-sample'), 'command file should retain skill name');
+
+  // AR7 regression (Phase 59.8): real-named agents are installed, README is
+  // excluded, empty agents are skipped, and no double-prefix occurs.
+  const realAgentPath = path.join(cfg, 'agents', 'gdd-a11y-mapper.md');
+  assert.ok(
+    fs.existsSync(realAgentPath),
+    `real-named agent must install (got missing ${realAgentPath})`,
+  );
+  const realAgent = fs.readFileSync(realAgentPath, 'utf8');
+  assert.ok(
+    realAgent.includes('A11y mapper agent body.'),
+    'real agent must carry its source content, not an empty placeholder',
+  );
+  // The pre-prefixed `gdd-sample.md` agent must NOT double-prefix.
+  assert.equal(
+    fs.existsSync(path.join(cfg, 'agents', 'gdd-gdd-sample.md')),
+    false,
+    'agent filename must not be double-prefixed',
+  );
+  // README.md must be excluded from the agents install.
+  assert.equal(
+    fs.existsSync(path.join(cfg, 'agents', 'gdd-README.md')),
+    false,
+    'agents/README.md must not be installed as an agent',
+  );
+  assert.equal(
+    fs.existsSync(path.join(cfg, 'agents', 'README.md')),
+    false,
+    'agents/README.md must not be installed verbatim either',
+  );
+  // Empty agent file must be skipped (no 0-byte placeholder written).
+  assert.equal(
+    fs.existsSync(path.join(cfg, 'agents', 'gdd-empty-agent.md')),
+    false,
+    'empty agent file must be skipped (no 0-byte write)',
+  );
 });
 
 // ── Cline → .clinerules block ─────────────────────────────────────────────

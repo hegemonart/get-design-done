@@ -103,9 +103,18 @@ export function resolveSnapshotsDir(): string {
  * is returned verbatim (after path resolution). This is useful for
  * tests and for users who want to pin a project root explicitly.
  *
+ * REPO-BOUNDARY GUARD (audit S8): the upward walk STOPS at the first `.git`
+ * directory it encounters. If a `.git` boundary is hit BEFORE any GDD marker
+ * is found, the walk does NOT continue into the parent repository — that
+ * would let a nested, unrelated checkout resolve to a PARENT repo's
+ * `.design/`/`.planning/`, leaking another project's state into this one
+ * (cross-project info bleed). At a `.git` boundary we check the boundary
+ * directory itself for a marker (a repo root legitimately holds `.design/`),
+ * then treat "no marker at or below this repo root" as not-found.
+ *
  * Throws `Error('gdd project root not found: ...')` when no marker is
- * found before the filesystem root. Callers in tool handlers should
- * catch and forward via `errorResponse()`.
+ * found before either the first `.git` boundary or the filesystem root.
+ * Callers in tool handlers should catch and forward via `errorResponse()`.
  */
 export function resolveProjectRoot(startCwd: string = process.cwd()): string {
   const override = process.env['GDD_PROJECT_ROOT'];
@@ -121,6 +130,15 @@ export function resolveProjectRoot(startCwd: string = process.cwd()): string {
       existsSync(join(dir, '.claude-plugin', 'plugin.json'))
     ) {
       return dir;
+    }
+    // S8: a `.git` here marks a repository boundary. We already checked this
+    // directory for a marker above and found none, so do not walk PAST the
+    // repo root into a parent (possibly unrelated) project.
+    if (existsSync(join(dir, '.git'))) {
+      throw new Error(
+        `gdd project root not found: hit repo boundary at ${dir} ` +
+          `(.git) before any GDD marker, starting from ${startCwd}`,
+      );
     }
     const parent = dirname(dir);
     if (parent === dir) {

@@ -38,7 +38,9 @@
  *   - The `prior_class` value is persisted on the arm so subsequent
  *     reads + decay calculations preserve it (forward-compat).
  *
- * Atomic .tmp + rename. Discounted Thompson via per-arm time-decay
+ * Atomic per-pid-unique .tmp + rename (Phase 59-8 C2: unique tmp name per
+ * process so parallel waves never interleave writes on one scratch file).
+ * Discounted Thompson via per-arm time-decay
  * factor `rho^days_since_last_use` applied at sample time, not stored.
  *
  * Reward computation (D-06): two-stage lexicographic — UNCHANGED.
@@ -56,6 +58,17 @@ const path = require('node:path');
 
 const DEFAULT_POSTERIOR_PATH = '.design/telemetry/posterior.json';
 const SCHEMA_VERSION = '1.0.0';
+
+// C2 fix (Phase 59-8): monotonic per-process counter for tmp-file naming.
+// Combined with process.pid it guarantees that two concurrent writers — even
+// within the same process, even firing in the same millisecond — never target
+// the same `.tmp` path. The old fixed `p + '.tmp'` name let parallel agent
+// waves interleave partial writes on one tmp file, producing truncated JSON
+// that loadPosterior() then silently reset to an empty posterior (losing all
+// learned arms). Unique tmp + atomic rename makes a half-written file
+// invisible to readers: rename is atomic on the same filesystem, so a reader
+// sees either the old complete file or the new complete file, never a partial.
+let _tmpCounter = 0;
 
 // Decay factor — 60-day half-life.
 const DEFAULT_DECAY = 0.988;
@@ -136,6 +149,12 @@ function loadPosterior(opts = {}) {
     }
     return data;
   } catch {
+    // Corrupt-JSON recovery (preserved, Phase 59-8 C2): fall back to an empty
+    // posterior. With the per-pid unique-tmp + atomic-rename write discipline
+    // (see savePosterior), a reader can no longer observe a half-written file
+    // — rename publishes the complete file in one step — so this branch should
+    // now only fire on genuine on-disk corruption (e.g. external truncation),
+    // not on a write/read race during a parallel agent wave.
     return { schema_version: SCHEMA_VERSION, generated_at: new Date().toISOString(), arms: [] };
   }
 }
@@ -159,9 +178,19 @@ function savePosterior(posterior, opts = {}) {
   const p = resolvePath(opts);
   fs.mkdirSync(path.dirname(p), { recursive: true });
   posterior.generated_at = new Date().toISOString();
-  const tmp = p + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(posterior, null, 2));
-  fs.renameSync(tmp, p);
+  // C2 fix (Phase 59-8): per-process-unique tmp name (pid + monotonic
+  // counter) so concurrent writers never collide on the same scratch file.
+  // The atomic rename then publishes the fully-written file in one step.
+  const tmp = `${p}.${process.pid}.${_tmpCounter++}.tmp`;
+  try {
+    fs.writeFileSync(tmp, JSON.stringify(posterior, null, 2));
+    fs.renameSync(tmp, p);
+  } catch (err) {
+    // Best-effort cleanup of the orphaned tmp on failure so a crashed
+    // write never leaves stale scratch files behind. ENOENT is fine.
+    try { fs.unlinkSync(tmp); } catch { /* already gone */ }
+    throw err;
+  }
   return p;
 }
 
@@ -347,7 +376,20 @@ function decayArm(arm, opts = {}) {
   const factor = Math.pow(decay, days);
   // Decay shrinks both α and β toward the prior. We never go below the
   // initial prior strength — caller can rebuild a fresh prior via reset().
-  const { alpha: pa, beta: pb } = priorFor(arm.tier, opts.strength ?? PRIOR_STRENGTH);
+  //
+  // C1 fix (Phase 59-8): decay MUST target the SAME prior the arm was
+  // bootstrapped with. The arm persists `prior_class` (Phase 29 Plan 06 /
+  // D-04), so pass it through to priorFor — otherwise a promoted-incubator
+  // arm (Beta(2,8)) would drift back toward the informed TIER_PRIOR while
+  // idle, undoing the D-04 preferential-selection suppression. Default-class
+  // arms have no `prior_class` field, so `arm.prior_class` is undefined and
+  // priorFor falls through to the Phase 23.5 informed prior (byte-for-byte
+  // unchanged).
+  const { alpha: pa, beta: pb } = priorFor(
+    arm.tier,
+    opts.strength ?? PRIOR_STRENGTH,
+    arm.prior_class,
+  );
   return {
     alpha: pa + factor * Math.max(0, arm.alpha - pa),
     beta: pb + factor * Math.max(0, arm.beta - pb),
