@@ -38,7 +38,75 @@ function findPackageRoot(startDir) {
 
 const REPO_ROOT = findPackageRoot(__dirname) || path.resolve(__dirname, '..');
 
-const { matches } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'glob-match.cjs'));
+const { matches, defaultNocase } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'glob-match.cjs'));
+
+/**
+ * HARDEN-02: Canonicalize a candidate path to a cwd-relative form before glob
+ * matching, defeating equivalent spellings of a protected file:
+ *   - POSIX absolute  `/abs/cwd/hooks/x.js`
+ *   - backslash drive `C:\cwd\hooks\x.js`
+ *   - forward-slash drive `C:/cwd/hooks/x.js`   (was the bypass — backslash-only detector)
+ *   - `../<cwd-basename>/hooks/x.js` reentry     (was the bypass — raw string never matched)
+ *   - symlink / symlinked ANCESTOR redirection into a protected dir (incl. NEW files)
+ *
+ * Returns a forward-slash cwd-relative string for IN-cwd targets, or the
+ * sentinel `null` for targets that resolve OUTSIDE cwd (out-of-repo edits are
+ * not this guard's concern and must not be false-blocked).
+ */
+function canonicalizeCandidate(cand, cwd) {
+  // 1. Recognize absolute paths robustly across platforms. `path.isAbsolute`
+  //    on a backslash-normalized copy catches POSIX `/…` and native drive
+  //    paths; the drive-letter regex is the Windows-on-POSIX fallback so a
+  //    `C:/…` / `C:\…` spelling is treated as absolute even when the test
+  //    process runs on Linux.
+  const normalized = cand.replace(/\\/g, '/');
+  const isAbs = path.isAbsolute(cand)
+    || path.isAbsolute(normalized)
+    || /^[A-Za-z]:[\\/]/.test(cand);
+
+  const abs = isAbs ? normalized : path.resolve(cwd, cand);
+
+  // 2. Canonicalize through symlinks — MANDATORY, for existing AND new targets.
+  //    Full-path realpath throws (ENOENT) on a not-yet-existing write target,
+  //    so walk UP to the nearest existing ancestor, realpath THAT, then re-join
+  //    the non-existent tail. This resolves a symlinked ancestor dir of a new
+  //    file (the write-new-file symlink bypass). Any unexpected I/O error falls
+  //    back to the plain resolved path — the hook must never hard-fail.
+  let canonicalAbs = abs;
+  try {
+    canonicalAbs = fs.realpathSync(abs);
+  } catch (e) {
+    if (e && e.code === 'ENOENT') {
+      try {
+        let ancestor = path.dirname(abs);
+        const tail = [path.basename(abs)];
+        // Walk up until an existing ancestor is found (or filesystem root).
+        // Guard the loop against an unbounded climb.
+        for (let i = 0; i < 64; i++) {
+          if (fs.existsSync(ancestor)) break;
+          const parent = path.dirname(ancestor);
+          if (parent === ancestor) break;
+          tail.unshift(path.basename(ancestor));
+          ancestor = parent;
+        }
+        const realAncestor = fs.realpathSync(ancestor);
+        canonicalAbs = path.join(realAncestor, ...tail);
+      } catch {
+        canonicalAbs = abs;
+      }
+    } else {
+      canonicalAbs = abs;
+    }
+  }
+
+  // 3. cwd-relative canonical form.
+  const rel = path.relative(cwd, canonicalAbs).replace(/\\/g, '/');
+
+  // 4. Out-of-cwd sentinel — these are NOT matched against repo-internal globs.
+  if (rel === '..' || rel.startsWith('../') || path.isAbsolute(rel)) return null;
+
+  return rel;
+}
 
 function loadProtectedPaths(cwd) {
   const defaultFile = path.join(REPO_ROOT, 'reference', 'protected-paths.default.json');
@@ -248,10 +316,10 @@ async function main() {
 
   for (const cand of candidates) {
     if (!cand) continue;
-    const rel = cand.startsWith('/') || /^[A-Z]:\\/i.test(cand)
-      ? path.relative(cwd, cand).replace(/\\/g, '/')
-      : cand.replace(/\\/g, '/');
-    const r = matches(rel, protectedPaths);
+    const rel = canonicalizeCandidate(cand, cwd);
+    // Out-of-cwd targets (sentinel null) are not this guard's concern.
+    if (rel === null) continue;
+    const r = matches(rel, protectedPaths, { nocase: defaultNocase() });
     if (r.matched) {
       try {
         require('./_hook-emit.js').emitHookFired('gdd-protected-paths', 'block', {

@@ -38,6 +38,8 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
+import Ajv, { type ValidateFunction } from 'ajv';
+
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -186,6 +188,33 @@ export function buildServer(): Server {
   const byName: Map<string, LoadedTool> = new Map();
   for (const t of tools) byName.set(t.name, t);
 
+  // HARDEN-01 (Task 2): compile an ajv validator per tool from its advertised
+  // input JSON Schema, so every tools/call argument is validated against the
+  // tool's contract BEFORE the handler runs. `strict:false` tolerates the
+  // Draft-07 keywords our schemas use; `allErrors` yields complete messages.
+  const ajv = new Ajv({ allErrors: true, strict: false });
+  const PASS_THROUGH: ValidateFunction = (() => {
+    const v = (() => true) as ValidateFunction;
+    v.errors = null;
+    return v;
+  })();
+  const validators: Map<string, ValidateFunction> = new Map();
+  for (const t of tools) {
+    try {
+      validators.set(t.name, ajv.compile(t.inputSchema));
+    } catch (err) {
+      // A single malformed schema file must not brick the whole server: fall
+      // back to a permissive validator for THAT tool only (today's no-
+      // validation behavior). The other tools still enforce (T-60.1-04).
+      const msg = err instanceof Error ? err.message : String(err);
+      // eslint-disable-next-line no-console
+      console.error(
+        `[gdd-mcp] schema compile failed for ${t.name}; tool degraded to permissive validation: ${msg}`,
+      );
+      validators.set(t.name, PASS_THROUGH);
+    }
+  }
+
   const server = new Server(
     { name: SERVER_NAME, version: SERVER_VERSION },
     {
@@ -235,6 +264,30 @@ export function buildServer(): Server {
         ],
         structuredContent: { success: false, error: payload.error },
       };
+    }
+
+    // HARDEN-01 (Task 2): validate arguments against the tool's advertised
+    // input schema BEFORE the handler runs. A schema-invalid call returns a
+    // structured isError result and the handler is NEVER reached.
+    const validate = validators.get(toolName);
+    if (validate !== undefined) {
+      const argsObj = args ?? {};
+      if (!validate(argsObj)) {
+        const detail = ajv.errorsText(validate.errors, { dataVar: 'input' });
+        const payload = toToolError(
+          new Error(`input validation failed: ${detail}`),
+        );
+        return {
+          isError: true,
+          content: [
+            {
+              type: 'text' as const,
+              text: JSON.stringify({ success: false, error: payload.error }),
+            },
+          ],
+          structuredContent: { success: false, error: payload.error },
+        };
+      }
     }
 
     let response;
