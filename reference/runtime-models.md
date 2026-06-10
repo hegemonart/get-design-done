@@ -44,21 +44,21 @@ Anthropic's first-party runtime. Public tier docs at https://docs.anthropic.com/
 {
   "id": "claude",
   "tier_to_model": {
-    "opus":   { "model": "claude-opus-4-7" },
+    "opus":   { "model": "claude-opus-4-8" },
     "sonnet": { "model": "claude-sonnet-4-6" },
     "haiku":  { "model": "claude-haiku-4-5" }
   },
   "reasoning_class_to_model": {
-    "high":   { "model": "claude-opus-4-7" },
+    "high":   { "model": "claude-opus-4-8" },
     "medium": { "model": "claude-sonnet-4-6" },
     "low":    { "model": "claude-haiku-4-5" }
   },
   "provenance": [
     {
       "source_url": "https://docs.anthropic.com/en/docs/about-claude/models",
-      "retrieved_at": "2026-04-29T00:00:00.000Z",
-      "last_validated_cycle": "2026-04-29-v1.26",
-      "note": "Anthropic public model catalog — first-party runtime."
+      "retrieved_at": "2026-06-10T00:00:00.000Z",
+      "last_validated_cycle": "2026-06-10-v1.59.9",
+      "note": "Anthropic public model catalog — first-party runtime. Opus tier moved to claude-opus-4-8 (1M-context [1m] variant) this cycle."
     }
   ]
 }

@@ -60,7 +60,7 @@ test('runtime-models: canonical seed picks for the four canonical runtimes (D-02
   // source file (claude-sonnet-4-6 or claude-sonnet-4-7 are both valid
   // anthropic sonnet IDs); we assert opus + haiku here and let the
   // budget-enforcer test cover the price-table side of sonnet.
-  assert.equal(byId.claude.tier_to_model.opus.model, 'claude-opus-4-7', 'claude → opus seed');
+  assert.equal(byId.claude.tier_to_model.opus.model, 'claude-opus-4-8', 'claude → opus seed');
   assert.equal(byId.claude.tier_to_model.haiku.model, 'claude-haiku-4-5', 'claude → haiku seed');
 
   assert.equal(byId.codex.tier_to_model.opus.model, 'gpt-5', 'codex → opus seed');

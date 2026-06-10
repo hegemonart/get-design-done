@@ -63,10 +63,10 @@ test('parse-runtime-models: claude seed picks (D-02) are locked', () => {
   const { runtimes } = parseRuntimeModels({ cwd: REPO_ROOT });
   const claude = runtimes.find((r) => r.id === 'claude');
   assert.ok(claude, 'claude entry exists');
-  assert.equal(claude.tier_to_model.opus.model, 'claude-opus-4-7');
+  assert.equal(claude.tier_to_model.opus.model, 'claude-opus-4-8');
   assert.equal(claude.tier_to_model.sonnet.model, 'claude-sonnet-4-6');
   assert.equal(claude.tier_to_model.haiku.model, 'claude-haiku-4-5');
-  assert.equal(claude.reasoning_class_to_model.high.model, 'claude-opus-4-7');
+  assert.equal(claude.reasoning_class_to_model.high.model, 'claude-opus-4-8');
   assert.equal(claude.reasoning_class_to_model.medium.model, 'claude-sonnet-4-6');
   assert.equal(claude.reasoning_class_to_model.low.model, 'claude-haiku-4-5');
 });
