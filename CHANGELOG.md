@@ -4,6 +4,23 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.60.1] - 2026-06-10
+
+**Security hardening** - two HIGH-severity vulnerabilities closed before the upcoming rebrand copies the foundation layer across every runtime. Both were reachable by a prompt-injected agent, undercutting the trust boundary the plugin's own scanners exist to defend. Each fix ships with failing-then-passing regression tests; an independent adversarial audit confirmed both vectors are dead with no surviving bypass.
+
+### Security
+
+- **Path traversal in the `gdd_intel_get` MCP tool (HARDEN-01).** A `slice_id` carrying `../`, an absolute path, or a path separator flowed unsanitized into a file read and could escape `.design/intel/` to return any `.json` file's contents (cloud credentials, config) to the caller. The intel store now rejects any non-basename `slice_id` and enforces a `resolve` + `startsWith(root + sep)` containment check before touching disk. Separately, the `gdd-mcp` server **now validates every `tools/call` argument against the advertised per-tool JSON schema** at the dispatcher - previously raw arguments were passed straight to handlers with no validation.
+- **Protected-paths guard canonicalization bypass (HARDEN-02).** The hook that blocks edits to `hooks/**`, `skills/**`, `.git/**`, and `.claude/settings.json` matched a non-canonical path string, so a Windows forward-slash absolute path (`C:/…`) or a `../<cwd-basename>/…` relative re-entry slipped past the block. The guard now canonicalizes candidates with `path.resolve` + `path.relative` (forward-slash drive letters included), mandatorily resolves the nearest existing ancestor with `realpathSync` to catch symlinked-ancestor-of-a-new-file escapes, and folds case on Windows/macOS. The two bypass vectors (previously untested) now have explicit regression coverage.
+
+### Breaking changes
+
+None.
+
+5,139/5,139 tests pass.
+
+---
+
 ## [1.60.0] - 2026-06-10
 
 **Foundation & Honesty** - the subtract-first base the v2.0 work and the upcoming rebrand depend on. Make the catalog enumerable and the capability claims machine-checked *before* building or renaming anything. A pre-flight audit found the catalog already clean (0 content-duplicate skills, 0 orphan skills or agents, a perfect manifest to template to generated bijection, and every count and capability claim already tracing to source), so this release does not manufacture cuts - it removes genuinely dead code and adds the guards that lock the clean state in.

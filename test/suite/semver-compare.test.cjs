@@ -761,6 +761,9 @@ OFF_CADENCE_VERSIONS.add('1.59.9');
 // 1.59.x point-release arc (1.59.1..1.59.9, no 1.59.0) lands on this minor;
 // registered here following the 1.29.0/1.30.0/1.31.0 on-cadence-minor precedent.
 OFF_CADENCE_VERSIONS.add('1.60.0');
+// v1.60.1 — Phase 60.1 security hardening (two High-severity audit fixes), an
+// off-cadence patch on the 1.60.0 minor.
+OFF_CADENCE_VERSIONS.add('1.60.1');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
