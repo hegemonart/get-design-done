@@ -1,8 +1,8 @@
 'use strict';
 // Phase 41 — SC#10 network-isolation gate. gdd-detect is OFFLINE BY DEFAULT: its executable surface
-// (bin/gdd-detect + scripts/lib/detect/**/*.cjs) must contain NO network primitives. The optional
-// jsdom/puppeteer paths are soft try-require by NAME only (a string literal "puppeteer" is fine; an
-// actual fetch/https/axios is not). Mirrors test/suite/issue-reporter-network-isolation.test.cjs.
+// (bin/gdd-detect + scripts/lib/detect/**/*.cjs) must contain NO network primitives. It is a pure
+// regex engine over local files — no jsdom, no puppeteer, no fetch/https/axios.
+// Mirrors test/suite/issue-reporter-network-isolation.test.cjs.
 //
 // Scope = executable CODE (.cjs + the extensionless bin trampoline). JSON data files (e.g. the rule
 // schema, whose `$id` is a standard non-dereferenced URI) are not code and are out of scope — the
@@ -50,10 +50,9 @@ test('41-03: gdd-detect executable surface contains no network primitives (offli
   assert.deepEqual(violations, [], `network primitives in the gdd-detect CLI surface:\n  ${violations.join('\n  ')}`);
 });
 
-test('41-03: the only optional-dependency references are name-only try-require (jsdom/puppeteer)', () => {
+test('41-03: the CLI has no optional-dependency references (regex-only, no jsdom/puppeteer)', () => {
   const cli = fs.readFileSync(path.join(REPO_ROOT, 'scripts', 'lib', 'detect', 'cli.cjs'), 'utf8');
-  // The optionals are referenced by bare name inside try{}; never imported at top level.
-  assert.match(cli, /try \{ requireFn\('jsdom'\)/, 'jsdom is a guarded try-require');
-  assert.match(cli, /requireFn\('puppeteer'\)/, 'puppeteer is a guarded try-require');
-  assert.doesNotMatch(cli, /^const .*require\(['"](jsdom|puppeteer)['"]\)/m, 'no top-level import of an optional dep');
+  // The detector is regex-only over local files: no DOM/URL engine scaffolding remains.
+  assert.doesNotMatch(cli, /jsdom/, 'no jsdom reference');
+  assert.doesNotMatch(cli, /puppeteer/i, 'no puppeteer reference');
 });

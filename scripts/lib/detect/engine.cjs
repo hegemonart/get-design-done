@@ -1,8 +1,8 @@
 'use strict';
-// Phase 41 — gdd-detect engine. Pure, dep-free (regex-fast path). Walks a path, runs each rule's
-// matcher against file content, returns structured findings. The DOM-aware (jsdom) + URL (puppeteer)
-// paths are layered on in cli.cjs via soft try-require; the engine itself never touches the network
-// or any optional dependency — so the SC#10 network-isolation scan stays clean.
+// Phase 41 — gdd-detect engine. Pure, dep-free regex engine over file content. Walks a path, runs
+// each rule's matcher against the text of each scannable file, and returns structured findings. The
+// engine never touches the network or any optional dependency — so the SC#10 network-isolation scan
+// stays clean.
 
 const fs = require('node:fs');
 const path = require('node:path');
