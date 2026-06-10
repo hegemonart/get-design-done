@@ -52,6 +52,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const { normalizeModelId, tierForModelId } = require('./model-id.cjs');
+
 const REPO_ROOT_GUESS = path.resolve(__dirname, '..', '..');
 const DEFAULT_RUNTIME_ID = 'claude';
 const VALID_TIERS = Object.freeze(['opus', 'sonnet', 'haiku']);
@@ -326,10 +328,18 @@ function computeCost(args, opts) {
     tokens_out: Number(args.tokens_out || 0),
     cache_hit: args.cache_hit === true,
   };
+  // Normalize the model id (strip a trailing `[1m]`/`[200k]` variant suffix)
+  // BEFORE table lookup so e.g. `claude-opus-4-8[1m]` matches the
+  // `claude-opus-4-8` row. The variant encodes a context-window SKU; the
+  // current price tables are keyed on the base id.
+  const rawModelId = typeof args.model_id === 'string' && args.model_id.length > 0
+    ? args.model_id
+    : null;
+  const normalizedModelId = rawModelId !== null
+    ? (normalizeModelId(rawModelId).base || rawModelId)
+    : null;
   const q = {
-    model_id: typeof args.model_id === 'string' && args.model_id.length > 0
-      ? args.model_id
-      : null,
+    model_id: normalizedModelId,
     tier: typeof args.tier === 'string' && args.tier.length > 0
       ? args.tier
       : null,
@@ -365,14 +375,33 @@ function computeCost(args, opts) {
     }
   }
 
-  // Branch 5: nothing matched.
+  // Branch 5: nothing matched. Rather than silently returning a null cost
+  // (which downstream aggregators treat as $0 — a frontier model billed as
+  // free), compute a CONSERVATIVE CEILING at the OPUS rate from the claude
+  // price table. An unknown/new model is thus priced LOUDLY (cost_estimated)
+  // and CONSERVATIVELY (opus ceiling), never $0 and never the sonnet rate.
+  const reason = rows.length === 0 ? 'runtime_table_missing' : 'model_not_found';
+  const claudeRows = loadPriceTable(DEFAULT_RUNTIME_ID, opts);
+  const opusRow = findPriceRow(claudeRows, { tier: 'opus' });
+  if (opusRow !== null) {
+    return {
+      cost_usd: applyFormula(opusRow, tokens),
+      model: normalizedModelId,
+      tier: 'opus',
+      runtime_used: DEFAULT_RUNTIME_ID,
+      fallback: true,
+      reason,
+      cost_estimated: true,
+    };
+  }
+  // Even the opus row is unavailable → genuinely cannot price. Keep null.
   return {
     cost_usd: null,
     model: null,
     tier: q.tier,
     runtime_used: null,
     fallback: false,
-    reason: rows.length === 0 ? 'runtime_table_missing' : 'model_not_found',
+    reason,
   };
 }
 

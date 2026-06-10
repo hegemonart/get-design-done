@@ -19,7 +19,7 @@
 > standard (≤200k-input) per-1M-token prices. Anthropic's flagship
 > `claude-opus-4-8` ships a 1M-context (`[1m]`) variant; long-context
 > requests above the 200k-input threshold may be billed at a higher
-> tiered rate. This table tracks only the standard tier today — the
+> tiered rate. This table tracks only the standard tier today; the
 > >200k tiered figure will be added as a separate row/column once
 > Anthropic publishes it. The parser is positional-by-header and
 > tolerates right-edge columns, so a future `>200k_input_per_1m`
