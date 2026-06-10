@@ -65,7 +65,10 @@ function runHook(hookPath: string, stdin: string, cwd: string): HookResult {
       cwd,
       input: stdin,
       encoding: 'utf8',
-      env: { ...process.env, GDD_TEST_MODE: '1' },
+      // GDD_NO_AGGREGATOR: don't launch the detached aggregator child; it
+      // inherits cwd=<temp dir> and on Windows holds it open, making the
+      // teardown rmSync throw EPERM. Production-only background rollup.
+      env: { ...process.env, GDD_TEST_MODE: '1', GDD_NO_AGGREGATOR: '1' },
     },
   );
   return {

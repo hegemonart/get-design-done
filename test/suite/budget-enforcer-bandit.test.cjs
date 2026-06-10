@@ -37,6 +37,30 @@ function tmp(prefix) {
   return dir;
 }
 
+/**
+ * Defense-in-depth teardown. On Windows, a lingering child handle (or AV
+ * scanner) can briefly hold a temp dir, making rmSync throw EPERM/ENOTEMPTY.
+ * Retry a few times, then swallow — a cleanup failure must never fail an
+ * otherwise-passing test. (Primary fix is GDD_NO_AGGREGATOR in runHook.)
+ */
+function safeRm(dir) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      safeRm(dir);
+      return;
+    } catch (err) {
+      const code = err && err.code;
+      if (code !== 'EPERM' && code !== 'ENOTEMPTY' && code !== 'EBUSY') {
+        return; // not a retryable Windows-handle race; give up quietly
+      }
+      // brief synchronous backoff before retry
+      const until = Date.now() + 50;
+      while (Date.now() < until) { /* spin */ }
+    }
+  }
+  // Final swallow: cleanup failure is non-fatal.
+}
+
 function setupTierResolverFixtures(dir) {
   // Copy reference/runtime-models.md + the parser shim so tier-resolver
   // can resolve from inside the sandbox.
@@ -83,6 +107,11 @@ function runHook(dir, stdinPayload, extraEnv = {}) {
   const env = {
     ...process.env,
     GDD_EVENTS_PATH: eventsPath,
+    // Suppress the detached aggregator child: it inherits cwd=dir and, on
+    // Windows, holds the temp dir open so the per-test rmSync() teardown
+    // throws EPERM. The aggregator is a production-only background rollup;
+    // tests must not launch a detached daemon. (Windows CI matrix fix.)
+    GDD_NO_AGGREGATOR: '1',
     ...extraEnv,
   };
   const result = spawnSync(
@@ -171,7 +200,7 @@ test('27.5-02: adaptive_mode=full + no _tier_override + no _tier_downgraded → 
       `expected bandit-pull source in full mode, got ${ev.payload.source}`,
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -260,7 +289,7 @@ test('27.5-02: adaptive_mode=full → modified_tool_input._tier_override reflect
       'modified_tool_input._tier_override should be stamped with bandit tier',
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -319,7 +348,7 @@ test('27.5-02: adaptive_mode=full → routerDecision.resolved_models[agent] upda
       `resolved_models should be rewritten by bandit; still ${rd.resolved_models['design-verifier']}`,
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -358,7 +387,7 @@ test('27.5-02: adaptive_mode=static → NO bandit.tier_selected event', () => {
       `static mode must not emit bandit.tier_selected events, got ${banditEvents.length}`,
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -397,7 +426,7 @@ test('27.5-02: adaptive_mode=hedge → NO bandit.tier_selected event (D-07: hedg
       `hedge mode must not emit bandit.tier_selected, got ${banditEvents.length}`,
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -453,7 +482,7 @@ test('27.5-02: adaptive_mode=full + _tier_downgraded:true (budget downgrade) →
       'budget downgrade sets tier_override=haiku',
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -493,7 +522,7 @@ test('27.5-02: adaptive_mode=full + complexity_class:S → NO bandit consultatio
       `S-class must short-circuit before bandit, got ${banditEvents.length} bandit events`,
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -547,7 +576,7 @@ test('27.5-02: adaptive_mode=full + cache hit → NO bandit consultation', () =>
       `cache hit must short-circuit before bandit, got ${banditEvents.length} bandit events`,
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -595,7 +624,7 @@ test('27.5-02: bandit.tier_selected payload has agent/bin/prior_tier/selected_ti
     assert.equal(typeof ev.timestamp, 'string', 'event.timestamp must be ISO string');
     assert.equal(typeof ev.sessionId, 'string', 'event.sessionId must be a string');
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
 
@@ -648,6 +677,6 @@ test('27.5-02: model_tier_overrides[agent] is unchanged by bandit override (D-03
       'model_tier_overrides must be preserved unchanged by bandit (D-03)',
     );
   } finally {
-    rmSync(dir, { recursive: true, force: true });
+    safeRm(dir);
   }
 });
