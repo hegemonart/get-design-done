@@ -84,6 +84,7 @@
     "validate:composition-graph": "node scripts/validate-composition-graph.cjs",
     "validate:design-context": "node scripts/validate-design-context.cjs",
     "validate:skill-frontmatter": "node scripts/validate-skill-frontmatter.cjs",
+    "validate:catalog": "node scripts/validate-catalog-integrity.cjs",
     "build:skill-graph": "node scripts/generate-skill-graph.cjs",
     "build:skill-graph:check": "node scripts/generate-skill-graph.cjs --check",
     "sync:rule-catalogue": "node scripts/sync-rule-catalogue.cjs --check",

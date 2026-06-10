@@ -84,6 +84,9 @@ jobs:
       - name: Skill composition graph (DAG — no cycles, no dangling refs)
         run: npm run validate:composition-graph
 
+      - name: Catalog integrity (dupes + orphans + bijection + capability honesty)
+        run: npm run validate:catalog
+
       - name: Skill frontmatter boilerplate-cohort lint (no 3+ shared opening sentences)
         run: npm run validate:skill-frontmatter
 
