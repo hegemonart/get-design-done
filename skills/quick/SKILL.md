@@ -26,9 +26,11 @@ Fast pipeline run. Skips optional-quality agents for speed while keeping the cor
    - Optional stage name (defaults to full pipeline from the current STATE.md position).
    - `--skip <agent-name>` (repeatable) adds to the skip list.
 2. Read `.design/STATE.md` to determine entry stage if none was passed.
-3. For each stage to execute, spawn the stage skill with a `quick_mode: true` flag and the effective skip list in the spawn context. Stage skills read this flag and route around the listed agents.
+3. For each stage to execute, invoke the stage skill but spawn it with the optional agents in the effective skip list **omitted from the spawn graph** - this skill is the orchestrator, so it simply does not call those agents (the stage skills do not read a `quick_mode` flag; the skipping happens here, by not spawning them). The kept agents run exactly as in the full pipeline.
 4. After each stage, print: "Stage <name> done. Skipped: <list>."
 5. Final summary prints which agents were skipped across the full run.
+
+Mechanism note: `/gdd:quick` is a lighter-touch *invocation* of the normal stages, not a special stage mode. It reduces ceremony by leaving the listed optional-quality agents out of the spawn graph it orchestrates. There is no flag the stage skills parse - if invoked directly (not via this skill) the stages run their full agent set.
 
 ## Use When
 
