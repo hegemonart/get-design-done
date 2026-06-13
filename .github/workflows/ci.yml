@@ -242,6 +242,22 @@ jobs:
       - name: WebSocket bind scan (CI mode)
         run: npm run scan:ws-bind
 
+      - name: Install dependencies
+        # The scan steps above run standalone node scripts (no install needed),
+        # but `npm audit` requires the resolved dependency tree on disk.
+        # --no-audit suppresses install-time audit noise; the dedicated audit
+        # step below is the real gate. Flags mirror the other jobs in this file.
+        run: npm ci --no-audit --no-fund
+
+      - name: npm audit (production deps, HIGH gate)
+        # SEC-CI-02: blocking supply-chain gate. --omit=dev scopes the audit to
+        # SHIPPED production dependencies only — devDependencies (e.g. the dev-only
+        # esbuild HIGH) are not delivered to consumers and intentionally do not gate.
+        # --audit-level=high makes npm exit non-zero only on HIGH/CRITICAL advisories.
+        # Gate is GREEN today (0 production vulns); it guards against future
+        # regressions by turning a silent prod-dep advisory into a hard build failure.
+        run: npm audit --omit=dev --audit-level=high
+
   size-budget:
     name: "Size budget (blocking)"
     needs: [test]
