@@ -1,0 +1,68 @@
+# CodeQL static-analysis (SAST) workflow — SEC-CI-01 (Phase 60.2).
+#
+# (a) REGRESSION GUARD. The repo is currently clean (the upstream-cited fixes —
+#     qs override, least-privilege permissions, hasOwnProperty, ReDoS annotations —
+#     are already landed). This scanner is the one that would have caught those
+#     bugs, landed AHEAD of Phase 64 which adds ~4400 LOC of regex + DOM detector
+#     code (the highest-risk new surface in the codebase).
+# (b) ANALYSIS-ONLY. The job uploads alerts to the GitHub Security tab and exits 0
+#     on a successful analysis. By design it does NOT block the build on
+#     pre-existing code-scanning alerts (no `--fail-on`, no severity gate). This
+#     makes it mergeable immediately; tightening is a future branch-protection
+#     concern (out of scope for this plan).
+# (c) STABLE JOB NAME. The job carries a fixed name —
+#     "CodeQL analyze (javascript-typescript)" — so a future branch-protection
+#     rule can require it by that exact string.
+
+name: CodeQL
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    # Weekly regression guard for future PRs. Monday 04:27 UTC — an off-peak,
+    # odd-minute slot to avoid the top-of-hour scheduler congestion GitHub warns
+    # about.
+    - cron: "27 4 * * 1"
+
+# Least-privilege default for all jobs (mirrors ci.yml). GITHUB_TOKEN is
+# read-only unless a job overrides this block.
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: "CodeQL analyze (javascript-typescript)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Job-level least privilege: read access to repo + actions, and
+    # security-events: write so the analyze step can upload SARIF to the
+    # Security tab. No contents/packages/PR write.
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          # security-extended is the SEC-CI-01 requirement; the default
+          # `security` suite is narrower.
+          queries: security-extended
+          # Interpreted JS/TS — no compiled build artifact is needed for
+          # analysis, so no autobuild step. CodeQL's default extraction handles
+          # the javascript-typescript path.
+          build-mode: none
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          # Stable category so reruns dedupe cleanly in the Security tab.
+          category: "/language:javascript-typescript"
