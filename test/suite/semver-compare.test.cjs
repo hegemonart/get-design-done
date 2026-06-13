@@ -764,6 +764,9 @@ OFF_CADENCE_VERSIONS.add('1.60.0');
 // v1.60.1 — Phase 60.1 security hardening (two High-severity audit fixes), an
 // off-cadence patch on the 1.60.0 minor.
 OFF_CADENCE_VERSIONS.add('1.60.1');
+// v1.60.2 — Phase 60.2 security & CI hardening (CodeQL + npm-audit gate + hono
+// override + dangerous-link detection), an off-cadence patch on the 1.60 minor.
+OFF_CADENCE_VERSIONS.add('1.60.2');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

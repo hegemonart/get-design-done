@@ -4,6 +4,28 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.60.2] - 2026-06-13
+
+**Security & CI hardening** - bring the SAST/dependency-audit gates the project lacked, and close the one untrusted-link gap in the injection scanner, *before* the detection engine lands its large new surface. Sourced from a reconciliation against the upstream framework's recent releases (`.planning/audits/UPSTREAM-GSD-CORE-DIFF-2026-06-13.md`).
+
+### Added
+
+- **CodeQL / SAST workflow** (`.github/workflows/codeql.yml`) - `javascript-typescript` with the `security-extended` query suite, on push / PR / weekly schedule. Analysis-only (alerts surface in the Security tab; the job is non-blocking on pre-existing findings). A regression guard for every future PR, established now on a clean tree.
+- **`npm audit` production gate in CI** - `npm audit --omit=dev --audit-level=high` in the security job. Scoped to production dependencies (what ships to consumers); dev-only advisories don't gate the build. Currently green.
+- **Dangerous-link scheme detection in the injection scanner** - `scripts/injection-patterns.cjs` now flags `javascript:` URIs, `data:text/html` / `data:` script payloads, userinfo-credential URLs (`scheme://user:pass@host`), and secret-bearing query params (cross-referenced to the redaction token shapes). These flow from untrusted markdown read by the Read hook and the design-authority watcher's feed ingest, which previously had zero coverage for them. Pattern count 21 to 27; both the runtime hook and the CI scanner auto-consume the new patterns. Tightly anchored with negative fixtures so legitimate `https://`, `mailto:`, `data:image`, and ordinary query strings are not flagged.
+
+### Changed
+
+- **`hono` override `>=4.12.23`** added to `package.json` (transitive via `@modelcontextprotocol/sdk`). Precautionary / future-proofing - our `npm audit` does not currently flag the resolved `hono@4.12.21`; this pins the dependency forward regardless. Resolves to `4.12.25`.
+
+### Breaking changes
+
+None.
+
+5,143/5,143 tests pass.
+
+---
+
 ## [1.60.1] - 2026-06-10
 
 **Security hardening** - two HIGH-severity vulnerabilities closed before the upcoming rebrand copies the foundation layer across every runtime. Both were reachable by a prompt-injected agent, undercutting the trust boundary the plugin's own scanners exist to defend. Each fix ships with failing-then-passing regression tests; an independent adversarial audit confirmed both vectors are dead with no surviving bypass.
