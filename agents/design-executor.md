@@ -77,7 +77,7 @@ const r = estimateMCPCalls({ toolCalls: <calls-issued-so-far>, config: loadConfi
 if (r.exceeds) STOP;
 ```
 
-The MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) enforces the same ceiling at the tool boundary; the preflight here avoids wasting a MCP round-trip before the hook blocks you. Surface in `/gdd:stats` as "MCP calls this task: N/limit".
+The MCP circuit-breaker (`hooks/gdd-mcp-circuit-breaker.js`) enforces the same ceiling at the tool boundary; the preflight here avoids wasting a MCP round-trip before the hook blocks you. Surface in `/hone:stats` as "MCP calls this task: N/limit".
 
 ---
 

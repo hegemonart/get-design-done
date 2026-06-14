@@ -49,7 +49,7 @@ function findPackageRoot(startDir) {
   for (let i = 0; i < 12; i++) {
     try {
       const pkg = require(path.join(dir, 'package.json'));
-      if (pkg && pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg && pkg.name === '@hegemonart/hone') return dir;
     } catch { /* not this level */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;

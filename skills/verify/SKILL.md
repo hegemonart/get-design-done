@@ -8,7 +8,7 @@ tools: mcp__hone_state__get, mcp__hone_state__transition_stage, mcp__hone_state_
 
 # Get Design Done - Verify
 
-**Stage 5 of 5** in the get-design-done pipeline. Thin orchestrator. Verification intelligence lives in three agents: design-auditor, design-verifier, and design-integration-checker.
+**Stage 5 of 5** in the hone pipeline. Thin orchestrator. Verification intelligence lives in three agents: design-auditor, design-verifier, and design-integration-checker.
 
 Full procedure detail: `./verify-procedure.md`.
 

@@ -30,7 +30,7 @@ Close the qualitative side of the outcome loop: turn pre-collected user-research
 
 ## When invoked
 
-On demand (`/gdd:research-sync`) or auto-suggested when the verify cross-check finds `<prior-research>` data > 14 days old. Gate on a research source being `available` (per `connections/usertesting.md` / `connections/maze.md` / `connections/hotjar.md`); none → `research synthesis: no research source configured — skipped.` (degrade-to-noop).
+On demand (`/hone:research-sync`) or auto-suggested when the verify cross-check finds `<prior-research>` data > 14 days old. Gate on a research source being `available` (per `connections/usertesting.md` / `connections/maze.md` / `connections/hotjar.md`); none → `research synthesis: no research source configured — skipped.` (degrade-to-noop).
 
 ## Step 1 - Read (read-only) + pseudonymize
 

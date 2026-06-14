@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/hone-state/schemas/update_progress.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/scripts/mcp-servers/hone-state/schemas/update_progress.schema.json",
   "title": "GddStateUpdateProgress",
   "description": "MCP tool hone_state__update_progress — update <position> task_progress and/or status. Emits state.mutation.",
   "type": "object",

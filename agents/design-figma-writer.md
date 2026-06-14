@@ -291,7 +291,7 @@ Parse DESIGN-VERIFICATION.md `## Handoff Faithfulness → Component Structure` t
 - MISSING → status: `pending`
 - Component with any DIVERGE token in Color/Typography/Spacing tables → status: `diverging`
 
-If `## Handoff Faithfulness` section is absent, write: "No Handoff Faithfulness data found. Run `/gdd:handoff --post-handoff` verify first." and STOP.
+If `## Handoff Faithfulness` section is absent, write: "No Handoff Faithfulness data found. Run `/hone:handoff --post-handoff` verify first." and STOP.
 
 ### Step IS-2 - Build annotation proposal
 

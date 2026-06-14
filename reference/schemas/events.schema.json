@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/events.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/reference/schemas/events.schema.json",
   "title": "Event",
   "description": "One line of .design/telemetry/events.jsonl — the append-only telemetry stream produced by Plan 20-06. Each event is a single JSON object followed by a newline. See .planning/phases/20-gdd-sdk-foundation/20-06-PLAN.md.",
   "type": "object",
@@ -101,12 +101,12 @@
         },
         "parent_event_id": {
           "type": ["string", "null"],
-          "description": "UUIDv4 of the parent chain event when the gap was surfaced inside a larger trajectory; null when this is a root emit (e.g. /gdd:fast bail-out)."
+          "description": "UUIDv4 of the parent chain event when the gap was surfaced inside a larger trajectory; null when this is a root emit (e.g. /hone:fast bail-out)."
         },
         "source": {
           "type": "string",
           "enum": ["fast", "router", "reflector_pattern"],
-          "description": "Which surface detected the gap. fast = /gdd:fast no-skill-match path; router = gdd-router unmatched-intent path; reflector_pattern = reflector pattern-detection pass (Plan 29-02)."
+          "description": "Which surface detected the gap. fast = /hone:fast no-skill-match path; router = hone-router unmatched-intent path; reflector_pattern = reflector pattern-detection pass (Plan 29-02)."
         },
         "context_hash": {
           "type": "string",
@@ -127,7 +127,7 @@
         "evidence_refs": {
           "type": "array",
           "items": { "$ref": "#/definitions/TrajectoryRef" },
-          "description": "Pointers to trajectory-JSONL slices that evidence the gap (D-07). Hash-pinned to detect chain mutation. Empty array allowed for low-evidence emits (e.g. /gdd:fast which has no trajectory)."
+          "description": "Pointers to trajectory-JSONL slices that evidence the gap (D-07). Hash-pinned to detect chain mutation. Empty array allowed for low-evidence emits (e.g. /hone:fast which has no trajectory)."
         }
       },
       "description": "Phase 29 D-02 capability_gap payload — exactly 7 fields, additionalProperties: false. Validated when the envelope's type === 'capability_gap' via the allOf[0] conditional."
@@ -203,7 +203,7 @@
         "source": {
           "type": "string",
           "const": "router",
-          "description": "Phase 32-08 D-02 — the router_pick event class is emitted EXCLUSIVELY by the gdd-router skill at its resolved-pick point. No other producer is authorised."
+          "description": "Phase 32-08 D-02 — the router_pick event class is emitted EXCLUSIVELY by the hone-router skill at its resolved-pick point. No other producer is authorised."
         },
         "picked_skill": {
           "type": "string",
@@ -252,7 +252,7 @@
         "tool_name": {
           "type": "string",
           "minLength": 1,
-          "description": "The tool the risk gate scored — Write | Edit | MultiEdit | Bash | NotebookEdit (or any writer tool). Mirrors the PreToolUse tool_name the gdd-risk-gate hook received."
+          "description": "The tool the risk gate scored — Write | Edit | MultiEdit | Bash | NotebookEdit (or any writer tool). Mirrors the PreToolUse tool_name the hone-risk-gate hook received."
         },
         "risk_score": {
           "type": "number",
@@ -263,7 +263,7 @@
         "suggested_action": {
           "type": "string",
           "enum": ["allow", "review", "require_confirmation", "block"],
-          "description": "The action the risk scorer recommends for this score. allow < review < require_confirmation < block (ascending threshold bands). The gdd-risk-gate hook silences 'allow', advises on 'review'/'require_confirmation', and blocks on 'block'."
+          "description": "The action the risk scorer recommends for this score. allow < review < require_confirmation < block (ascending threshold bands). The hone-risk-gate hook silences 'allow', advises on 'review'/'require_confirmation', and blocks on 'block'."
         },
         "reasons": {
           "type": "array",
@@ -280,7 +280,7 @@
           "description": "Optional — a short, PII-free context tag the agent layer attaches when routing the assessment (e.g. a finding id or routing verdict). Free-form; never the raw prompt."
         }
       },
-      "description": "Phase 56 (R8) risk_assessment payload — 5 required fields + 2 optional (agent, decision_context), additionalProperties: false. Emitted by the gdd-risk-gate PreToolUse hook for every scored writer action; read by sdk/dashboard/data/risk-surface.cjs ({risk_score, suggested_action}) and gdd-events --type risk_assessment. Validated when the envelope's type === 'risk_assessment' via the allOf[3] conditional."
+      "description": "Phase 56 (R8) risk_assessment payload — 5 required fields + 2 optional (agent, decision_context), additionalProperties: false. Emitted by the hone-risk-gate PreToolUse hook for every scored writer action; read by sdk/dashboard/data/risk-surface.cjs ({risk_score, suggested_action}) and hone-events --type risk_assessment. Validated when the envelope's type === 'risk_assessment' via the allOf[3] conditional."
     }
   },
   "allOf": [

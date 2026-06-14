@@ -8,7 +8,7 @@ tools: Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__hone_sta
 
 # Get Design Done - Plan
 
-**Stage 3 of 5** in the get-design-done pipeline. Thin orchestrator. All planning intelligence lives in `agents/design-planner.md`.
+**Stage 3 of 5** in the hone pipeline. Thin orchestrator. All planning intelligence lives in `agents/design-planner.md`.
 
 Full procedure detail: `./plan-procedure.md`.
 
@@ -75,7 +75,7 @@ The next stage (design) calls `mcp__hone_state__transition_stage` on entry - thi
 
 ## After Completion
 
-Print: plan tasks (N waves, M total tasks), files written (`.design/DESIGN-PLAN.md`, plus `.design/DESIGN-RESEARCH.md` if research ran), next step `/get-design-done:design`.
+Print: plan tasks (N waves, M total tasks), files written (`.design/DESIGN-PLAN.md`, plus `.design/DESIGN-RESEARCH.md` if research ran), next step `{{command_prefix}}design`.
 
 ## Spec self-review (before transition)
 

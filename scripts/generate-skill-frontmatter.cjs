@@ -29,7 +29,7 @@
 const fs = require('fs');
 const path = require('path');
 // Identity SoT (Phase 61 rebrand, REBRAND-03): skill-name prefix from the seam
-// ('hone-', trailing hyphen included) replaces the hardcoded 'gdd-'.
+// ('hone-', trailing hyphen included) replaces the hardcoded 'hone-'.
 const { SKILL_PREFIX } = require('./lib/pkg-identity.cjs');
 
 const ROOT = path.resolve(__dirname, '..');

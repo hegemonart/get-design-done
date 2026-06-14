@@ -1,19 +1,19 @@
 'use strict';
-// Phase 41 — gdd-detect CLI. A regex anti-pattern scanner over LOCAL files: it walks a file or
+// Phase 41 — hone-detect CLI. A regex anti-pattern scanner over LOCAL files: it walks a file or
 // directory and runs each BAN-NN rule's matcher against the file text. There is exactly one engine
 // (regex over file content) and it never touches the network or any optional dependency, so the
 // SC#10 network-isolation scan stays clean and the plugin keeps its zero-runtime-dep guarantee.
 //
-//   gdd-detect <path> [--json] [--rule BAN-NN]
+//   hone-detect <path> [--json] [--rule BAN-NN]
 //
 // Exit codes: 0 = clean · 2 = findings · 1 = invocation error.
 
 const engine = require('./engine.cjs');
 
-const HELP = `gdd-detect — scan local HTML/CSS/JSX for GDD anti-patterns (BAN-NN).
+const HELP = `hone-detect — scan local HTML/CSS/JSX for GDD anti-patterns (BAN-NN).
 
 Usage:
-  gdd-detect <path> [options]
+  hone-detect <path> [options]
 
 Arguments:
   <path>            A file or directory (scanned recursively). Regex anti-pattern scan over local files.
@@ -58,7 +58,7 @@ function renderHuman(result, mode) {
   const errs = result.findings.filter((f) => f.severity === 'error').length;
   const warns = result.findings.length - errs;
   lines.push('');
-  lines.push(`gdd-detect (${mode}): ${result.filesScanned} file(s), ${result.findings.length} finding(s) — ${errs} error, ${warns} warn.`);
+  lines.push(`hone-detect (${mode}): ${result.filesScanned} file(s), ${result.findings.length} finding(s) — ${errs} error, ${warns} warn.`);
   return lines.join('\n');
 }
 
@@ -75,12 +75,12 @@ function main(argv, io) {
   const opts = parseArgs(argv);
 
   if (opts.help || (!opts.path && argv.length === 0)) { log(HELP); return opts.help ? 0 : 1; }
-  if (!opts.path) { err('gdd-detect: missing <path>. See --help.'); return 1; }
-  if (opts.rule && !/^BAN-\d{2}$/i.test(opts.rule)) { err(`gdd-detect: --rule expects a BAN-NN id (got "${opts.rule}").`); return 1; }
+  if (!opts.path) { err('hone-detect: missing <path>. See --help.'); return 1; }
+  if (opts.rule && !/^BAN-\d{2}$/i.test(opts.rule)) { err(`hone-detect: --rule expects a BAN-NN id (got "${opts.rule}").`); return 1; }
 
   // URL path is not wired: this is a regex scanner over local files. Never a stack trace.
   if (isUrl(opts.path)) {
-    err('gdd-detect: URL scanning is not wired in this build; clone the page locally and scan the files instead.');
+    err('hone-detect: URL scanning is not wired in this build; clone the page locally and scan the files instead.');
     return 1;
   }
 
@@ -88,7 +88,7 @@ function main(argv, io) {
 
   let result;
   try { result = engine.run(opts.path, { ruleId: opts.rule, cwd }); }
-  catch (e) { err('gdd-detect: ' + (e && e.message ? e.message : String(e))); return 1; }
+  catch (e) { err('hone-detect: ' + (e && e.message ? e.message : String(e))); return 1; }
 
   if (opts.json) log(JSON.stringify({ mode, ...result }, null, 2));
   else log(renderHuman(result, mode));

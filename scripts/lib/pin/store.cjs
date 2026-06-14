@@ -8,7 +8,7 @@
  * (unpin) and an inventory (listPins).
  *
  * The pin marker is exactly:
- *   <!-- gdd-pinned-skill source=<skillId> -->
+ *   <!-- hone-pinned-skill source=<skillId> -->
  * and is the FIRST line of every pinned stub. unpin only ever deletes files
  * carrying this marker, so a hand-written / unrelated SKILL.md is never removed.
  *
@@ -78,14 +78,14 @@ function quote(s) {
  * Render the pinned stub contents for a skill record. Layout:
  *   <marker line>
  *   ---
- *   name: gdd-<id>
+ *   name: hone-<id>
  *   description: "<desc>"
  *   argument-hint: "<hint>"   (only when the record has one)
  *   tools: <tools>            (only when the record has tools)
  *   ---
  *   <one-line body pointing at the source skill>
  *
- * `name` mirrors the generator: `gdd-<id>` unless the record overrides via
+ * `name` mirrors the generator: `hone-<id>` unless the record overrides via
  * `frontmatter_name`.
  */
 function renderStub(skillId, rec) {
@@ -206,7 +206,7 @@ function unpinSkill(args) {
         id: c.id,
         config_dir: c.config_dir,
         path: file,
-        reason: 'first non-empty line lacks the gdd-pinned-skill marker - refusing to delete',
+        reason: 'first non-empty line lacks the hone-pinned-skill marker - refusing to delete',
       });
       continue;
     }

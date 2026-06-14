@@ -1,6 +1,6 @@
 # Hotjar — Connection Specification
 
-This file is the connection specification for Hotjar within the get-design-done pipeline. It lives in `connections/` alongside other connection specs. See the connection index for the full connection capability matrix (the hotjar row is added at the Phase 38 wiring closeout).
+This file is the connection specification for Hotjar within the hone pipeline. It lives in `connections/` alongside other connection specs. See the connection index for the full connection capability matrix (the hotjar row is added at the Phase 38 wiring closeout).
 
 ---
 
@@ -53,7 +53,7 @@ test -n "${HOTJAR_API_KEY}"
 - Empty → `hotjar: not_configured`
 - Present (MCP or token) but a live insight fetch errored → `hotjar: unavailable`
 
-**Kill-switch:** Hotjar is forced to a noop when `GDD_DISABLE_HOTJAR=1` (env), regardless of MCP/token presence — the probe short-circuits to `not_configured` and no fetch is attempted. `gdd-health` surfaces the state (mirrors the Phase 30 / 35.x kill-switch pattern).
+**Kill-switch:** Hotjar is forced to a noop when `GDD_DISABLE_HOTJAR=1` (env), regardless of MCP/token presence — the probe short-circuits to `not_configured` and no fetch is attempted. `hone-health` surfaces the state (mirrors the Phase 30 / 35.x kill-switch pattern).
 
 **Write the `hotjar` status to `.design/STATE.md` `<connections>` after probing.** Three-value schema:
 

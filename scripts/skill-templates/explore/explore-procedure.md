@@ -15,7 +15,7 @@ recording).
 
 # Explore Procedure
 
-Detailed procedure for the get-design-done `explore` Stage 2 orchestrator. Companion to
+Detailed procedure for the hone `explore` Stage 2 orchestrator. Companion to
 `../skills/explore/SKILL.md`. Read this file when executing a specific step; the SKILL.md
 keeps the essential workflow + decision tree, this file holds the deep methodology.
 
@@ -262,6 +262,6 @@ When all questions are answered, write `.design/DESIGN-CONTEXT.md` summarizing t
 ```
 === Explore complete ===
 Saved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md
-Next: @get-design-done plan
+Next: {{command_prefix}}plan
 =========================
 ```

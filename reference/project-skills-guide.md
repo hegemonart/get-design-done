@@ -33,9 +33,9 @@ Auto-loaded in gdd sessions.
 
 ## Writers
 
-- `/gdd:sketch-wrap-up` appends winner rationale to the appropriate file
+- `/hone:sketch-wrap-up` appends winner rationale to the appropriate file
 - User edits directly
-- `/gdd:spike-wrap-up` may append to the relevant file when adopted
+- `/hone:spike-wrap-up` may append to the relevant file when adopted
 
 ## Why this layer?
 

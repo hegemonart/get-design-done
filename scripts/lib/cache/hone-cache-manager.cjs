@@ -19,7 +19,7 @@
  * Pure functions + side-effects-via-appendEvent. No external deps
  * beyond `node:` builtins and the lazy event-stream require.
  *
- * @module scripts/lib/cache/gdd-cache-manager
+ * @module scripts/lib/cache/hone-cache-manager
  */
 'use strict';
 

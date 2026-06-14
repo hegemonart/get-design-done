@@ -31,8 +31,8 @@ writes:
 ## When to invoke
 
 - After completing any phase plan that edits skill/agent/reference/connection files
-- When `/gdd:health` reports intel store staleness
-- Manually via `/gdd:update intel` (future command)
+- When `/hone:health` reports intel store staleness
+- Manually via `/hone:update intel` (future command)
 
 ## Protocol
 

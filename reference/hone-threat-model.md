@@ -40,7 +40,7 @@ controls; the table names what crosses the line.
 | Boundary | Untrusted side | What crosses |
 | --- | --- | --- |
 | WS event-stream server `←` client | A WebSocket client on the network (LAN/internet if bound wide) | The HTTP `Upgrade` request + `Authorization: Bearer` header |
-| gdd-state MCP `←` environment / config / tool input | Whoever sets `GDD_STATE_PATH` or supplies a tool-call payload, or authors `.design/config.json` | The `GDD_STATE_PATH` env value + the JSON tool-input payloads |
+| hone-state MCP `←` environment / config / tool input | Whoever sets `GDD_STATE_PATH` or supplies a tool-call payload, or authors `.design/config.json` | The `GDD_STATE_PATH` env value + the JSON tool-input payloads |
 | Peer-CLI broker `↔` spawned child | A spawned peer CLI (Codex / Gemini / Cursor / Copilot / Qwen) and its stdout stream | The child's stdout JSON frames + the parent env handed to the child |
 | Outbound call sites `↔` external host | The remote HTTP host / GitHub / Figma the call reaches | The outbound request payload + whatever the remote returns |
 | OpenRouter catalog fetch `→` openrouter.ai | The OpenRouter `/models` API host (and any MITM on the path) | The `Authorization: Bearer <OPENROUTER_API_KEY>` request header + the untrusted `/models` JSON the host returns |
@@ -98,13 +98,13 @@ inside the user's repo, with no sandbox.
 
 ---
 
-## Component 2 - MCP servers (gdd-state: 11 mutating tools / gdd-mcp: read)
+## Component 2 - MCP servers (hone-state: 11 mutating tools / hone-mcp: read)
 
-Two MCP servers expose GDD state to an MCP client: **gdd-state**
-(`sdk/mcp/gdd-state/`) with **11 mutating tools** - `add_blocker`,
+Two MCP servers expose GDD state to an MCP client: **hone-state**
+(`sdk/mcp/hone-state/`) with **11 mutating tools** - `add_blocker`,
 `add_decision`, `add_must_have`, `checkpoint`, `frontmatter_update`, `get`,
 `probe_connections`, `resolve_blocker`, `set_status`, `transition_stage`,
-`update_progress` - and **gdd-mcp** (`sdk/mcp/gdd-mcp/`) with read tools. The
+`update_progress` - and **hone-mcp** (`sdk/mcp/hone-mcp/`) with read tools. The
 mutating server is the higher-value target because it writes `STATE.md`.
 
 - **Assets:** The integrity of `STATE.md` (the project's source of truth for
@@ -131,14 +131,14 @@ mutating server is the higher-value target because it writes `STATE.md`.
     file the process can write.
 - **Current mitigations:** Every mutation emits a `state.mutation` /
   `state.transition` event through `emitStateMutation()` / `emitStateTransition()`
-  (`sdk/mcp/gdd-state/tools/shared.ts` lines 91–140), giving a partial audit
+  (`sdk/mcp/hone-state/tools/shared.ts` lines 91–140), giving a partial audit
   trail (anti-repudiation). Handlers **never throw to the harness** - every
   error funnels through `errorResponse()` → `toToolError()` into a structured
   `{success:false,error}` (shared.ts lines 28–31, 148–151), so a malformed
   input degrades to a clean error instead of a crash. Each of the 11 tools
-  already ships a JSON input schema under `sdk/mcp/gdd-state/schemas/`. State
+  already ships a JSON input schema under `sdk/mcp/hone-state/schemas/`. State
   events are redacted by `redact.cjs` at serialize time (Component 4).
-- **Residual risks:** `resolveStatePath()` (`sdk/mcp/gdd-state/tools/shared.ts`
+- **Residual risks:** `resolveStatePath()` (`sdk/mcp/hone-state/tools/shared.ts`
   lines 60–64) honors `GDD_STATE_PATH` with **no path-traversal guard** - it
   returns the override verbatim, so `..` escape / absolute-outside / symlink
   escape are unchecked. The tool schemas exist but carry **no payload-size cap**
@@ -383,7 +383,7 @@ spine the phase closeout (33.5-06) uses to prove completeness.
 | Residual risk | Component | Closing plan |
 | --- | --- | --- |
 | WS binds `0.0.0.0` by default (`listen` line 145, no host) + timing-unsafe `!==` token compare (line 112) | WebSocket transport | **33.5-03** |
-| `GDD_STATE_PATH` path traversal (no guard, shared.ts 60–64) + no payload-size cap + un-tightened tool schemas | gdd-state MCP | **33.5-03** |
+| `GDD_STATE_PATH` path traversal (no guard, shared.ts 60–64) + no payload-size cap + un-tightened tool schemas | hone-state MCP | **33.5-03** |
 | Full `process.env` (incl. `ANTHROPIC_API_KEY` / `GH_TOKEN`) leaks to spawned peers (acp 102 / asp 122) | Peer-CLI broker | **33.5-04** |
 | Outbound egress sites have no machine-readable allowlist + no CI gate | cross-cutting (hooks update-check, figma-extract, issue-reporter, e2e) | **33.5-02** (allowlist) + **33.5-04** (scan gate) |
 | Secret-scan misses Gemini `AIza…` / GitHub fine-grained `github_pat_…` / GitHub server `gh[sour]_…` tokens | redact.cjs | **33.5-05** |

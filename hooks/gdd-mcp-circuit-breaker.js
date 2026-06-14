@@ -250,7 +250,7 @@ async function main() {
     const reason = timeoutBreak
       ? `${consecutive_timeouts} consecutive MCP timeouts on ${tool} (≥${budget.max_consecutive_timeouts}). Likely the sandbox hill-climb failure mode. Stop and redirect.`
       : `MCP call count for this task is ${total_calls}, above max_calls_per_task=${budget.max_calls_per_task}. Stop and redirect.`;
-    const msg = `${reason} For authoring new Figma content, use figma:figma-generate-design. For decision-writing, use /gdd:figma-write. See reference/figma-sandbox.md.`;
+    const msg = `${reason} For authoring new Figma content, use figma:figma-generate-design. For decision-writing, use /hone:figma-write. See reference/figma-sandbox.md.`;
     appendStateBlocker(cwd, msg);
     process.stdout.write(JSON.stringify({ continue: false, stopReason: `gdd-mcp-circuit-breaker: ${msg}` }));
     return;

@@ -14,7 +14,7 @@ snippets, and the `DARKMODE-AUDIT.md` report template.
 
 # Dark Mode Audit Procedure
 
-Detailed procedure for the `gdd-darkmode` standalone audit - companion to
+Detailed procedure for the `hone-darkmode` standalone audit - companion to
 `../skills/darkmode/SKILL.md`. Read this file when executing a specific audit step
 (architecture detection, contrast computation, anti-pattern grep, report layout). The
 SKILL.md keeps the essential pre-flight + step routing; this file holds the deep

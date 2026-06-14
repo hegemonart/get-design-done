@@ -1,6 +1,6 @@
 # Rollout Coordination - the `<rollout_status>` contract + the verify→prod loop
 
-How GDD tracks a design from "PR merged" to "live for 100% of users", and feeds the **actual deployment percentage** back into the `design_arms` posterior so a variant's reward reflects how widely it was really shipped. The deterministic classifier is `scripts/lib/rollout/rollout-status.cjs`; the orchestration is `agents/rollout-coordinator.md` + `/gdd:rollout-status`. GDD **reads** the feature-flag service (via the Phase 38 LaunchDarkly/Statsig/GrowthBook connections) - it never drives the rollout.
+How GDD tracks a design from "PR merged" to "live for 100% of users", and feeds the **actual deployment percentage** back into the `design_arms` posterior so a variant's reward reflects how widely it was really shipped. The deterministic classifier is `scripts/lib/rollout/rollout-status.cjs`; the orchestration is `agents/rollout-coordinator.md` + `/hone:rollout-status`. GDD **reads** the feature-flag service (via the Phase 38 LaunchDarkly/Statsig/GrowthBook connections) - it never drives the rollout.
 
 ---
 
@@ -36,7 +36,7 @@ stuck: false
 
 ## Stuck detection
 
-`isStuck(state, daysSinceChange, threshold)` - a partial rollout that has not progressed for ≥ `threshold` days (default **14**, configurable via `.design/config.json rollout.stuck_days`). `prod-100%` and `unrolled` are never stuck. `/gdd:rollout-status` surfaces stuck cycles ("canary-10% for 18 days - advance or roll back?"). GDD **notifies**; it does not auto-advance or roll back (read-only - D-02).
+`isStuck(state, daysSinceChange, threshold)` - a partial rollout that has not progressed for ≥ `threshold` days (default **14**, configurable via `.design/config.json rollout.stuck_days`). `prod-100%` and `unrolled` are never stuck. `/hone:rollout-status` surfaces stuck cycles ("canary-10% for 18 days - advance or roll back?"). GDD **notifies**; it does not auto-advance or roll back (read-only - D-02).
 
 ## Feeding `design_arms` (deployed_pct weighting)
 

@@ -6,10 +6,10 @@
  * Cursor SKILL.md converter. Translates Claude-shape source into
  * Cursor's expected shape:
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
  *   - Slash references in prose pass through unchanged — Cursor consumes
- *     the same `/gdd-<name>` shape Claude does (see runtime-slash.cjs).
- *     Mixed-shape inputs (`gdd-x`, `/gdd:x`) are normalized to `/gdd-x`
+ *     the same `/hone-<name>` shape Claude does (see runtime-slash.cjs).
+ *     Mixed-shape inputs (`hone-x`, `/hone:x`) are normalized to `/hone-x`
  *     so the installed skill is consistent.
  *   - Tool names in code fences pass through unchanged — Cursor accepts
  *     the Claude vocabulary (Read/Write/Bash/Edit/Grep/Glob).
@@ -52,7 +52,7 @@ const shared = require('./shared.cjs');
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'cursor');
   out = shared.ensureAdapterHeader(out, 'Cursor');
   return fm + out;

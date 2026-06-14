@@ -128,7 +128,7 @@ function stripCommandPrefix(s) {
  *   - all other runtimes → `/hone-<token><tail>`
  *   - Unknown / falsy runtime → defaults to `'claude'` shape (`/hone-`).
  *
- * @param {string} commandName  e.g. `'explore'`, `'/hone-debug'`, `'/gdd-debug'`, `'do x y'`.
+ * @param {string} commandName  e.g. `'explore'`, `'/hone-debug'`, `'/hone-debug'`, `'do x y'`.
  * @param {string} [runtime]    runtime ID; defaults to `'claude'`.
  * @returns {string}
  */

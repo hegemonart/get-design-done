@@ -67,17 +67,17 @@ Run with `GDD_BANDIT_BYPASS=1` in the environment. This is the same effect as fl
 
 ## How to inspect the posterior
 
-### Live snapshot via `/gdd:bandit-status`
+### Live snapshot via `/hone:bandit-status`
 
 Run the read-only diagnostic skill:
 
 ```text
-/gdd:bandit-status
+/hone:bandit-status
 ```
 
 Output is a Markdown table grouped by `(agent, bin, delegate)` with one row per tier and columns for `alpha`, `beta`, `mean`, `stddev`, `count`, `last_used`. Read this when investigating "the bandit picked X but I expected Y" or when verifying convergence after enabling `adaptive_mode: full`.
 
-The skill is strictly read-only per Phase 27.5 D-11. To reset the posterior, use `/gdd:bandit-reset` from Phase 23.5.
+The skill is strictly read-only per Phase 27.5 D-11. To reset the posterior, use `/hone:bandit-reset` from Phase 23.5.
 
 ### Direct posterior file
 
@@ -118,7 +118,7 @@ Each arm is a unique `(agent, bin, tier, delegate?)` slice. The `delegate` field
 To wipe the posterior and start fresh (e.g., after a major refactor that invalidates priors):
 
 ```text
-/gdd:bandit-reset
+/hone:bandit-reset
 ```
 
 This deletes `.design/telemetry/posterior.json`. The next `consultBandit()` call will re-seed from `TIER_PRIOR` (Phase 23.5).
@@ -139,9 +139,9 @@ Work down this checklist in order:
    - `bandit_pull` — `adaptive_mode === 'full'`, no delegate, bandit picked via `pull()`.
    - `bandit_pull_with_delegate` — same but with a specific delegate arm.
 
-4. **Has the bandit accumulated enough data?** Run `/gdd:bandit-status` and find the `(agent, bin, delegate)` row. If `count < 3`, the pick is statistically unstable — early Thompson sampling is high-variance. Wait for more cycles or seed more aggressively via `default-tier:`.
+4. **Has the bandit accumulated enough data?** Run `/hone:bandit-status` and find the `(agent, bin, delegate)` row. If `count < 3`, the pick is statistically unstable — early Thompson sampling is high-variance. Wait for more cycles or seed more aggressively via `default-tier:`.
 
-5. **Is the posterior unexpectedly biased?** Inspect the `alpha` and `beta` values directly in `.design/telemetry/posterior.json`. If `alpha` is massive and `beta` is tiny for the picked tier, the bandit is confident — confirm the reward signal isn't wrong. If both are small, the prior is dominating; try `/gdd:bandit-reset` and re-seed.
+5. **Is the posterior unexpectedly biased?** Inspect the `alpha` and `beta` values directly in `.design/telemetry/posterior.json`. If `alpha` is massive and `beta` is tiny for the picked tier, the bandit is confident — confirm the reward signal isn't wrong. If both are small, the prior is dominating; try `/hone:bandit-reset` and re-seed.
 
 6. **Is the reward signal misaligned with intent?** The reward function is two-stage lexicographic (D-08). Stage 1 requires `status === 'completed'` (else reward = 0). Stage 2 rewards cheaper successful spawns. If your agent is "succeeding" but cost is high, the bandit will favor cheaper tiers even if they're lower quality. Adjust `lambda` in `.design/budget.json` to weight cost less.
 

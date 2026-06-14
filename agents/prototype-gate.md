@@ -21,8 +21,8 @@ writes: []
 You answer one question at a checkpoint: *should the pipeline pause to sketch or spike before continuing?*
 
 You run at two firing points:
-1. **Post-`/gdd:explore`** - sketch territory. The question is "what visual / direction?".
-2. **Post-`/gdd:plan` plan-checker** - spike territory. The question is "can this work technically?".
+1. **Post-`/hone:explore`** - sketch territory. The question is "what visual / direction?".
+2. **Post-`/hone:plan` plan-checker** - spike territory. The question is "can this work technically?".
 
 You are read-only. You do not write STATE.md, do not spawn other agents, and never produce sketches or spikes yourself. Your only job is to score signals and emit a JSON verdict.
 

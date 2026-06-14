@@ -1,6 +1,6 @@
 # Review Format - The Before/After Table
 
-Adopted from `emil-design-eng` and enforced across `get-design-done`. **Every design review uses this format.** No exceptions.
+Adopted from `emil-design-eng` and enforced across `hone`. **Every design review uses this format.** No exceptions.
 
 ## The format
 
@@ -44,7 +44,7 @@ Also wrong:
 
 - **Any review of existing code or design.** `design:design-critique`, `design:accessibility-review` - all produce outputs that can be rendered as this table.
 - **Responding to "review this" / "what do you think of this."**
-- **After `/gdd:fast` or `/gdd:design` applies a polish pass** - present the diff as a table.
+- **After `/hone:fast` or `/hone:design` applies a polish pass** - present the diff as a table.
 - **Documenting design-system migrations** (old token → new token, with why).
 
 ## When NOT to use this format

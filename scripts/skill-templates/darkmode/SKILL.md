@@ -5,7 +5,7 @@ argument-hint: ""
 user-invocable: true
 ---
 
-# gdd-darkmode - Dark Mode Audit
+# hone-darkmode - Dark Mode Audit
 
 Standalone dark mode audit. Detects the project's dark mode architecture, runs architecture-specific checks across contrast, token completeness, anti-patterns, and meta properties, then writes a prioritized fix list to `.design/DARKMODE-AUDIT.md`.
 
@@ -29,7 +29,7 @@ Output artifact prefix `DARKMODE-AUDIT` is distinct from the pipeline namespace 
 
 ## Pre-Flight
 
-Confirm source root exists. Try in order: `src/` (preferred), `app/` (Next.js App Router), `lib/` (libraries), `pages/` (Next.js Pages Router). Set `SRC_ROOT` to the first that exists. If none exist, abort: `"No source directory detected. Run /get-design-done explore first."`
+Confirm source root exists. Try in order: `src/` (preferred), `app/` (Next.js App Router), `lib/` (libraries), `pages/` (Next.js Pages Router). Set `SRC_ROOT` to the first that exists. If none exist, abort: `"No source directory detected. Run {{command_prefix}}explore first."`
 
 Confirm `.design/` exists (create if absent: `mkdir -p .design/`).
 

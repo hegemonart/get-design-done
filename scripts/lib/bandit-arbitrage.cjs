@@ -9,7 +9,7 @@
 // has drifted from the frontmatter default. This is the "stale
 // frontmatter" signal described in Phase 27.5 CONTEXT D-10 — it mirrors
 // the cross-runtime `cost-arbitrage.cjs` module from Phase 26-06 so
-// `/gdd:apply-reflections` can iterate both arbitrage sources
+// `/hone:apply-reflections` can iterate both arbitrage sources
 // homogeneously.
 //
 // Contract:

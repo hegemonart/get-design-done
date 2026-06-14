@@ -1,6 +1,6 @@
 # Platforms - Reference Guide
 
-Platform conventions are not arbitrary constraints - they are the accumulated result of billions of user interactions on each operating system. When a designer deviates from a platform convention, they are implicitly asking their user to unlearn a trained reflex and replace it with a novel one specific to this product. That is expensive. This reference establishes the canonical interaction patterns, layout rules, gesture vocabularies, and component conventions for each platform the get-design-done framework targets, along with the governing rule for when brand expression should yield to platform habit and when it should not.
+Platform conventions are not arbitrary constraints - they are the accumulated result of billions of user interactions on each operating system. When a designer deviates from a platform convention, they are implicitly asking their user to unlearn a trained reflex and replace it with a novel one specific to this product. That is expensive. This reference establishes the canonical interaction patterns, layout rules, gesture vocabularies, and component conventions for each platform the hone framework targets, along with the governing rule for when brand expression should yield to platform habit and when it should not.
 
 ---
 
@@ -339,8 +339,8 @@ The practical application is as follows:
 - Never override platform safe area handling. If a design requires content to appear in an unsafe zone, the design is wrong - not the safe area.
 - Always respect the platform's minimum touch target and accessibility text scaling requirements. These are not platform conventions; they are accessibility requirements, and meeting them is a baseline, not an aspiration.
 
-The iOS Human Interface Guidelines, Material Design 3 documentation, and Microsoft Fluent 2 guidelines are the authoritative sources for platform structural decisions. When any detail in this reference conflicts with those sources, those sources take precedence - they are updated continuously and reflect current platform capabilities and requirements. This reference synthesizes those sources for the purposes of the get-design-done framework but does not replace them.
+The iOS Human Interface Guidelines, Material Design 3 documentation, and Microsoft Fluent 2 guidelines are the authoritative sources for platform structural decisions. When any detail in this reference conflicts with those sources, those sources take precedence - they are updated continuously and reflect current platform capabilities and requirements. This reference synthesizes those sources for the purposes of the hone framework but does not replace them.
 
 ---
 
-*This reference governs all platform-targeting decisions within the get-design-done framework. Deviations from platform convention require explicit justification in `.design/DESIGN-CONTEXT.md` as a C-XX constraint, with rationale documented. Cross-references: [iOS HIG](https://developer.apple.com/design/human-interface-guidelines/), [Material Design 3](https://m3.material.io/), [Microsoft Fluent 2](https://fluent2.microsoft.design/).*
+*This reference governs all platform-targeting decisions within the hone framework. Deviations from platform convention require explicit justification in `.design/DESIGN-CONTEXT.md` as a C-XX constraint, with rationale documented. Cross-references: [iOS HIG](https://developer.apple.com/design/human-interface-guidelines/), [Material Design 3](https://m3.material.io/), [Microsoft Fluent 2](https://fluent2.microsoft.design/).*

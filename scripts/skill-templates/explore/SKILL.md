@@ -7,7 +7,7 @@ tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__hone_state__ge
 
 # Get Design Done - Explore
 
-**Role:** You are the Explore stage. Stage 2 of 5 in the get-design-done pipeline.
+**Role:** You are the Explore stage. Stage 2 of 5 in the hone pipeline.
 
 **Purpose:** Unified exploration merging the former `scan` (inventory grep) and `discover` (context interview) stages. Produces `.design/DESIGN.md`, `.design/DESIGN-DEBT.md`, and `.design/DESIGN-CONTEXT.md`.
 
@@ -96,7 +96,7 @@ Full interview protocol + JSON line schema: `./explore-procedure.md` §Step 3.
 
 ## After Writing
 
-Print: "=== Explore complete ===\nSaved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md\nNext: @get-design-done plan".
+Print: "=== Explore complete ===\nSaved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md\nNext: {{command_prefix}}plan".
 
 <HARD-GATE>
 Do NOT transition to plan (or invoke `{{command_prefix}}plan`) until BOTH `.design/DESIGN.md` AND `.design/DESIGN-CONTEXT.md` are committed AND the user has approved them. If this project uses a custom `.design` location, read the artifact paths from `.design/STATE.md` rather than assuming the default.

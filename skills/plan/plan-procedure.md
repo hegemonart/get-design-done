@@ -14,7 +14,7 @@ scoping, synthesizer wiring, research-synthesis persistence, exploration artifac
 
 # Plan Procedure
 
-Detailed procedure for the get-design-done `plan` Stage 3 orchestrator. Companion to
+Detailed procedure for the hone `plan` Stage 3 orchestrator. Companion to
 `../skills/plan/SKILL.md`. Read this file when executing a specific plan step; the
 SKILL.md keeps the essential workflow + decision tree, this file holds the deep
 agent prompts and pre-plan research wiring.
@@ -250,7 +250,7 @@ The next stage (design) calls `mcp__hone_state__transition_stage` on entry - thi
 Print user-facing summary:
 - Plan tasks: N waves, M total tasks
 - Files: .design/DESIGN-PLAN.md (and .design/DESIGN-RESEARCH.md if research ran)
-- Next: `/get-design-done:design` to execute the plan
+- Next: `/hone:design` to execute the plan
 
 ---
 

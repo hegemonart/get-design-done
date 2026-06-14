@@ -4,7 +4,7 @@
 // Each decision under review lives at .design/reviews/<decision-id>/ and moves through:
 //   proposed → reviewing → approved → locked
 // `locked` is terminal and HARD: a locked decision cannot be amended. The only way back is an
-// explicit, AUDITED unlock (/gdd:unlock-decision <id> --approver <who>), which records who reopened
+// explicit, AUDITED unlock (/hone:unlock-decision <id> --approver <who>), which records who reopened
 // it and why. This module is the pure transition core — the skill does the filesystem I/O.
 //
 // No `require` — pure. Deterministic.

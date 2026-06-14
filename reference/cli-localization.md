@@ -8,7 +8,7 @@ lowest-effort, highest-impact subset; full skill-body translation is deferred (p
 
 `scripts/lib/i18n/index.cjs` resolves the active locale with this precedence:
 
-1. **`.design/config.json#locale`** - an explicit per-project override (set via `/gdd:locale <code>`).
+1. **`.design/config.json#locale`** - an explicit per-project override (set via `/hone:locale <code>`).
 2. **`process.env`** - `LC_ALL` / `LC_MESSAGES` / `LANG` / `LANGUAGE` (normalized: `ru_RU.UTF-8` → `ru`).
 3. **`en`** - the default.
 

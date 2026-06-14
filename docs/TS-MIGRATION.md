@@ -1,6 +1,6 @@
 # TypeScript Migration Policy
 
-Plan 20-00 establishes the TypeScript toolchain for `get-design-done`. This doc documents which files are TS today and what rules govern future conversions.
+Plan 20-00 establishes the TypeScript toolchain for `hone`. This doc documents which files are TS today and what rules govern future conversions.
 
 ## Philosophy
 
@@ -17,7 +17,7 @@ These are the four files converted in Plan 20-00. Every one consumes at least on
 | `tests/helpers.ts` | Shared test fixtures (scaffoldDesignDir, readFrontmatter, countLines, mockMCP) | `require('./helpers.ts')` from `tests/*.test.cjs` under `node --test --experimental-strip-types` |
 | `scripts/validate-schemas.ts` | ajv-cli runner + structural fallback for every `reference/schemas/*.schema.json` pair | `npm run validate:schemas` |
 | `scripts/validate-frontmatter.ts` | Frontmatter hygiene validator for `agents/*.md` | `npm run validate:frontmatter` |
-| `scripts/aggregate-agent-metrics.ts` | Incremental per-agent telemetry aggregator | Detached child of `hooks/budget-enforcer.ts`; `/gdd:optimize` refresh step; manual `npm`-free invocation `node --experimental-strip-types scripts/aggregate-agent-metrics.ts` |
+| `scripts/aggregate-agent-metrics.ts` | Incremental per-agent telemetry aggregator | Detached child of `hooks/budget-enforcer.ts`; `/hone:optimize` refresh step; manual `npm`-free invocation `node --experimental-strip-types scripts/aggregate-agent-metrics.ts` |
 
 ## Tier-2 (opportunistic)
 

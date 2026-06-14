@@ -1,5 +1,5 @@
 'use strict';
-// Phase 41 — gdd-detect engine. Pure, dep-free regex engine over file content. Walks a path, runs
+// Phase 41 — hone-detect engine. Pure, dep-free regex engine over file content. Walks a path, runs
 // each rule's matcher against the text of each scannable file, and returns structured findings. The
 // engine never touches the network or any optional dependency — so the SC#10 network-isolation scan
 // stays clean.

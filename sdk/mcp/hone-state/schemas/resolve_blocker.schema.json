@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/hone-state/schemas/resolve_blocker.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/scripts/mcp-servers/hone-state/schemas/resolve_blocker.schema.json",
   "title": "GddStateResolveBlocker",
   "description": "MCP tool hone_state__resolve_blocker — remove one <blockers> entry by 0-based index or exact text match. Emits state.mutation when a row is removed; returns operation_failed error when no row matches.",
   "type": "object",

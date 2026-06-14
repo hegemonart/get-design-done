@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://get-design-done.example/schemas/hooks.schema.json",
+  "$id": "https://hone.example/schemas/hooks.schema.json",
   "title": "Claude hooks.json",
   "description": "Shape of hooks/hooks.json — event-triggered commands registered by the plugin.",
   "type": "object",

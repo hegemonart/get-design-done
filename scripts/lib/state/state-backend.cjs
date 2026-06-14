@@ -17,7 +17,7 @@
  *   - R10: openQueryDb uses engine-level readonly:true (engine rejects writes with SQLITE_READONLY)
  *
  * Package-root resolution: walk-up from __dirname to find package.json with
- * name === '@hegemonart/get-design-done', then resolve sdk/state/schema.sql
+ * name === '@hegemonart/hone', then resolve sdk/state/schema.sql
  * from that root. This is the Phase 53 lesson - never use __dirname-relative
  * cross-tree jumps; esbuild rewrites __dirname so fixed relative paths break.
  *
@@ -78,7 +78,7 @@ let _cachedPkgRoot = null;
 
 /**
  * Find the GDD package root by walking up from startDir.
- * Looks for package.json with name === '@hegemonart/get-design-done'.
+ * Looks for package.json with name === '@hegemonart/hone'.
  * Falls back to the first directory with any package.json, then startDir.
  *
  * @param {string} startDir
@@ -97,7 +97,7 @@ function _findPackageRoot(startDir) {
     }
     if (pkg) {
       if (firstWithPkg === null) firstWithPkg = dir;
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -253,7 +253,7 @@ function openStateDb(dbPath, opts = {}) {
  * to sqlite3_open_v2). The engine rejects all write operations with
  * SQLITE_READONLY - no schema execution is performed.
  *
- * This is the correct path for /gdd:state query (R10).
+ * This is the correct path for /hone:state query (R10).
  *
  * @param {string} dbPath absolute path to state.sqlite
  * @returns {import('better-sqlite3').Database}

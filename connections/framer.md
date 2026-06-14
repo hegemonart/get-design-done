@@ -1,6 +1,6 @@
 # Framer — Connection Specification
 
-This file is the connection specification for **Framer** within the get-design-done pipeline. Framer is an AI-native canvas design tool (Wave 2). Like Figma, it is a **canvas-category** connection: GDD reads the current Framer selection/frames as a design source and writes annotated design proposals back. It is **not** a code generator — the pipeline never asks Framer to emit production components. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for **Framer** within the hone pipeline. Framer is an AI-native canvas design tool (Wave 2). Like Figma, it is a **canvas-category** connection: GDD reads the current Framer selection/frames as a design source and writes annotated design proposals back. It is **not** a code generator — the pipeline never asks Framer to emit production components. See `connections/connections.md` for the full connection index and capability matrix.
 
 This is an **opt-in, user-connected** tool. There is no bundled dependency — GDD ships no Framer client. The connection only activates when the user has independently registered a Framer MCP (or plugin bridge) in their session.
 

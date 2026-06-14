@@ -17,14 +17,14 @@ jira: PROJ-45
 ```
 
 - A cycle may link a Linear issue, a Jira issue, both, or neither.
-- The link is set by the user (or a future `/gdd:link-ticket`); the agent **reads** it, never invents a link.
+- The link is set by the user (or a future `/hone:link-ticket`); the agent **reads** it, never invents a link.
 - No link for the current cycle → the agent is a noop on both paths.
 
 ## Read path (decision-injector - `.design/**.md` open)
 
 When a design artifact opens and the cycle has a link to an `available` system, the agent fetches the linked ticket's recent comments (via the resolved `mcp__linear__*` / `mcp__atlassian__*` tool) and surfaces a short **redacted** digest as cycle context - so a decision made in the ticket reaches the pipeline. Read-only; nothing is written on this path.
 
-## Write path (`/gdd:complete-cycle`)
+## Write path (`/hone:complete-cycle`)
 
 On cycle completion, for each linked + available system:
 

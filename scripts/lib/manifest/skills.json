@@ -239,7 +239,7 @@
     },
     {
       "name": "help",
-      "description": "Lists all available get-design-done commands with one-line descriptions",
+      "description": "Lists all available hone commands with one-line descriptions",
       "tools": "Read",
       "disable_model_invocation": true
     },
@@ -320,7 +320,7 @@
     },
     {
       "name": "new-project",
-      "description": "Initialize a new get-design-done project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage.",
+      "description": "Initialize a new hone project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage.",
       "argument_hint": "[--name <project-name>]",
       "tools": "Read, Write, AskUserQuestion, Bash, Glob",
       "composes_with": [
@@ -501,7 +501,7 @@
     {
       "name": "report-issue",
       "frontmatter_name": "report-issue",
-      "description": "Consent-gated GitHub issue reporter for /gdd. Triages locally against `reference/known-failure-modes.md`, layers Phase 22 secret-redaction with Phase 30 pseudonymization, drafts the payload to `.design/issue-drafts/`, opens `$EDITOR` for inspection, and submits via the user's `gh` CLI to a hardcoded repo only after explicit per-issue consent. Use when the user runs `{{command_prefix}}report-issue`, hits a failure on a whitelisted command with the `--report` flag, or asks to file a bug against get-design-done.",
+      "description": "Consent-gated GitHub issue reporter for /gdd. Triages locally against `reference/known-failure-modes.md`, layers Phase 22 secret-redaction with Phase 30 pseudonymization, drafts the payload to `.design/issue-drafts/`, opens `$EDITOR` for inspection, and submits via the user's `gh` CLI to a hardcoded repo only after explicit per-issue consent. Use when the user runs `{{command_prefix}}report-issue`, hits a failure on a whitelisted command with the `--report` flag, or asks to file a bug against hone.",
       "argument_hint": "[<command-name>] [--force-report]",
       "tools": "Read, Write, Grep, Bash"
     },
@@ -649,7 +649,7 @@
     },
     {
       "name": "turn-closeout",
-      "description": "Portable mirror of the gdd-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills ({{command_prefix}}next, {{command_prefix}}design, {{command_prefix}}verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical.",
+      "description": "Portable mirror of the hone-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills ({{command_prefix}}next, {{command_prefix}}design, {{command_prefix}}verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical.",
       "argument_hint": "(none - reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)",
       "tools": "Read, Bash"
     },
@@ -676,7 +676,7 @@
     },
     {
       "name": "update",
-      "description": "Update get-design-done to the latest release. Preserves .design/config.json and ./.claude/skills/.",
+      "description": "Update hone to the latest release. Preserves .design/config.json and ./.claude/skills/.",
       "argument_hint": "[--dry-run] [--version <tag>] [--show-privacy-diff]",
       "tools": "Read, Write, Bash",
       "disable_model_invocation": true

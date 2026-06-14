@@ -156,7 +156,7 @@ export const TOOL_DESCRIPTIONS: Record<string, string> = {
   hone_events_tail:
     'hone_events_tail: last-N events from .design/telemetry/events.jsonl with optional type filter.',
   hone_health:
-    'hone_health: read-only mirror of gdd-health SKILL — 4 checks (CLAUDE.md, .planning/, .design/, package.json).',
+    'hone_health: read-only mirror of hone-health SKILL — 4 checks (CLAUDE.md, .planning/, .design/, package.json).',
 };
 
 /** Human-readable annotation hints (MCP clients use these to style the

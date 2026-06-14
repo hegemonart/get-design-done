@@ -1,6 +1,6 @@
 'use strict';
 /**
- * scripts/lib/risk/override.cjs — PURE helpers for the `/gdd:override` skill
+ * scripts/lib/risk/override.cjs — PURE helpers for the `/hone:override` skill
  * (Phase 56). Mirrors the unlock-decision precedent (Phase 40): override is the
  * deliberately heavyweight escape hatch from a risk-blocked action or a
  * fact-force gate, and every use is audited.
@@ -12,7 +12,7 @@
  * Two modes, one per exported builder:
  *
  *   1. overrideDecisionEntry(findingId, { approver, reason })
- *        -> { text, status, tag } for `mcp__gdd_state__add_decision`.
+ *        -> { text, status, tag } for `mcp__hone_state__add_decision`.
  *      The audit invariant: a recorded approver is mandatory. The `override`
  *      tag is embedded in `text` (the Decision shape is { id, text, status } —
  *      it has no dedicated tags field), so the entry is greppable and the

@@ -2,11 +2,11 @@
 'use strict';
 
 /**
- * get-design-done — first-run nudge (Phase 14.7)
+ * hone — first-run nudge (Phase 14.7)
  *
  * Port of hooks/first-run-nudge.sh to pure Node CommonJS (Phase 28.x).
  * SessionStart hook. Silent-on-failure by policy: exits 0 on every error path.
- * Prints exactly one restrained line pointing at /gdd:start when all gates
+ * Prints exactly one restrained line pointing at /hone:start when all gates
  * pass, and nothing otherwise.
  *
  * Non-obvious behavior preserved:
@@ -14,7 +14,7 @@
  *  - HOME falls back to USERPROFILE (Windows). Mirrors bash `${HOME:-$USERPROFILE}`.
  *  - read_state_stage uses the same regex shape as the bash sed: drops an
  *    optional surrounding double-quote and stops at the first whitespace.
- *  - has_recent_gdd_command is a placeholder that always returns false (matches
+ *  - has_recent_hone_command is a placeholder that always returns false (matches
  *    the bash `return 1` → `is_active` boolean false).
  *  - Sourcing guard: helpers are exported on module.exports; main() only runs
  *    when invoked as the entry point (require.main === module).
@@ -27,7 +27,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const NUDGE_LINE =
-  'Tip: run /gdd:start to let GDD inspect this codebase and suggest one first fix.\n';
+  'Tip: run /hone:start to let GDD inspect this codebase and suggest one first fix.\n';
 
 function log(msg) {
   if (process.env.GDD_NUDGE_DEBUG === '1') {
@@ -58,7 +58,7 @@ function hasDesignState(designDir) {
 function isDismissed(homeDir) {
   try {
     if (!homeDir) return false;
-    return isFile(path.join(homeDir, '.claude', 'gdd-nudge-dismissed'));
+    return isFile(path.join(homeDir, '.claude', 'hone-nudge-dismissed'));
   } catch (_e) {
     return false;
   }

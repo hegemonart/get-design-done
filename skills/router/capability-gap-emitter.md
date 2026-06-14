@@ -1,4 +1,4 @@
-# gdd-router - capability_gap emitter (Phase 29 / D-02 / D-08)
+# hone-router - capability_gap emitter (Phase 29 / D-02 / D-08)
 
 Co-located reference for `skills/router/SKILL.md` - split out per Phase 28.5
 contract (router SKILL ≤100 lines) and the Phase 28.6 co-location pattern.
@@ -49,7 +49,7 @@ appendChainEvent({
 - `suggested_kind` is `"agent"` because router unmatched intents typically
   describe multi-step workflows (the unit the router resolves).
 - Router-unmatched is NOT the same as MCP-probe failure (per D-08). If
-  gdd-router returns a fallback because a peer-CLI connection is down, do
+  hone-router returns a fallback because a peer-CLI connection is down, do
   NOT emit capability_gap - that's a Phase 22 connection-status concern.
 - The emitter is the LAST step before returning the fallback JSON. Router
   output is unchanged (back-compat per the existing `## Output schema

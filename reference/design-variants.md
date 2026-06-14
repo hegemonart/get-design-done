@@ -1,6 +1,6 @@
 # Design Variants + the `design_arms` Outcome Loop
 
-How `/gdd:design --variants N` generates competing, hypothesis-tagged design variants, and how external outcomes (A/B experiments + user research) feed the `design_arms` posterior so the design stage learns **which patterns win with users** - not just which pass lint/test. The posterior math lives in `scripts/lib/ds-arms/design-arms-store.cjs`; the ingest agents are `agents/experiment-result-ingester.md` (A/B) + `agents/user-research-synthesizer.md` (research).
+How `/hone:design --variants N` generates competing, hypothesis-tagged design variants, and how external outcomes (A/B experiments + user research) feed the `design_arms` posterior so the design stage learns **which patterns win with users** - not just which pass lint/test. The posterior math lives in `scripts/lib/ds-arms/design-arms-store.cjs`; the ingest agents are `agents/experiment-result-ingester.md` (A/B) + `agents/user-research-synthesizer.md` (research).
 
 ---
 

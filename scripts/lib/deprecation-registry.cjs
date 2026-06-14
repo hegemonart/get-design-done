@@ -3,7 +3,7 @@
 //
 // The canonical registry is the `## Path migrations (machine-readable)` table in
 // reference/DEPRECATIONS.md. This module parses that table and derives each entry's status against a
-// running plugin version, so /gdd:migrate, the /gdd:update advisory, and the completeness gate all
+// running plugin version, so /hone:migrate, the /hone:update advisory, and the completeness gate all
 // share one version-logic core. It reads NO files itself (callers pass the markdown text) — so it is
 // trivially unit-testable.
 //

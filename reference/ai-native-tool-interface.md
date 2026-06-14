@@ -1,6 +1,6 @@
 # AI-Native Design Tool Interface - Capability Contract
 
-This file defines the capability-based contract that AI-native design tools must implement to integrate with the get-design-done pipeline. Two sub-categories are defined: **canvas** and **component-generator**. Future tools implement one sub-category and plug in via the same probe/read/write or probe/generate/adopt surface.
+This file defines the capability-based contract that AI-native design tools must implement to integrate with the hone pipeline. Two sub-categories are defined: **canvas** and **component-generator**. Future tools implement one sub-category and plug in via the same probe/read/write or probe/generate/adopt surface.
 
 ---
 

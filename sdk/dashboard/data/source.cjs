@@ -4,7 +4,7 @@
  *
  * THE data plane. `loadDashboardModel({root?})` assembles the full read-only
  * model the TUI + web layers render, by calling the SHARED LIBS in-process
- * (R1) — the same read surface the gdd-mcp tools expose — with a `.design/*`
+ * (R1) — the same read surface the hone-mcp tools expose — with a `.design/*`
  * file-scrape fallback per section (R1: "file-scrape fallback" = read
  * STATE.md / events.jsonl / context-graph.json directly when a lib is
  * unavailable).
@@ -108,7 +108,7 @@ function importEventStream() {
  * filesystem root.
  *
  * This mirrors `resolveProjectRoot()` in
- * `sdk/mcp/gdd-mcp/tools/shared.ts` (the canonical D-05 marker walk) so the
+ * `sdk/mcp/hone-mcp/tools/shared.ts` (the canonical D-05 marker walk) so the
  * dashboard resolves the USER's project, not the plugin's own install dir.
  *
  * @param {string} [startCwd]
@@ -138,11 +138,11 @@ function cwdMarkerWalk(startCwd = process.cwd()) {
  *
  * D2 fix: `packageRoot()` ALWAYS succeeds (it walks up from __dirname and
  * lands on the installed plugin's own package.json, e.g.
- * node_modules/@hegemonart/get-design-done), so when it preceded the cwd
- * resolution an installed `gdd-dashboard` always showed the PLUGIN's own
+ * node_modules/@hegemonart/hone), so when it preceded the cwd
+ * resolution an installed `hone-dashboard` always showed the PLUGIN's own
  * (empty) data instead of the user's project. We now resolve the user's
  * project FIRST via a cwd-upward marker walk (the same D-05 algorithm the
- * gdd-mcp tools use), and only fall back to the package root as a last
+ * hone-mcp tools use), and only fall back to the package root as a last
  * resort. Running the dashboard INSIDE the gdd repo still works — the marker
  * walk finds the repo's own .design/.planning, which IS the project root.
  *

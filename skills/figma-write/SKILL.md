@@ -3,14 +3,14 @@ name: hone-figma-write
 description: "Write design decisions from `.design/DESIGN-CONTEXT.md` back into the active Figma file by dispatching the `design-figma-writer` agent in one of three modes (annotate / tokenize / mappings). Use when the user has completed a design pipeline cycle and wants the decisions (layer comments, variable bindings, or Code Connect mappings) reflected in Figma. Operates proposal→confirm with `--dry-run` and `--confirm-shared` flags."
 ---
 
-# gdd-figma-write
+# hone-figma-write
 
 Dispatches the `design-figma-writer` agent to write design decisions back to the open Figma file. The shared probe pattern (ToolSearch → live call → STATE.md write) and connection handshake are documented at `../../reference/shared-preamble.md#connection-handshake-summary` and `../../connections/figma.md`.
 
 ## Usage
 
 ```
-/get-design-done figma-write <mode> [--dry-run] [--confirm-shared]
+/hone:figma-write <mode> [--dry-run] [--confirm-shared]
 ```
 
 Modes:

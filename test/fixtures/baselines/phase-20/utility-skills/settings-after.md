@@ -6,7 +6,7 @@ tools: Read, Write, AskUserQuestion, Bash, mcp__hone_state__get, mcp__hone_state
 disable-model-invocation: true
 ---
 
-# gdd-settings
+# hone-settings
 
 Manages `.design/config.json` - the per-project config for model profile and parallelism. See `reference/config-schema.md` for the full schema. This skill also supports patching non-stage STATE.md frontmatter keys (`cycle`, `wave`, custom keys) via `mcp__hone_state__frontmatter_update`. See **STATE.md frontmatter** below.
 

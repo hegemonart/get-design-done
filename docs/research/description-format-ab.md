@@ -3,7 +3,7 @@ title: "Description-format A/B — using-gdd (trigger-only vs <what>-clause)"
 phase: 33
 plan: 04
 requirement: BEHAV-04
-scenario: test/suite/skill-behavior/scenarios/using-gdd-ab.json
+scenario: test/suite/skill-behavior/scenarios/using-hone-ab.json
 status: pending keyed run
 threshold: 7/10
 ---
@@ -37,7 +37,7 @@ of the same skill, then scores body-read vs body-skip.
   a body-**skipping** agent (one that followed the one-line description summary) cannot,
   because neither description contains the order. The probe is encoded in
   `setup_prompt` / `body_probe` of
-  `test/suite/skill-behavior/scenarios/using-gdd-ab.json`.
+  `test/suite/skill-behavior/scenarios/using-hone-ab.json`.
 
   The correct answer (from the body) is the skill-priority order:
 

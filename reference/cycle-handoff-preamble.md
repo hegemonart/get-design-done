@@ -19,4 +19,4 @@ The current cycle's `.design/STATE.md`, the user's active message, and the lates
 
 ---
 
-*Prepended to CYCLES.md archive entries, `/gdd:pause` handoff payloads, and `.design/archive/cycle-N/` re-read paths. Tier: preamble. Phase: 14.5.*
+*Prepended to CYCLES.md archive entries, `/hone:pause` handoff payloads, and `.design/archive/cycle-N/` re-read paths. Tier: preamble. Phase: 14.5.*

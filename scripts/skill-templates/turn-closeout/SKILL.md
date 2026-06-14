@@ -1,11 +1,11 @@
 ---
 name: hone-turn-closeout
-description: "Portable mirror of the gdd-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills ({{command_prefix}}next, {{command_prefix}}design, {{command_prefix}}verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical."
+description: "Portable mirror of the hone-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills ({{command_prefix}}next, {{command_prefix}}design, {{command_prefix}}verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical."
 argument-hint: "(none - reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)"
 tools: Read, Bash
 ---
 
-# gdd-turn-closeout
+# hone-turn-closeout
 
 ## Role
 
@@ -53,7 +53,7 @@ If last event is already `{type:"turn_end", stage:<same>, payload:{task_progress
 Otherwise append one JSONL line to `.design/telemetry/events.jsonl`:
 
 ```json
-{"type":"turn_end","timestamp":"<ISO 8601 now>","sessionId":"<session-id-or-'turn-closeout'>","stage":"<stage>","payload":{"task_progress":"<N/M>"},"_meta":{"source":"gdd-turn-closeout-skill"}}
+{"type":"turn_end","timestamp":"<ISO 8601 now>","sessionId":"<session-id-or-'turn-closeout'>","stage":"<stage>","payload":{"task_progress":"<N/M>"},"_meta":{"source":"hone-turn-closeout-skill"}}
 ```
 
 Create `.design/telemetry/` if missing. Append is a single `appendFile`-equivalent call (writer assumes append-atomicity per Plan 20-06).
@@ -82,7 +82,7 @@ One line exactly. No commentary - the nudge is the user-facing surface.
 
 ## Equivalence with the JS hook
 
-This skill and `hooks/hone-turn-closeout.js` MUST stay code-level equivalent: same four early-return branches, same 60-second staleness threshold, same idempotence guard (`type=turn_end, stage, payload.task_progress`), same event shape (only `_meta.source` differs: `gdd-turn-closeout` vs `gdd-turn-closeout-skill` so reflector telemetry can distinguish hook-driven vs skill-driven). Same nudge wording for both N/N and mid-task cases. Change one → change the other in the same plan. Plan 25-09's `tests/turn-closeout-hook.test.cjs` covers the JS hook.
+This skill and `hooks/hone-turn-closeout.js` MUST stay code-level equivalent: same four early-return branches, same 60-second staleness threshold, same idempotence guard (`type=turn_end, stage, payload.task_progress`), same event shape (only `_meta.source` differs: `hone-turn-closeout` vs `hone-turn-closeout-skill` so reflector telemetry can distinguish hook-driven vs skill-driven). Same nudge wording for both N/N and mid-task cases. Change one → change the other in the same plan. Plan 25-09's `tests/turn-closeout-hook.test.cjs` covers the JS hook.
 
 ## Non-Goals
 
@@ -92,4 +92,4 @@ This skill and `hooks/hone-turn-closeout.js` MUST stay code-level equivalent: sa
 
 ## Integration Point
 
-Canonical tail-call sites per D-11: `{{command_prefix}}next`, `{{command_prefix}}design`, `{{command_prefix}}verify`. Each orchestrator's final step before returning to the user invokes `gdd-turn-closeout`. Tail-call wiring intentionally not part of v1.25 (Plan 25-04 ships only the callable surface).
+Canonical tail-call sites per D-11: `{{command_prefix}}next`, `{{command_prefix}}design`, `{{command_prefix}}verify`. Each orchestrator's final step before returning to the user invokes `hone-turn-closeout`. Tail-call wiring intentionally not part of v1.25 (Plan 25-04 ships only the callable surface).

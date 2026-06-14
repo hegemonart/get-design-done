@@ -3,7 +3,7 @@
  * and produce a pairwise parallelism verdict (Plan 23-03).
  *
  * Encodes the prompt-only heuristic from `reference/parallelism-rules.md`
- * into auditable code. Used by /gdd:plan and /gdd:execute to decide
+ * into auditable code. Used by /hone:plan and /hone:execute to decide
  * which tasks can run concurrently in a wave.
  *
  * Verdict rules (first match wins):

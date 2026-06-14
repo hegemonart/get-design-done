@@ -6,7 +6,7 @@ tools: Read, Write, Bash, AskUserQuestion
 disable-model-invocation: true
 ---
 
-# gdd-bandit-reset
+# hone-bandit-reset
 
 ## Role
 
@@ -84,7 +84,7 @@ Verify the cleared state with `/hone:bandit-status`. See `reference/bandit-integ
 
 ### 5. Record
 
-Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-reset","ts":"<ISO>","reset":<bool>,"arms_cleared":<count>,"backup_written":<bool>}`. The skill mutates ONLY the posterior (+ its `.bak`) and appends to skill-records.jsonl (telemetry); it touches no other state.
+Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"hone-bandit-reset","ts":"<ISO>","reset":<bool>,"arms_cleared":<count>,"backup_written":<bool>}`. The skill mutates ONLY the posterior (+ its `.bak`) and appends to skill-records.jsonl (telemetry); it touches no other state.
 
 ## Cross-references
 

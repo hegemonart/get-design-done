@@ -3,7 +3,7 @@
 //
 // Pure read-only mirror of skills/health/SKILL.md's check surface.
 // NO subprocess spawn — just inspects 4 well-known files/dirs and
-// reports status. Used by the gdd_health MCP tool.
+// reports status. Used by the hone_health MCP tool.
 //
 // Surface:
 //   async getHealthChecks(rootDir) → { checks: HealthCheck[] }
@@ -29,7 +29,7 @@
 // When both env and config trigger, env wins (matches D-08 display contract).
 //
 // Check 6 was added in Plan 31-09 — surfaces figma-extract readiness so a user
-// running /gdd:health immediately knows whether figma-extract is usable. The
+// running /hone:health immediately knows whether figma-extract is usable. The
 // detail line is one of three exact strings:
 //   - "figma extract: ready (token set)"
 //   - "figma extract: token missing"
@@ -51,7 +51,7 @@
 // file + JSON inspection only) — NEVER throws, NEVER networks.
 //
 // Check 10 was added in Phase 55 — surfaces whether the GDD dashboard is
-// reachable so a user running /gdd:health knows the `gdd dashboard` entrypoint
+// reachable so a user running /hone:health knows the `gdd dashboard` entrypoint
 // is wired. GRACEFUL-ABSENT by design (D-8 risk surfacing precedent): the
 // dashboard is an opt-in, read-only surface that also works via file-scrape, so
 // a missing bin or absent data plane is a 'warn' (actionable note), NEVER a
@@ -478,7 +478,7 @@ function findGddPackageRoot(startDir) {
             /\/hone$/.test(pkg.name) ||
             // legacy (Phase 61 migration window): accept the prior name in-place
             pkg.name === 'get-design-done' ||
-            /\/get-design-done$/.test(pkg.name)
+            /\/hone$/.test(pkg.name)
           ) {
             return dir;
           }

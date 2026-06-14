@@ -6,7 +6,7 @@ tools: Read, Bash
 disable-model-invocation: true
 ---
 
-# gdd-openrouter-status
+# hone-openrouter-status
 
 ## Role
 

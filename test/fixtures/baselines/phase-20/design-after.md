@@ -8,7 +8,7 @@ tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__hone_state__ge
 
 # Get Design Done - Design
 
-**Stage 4 of 5** in the get-design-done pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
+**Stage 4 of 5** in the hone pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
 
 Full procedure detail: `./design-procedure.md`.
 
@@ -18,7 +18,7 @@ Full procedure detail: `./design-procedure.md`.
 
 1. `mcp__hone_state__transition_stage` with `to: "design"`. Gate failure surfaces `error.context.blockers`; do not advance. Resume case: prior stage `design` + `status: in_progress` -> skip tasks where `.design/tasks/task-NN.md` already exists.
 2. `mcp__hone_state__get` -> snapshot `state`; read `state.position.wave` for execution plan.
-3. Abort only if `.design/DESIGN-PLAN.md` is missing: "No plan found. Run `/get-design-done:plan` first."
+3. Abort only if `.design/DESIGN-PLAN.md` is missing: "No plan found. Run `/hone:plan` first."
 
 Detail: `./design-procedure.md` §Stage entry.
 
@@ -71,7 +71,7 @@ Check task-NN.md files for `status: deviation`. If found: `mcp__hone_state__get`
 
 ## After Completion
 
-Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/get-design-done:verify`). Template: `./design-procedure.md` §After Completion.
+Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/hone:verify`). Template: `./design-procedure.md` §After Completion.
 
 ---
 

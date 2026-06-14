@@ -30,7 +30,7 @@ has no value.
     {
       "name": "health",
       "description": "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions.",
-      "tools": "Read, Bash, Glob, Grep, mcp__gdd_state__get",
+      "tools": "Read, Bash, Glob, Grep, mcp__hone_state__get",
       "disable_model_invocation": true
     }
   ]
@@ -39,7 +39,7 @@ has no value.
 
 Recognized record fields: `name`, `description`, `argument_hint`, `tools`,
 `user_invocable`, `disable_model_invocation`, `frontmatter_name` (the `name:` value when it
-is not the default `gdd-<id>`), `extra_frontmatter` (see below), plus `registered_in_phase`
+is not the default `hone-<id>`), `extra_frontmatter` (see below), plus `registered_in_phase`
 and `aliases`, which live only in the manifest and never round-trip to frontmatter. The
 schema at `scripts/lib/manifest/schemas/skills.schema.json` validates the shape.
 

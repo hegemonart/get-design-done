@@ -3,10 +3,10 @@
 The SDK is the typed, runtime-tested core that the GDD pipeline and both MCP
 servers are built on. It is plain TypeScript run under Node 22+
 `--experimental-strip-types` (no build step). Five concerns live here: the
-**`gdd-state` MCP server** (11 typed STATE.md tools over stdio), **lockfile-safe
+**`hone-state` MCP server** (11 typed STATE.md tools over stdio), **lockfile-safe
 STATE.md** read / mutate / transition, the **append-only event stream** (JSONL +
 in-process bus), the four **resilience primitives** (`.cjs` + `.d.cts`), and the
-headless **`gdd-sdk` CLI**.
+headless **`hone-sdk` CLI**.
 
 ## Import contract (D-04)
 

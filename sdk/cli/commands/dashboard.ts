@@ -98,7 +98,7 @@ export interface DashboardDeps {
 // relative to the GDD package root — never a fixed __dirname cross-tree jump
 // (the Phase 53/54 lesson). Works from the raw .ts (in-repo) AND the bundled
 // .js (packed tarball): we climb from the CLI entry (process.argv[1]) and from
-// cwd to the package.json whose name is "get-design-done".
+// cwd to the package.json whose name is "hone".
 // ---------------------------------------------------------------------------
 
 /**
@@ -108,7 +108,7 @@ export interface DashboardDeps {
  * `__dirname` is undefined) — so we anchor on the CLI entry (process.argv[1] is
  * `<root>/sdk/cli/index.{ts,js}` or `<root>/bin/hone-sdk` in every real launch,
  * the same anchor build.ts uses) and on cwd (a consumer running from their
- * project root, where the lib lives under node_modules/get-design-done/).
+ * project root, where the lib lives under node_modules/hone/).
  */
 function anchorDirs(): string[] {
   const out: string[] = [];
@@ -118,7 +118,7 @@ function anchorDirs(): string[] {
   return out;
 }
 
-/** Walk up from `startDir` to the GDD package root (package.json name === get-design-done). */
+/** Walk up from `startDir` to the GDD package root (package.json name === hone). */
 function climbToMarker(startDir: string): { root: string | null; firstWithPkg: string | null } {
   const req = createRequire(join(startDir, 'noop.js'));
   let dir = startDir;
@@ -129,7 +129,7 @@ function climbToMarker(startDir: string): { root: string | null; firstWithPkg: s
       if (firstWithPkg === null) firstWithPkg = dir;
       try {
         const pkg = req(pkgPath) as { name?: string };
-        if (pkg && pkg.name === 'get-design-done') return { root: dir, firstWithPkg };
+        if (pkg && pkg.name === 'hone') return { root: dir, firstWithPkg };
       } catch {
         /* unreadable package.json — keep climbing */
       }
@@ -143,7 +143,7 @@ function climbToMarker(startDir: string): { root: string | null; firstWithPkg: s
 
 /**
  * Resolve the GDD package root by climbing from each anchor (CLI entry, then cwd)
- * until the `get-design-done` marker is found. Falls back to the first ancestor
+ * until the `hone` marker is found. Falls back to the first ancestor
  * that has ANY package.json, then to cwd. Memoized per process.
  */
 let _cachedPkgRoot: string | null = null;

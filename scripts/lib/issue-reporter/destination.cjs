@@ -2,7 +2,7 @@
 /**
  * destination.cjs — Phase 30 Plans 30-04 + 30-07 hardcoded destination (D-02).
  *
- * Single source of truth for the GitHub repo that /gdd:report-issue
+ * Single source of truth for the GitHub repo that /hone:report-issue
  * submits to. No env-var lookup, no config override, no flag override.
  *
  * Frozen module export -> runtime immutability. Static tests in

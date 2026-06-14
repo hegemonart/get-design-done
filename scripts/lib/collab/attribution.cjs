@@ -4,7 +4,7 @@
 // A STATE.md decision line carries an OPTIONAL attribution suffix so multiple developers' decisions
 // survive a merge with provenance intact (SC#5). The canonical line form is:
 //
-//   D-NN: <text> (<status>) [author=<git-user> co-author=<gdd-instance-id>]
+//   D-NN: <text> (<status>) [author=<git-user> co-author=<hone-instance-id>]
 //
 // The suffix is optional and backward-compatible — a plain `D-01: text (locked)` parses with
 // author/coAuthor = null. This module does ONLY string parse/format + grouping; no fs, no clock.

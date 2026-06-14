@@ -2,56 +2,56 @@
   {
     "name": "hone_state__add_blocker",
     "schemaPath": "sdk/mcp/hone-state/schemas/add_blocker.schema.json",
-    "schemaHash": "1523907187f72855a22d53335b2de40d56990ae85bcc6f301f81ef6656064a28"
+    "schemaHash": "8d589ac7cbbd893fd825a3d192cfbc19af577bebdde5b17e3f94dd5fa92e7d14"
   },
   {
     "name": "hone_state__add_decision",
     "schemaPath": "sdk/mcp/hone-state/schemas/add_decision.schema.json",
-    "schemaHash": "aa07e26ed84984117a2720ad84ff51ff6a4b8b856ac5af63a837a2bfaf6bd5c1"
+    "schemaHash": "f378abd623d0cdd60e6ce662442ecfa1f1d5f2f09eefc4304dd160b9dd9e2d2c"
   },
   {
     "name": "hone_state__add_must_have",
     "schemaPath": "sdk/mcp/hone-state/schemas/add_must_have.schema.json",
-    "schemaHash": "26b9bb2e6b299db7881d8f3c4a055f75699db2e193211d1204e242cc9a3de6da"
+    "schemaHash": "05f3c3275897971a23b65dd4573d517355d83145ce9b2bf82c4a859b73a46509"
   },
   {
     "name": "hone_state__checkpoint",
     "schemaPath": "sdk/mcp/hone-state/schemas/checkpoint.schema.json",
-    "schemaHash": "ca850b013150615da04dcf615cd6c2696199547c832f903aeec7445bca25197d"
+    "schemaHash": "a67c5ef631a50f837f45b9234b5a84779268abb95bef6ccf0e09cb4da3438d54"
   },
   {
     "name": "hone_state__frontmatter_update",
     "schemaPath": "sdk/mcp/hone-state/schemas/frontmatter_update.schema.json",
-    "schemaHash": "add579d97a2daab06df73590475c4054b508da373130a20ed25f4bdbcf0a1d5c"
+    "schemaHash": "74356a9c49d487373240621c9873ddfe5cf1ea8abae6854d6c46a73f12059852"
   },
   {
     "name": "hone_state__get",
     "schemaPath": "sdk/mcp/hone-state/schemas/get.schema.json",
-    "schemaHash": "2cbfbce6c325d6c8e24c36588cc88ed1ecd0db95d7485e80cebeff00a9ee2e35"
+    "schemaHash": "98541177435614dd505db9dc5611381c63e615c726e35cdc064cc07edac0aaff"
   },
   {
     "name": "hone_state__probe_connections",
     "schemaPath": "sdk/mcp/hone-state/schemas/probe_connections.schema.json",
-    "schemaHash": "70c9b71968a90dafb521a7d2418675e1dea15ed7b0c74e15b36a10a13aba0275"
+    "schemaHash": "2fa8d0a0cb3f2e988918220dc3a78b9f373ef83cb7e0506a8c2260da6ed4ecef"
   },
   {
     "name": "hone_state__resolve_blocker",
     "schemaPath": "sdk/mcp/hone-state/schemas/resolve_blocker.schema.json",
-    "schemaHash": "3338a96d0a40c7cb2c86baac95134e3f9632e2dc53ad1218527ec1a5fdabaff8"
+    "schemaHash": "9716c76cd6a16207a6d1f80d63fd03386116e13451fd8f79d02245ea8316fbd0"
   },
   {
     "name": "hone_state__set_status",
     "schemaPath": "sdk/mcp/hone-state/schemas/set_status.schema.json",
-    "schemaHash": "1c990c2c55edc87d4aaaabaeb85188b86048dea5f7e6cc90123035ba913df887"
+    "schemaHash": "1f350ec0582ab315b05dd0b101be3f1b435e1ad6ed65d412f1c3454be942b8f5"
   },
   {
     "name": "hone_state__transition_stage",
     "schemaPath": "sdk/mcp/hone-state/schemas/transition_stage.schema.json",
-    "schemaHash": "42a461fd8fc026615d6555251c24c9d413d7842ffecfc29c501fdd6f7d901f7c"
+    "schemaHash": "e8a95b84d6817197e06933a087bee8efdb94cf89bed827ddfa8055b278e69287"
   },
   {
     "name": "hone_state__update_progress",
     "schemaPath": "sdk/mcp/hone-state/schemas/update_progress.schema.json",
-    "schemaHash": "b8141f35b113f5dd47d1df2dbf6882d23d28ff1662776359f36efe313379bdd8"
+    "schemaHash": "b6f556945a4a3737a3f453a141cbadaf36de7589319bd3fccc857c59007c979a"
   }
 ]

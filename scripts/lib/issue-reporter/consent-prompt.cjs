@@ -2,7 +2,7 @@
 /**
  * consent-prompt.cjs — Plan 30-04 D-03 consent gate.
  *
- * The ONE place where the user explicitly says "yes" before /gdd:report-issue
+ * The ONE place where the user explicitly says "yes" before /hone:report-issue
  * submits anything. There is no auto-mode and no env-var bypass:
  *
  *   - Refuses (throws) if stdin is not a TTY (no piped 'y' from CI, no
@@ -62,7 +62,7 @@ function rejectBypassEnv(env) {
   }
   if (offenders.length > 0) {
     throw new Error(
-      `refused: env var ${offenders.join(', ')} detected; /gdd:report-issue has no auto-mode by design (D-03)`
+      `refused: env var ${offenders.join(', ')} detected; /hone:report-issue has no auto-mode by design (D-03)`
     );
   }
 }
@@ -131,7 +131,7 @@ function buildSummary(draft, draftPath) {
   const head = String(draft.body || '').split(/\r?\n/).slice(0, 10).join('\n');
   return [
     '',
-    '--- /gdd:report-issue draft summary ---',
+    '--- /hone:report-issue draft summary ---',
     `Destination: ${DESTINATION_REPO}`,
     `Draft path:  ${draftPath}`,
     `Title:       ${draft.title}`,
@@ -184,7 +184,7 @@ async function promptConsent(opts) {
   // shell"; the underlying mechanism is the isTTY flag).
   if (!stdin.isTTY) {
     throw new Error(
-      'refused: /gdd:report-issue requires an interactive TTY (no auto-mode by design — D-03)'
+      'refused: /hone:report-issue requires an interactive TTY (no auto-mode by design — D-03)'
     );
   }
 

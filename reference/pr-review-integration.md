@@ -1,6 +1,6 @@
 # PR Review Integration - the gh-based contract for `agents/pr-commenter.md`
 
-How GDD surfaces verify/audit output **inline on a pull request** and as a **status check**, using the `gh` CLI only (no GitHub SDK, no network library). `agents/pr-commenter.md` posts against this contract after `/gdd:ship` creates the PR. Every outbound string is redacted first; every failure mode degrades to a noop (never fails the ship).
+How GDD surfaces verify/audit output **inline on a pull request** and as a **status check**, using the `gh` CLI only (no GitHub SDK, no network library). `agents/pr-commenter.md` posts against this contract after `/hone:ship` creates the PR. Every outbound string is redacted first; every failure mode degrades to a noop (never fails the ship).
 
 ---
 
@@ -8,7 +8,7 @@ How GDD surfaces verify/audit output **inline on a pull request** and as a **sta
 
 ```bash
 gh repo view --json nameWithOwner -q .nameWithOwner   # owner/repo
-# PR number: supplied by /gdd:ship; or: gh pr view --json number,headRefOid -q '.number, .headRefOid'
+# PR number: supplied by /hone:ship; or: gh pr view --json number,headRefOid -q '.number, .headRefOid'
 ```
 
 `head_sha` (the PR head commit) is required for the check-run; get it from `gh pr view --json headRefOid`.
@@ -89,7 +89,7 @@ No raw artifact excerpt reaches `gh` un-redacted.
 | no PR number (manual/failed creation) | noop + one-line note |
 | a single `gh api` call fails (≤3 attempts) | print that body; continue with the rest |
 
-In all cases pr-commenter exits cleanly - it **never** fails the `/gdd:ship` success path.
+In all cases pr-commenter exits cleanly - it **never** fails the `/hone:ship` success path.
 
 ## Out of scope (per Phase 35 split)
 

@@ -56,7 +56,7 @@ Minimum expected files:
 For each D-XX decision in DESIGN-CONTEXT.md, query the graph before grepping:
 
 ```
-node bin/gdd-graph query "decision:D-<nn>" --budget 1500
+node bin/hone-graph query "decision:D-<nn>" --budget 1500
 ```
 
 The query returns a subgraph of components and tokens connected to this decision. Use the returned node IDs (`component:<name>` and `token:<name>`) as the seed list for your grep searches. This reduces false-negatives where a decision is implemented but grep pattern misses it.

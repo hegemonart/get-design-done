@@ -10,7 +10,7 @@ If you are a user of the plugin, you can stop reading here.
 ## Milestone Completeness Rubric
 
 What "complete" means at each layer of the plugin's own internal release lifecycle. This
-is about how we ship `get-design-done` itself - phases, plans, tasks, cycle releases - NOT
+is about how we ship `hone` itself - phases, plans, tasks, cycle releases - NOT
 about the user-facing design cycle (which is a separate concept covered by the
 `new-cycle` / `complete-cycle` skills).
 

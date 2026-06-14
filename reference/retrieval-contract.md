@@ -19,7 +19,7 @@ Read the file with the `Read` tool. Only do this when layers 1 and 2 confirmed t
 
 ## Token economy
 
-A `/gdd:recall "term"` query that returns 5 Layer-1 hits ≈ 400 tokens. Opening all 5 full docs blind ≈ 4000 tokens. **Always ladder.** Skipping to Layer 3 is the #1 cause of context exhaustion in long pipeline runs.
+A `/hone:recall "term"` query that returns 5 Layer-1 hits ≈ 400 tokens. Opening all 5 full docs blind ≈ 4000 tokens. **Always ladder.** Skipping to Layer 3 is the #1 cause of context exhaustion in long pipeline runs.
 
 ## FTS5 backend (Phase 19.5)
 
@@ -43,4 +43,4 @@ Cross-references:
 
 ---
 
-*Imported by every skill that reads `.design/` artifacts: `/gdd:progress`, `/gdd:resume`, `/gdd:reflect`, `/gdd:pause`, `/gdd:recall` (Phase 19.5+), `/gdd:timeline` (Phase 19.5+). Tier: preamble. Phase: 14.5.*
+*Imported by every skill that reads `.design/` artifacts: `/hone:progress`, `/hone:resume`, `/hone:reflect`, `/hone:pause`, `/hone:recall` (Phase 19.5+), `/hone:timeline` (Phase 19.5+). Tier: preamble. Phase: 14.5.*

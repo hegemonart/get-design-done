@@ -51,8 +51,8 @@ Named exports from each file (frontmatter `name:` fields, command names, agent n
     {
       "file": "skills/scan/SKILL.md",
       "kind": "skill",
-      "name": "gdd-scan",
-      "command": "/gdd:scan"
+      "name": "hone-scan",
+      "command": "/hone:scan"
     },
     {
       "file": "agents/design-verifier.md",
@@ -235,7 +235,7 @@ Cross-reference graph: nodes are files, edges are dependency relationships from 
 {
   "generated": "<ISO-8601>",
   "nodes": [
-    { "id": "skills/verify/SKILL.md", "type": "skill", "name": "gdd-verify" }
+    { "id": "skills/verify/SKILL.md", "type": "skill", "name": "hone-verify" }
   ],
   "edges": [
     {

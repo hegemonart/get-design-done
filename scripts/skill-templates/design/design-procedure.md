@@ -14,7 +14,7 @@ coordination, executor STATE.md protocol, figma-write dispatch).
 
 # Design Procedure
 
-Detailed procedure for the get-design-done `design` Stage 4 orchestrator. Companion to
+Detailed procedure for the hone `design` Stage 4 orchestrator. Companion to
 `../skills/design/SKILL.md`. Read this file when executing a specific design step; the
 SKILL.md keeps the essential wave-iteration workflow + decision tree, this file holds
 the full executor prompts and parallelism semantics.
@@ -29,7 +29,7 @@ the full executor prompts and parallelism semantics.
 2. Call `mcp__hone_state__get` -> snapshot `state`; read `state.position.wave` to decide execution plan.
 
 Abort only if `.design/DESIGN-PLAN.md` is missing:
-> "No plan found. Run `/get-design-done:plan` first."
+> "No plan found. Run `{{command_prefix}}plan` first."
 
 ---
 
@@ -271,7 +271,7 @@ Tasks: [N] complete / [M] total
 Deviations: [N]
 Commits: [git log --oneline since stage start]
 
-Next: /get-design-done:verify
+Next: {{command_prefix}}verify
   -> Scores the result against baseline, checks must-haves,
     runs NNG heuristic evaluation, and identifies gaps.
 ==============================

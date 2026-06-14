@@ -1,6 +1,6 @@
 # Webflow — Connection Specification
 
-This file is the connection specification for Webflow within the get-design-done (GDD) pipeline. Webflow is an AI-native Wave 2 generator-category, code-capable canvas: GDD reads a Webflow site's structure and styles and uses them as a **design-adaptation source** — it reads the site's existing design language and emits it as a source for adaptation. GDD does **not** author Webflow CMS schemas, publish content, or write back to the site. See `connections/21st-dev.md` for the structural template this spec follows, and `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for Webflow within the hone (GDD) pipeline. Webflow is an AI-native Wave 2 generator-category, code-capable canvas: GDD reads a Webflow site's structure and styles and uses them as a **design-adaptation source** — it reads the site's existing design language and emits it as a source for adaptation. GDD does **not** author Webflow CMS schemas, publish content, or write back to the site. See `connections/21st-dev.md` for the structural template this spec follows, and `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

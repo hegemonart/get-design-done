@@ -14,7 +14,7 @@
 // Codex or Gemini (both require spawning a nested CLI instance as a
 // shell subprocess rather than a tool call). The map returns `null`
 // for those slots; callers check for null and fall back to a
-// `shell("npx gdd-sdk …")` invocation. See AGENTS.md / GEMINI.md.
+// `shell("npx hone-sdk …")` invocation. See AGENTS.md / GEMINI.md.
 
 import type { Harness } from './detect.ts';
 
@@ -109,7 +109,7 @@ export const TOOL_MAPS: Readonly<Record<Harness, Readonly<Record<CCTool, string 
  * Return the harness-specific tool name for a CC tool. Returns `null`
  * when the harness has no native equivalent — currently only `Task` on
  * Codex + Gemini. Callers that receive `null` should fall back to a
- * `shell`/`run_shell_command` invocation of `npx gdd-sdk …`.
+ * `shell`/`run_shell_command` invocation of `npx hone-sdk …`.
  */
 export function mapTool(harness: Harness, ccTool: CCTool): string | null {
   const row = TOOL_MAPS[harness];

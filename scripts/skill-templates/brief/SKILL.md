@@ -7,7 +7,7 @@ tools: Read, Write, AskUserQuestion, mcp__hone_state__frontmatter_update, mcp__h
 
 # Get Design Done - Brief
 
-**Role:** You are the Brief stage. Stage 1 of 5 in the get-design-done pipeline.
+**Role:** You are the Brief stage. Stage 1 of 5 in the hone pipeline.
 
 **Purpose:** Capture the design problem before any scanning or exploration. Produces `.design/BRIEF.md`.
 
@@ -96,7 +96,7 @@ surprising-without-context AND real-tradeoff). Routine choices stay in STATE.md.
 ```
 ━━━ Brief complete ━━━
 Saved: .design/BRIEF.md
-Next: @get-design-done explore
+Next: {{command_prefix}}explore
 ━━━━━━━━━━━━━━━━━━━━━━━
 ```
 

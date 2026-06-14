@@ -11,7 +11,7 @@
 // agentsFileFingerprint — first-line marker we drop into every AGENTS.md /
 //   GEMINI.md write so uninstall can confirm the file is plugin-owned.
 
-const PLUGIN_FINGERPRINT = 'get-design-done plugin instructions';
+const PLUGIN_FINGERPRINT = 'hone plugin instructions';
 
 function mergeClaudeSettings(existing, marketplaceEntry) {
   const next = { ...(existing || {}) };
@@ -74,15 +74,15 @@ function buildAgentsFileContent(runtime, payloadHeader) {
   const lines = [
     `<!-- ${PLUGIN_FINGERPRINT} -->`,
     '',
-    `# ${runtime.displayName} — get-design-done plugin`,
+    `# ${runtime.displayName} — hone plugin`,
     '',
-    'This file was written by `npx @hegemonart/get-design-done`. It loads',
+    'This file was written by `npx @hegemonart/hone`. It loads',
     'the GDD plugin instructions for this runtime. Re-run the installer to',
-    'refresh; run `npx @hegemonart/get-design-done --uninstall` to remove.',
+    'refresh; run `npx @hegemonart/hone --uninstall` to remove.',
     '',
     payloadHeader || '',
     '',
-    `Plugin repository: https://github.com/hegemonart/get-design-done`,
+    `Plugin repository: https://github.com/hegemonart/hone`,
     '',
   ];
   return lines.join('\n');
@@ -91,7 +91,7 @@ function buildAgentsFileContent(runtime, payloadHeader) {
 // Phase 28.7 (Plan 28.7-08) — Extended fingerprint detection.
 //
 // In Phase 24, plugin-owned AGENTS.md / GEMINI.md files were marked with the
-// `<!-- get-design-done plugin instructions -->` HTML comment (PLUGIN_FINGERPRINT
+// `<!-- hone plugin instructions -->` HTML comment (PLUGIN_FINGERPRINT
 // above). Phase 28.7 introduces TWO more fingerprint shapes for the new
 // multi-artifact installer:
 //
@@ -100,7 +100,7 @@ function buildAgentsFileContent(runtime, payloadHeader) {
 //     This applies to every SKILL.md / command file written into a runtime's
 //     skills/ or command/ directory.
 //
-//   - `# get-design-done rules` — emitted as the heading of the .clinerules
+//   - `# hone rules` — emitted as the heading of the .clinerules
 //     file by converters/cline.cjs#buildClinerulesFile. Cline is rules-based
 //     and does not have a per-skill directory layout (Phase 28.7 D-09).
 //
@@ -109,12 +109,12 @@ function buildAgentsFileContent(runtime, payloadHeader) {
 // D-04 carry-forward). Anything else is treated as user-authored and left
 // alone (skipped-foreign action).
 const GDD_ADAPTER_FINGERPRINT = 'gdd: auto-generated from Claude SKILL.md';
-const CLINERULES_HEADER_FINGERPRINT = '# get-design-done rules';
+const CLINERULES_HEADER_FINGERPRINT = '# hone rules';
 
 // B5/S4 fix (Phase 59.8): ownership detection is WHOLE-LINE anchored, not a
 // loose `String.includes` substring scan. The old substring match treated any
 // user-authored file that merely *mentioned* a marker string (e.g. a doc that
-// quotes "get-design-done plugin instructions", or a code fence containing
+// quotes "hone plugin instructions", or a code fence containing
 // "gdd: auto-generated from Claude SKILL.md") as plugin-owned — so install
 // would overwrite it and uninstall would delete it. We now require the marker
 // to appear on a recognized GENERATED line:
@@ -124,7 +124,7 @@ const CLINERULES_HEADER_FINGERPRINT = '# get-design-done rules';
 //     are emitted as a standalone HTML comment line; we accept the marker only
 //     when it sits inside an HTML comment that occupies the whole (trimmed)
 //     line. A bare prose mention of the same words no longer qualifies.
-//   - `# get-design-done rules`  cline rules header — must be the exact, whole
+//   - `# hone rules`  cline rules header — must be the exact, whole
 //     trimmed line (a Markdown H1), matching converters/cline.cjs.
 //
 // Scanning line-by-line keeps detection of genuinely plugin-owned files intact

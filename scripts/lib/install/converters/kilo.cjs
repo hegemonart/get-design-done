@@ -7,12 +7,12 @@
  * into the command-format output Kilo expects under its XDG
  * `command/<name>.md` slash-command directory (see Phase 28.7 D-05 +
  * `runtime-artifact-layout.cjs#kilo`, which stages this converter via
- * `commandsKind('command', 'gdd-', ...)`).
+ * `commandsKind('command', 'hone-', ...)`).
  *
  * Translation rules:
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose pass through as `/gdd-<name>` — Kilo
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose pass through as `/hone-<name>` — Kilo
  *     accepts the Claude-canonical slash shape via the
  *     `runtime-slash.cjs` map (rt: 'kilo' → `/gdd-`). Legacy colon and
  *     shell-variable forms are normalized to `/gdd-`.
@@ -53,7 +53,7 @@ const shared = require('./shared.cjs');
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'kilo');
   out = shared.ensureAdapterHeader(out, 'Kilo');
   return fm + out;

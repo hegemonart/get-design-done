@@ -12,7 +12,7 @@
  *   - Malformed lines tolerated — counted in skipped_count, NOT thrown.
  *
  * No external deps. Stateless. Safe to require from CommonJS callers
- * (agents, hooks, CI gates) without dragging the gdd-state MCP graph.
+ * (agents, hooks, CI gates) without dragging the hone-state MCP graph.
  */
 'use strict';
 

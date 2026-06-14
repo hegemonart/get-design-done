@@ -115,7 +115,7 @@ const path = require('node:path');
  *
  * Each entry also carries the protocol the peer speaks; the adapter layer
  * uses that to pick acp-client vs asp-client. The registry surfaces it for
- * `peer-cli-capabilities.md` rendering and the `/gdd:peers` command.
+ * `peer-cli-capabilities.md` rendering and the `/hone:peers` command.
  *
  * @type {Readonly<Record<string, {roles: readonly string[], protocol: 'acp'|'asp'}>>}
  */
@@ -237,7 +237,7 @@ function loadAdapter(peer, loadAdapterFn) {
  * on the happy path, with the broker as the actual liveness gate.
  *
  * Returns `{ available: false, reason: '...' }` on any negative; the reason
- * is plain English suitable for `/gdd:peers` rendering or test assertions.
+ * is plain English suitable for `/hone:peers` rendering or test assertions.
  *
  * @param {string} peer
  * @param {object} [opts]
@@ -269,7 +269,7 @@ function healthProbe(peer, opts) {
     // installation. Treat as "available but un-probable" for v1.27 — the
     // dispatch path will still try; if the binary is missing the protocol
     // client errors out and dispatch returns null. We return available:true
-    // here so the user's `/gdd:peers` command shows the peer as usable
+    // here so the user's `/hone:peers` command shows the peer as usable
     // pending a real call. (Once Plan 27-11 ships `peerBinary` on every
     // adapter via runtimes.cjs, this branch becomes dead code.)
     return { available: true };
@@ -403,11 +403,11 @@ async function dispatch(role, tier, text, opts) {
   }
 }
 
-// ── Introspection helpers (used by /gdd:peers in Plan 27-09) ────────────────
+// ── Introspection helpers (used by /hone:peers in Plan 27-09) ────────────────
 
 /**
  * Return a snapshot of the capability matrix as a plain (non-frozen) object
- * suitable for JSON serialization. Useful for `/gdd:peers` rendering and
+ * suitable for JSON serialization. Useful for `/hone:peers` rendering and
  * for tests that want to assert on the matrix without touching the frozen
  * exports directly.
  *

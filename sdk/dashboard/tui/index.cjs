@@ -723,7 +723,7 @@ async function run(opts = {}) {
 
 // ---------------------------------------------------------------------------
 // CLI entry — `node sdk/dashboard/tui/index.cjs [--once] [--root <dir>]`.
-// This is what bin/gdd-dashboard spawns. Kept tiny: parse a couple of flags,
+// This is what bin/hone-dashboard spawns. Kept tiny: parse a couple of flags,
 // invoke run(), and translate the result to an exit code. Read-only; never
 // throws out (errors degrade to a non-zero exit + a stderr note).
 // ---------------------------------------------------------------------------
@@ -748,7 +748,7 @@ function parseCliArgs(argv) {
 }
 
 const CLI_USAGE = [
-  'Usage: gdd-dashboard [--once] [--root <dir>] [--interval <ms>]',
+  'Usage: hone-dashboard [--once] [--root <dir>] [--interval <ms>]',
   '',
   '  A read-only terminal dashboard for a GDD project: Sessions / Cycle / Cost /',
   '  Findings / DesignContext panes. Live-refreshes by polling the project state +',
@@ -773,7 +773,7 @@ async function mainCli(argv) {
     await run({ once: args.once, root: args.root, interval: args.interval });
     return 0;
   } catch (err) {
-    process.stderr.write(`gdd-dashboard: ${err && err.message ? err.message : String(err)}\n`);
+    process.stderr.write(`hone-dashboard: ${err && err.message ? err.message : String(err)}\n`);
     return 1;
   }
 }
@@ -782,7 +782,7 @@ if (require.main === module) {
   mainCli(process.argv.slice(2)).then(
     (code) => process.exit(code),
     (err) => {
-      process.stderr.write(`gdd-dashboard: ${err && err.message ? err.message : String(err)}\n`);
+      process.stderr.write(`hone-dashboard: ${err && err.message ? err.message : String(err)}\n`);
       process.exit(1);
     },
   );

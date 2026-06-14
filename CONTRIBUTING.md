@@ -1,4 +1,4 @@
-# Contributing to get-design-done
+# Contributing to hone
 
 Thanks for helping improve gdd. This guide documents the CI/CD contract that
 keeps the plugin shippable.

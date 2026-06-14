@@ -1,6 +1,6 @@
 # pencil.dev — Connection Specification
 
-This file is the connection specification for pencil.dev within the get-design-done pipeline. pencil.dev uses git-tracked `.pen` files as its source of truth — no MCP server is required. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for pencil.dev within the hone pipeline. pencil.dev uses git-tracked `.pen` files as its source of truth — no MCP server is required. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

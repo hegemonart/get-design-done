@@ -8,14 +8,14 @@
       "path": "reference/codex-tools.md",
       "type": "meta-rules",
       "phase": 21,
-      "description": "Cross-harness tool map — Claude Code → OpenAI Codex CLI tool-name equivalents for the gdd-sdk runner (Read→read_file, Write/Edit→apply_patch, Bash→shell, etc.)"
+      "description": "Cross-harness tool map — Claude Code → OpenAI Codex CLI tool-name equivalents for the hone-sdk runner (Read→read_file, Write/Edit→apply_patch, Bash→shell, etc.)"
     },
     {
       "name": "gemini-tools",
       "path": "reference/gemini-tools.md",
       "type": "meta-rules",
       "phase": 21,
-      "description": "Cross-harness tool map — Claude Code → Gemini CLI tool-name equivalents for the gdd-sdk runner"
+      "description": "Cross-harness tool map — Claude Code → Gemini CLI tool-name equivalents for the hone-sdk runner"
     },
     {
       "name": "error-recovery",
@@ -57,7 +57,7 @@
       "path": "reference/pseudonymization-rules.md",
       "type": "meta-rules",
       "phase": 30,
-      "description": "Pseudonymization rule catalog (R1..R8) — replaces git identity, paths, hostname, repo origin, env-var values, email, IPs; defines stable per-user pseudonym derivation. Consumed by /gdd:update --show-privacy-diff."
+      "description": "Pseudonymization rule catalog (R1..R8) — replaces git identity, paths, hostname, repo origin, env-var values, email, IPs; defines stable per-user pseudonym derivation. Consumed by /hone:update --show-privacy-diff."
     },
     {
       "name": "DEPRECATIONS",
@@ -69,7 +69,7 @@
       "name": "STATE-TEMPLATE",
       "path": "reference/STATE-TEMPLATE.md",
       "type": "schema",
-      "description": "Template for .design/STATE.md scaffolded by /gdd:scan"
+      "description": "Template for .design/STATE.md scaffolded by /hone:scan"
     },
     {
       "name": "accessibility",
@@ -502,7 +502,7 @@
       "path": "reference/schemas/mcp-hone-tools.schema.json",
       "type": "schema",
       "phase": 27.7,
-      "description": "Draft-07 input/output schemas for the 12 read-only tools in sdk/mcp/gdd-mcp/ (gdd-mcp MCP server)"
+      "description": "Draft-07 input/output schemas for the 12 read-only tools in sdk/mcp/hone-mcp/ (hone-mcp MCP server)"
     },
     {
       "name": "meta-rules",
@@ -782,7 +782,7 @@
       "name": "start-interview",
       "path": "reference/start-interview.md",
       "type": "preamble",
-      "description": "Locked 5-question interview consumed by /gdd:start — pain, target-area, budget, framework/DS confirmation, Figma/canvas workflow"
+      "description": "Locked 5-question interview consumed by /hone:start — pain, target-area, budget, framework/DS confirmation, Figma/canvas workflow"
     },
     {
       "name": "style-vocabulary",
@@ -868,7 +868,7 @@
       "path": "reference/live-mode-integration.md",
       "type": "meta-rules",
       "phase": 47,
-      "description": "Live-mode contract for /gdd:live: the seven-stage pick to generate to accept loop, the Claude Preview MCP surface (preview_eval injects scripts/lib/live/runtime.cjs RUNTIME_JS, hot-swap via the data-gdd-variant marker), the six live_* telemetry events vs the four on-disk session kinds, the .design/live-sessions session file (scripts/lib/live/session-store.cjs + live-session.schema.json), the dev-time bandit feed (bandit-feed.cjs into design-variants), degraded screenshot-only mode gated on capability_matrix.mcp_support (harness-mode.cjs), and the scope guard (scope-guard.cjs)."
+      "description": "Live-mode contract for /hone:live: the seven-stage pick to generate to accept loop, the Claude Preview MCP surface (preview_eval injects scripts/lib/live/runtime.cjs RUNTIME_JS, hot-swap via the data-hone-variant marker), the six live_* telemetry events vs the four on-disk session kinds, the .design/live-sessions session file (scripts/lib/live/session-store.cjs + live-session.schema.json), the dev-time bandit feed (bandit-feed.cjs into design-variants), degraded screenshot-only mode gated on capability_matrix.mcp_support (harness-mode.cjs), and the scope guard (scope-guard.cjs)."
     },
     {
       "name": "capability-gap-stage-gate",
@@ -889,7 +889,7 @@
       "path": "reference/hone-threat-model.md",
       "type": "heuristic",
       "phase": 33.5,
-      "description": "STRIDE threat model of GDD's own runtime attack surface — hooks, the gdd-state + gdd-mcp MCP servers, the peer-CLI broker, the WebSocket event-stream transport, and issue-reporter outbound; maps each residual risk to the plan that closes it."
+      "description": "STRIDE threat model of GDD's own runtime attack surface — hooks, the hone-state + hone-mcp MCP servers, the peer-CLI broker, the WebSocket event-stream transport, and issue-reporter outbound; maps each residual risk to the plan that closes it."
     },
     {
       "name": "hone-runtime-audit",
@@ -959,7 +959,7 @@
       "path": "reference/export-formats.md",
       "type": "heuristic",
       "phase": 35.5,
-      "description": "/gdd:export contract — the source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots), the three formats (self-contained HTML via scripts/lib/export/build-html.cjs, Paged.js-compatible print PDF rendered by the user, Notion page via the Notion MCP), mandatory scripts/lib/redact.cjs + the --pseudonymize opt-in (scripts/lib/pseudonymize.cjs), and the --pr hand-off to pr-commenter. No bundled PDF/markdown runtime."
+      "description": "/hone:export contract — the source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots), the three formats (self-contained HTML via scripts/lib/export/build-html.cjs, Paged.js-compatible print PDF rendered by the user, Notion page via the Notion MCP), mandatory scripts/lib/redact.cjs + the --pseudonymize opt-in (scripts/lib/pseudonymize.cjs), and the --pr hand-off to pr-commenter. No bundled PDF/markdown runtime."
     },
     {
       "name": "finance",
@@ -1001,21 +1001,21 @@
       "path": "reference/ds-bootstrap-rubric.md",
       "type": "heuristic",
       "phase": 37.2,
-      "description": "Greenfield DS emission rules for /gdd:bootstrap-ds + agents/ds-generator.md: primary→9 OKLCH tints (native oklch(), no color library), never >2 brand colors, neutrals + semantic colors, modular type scale (ratio 1.2/1.25/1.333), 4pt/8pt spacing, radius + motion defaults, the 3 variants (conservative/balanced/bold), role-named CSS-custom-property emission + framework mapping, and button/input/card proof scaffolding. Deterministic math in scripts/lib/ds/token-scale.cjs."
+      "description": "Greenfield DS emission rules for /hone:bootstrap-ds + agents/ds-generator.md: primary→9 OKLCH tints (native oklch(), no color library), never >2 brand colors, neutrals + semantic colors, modular type scale (ratio 1.2/1.25/1.333), 4pt/8pt spacing, radius + motion defaults, the 3 variants (conservative/balanced/bold), role-named CSS-custom-property emission + framework mapping, and button/input/card proof scaffolding. Deterministic math in scripts/lib/ds/token-scale.cjs."
     },
     {
       "name": "design-variants",
       "path": "reference/design-variants.md",
       "type": "heuristic",
       "phase": 38,
-      "description": "Design-variants schema + the design_arms outcome loop: /gdd:design --variants N emits N hypothesis-tagged competing variants (<variant id component pattern hypothesis>); each (component_type, variant_pattern_hash) is a Beta(2,8) arm in scripts/lib/ds-arms/design-arms-store.cjs that learns which patterns win with USERS from A/B (experiment-result-ingester) + user-research (user-research-synthesizer) outcomes. Advisory not directive (the user always wins). Distinct from the routing bandit."
+      "description": "Design-variants schema + the design_arms outcome loop: /hone:design --variants N emits N hypothesis-tagged competing variants (<variant id component pattern hypothesis>); each (component_type, variant_pattern_hash) is a Beta(2,8) arm in scripts/lib/ds-arms/design-arms-store.cjs that learns which patterns win with USERS from A/B (experiment-result-ingester) + user-research (user-research-synthesizer) outcomes. Advisory not directive (the user always wins). Distinct from the routing bandit."
     },
     {
       "name": "rollout-coordination",
       "path": "reference/rollout-coordination.md",
       "type": "heuristic",
       "phase": 38.5,
-      "description": "Rollout-coordination contract: the <rollout_status> STATE block (unrolled/staging-only/canary-N%/prod-100%), stuck detection (default 14 days), linear deployed_pct weighting feeding design_arms via verify_outcome (a 10%-rolled variant counts 0.1), and the rollout_started/advanced/stuck/verify_outcome events. Classifier scripts/lib/rollout/rollout-status.cjs; agent agents/rollout-coordinator.md; skill /gdd:rollout-status. Read-only — GDD never drives the rollout."
+      "description": "Rollout-coordination contract: the <rollout_status> STATE block (unrolled/staging-only/canary-N%/prod-100%), stuck detection (default 14 days), linear deployed_pct weighting feeding design_arms via verify_outcome (a 10%-rolled variant counts 0.1), and the rollout_started/advanced/stuck/verify_outcome events. Classifier scripts/lib/rollout/rollout-status.cjs; agent agents/rollout-coordinator.md; skill /hone:rollout-status. Read-only — GDD never drives the rollout."
     },
     {
       "name": "shadcn-v2",
@@ -1050,7 +1050,7 @@
       "path": "reference/cost-governance.md",
       "type": "heuristic",
       "phase": 39.2,
-      "description": "Cost-governance contract: the per-cycle forecast model (best/typical/worst from mean ± k·σ, cyclesToCap) via scripts/lib/budget/cost-forecast.cjs; the project_cap hard-halt (disabled by default, graceful PreToolUse:Agent block, warn 50/80 + halt 100) via scripts/lib/budget/project-cap.cjs + hooks/budget-enforcer.ts; the ROI dashboard (shipped = surviving >=14d, cost-per-shipped-commit) via scripts/lib/budget/roi.cjs; and the budget_forecast/project_cap_warning/project_cap_halt events. Agent agents/cost-forecaster.md; skills /gdd:budget + /gdd:roi. Read/report-only — the hook only blocks, never spends."
+      "description": "Cost-governance contract: the per-cycle forecast model (best/typical/worst from mean ± k·σ, cyclesToCap) via scripts/lib/budget/cost-forecast.cjs; the project_cap hard-halt (disabled by default, graceful PreToolUse:Agent block, warn 50/80 + halt 100) via scripts/lib/budget/project-cap.cjs + hooks/budget-enforcer.ts; the ROI dashboard (shipped = surviving >=14d, cost-per-shipped-commit) via scripts/lib/budget/roi.cjs; and the budget_forecast/project_cap_warning/project_cap_halt events. Agent agents/cost-forecaster.md; skills /hone:budget + /hone:roi. Read/report-only — the hook only blocks, never spends."
     },
     {
       "name": "multi-author-model",
@@ -1064,7 +1064,7 @@
       "path": "reference/cli-localization.md",
       "type": "meta-rules",
       "phase": 40.5,
-      "description": "CLI-localization contract: locale resolution (config.locale > env LANG > en) + fallback chain locale->base->en + flat-JSON message tables via scripts/lib/i18n/index.cjs; tables at scripts/lib/i18n/messages/{en,ru,uk,de,fr,zh,ja}.json (en source-complete, ru full, 5 placeholders with en fallback); the opt-in description_i18n frontmatter (descriptionFor falls back to English); /gdd:locale skill; warn-only completeness; the add-a-locale contribution path (translate table + NOTICE credit + PR). Distinct from reference/i18n.md (which covers USER-design i18n)."
+      "description": "CLI-localization contract: locale resolution (config.locale > env LANG > en) + fallback chain locale->base->en + flat-JSON message tables via scripts/lib/i18n/index.cjs; tables at scripts/lib/i18n/messages/{en,ru,uk,de,fr,zh,ja}.json (en source-complete, ru full, 5 placeholders with en fallback); the opt-in description_i18n frontmatter (descriptionFor falls back to English); /hone:locale skill; warn-only completeness; the add-a-locale contribution path (translate table + NOTICE credit + PR). Distinct from reference/i18n.md (which covers USER-design i18n)."
     },
     {
       "name": "skill-placeholders",
@@ -1134,7 +1134,7 @@
       "path": "reference/visual-tells.md",
       "type": "heuristic",
       "phase": 49,
-      "description": "Visual-tells catalog: 8 default-AI-aesthetic categories (default-AI-hero, gradient-spam, isometric-illustration-fallback, centered-everything-syndrome, inter-everything, purple-violet-default, glassmorphism-spam, decorative-motion-without-intent) with diagnostic regex + remediation; backs the gdd-design-quality-check hook."
+      "description": "Visual-tells catalog: 8 default-AI-aesthetic categories (default-AI-hero, gradient-spam, isometric-illustration-fallback, centered-everything-syndrome, inter-everything, purple-violet-default, glassmorphism-spam, decorative-motion-without-intent) with diagnostic regex + remediation; backs the hone-design-quality-check hook."
     },
     {
       "name": "reviewer-confidence-gate",

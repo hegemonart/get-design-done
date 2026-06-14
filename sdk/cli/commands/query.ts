@@ -1,7 +1,7 @@
 // sdk/cli/commands/query.ts — Plan 21-09 Task 4 (SDK-21).
 //
 // `hone-sdk query <op>` — typed STATE.md read operations. Mirrors the
-// read side of the gdd-state MCP server. Never mutates — use the
+// read side of the hone-state MCP server. Never mutates — use the
 // dedicated MCP tools (via Claude Code) for writes.
 //
 // Operations:

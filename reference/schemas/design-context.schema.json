@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/design-context.schema.json",
+  "$id": "https://github.com/hegemonart/hone/reference/schemas/design-context.schema.json",
   "title": "Design Context Graph",
   "description": "The canonical typed knowledge graph of a design system, persisted at .design/context-graph.json. Nodes are design entities (tokens, components, screens, patterns); edges are typed relationships between them (uses-token, composes, transitions-to). Built by a two-phase mapper: a deterministic extract pass emits node/edge skeletons, then an LLM summary pass fills each node summary. Validated structurally by scripts/validate-design-context.cjs and queried by scripts/lib/design-context-query.cjs.",
   "type": "object",

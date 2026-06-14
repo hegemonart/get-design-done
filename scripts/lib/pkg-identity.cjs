@@ -1,9 +1,9 @@
 'use strict';
 
 // scripts/lib/pkg-identity.cjs — identity Source-of-Truth for the Phase 61
-// rebrand (REBRAND-01). get-design-done → Hone.
+// rebrand (REBRAND-01). Renamed from get-design-done → Hone.
 //
-// ~90% of the `gdd-` surface (skills/, commands/, manifests, MCP keys) is
+// ~90% of the legacy `gdd-` surface (skills/, commands/, manifests, MCP keys) is
 // GENERATED from this handful of constants. Centralizing them makes the rename
 // a "change one place + regenerate" operation rather than 717 hand-edits.
 // Every install/marketplace/MCP/skill/command derivation MUST import from here.
@@ -29,19 +29,19 @@ const IDENTITY = Object.freeze({
   LICENSE: 'Apache-2.0',
 
   // --- command prefixes ---
-  COMMAND_PREFIX: '/hone:', // Claude/namespaced form (replaces '/gdd:')
-  COMMAND_PREFIX_FLAT: '/hone-', // Codex flat form (replaces '/gdd-')
+  COMMAND_PREFIX: '/hone:', // Claude/namespaced form (renamed from legacy '/gdd:')
+  COMMAND_PREFIX_FLAT: '/hone-', // Codex flat form (renamed from legacy '/gdd-')
   COMMAND_ALIAS: 'gdd', // deprecated alias kept 1-2 versions, wired in Wave 3
 
   // --- skill / bin prefixes ---
-  SKILL_PREFIX: 'hone-', // replaces `gdd-` in `name: gdd-<id>` (trailing hyphen included)
-  BIN_PREFIX: 'hone-', // replaces `gdd-` in bin filenames (trailing hyphen included)
+  SKILL_PREFIX: 'hone-', // renamed from legacy `gdd-` in `name: gdd-<id>` (trailing hyphen included)
+  BIN_PREFIX: 'hone-', // renamed from legacy `gdd-` in bin filenames (trailing hyphen included)
 
   // --- MCP servers / tools ---
-  MCP_SERVER_PRIMARY: 'hone-mcp', // replaces `gdd-mcp`
-  MCP_SERVER_STATE: 'hone-state', // replaces `gdd-state`
-  MCP_STATE_LAUNCH_BIN: 'hone-state-mcp', // replaces `gdd-state-mcp`
-  MCP_TOOL_PREFIX: 'hone_', // replaces `gdd_` in tool/schema names
+  MCP_SERVER_PRIMARY: 'hone-mcp', // renamed from legacy `gdd-mcp`
+  MCP_SERVER_STATE: 'hone-state', // renamed from legacy `gdd-state`
+  MCP_STATE_LAUNCH_BIN: 'hone-state-mcp', // renamed from legacy `gdd-state-mcp`
+  MCP_TOOL_PREFIX: 'hone_', // renamed from legacy `gdd_` in tool/schema names
 
   // --- env prefix (DEFERRED — kept as GDD on purpose; see SCOPE NOTE) ---
   ENV_PREFIX: 'GDD',

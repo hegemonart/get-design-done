@@ -29,7 +29,7 @@
           },
           "frontmatter_name": {
             "type": "string",
-            "description": "Frontmatter name: value when it is not the default gdd-<name>."
+            "description": "Frontmatter name: value when it is not the default hone-<name>."
           },
           "description": {
             "type": "string",

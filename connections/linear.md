@@ -1,6 +1,6 @@
 # Linear — Connection Specification
 
-This file is the connection specification for Linear within the get-design-done pipeline. See `connections/connections.md` for the full index + capability matrix (the linear row is added at the 35.3 closeout).
+This file is the connection specification for Linear within the hone pipeline. See `connections/connections.md` for the full index + capability matrix (the linear row is added at the 35.3 closeout).
 
 ---
 
@@ -31,7 +31,7 @@ Expect Linear issue/comment tools (`mcp__linear__*`). If empty → `linear: not_
 ## What GDD does (bidirectional, via `agents/ticket-sync-agent.md`)
 
 - **READ (decision-injector):** when a `.design/**.md` opens, the linked Linear issue's recent comments are surfaced as cycle context (so a decision made in the ticket reaches the pipeline).
-- **WRITE (cycle completion):** on `/gdd:complete-cycle`, the agent updates the linked issue's status (e.g., In Review → Done) and posts a **redacted** one-paragraph summary (verify result + top-line audit). The link map lives in STATE `<ticket_links>`.
+- **WRITE (cycle completion):** on `/hone:complete-cycle`, the agent updates the linked issue's status (e.g., In Review → Done) and posts a **redacted** one-paragraph summary (verify result + top-line audit). The link map lives in STATE `<ticket_links>`.
 
 See `reference/ticket-sync.md` for the `<ticket_links>` schema + the read/write contract.
 

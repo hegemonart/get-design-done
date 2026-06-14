@@ -9,7 +9,7 @@
 //                           `path`) imports inside individual tool .ts
 //                           files. Tools must be thin wrappers — all
 //                           filesystem I/O routes through scripts/lib/*
-//                           helpers (gdd-state, intel-store, etc.). The
+//                           helpers (hone-state, intel-store, etc.). The
 //                           `index.ts` and `shared.ts` siblings ARE
 //                           infrastructure and are exempt.
 //

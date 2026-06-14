@@ -26,7 +26,7 @@ Close the deployment loop: GDD's pipeline ends at "PR merged", but the post-merg
 
 ## When invoked
 
-After `/gdd:ship` merges a cycle's PR, and on demand via `/gdd:rollout-status`. Gate on an experiment-source/flag connection being `available` (per `connections/launchdarkly.md` / `statsig.md` / `growthbook.md`); none → `rollout: no flag service configured — skipped.` (degrade-to-noop).
+After `/hone:ship` merges a cycle's PR, and on demand via `/hone:rollout-status`. Gate on an experiment-source/flag connection being `available` (per `connections/launchdarkly.md` / `statsig.md` / `growthbook.md`); none → `rollout: no flag service configured — skipped.` (degrade-to-noop).
 
 ## Step 1 - Read the flag service (read-only)
 

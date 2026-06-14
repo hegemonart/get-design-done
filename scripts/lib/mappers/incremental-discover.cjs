@@ -85,7 +85,7 @@ const { pathToFileURL } = require('node:url');
 // `__dirname`-relative jump. This is load-bearing for the esbuild SDK bundle:
 // when this .cjs is inlined into sdk/cli/index.js, esbuild rewrites `__dirname`
 // to the bundle's location (sdk/cli/), so `../../../sdk/fingerprint` would
-// resolve one level ABOVE the package (the gdd-sdk --help crash on POSIX CI).
+// resolve one level ABOVE the package (the hone-sdk --help crash on POSIX CI).
 // The package root is the single ancestor of both the source tree
 // (scripts/lib/mappers/) and the bundle (sdk/cli/), so a walk-up is correct in
 // every mode: source, the in-repo test, and the packed/installed bundle.

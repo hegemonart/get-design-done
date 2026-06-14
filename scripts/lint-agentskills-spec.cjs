@@ -164,9 +164,9 @@ function lintSkill(skillDir, skillName) {
     if (
       name !== skillName &&
       name !== `hone-${skillName}` &&
-      name !== `gdd-${skillName}` &&
+      name !== `hone-${skillName}` &&
       skillName !== `hone-${name}` &&
-      skillName !== `gdd-${name}`
+      skillName !== `hone-${name}`
     ) {
       rows.push({
         status: 'FAIL',

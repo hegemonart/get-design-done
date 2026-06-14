@@ -30,7 +30,7 @@
  *   - Default `prior_class` (omitted or 'default'): existing informed
  *     TIER_PRIOR bootstrap (Phase 23.5) — byte-for-byte unchanged.
  *   - `prior_class: 'promoted_incubator'`: Beta(2, 8) bootstrap for
- *     arms registered when `/gdd:apply-reflections accept` promotes
+ *     arms registered when `/hone:apply-reflections accept` promotes
  *     an incubator draft. The conservative prior (posterior mean 0.2)
  *     suppresses preferential selection until ~8-10 successful pulls
  *     accumulate. The bandit-fairness gate IS the promotion staging
@@ -85,7 +85,7 @@ const PRIOR_STRENGTH = 10;
 const DEFAULT_TIERS = Object.freeze(['haiku', 'sonnet', 'opus']);
 
 // Phase 29 Plan 06 / CONTEXT D-04. Conservative prior for arms
-// bootstrapped via `/gdd:apply-reflections accept` (incubator → live
+// bootstrapped via `/hone:apply-reflections accept` (incubator → live
 // agent/skill). Beta(2, 8) — posterior mean 0.2 — suppresses
 // preferential selection until ~8-10 successful pulls accumulate.
 // The bandit-fairness gate IS the staging mechanism (D-04: no

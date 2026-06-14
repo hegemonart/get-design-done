@@ -1,8 +1,8 @@
 # Cursor — Runtime Install Notes
 
-This file documents the get-design-done install path on Cursor and one known limitation.
+This file documents the hone install path on Cursor and one known limitation.
 
-Cursor is one of the 14 first-class runtimes for `gdd install` (see `reference/runtimes.md` for the full set). It uses the `multi-artifact` install kind: skills land as `~/.cursor/skills/<gdd-name>/SKILL.md` after passing through `scripts/lib/install/converters/cursor.cjs`.
+Cursor is one of the 14 first-class runtimes for `gdd install` (see `reference/runtimes.md` for the full set). It uses the `multi-artifact` install kind: skills land as `~/.cursor/skills/<hone-name>/SKILL.md` after passing through `scripts/lib/install/converters/cursor.cjs`.
 
 ## Install
 
@@ -11,14 +11,14 @@ gdd install --runtime cursor          # global → ~/.cursor/skills/
 gdd install --runtime cursor --local  # repo-local → .cursor/skills/
 ```
 
-Each installed skill is name-prefixed with `gdd-` (e.g. `gdd-explore`, `gdd-discover`) so it cannot collide with user-authored Cursor skills.
+Each installed skill is name-prefixed with `hone-` (e.g. `hone-explore`, `hone-discover`) so it cannot collide with user-authored Cursor skills.
 
 ## Converter behavior
 
 `converters/cursor.cjs#convert` is a pure string→string transform that:
 
-- Normalizes the frontmatter `name:` field to `gdd-<skill>` (no double-prefix).
-- Rewrites mixed-shape slash references (`gdd-x`, `/gdd:x`) to a consistent `/gdd-<name>` shape.
+- Normalizes the frontmatter `name:` field to `hone-<skill>` (no double-prefix).
+- Rewrites mixed-shape slash references (`hone-x`, `/hone:x`) to a consistent `/hone-<name>` shape.
 - Passes the Claude tool vocabulary through unchanged (Read / Write / Bash / Edit / Grep / Glob — Cursor accepts these).
 - Injects a 1-line HTML adapter header recording auto-generation.
 

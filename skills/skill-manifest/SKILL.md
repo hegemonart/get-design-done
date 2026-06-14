@@ -24,14 +24,14 @@ Generated from intel store: .design/intel/exports.json
 
 SKILLS (Commands)
 ─────────────────
-/hone:scan               gdd-scan
-/hone:discover           gdd-discover
-/hone:plan               gdd-plan
-/hone:design             gdd-design
-/hone:verify             gdd-verify
-/hone:style              gdd-style
-/hone:darkmode           gdd-darkmode
-/hone:compare            gdd-compare
+/hone:scan               hone-scan
+/hone:discover           hone-discover
+/hone:plan               hone-plan
+/hone:design             hone-design
+/hone:verify             hone-verify
+/hone:style              hone-style
+/hone:darkmode           hone-darkmode
+/hone:compare            hone-compare
 ... (all skills)
 
 AGENTS

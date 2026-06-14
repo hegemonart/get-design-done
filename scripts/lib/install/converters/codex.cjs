@@ -6,9 +6,9 @@
  * Codex SKILL.md converter. Translates Claude-shape source into Codex's
  * expected shape:
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose rewritten from `/gdd-<name>` to
- *     `$gdd-<name>` (Codex's shell-variable form) via
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose rewritten from `/hone-<name>` to
+ *     `$hone-<name>` (Codex's shell-variable form) via
  *     `../runtime-slash.cjs#formatGddSlash`. Skill names are lowercased
  *     on emission per Codex shell-var convention.
  *   - Tool names in code fences rewritten via `CODEX_TOOL_MAP` from
@@ -51,7 +51,7 @@ const shared = require('./shared.cjs');
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'codex');
   out = shared.rewriteCodeFenceTools(out, shared.CODEX_TOOL_MAP);
   out = shared.ensureAdapterHeader(out, 'Codex');

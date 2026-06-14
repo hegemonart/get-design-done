@@ -188,7 +188,7 @@ function getGlobalSkillsBase(runtime) {
  * Returns `null` for runtimes that don't use a skills directory (cline).
  *
  * @param {string} runtime
- * @param {string} skillName e.g. `'gdd-executor'`.
+ * @param {string} skillName e.g. `'hone-executor'`.
  * @returns {string|null}
  */
 function getGlobalSkillDir(runtime, skillName) {

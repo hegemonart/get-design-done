@@ -1,6 +1,6 @@
 # Litmus — Connection Specification
 
-This file is the connection specification for Litmus within the get-design-done pipeline. It lives in `connections/` alongside other connection specs. See the connection index for the full connection capability matrix (the litmus row is added at the 34.2 closeout).
+This file is the connection specification for Litmus within the hone pipeline. It lives in `connections/` alongside other connection specs. See the connection index for the full connection capability matrix (the litmus row is added at the 34.2 closeout).
 
 ---
 

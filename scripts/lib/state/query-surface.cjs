@@ -2,7 +2,7 @@
 /**
  * scripts/lib/state/query-surface.cjs - Phase 57 (SAFE-01 / CONS-03)
  *
- * Public query surface for the /gdd:state skill subcommands:
+ * Public query surface for the /hone:state skill subcommands:
  *   query(sql, opts)           - readonly SELECT-only execution with denylist
  *   recover(opts)              - rotate corrupt .sqlite to .bak, rebuild from markdown
  *   demigrate(opts)            - remove .design/state.sqlite so markdown becomes SoT
@@ -34,7 +34,7 @@ function _findPackageRoot(startDir) {
     try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch { pkg = null; }
     if (pkg) {
       if (firstWithPkg === null) firstWithPkg = dir;
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;

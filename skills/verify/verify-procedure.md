@@ -13,7 +13,7 @@ decision tree, agent spawn protocols, gap-response loop, must-have flipping).
 
 # Verify Procedure
 
-Detailed procedure for the get-design-done `verify` Stage 5 orchestrator. Companion to
+Detailed procedure for the hone `verify` Stage 5 orchestrator. Companion to
 `../skills/verify/SKILL.md`. Read this file when executing a specific verify step; the
 SKILL.md keeps the essential workflow + decision tree, this file holds the deep
 methodology, agent prompts, and gap-loop semantics.
@@ -51,7 +51,7 @@ This step is a pure read against the snapshot already loaded in Step 2 - no extr
 3. Resume detection (read `state.position.status` from the snapshot):
    - If `status==in_progress` and `.design/DESIGN-VERIFICATION.md` exists: RESUME - skip re-spawning agents, go to Step 2 (gap-response loop).
    - Otherwise: call `mcp__hone_state__update_progress` with `task_progress: "0/3"`, `status: "in_progress"` to open the stage, then proceed to Step 1.
-4. If STATE.md is missing entirely (edge case - verify is never the entry point): block with "No STATE.md found - run /get-design-done:discover first." Do NOT attempt to create a skeleton from verify; upstream stages own bootstrap.
+4. If STATE.md is missing entirely (edge case - verify is never the entry point): block with "No STATE.md found - run /hone:discover first." Do NOT attempt to create a skeleton from verify; upstream stages own bootstrap.
 
 ---
 
@@ -65,7 +65,7 @@ When verification concludes that M-XX is satisfied (or failed), record the resul
 { "id": "M-03", "text": "Dark mode toggle persists to localStorage", "status": "pass" }
 ```
 
-The gdd-state mutator treats an `add_must_have` with an existing id as an **update-in-place**, not a duplicate append. The entry's position in the `<must_haves>` block is preserved. This is intentional design - verify doesn't need a dedicated `update_must_have_status` tool because `add_must_have` handles both cases correctly.
+The hone-state mutator treats an `add_must_have` with an existing id as an **update-in-place**, not a duplicate append. The entry's position in the `<must_haves>` block is preserved. This is intentional design - verify doesn't need a dedicated `update_must_have_status` tool because `add_must_have` handles both cases correctly.
 
 Pass the original `text` verbatim when you're only flipping the status; supplying a changed `text` overwrites the prose in-place as well (useful when the M-XX description was imprecise and the verifier can restate it). Omit `text` by passing the value from the earlier `mcp__hone_state__get` snapshot.
 
@@ -168,7 +168,7 @@ If chromatic: unavailable or not_configured: skip; note in DESIGN-VERIFICATION.m
 - **Normal mode:** Check that `.design/DESIGN-PLAN.md` exists. If missing, block with: "Verify requires DESIGN-PLAN.md. Run `/hone:plan` first, or use `--post-handoff` if starting from a Claude Design handoff bundle."
 - **Post-handoff mode** (`post_handoff=true` OR STATE.md `status: handoff-sourced`): Skip the DESIGN-PLAN.md check entirely - handoff workflows have no DESIGN-PLAN.md.
 
-Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /get-design-done:discover first."
+Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /hone:discover first."
 
 ## Post-Handoff Mode
 
@@ -369,7 +369,7 @@ Merge verifier gaps (G-NN entries) and integration-checker gaps (Orphaned/Missin
   ```
   Verification failed — N gaps found (X blockers, Y majors, Z minors, W cosmetics).
   Report: .design/DESIGN-VERIFICATION.md
-  Fix gaps and re-run: /get-design-done:verify
+  Fix gaps and re-run: /hone:verify
   ```
 - If `auto_mode=false`: present gap summary and menu (go to Step 3).
 
@@ -403,7 +403,7 @@ Choose:
 - Call `mcp__hone_state__checkpoint` to record the save-and-exit checkpoint.
 - Exit:
   ```
-  Gaps saved. Resume with: /get-design-done:verify
+  Gaps saved. Resume with: /hone:verify
   Report: .design/DESIGN-VERIFICATION.md
   ```
 
@@ -505,7 +505,7 @@ Reports:
   Qualitative audit: .design/DESIGN-AUDIT.md
   Full verification: .design/DESIGN-VERIFICATION.md
 
-Next: [if pass] pipeline complete — run /get-design-done:discover for next session
-      [if fail] fix gaps and re-run /get-design-done:verify
+Next: [if pass] pipeline complete — run /hone:discover for next session
+      [if fail] fix gaps and re-run /hone:verify
 ======================
 ```

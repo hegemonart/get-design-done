@@ -1,6 +1,6 @@
 # .design/config.json Schema
 
-The config file is created on first `/gdd:settings` call or when any stage initializes a new project. It controls model selection (profile) and how stages dispatch agents in parallel.
+The config file is created on first `/hone:settings` call or when any stage initializes a new project. It controls model selection (profile) and how stages dispatch agents in parallel.
 
 ## Full Schema
 
@@ -24,7 +24,7 @@ The config file is created on first `/gdd:settings` call or when any stage initi
 
 ## Default Config
 
-If no `.design/config.json` exists, stages and `/gdd:settings` assume:
+If no `.design/config.json` exists, stages and `/hone:settings` assume:
 
 ```json
 {
@@ -83,7 +83,7 @@ Keyed by stage name (`brief`, `explore`, `plan`, `design`, `verify`). Any field 
 
 ### `connections.skip`
 
-Optional array of connection names the user has explicitly opted out of. `/gdd:connections` reads this list and never re-prompts for skipped connections. Users re-enable a skipped connection by invoking `/gdd:connections <name>` directly (bypasses the skip list for that run).
+Optional array of connection names the user has explicitly opted out of. `/hone:connections` reads this list and never re-prompts for skipped connections. Users re-enable a skipped connection by invoking `/hone:connections <name>` directly (bypasses the skip list for that run).
 
 ```json
 {
@@ -97,7 +97,7 @@ Valid names: `figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`,
 
 ### `connections_onboarding` (scratch block)
 
-Transient state written by `/gdd:connections` while a setup flow is in progress. Not hand-edited. Shape:
+Transient state written by `/hone:connections` while a setup flow is in progress. Not hand-edited. Shape:
 
 ```json
 {
@@ -108,7 +108,7 @@ Transient state written by `/gdd:connections` while a setup flow is in progress.
 }
 ```
 
-`/gdd:connections` deletes this block when `pending_verification` drains. Its presence after a session restart is the signal that a resume is required (the skill jumps straight to verification).
+`/hone:connections` deletes this block when `pending_verification` drains. Its presence after a session restart is the signal that a resume is required (the skill jumps straight to verification).
 
 ## How Agents Read The Profile
 
@@ -211,15 +211,15 @@ Class `S` is special: when `complexity_class === "S"` is supplied to the hook, e
 
 ## Bootstrap behavior
 
-If `.design/budget.json` is missing when any `/gdd:*` command runs, `scripts/bootstrap.sh` writes the Default Config values (per D-12). Don't block the spawn - defaults are sensible.
+If `.design/budget.json` is missing when any `/hone:*` command runs, `scripts/bootstrap.sh` writes the Default Config values (per D-12). Don't block the spawn - defaults are sensible.
 
 ## .design/telemetry/costs.jsonl + .design/agent-metrics.json (Phase 10.1)
 
-Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.ts` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.ts` (detached child of the hook + refresh step of `/gdd:optimize`). Both files live under the gitignored `.design/` directory - they are local session state, not committed.
+Phase 10.1 introduces two measurement artifacts written by `hooks/budget-enforcer.ts` (PreToolUse on `Agent` spawns) and `scripts/aggregate-agent-metrics.ts` (detached child of the hook + refresh step of `/hone:optimize`). Both files live under the gitignored `.design/` directory - they are local session state, not committed.
 
 ### .design/telemetry/costs.jsonl
 
-Append-only ledger. One JSON object per line. Written by `hooks/budget-enforcer.ts` on every PreToolUse decision: spawn allowed, spawn blocked by cap, tier downgraded, cache-hit short-circuit, lazy-gate skip. Consumed by the Phase 11 reflector (`agents/design-reflector.md`) and by `/gdd:optimize`.
+Append-only ledger. One JSON object per line. Written by `hooks/budget-enforcer.ts` on every PreToolUse decision: spawn allowed, spawn blocked by cap, tier downgraded, cache-hit short-circuit, lazy-gate skip. Consumed by the Phase 11 reflector (`agents/design-reflector.md`) and by `/hone:optimize`.
 
 **Row schema** (verbatim from ROADMAP criterion 7):
 
@@ -292,7 +292,7 @@ Both files sit inside `.design/`, which is already `.gitignore`d at the project 
 
 ### Refresh cadence
 
-The aggregator is invoked as a detached child process by `hooks/budget-enforcer.ts` after every telemetry row write. It is also invoked directly by `/gdd:optimize` before analysis. There is no cron, no daemon, and no scheduled task - metrics are always at most one spawn stale.
+The aggregator is invoked as a detached child process by `hooks/budget-enforcer.ts` after every telemetry row write. It is also invoked directly by `/hone:optimize` before analysis. There is no cron, no daemon, and no scheduled task - metrics are always at most one spawn stale.
 
 ## .design/cache-manifest.json Schema (Phase 10.1)
 
@@ -391,7 +391,7 @@ single-operator projects are unaffected. Full contract: `reference/multi-author-
   `(section, action)` to its listed roles; an unruled pair is allowed. `viewer` never mutates. A CI
   gate calls `can(config, actor, section, action)` to enforce on PRs.
 - **`collab`** - `{ multi_writer_enabled (bool), lock_timeout_ms (int), sync_backend
-  (git|s3|git-lfs) }`. `multi_writer_enabled: true` switches the gdd-state advisory lock to the
+  (git|s3|git-lfs) }`. `multi_writer_enabled: true` switches the hone-state advisory lock to the
   team-mode policy (`scripts/lib/collab/lock-policy.cjs` - 30 s wait + 100 ms backoff);
   `sync_backend` selects the cross-machine `.design/` backend (`scripts/lib/collab/sync-backend.cjs`,
   default `git`; `s3`/`git-lfs` are opt-in declarations - a live client is not bundled this phase).
@@ -399,7 +399,7 @@ single-operator projects are unaffected. Full contract: `reference/multi-author-
 ## CLI localization (Phase 40.5)
 
 - **`locale`** (`en`|`ru`|`uk`|`de`|`fr`|`zh`|`ja`) - overrides the language of GDD's own `--help`,
-  common error messages, and skill prompt headers. Set via `/gdd:locale <code>`. Precedence: this key >
+  common error messages, and skill prompt headers. Set via `/hone:locale <code>`. Precedence: this key >
   env `LANG`/`LC_ALL` > `en`. Missing message keys fall back to English (`scripts/lib/i18n/index.cjs`,
   chain `locale → base → en`); `en` + `ru` are complete, the other five are placeholders. Full
   contract: `reference/cli-localization.md`.

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/hone-state/schemas/get.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/scripts/mcp-servers/hone-state/schemas/get.schema.json",
   "title": "GddStateGet",
   "description": "MCP tool hone_state__get — read current STATE.md (parsed). Read-only; no event emitted.",
   "type": "object",

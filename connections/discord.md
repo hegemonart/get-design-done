@@ -1,6 +1,6 @@
 # Discord — Connection Specification
 
-This file is the connection specification for Discord within the get-design-done pipeline. It lives in `connections/` alongside other connection specs. See `connections/connections.md` for the full connection index and capability matrix (the discord row is added at the 35.2 closeout).
+This file is the connection specification for Discord within the hone pipeline. It lives in `connections/` alongside other connection specs. See `connections/connections.md` for the full connection index and capability matrix (the discord row is added at the 35.2 closeout).
 
 ---
 

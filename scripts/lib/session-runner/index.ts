@@ -639,7 +639,7 @@ function usdCost(inputTokens: number, outputTokens: number, modelName: string | 
 
 /** Build a stable session identifier. */
 function buildSessionId(stage: string): string {
-  return `gdd-session-${new Date().toISOString()}-${process.pid}-${stage}`;
+  return `hone-session-${new Date().toISOString()}-${process.pid}-${stage}`;
 }
 
 /** Shape of a message chunk we care about. The SDK exports many types;

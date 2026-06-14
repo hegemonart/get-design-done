@@ -3,14 +3,14 @@ name: health-mcp-detection
 type: heuristic
 version: 1.0.0
 phase: 28.5
-tags: [health, mcp, detection, gdd-mcp, registration-nudge]
+tags: [health, mcp, detection, hone-mcp, registration-nudge]
 last_updated: 2026-05-18
 ---
 
 # Health MCP-Registration Detection Procedure
 
 Extracted from `skills/health/SKILL.md` per Phase 28.5 D-10 (extract-then-link, never delete content).
-This file documents the canonical procedure for inspecting whether `gdd-mcp` (Phase 27.7+) is
+This file documents the canonical procedure for inspecting whether `hone-mcp` (Phase 27.7+) is
 registered with any installed harness and rendering a one-line status row after the health
 table. The procedure is non-blocking by design: any failure path renders `unknown` rather
 than crashing the skill.
@@ -34,8 +34,8 @@ Based on the detection result, render exactly ONE of these row strings:
   `MCP server: registered with claude+codex`
 - When only one harness is present and registered:
   `MCP server: registered with claude` (or `MCP server: registered with codex`)
-- When at least one harness is present but `gdd-mcp` is NOT in its registered list:
-  `MCP server: not registered  (run: npx @hegemonart/get-design-done --register-mcp; dismiss: .design/config.json#mcp_nudge=false)`
+- When at least one harness is present but `hone-mcp` is NOT in its registered list:
+  `MCP server: not registered  (run: npx @hegemonart/hone --register-mcp; dismiss: .design/config.json#mcp_nudge=false)`
 - When neither harness CLI is found on PATH:
   `MCP server: unknown (claude/codex CLI not found)`
 

@@ -62,7 +62,7 @@ function loadJsonOr(empty, filePath) {
     return JSON.parse(raw);
   } catch (err) {
     const friendly = new Error(
-      `get-design-done installer: cannot parse ${filePath} as JSON\n  ${err.message}\n  Fix the file manually or delete it, then re-run.`,
+      `hone installer: cannot parse ${filePath} as JSON\n  ${err.message}\n  Fix the file manually or delete it, then re-run.`,
     );
     friendly.code = 'EINSTALLER_BAD_JSON';
     friendly.path = filePath;
@@ -227,7 +227,7 @@ function uninstallClaudeMarketplace(runtime, configDir, dryRun) {
  * For `kind === 'commands'`   → <configDir>/<destSubpath>/<itemName>.md
  * For `kind === 'agents'`     → <configDir>/<destSubpath>/<itemName>.md
  *
- * `itemName` already has the prefix applied (e.g. `gdd-explore`) per the
+ * `itemName` already has the prefix applied (e.g. `hone-explore`) per the
  * StagedArtifact contract documented in runtime-artifact-layout.cjs.
  *
  * @param {string} configDir
@@ -451,7 +451,7 @@ function installMultiArtifact(runtime, configDir, dryRun, opts) {
     for (const item of staged) {
       // AR7 fix (Phase 59.8): never write a 0-byte / empty artifact. The old
       // agents path staged `content: ''` for every skill name that had no
-      // matching agent file, producing empty `gdd-<name>.md` placeholders.
+      // matching agent file, producing empty `hone-<name>.md` placeholders.
       // Even with the layout-side enumeration fix, guard defensively here so
       // no converter/kind can ever emit an empty file to disk.
       if (!item.content || !String(item.content).trim()) {
@@ -578,7 +578,7 @@ function uninstallMultiArtifact(runtime, configDir, dryRun, opts) {
     // AR7 fix (Phase 59.8): derive the artifact names from the SAME staging
     // pass install uses, so uninstall stays symmetric. The `agents` kind
     // enumerates `agents/*.md` (real agent role names), NOT skill names — the
-    // old `gdd-<skillName>.md` derivation never matched any installed agent
+    // old `hone-<skillName>.md` derivation never matched any installed agent
     // file and left every real agent on disk after `--uninstall`.
     let stagedNames;
     try {
@@ -837,7 +837,7 @@ function uninstallCline(runtime, configDir, dryRun) {
 //     "schema_version": 1,
 //     "generated_at": "<ISO-timestamp>",
 //     "source": "reference/runtime-models.md",
-//     "generated_by": "get-design-done"
+//     "generated_by": "hone"
 //   }
 //
 // `generated_by` is the fingerprint uninstall uses to decide whether the

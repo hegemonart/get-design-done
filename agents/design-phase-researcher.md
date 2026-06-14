@@ -165,7 +165,7 @@ The researcher MUST add an `## Architectural Responsibility Map` section to DESI
 
 | Tier | Description |
 |------|-------------|
-| command | User-facing /gdd: skill file |
+| command | User-facing /hone: skill file |
 | agent | Specialized subagent invoked by commands |
 | reference | Static knowledge base read by agents |
 | connection | External integration contract doc |
@@ -193,17 +193,17 @@ The researcher MUST add a `## Flow Diagram` section to DESIGN-CONTEXT.md immedia
 
 ```mermaid
 flowchart TD
-    A["/gdd:scan"] --> B["design-context-builder\n(builds DESIGN-CONTEXT.md)"]
-    B --> C["/gdd:discover"]
+    A["/hone:scan"] --> B["design-context-builder\n(builds DESIGN-CONTEXT.md)"]
+    B --> C["/hone:discover"]
     C --> D["design-phase-researcher\n(builds DESIGN-CONTEXT.md addendum)"]
-    D --> E["/gdd:plan"]
+    D --> E["/hone:plan"]
     E --> F["design-planner\n(builds DESIGN-PLAN.md)"]
-    F --> G["/gdd:design"]
+    F --> G["/hone:design"]
     G --> H["design-executor\n(executes plan tasks)"]
-    H --> I["/gdd:verify"]
+    H --> I["/hone:verify"]
     I --> J["design-verifier\n(builds DESIGN-VERIFICATION.md)"]
     J --> K{Pass?}
-    K -- Yes --> L["/gdd:complete-cycle"]
+    K -- Yes --> L["/hone:complete-cycle"]
     K -- No --> G
 ```
 ````
@@ -213,7 +213,7 @@ flowchart TD
 2. Each node represents a command or agent invocation - not an implementation file.
 3. Show the primary happy path. Add a single retry/failure edge where meaningful.
 4. Maximum 12 nodes. If the workflow has more stages, show only the main trunk and annotate branches with a comment.
-5. Node labels: commands in `/gdd:name` format, agents in `agent-name\n(one-line purpose)` format.
+5. Node labels: commands in `/hone:name` format, agents in `agent-name\n(one-line purpose)` format.
 6. The researcher adapts the diagram to reflect the actual project workflow observed during its research - the example above is the default GDD pipeline. If the project has custom commands or a different stage order, update accordingly.
 
 ---

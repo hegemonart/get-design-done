@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/hone-state/schemas/add_must_have.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/scripts/mcp-servers/hone-state/schemas/add_must_have.schema.json",
   "title": "GddStateAddMustHave",
   "description": "MCP tool hone_state__add_must_have — append one entry to <must_haves>. Emits state.mutation.",
   "type": "object",

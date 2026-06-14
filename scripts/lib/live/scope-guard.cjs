@@ -2,7 +2,7 @@
 /**
  * scripts/lib/live/scope-guard.cjs — Phase 47 (Live Mode) write-scope guard.
  *
- * `/gdd:live` lets the agent rewrite the source files behind a picked DOM
+ * `/hone:live` lets the agent rewrite the source files behind a picked DOM
  * element. To keep that powerful loop safe, EVERY write the live session makes
  * must be inside an explicitly enumerated allow-set:
  *

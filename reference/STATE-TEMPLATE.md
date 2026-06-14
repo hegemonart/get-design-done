@@ -45,7 +45,7 @@ skipped_stages: ""
 <!-- Filled by discover stage. Format: -->
 <!-- D-01: [decision text] (locked | tentative) -->
 <!-- In team mode, an optional attribution suffix records provenance for multi-author merges: -->
-<!-- D-01: [decision text] (locked | tentative) [author=<git-user> co-author=<gdd-instance-id>] -->
+<!-- D-01: [decision text] (locked | tentative) [author=<git-user> co-author=<hone-instance-id>] -->
 <!-- The suffix is optional + backward-compatible; see reference/multi-author-model.md. -->
 </decisions>
 
@@ -75,7 +75,7 @@ skipped_stages: ""
 </quality_gate>
 
 <connections>
-<!-- Detected at scan entry or via /gdd:connections; updated if connections become available mid-pipeline. -->
+<!-- Detected at scan entry or via /hone:connections; updated if connections become available mid-pipeline. -->
 <!-- Format: <connection_name>: <available | unavailable | not_configured> -->
 <!-- Key normalization: hyphens become underscores; leading digits are spelled out (21st-dev → twenty_first). -->
 figma: not_configured
@@ -108,7 +108,7 @@ agents: ["token-mapper", "component-taxonomy-mapper"]
 </parallelism_decision>
 
 <todos>
-<!-- Mirror of .design/TODO.md counts for quick lookup by /gdd:progress and /gdd:stats. -->
+<!-- Mirror of .design/TODO.md counts for quick lookup by /hone:progress and /hone:stats. -->
 <!-- Format:
 pending: 0
 in_progress: 0

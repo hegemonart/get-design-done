@@ -1,6 +1,6 @@
 # Print-Renderer — Connection Specification
 
-This file is the connection specification for the print-render within the get-design-done pipeline. It lives in `connections/` alongside the other connection specs (the closest analog is `connections/preview.md`, the headless-Chrome visual-truth connection). See the connection index for the full connection capability matrix (the print-renderer row is added at the 34.3 closeout).
+This file is the connection specification for the print-render within the hone pipeline. It lives in `connections/` alongside the other connection specs (the closest analog is `connections/preview.md`, the headless-Chrome visual-truth connection). See the connection index for the full connection capability matrix (the print-renderer row is added at the 34.3 closeout).
 
 ---
 

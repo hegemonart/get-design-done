@@ -1,6 +1,6 @@
 ---
 name: cost-forecaster
-description: Forecasts GDD spend over the next N design cycles. Reads .design/telemetry/costs.jsonl (grouping est_cost_usd by cycle) plus the configured .design/budget.json caps, runs the pure scripts/lib/budget/cost-forecast.cjs model (best/typical/worst from the variance of historical per-cycle rates), and reports "at the current rate you'll hit your project_cap in Y cycles." Supports --scenario best|typical|worst. Report-only - it never writes budget.json, never spends, never halts (the budget-enforcer hook halts). Spawned by /gdd:budget.
+description: Forecasts GDD spend over the next N design cycles. Reads .design/telemetry/costs.jsonl (grouping est_cost_usd by cycle) plus the configured .design/budget.json caps, runs the pure scripts/lib/budget/cost-forecast.cjs model (best/typical/worst from the variance of historical per-cycle rates), and reports "at the current rate you'll hit your project_cap in Y cycles." Supports --scenario best|typical|worst. Report-only - it never writes budget.json, never spends, never halts (the budget-enforcer hook halts). Spawned by /hone:budget.
 tools: Read, Bash, Grep, Glob
 color: green
 default-tier: sonnet

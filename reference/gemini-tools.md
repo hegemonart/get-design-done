@@ -20,27 +20,27 @@ name in prose is authoritative; Gemini resolves via this map.
 | `WebSearch` | `google_web_search` | Built-in. |
 | `WebFetch` | `web_fetch` | Built-in. |
 
-## MCP server `gdd-state`
+## MCP server `hone-state`
 
-The gdd-state MCP server works unchanged on Gemini. Configure Gemini to load
+The hone-state MCP server works unchanged on Gemini. Configure Gemini to load
 it by adding to `~/.gemini/settings.json`:
 
 ```json
 {
   "mcpServers": {
-    "gdd-state": {
+    "hone-state": {
       "command": "node",
-      "args": ["--experimental-strip-types", "<pkg-root>/sdk/mcp/gdd-state/server.ts"]
+      "args": ["--experimental-strip-types", "<pkg-root>/sdk/mcp/hone-state/server.ts"]
     }
   }
 }
 ```
 
-All 11 tools exposed by the server appear as `mcp__gdd_state__*` in Gemini.
+All 11 tools exposed by the server appear as `mcp__hone_state__*` in Gemini.
 
 ## Known gaps
 
-- `Task` spawning: same as Codex - prefer `run_shell_command("npx gdd-sdk stage ...")`.
+- `Task` spawning: same as Codex - prefer `run_shell_command("npx hone-sdk stage ...")`.
   See GEMINI.md for invocation details.
 - Gemini's `replace` has stricter uniqueness requirements than CC's Edit;
   when `old_string` appears more than once, Gemini requires context lines.

@@ -1,8 +1,8 @@
-# gdd-state MCP — Connection Specification
+# hone-state MCP — Connection Specification
 
-This file is the connection specification for the `gdd-state` MCP server within the get-design-done pipeline. `gdd-state` is a **local stdio MCP server** that ships with the plugin. It exposes 11 typed tools for reading and mutating `.design/STATE.md` and emits typed telemetry events on every successful mutation. Starting in Phase 20+, `gdd-state` is the **sole mutation surface** for STATE.md — stage SKILLs stop using `Read+regex+Write` and call these tools instead.
+This file is the connection specification for the `hone-state` MCP server within the hone pipeline. `hone-state` is a **local stdio MCP server** that ships with the plugin. It exposes 11 typed tools for reading and mutating `.design/STATE.md` and emits typed telemetry events on every successful mutation. Starting in Phase 20+, `hone-state` is the **sole mutation surface** for STATE.md — stage SKILLs stop using `Read+regex+Write` and call these tools instead.
 
-Unlike the remote/desktop connections (Figma, Refero, Preview, …), `gdd-state` is an **internal** connection: it does not reach out to any external service. It wraps the existing `sdk/state/` module (see Plans 20-01, 20-02, 20-04) and emits events via `sdk/event-stream/` (Plan 20-06). Every mutation tool emits a `state.mutation` event; `transition_stage` additionally emits `state.transition` on both pass and gate-veto.
+Unlike the remote/desktop connections (Figma, Refero, Preview, …), `hone-state` is an **internal** connection: it does not reach out to any external service. It wraps the existing `sdk/state/` module (see Plans 20-01, 20-02, 20-04) and emits events via `sdk/event-stream/` (Plan 20-06). Every mutation tool emits a `state.mutation` event; `transition_stage` additionally emits `state.transition` on both pass and gate-veto.
 
 ---
 
@@ -10,7 +10,7 @@ Unlike the remote/desktop connections (Figma, Refero, Preview, …), `gdd-state`
 
 **Prerequisites:**
 
-- The `@hegemonart/get-design-done` plugin installed (the server script ships in `sdk/mcp/gdd-state/`).
+- The `@hegemonart/hone` plugin installed (the server script ships in `sdk/mcp/hone-state/`).
 - Node 22+ with `--experimental-strip-types` (the server is a TypeScript file run directly via strip-types — no build step).
 
 ### Option A — Project-scoped install (dev repo)
@@ -18,15 +18,15 @@ Unlike the remote/desktop connections (Figma, Refero, Preview, …), `gdd-state`
 For local development against the plugin source tree:
 
 ```
-claude mcp add gdd-state --transport stdio "node --experimental-strip-types ./sdk/mcp/gdd-state/server.ts"
+claude mcp add hone-state --transport stdio "node --experimental-strip-types ./sdk/mcp/hone-state/server.ts"
 ```
 
 ### Option B — Plugin-installed, global resolution
 
-When the plugin is installed globally via `npm i -g @hegemonart/get-design-done`:
+When the plugin is installed globally via `npm i -g @hegemonart/hone`:
 
 ```
-claude mcp add gdd-state --transport stdio "node --experimental-strip-types $(npm root -g)/@hegemonart/get-design-done/sdk/mcp/gdd-state/server.ts"
+claude mcp add hone-state --transport stdio "node --experimental-strip-types $(npm root -g)/@hegemonart/hone/sdk/mcp/hone-state/server.ts"
 ```
 
 Restart the Claude Code session after install.
@@ -40,47 +40,47 @@ The server resolves the STATE.md path from `process.env.GDD_STATE_PATH ?? .desig
 After session restart:
 
 ```
-ToolSearch({ query: "mcp__gdd_state", max_results: 1 })
+ToolSearch({ query: "mcp__hone_state", max_results: 1 })
 ```
 
-A single non-empty match is sufficient — the server ships 11 tools, all prefixed `mcp__gdd_state__`.
+A single non-empty match is sufficient — the server ships 11 tools, all prefixed `mcp__hone_state__`.
 
 ---
 
 ## Probe Pattern
 
-The `gdd-state` probe is **ToolSearch-only**. The server is local and always available once installed, so a keyword match on the tool prefix is sufficient evidence that the MCP is registered.
+The `hone-state` probe is **ToolSearch-only**. The server is local and always available once installed, so a keyword match on the tool prefix is sufficient evidence that the MCP is registered.
 
 ```
 Step GS1 — ToolSearch check:
-  ToolSearch({ query: "mcp__gdd_state", max_results: 1 })
-  → Empty result     → gdd-state: not_configured  (fall back to direct import — see Fallback Behavior)
-  → Non-empty result → gdd-state: available
+  ToolSearch({ query: "mcp__hone_state", max_results: 1 })
+  → Empty result     → hone-state: not_configured  (fall back to direct import — see Fallback Behavior)
+  → Non-empty result → hone-state: available
 
-Write gdd-state status to STATE.md <connections>.
+Write hone-state status to STATE.md <connections>.
 ```
 
-No live tool call is required in the probe. Unlike Figma (which can be registered but error on auth/network), `gdd-state` is a local process — its presence in the tool list implies it will respond to calls. Each stage skill that probes should call `gdd_state__probe_connections` to write the resolved status back; the server's own probe result is recorded alongside every other connection.
+No live tool call is required in the probe. Unlike Figma (which can be registered but error on auth/network), `hone-state` is a local process — its presence in the tool list implies it will respond to calls. Each stage skill that probes should call `hone_state__probe_connections` to write the resolved status back; the server's own probe result is recorded alongside every other connection.
 
 ---
 
 ## Tools
 
-Tool names are static — the server always exposes `mcp__gdd_state__<tool>`. No prefix resolution is required.
+Tool names are static — the server always exposes `mcp__hone_state__<tool>`. No prefix resolution is required.
 
 | Tool                                 | Mutates? | Emits event?                     | Purpose                                                                                                     |
 | ------------------------------------ | -------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `mcp__gdd_state__get`                | No       | —                                | Read current STATE.md (parsed). Optional `{ fields: string[] }` projection.                                 |
-| `mcp__gdd_state__update_progress`    | Yes      | `state.mutation`                 | Update `<position>.task_progress` and/or `<position>.status`.                                               |
-| `mcp__gdd_state__transition_stage`   | Yes      | `state.transition` (pass + fail) | Run the gate and advance `<position>.stage` on pass. Gate-veto returns `{success:false}`; server never crashes. |
-| `mcp__gdd_state__add_blocker`        | Yes      | `state.mutation`                 | Append one entry to `<blockers>`. Defaults stage to current and date to today (UTC).                        |
-| `mcp__gdd_state__resolve_blocker`    | Yes      | `state.mutation`                 | Remove one `<blockers>` entry by 0-based index or exact text match.                                         |
-| `mcp__gdd_state__add_decision`       | Yes      | `state.mutation`                 | Append one entry to `<decisions>`. Auto-allocates `D-N`.                                                    |
-| `mcp__gdd_state__add_must_have`      | Yes      | `state.mutation`                 | Append one entry to `<must_haves>`. Auto-allocates `M-N`.                                                   |
-| `mcp__gdd_state__set_status`         | Yes      | `state.mutation`                 | Update `<position>.status`. Thin wrapper for prose that only changes status.                                |
-| `mcp__gdd_state__checkpoint`         | Yes      | `state.mutation`                 | Bump `frontmatter.last_checkpoint` and append a `<timestamps>` entry.                                       |
-| `mcp__gdd_state__probe_connections`  | Yes      | `state.mutation`                 | Merge probe results into `<connections>`. Overwrites keys; never deletes.                                   |
-| `mcp__gdd_state__frontmatter_update` | Yes      | `state.mutation`                 | Patch frontmatter fields. Rejects `pipeline_state_version` and `stage` (use `transition_stage`).            |
+| `mcp__hone_state__get`                | No       | —                                | Read current STATE.md (parsed). Optional `{ fields: string[] }` projection.                                 |
+| `mcp__hone_state__update_progress`    | Yes      | `state.mutation`                 | Update `<position>.task_progress` and/or `<position>.status`.                                               |
+| `mcp__hone_state__transition_stage`   | Yes      | `state.transition` (pass + fail) | Run the gate and advance `<position>.stage` on pass. Gate-veto returns `{success:false}`; server never crashes. |
+| `mcp__hone_state__add_blocker`        | Yes      | `state.mutation`                 | Append one entry to `<blockers>`. Defaults stage to current and date to today (UTC).                        |
+| `mcp__hone_state__resolve_blocker`    | Yes      | `state.mutation`                 | Remove one `<blockers>` entry by 0-based index or exact text match.                                         |
+| `mcp__hone_state__add_decision`       | Yes      | `state.mutation`                 | Append one entry to `<decisions>`. Auto-allocates `D-N`.                                                    |
+| `mcp__hone_state__add_must_have`      | Yes      | `state.mutation`                 | Append one entry to `<must_haves>`. Auto-allocates `M-N`.                                                   |
+| `mcp__hone_state__set_status`         | Yes      | `state.mutation`                 | Update `<position>.status`. Thin wrapper for prose that only changes status.                                |
+| `mcp__hone_state__checkpoint`         | Yes      | `state.mutation`                 | Bump `frontmatter.last_checkpoint` and append a `<timestamps>` entry.                                       |
+| `mcp__hone_state__probe_connections`  | Yes      | `state.mutation`                 | Merge probe results into `<connections>`. Overwrites keys; never deletes.                                   |
+| `mcp__hone_state__frontmatter_update` | Yes      | `state.mutation`                 | Patch frontmatter fields. Rejects `pipeline_state_version` and `stage` (use `transition_stage`).            |
 
 **Tool response envelope (consistent across all 11 tools):**
 
@@ -105,25 +105,25 @@ or
 }
 ```
 
-`kind` is one of `validation`, `state_conflict`, `operation_failed`, `unknown` — matching the GDDError taxonomy in `sdk/errors/`. Callers branch on `kind` to decide whether to retry, surface to the operator, or fall back. Full Draft-07 schemas live at `sdk/mcp/gdd-state/schemas/*.schema.json` and the combined manifest is at `reference/schemas/mcp-gdd-state-tools.schema.json`.
+`kind` is one of `validation`, `state_conflict`, `operation_failed`, `unknown` — matching the GDDError taxonomy in `sdk/errors/`. Callers branch on `kind` to decide whether to retry, surface to the operator, or fall back. Full Draft-07 schemas live at `sdk/mcp/hone-state/schemas/*.schema.json` and the combined manifest is at `reference/schemas/mcp-gdd-state-tools.schema.json`.
 
 **Scoped out of Phase 20:**
 
-- `gdd_state__config_update` (mentioned in the ROADMAP prose but NOT in the numerical success criterion of "11 tools"). `.design/config.json` is a separate artifact from STATE.md; its mutation surface is tracked for Phase 21+.
+- `hone_state__config_update` (mentioned in the ROADMAP prose but NOT in the numerical success criterion of "11 tools"). `.design/config.json` is a separate artifact from STATE.md; its mutation surface is tracked for Phase 21+.
 
 ---
 
 ## Pipeline Integration
 
-`gdd-state` is **required, not optional**. It replaces the pre-Phase-20 `Read+regex+Write` pattern that every stage skill used to mutate STATE.md by hand. Skipping this connection is the pre-Phase-20 regression path.
+`hone-state` is **required, not optional**. It replaces the pre-Phase-20 `Read+regex+Write` pattern that every stage skill used to mutate STATE.md by hand. Skipping this connection is the pre-Phase-20 regression path.
 
 | Stage   | Skill/Agent                           | Tool used                                                                                                                                                                                                                                                        | Purpose                                                                                                                                                             |
 | ------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| brief    | `skills/brief/SKILL.md`               | `gdd_state__get`, `gdd_state__update_progress`, `gdd_state__set_status`, `gdd_state__add_must_have`, `gdd_state__add_decision`, `gdd_state__checkpoint`, `gdd_state__transition_stage`, `gdd_state__frontmatter_update`                                        | Initialize STATE.md position; record brief-derived decisions and must-haves; gate-advance to `explore` on completion.                                                |
-| explore  | `skills/explore/SKILL.md`             | `gdd_state__get`, `gdd_state__probe_connections`, `gdd_state__add_decision`, `gdd_state__update_progress`, `gdd_state__checkpoint`, `gdd_state__transition_stage`                                                                                              | Run the 12-connection probe and write all 12 results with a single `probe_connections` call; record exploration-phase decisions; gate-advance to `plan`.             |
-| plan     | `skills/plan/SKILL.md`                | `gdd_state__get`, `gdd_state__add_decision`, `gdd_state__add_must_have`, `gdd_state__update_progress`, `gdd_state__checkpoint`, `gdd_state__transition_stage`                                                                                                  | Record locked decisions and plan-derived must-haves; gate-advance to `design`.                                                                                       |
-| design   | `skills/design/SKILL.md`              | `gdd_state__get`, `gdd_state__update_progress`, `gdd_state__checkpoint`, `gdd_state__add_decision`, `gdd_state__resolve_blocker`, `gdd_state__transition_stage`                                                                                                | Tick task_progress; resolve design-stage blockers; gate-advance to `verify`.                                                                                         |
-| verify   | `skills/verify/SKILL.md`              | `gdd_state__get`, `gdd_state__update_progress`, `gdd_state__add_must_have` (status updates), `gdd_state__add_blocker` (on failure), `gdd_state__set_status` (`completed`/`blocked`), `gdd_state__checkpoint`                                                 | Execute must-have checks, flip `pass`/`fail`, append blockers on regressions, finalize status.                                                                       |
+| brief    | `skills/brief/SKILL.md`               | `hone_state__get`, `hone_state__update_progress`, `hone_state__set_status`, `hone_state__add_must_have`, `hone_state__add_decision`, `hone_state__checkpoint`, `hone_state__transition_stage`, `hone_state__frontmatter_update`                                        | Initialize STATE.md position; record brief-derived decisions and must-haves; gate-advance to `explore` on completion.                                                |
+| explore  | `skills/explore/SKILL.md`             | `hone_state__get`, `hone_state__probe_connections`, `hone_state__add_decision`, `hone_state__update_progress`, `hone_state__checkpoint`, `hone_state__transition_stage`                                                                                              | Run the 12-connection probe and write all 12 results with a single `probe_connections` call; record exploration-phase decisions; gate-advance to `plan`.             |
+| plan     | `skills/plan/SKILL.md`                | `hone_state__get`, `hone_state__add_decision`, `hone_state__add_must_have`, `hone_state__update_progress`, `hone_state__checkpoint`, `hone_state__transition_stage`                                                                                                  | Record locked decisions and plan-derived must-haves; gate-advance to `design`.                                                                                       |
+| design   | `skills/design/SKILL.md`              | `hone_state__get`, `hone_state__update_progress`, `hone_state__checkpoint`, `hone_state__add_decision`, `hone_state__resolve_blocker`, `hone_state__transition_stage`                                                                                                | Tick task_progress; resolve design-stage blockers; gate-advance to `verify`.                                                                                         |
+| verify   | `skills/verify/SKILL.md`              | `hone_state__get`, `hone_state__update_progress`, `hone_state__add_must_have` (status updates), `hone_state__add_blocker` (on failure), `hone_state__set_status` (`completed`/`blocked`), `hone_state__checkpoint`                                                 | Execute must-have checks, flip `pass`/`fail`, append blockers on regressions, finalize status.                                                                       |
 
 Stage SKILL rewrites in Plans 20-07 through 20-11 will switch each skill from `Read+Write` to these tools. Until those plans land, the tools are exposed but not yet consumed — Plan 20-05 ships only the surface.
 
@@ -131,10 +131,10 @@ Stage SKILL rewrites in Plans 20-07 through 20-11 will switch each skill from `R
 
 ## Fallback Behavior
 
-If the `gdd-state` MCP is **not_configured** (ToolSearch returned empty), skills fall back to the pre-Phase-20 path by importing the `sdk/state/` module directly:
+If the `hone-state` MCP is **not_configured** (ToolSearch returned empty), skills fall back to the pre-Phase-20 path by importing the `sdk/state/` module directly:
 
 ```ts
-import { read, mutate, transition } from '@hegemonart/get-design-done/sdk/state/index.js';
+import { read, mutate, transition } from '@hegemonart/hone/sdk/state/index.js';
 ```
 
 This path bypasses the event stream (no `state.mutation` or `state.transition` events are emitted) but preserves mutation safety through the same lockfile + atomic-rename protocol. It exists for two reasons:
@@ -142,17 +142,17 @@ This path bypasses the event stream (no `state.mutation` or `state.transition` e
 1. **Standalone CLI usage.** Users running `node` scripts against the plugin outside a Claude Code session do not have MCP; the direct import lets them still mutate STATE.md safely.
 2. **Degraded operation.** If the MCP server fails to register for any reason (e.g. a session state bug), skills continue to function with the tradeoff of losing event telemetry for that session. Compared to crashing the stage, this is the right tradeoff — telemetry is observability; the STATE.md mutation is the user's primary concern.
 
-Stages do not append a `<blocker>` for a missing `gdd-state` connection — the fallback path keeps mutation safety. If a downstream consumer specifically requires events (e.g. a Phase 22+ dashboard), that consumer is responsible for surfacing the absent MCP as its own problem.
+Stages do not append a `<blocker>` for a missing `hone-state` connection — the fallback path keeps mutation safety. If a downstream consumer specifically requires events (e.g. a Phase 22+ dashboard), that consumer is responsible for surfacing the absent MCP as its own problem.
 
 ---
 
 ## STATE.md Integration
 
-Unlike external MCPs, `gdd-state` is the thing that **writes** to `<connections>`. Stage skills record its own probe result alongside every other connection:
+Unlike external MCPs, `hone-state` is the thing that **writes** to `<connections>`. Stage skills record its own probe result alongside every other connection:
 
 ```xml
 <connections>
-gdd-state: available
+hone-state: available
 figma: available
 refero: not_configured
 preview: available
@@ -163,15 +163,15 @@ preview: available
 
 | Value            | Meaning                                                                                                        |
 | ---------------- | -------------------------------------------------------------------------------------------------------------- |
-| `available`      | `ToolSearch` returned ≥1 result matching `mcp__gdd_state`. Server is registered and tools are loadable.        |
-| `unavailable`    | Never used for `gdd-state` — the server either is or is not in the session. Reserved for symmetry.             |
+| `available`      | `ToolSearch` returned ≥1 result matching `mcp__hone_state`. Server is registered and tools are loadable.        |
+| `unavailable`    | Never used for `hone-state` — the server either is or is not in the session. Reserved for symmetry.             |
 | `not_configured` | `ToolSearch` returned empty. Fall back to the direct module import; events are not emitted this session.       |
 
 ---
 
 ## Caveats and Pitfalls
 
-- **Do not run multiple `gdd-state` instances against the same `.design/`.** The module's lockfile (see `sdk/state/lockfile.ts`) guarantees per-process safety, but spawning two separate MCP servers against the same STATE.md wastes locks and produces duplicate events. One server per Claude Code session is the design contract.
+- **Do not run multiple `hone-state` instances against the same `.design/`.** The module's lockfile (see `sdk/state/lockfile.ts`) guarantees per-process safety, but spawning two separate MCP servers against the same STATE.md wastes locks and produces duplicate events. One server per Claude Code session is the design contract.
 
 - **Event ordering follows successful mutation, not request receipt.** `appendEvent()` is called only after `mutate()` returns successfully. A failed mutation produces a `{success:false, error}` response with no event emitted. The `state.transition` event is a deliberate exception: gate vetoes emit `state.transition` with `pass:false` because gate failures are themselves observable telemetry.
 

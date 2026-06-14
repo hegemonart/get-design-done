@@ -16,30 +16,30 @@ name in prose is authoritative; Codex resolves via this map.
 | `Bash` | `shell` | Takes `{command: string, cwd?, timeout_sec?}`. |
 | `Grep` | `shell` | Compose a `rg` / `grep -rn` invocation; no native Codex grep tool. |
 | `Glob` | `shell` | Compose `ls` / `find`; no native Codex glob. |
-| `Task` | Sub-invocation via nested Codex | Codex spawns nested sessions via its own CLI, not a tool call. Skills requiring Task should prefer the MCP `gdd-state` tool layer instead. |
+| `Task` | Sub-invocation via nested Codex | Codex spawns nested sessions via its own CLI, not a tool call. Skills requiring Task should prefer the MCP `hone-state` tool layer instead. |
 | `WebSearch` | `web_search` | If enabled in Codex policy. |
 | `WebFetch` | `shell` (curl) or `web_search.open` | Prefer curl for deterministic output. |
 
-## MCP server `gdd-state`
+## MCP server `hone-state`
 
-The gdd-state MCP server works unchanged on Codex. Configure Codex to load
+The hone-state MCP server works unchanged on Codex. Configure Codex to load
 it by adding to `~/.codex/config.toml`:
 
 ```toml
 [[mcp_servers]]
-name = "gdd-state"
+name = "hone-state"
 command = "node"
-args = ["--experimental-strip-types", "<pkg-root>/sdk/mcp/gdd-state/server.ts"]
+args = ["--experimental-strip-types", "<pkg-root>/sdk/mcp/hone-state/server.ts"]
 ```
 
-All 11 tools exposed by the server appear as `mcp__gdd_state__*` in Codex.
+All 11 tools exposed by the server appear as `mcp__hone_state__*` in Codex.
 
 ## Known gaps
 
 - `Task` spawning: Codex does not expose nested-session as a tool call. For
   now, skills that rely on `Task` (parallel mappers in Plan 21-06, parallel
-  discussants in Plan 21-07) should invoke the gdd-sdk CLI as a shell
-  subprocess: `shell("npx gdd-sdk stage explore --parallel")`. This is
+  discussants in Plan 21-07) should invoke the hone-sdk CLI as a shell
+  subprocess: `shell("npx hone-sdk stage explore --parallel")`. This is
   documented in AGENTS.md.
 - `apply_patch` diff format differs from CC's Edit: Codex expects unified
   diff (`---`/`+++`/`@@` hunks), while CC's Edit takes `old_string`/`new_string`.

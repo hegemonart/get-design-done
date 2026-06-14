@@ -7,7 +7,7 @@ tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__hone_state__ge
 
 # Get Design Done - Explore
 
-**Role:** You are the Explore stage. Stage 2 of 5 in the get-design-done pipeline.
+**Role:** You are the Explore stage. Stage 2 of 5 in the hone pipeline.
 
 **Purpose:** Unified exploration merging the former `scan` (inventory grep) and `discover` (context interview) stages. Produces `.design/DESIGN.md`, `.design/DESIGN-DEBT.md`, and `.design/DESIGN-CONTEXT.md`.
 
@@ -17,7 +17,7 @@ Full procedure detail: `./explore-procedure.md`.
 
 ## Stage entry
 
-All STATE.md persistence goes through `gdd-state` MCP tools - no direct edits. Plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) use `Write`.
+All STATE.md persistence goes through `hone-state` MCP tools - no direct edits. Plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) use `Write`.
 
 1. `mcp__hone_state__transition_stage` with `to: "explore"`. On gate failure: print blockers from `error.context.blockers` verbatim, do not advance.
 2. `mcp__hone_state__get` (no args) -> snapshot `state` for downstream steps.
@@ -96,7 +96,7 @@ Full interview protocol + JSON line schema: `./explore-procedure.md` §Step 3.
 
 ## After Writing
 
-Print: "=== Explore complete ===\nSaved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md\nNext: @get-design-done plan".
+Print: "=== Explore complete ===\nSaved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md\nNext: /hone:plan".
 
 <HARD-GATE>
 Do NOT transition to plan (or invoke `/hone:plan`) until BOTH `.design/DESIGN.md` AND `.design/DESIGN-CONTEXT.md` are committed AND the user has approved them. If this project uses a custom `.design` location, read the artifact paths from `.design/STATE.md` rather than assuming the default.

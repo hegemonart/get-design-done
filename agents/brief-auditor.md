@@ -116,7 +116,7 @@ fired, write a single line: "No anti-patterns fired. The brief is specific enoug
 
 ## Suggested next step
 
-When one or more anti-patterns fired, end with: "Run /gdd:discuss brief to refine before explore."
+When one or more anti-patterns fired, end with: "Run /hone:discuss brief to refine before explore."
 When none fired, omit this section.
 ```
 

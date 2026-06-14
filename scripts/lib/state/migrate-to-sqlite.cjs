@@ -47,7 +47,7 @@ function findPackageRoot(startDir) {
     try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch { pkg = null; }
     if (pkg) {
       if (firstWithPkg === null) firstWithPkg = dir;
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -306,7 +306,7 @@ async function migrateToSqlite(opts = {}) {
           dryRun,
           skipped: true,
           reason:
-            'SQLite database failed integrity_check. Run /gdd:state recover to rebuild from markdown.',
+            'SQLite database failed integrity_check. Run /hone:state recover to rebuild from markdown.',
         };
       }
     } finally {
@@ -566,14 +566,14 @@ async function migrateToSqlite(opts = {}) {
     // we always roll back. We call db.transaction() around a manual SAVEPOINT
     // using the lower-level exec approach.
     try {
-      db.exec('SAVEPOINT gdd_dryrun');
+      db.exec('SAVEPOINT hone_dryrun');
       migrate(); // runs all UPSERTs but they land inside the savepoint
-      db.exec('ROLLBACK TO SAVEPOINT gdd_dryrun');
-      db.exec('RELEASE SAVEPOINT gdd_dryrun');
+      db.exec('ROLLBACK TO SAVEPOINT hone_dryrun');
+      db.exec('RELEASE SAVEPOINT hone_dryrun');
     } catch {
       // If there was a SQL error (e.g. table doesn't exist yet), still rollback.
-      try { db.exec('ROLLBACK TO SAVEPOINT gdd_dryrun'); } catch { /* ignore */ }
-      try { db.exec('RELEASE SAVEPOINT gdd_dryrun'); } catch { /* ignore */ }
+      try { db.exec('ROLLBACK TO SAVEPOINT hone_dryrun'); } catch { /* ignore */ }
+      try { db.exec('RELEASE SAVEPOINT hone_dryrun'); } catch { /* ignore */ }
     }
 
     const diff = buildDryRunDiff(ops);

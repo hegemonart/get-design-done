@@ -132,7 +132,7 @@ let _calLoadError = null;
 //     call; the user never sees the tool run).
 //   * action ∈ {allow, review, require_confirmation} -> accepted:true at the
 //     PreToolUse boundary. The action proceeds past the risk gate; a later
-//     hook may still block, and the user may later /gdd:override or undo, but
+//     hook may still block, and the user may later /hone:override or undo, but
 //     for THIS gate's calibration loop "the risk gate let it through" IS the
 //     acceptance signal. user_undo / post_apply_correct are deliberately left
 //     null (unresolved) — a future PostToolUse pass can resolve them later.
@@ -345,7 +345,7 @@ function buildAdvisory(tool, assessment, extraNote) {
 function buildBlock(tool, assessment) {
   return {
     continue: false,
-    stopReason: `${rationaleLine(tool, assessment)} — run /gdd:override to escalate`,
+    stopReason: `${rationaleLine(tool, assessment)} — run /hone:override to escalate`,
   };
 }
 
@@ -462,7 +462,7 @@ async function main() {
       process.stdout.write(JSON.stringify(buildAdvisory(
         tool,
         assessment,
-        'High-risk action — design-fixer will confirm with you (AskUserQuestion) before applying; or run /gdd:override to escalate.',
+        'High-risk action — design-fixer will confirm with you (AskUserQuestion) before applying; or run /hone:override to escalate.',
       )));
       return;
     case 'review':

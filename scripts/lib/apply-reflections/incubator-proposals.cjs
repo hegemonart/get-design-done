@@ -1,6 +1,6 @@
 // scripts/lib/apply-reflections/incubator-proposals.cjs
 //
-// Incubator-draft proposal class for /gdd:apply-reflections. Consumes drafts
+// Incubator-draft proposal class for /hone:apply-reflections. Consumes drafts
 // authored by scripts/lib/incubator-author.cjs at
 // `.design/reflections/incubator/<slug>/` and exposes the 7 actions surfaced
 // in skills/apply-reflections/SKILL.md.

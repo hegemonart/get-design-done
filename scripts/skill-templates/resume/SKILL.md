@@ -19,7 +19,7 @@ Two paths - MCP preferred when available, file-read fallback otherwise. This run
 
 ### MCP path (preferred)
 
-When `mcp__hone_status` is exposed (Phase 27.7+, registered via `npx @hegemonart/get-design-done --register-mcp`):
+When `mcp__hone_status` is exposed (Phase 27.7+, registered via `npx @hegemonart/hone --register-mcp`):
 
 1. Call `mcp__hone_status` (no args) → `{phase, branch, last_decisions, last_completed_plans, blocker_count}`. One call replaces reading STATE.md + parsing frontmatter + extracting decisions.
 2. Call `mcp__hone_cycle_recap` (no args) → diff vs last cycle snapshot. Critical for session-restoration context: what changed since you paused?

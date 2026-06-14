@@ -27,7 +27,7 @@ The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pip
    ```
 
 6. Reset the `<decisions>` section in STATE.md for the new cycle. Preserve prior decisions by prepending a comment marker `<!-- prior cycle decisions archived in CYCLES.md -->`.
-7. Print: "Cycle cycle-N started. Run `@get-design-done brief` or `@get-design-done explore` to begin."
+7. Print: "Cycle cycle-N started. Run `{{command_prefix}}brief` or `{{command_prefix}}explore` to begin."
 
 ## Do Not
 

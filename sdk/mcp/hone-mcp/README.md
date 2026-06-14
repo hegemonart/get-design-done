@@ -23,13 +23,13 @@ Phase 27.7. Mirror of the `sdk/mcp/hone-state/` Phase 20 pattern. v1 is read-onl
 
 All tools are thin wrappers (≤30 LOC) over `scripts/lib/*` helpers. The lint rule at `scripts/lib/mcp-tools-lint/` enforces no direct `fs.*`/`path.*` imports and zero write-tool names (`_create`, `_update`, `_delete`, `_append`, `_clear`, `_write`, `_set`). The 12-tool cap is hard (D-03) — adding a 13th requires a new plan.
 
-Schemas live under `reference/schemas/mcp-gdd-tools.schema.json` (Draft-07). Tool sources are under `sdk/mcp/hone-mcp/tools/*.ts` (moved here from `scripts/mcp-servers/hone-mcp/` in Plan 31-5-05 for MCP-server symmetry with `sdk/mcp/hone-state/` — D-08).
+Schemas live under `reference/schemas/mcp-hone-tools.schema.json` (Draft-07). Tool sources are under `sdk/mcp/hone-mcp/tools/*.ts` (moved here from `scripts/mcp-servers/hone-mcp/` in Plan 31-5-05 for MCP-server symmetry with `sdk/mcp/hone-state/` — D-08).
 
 ## Manual registration
 
 ```bash
 # Opt-in via installer (idempotent, detects Claude Code + Codex CLIs):
-npx @hegemonart/get-design-done --register-mcp
+npx @hegemonart/hone --register-mcp
 
 # Or manual (Claude Code):
 claude mcp add hone-mcp -s user -- hone-mcp
@@ -38,13 +38,13 @@ claude mcp add hone-mcp -s user -- hone-mcp
 codex mcp add hone-mcp -- hone-mcp
 ```
 
-Dismiss the gdd-health MCP-registration nudge by setting `.design/config.json` to `{"mcp_nudge": false}`.
+Dismiss the hone-health MCP-registration nudge by setting `.design/config.json` to `{"mcp_nudge": false}`.
 
 ## When to prefer MCP vs file reads
 
 | Scenario | Use MCP | Use file reads |
 |----------|---------|----------------|
-| Cold-boot priming (`/gdd:progress`, `/gdd:resume`, `/gdd:next`) | Yes — 3 calls, ~3 s, ~32k tokens | Fallback only when MCP unavailable |
+| Cold-boot priming (`/hone:progress`, `/hone:resume`, `/hone:next`) | Yes — 3 calls, ~3 s, ~32k tokens | Fallback only when MCP unavailable |
 | Mid-cycle context refresh in stage skills | Yes — 1–2 targeted calls | Fallback only |
 | Editing STATE.md sections | No — use `mcp__hone_state__*` (Phase 20) | N/A |
 | Listing all skills | No — slash-skills + `scripts/list-skills.cjs` | N/A |
@@ -62,5 +62,5 @@ Per CONTEXT.md D-09 the benchmark is informational — failure to hit the −30%
 
 - `sdk/mcp/hone-state/` — Phase 20 STATE.md mutation MCP (write surface)
 - `scripts/lib/mcp-tools-lint/` — Static analysis enforcing thin-wrapper discipline
-- `reference/schemas/mcp-gdd-tools.schema.json` — Tool input/output schemas (Draft-07)
+- `reference/schemas/mcp-hone-tools.schema.json` — Tool input/output schemas (Draft-07)
 - `.planning/phases/27.7-hone-mcp-server/CONTEXT.md` — Phase 27.7 decisions and rationale

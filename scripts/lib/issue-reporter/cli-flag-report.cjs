@@ -139,7 +139,7 @@ function parseReportFlag(commandName, argv, opts) {
   if (!whitelisted) {
     // Whitelist gate: even if the user typed --report, the command does
     // not expose it. Force-report is independent: it's a global modifier
-    // for the explicit /gdd:report-issue command path.
+    // for the explicit /hone:report-issue command path.
     return { report: false, forceReport: forceReport && commandName === 'gdd:report-issue' };
   }
   return { report, forceReport };

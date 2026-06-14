@@ -2,7 +2,7 @@
 /**
  * scripts/lib/live/bandit-feed.cjs — Phase 47 (Live Mode) → Phase 38 design-arms bridge.
  *
- * When a user ACCEPTS a generated variant in /gdd:live, that acceptance is a weak,
+ * When a user ACCEPTS a generated variant in /hone:live, that acceptance is a weak,
  * dev-time positive signal for the variant's design pattern. We fold it into the Phase 38
  * `design_arms` posterior store as a WON observation — but at a discounted weight
  * (DEV_TIME_WEIGHT = 0.5) because a developer's pick during authoring is advisory until

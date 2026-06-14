@@ -35,7 +35,7 @@ Based on the detection result, render exactly ONE of these row strings:
 - When only one harness is present and registered:
   `MCP server: registered with claude` (or `MCP server: registered with codex`)
 - When at least one harness is present but `hone-mcp` is NOT in its registered list:
-  `MCP server: not registered  (run: npx @hegemonart/get-design-done --register-mcp; dismiss: .design/config.json#mcp_nudge=false)`
+  `MCP server: not registered  (run: npx @hegemonart/hone --register-mcp; dismiss: .design/config.json#mcp_nudge=false)`
 - When neither harness CLI is found on PATH:
   `MCP server: unknown (claude/codex CLI not found)`
 

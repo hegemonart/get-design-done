@@ -52,7 +52,7 @@ const os = require('node:os');
 const path = require('node:path');
 
 // Identity SoT (Phase 61 rebrand, REBRAND-02): marketplace/plugin name from the
-// frozen seam (scripts/lib/pkg-identity.cjs), not a hardcoded 'get-design-done'.
+// frozen seam (scripts/lib/pkg-identity.cjs), not a hardcoded 'hone'.
 const { MARKETPLACE_NAME, PLUGIN_NAME } = require('../pkg-identity.cjs');
 const MANIFEST_REL_PATH = '.codex-plugin/plugin.json';
 const CATALOG_REL_PATH = '.claude-plugin/marketplace.json';

@@ -1,6 +1,6 @@
 'use strict';
 
-// Config-dir lookup chain for the get-design-done multi-runtime installer.
+// Config-dir lookup chain for the hone multi-runtime installer.
 //
 // Order of precedence (Phase 24 D-03):
 //   1. Explicit override (--config-dir <dir> from caller).

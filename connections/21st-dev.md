@@ -1,6 +1,6 @@
 # 21st.dev Magic MCP — Connection Specification
 
-This file is the connection specification for the 21st.dev Magic MCP within the get-design-done pipeline. 21st.dev is a component-generator tool — it searches a marketplace of pre-built components and generates new ones via AI. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for the 21st.dev Magic MCP within the hone pipeline. 21st.dev is a component-generator tool — it searches a marketplace of pre-built components and generates new ones via AI. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

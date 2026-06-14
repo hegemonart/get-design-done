@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/hone-state/schemas/checkpoint.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/scripts/mcp-servers/hone-state/schemas/checkpoint.schema.json",
   "title": "GddStateCheckpoint",
   "description": "MCP tool hone_state__checkpoint — bump frontmatter.last_checkpoint + append a <timestamps> entry. Emits state.mutation.",
   "type": "object",

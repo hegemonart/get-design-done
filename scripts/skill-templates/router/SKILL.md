@@ -5,7 +5,7 @@ argument-hint: "<intent-string> [<target-artifacts-csv>]"
 tools: Read, Bash, Grep
 ---
 
-# gdd-router
+# hone-router
 
 ## Role
 

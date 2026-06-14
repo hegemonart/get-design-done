@@ -6,7 +6,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep, Task
 user-invocable: true
 ---
 
-# gdd-live - Live In-Browser Design Mode
+# hone-live - Live In-Browser Design Mode
 
 Pick a DOM element on a running dev server, generate competing design variants, hot-swap them in place, and accept the winner as a real source edit. Every step persists to `.design/live-sessions/<id>.json` so the session survives a crash or a later resume.
 
@@ -58,7 +58,7 @@ Inject the browser runtime once. Read `RUNTIME_JS` from `scripts/lib/live/runtim
 
 ## POST-CHECK
 
-Run the post-check on each variant via `scripts/lib/live/postcheck.cjs`, which invokes `gdd-detect`. Show the findings inline next to each variant. A variant that trips a finding is flagged, NOT auto-rejected: the user still decides. Append a `live_postcheck` event per variant.
+Run the post-check on each variant via `scripts/lib/live/postcheck.cjs`, which invokes `hone-detect`. Show the findings inline next to each variant. A variant that trips a finding is flagged, NOT auto-rejected: the user still decides. Append a `live_postcheck` event per variant.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: component-benchmark-harvester
-description: Given a component name, harvests design-system excerpts from 18 sources (design-corpora.md) and emits raw, source-attributed output to .design/benchmarks/raw/<component>.md. Spawned by /gdd:benchmark.
+description: Given a component name, harvests design-system excerpts from 18 sources (design-corpora.md) and emits raw, source-attributed output to .design/benchmarks/raw/<component>.md. Spawned by /hone:benchmark.
 tools: Read, Write, WebFetch, Bash, Grep, Glob
 color: yellow
 default-tier: sonnet

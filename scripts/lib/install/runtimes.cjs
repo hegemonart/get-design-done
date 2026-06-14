@@ -24,7 +24,7 @@
 // and add a matching branch in runtime-artifact-layout.cjs (Phase 28.7).
 
 // Identity SoT (Phase 61 rebrand, REBRAND-02): REPO/MARKETPLACE_NAME/PLUGIN_NAME
-// are sourced from the frozen seam instead of hardcoding 'get-design-done'.
+// are sourced from the frozen seam instead of hardcoding 'hone'.
 const { REPO, MARKETPLACE_NAME, PLUGIN_NAME } = require('../pkg-identity.cjs');
 
 const RUNTIMES = Object.freeze([

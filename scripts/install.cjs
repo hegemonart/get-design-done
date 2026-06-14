@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
-// npx @hegemonart/get-design-done
-// Multi-runtime installer for the get-design-done plugin.
+// npx @hegemonart/hone
+// Multi-runtime installer for the hone plugin.
 //
 // Runtime selection:
 //   • zero-flag in TTY      → @clack/prompts interactive multi-select
@@ -76,7 +76,7 @@ function helpText() {
     '  --dry-run       Print the diff without writing',
     '  --config-dir D  Override the config directory',
     '  --no-peer-prompt  Suppress the post-install peer-CLI detection nudge',
-    '  --register-mcp     Register gdd-mcp + gdd-state with detected harnesses (Claude Code, Codex). Opt-in.',
+    '  --register-mcp     Register hone-mcp + hone-state with detected harnesses (Claude Code, Codex). Opt-in.',
     '  --no-register-mcp  Skip MCP registration (default behavior; included for symmetry).',
     '  --doctor        Print Tier-2 distribution-channel status (read-only; no install)',
     '  --help, -h      Show this message',
@@ -311,7 +311,7 @@ async function main() {
   }
 
   // Phase 27.7 / Plan 27.7-04 — opt-in MCP registration (D-07).
-  // Phase 59.1 — registers BOTH gdd MCP servers (gdd-mcp + gdd-state).
+  // Phase 59.1 — registers BOTH gdd MCP servers (hone-mcp + hone-state).
   // Fires only on real install (not uninstall, not dry-run) when the user
   // passes --register-mcp explicitly. Default OFF; --no-register-mcp is a
   // no-op today (reserved for symmetry / when default flips). Idempotent

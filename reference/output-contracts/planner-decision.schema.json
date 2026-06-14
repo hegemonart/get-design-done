@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "planner-decision.schema.json",
   "title": "Planner Decision Output Contract",
-  "description": "Schema for the structured JSON block emitted by design-planner. Lets /gdd:synthesize and downstream consumers (executor, audit aggregator) read planner output without regex-parsing markdown.",
+  "description": "Schema for the structured JSON block emitted by design-planner. Lets /hone:synthesize and downstream consumers (executor, audit aggregator) read planner output without regex-parsing markdown.",
   "type": "object",
   "required": ["schema_version", "plan_id", "tasks", "waves"],
   "additionalProperties": false,

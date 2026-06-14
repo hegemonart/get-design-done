@@ -5,7 +5,7 @@ argument-hint: ""
 tools: Read, Bash
 ---
 
-# gdd-peers
+# hone-peers
 
 ## Role
 
@@ -92,5 +92,5 @@ The table IS the output. No follow-up prose. Users act on it: `(opt-in disabled)
 Append one JSONL line to `.design/skill-records.jsonl`:
 
 ```json
-{"skill": "gdd-peers", "ts": "<ISO timestamp>", "peers_detected": ["codex"], "peers_allowlisted": ["codex"], "had_posterior": false}
+{"skill": "hone-peers", "ts": "<ISO timestamp>", "peers_detected": ["codex"], "peers_allowlisted": ["codex"], "had_posterior": false}
 ```

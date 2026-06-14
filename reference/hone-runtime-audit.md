@@ -47,7 +47,7 @@ these cannot exfiltrate on their own and are covered by gitleaks + the threat mo
 | --- | --- | --- |
 | `scripts/lib/easings.cjs` (line 6) | React-Native `Easing.js` spec link in a comment | bare URL string, no call |
 | `scripts/lib/spring.cjs` (line 6) | React-Native `SpringConfig.js` spec link in a comment | bare URL string, no call |
-| `scripts/lib/install/merge.cjs` (line 85) | "Plugin repository: https://github.com/hegemonart/get-design-done" printed string | bare URL string, no call |
+| `scripts/lib/install/merge.cjs` (line 85) | "Plugin repository: https://github.com/hegemonart/hone" printed string | bare URL string, no call |
 | `scripts/lib/issue-reporter/destination.cjs` (lines 29–30) | frozen `DESTINATION_URL` / `ISSUE_TEMPLATE_URL` constants | constants consumed only via the `gh` spawn above |
 | `scripts/lint-agentskills-spec.cjs` (line 76) | spec-example URL in a comment | bare URL string, no call |
 | `hooks/update-check.sh` | shell update-check egress | shell script - outside the `.{js,cjs,mjs,ts}` scanner scope |
@@ -76,8 +76,8 @@ Where untrusted data crosses a trust boundary into GDD's runtime.
 | Surface | Untrusted source | Boundary | Risk note |
 | --- | --- | --- | --- |
 | WebSocket upgrade request | a remote client connecting to the event-stream WS | `scripts/lib/transports/ws.cjs` HTTP `upgrade` handler | Bearer-token gate (≥8 chars) already ships; **33.5-03** adds 127.0.0.1-default bind + timing-safe compare so the default config does not expose `0.0.0.0`. |
-| gdd-state MCP tool inputs | the MCP client / model | `sdk/mcp/gdd-state/tools/*.ts` (11 tools) + `tools/shared.ts` | Each tool has a JSON schema under `sdk/mcp/gdd-state/schemas/`; **33.5-08** tightens them (`additionalProperties:false` + `maxLength`) and adds a payload-size cap (JSON-bomb guard). |
-| `GDD_STATE_PATH` env override | the launching environment | `sdk/mcp/gdd-state/tools/shared.ts:resolveStatePath()` (line 60–61) | `process.env['GDD_STATE_PATH'] ?? .design/STATE.md` with **no path-traversal guard** today - `..`/absolute-outside escape is unchecked. **Closed by 33.5-08** (resolve + assert within project root / `.design/`). |
+| hone-state MCP tool inputs | the MCP client / model | `sdk/mcp/hone-state/tools/*.ts` (11 tools) + `tools/shared.ts` | Each tool has a JSON schema under `sdk/mcp/hone-state/schemas/`; **33.5-08** tightens them (`additionalProperties:false` + `maxLength`) and adds a payload-size cap (JSON-bomb guard). |
+| `GDD_STATE_PATH` env override | the launching environment | `sdk/mcp/hone-state/tools/shared.ts:resolveStatePath()` (line 60–61) | `process.env['GDD_STATE_PATH'] ?? .design/STATE.md` with **no path-traversal guard** today - `..`/absolute-outside escape is unchecked. **Closed by 33.5-08** (resolve + assert within project root / `.design/`). |
 | `.design/config.json` | a repo-local config file (potentially attacker-influenced in a malicious clone) | 14 modules incl. `scripts/lib/peer-cli/registry.cjs` (line 154) | Drives `peer_cli.enabled_peers` / (33.5) `peer_cli.env_allowlist`, the WS `event_stream.bind_host`, and the issue-reporter kill-switch. Parsed defensively; opt-in by design (a peer must be explicitly enabled). |
 | peer child `stdout` | a spawned LOCAL peer CLI | `scripts/lib/peer-cli/acp-client.cjs` (JSON-RPC frame parser) | A malicious/buggy peer could flood stdout - **already capped at 16 MiB un-newlined** (DoS guard). JSON-RPC frames are parsed, not `eval`'d. |
 
@@ -103,7 +103,7 @@ The residual gaps surfaced here are **closed by the remaining Phase 33.5 plans**
   peer-CLI env-allowlist sandbox (shared `sanitize-env`) that closes the `acp-client.cjs` /
   `asp-client.cjs` full-`process.env` forward rows.
 - **33.5-05** (and 33.5-07/08) - secret-scan extension (Gemini + GitHub fine-grained/server
-  tokens) with a synthetic-secret fuzz, the gdd-state path-traversal guard + payload cap +
+  tokens) with a synthetic-secret fuzz, the hone-state path-traversal guard + payload cap +
   tightened schemas, `SECURITY.md`, and the regression baseline.
 
 This report + the canonical allowlist satisfy **SEC-02** and unblock ROADMAP **SC#5** (the

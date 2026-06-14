@@ -92,6 +92,7 @@
     "validate:schemas": "node --experimental-strip-types scripts/validate-schemas.ts",
     "validate:frontmatter": "node --experimental-strip-types scripts/validate-frontmatter.ts agents/",
     "detect:stale-refs": "node scripts/detect-stale-refs.cjs",
+    "validate:no-stale-brand": "node scripts/validate-no-stale-brand.cjs",
     "validate:feature-counts": "node scripts/check-feature-counts.cjs",
     "validate:registry-tiers": "node scripts/validate-registry-tiers.cjs",
     "validate:no-internal-refs": "node scripts/validate-no-internal-refs.cjs",

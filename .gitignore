@@ -67,7 +67,7 @@ dist/*.tgz
 # macOS cruft anywhere in the tree
 **/.DS_Store
 
-# Phase 30 (Plan 30-04): /gdd:report-issue payload drafts.
+# Phase 30 (Plan 30-04): /hone:report-issue payload drafts.
 # Already covered by `.design/` above, but called out explicitly so
 # the Phase 30 D-04 invariant (drafts persist on disk locally, never
 # enter the repo) is visible at the .gitignore layer. Drafts can

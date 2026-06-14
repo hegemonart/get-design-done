@@ -1,6 +1,6 @@
 name: npm backfill publish
 
-# Manually publish the current main branch to npm as @hegemonart/get-design-done
+# Manually publish the current main branch to npm as @hegemonart/hone
 # under a specific version. Used when:
 #   - A release shipped before the npm-publish step existed in release.yml
 #     (e.g. v1.0.7 predates the npm-publish infrastructure in PR #11)

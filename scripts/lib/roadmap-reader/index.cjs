@@ -2,7 +2,7 @@
 // scripts/lib/roadmap-reader/index.cjs — Plan 27.7-02
 //
 // Read + parse .planning/ROADMAP.md into a flat list of phase entries
-// consumed by the gdd_phases_list MCP tool. Pure read; no I/O outside
+// consumed by the hone_phases_list MCP tool. Pure read; no I/O outside
 // readRoadmapMd().
 //
 // Output shape per phase:

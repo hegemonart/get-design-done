@@ -128,7 +128,7 @@ Context reached ${pct}% during the previous session (threshold: ${thresholdPct}%
 The session was auto-paused to preserve quality.
 
 To resume:
-1. Run \`/gdd:resume\` — it will read this block and restore working context
+1. Run \`/hone:resume\` — it will read this block and restore working context
 2. If mid-plan: check .design/STATE.md for the last completed task
 3. Re-read the active PLAN.md to orient before continuing
 
@@ -163,7 +163,7 @@ let CACHED_SESSION_ID: string | null = null;
 function getSessionId(): string {
   if (CACHED_SESSION_ID === null) {
     const iso = new Date().toISOString().replace(/[:.]/g, '-');
-    CACHED_SESSION_ID = `gdd-hook-${iso}-${process.pid}`;
+    CACHED_SESSION_ID = `hone-hook-${iso}-${process.pid}`;
   }
   return CACHED_SESSION_ID;
 }
@@ -233,7 +233,7 @@ export async function main(): Promise<void> {
   const response: HookOutput = {
     continue: true,
     suppressOutput: false,
-    message: `gdd-context-exhaustion: Context at ${Math.round(usage * 100)}% — auto-recorded <paused> block in .design/STATE.md. Run /gdd:resume in the next session to continue.`,
+    message: `hone-context-exhaustion: Context at ${Math.round(usage * 100)}% — auto-recorded <paused> block in .design/STATE.md. Run /hone:resume in the next session to continue.`,
   };
   process.stdout.write(JSON.stringify(response));
 }

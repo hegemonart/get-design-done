@@ -238,7 +238,7 @@ function commandsKind(destSubpath, prefix, converterPath, runtime) {
  * are named after agent roles (`design-planner.md`, `a11y-mapper.md`, …),
  * which never coincide with skill directory names. The old skill-name-derived
  * path read `agents/<skillName>.md`, found nothing for any skill, and staged
- * ~96 empty `gdd-<skillName>.md` artifacts while installing ZERO real agents.
+ * ~96 empty `hone-<skillName>.md` artifacts while installing ZERO real agents.
  *
  * Enumeration rules:
  *   - top-level `*.md` files in `agents/` only (no nested dirs),
@@ -271,13 +271,13 @@ function agentsKind(destSubpath, prefix) {
         if (!ent.isFile()) continue;
         if (!ent.name.toLowerCase().endsWith('.md')) continue;
         if (ent.name.toLowerCase() === 'readme.md') continue;
-        // Strip any pre-existing hone-/gdd-/gsd- prefix on the agent filename
+        // Strip any pre-existing hone-/hone-/gsd- prefix on the agent filename
         // before re-applying `prefix`, so an agent already named `hone-foo.md`
         // (or legacy `gdd-foo.md`) does not become `hone-hone-foo.md`. Real
         // agents ship un-prefixed (`a11y-mapper.md`); this guard keeps every
         // shape correct.
         const fileBase = ent.name.slice(0, -'.md'.length);
-        const bareName = fileBase.replace(/^(hone-|gdd-|gsd-)/i, '');
+        const bareName = fileBase.replace(/^(hone-|hone-|gsd-)/i, '');
         const srcPath = path.join(agentsRoot, ent.name);
         let raw = '';
         try {

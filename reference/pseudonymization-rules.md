@@ -35,7 +35,7 @@ Redaction handles "this string must never escape"; pseudonymization handles "thi
 
 ## The rules
 
-Eight rules. Each rule has a stable id (R1..R8) used by `/gdd:update --show-privacy-diff` (Plan 30-07) to enumerate active rules.
+Eight rules. Each rule has a stable id (R1..R8) used by `/hone:update --show-privacy-diff` (Plan 30-07) to enumerate active rules.
 
 ### R1 - git-identity
 
@@ -180,7 +180,7 @@ pseudonym: 'a1b2c3d4'
 - **`scripts/lib/pseudonymize.cjs`** - implements R1..R8. The module's `RULES` manifest constant has a 1:1 correspondence with the sections above (R1..R8 ids match `RULES[i].id`).
 - **Plan 30-02 (payload assembly)** - composes Phase 22 redaction + Phase 30 pseudonymization.
 - **Plan 30-04 (consent prompt)** - uses the `replacements` log returned by `pseudonymize()` to display "X replacements made (R1: 3, R2: 5, ...)" summary before the user submits.
-- **Plan 30-07 (`/gdd:update --show-privacy-diff`)** - diffs this document plus `pseudonymize.cjs` between installed and target versions of the plugin. Always-show on first run after upgrade that touched these files; opt-in afterward (CONTEXT D-09).
+- **Plan 30-07 (`/hone:update --show-privacy-diff`)** - diffs this document plus `pseudonymize.cjs` between installed and target versions of the plugin. Always-show on first run after upgrade that touched these files; opt-in afterward (CONTEXT D-09).
 
 ## See also
 

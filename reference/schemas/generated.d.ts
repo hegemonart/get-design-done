@@ -142,7 +142,7 @@ export interface DesignConfigJson {
    */
   collab?: {
     /**
-     * When true, the gdd-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process).
+     * When true, the hone-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process).
      */
     multi_writer_enabled?: boolean;
     /**

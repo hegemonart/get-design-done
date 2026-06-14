@@ -8,7 +8,7 @@ tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__hone_state__ge
 
 # Get Design Done - Design
 
-**Stage 4 of 5** in the get-design-done pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
+**Stage 4 of 5** in the hone pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
 
 Full procedure detail: `./design-procedure.md`.
 
@@ -18,7 +18,7 @@ Full procedure detail: `./design-procedure.md`.
 
 1. `mcp__hone_state__transition_stage` with `to: "design"`. Gate failure surfaces `error.context.blockers`; do not advance. Resume case: prior stage `design` + `status: in_progress` -> skip tasks where `.design/tasks/task-NN.md` already exists.
 2. `mcp__hone_state__get` -> snapshot `state`; read `state.position.wave` for execution plan.
-3. Abort only if `.design/DESIGN-PLAN.md` is missing: "No plan found. Run `/get-design-done:plan` first."
+3. Abort only if `.design/DESIGN-PLAN.md` is missing: "No plan found. Run `/hone:plan` first."
 
 Detail: `./design-procedure.md` §Stage entry.
 
@@ -46,7 +46,7 @@ Read `.design/DESIGN-PLAN.md`. Partition tasks by `## Wave N` heading. Within ea
 For each wave in order:
 
 1. **Parallelism decision (per wave)**: read `.design/config.json` `parallelism`, collect candidates, check `Touches:` / `writes:` / `parallel-safe` / `typical-duration-seconds`, apply `reference/parallelism-rules.md` hard->soft. Overlapping `Touches:` split into sequential sub-waves. Record verdict via `mcp__hone_state__update_progress` with `status: "design_wave_<N>_parallelism: <parallel|serial>, reason=<short-reason>"`.
-2. **Executor STATE.md protocol** (inlined verbatim into every `design-executor` prompt): executors update STATE.md ONLY via `gdd-state` MCP tools - `update_progress`, `add_blocker`, `resolve_blocker`. NEVER `Read`+`Write` `.design/STATE.md` directly. The MCP tools enforce the lockfile (Plan 20-01) and emit mutation events (Plan 20-06) so concurrent executors serialize safely.
+2. **Executor STATE.md protocol** (inlined verbatim into every `design-executor` prompt): executors update STATE.md ONLY via `hone-state` MCP tools - `update_progress`, `add_blocker`, `resolve_blocker`. NEVER `Read`+`Write` `.design/STATE.md` directly. The MCP tools enforce the lockfile (Plan 20-01) and emit mutation events (Plan 20-06) so concurrent executors serialize safely.
 3. **Parallel batch** (when `parallel_mode=true` AND any `Parallel: true` tasks in wave): announce the partition, spawn all `Parallel: true` tasks via concurrent `Task("design-executor", ..., isolation: "worktree")` calls in ONE response, wait for all `## EXECUTION COMPLETE` markers, merge worktrees (non-overlapping `Touches:` guarantees no conflicts; surface any conflict to the user before continuing), then `update_progress` + `checkpoint`.
 4. **Sequential tail** (`Parallel: false` or `parallel_mode=false`): spawn one `design-executor` at a time (no worktree isolation), waiting for each `## EXECUTION COMPLETE` and emitting `update_progress` per task; `checkpoint` after the final task of the wave.
 
@@ -71,7 +71,7 @@ Check task-NN.md files for `status: deviation`. If found: `mcp__hone_state__get`
 
 ## After Completion
 
-Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/get-design-done:verify`). Template: `./design-procedure.md` §After Completion.
+Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/hone:verify`). Template: `./design-procedure.md` §After Completion.
 
 ---
 

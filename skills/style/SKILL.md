@@ -5,7 +5,7 @@ argument-hint: "[ComponentName]"
 user-invocable: true
 ---
 
-# gdd-style - Component Handoff Doc Generator
+# hone-style - Component Handoff Doc Generator
 
 Generates a per-component style spec at `.design/DESIGN-STYLE-[ComponentName].md`. This is a **standalone command**, not a pipeline stage.
 
@@ -32,7 +32,7 @@ This separation is a pre-roadmap decision recorded in `.planning/STATE.md`: util
 ## Workflow
 
 1. **Argument check** - if `$ARGUMENTS` is empty, enter list mode (see `./style-doc-procedure.md#component-source-resolution`); display available components from `src/components/` + `.design/tasks/`, then exit.
-2. **Mode detect** - `DESIGN-SUMMARY.md` exists → post-pipeline; else `DESIGN.md` exists → pre-pipeline; else abort with a "run /get-design-done scan first" message. Full decision tree at `./style-doc-procedure.md#mode-detection`.
+2. **Mode detect** - `DESIGN-SUMMARY.md` exists → post-pipeline; else `DESIGN.md` exists → pre-pipeline; else abort with a "run /hone:scan first" message. Full decision tree at `./style-doc-procedure.md#mode-detection`.
 3. **Source resolve** - search the 10-path fallback chain for a file matching the ComponentName. On zero matches: abort. On multiple matches: prompt the user to disambiguate.
 4. **Agent spawn** - dispatch `design-doc-writer` with the mode-specific `<required_reading>` block and the STYL-05 section list. The full Task payload + STYL-05 spec live in `./style-doc-procedure.md#agent-spawn-payload`.
 5. **Confirm + report** - after the agent emits `## DOC COMPLETE`, verify the output path exists and report success.
@@ -55,7 +55,7 @@ This command MUST NOT (per `../../reference/shared-preamble.md#output-contract-r
 **Example 1: Named component**
 
 ```
-/get-design-done style Button
+/hone:style Button
 ```
 
 Resolves `src/components/Button.tsx`, detects post-pipeline mode (DESIGN-SUMMARY.md exists), spawns `design-doc-writer` with `pipeline_complete: true`, writes `.design/DESIGN-STYLE-Button.md`.
@@ -63,7 +63,7 @@ Resolves `src/components/Button.tsx`, detects post-pipeline mode (DESIGN-SUMMARY
 **Example 2: No argument (list mode)**
 
 ```
-/get-design-done style
+/hone:style
 ```
 
 Globs component files and prompts the user to specify a ComponentName. Exits without generating any file. See `./style-doc-procedure.md#component-source-resolution` for the full glob path list.

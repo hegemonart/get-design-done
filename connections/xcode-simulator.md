@@ -1,6 +1,6 @@
 # Xcode Simulator — Connection Specification
 
-This file is the connection specification for the **Xcode iOS Simulator** within the get-design-done pipeline. Its role is to provide *rendered* evidence for native-iOS work: it lets the verify stage capture a SwiftUI snapshot from a booted simulator so a native screen can be audited against its design intent, the same way `connections/preview.md` provides browser screenshots for web. It is the iOS half of the native-verify connection pair (the Android half is `connections/android-emulator.md`).
+This file is the connection specification for the **Xcode iOS Simulator** within the hone pipeline. Its role is to provide *rendered* evidence for native-iOS work: it lets the verify stage capture a SwiftUI snapshot from a booted simulator so a native screen can be audited against its design intent, the same way `connections/preview.md` provides browser screenshots for web. It is the iOS half of the native-verify connection pair (the Android half is `connections/android-emulator.md`).
 
 **It is OPTIONAL.** Most users — and CI — have no Xcode installed. Per **D-03** this connection is **never hard-required**: when it is absent the verify stage degrades gracefully to code-only structural verification, and no blocker is raised unless a `must_have` explicitly demands rendered evidence. The `swift-executor` agent generates compilable SwiftUI **without** any simulator (D-04/D-10); the simulator only adds rendered confirmation when it happens to be available.
 

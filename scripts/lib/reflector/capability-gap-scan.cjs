@@ -224,7 +224,7 @@ function scanIntelTouchesClusters(input) {
 
   // Build a lowercase token set from existing agent slugs for the
   // soft-ownership heuristic. Conservative: when in doubt, KEEP the
-  // group as a candidate; the /gdd:apply-reflections user gate is the
+  // group as a candidate; the /hone:apply-reflections user gate is the
   // safety net.
   const agentTokens = new Set();
   for (const slug of existingAgents) {

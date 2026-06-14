@@ -2,7 +2,7 @@
 /**
  * scripts/lib/new-addendum.cjs — Phase 54 (Composable Reference Addendums), REG-01.
  *
- * Pure, dependency-free generator behind the `/gdd:new-addendum <kind> <name>`
+ * Pure, dependency-free generator behind the `/hone:new-addendum <kind> <name>`
  * scaffolder skill (scripts/skill-templates/new-addendum/SKILL.md). The SKILL.md drives
  * the prompts; this module is the deterministic core it (and the test suite)
  * call. Mirrors scripts/lib/manifest/scaffolder.cjs (the Phase 50 skill

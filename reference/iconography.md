@@ -1,6 +1,6 @@
 # Iconography - Reference Guide
 
-Icons are a precise visual language. Every sizing, weight, metaphor, and accessibility decision either reinforces or undermines the system's communicative intent. This reference establishes canonical rules for icon usage across the get-design-done framework.
+Icons are a precise visual language. Every sizing, weight, metaphor, and accessibility decision either reinforces or undermines the system's communicative intent. This reference establishes canonical rules for icon usage across the hone framework.
 
 ---
 
@@ -230,4 +230,4 @@ A minimal, classic icon set with 287 icons on a 24px grid at a 2px stroke. MIT l
 
 ---
 
-*This reference governs all icon decisions within the get-design-done framework. Deviations require explicit justification in `.design/DESIGN-CONTEXT.md` as a C-XX constraint.*
+*This reference governs all icon decisions within the hone framework. Deviations require explicit justification in `.design/DESIGN-CONTEXT.md` as a C-XX constraint.*

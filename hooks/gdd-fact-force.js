@@ -9,13 +9,13 @@
  * must have been surfaced. Until those prerequisites are met, the first write
  * is SOFT-blocked (`{continue:false, stopReason}` listing the missing facts);
  * the agent can satisfy them (Read the importers) or escape via
- * `/gdd:override factforce <path>` which sets `checked[path]`.
+ * `/hone:override factforce <path>` which sets `checked[path]`.
  *
  * Tiering (CONTEXT.md shared contract):
  *   - prerequisites met OR checked[path] set      -> { continue:true }
  *   - prerequisites UNMET, computeRisk != block    -> SOFT block (continue:false)
  *   - prerequisites UNMET, computeRisk == block     -> HARD block (continue:false);
- *       only escape is /gdd:override (same JSON shape, stronger stopReason)
+ *       only escape is /hone:override (same JSON shape, stronger stopReason)
  *   - graph ABSENT/unbuilt                          -> importer prereq SOFTENS to a
  *       warning, never a hard block (do not over-block greenfield)
  *
@@ -43,7 +43,7 @@ function findPackageRoot(startDir) {
   for (let i = 0; i < 12; i++) {
     try {
       const pkg = require(path.join(dir, 'package.json'));
-      if (pkg && pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg && pkg.name === '@hegemonart/hone') return dir;
     } catch { /* not this level */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -396,8 +396,8 @@ async function main() {
   const hard = riskIsBlock(tool, payload.tool_input, cwd);
   const factsList = missing.join('; ');
   const stopReason = hard
-    ? `gdd-fact-force (HARD — risk=block): cannot mutate '${relPath}' until facts are established — ${factsList}. The only escape is \`/gdd:override factforce ${relPath} --approver <who>\`.`
-    : `gdd-fact-force: establish the facts before the first edit to '${relPath}' — ${factsList}. Read them, or run \`/gdd:override factforce ${relPath}\` to mark checked.`;
+    ? `gdd-fact-force (HARD — risk=block): cannot mutate '${relPath}' until facts are established — ${factsList}. The only escape is \`/hone:override factforce ${relPath} --approver <who>\`.`
+    : `gdd-fact-force: establish the facts before the first edit to '${relPath}' — ${factsList}. Read them, or run \`/hone:override factforce ${relPath}\` to mark checked.`;
 
   emit(hard ? 'block-hard' : 'block-soft', { path: relPath, missing: missing.length });
   process.stdout.write(JSON.stringify({ continue: false, stopReason }));

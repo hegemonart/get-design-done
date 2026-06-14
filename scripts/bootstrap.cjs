@@ -4,8 +4,8 @@
 /**
  * Pure-Node port of scripts/bootstrap.sh.
  *
- * Original: scripts/bootstrap.sh — get-design-done SessionStart bootstrap.
- * Auto-provisions companion resources that get-design-done references but
+ * Original: scripts/bootstrap.sh — hone SessionStart bootstrap.
+ * Auto-provisions companion resources that hone references but
  * which are not Claude Code plugins (so they cannot be listed in `dependencies`).
  *
  * Idempotency: a marker file under ${CLAUDE_PLUGIN_DATA}/bootstrap-manifest.txt
@@ -14,7 +14,7 @@
  * triggers the network/IO work.
  *
  * Behavior preserved from the .sh:
- *   - Env-var fallbacks: CLAUDE_PLUGIN_DATA → ~/.claude/plugins/data/get-design-done,
+ *   - Env-var fallbacks: CLAUDE_PLUGIN_DATA → ~/.claude/plugins/data/hone,
  *     CLAUDE_PLUGIN_ROOT → resolved relative to this script (../).
  *   - Windows backslash normalization for both env vars (\ → /).
  *   - mkdir -p of PLUGIN_DATA, ~/.claude/libs, ~/.claude/skills.
@@ -28,7 +28,7 @@
  *   - Ensures cwd/.design/telemetry/.
  *   - Copies manifest → marker on success.
  *   - Silent-on-failure: every error path collapses to exit 0. Only logs go to
- *     stderr with the `[get-design-done bootstrap]` prefix.
+ *     stderr with the `[hone bootstrap]` prefix.
  *
  * Sourcing-guard pattern: helpers are exported on module.exports; main() only
  * runs when this file is the entry point (require.main === module). Tests can
@@ -43,14 +43,14 @@ const path = require('node:path');
 const os = require('node:os');
 const { spawnSync } = require('node:child_process');
 
-const LOG_PREFIX = '[get-design-done bootstrap]';
+const LOG_PREFIX = '[hone bootstrap]';
 
 /**
  * Stderr logger matching the .sh `log()` function.
  * @param {string} msg
  */
 function log(msg) {
-  // The .sh used: printf '[get-design-done bootstrap] %s\n' "$*" >&2
+  // The .sh used: printf '[hone bootstrap] %s\n' "$*" >&2
   process.stderr.write(`${LOG_PREFIX} ${msg}\n`);
 }
 
@@ -72,7 +72,7 @@ function normalizeSlashes(p) {
  * @param {string} home
  */
 function defaultPluginData(home) {
-  return normalizeSlashes(path.join(home, '.claude', 'plugins', 'data', 'get-design-done'));
+  return normalizeSlashes(path.join(home, '.claude', 'plugins', 'data', 'hone'));
 }
 
 /**
@@ -348,7 +348,7 @@ function run(opts = {}) {
   // Soft notice for companion skills we cannot auto-install.
   try {
     if (!fs.existsSync(ctx.emilSkillTarget)) {
-      log('optional: emil-design-eng skill not found in ~/.claude/skills. See get-design-done README for install options.');
+      log('optional: emil-design-eng skill not found in ~/.claude/skills. See hone README for install options.');
     }
   } catch {
     // ignore — emil notice is purely advisory

@@ -9,7 +9,7 @@ last_updated: 2026-06-03
 
 # Live Mode Integration
 
-This file is the meta-rules companion to the `gdd-live` skill (`scripts/skill-templates/live/SKILL.md`). It describes how `/gdd:live` turns a running dev server into a live design surface: the user picks a DOM element, the agent generates N variants in one batch, the variants hot-swap in place, the user accepts or discards, and the whole session persists. For the SKILL.md structural contract (line cap, description budget, frontmatter), see `./skill-authoring-contract.md`. The variants themselves are grounded in the Phase 45 domain indexes (`./spatial.md`, `./interaction.md`, `./color.md`, `./typography.md`, `./motion.md`).
+This file is the meta-rules companion to the `hone-live` skill (`scripts/skill-templates/live/SKILL.md`). It describes how `/hone:live` turns a running dev server into a live design surface: the user picks a DOM element, the agent generates N variants in one batch, the variants hot-swap in place, the user accepts or discards, and the whole session persists. For the SKILL.md structural contract (line cap, description budget, frontmatter), see `./skill-authoring-contract.md`. The variants themselves are grounded in the Phase 45 domain indexes (`./spatial.md`, `./interaction.md`, `./color.md`, `./typography.md`, `./motion.md`).
 
 There is NO bundled browser automation. The skill drives the Claude Preview MCP at runtime; the modules under `scripts/lib/live/` are pure and dependency-free.
 
@@ -21,7 +21,7 @@ The loop is seven stages, each owned by one module under `scripts/lib/live/`:
 2. INJECT. Read `RUNTIME_JS` from `scripts/lib/live/runtime.cjs` and evaluate it in the page via `preview_eval`. The runtime is an idempotent IIFE on `window.__gddLive`; re-injecting after a navigation rebinds the same singleton.
 3. PICK. The runtime arms a one-shot click handler. The clicked element is reported back as `{selector, tagName, classList, boundingRect, computedStyle subset, variant}` (the `pickReportShape` contract). The selector strategy prefers id, then a data-testid, then a tag plus class plus nth-of-type path.
 4. GENERATE. Load the matching domain index first, then generate all N variants (default 3) in ONE batch. Each variant is written atomically to its source file and made live, either through HMR or through the runtime swap helper.
-5. POST-CHECK. Each variant runs through `scripts/lib/live/postcheck.cjs`, which invokes `gdd-detect`. Findings show inline. A finding flags a variant; it never auto-rejects it.
+5. POST-CHECK. Each variant runs through `scripts/lib/live/postcheck.cjs`, which invokes `hone-detect`. Findings show inline. A finding flags a variant; it never auto-rejects it.
 6. ACCEPT or DISCARD. Accept applies the chosen variant as the canonical source edit, reverts the others, and feeds the bandit. Discard reverts everything and leaves the source untouched.
 7. PERSIST. Every stage is written to the session file as it happens.
 
@@ -35,7 +35,7 @@ Live mode drives the built-in Claude Preview MCP, the same connection documented
 - `preview_navigate` to move between routes (the runtime re-inject is idempotent across navigations).
 - `preview_screenshot` for evidence, and as the only output in degraded mode.
 
-The `data-gdd-variant` attribute is the hot-swap marker. The runtime stamps `data-gdd-variant="N"` on the picked element when it applies variant N, and reads it back to know which variant is live.
+The `data-hone-variant` attribute is the hot-swap marker. The runtime stamps `data-hone-variant="N"` on the picked element when it applies variant N, and reads it back to know which variant is live.
 
 ## The six live events
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-# GET DESIGN DONE
+# Hone
 
 [English](../../README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · **Italiano** · [Deutsch](README.de.md)
 
@@ -8,18 +8,20 @@
 
 **Una pipeline di qualità del design per agenti di coding IA: brief -> esplorazione -> piano -> implementazione -> verifica.**
 
-**Get Design Done mantiene l'UI generata dall'IA allineata al tuo brief, al tuo design system, alla tua conoscenza di design locale e ai tuoi quality gate. Costruito per Claude Code, e si installa su Codex, Cursor, Gemini, OpenCode, Copilot, Windsurf e altro.**
+**Hone mantiene l'UI generata dall'IA allineata al tuo brief, al tuo design system, alla tua conoscenza di design locale e ai tuoi quality gate. Costruito per Claude Code, e si installa su Codex, Cursor, Gemini, OpenCode, Copilot, Windsurf e altro.**
 
-[![npm version](https://img.shields.io/npm/v/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
-[![npm downloads](https://img.shields.io/npm/dm/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
-[![CI](https://img.shields.io/github/actions/workflow/status/hegemonart/get-design-done/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI)](https://github.com/hegemonart/get-design-done/actions/workflows/ci.yml)
-[![GitHub stars](https://img.shields.io/github/stars/hegemonart/get-design-done?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/get-design-done)
+[![npm version](https://img.shields.io/npm/v/@hegemonart/hone?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/hone)
+[![npm downloads](https://img.shields.io/npm/dm/@hegemonart/hone?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/hone)
+[![CI](https://img.shields.io/github/actions/workflow/status/hegemonart/hone/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI)](https://github.com/hegemonart/hone/actions/workflows/ci.yml)
+[![GitHub stars](https://img.shields.io/github/stars/hegemonart/hone?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/hone)
 [![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 ```bash
-npx @hegemonart/get-design-done@latest
+npx hone
 ```
+
+> **Rinominato da get-design-done (gdd).** Le installazioni esistenti continuano a funzionare: l'alias deprecato `/gdd:` resta per 1-2 versioni. `npx hone` è la nuova installazione; `@hegemonart/get-design-done` è deprecato su npm a favore di `@hegemonart/hone`. _(La traduzione potrebbe essere in ritardo rispetto al README inglese.)_
 
 **Funziona su macOS, Linux e Windows.**
 
@@ -31,11 +33,11 @@ npx @hegemonart/get-design-done@latest
 
 ## Cos'è
 
-Get Design Done aiuta gli agenti di coding IA a rilasciare UI che appartiene al tuo prodotto.
+Hone aiuta gli agenti di coding IA a rilasciare UI che appartiene al tuo prodotto.
 
 Trasforma richieste vaghe come "migliora questa schermata" in un workflow di design tracciabile: brief, esplorazione, piano, implementazione, verifica.
 
-Invece di chiedere a un agente di improvvisare basandosi solo sul gusto, GDD gli fornisce un processo strutturato, conoscenza di design locale, memoria specifica del progetto, connessioni opzionali agli strumenti di design e una verifica prima che il lavoro venga rilasciato.
+Invece di chiedere a un agente di improvvisare basandosi solo sul gusto, Hone gli fornisce un processo strutturato, conoscenza di design locale, memoria specifica del progetto, connessioni opzionali agli strumenti di design e una verifica prima che il lavoro venga rilasciato.
 
 ## Perché esiste
 
@@ -49,23 +51,23 @@ Senza un workflow di design, le interfacce generate vanno alla deriva:
 - la gerarchia cambia da schermata a schermata
 - l'implementazione non corrisponde più al brief originale
 
-GDD aggiunge la disciplina di design mancante attorno ai workflow di coding IA. Cattura il problema, mappa il design system corrente, pianifica modifiche circoscritte, le esegue in step atomici e verifica il risultato rispetto al brief, ai token, all'accessibilità e alle rubriche di qualità del design.
+Hone aggiunge la disciplina di design mancante attorno ai workflow di coding IA. Cattura il problema, mappa il design system corrente, pianifica modifiche circoscritte, le esegue in step atomici e verifica il risultato rispetto al brief, ai token, all'accessibilità e alle rubriche di qualità del design.
 
-Dietro le quinte: 64 agenti specializzati, un intel store interrogabile, routing dei modelli per tier e 39 connessioni opzionali agli strumenti. Quello che usi giorno per giorno è una manciata di comandi `/gdd:*`.
+Dietro le quinte: 64 agenti specializzati, un intel store interrogabile, routing dei modelli per tier e 39 connessioni opzionali agli strumenti. Quello che usi giorno per giorno è una manciata di comandi `/hone:*`.
 
 ## Installazione
 
 ### npm
 
 ```bash
-npx @hegemonart/get-design-done@latest
+npx hone
 ```
 
 ### Claude Code
 
 ```bash
 /plugin marketplace add hegemonart/hone
-/plugin install get-design-done@get-design-done
+/plugin install hone@hone
 /reload-plugins
 ```
 
@@ -77,25 +79,25 @@ codex plugin marketplace add hegemonart/hone
 
 ### agentskills.io
 
-Sfoglia e installa Get Design Done dal registro di skill [agentskills.io](https://agentskills.io).
+Sfoglia e installa Hone dal registro di skill [agentskills.io](https://agentskills.io).
 
 ### Installer diretto per runtime
 
 ```bash
 # Claude Code
-npx @hegemonart/get-design-done --claude --global
-npx @hegemonart/get-design-done --claude --local
+npx @hegemonart/hone --claude --global
+npx @hegemonart/hone --claude --local
 
 # Altri runtime
-npx @hegemonart/get-design-done --codex --global
-npx @hegemonart/get-design-done --cursor --global
-npx @hegemonart/get-design-done --gemini --global
+npx @hegemonart/hone --codex --global
+npx @hegemonart/hone --cursor --global
+npx @hegemonart/hone --gemini --global
 
 # Installazione multi-runtime
-npx @hegemonart/get-design-done --all --global
+npx @hegemonart/hone --all --global
 
 # Anteprima senza scrivere
-npx @hegemonart/get-design-done --dry-run
+npx @hegemonart/hone --dry-run
 ```
 
 ## Per iniziare
@@ -103,33 +105,33 @@ npx @hegemonart/get-design-done --dry-run
 Esegui un primo passaggio leggero:
 
 ```bash
-/gdd:start
+/hone:start
 ```
 
 Oppure esegui il ciclo di design completo:
 
 ```bash
-/gdd:brief
-/gdd:explore
-/gdd:plan
-/gdd:design
-/gdd:verify
+/hone:brief
+/hone:explore
+/hone:plan
+/hone:design
+/hone:verify
 ```
 
 Per il routing in linguaggio naturale:
 
 ```bash
-/gdd:do improve the checkout page hierarchy, spacing, and empty states
+/hone:do improve the checkout page hierarchy, spacing, and empty states
 ```
 
 ## Casi d'uso
 
 ### Migliorare una schermata esistente
 
-Usa GDD quando una schermata funziona tecnicamente ma risulta visivamente incoerente, poco chiara o poco curata nel design.
+Usa Hone quando una schermata funziona tecnicamente ma risulta visivamente incoerente, poco chiara o poco curata nel design.
 
 ```bash
-/gdd:do improve the settings page layout and component hierarchy
+/hone:do improve the settings page layout and component hierarchy
 ```
 
 ### Riportare l'output dell'IA dentro il design system
@@ -137,7 +139,7 @@ Usa GDD quando una schermata funziona tecnicamente ma risulta visivamente incoer
 Usalo quando un agente ha generato UI che sembra plausibile ma non corrisponde ai tuoi token, spaziature, stati o componenti.
 
 ```bash
-/gdd:verify
+/hone:verify
 ```
 
 ### Audit prima del rilascio
@@ -145,19 +147,19 @@ Usalo quando un agente ha generato UI che sembra plausibile ma non corrisponde a
 Esegui la verifica prima di una PR, di un rilascio o di un handoff di design.
 
 ```bash
-/gdd:audit
+/hone:audit
 ```
 
 ### Sistemare la dark mode
 
 ```bash
-/gdd:darkmode
+/hone:darkmode
 ```
 
 ### Importare un handoff di design
 
 ```bash
-/gdd:handoff ./my-design.html
+/hone:handoff ./my-design.html
 ```
 
 Questo analizza un bundle Claude Design, estrae le proprietà CSS personalizzate in decisioni di design ed esegue i controlli di fedeltà dell'handoff.
@@ -165,14 +167,14 @@ Questo analizza un bundle Claude Design, estrae le proprietà CSS personalizzate
 ### Fare un piccolo fix mirato
 
 ```bash
-/gdd:fast "fix contrast in pricing cards"
+/hone:fast "fix contrast in pricing cards"
 ```
 
 ## Cosa lo rende diverso
 
 ### Conoscenza di design locale
 
-GDD include un'estesa libreria di riferimenti locale per il lavoro di design. Gli agenti possono usarla senza affidarsi alla ricerca web in tempo reale per i giudizi di design di base.
+Hone include un'estesa libreria di riferimenti locale per il lavoro di design. Gli agenti possono usarla senza affidarsi alla ricerca web in tempo reale per i giudizi di design di base.
 
 Copre accessibilità, WCAG, tipografia, spaziatura, griglie, colore, contrasto, superfici, motion, UX writing, form, stati vuoti, gerarchia visuale, dark mode, comportamento responsive, i18n, metodi di ricerca, scoring di audit e anti-pattern di design.
 
@@ -182,7 +184,7 @@ Mappa completa: [docs/KNOWLEDGE-BASE.md](docs/KNOWLEDGE-BASE.md)
 
 ### Memoria specifica del progetto
 
-GDD crea un workspace `.design/` che mantiene ogni ciclo ben ancorato:
+Hone crea un workspace `.design/` che mantiene ogni ciclo ben ancorato:
 
 | Artefatto | Scopo |
 | --- | --- |
@@ -198,7 +200,7 @@ Più a lungo lo usi, meno l'agente deve riscoprire.
 
 ### Verifica prima del rilascio
 
-GDD non si ferma quando l'UI "sembra finita".
+Hone non si ferma quando l'UI "sembra finita".
 
 La fase di verifica controlla se il risultato corrisponde ancora a:
 
@@ -210,11 +212,11 @@ La fase di verifica controlla se il risultato corrisponde ancora a:
 - le regole di motion e interazione
 - le decisioni di design registrate
 
-Quando emergono dei gap, GDD produce una lista di fix strutturata invece di lasciare la review al puro istinto.
+Quando emergono dei gap, Hone produce una lista di fix strutturata invece di lasciare la review al puro istinto.
 
 ### Test di comportamento degli skill
 
-Gli skill stessi di GDD vengono messi alla prova sotto scenari di pressione avversaria (pressione temporale, sunk-cost, autorità, minimizzazione dello scope) per confermare che mantengono la propria disciplina invece di cedere. Vedi [CONTRIBUTING.md](CONTRIBUTING.md) per come aggiungere uno scenario di pressione.
+Gli skill stessi di Hone vengono messi alla prova sotto scenari di pressione avversaria (pressione temporale, sunk-cost, autorità, minimizzazione dello scope) per confermare che mantengono la propria disciplina invece di cedere. Vedi [CONTRIBUTING.md](CONTRIBUTING.md) per come aggiungere uno scenario di pressione.
 
 ## Come funziona
 
@@ -224,11 +226,11 @@ Brief -> Explore -> Plan -> Design -> Verify -> Ship
 
 | Fase | Comando | Output |
 | --- | --- | --- |
-| Brief | `/gdd:brief` | Cattura il problema di design |
-| Explore | `/gdd:explore` | Mappa il sistema UI, il debito, i token, i componenti |
-| Plan | `/gdd:plan` | Crea task di design atomici |
-| Design | `/gdd:design` | Esegue i task con validazione |
-| Verify | `/gdd:verify` | Audita il risultato finale |
+| Brief | `/hone:brief` | Cattura il problema di design |
+| Explore | `/hone:explore` | Mappa il sistema UI, il debito, i token, i componenti |
+| Plan | `/hone:plan` | Crea task di design atomici |
+| Design | `/hone:design` | Esegue i task con validazione |
+| Verify | `/hone:verify` | Audita il risultato finale |
 
 ### Output principali
 
@@ -243,50 +245,50 @@ Brief -> Explore -> Plan -> Design -> Verify -> Ship
 
 ## Comandi
 
-GDD include 96 skill. Questi sono quelli di cui la maggior parte degli utenti ha bisogno giorno per giorno. Per il riferimento completo vedi [SKILL.md](SKILL.md).
+Hone include 96 skill. Questi sono quelli di cui la maggior parte degli utenti ha bisogno giorno per giorno. Per il riferimento completo vedi [SKILL.md](SKILL.md).
 
 ### Pipeline principale
 
 | Comando | Scopo |
 | --- | --- |
-| `/gdd:brief` | Cattura il brief di design |
-| `/gdd:explore` | Inventaria il sistema UI corrente |
-| `/gdd:plan` | Produce il piano di design |
-| `/gdd:design` | Esegue il piano |
-| `/gdd:verify` | Verifica il risultato |
-| `/gdd:ship` | Prepara un branch PR pulito |
-| `/gdd:next` | Auto-routing alla fase successiva |
+| `/hone:brief` | Cattura il brief di design |
+| `/hone:explore` | Inventaria il sistema UI corrente |
+| `/hone:plan` | Produce il piano di design |
+| `/hone:design` | Esegue il piano |
+| `/hone:verify` | Verifica il risultato |
+| `/hone:ship` | Prepara un branch PR pulito |
+| `/hone:next` | Auto-routing alla fase successiva |
 
 ### Uso quotidiano
 
 | Comando | Scopo |
 | --- | --- |
-| `/gdd:do <task>` | Router in linguaggio naturale |
-| `/gdd:fast <task>` | Piccolo fix mirato |
-| `/gdd:quick` | Flusso di task leggero |
-| `/gdd:audit` | Audit di qualità del design |
-| `/gdd:darkmode` | Audit della dark mode |
-| `/gdd:style <component>` | Handoff di stile di un componente |
-| `/gdd:health` | Diagnostica lo stato della pipeline |
-| `/gdd:progress` | Mostra l'avanzamento del ciclo corrente |
-| `/gdd:resume` | Riprende dal checkpoint |
+| `/hone:do <task>` | Router in linguaggio naturale |
+| `/hone:fast <task>` | Piccolo fix mirato |
+| `/hone:quick` | Flusso di task leggero |
+| `/hone:audit` | Audit di qualità del design |
+| `/hone:darkmode` | Audit della dark mode |
+| `/hone:style <component>` | Handoff di stile di un componente |
+| `/hone:health` | Diagnostica lo stato della pipeline |
+| `/hone:progress` | Mostra l'avanzamento del ciclo corrente |
+| `/hone:resume` | Riprende dal checkpoint |
 
 ### Strumenti di design e handoff
 
 | Comando | Scopo |
 | --- | --- |
-| `/gdd:connections` | Configura le integrazioni opzionali |
-| `/gdd:figma-extract` | Estrae il contesto del design system da Figma |
-| `/gdd:figma-write` | Riscrive decisioni e stato su Figma |
-| `/gdd:handoff <bundle>` | Importa un bundle Claude Design |
-| `/gdd:sketch <idea>` | Genera mockup HTML multi-variante |
-| `/gdd:spike <idea>` | Passaggio di fattibilità timeboxed |
+| `/hone:connections` | Configura le integrazioni opzionali |
+| `/hone:figma-extract` | Estrae il contesto del design system da Figma |
+| `/hone:figma-write` | Riscrive decisioni e stato su Figma |
+| `/hone:handoff <bundle>` | Importa un bundle Claude Design |
+| `/hone:sketch <idea>` | Genera mockup HTML multi-variante |
+| `/hone:spike <idea>` | Passaggio di fattibilità timeboxed |
 
 Riferimento completo dei comandi: [SKILL.md](SKILL.md)
 
 ## Connessioni
 
-GDD funziona senza strumenti esterni, ma può connettersi a 39 integrazioni opzionali. Sono tutte opzionali; la pipeline degrada in modo grazioso verso i fallback quando una connessione non è disponibile.
+Hone funziona senza strumenti esterni, ma può connettersi a 39 integrazioni opzionali. Sono tutte opzionali; la pipeline degrada in modo grazioso verso i fallback quando una connessione non è disponibile.
 
 Il layer di connessione copre queste categorie:
 
@@ -302,7 +304,7 @@ Il layer di connessione copre queste categorie:
 Configura le integrazioni con:
 
 ```bash
-/gdd:connections
+/hone:connections
 ```
 
 Per la lista completa delle connessioni con i pattern di sonda, vedi [connections/connections.md](connections/connections.md).
@@ -315,15 +317,15 @@ Per la lista completa delle connessioni con i pattern di sonda, vedi [connection
 
 ## Supporto multi-runtime
 
-GDD si installa su 14 runtime di coding IA: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy e Cline. Gli stessi skill e agenti sorgente vengono compilati nel layout nativo di ciascun runtime (`skills/`, `command/`, `agents/` o `.clinerules`) da convertitori specifici per runtime, così la pipeline ti segue tra gli editor.
+Hone si installa su 14 runtime di coding IA: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy e Cline. Gli stessi skill e agenti sorgente vengono compilati nel layout nativo di ciascun runtime (`skills/`, `command/`, `agents/` o `.clinerules`) da convertitori specifici per runtime, così la pipeline ti segue tra gli editor.
 
 Claude Code è il flagship. L'esperienza completa gira lì da capo a coda: ogni agente, gli hook defense-in-depth e le connessioni supportate da MCP. Sugli altri runtime ottieni gli stessi skill e agenti nella loro forma nativa, le connessioni supportate da MCP si attivano sugli host con capacità MCP e il layer degli hook è specifico di Claude Code.
 
 ## Sicurezza e privacy
 
-GDD è local-first per impostazione predefinita. Scrive gli artefatti di progetto sotto `.design/`, usa le integrazioni opzionali solo quando configurate e mantiene la segnalazione di issue subordinata al consenso.
+Hone è local-first per impostazione predefinita. Scrive gli artefatti di progetto sotto `.design/`, usa le integrazioni opzionali solo quando configurate e mantiene la segnalazione di issue subordinata al consenso.
 
-Il plugin include hook defense-in-depth per percorsi protetti, blocco dei comandi pericolosi, scansione di injection, circuit breaking per MCP e applicazione del budget. GDD espone inoltre 13 tool MCP in sola lettura per un'introspezione sicura del progetto.
+Il plugin include hook defense-in-depth per percorsi protetti, blocco dei comandi pericolosi, scansione di injection, circuit breaking per MCP e applicazione del budget. Hone espone inoltre 13 tool MCP in sola lettura per un'introspezione sicura del progetto.
 
 Aggiungi i percorsi sensibili alla deny list del tuo runtime:
 
@@ -346,13 +348,13 @@ Leggi: [SECURITY.md](SECURITY.md) · [PRIVACY.md](PRIVACY.md)
 ## Aggiornamento
 
 ```bash
-npx @hegemonart/get-design-done@latest
+npx hone
 ```
 
 Oppure da dentro Claude Code:
 
 ```bash
-/gdd:update
+/hone:update
 ```
 
 Per lo storico completo dei rilasci, vedi [CHANGELOG.md](CHANGELOG.md).
@@ -364,20 +366,20 @@ Per lo storico completo dei rilasci, vedi [CHANGELOG.md](CHANGELOG.md).
 Riavvia il tuo runtime ed esegui:
 
 ```bash
-/gdd:help
+/hone:help
 ```
 
 ### La pipeline è bloccata
 
 ```bash
-/gdd:health
-/gdd:resume
+/hone:health
+/hone:resume
 ```
 
 ### Il costo è troppo alto
 
 ```bash
-/gdd:optimize
+/hone:optimize
 ```
 
 ## Contribuire
@@ -398,6 +400,6 @@ Licenza MIT. Vedi [LICENSE](LICENSE) per i dettagli. Le attribuzioni di terze pa
 
 <div align="center">
 
-**Claude Code rilascia codice. Get Design Done si assicura che rilasci design.**
+**Claude Code rilascia codice. Hone si assicura che rilasci design.**
 
 </div>

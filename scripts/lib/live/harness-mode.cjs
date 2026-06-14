@@ -2,7 +2,7 @@
 /**
  * scripts/lib/live/harness-mode.cjs — Phase 47 (Live Mode) capability gate.
  *
- * `/gdd:live` drives the Claude Preview MCP at runtime (preview_inspect /
+ * `/hone:live` drives the Claude Preview MCP at runtime (preview_inspect /
  * preview_click / preview_eval / preview_screenshot). That whole loop is only
  * available on a harness whose capability matrix reports `mcp_support: true`.
  * Harnesses without MCP support cannot inject the runtime or read picks back, so

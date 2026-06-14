@@ -1,5 +1,5 @@
 // scripts/lib/init-runner/scaffold.ts — filesystem helpers for the
-// `gdd-sdk init` runner (Plan 21-08, SDK-20).
+// `hone-sdk init` runner (Plan 21-08, SDK-20).
 //
 // This module is synchronous + side-effectful; every helper either
 // mutates disk in a well-defined way or reports a boolean/null/string
@@ -157,7 +157,7 @@ export function ensureDesignDirs(cwd: string): {
 /**
  * Walk up from `process.argv[1]`'s directory (falling back to cwd if
  * argv[1] isn't a real path) looking for a `package.json` whose `name`
- * field matches `@hegemonart/get-design-done`. When found, return
+ * field matches `@hegemonart/hone`. When found, return
  * `<pkg-root>/reference/STATE-TEMPLATE.md`. Return `null` if we run out
  * of parent directories without finding the plugin root — e.g., when
  * invoked from a fork that has renamed the package.

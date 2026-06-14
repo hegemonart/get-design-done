@@ -1,12 +1,12 @@
 ---
 name: hone
-short_name: gdd
+short_name: hone
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
 argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|live|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|pin|unpin|list-pins|new-skill|new-addendum|instinct|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark|recall|timeline|continue|zoom-out]"
 user-invocable: true
 ---
 
-# Get Design Done - Pipeline Router
+# Hone - Pipeline Router
 
 Entry point for the hone toolkit. Establishes the `/hone:` command namespace.
 
@@ -90,7 +90,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `analyze-dependencies [--slice <name>]` | `hone:analyze-dependencies` | Query the `.design/intel/` store - dependency slices, graph queries, phase-scoped reads |
 | `extract-learnings [--cycle <slug>]` | `hone:extract-learnings` | Extract decisions, lessons, patterns, and surprises from a completed cycle → `.design/cycles/<slug>/LEARNINGS.md` |
 | `skill-manifest [--refresh]` | `hone:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
-| `pin <skill>` | `hone:hone-pin` | Phase 46 - write standalone shortcut aliases for a gdd skill across every installed harness dir (so `/audit` resolves alongside `/hone:audit`); metadata comes from the skills.json catalogue |
+| `pin <skill>` | `hone:hone-pin` | Phase 46 - write standalone shortcut aliases for a Hone skill across every installed harness dir (so `/audit` resolves alongside `/hone:audit`); metadata comes from the skills.json catalogue |
 | `unpin <skill>` | `hone:hone-unpin` | Phase 46 - remove pinned aliases for a skill (only files carrying the hone-pinned-skill marker) |
 | `list-pins` | `hone:hone-list-pins` | Phase 46 - show pinned aliases per harness with their source skill and last-pinned timestamp |
 | `new-skill <name>` | `hone:hone-new-skill` | Phase 50 - interactive scaffolder for a new Phase 28.5 + v3-compliant skill (multi-paragraph description, lifecycle stage, optional composes_with); writes source/skills/<name>/SKILL.md |
@@ -111,10 +111,10 @@ Each stage produces artifacts in `.design/` inside the current project.
 | `rollout-status [<cycle>] [--all] [--stuck]` | `hone:hone-rollout-status` | Phase 38.5 - track a shipped cycle's production rollout (unrolled / staging-only / canary-N% / prod-100%) by reading the feature-flag service via `rollout-coordinator`; surfaces STUCK rollouts; feeds `design_arms` by deployed %. Read-only - never advances or rolls back |
 | `budget [--cycles N] [--scenario best\|typical\|worst]` | `hone:hone-budget` | Phase 39.2 - forecast design-cycle spend (best/typical/worst from telemetry variance) via `cost-forecaster`; "at the current rate you'll hit your $X project cap in Y cycles." Read-only - never spends, edits `budget.json`, or halts (the budget-enforcer hook halts) |
 | `roi [--since <date>] [--window-days 14]` | `hone:hone-roi` | Phase 39.2 - ROI table joining per-cycle cost with commits that shipped (survived ≥14d) vs reverted → cost-per-shipped-commit + stick rate. Read-only markdown report |
-| `migrate [--yes] [--dry-run]` | `hone:hone-migrate` | Phase 39.5 - migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
+| `migrate [--yes] [--dry-run]` | `hone:hone-migrate` | Phase 39.5 - migrate a project off Hone's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
 | `review-decisions [<id>] [--pending]` | `hone:hone-review-decisions` | Phase 40 - surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
 | `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `hone:hone-unlock-decision` | Phase 40 - reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
-| `locale [<code>]` | `hone:hone-locale` | Phase 40.5 - inspect or set the GDD CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
+| `locale [<code>]` | `hone:hone-locale` | Phase 40.5 - inspect or set the Hone CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
 | `context [nodes --type X \| edges --type Z \| path <a> <b> \| consumers-of <id> \| unreachable \| cycles \| coverage]` | `hone:hone-context` | Phase 52 - read-only query front end for the typed DesignContext graph at `.design/context-graph.json`; lists/filters nodes and edges, traces a path between two nodes, finds a node's consumers, and reports unreachable nodes, dependency cycles, and coverage. Never writes |
 | `migrate-context [--dry-run]` | `hone:hone-migrate-context` | Phase 52 - migrate a pre-Phase-52 project from flat `.design/map/*.md` mapper notes to the typed DesignContext graph; runs the extract-*.mjs passes, merges fragments, validates with `validate-design-context.cjs`, and flags low-confidence transforms for review. Preview-first; `--dry-run` previews without writing |
 | `override <finding-id \| factforce <path>> [--approver <who>] [--reason <text>]` | `hone:hone-override` | Phase 56 - escalation surface for a risk-gate block or a first-write fact-force hold; with an approver and reason, writes a `D-XX` override-tagged decision (audit trail) for a blocked finding, or clears the fact-force `checked[path]` lock for a path you have legitimately reviewed. Mirrors unlock-decision; never overrides silently |
@@ -185,7 +185,7 @@ When invoked without arguments (or with `status`), show pipeline state and sugge
 ## Status Display
 
 ```
-━━━ Get Design Done Pipeline ━━━
+━━━ Hone Pipeline ━━━
 [✓] Brief      → .design/BRIEF.md
 [✓] Explore    → DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md   (stage 2-of-5; replaces scan+discover)
 [→] Plan       ← current stage (3-of-5)

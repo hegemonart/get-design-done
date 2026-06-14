@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/scripts/mcp-servers/hone-state/schemas/probe_connections.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/scripts/mcp-servers/hone-state/schemas/probe_connections.schema.json",
   "title": "GddStateProbeConnections",
   "description": "MCP tool hone_state__probe_connections — update <connections> map from probe results. Overwrites keys present in the input; does NOT delete keys not in the input. Emits state.mutation.",
   "type": "object",

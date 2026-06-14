@@ -1,6 +1,6 @@
 ---
 name: hone-graph-refresh
-description: "Refreshes the knowledge graph at .design/graph/graph.json from .design/intel/ slices using the native bin/gdd-graph CLI. Run after hone-intel-updater to keep the semantic graph current. Intel and graph share a single {from,to,kind,weight?} schema, so no translation step is needed."
+description: "Refreshes the knowledge graph at .design/graph/graph.json from .design/intel/ slices using the native bin/hone-graph CLI. Run after hone-intel-updater to keep the semantic graph current. Intel and graph share a single {from,to,kind,weight?} schema, so no translation step is needed."
 tools: Bash, Read, Write
 color: green
 default-tier: haiku
@@ -16,7 +16,7 @@ writes:
 
 # hone-graph-refresh
 
-**Role:** Refresh the project knowledge graph at `.design/graph/graph.json` from the intel store at `.design/intel/`. Reads intel slices and (re)builds the graph via the native `bin/gdd-graph build` command. Intel and graph share a single `{from,to,kind,weight?}` edge schema, so there is no translation step - `gdd-graph build` ingests intel slices directly.
+**Role:** Refresh the project knowledge graph at `.design/graph/graph.json` from the intel store at `.design/intel/`. Reads intel slices and (re)builds the graph via the native `bin/hone-graph build` command. Intel and graph share a single `{from,to,kind,weight?}` edge schema, so there is no translation step - `hone-graph build` ingests intel slices directly.
 
 ## When to invoke
 
@@ -47,7 +47,7 @@ If `false`: print "Graphify not enabled in .design/config.json - skipping refres
 With the shared `{from,to,kind,weight?}` schema between intel and graph, the canonical refresh is a single `build` invocation. No per-node iteration, no translation step.
 
 ```bash
-node bin/gdd-graph build
+node bin/hone-graph build
 ```
 
 Exit code 0 indicates success; non-zero with stderr indicates a schema violation in an intel slice - report and stop.
@@ -55,7 +55,7 @@ Exit code 0 indicates success; non-zero with stderr indicates a schema violation
 ### Step 4 - Verify the rebuilt graph
 
 ```bash
-node bin/gdd-graph status --format json
+node bin/hone-graph status --format json
 ```
 
 Capture `{ node_count, edge_count, built_at, schema_version }` from the JSON output.

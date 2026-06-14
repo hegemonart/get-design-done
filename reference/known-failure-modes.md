@@ -110,9 +110,9 @@ diagnosis: 'GitHub CLI (`gh`) is not installed or not on PATH; the issue reporte
 remedy: 'Install gh from https://cli.github.com and run `gh auth login`, then retry. (Or use the clipboard fallback: the payload is already on disk under .design/issue-drafts/.)'
 severity: low
 propose_report: false
-symptom: 'The `/gdd:report-issue` flow exits during the outbound submission step with `gh: command not found`, `spawn gh ENOENT`, or (on Windows) `''gh'' is not recognized as an internal or external command`.'
+symptom: 'The `/hone:report-issue` flow exits during the outbound submission step with `gh: command not found`, `spawn gh ENOENT`, or (on Windows) `''gh'' is not recognized as an internal or external command`.'
 root_cause: 'Phase 30 D-05 routes the outbound submission through the user''s `gh` CLI; when `gh` is absent or off `PATH`, the spawn fails before any network call.'
-fix: '1) Install `gh` from https://cli.github.com (`brew install gh`, `winget install GitHub.cli`, or distro package). 2) Run `gh auth login` and pick GitHub.com + your preferred protocol. 3) Verify with `gh auth status`. 4) Re-run `/gdd:report-issue`. As a fallback, the issue draft is already saved under `.design/issue-drafts/` — open it and file manually via the GitHub web UI.'
+fix: '1) Install `gh` from https://cli.github.com (`brew install gh`, `winget install GitHub.cli`, or distro package). 2) Run `gh auth login` and pick GitHub.com + your preferred protocol. 3) Verify with `gh auth status`. 4) Re-run `/hone:report-issue`. As a fallback, the issue draft is already saved under `.design/issue-drafts/` — open it and file manually via the GitHub web UI.'
 related_phases: [30]
 first_observed_cycle: 'pre-30.5'
 ```
@@ -244,12 +244,12 @@ an upstream regression.
 id: KFM-009
 pattern: 'Cannot find module.*(scripts/lib/|skills/.*SKILL\.md|reference/.*\.md)'
 diagnosis: 'A plugin file is missing — most often the result of a local `git clean` or a partial install.'
-remedy: 'Reinstall the plugin: `npm install -g @hegemonart/get-design-done` (or pull the repo fresh in dev). If the file should exist, the error message gives its path.'
+remedy: 'Reinstall the plugin: `npm install -g @hegemonart/hone` (or pull the repo fresh in dev). If the file should exist, the error message gives its path.'
 severity: medium
 propose_report: true
 symptom: 'A command errors out with `Cannot find module` referencing a path under `scripts/lib/`, `skills/.../SKILL.md`, or `reference/*.md`. From the user''s perspective, a file that should ship with the plugin is gone.'
 root_cause: 'The file was removed locally — most often by an aggressive `git clean -fdx`, a worktree teardown that swept up tracked files, or an incomplete reinstall. The error path tells you exactly which file is missing.'
-fix: '1) Note the missing path from the error. 2) `git status` to confirm it''s gone (not just renamed). 3) `git checkout HEAD -- <path>` to restore from the current commit. 4) If the file was never committed locally, run `npm install -g @hegemonart/get-design-done` (or pull the repo fresh in dev mode). 5) Re-run the failing command. (propose_report:true because a missing plugin file can also indicate an upstream packaging bug.)'
+fix: '1) Note the missing path from the error. 2) `git status` to confirm it''s gone (not just renamed). 3) `git checkout HEAD -- <path>` to restore from the current commit. 4) If the file was never committed locally, run `npm install -g @hegemonart/hone` (or pull the repo fresh in dev mode). 5) Re-run the failing command. (propose_report:true because a missing plugin file can also indicate an upstream packaging bug.)'
 related_phases: [24, 25]
 first_observed_cycle: 'pre-30.5'
 ```
@@ -480,7 +480,7 @@ first_observed_cycle: 'cycle-2026-05'
 
 ### KFM-021 - Skill name contains colon (agentskills.io slug regex)
 
-Skills named with a colon (e.g. `get-design-done:foo`) fail the
+Skills named with a colon (e.g. `hone:foo`) fail the
 agentskills.io spec validator. The spec reserves colons for namespace
 delimiters at the registry level; on-disk skill folders must use
 hyphens.
@@ -489,12 +489,12 @@ hyphens.
 id: KFM-021
 pattern: '(agentskills\.io.*(slug|name).*invalid|skill name.*contains colon|SKILL.*invalid.*slug)'
 diagnosis: 'Skill folder name contains a colon, which the agentskills.io spec reserves for registry-level namespacing; on-disk skill slugs must be hyphen-separated.'
-remedy: 'Rename the skill folder to use a hyphen (e.g. `get-design-done:foo` -> `get-design-done-foo`) and update any cross-references.'
+remedy: 'Rename the skill folder to use a hyphen (e.g. `hone:foo` -> `hone-foo`) and update any cross-references.'
 severity: medium
 propose_report: false
-symptom: 'A skill-validation step (or the publishing flow) rejects a skill folder with an error like `skill name "get-design-done:foo" is not a valid agentskills.io slug` or `slug must match /^[a-z0-9][a-z0-9-]*$/`.'
+symptom: 'A skill-validation step (or the publishing flow) rejects a skill folder with an error like `skill name "hone:foo" is not a valid agentskills.io slug` or `slug must match /^[a-z0-9][a-z0-9-]*$/`.'
 root_cause: 'The agentskills.io spec slug regex `/^[a-z0-9][a-z0-9-]*$/` excludes colons; colons are reserved at the registry level for namespacing. On-disk skill folders must use hyphens only.'
-fix: '1) Rename the folder: `git mv skills/get-design-done:foo skills/get-design-done-foo`. 2) Update any cross-references in `plugin.json`, `README.md`, and other skills'' frontmatter `requires:` arrays. 3) Search-and-replace the old slug with the new one across `reference/` and `commands/`. 4) Re-run the validation.'
+fix: '1) Rename the folder: `git mv skills/hone:foo skills/hone-foo`. 2) Update any cross-references in `plugin.json`, `README.md`, and other skills'' frontmatter `requires:` arrays. 3) Search-and-replace the old slug with the new one across `reference/` and `commands/`. 4) Re-run the validation.'
 related_phases: [28.5, 28.6]
 first_observed_cycle: 'cycle-2026-05'
 ```

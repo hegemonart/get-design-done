@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://get-design-done.example/schemas/pressure-scenario.schema.json",
+  "$id": "https://hone.example/schemas/pressure-scenario.schema.json",
   "title": "Pressure Scenario Manifest",
   "description": "Contract for a Phase-33 skill-behavior pressure-scenario manifest. The runner (scripts/lib/skill-behavior/runner.cjs) loads manifests conforming to this schema, spawns a subagent against `setup_prompt` under the named `pressures`, and validates the response against the `expected_compliance` / `expected_violations` regex sources (compiled with new RegExp(source)). The 5-value `pressures` enum and the required-field set come verbatim from ROADMAP Phase-33 SC#2.",
   "type": "object",

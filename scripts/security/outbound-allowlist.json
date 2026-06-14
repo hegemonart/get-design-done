@@ -39,7 +39,7 @@
     },
     {
       "glob": "hooks/update-check.cjs",
-      "justification": "SessionStart update-check hook — polls the GitHub Releases API (https://api.github.com/repos/hegemonart/get-design-done/releases/latest) via node:https with a 3s timeout, anonymous (no API token), to detect newer plugin versions. Result is cached for 24h at .design/update-cache.json. Silent-on-failure (exits 0 on every error path per D-04). Read-only, user-passive, advisory-only — the hook NEVER writes outside .design/ and NEVER spawns the upgrader itself. Ported from the original update-check.sh (which used curl) to fix Windows-without-Git-Bash hooks; the egress profile is identical to the bash version."
+      "justification": "SessionStart update-check hook — polls the GitHub Releases API (https://api.github.com/repos/hegemonart/hone/releases/latest) via node:https with a 3s timeout, anonymous (no API token), to detect newer plugin versions. Result is cached for 24h at .design/update-cache.json. Silent-on-failure (exits 0 on every error path per D-04). Read-only, user-passive, advisory-only — the hook NEVER writes outside .design/ and NEVER spawns the upgrader itself. Ported from the original update-check.sh (which used curl) to fix Windows-without-Git-Bash hooks; the egress profile is identical to the bash version."
     }
   ]
 }

@@ -18,13 +18,13 @@ const DEPRECATIONS_PATH = path.join(REPO_ROOT, 'reference/DEPRECATIONS.md');
 // rename/split documented in DEPRECATIONS.md was partial, so static detection
 // would over-fire. Cover those cases via targeted review rather than grep.
 const PATTERNS = [
-  { name: '/design: namespace (replaced by /gdd:)', regex: /\/design:[a-z-]+/g },
+  { name: '/design: namespace (replaced by /hone:)', regex: /\/design:[a-z-]+/g },
   // Phase 30.6: runtime dispatch to upstream gsd-tools.cjs is now disallowed.
-  // Native CLI lives at bin/gdd-graph (graph ops) and is invoked as `node bin/gdd-graph <sub>`.
+  // Native CLI lives at bin/hone-graph (graph ops) and is invoked as `node bin/hone-graph <sub>`.
   // The pattern is precise — only the explicit bash dispatch is flagged. Prose mentions
   // of "gsd-tools" or "get-shit-done" in attribution contexts (NOTICE, CHANGELOG, README)
   // are NOT matched because they don't include the leading `node "$HOME/.claude/...` token.
-  { name: 'gsd-tools.cjs runtime dispatch (use bin/gdd-graph instead)', regex: /node\s+["']?\$HOME\/\.claude\/get-shit-done\/bin\/gsd-tools\.cjs/g },
+  { name: 'gsd-tools.cjs runtime dispatch (use bin/hone-graph instead)', regex: /node\s+["']?\$HOME\/\.claude\/get-shit-done\/bin\/gsd-tools\.cjs/g },
 ];
 
 const EXCLUDE_DIRS = new Set([
@@ -53,15 +53,15 @@ function ensureDeprecationsExists() {
     'Auto-generated stub — edit this file to declare deprecations authoritatively.',
     '',
     '## Stale command namespaces',
-    '- `/design:*` — replaced by `/gdd:*`',
+    '- `/design:*` — replaced by `/hone:*`',
     '',
     '## Stale agent names',
     '- `design-context-builder` — replaced',
     '- `design-pattern-mapper` (as single blob) — replaced',
     '',
     '## Stale stage names',
-    '- `scan` — folded into `/gdd:explore`',
-    '- `discover` — folded into `/gdd:explore`',
+    '- `scan` — folded into `/hone:explore`',
+    '- `discover` — folded into `/hone:explore`',
     '',
   ].join('\n');
   fs.mkdirSync(path.dirname(DEPRECATIONS_PATH), { recursive: true });

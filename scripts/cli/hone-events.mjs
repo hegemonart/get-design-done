@@ -1,14 +1,14 @@
 #!/usr/bin/env -S node --experimental-strip-types
-// scripts/cli/gdd-events.mjs — CLI transport for the event stream
+// scripts/cli/hone-events.mjs — CLI transport for the event stream
 // (Plan 22-06).
 //
 // Subcommands:
-//   gdd-events tail [--follow] [--path=<p>]
+//   hone-events tail [--follow] [--path=<p>]
 //     - dump events.jsonl to stdout, line-by-line
 //     - --follow re-polls every 250ms appending new content (no native
 //       inotify dep; portable across platforms)
 //
-//   gdd-events grep <filter> [--path=<p>]
+//   hone-events grep <filter> [--path=<p>]
 //     - filter language (space-separated terms, all AND'd):
 //         type=<exact-string>           — match `type` field
 //         payload.<dotted.path>=<value> — drill into payload by '.'-path
@@ -16,14 +16,14 @@
 //         !payload.<path>=<value>       — negate
 //     - prints matching events to stdout as JSONL (compact)
 //
-//   gdd-events cat [--path=<p>]
+//   hone-events cat [--path=<p>]
 //     - alias for tail without --follow, but pretty-prints with a
 //       leading timestamp+type prefix per line
 //
-//   gdd-events list-types
+//   hone-events list-types
 //     - prints the runtime KNOWN_EVENT_TYPES list (from Plan 22-01)
 //
-//   gdd-events serve [--port=<n>] [--token=<t>] [--tail=<file>]
+//   hone-events serve [--port=<n>] [--token=<t>] [--tail=<file>]
 //     - WebSocket transport (Plan 22-07). Loaded lazily via
 //       probe-optional; helpful error if `ws` is not installed.
 //
@@ -42,14 +42,14 @@ const DEFAULT_PATH = '.design/telemetry/events.jsonl';
 function usage() {
   stderr.write(
     [
-      'gdd-events — Phase 22 event-stream CLI',
+      'hone-events — Phase 22 event-stream CLI',
       '',
       'Usage:',
-      '  gdd-events tail [--follow] [--path=<p>]',
-      '  gdd-events grep <filter…> [--path=<p>]',
-      '  gdd-events cat [--path=<p>]',
-      '  gdd-events list-types',
-      '  gdd-events serve [--port=<n>] [--token=<t>] [--tail=<file>]',
+      '  hone-events tail [--follow] [--path=<p>]',
+      '  hone-events grep <filter…> [--path=<p>]',
+      '  hone-events cat [--path=<p>]',
+      '  hone-events list-types',
+      '  hone-events serve [--port=<n>] [--token=<t>] [--tail=<file>]',
       '  gdd-events --type <typename> [--path=<p>]   (Plan 29-03 ergonomic alias for `grep type=<typename>`)',
       '',
       'Filter language (grep): type=<s>  payload.<dotted.path>=<s>  !type=<s>',
@@ -104,7 +104,7 @@ export function compileFilter(terms) {
     }
     const eq = body.indexOf('=');
     if (eq === -1) {
-      throw new Error(`gdd-events: bad filter term: ${term}`);
+      throw new Error(`hone-events: bad filter term: ${term}`);
     }
     const key = body.slice(0, eq);
     const want = body.slice(eq + 1);
@@ -129,7 +129,7 @@ export function compileFilter(terms) {
     } else if (key === 'sessionId') {
       test = (ev) => ev?.sessionId === want;
     } else {
-      throw new Error(`gdd-events: unsupported filter key: ${key}`);
+      throw new Error(`hone-events: unsupported filter key: ${key}`);
     }
     checks.push(negate ? (ev) => !test(ev) : test);
   }
@@ -184,7 +184,7 @@ async function cmdGrep(parsed) {
   const path = resolvePath(parsed.flags.path);
   const terms = parsed._;
   if (terms.length === 0) {
-    stderr.write('gdd-events grep: at least one filter term required\n');
+    stderr.write('hone-events grep: at least one filter term required\n');
     return 2;
   }
   const predicate = compileFilter(terms);
@@ -218,7 +218,7 @@ async function cmdServe(parsed) {
     mod = require('../lib/transports/ws.cjs');
   } catch (err) {
     stderr.write(
-      'gdd-events serve: WebSocket transport requires the optional `ws` package.\n' +
+      'hone-events serve: WebSocket transport requires the optional `ws` package.\n' +
         '  install: npm i -D ws\n' +
         `  ${err && err.message ? err.message : String(err)}\n`,
     );
@@ -227,7 +227,7 @@ async function cmdServe(parsed) {
   const port = Number(parsed.flags.port) || 9595;
   const token = parsed.flags.token || process.env.GDD_EVENTS_TOKEN;
   if (!token) {
-    stderr.write('gdd-events serve: --token=<t> or GDD_EVENTS_TOKEN env required\n');
+    stderr.write('hone-events serve: --token=<t> or GDD_EVENTS_TOKEN env required\n');
     return 2;
   }
   const tailFrom = parsed.flags.tail
@@ -239,7 +239,7 @@ async function cmdServe(parsed) {
   const { subscribeAll } = await import('../../sdk/event-stream/index.ts');
   const subscribe = (handler) => subscribeAll(handler);
   const handle = await mod.startServer({ port, token, tailFrom, subscribe });
-  stderr.write(`gdd-events: WebSocket listening on :${port} (auth required)\n`);
+  stderr.write(`hone-events: WebSocket listening on :${port} (auth required)\n`);
   // Keep the process alive until SIGINT/SIGTERM.
   await new Promise((resolve) => {
     const close = () => {
@@ -258,9 +258,9 @@ async function main() {
   // Plan 29-03: `--type <typename>` (and `--type=<typename>`) is an ergonomic
   // alias for `grep type=<typename>`. Desugar BEFORE shifting the subcommand
   // so the flag can be used without a subcommand prefix:
-  //   gdd-events --type capability_gap --path=…
+  //   hone-events --type capability_gap --path=…
   // Equivalent to:
-  //   gdd-events grep type=capability_gap --path=…
+  //   hone-events grep type=capability_gap --path=…
   if (typeof parsed.flags.type === 'string' && parsed.flags.type.length > 0) {
     const typeValue = parsed.flags.type;
     delete parsed.flags.type;
@@ -270,7 +270,7 @@ async function main() {
     try {
       return await cmdGrep(parsed);
     } catch (err) {
-      stderr.write(`gdd-events: ${err && err.message ? err.message : String(err)}\n`);
+      stderr.write(`hone-events: ${err && err.message ? err.message : String(err)}\n`);
       return 1;
     }
   }
@@ -298,7 +298,7 @@ async function main() {
         return sub === undefined ? 0 : 2;
     }
   } catch (err) {
-    stderr.write(`gdd-events: ${err && err.message ? err.message : String(err)}\n`);
+    stderr.write(`hone-events: ${err && err.message ? err.message : String(err)}\n`);
     return 1;
   }
 }
@@ -310,7 +310,7 @@ const isCli = process.argv[1] !== undefined &&
   import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isCli) {
   main().then((code) => exit(code), (err) => {
-    stderr.write(`gdd-events fatal: ${err}\n`);
+    stderr.write(`hone-events fatal: ${err}\n`);
     exit(1);
   });
 }

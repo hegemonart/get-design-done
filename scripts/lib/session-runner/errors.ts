@@ -1,5 +1,5 @@
 // scripts/lib/session-runner/errors.ts — map Anthropic Agent SDK
-// errors onto the gdd-errors taxonomy (Plan 21-01 Task 3).
+// errors onto the hone-errors taxonomy (Plan 21-01 Task 3).
 //
 // The SDK throws a variety of shapes — typed APIError subclasses,
 // plain Error objects, AbortError from node:dom, and occasionally
@@ -253,7 +253,7 @@ function isAbortError(err: unknown): boolean {
 
 /**
  * Map an error thrown/returned by @anthropic-ai/claude-agent-sdk into the
- * gdd-errors taxonomy.
+ * hone-errors taxonomy.
  *
  * See the rules table at the top of this file for the decision tree.
  */

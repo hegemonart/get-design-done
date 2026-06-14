@@ -1,6 +1,6 @@
 # Chromatic — Connection Specification
 
-This file is the connection specification for Chromatic within the get-design-done pipeline. It lives in `connections/` alongside other connection specs. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for Chromatic within the hone pipeline. It lives in `connections/` alongside other connection specs. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

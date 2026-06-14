@@ -49,7 +49,7 @@ process.stdin.on('end', () => {
   } catch (err) {
     try {
       process.stderr.write(
-        `[gdd-trajectory] hook failed: ${err && err.message ? err.message : String(err)}\n`,
+        `[hone-trajectory] hook failed: ${err && err.message ? err.message : String(err)}\n`,
       );
     } catch {
       /* swallow */

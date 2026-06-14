@@ -15,7 +15,7 @@ recording).
 
 # Explore Procedure
 
-Detailed procedure for the get-design-done `explore` Stage 2 orchestrator. Companion to
+Detailed procedure for the hone `explore` Stage 2 orchestrator. Companion to
 `../skills/explore/SKILL.md`. Read this file when executing a specific step; the SKILL.md
 keeps the essential workflow + decision tree, this file holds the deep methodology.
 
@@ -23,7 +23,7 @@ keeps the essential workflow + decision tree, this file holds the deep methodolo
 
 ## Stage entry
 
-All STATE.md persistence in this skill goes through `gdd-state` MCP tools - no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
+All STATE.md persistence in this skill goes through `hone-state` MCP tools - no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
 
 1. Call `mcp__hone_state__transition_stage` with `to: "explore"`.
    - On success: proceed to probes.
@@ -262,6 +262,6 @@ When all questions are answered, write `.design/DESIGN-CONTEXT.md` summarizing t
 ```
 === Explore complete ===
 Saved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md
-Next: @get-design-done plan
+Next: /hone:plan
 =========================
 ```

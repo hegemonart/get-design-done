@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://get-design-done.example/schemas/config.schema.json",
+  "$id": "https://hone.example/schemas/config.schema.json",
   "title": ".design/config.json",
   "description": "Shape of .design/config.json — model profile and parallelism settings per reference/config-schema.md.",
   "type": "object",
@@ -78,7 +78,7 @@
       "additionalProperties": true,
       "description": "Phase 40 team-collaboration settings.",
       "properties": {
-        "multi_writer_enabled": { "type": "boolean", "description": "When true, the gdd-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process)." },
+        "multi_writer_enabled": { "type": "boolean", "description": "When true, the hone-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process)." },
         "lock_timeout_ms": { "type": "integer", "minimum": 0, "description": "Override the team-mode lock acquire maxWaitMs (default 30000)." },
         "sync_backend": { "type": "string", "enum": ["git", "s3", "git-lfs"], "description": "Cross-machine .design/ sync backend (scripts/lib/collab/sync-backend.cjs). Default git (existing push/pull). s3 / git-lfs are opt-in declarations; a live client is not bundled this phase." }
       }

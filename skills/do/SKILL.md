@@ -15,8 +15,8 @@ Takes a free-form description, maps it to a `/hone:*` command, confirms with the
 |---|---|
 | "explore", "scan", "what design patterns", "what components" | `/hone:explore` |
 | "discuss", "decide", "what should we use for", "help me decide" | `/hone:discuss` |
-| "plan", "create tasks", "what tasks do we need" | `@get-design-done plan` |
-| "design", "implement", "build", "execute" | `@get-design-done design` |
+| "plan", "create tasks", "what tasks do we need" | `/hone:plan` |
+| "design", "implement", "build", "execute" | `/hone:design` |
 | "verify", "check", "audit", "review" | `/hone:audit` |
 | "sketch", "explore directions", "try designs", "variant" | `/hone:sketch` |
 | "spike", "experiment", "feasibility", "test if" | `/hone:spike` |

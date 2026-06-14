@@ -16,7 +16,7 @@ disable-model-invocation: true
 
 ## When to use
 
-- First time opening a repo with the get-design-done plugin installed.
+- First time opening a repo with the hone plugin installed.
 - The user wants a single proof-of-value pass without committing to the pipeline.
 
 ## When NOT to use

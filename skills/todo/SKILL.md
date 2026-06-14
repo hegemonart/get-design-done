@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 # /hone:todo
 
-**Role:** Design todo list. Three subcommands: `add`, `list`, `pick`. Backing store: `.design/TODO.md`. For items that are pipeline-level decisions or must-haves (not free-form backlog), route through the `gdd-state` MCP tools instead - see **Pipeline-linked items** below.
+**Role:** Design todo list. Three subcommands: `add`, `list`, `pick`. Backing store: `.design/TODO.md`. For items that are pipeline-level decisions or must-haves (not free-form backlog), route through the `hone-state` MCP tools instead - see **Pipeline-linked items** below.
 
 ## File format
 

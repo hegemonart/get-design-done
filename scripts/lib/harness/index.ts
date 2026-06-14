@@ -54,7 +54,7 @@ export function resetHarnessCache(): void {
 
 /**
  * True when the currently detected harness exposes MCP protocol support.
- * Used by gdd-sdk audit to decide whether to spawn the gdd-state MCP
+ * Used by hone-sdk audit to decide whether to spawn the hone-state MCP
  * server or import handlers directly.
  *
  * Claude Code, Codex, and Gemini all speak MCP; only `'unknown'` does not.

@@ -18,7 +18,7 @@
 //   - POSIX:    Unix domain socket at
 //               `~/.gdd/peer-brokers/<peer>-<workspace-hash>.sock`
 //   - Windows:  named pipe at
-//               `\\.\pipe\gdd-peer-broker-<peer>-<workspace-hash>`
+//               `\\.\pipe\hone-peer-broker-<peer>-<workspace-hash>`
 //
 // Brokers live BETWEEN gdd cycles. Closing this client's connection does
 // NOT shut down the broker — multiple cycles re-attach to the same broker
@@ -104,7 +104,7 @@ class BrokerTimeoutError extends Error {
  * Compute the platform-appropriate broker endpoint for a (peer, workspace).
  *
  * POSIX → `~/.gdd/peer-brokers/<peer>-<hash>.sock`
- * Windows → `\\.\pipe\gdd-peer-broker-<peer>-<hash>`
+ * Windows → `\\.\pipe\hone-peer-broker-<peer>-<hash>`
  *
  * The workspace hash is a short SHA-256 prefix of the absolute workspace
  * path; we don't include the literal path in the socket name because:
@@ -133,7 +133,7 @@ function brokerEndpoint({ peer, workspace, platform } = {}) {
     .slice(0, 12);
 
   if (plat === 'win32') {
-    return `\\\\.\\pipe\\gdd-peer-broker-${peer}-${hash}`;
+    return `\\\\.\\pipe\\hone-peer-broker-${peer}-${hash}`;
   }
   return path.join(os.homedir(), '.gdd', 'peer-brokers', `${peer}-${hash}.sock`);
 }

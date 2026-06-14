@@ -3,17 +3,17 @@ name: hone-graphify
 description: "Manage the Graphify knowledge graph for the current project. Build, query, status, diff. When available, design-planner and design-integration-checker use the graph for pre-search consultation."
 ---
 
-# gdd-graphify
+# hone-graphify
 
-Thin command wrapper around the get-design-done (GDD) graphify tools integration.
+Thin command wrapper around the hone (GDD) graphify tools integration.
 
 ## Usage
 
 ```
-/get-design-done graphify build          # Build or rebuild the knowledge graph
-/get-design-done graphify query <term>   # Query graph for a node and neighbors
-/get-design-done graphify status         # Check graph age, enabled, node count
-/get-design-done graphify diff           # Show topology changes since last build
+/hone:graphify build          # Build or rebuild the knowledge graph
+/hone:graphify query <term>   # Query graph for a node and neighbors
+/hone:graphify status         # Check graph age, enabled, node count
+/hone:graphify diff           # Show topology changes since last build
 ```
 
 ## Behavior

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-// Top-3 findings engine for /gdd:start (Phase 14.7-03).
+// Top-3 findings engine for /hone:start (Phase 14.7-03).
 //
 // Deterministic, read-only, no LLM, no child_process. Reads the detected UI root,
 // runs a bank of regex-based detectors, applies the D-02 safe-fix rubric to pick
@@ -230,7 +230,7 @@ const DETECTORS = [
 
 /* --------------------------- scoring rubric ---------------------------- */
 
-// Phase 14.7 D-02 — a finding qualifies for /gdd:fast if all five hold.
+// Phase 14.7 D-02 — a finding qualifies for /hone:fast if all five hold.
 function qualifiesAsSafeFix(f) {
   // 1. single file
   const singleFile = !f.crossFile;

@@ -1,4 +1,4 @@
-# Parallelism Rules for get-design-done
+# Parallelism Rules for hone
 
 The decision engine reads these rules at every stage spawn point and writes its verdict to STATE.md `<parallelism_decision>`. Parallelism is computed, not hardcoded.
 

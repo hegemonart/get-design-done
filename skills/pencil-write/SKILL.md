@@ -6,14 +6,14 @@ user-invocable: true
 tools: Read, Write, Bash, Grep, Glob
 ---
 
-# gdd-pencil-write
+# hone-pencil-write
 
 Dispatches the `design-pencil-writer` agent to write design decisions back to `.pen` spec files. Unlike Figma/paper.design, pencil.dev keeps `.pen` YAML specs as the project's git-tracked source of truth; no MCP is required and every write is committed atomically. The probe pattern (file-based, no ToolSearch) and integration contract are documented at `../../connections/pencil-dev.md`.
 
 ## Usage
 
 ```
-/get-design-done pencil-write <mode> [--dry-run]
+/hone:pencil-write <mode> [--dry-run]
 ```
 
 Modes:

@@ -5,7 +5,7 @@ argument-hint: ""
 tools: Read, Bash
 ---
 
-# gdd-bandit-status
+# hone-bandit-status
 
 ## Role
 
@@ -88,7 +88,7 @@ After the table, surface a per-`(agent, bin)` best-arm summary: for each unique 
 
 ### 4. Record
 
-Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-status","ts":"<ISO>","arms_seen":<count>,"posterior_present":<bool>}`. Skill writes ONLY to skill-records.jsonl (telemetry); never touches the posterior.
+Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"hone-bandit-status","ts":"<ISO>","arms_seen":<count>,"posterior_present":<bool>}`. Skill writes ONLY to skill-records.jsonl (telemetry); never touches the posterior.
 
 ## Cross-references
 

@@ -5,7 +5,7 @@
  * Pure module. Computes a structured diff of the three privacy-critical
  * surfaces between two installation roots — typically:
  *   - oldRoot: tempdir snapshot of the currently-installed plugin (before
- *              /gdd:update overwrites the tree).
+ *              /hone:update overwrites the tree).
  *   - newRoot: the repo root after `claude plugin install` completes.
  *
  * The three privacy-critical surfaces this module diffs:
@@ -352,7 +352,7 @@ function renderPrivacyDiff(diff) {
 }
 
 /**
- * Decide whether /gdd:update should AUTO-SHOW the diff after an upgrade.
+ * Decide whether /hone:update should AUTO-SHOW the diff after an upgrade.
  *
  * Branches:
  *   - prevVersion null/empty -> false (no previous snapshot to compare against)

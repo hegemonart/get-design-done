@@ -17,7 +17,7 @@ It stays in git because the Claude Code marketplace install path git-clones the 
 briefly gitignored it and broke that path; v1.58.1 restored it as a committed, drift-gated
 build output.
 
-End users installing `@hegemonart/get-design-done` from the npm registry receive a tarball
+End users installing `@hegemonart/hone` from the npm registry receive a tarball
 with `skills/` already built; no build step runs on their machine.
 
 ## Why two directories, not one

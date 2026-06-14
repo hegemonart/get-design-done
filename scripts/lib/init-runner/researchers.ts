@@ -1,5 +1,5 @@
 // scripts/lib/init-runner/researchers.ts — researcher dispatch for the
-// `gdd-sdk init` runner (Plan 21-08, SDK-20).
+// `hone-sdk init` runner (Plan 21-08, SDK-20).
 //
 // Two exports:
 //

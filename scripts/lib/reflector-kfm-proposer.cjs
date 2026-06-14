@@ -12,7 +12,7 @@
  * Decisions honored:
  *   * D-05 — Reflector follows Phase 29 incubator-author on-disk pattern
  *     (drafts in `.design/reflections/incubator/<slug>/`). User reviews
- *     via `/gdd:apply-reflections`.
+ *     via `/hone:apply-reflections`.
  *   * D-06 — Same draft surface consumed by Task 2's authority-watcher
  *     `kfm-candidate` event. One unified review path, not two.
  *   * 30.5 D-07/D-08 — Re-uses `failure-mode-matcher.match()` for
@@ -307,7 +307,7 @@ function proposeKfmDraft(input, options) {
     norm.articleTitle ? `**Article title:** ${norm.articleTitle}` : null,
     norm.rawExcerpt ? `**Excerpt:** ${norm.rawExcerpt.replace(/\n/g, ' ').slice(0, 500)}` : null,
     '',
-    `Drafted ${now}. Review via \`/gdd:apply-reflections\` → [KFM-CANDIDATE] proposal class.`,
+    `Drafted ${now}. Review via \`/hone:apply-reflections\` → [KFM-CANDIDATE] proposal class.`,
     '',
     'Fill the `TODO:` placeholders before accepting. The `pattern` regex is matched against',
     '`[error.message, error.stack].filter(Boolean).join("\\n")` — keep it conservative so',

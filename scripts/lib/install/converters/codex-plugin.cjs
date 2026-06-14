@@ -152,7 +152,7 @@ function copyDirRecursive(src, dest) {
  *   license     ← packageJson.license
  *   keywords    ← curateKeywords(packageJson.keywords) → ≤10 entries
  *   skills      ← static "./skills/"
- *   mcpServers  ← inline { gdd-mcp: { command: "npx", args: [...] } }
+ *   mcpServers  ← inline { hone-mcp: { command: "npx", args: [...] } }
  *   interface   ← 9 sub-fields per Schema Mapping table:
  *                  displayName, shortDescription, longDescription,
  *                  developerName, category, capabilities, websiteURL,

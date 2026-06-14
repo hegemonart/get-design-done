@@ -2,7 +2,7 @@
 /**
  * scripts/lib/live/runtime.cjs — Phase 47 (Live Mode) browser-side runtime.
  *
- * The `/gdd:live` skill injects a small browser runtime into the running dev
+ * The `/hone:live` skill injects a small browser runtime into the running dev
  * server via the Claude Preview MCP `preview_eval` tool. That runtime does two
  * jobs:
  *

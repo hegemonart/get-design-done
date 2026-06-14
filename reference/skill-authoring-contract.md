@@ -133,7 +133,7 @@ Concrete example:
 ```yaml
 ---
 name: help
-description: "Lists all available get-design-done commands with one-line descriptions. Use when the user asks for help, a command list, or wants to know what is available."
+description: "Lists all available hone commands with one-line descriptions. Use when the user asks for help, a command list, or wants to know what is available."
 tools: Read
 disable-model-invocation: true
 ---

@@ -69,9 +69,9 @@ The `hone_health` MCP surface also reports a `skill_discipline` check (Phase 32)
 - `skill-discipline: ready` - `skills/using-gdd/SKILL.md` exists AND `hooks/hooks.json` SessionStart wires `inject-using-gdd.sh` (status `ok`).
 - `skill-discipline: missing using-gdd` (skill absent) or `skill-discipline: hook not wired` (skill present, no SessionStart inject) - both `warn`. The MCP surface also reports a `harness_freshness` check (Phase 44): per-harness `last_verified` age, status-aware (only `tested` harnesses warn at 60d / fail at 180d; others `n/a`). Full taxonomy in `HARNESSES.md`; refresh with `npm run verify:harness <id>`.
 
-## Check MCP registration (gdd-mcp)
+## Check MCP registration (hone-mcp)
 
-After the health table, inspect whether `gdd-mcp` (Phase 27.7+) is registered with any installed harness and render a one-line status row. Dismissable via `.design/config.json#mcp_nudge=false`. Non-blocking: failure paths render `MCP server: unknown` rather than crash. Full detection procedure (dismissal check, detection via `scripts/lib/install/mcp-register.cjs`, row rendering for claude/codex/both/neither, fallback) lives in `./health-mcp-detection.md`.
+After the health table, inspect whether `hone-mcp` (Phase 27.7+) is registered with any installed harness and render a one-line status row. Dismissable via `.design/config.json#mcp_nudge=false`. Non-blocking: failure paths render `MCP server: unknown` rather than crash. Full detection procedure (dismissal check, detection via `scripts/lib/install/mcp-register.cjs`, row rendering for claude/codex/both/neither, fallback) lives in `./health-mcp-detection.md`.
 
 ## Update notice (safe-window surface)
 

@@ -1,6 +1,6 @@
 # Rive — Connection Specification
 
-This file is the connection specification for the Rive motion-export check within the get-design-done pipeline. It lives in `connections/` alongside the other connection specs (the closest analog is [`connections/print-renderer.md`](print-renderer.md), the verify-stage RENDERED proof for the `print` project type, and its sibling `connections/lottie.md` covers the JSON-vector motion format). See the connection index for the full connection capability matrix (the Rive row is added at the 36.2 Wave-B wiring plan).
+This file is the connection specification for the Rive motion-export check within the hone pipeline. It lives in `connections/` alongside the other connection specs (the closest analog is [`connections/print-renderer.md`](print-renderer.md), the verify-stage RENDERED proof for the `print` project type, and its sibling `connections/lottie.md` covers the JSON-vector motion format). See the connection index for the full connection capability matrix (the Rive row is added at the 36.2 Wave-B wiring plan).
 
 ---
 

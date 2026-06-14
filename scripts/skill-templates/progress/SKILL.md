@@ -17,7 +17,7 @@ Two paths - MCP preferred when available, file-read fallback otherwise.
 
 ### MCP path (preferred)
 
-When the harness exposes `mcp__hone_status` (Phase 27.7+, registered via `npx @hegemonart/get-design-done --register-mcp`):
+When the harness exposes `mcp__hone_status` (Phase 27.7+, registered via `npx @hegemonart/hone --register-mcp`):
 
 1. Call `mcp__hone_status` (no args). Returns `{phase, branch, last_decisions, last_completed_plans, blocker_count}` in one call.
 2. If you need `stage` / `task_progress` for the output line, call `mcp__hone_phase_current` (no args). Returns `{phase, stage, task_progress, status}`.

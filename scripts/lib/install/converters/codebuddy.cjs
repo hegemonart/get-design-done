@@ -6,10 +6,10 @@
  * CodeBuddy SKILL.md converter. Translates Claude-shape source into
  * CodeBuddy's expected shape (uniform skills/<name>/SKILL.md layout —
  * per `runtime-artifact-layout.cjs#codebuddy` which emits the standard
- * skillsKind('skills', 'gdd-', ...) entry):
+ * skillsKind('skills', 'hone-', ...) entry):
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose pass through as `/gdd-<name>` —
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose pass through as `/hone-<name>` —
  *     CodeBuddy accepts the Claude shape. Mixed-shape inputs are
  *     normalized via the runtime-slash module.
  *   - Tool names in code fences pass through unchanged — CodeBuddy
@@ -46,7 +46,7 @@ const shared = require('./shared.cjs');
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'codebuddy');
   out = shared.ensureAdapterHeader(out, 'CodeBuddy');
   return fm + out;

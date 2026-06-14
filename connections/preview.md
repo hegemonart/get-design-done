@@ -1,6 +1,6 @@
 # Claude Preview / Playwright MCP — Connection Specification
 
-This file is the connection specification for the Claude Preview (Playwright-backed) MCP within the get-design-done pipeline. Its primary role is to provide live browser screenshots for the verify stage — replacing `? VISUAL` flags with real rendered evidence. It also powers dark-mode screenshot capture in the darkmode stage and before/after screenshot delta in the compare stage. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for the Claude Preview (Playwright-backed) MCP within the hone pipeline. Its primary role is to provide live browser screenshots for the verify stage — replacing `? VISUAL` flags with real rendered evidence. It also powers dark-mode screenshot capture in the darkmode stage and before/after screenshot delta in the compare stage. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 
@@ -174,4 +174,4 @@ Downstream stages (verify, compare, darkmode) re-probe rather than blindly readi
 
 4. **`preview_start` may require a running dev server.** If the project has no dev server running, `preview_list` may return an empty array — that is `preview: available` (not unavailable). The empty array means the MCP is functional but no sessions are running. The verify stage should attempt `preview_navigate` to `http://localhost:3000` (or project-configured port) and handle 404 / connection-refused gracefully — if navigation fails, update STATE.md to `preview: unavailable` for this session and fall back to static analysis.
 
-5. **`.design/screenshots/` should be gitignored.** Screenshots may contain rendered UI with sensitive data (user info, internal tools). The `.design/` directory is already gitignored in get-design-done projects (see Phase 1). Confirm `.gitignore` includes `.design/` before saving screenshots.
+5. **`.design/screenshots/` should be gitignored.** Screenshots may contain rendered UI with sensitive data (user info, internal tools). The `.design/` directory is already gitignored in hone projects (see Phase 1). Confirm `.gitignore` includes `.design/` before saving screenshots.

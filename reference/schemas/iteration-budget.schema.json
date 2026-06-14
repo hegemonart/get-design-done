@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/iteration-budget.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/reference/schemas/iteration-budget.schema.json",
   "title": "IterationBudget",
   "description": "Shape of .design/iteration-budget.json produced by scripts/lib/iteration-budget.cjs. Caps the number of fix-loop iterations that can consume context before the pipeline halts for user input. All mutations are coordinated by scripts/lib/lockfile.cjs and written via temp+rename. See .planning/phases/20-gdd-sdk-foundation/20-14-PLAN.md §Task 4.",
   "type": "object",

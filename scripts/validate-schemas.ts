@@ -72,7 +72,7 @@ function findRepoRoot(): string {
     try {
       const pkgPath: string = join(dir, 'package.json');
       const pkg: { name?: string } = JSON.parse(readFileSync(pkgPath, 'utf8')) as { name?: string };
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch {
       // not this level
     }
@@ -151,10 +151,10 @@ export const PAIRS: readonly Pair[] = [
     required: false,
   },
   {
-    name: 'mcp-gdd-state-tools',
-    schema: 'reference/schemas/mcp-gdd-state-tools.schema.json',
+    name: 'mcp-hone-state-tools',
+    schema: 'reference/schemas/mcp-hone-state-tools.schema.json',
     // The combined tool manifest is a codegen artifact — individual per-tool
-    // schemas live under sdk/mcp/gdd-state/schemas/ and are
+    // schemas live under sdk/mcp/hone-state/schemas/ and are
     // consumed directly by the server. Schema-compile only here so the
     // Draft-07 declaration stays valid as tools evolve. See Plan 20-05.
     data: null,

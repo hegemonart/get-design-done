@@ -6,7 +6,7 @@ tools: Read, Bash, Write
 disable-model-invocation: true
 ---
 
-# gdd-cache-manager
+# hone-cache-manager
 
 ## Role
 

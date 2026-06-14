@@ -1,6 +1,6 @@
 # paper.design MCP — Connection Specification
 
-This file is the connection specification for paper.design within the get-design-done pipeline. paper.design is a canvas tool — it treats the design canvas as both source AND destination, enabling a full canvas→code→verify→canvas round-trip. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for paper.design within the hone pipeline. paper.design is a canvas tool — it treats the design canvas as both source AND destination, enabling a full canvas→code→verify→canvas round-trip. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

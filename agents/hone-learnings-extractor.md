@@ -1,6 +1,6 @@
 ---
 name: hone-learnings-extractor
-description: "Extracts structured learning entries from .design/ artifacts (DESIGN-CONTEXT.md, DESIGN-VERIFICATION.md, DESIGN-DEBT.md, DESIGN-SUMMARY.md, CYCLES.md). Writes .design/learnings/LEARNINGS.md and proposes reference/ additions. Called by /gdd:extract-learnings."
+description: "Extracts structured learning entries from .design/ artifacts (DESIGN-CONTEXT.md, DESIGN-VERIFICATION.md, DESIGN-DEBT.md, DESIGN-SUMMARY.md, CYCLES.md). Writes .design/learnings/LEARNINGS.md and proposes reference/ additions. Called by /hone:extract-learnings."
 tools: Read, Write, Bash, Glob, Grep
 color: blue
 default-tier: sonnet
@@ -16,7 +16,7 @@ writes:
 
 # hone-learnings-extractor
 
-**Role:** Extract structured learning entries from the current cycle's `.design/` artifacts. Called by `/gdd:extract-learnings` - do not invoke directly.
+**Role:** Extract structured learning entries from the current cycle's `.design/` artifacts. Called by `/hone:extract-learnings` - do not invoke directly.
 
 ## Extraction targets
 
@@ -74,7 +74,7 @@ For each learning with `Proposed reference update: yes`:
 
 2. Draft the proposed section text in markdown format matching the reference file's existing heading style
 
-3. Return the proposals as a list to `/gdd:extract-learnings` for the user review flow
+3. Return the proposals as a list to `/hone:extract-learnings` for the user review flow
 
 ## Required reading (conditional)
 

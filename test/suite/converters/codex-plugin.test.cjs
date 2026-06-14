@@ -428,11 +428,25 @@ test('codex-plugin: Phase 28.7 codex.cjs is unchanged from HEAD (D-05)', (t) => 
   // raw blob bytes (LF). The D-05 invariant is semantic ("no content
   // change") not byte-level — line-ending normalization is OS-level, not
   // content drift. Strip \r from both sides to compare semantic content.
-  const normalize = (s) => s.replace(/\r\n/g, '\n');
+  //
+  // Phase 61 (Hone rebrand, REBRAND-09) is a SANCTIONED exception to the
+  // Phase-28.7 byte-freeze: the file-drop converter's brand prefix is renamed
+  // from legacy gdd- to hone- (the buildFrontmatter prefix arg + doc comment).
+  // We fold the same legacy-brand rename into BOTH sides so the D-05 invariant
+  // still enforces "no STRUCTURAL/behavioral drift" across the rename — any
+  // non-brand edit to codex.cjs still fails this test. The legacy literals
+  // below are intentional rename inputs (brand-gate-allowlisted as "legacy").
+  const normalize = (s) => s
+    .replace(/\r\n/g, '\n')
+    .replace(/get-design-done/g, 'hone') // legacy brand fold
+    .replace(/\/gdd-/g, '/hone-') // legacy brand fold
+    .replace(/\$gdd-/g, '$hone-') // legacy brand fold
+    .replace(/`gdd-/g, '`hone-') // legacy brand fold
+    .replace(/'gdd-'/g, "'hone-'"); // legacy brand fold
   assert.equal(
     normalize(current),
     normalize(head),
-    'D-05 violation: scripts/lib/install/converters/codex.cjs must be byte-identical to HEAD (Phase 28.7 file-drop converter untouched per CONTEXT D-05 additive)'
+    'D-05 violation: scripts/lib/install/converters/codex.cjs drifted beyond the sanctioned Phase 61 gdd→hone brand rename (Phase 28.7 file-drop converter must stay behaviorally untouched per CONTEXT D-05 additive)'
   );
 });
 

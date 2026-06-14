@@ -35,7 +35,7 @@ The `FailoverReason` enum in `scripts/lib/error-classifier.cjs` has eight values
 | Figma MCP probe           | live `get_metadata` call errors              | `network_transient` → jittered-backoff retry. `auth_error` → STOP with a reauth note. `rate_limited` → block then retry. |
 | Watch-authorities fetcher | per-feed HTTP fetch                          | Same policy as Figma probe; `validation` also possible on ETag stalemate (304). |
 | Update-check HTTP curl    | GitHub `releases/latest` fetch               | Silent failure by D-04 of Plan 13.3 - classify but don't surface; log and exit 0. |
-| MCP transport             | tool-call errors (gdd-state, figma, 21st-dev)| Map `tool_not_found` to a probe-reissue; map `auth_error` to STOP; retry transient classes via the caller's own loop. |
+| MCP transport             | tool-call errors (hone-state, figma, 21st-dev)| Map `tool_not_found` to a probe-reissue; map `auth_error` to STOP; retry transient classes via the caller's own loop. |
 
 ## Fix-loop iteration interaction
 
@@ -55,4 +55,4 @@ Every classification result that leads to a retry or a surfaced error should app
 { "type": "error.classified", "timestamp": "…", "sessionId": "…", "payload": { "reason": "rate_limited", "retryable": true, "caller": "figma-probe" } }
 ```
 
-The event subtype is defined in `scripts/lib/event-stream/types.ts`. Consumers (`gdd-reflector`, dashboard) aggregate by `reason` to detect classifier drift - if `unknown` spikes, the classifier needs tightening.
+The event subtype is defined in `scripts/lib/event-stream/types.ts`. Consumers (`hone-reflector`, dashboard) aggregate by `reason` to detect classifier drift - if `unknown` spikes, the classifier needs tightening.

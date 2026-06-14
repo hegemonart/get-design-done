@@ -4,7 +4,7 @@
  *
  * Pure + dep-free (D-02): no markdown library, no `paged`/`puppeteer`/`pdfkit`. Produces a
  * SINGLE self-contained HTML string — inline <style>, base64-embedded images, ZERO external
- * references — for the /gdd:export html + pdf formats (pdf = the same HTML + Paged.js-compatible
+ * references — for the /hone:export html + pdf formats (pdf = the same HTML + Paged.js-compatible
  * @page print CSS the user renders, never a bundled PDF runtime). Deterministic: same input →
  * byte-identical output (hermetic tests, D-07).
  */

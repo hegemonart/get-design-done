@@ -7,8 +7,8 @@
  * into Antigravity's expected shape (which nests under `~/.gemini/antigravity/`
  * per the runtime-homes resolver):
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose pass through as `/gdd-<name>` —
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose pass through as `/hone-<name>` —
  *     Antigravity accepts the Claude shape. Mixed-shape inputs are
  *     normalized via the runtime-slash module.
  *   - Tool names in code fences pass through unchanged — Antigravity
@@ -39,7 +39,7 @@ const shared = require('./shared.cjs');
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'antigravity');
   out = shared.ensureAdapterHeader(out, 'Antigravity');
   return fm + out;

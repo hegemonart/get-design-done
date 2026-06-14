@@ -7,7 +7,7 @@ tools: Read, Bash
 
 # {{command_prefix}}unpin
 
-**Role:** Remove the pinned shortcut aliases for one gdd skill from every installed harness `skills/` directory. Only stubs that carry the marker line `<!-- gdd-pinned-skill source=<skill> -->` as their first non-empty line are deleted, so a hand-authored or unrelated SKILL.md is never touched.
+**Role:** Remove the pinned shortcut aliases for one gdd skill from every installed harness `skills/` directory. Only stubs that carry the marker line `<!-- hone-pinned-skill source=<skill> -->` as their first non-empty line are deleted, so a hand-authored or unrelated SKILL.md is never touched.
 
 ## Steps
 

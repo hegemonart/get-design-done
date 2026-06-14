@@ -8,7 +8,7 @@ Typography · Keyboard/a11y · Motion · Do/Don't · Anti-patterns · Citations 
 
 **Harvest source list**: `connections/design-corpora.md` (18 systems)
 **Tooling**: `agents/component-benchmark-harvester.md` → `agents/component-benchmark-synthesizer.md`
-**CLI**: `/gdd:benchmark <component>` - see `skills/benchmark/SKILL.md`
+**CLI**: `/hone:benchmark <component>` - see `skills/benchmark/SKILL.md`
 
 ---
 

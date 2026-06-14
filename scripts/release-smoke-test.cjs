@@ -3,7 +3,7 @@
 // release-smoke-test.cjs — release-time smoke test per D-22.
 //
 // Validates that the freshly-checked-out tag produces a consistent plugin
-// surface. Runs deterministic (non-LLM) portions of /gdd:explore against
+// surface. Runs deterministic (non-LLM) portions of /hone:explore against
 // test/fixtures/src/ in an isolated temp dir and diffs resulting artifacts
 // against the provided baseline directory. Exit code:
 //   0 — zero diffs, zero missing artifacts
@@ -11,7 +11,7 @@
 //   2 — baseline not found / argument error
 //
 // Does NOT invoke the `claude` CLI (unavailable on stock GitHub runners).
-// The LLM-dependent portions of /gdd:explore are intentionally out of scope;
+// The LLM-dependent portions of /hone:explore are intentionally out of scope;
 // this smoke test covers the intel builder + static analysis surface.
 //
 // Usage:
@@ -47,7 +47,7 @@ if (!fs.existsSync(FIXTURE_SRC)) {
   process.exit(2);
 }
 
-const tmpDir = path.join(os.tmpdir(), `gdd-smoke-${Date.now()}`);
+const tmpDir = path.join(os.tmpdir(), `hone-smoke-${Date.now()}`);
 fs.mkdirSync(tmpDir, { recursive: true });
 
 // Snapshot REPO_ROOT/.design/ contents BEFORE the smoke test runs. This lets

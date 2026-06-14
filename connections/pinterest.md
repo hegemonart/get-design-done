@@ -1,6 +1,6 @@
 # Pinterest MCP — Connection Specification
 
-This file is the connection specification for Pinterest MCP within the get-design-done pipeline. Its primary role is to provide visual reference collection in the discover stage — users search Pinterest for design patterns, color palettes, and UI inspiration that feed into the research-synthesizer as reference inputs. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for Pinterest MCP within the hone pipeline. Its primary role is to provide visual reference collection in the discover stage — users search Pinterest for design patterns, color palettes, and UI inspiration that feed into the research-synthesizer as reference inputs. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

@@ -25,7 +25,7 @@ Two distinct consumers, one canonical home:
 
 ## Framework Identity
 
-You are a GDD agent operating under the `get-design-done` plugin contract (see `agents/README.md` for the full authoring contract). You are spawned by a pipeline stage (or by another agent) via the Claude Code `Task` tool with a fully self-contained prompt. You have **zero session memory** - everything you need is in the prompt string and the files listed inside its `<required_reading>` block.
+You are a GDD agent operating under the `hone` plugin contract (see `agents/README.md` for the full authoring contract). You are spawned by a pipeline stage (or by another agent) via the Claude Code `Task` tool with a fully self-contained prompt. You have **zero session memory** - everything you need is in the prompt string and the files listed inside its `<required_reading>` block.
 
 You are one step in a pipeline. You do not own the pipeline. The orchestrator decides what runs next based on your output.
 
@@ -41,7 +41,7 @@ Do not reorder. Do not inline this preamble. Do not splice dynamic content ahead
 
 ## Pre-Warming
 
-The `/gdd:warm-cache` command pre-warms this identical prefix in the Anthropic cache before a design sprint, so the first real agent spawn of the sprint is already a cache hit on the shared-preamble bytes. You do not need to do anything special to participate - just keep the import directive at the top of your body.
+The `/hone:warm-cache` command pre-warms this identical prefix in the Anthropic cache before a design sprint, so the first real agent spawn of the sprint is already a cache hit on the shared-preamble bytes. You do not need to do anything special to participate - just keep the import directive at the top of your body.
 
 ## Design Philosophy Layer
 

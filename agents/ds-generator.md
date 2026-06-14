@@ -25,7 +25,7 @@ Bootstrap a coherent design system for a **greenfield** project that has none - 
 
 ## When invoked
 
-By `/gdd:bootstrap-ds` (the skill collects the brand input). Also reachable when `design-context-builder` detects a greenfield project (no DS signals) and the user opts in.
+By `/hone:bootstrap-ds` (the skill collects the brand input). Also reachable when `design-context-builder` detects a greenfield project (no DS signals) and the user opts in.
 
 ## Inputs (brand input)
 

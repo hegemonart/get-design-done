@@ -354,9 +354,9 @@ function computeBaselineDrift(
 
 /**
  * Synchronous baseline parse. We want a stand-alone parser that works
- * on the baseline file without taking a lock — gdd-state's `read()` is
+ * on the baseline file without taking a lock — hone-state's `read()` is
  * async but lock-free, so we wrap it with a top-level await via
- * readFileSync + the gdd-state parser exports. Since parser.ts is not
+ * readFileSync + the hone-state parser exports. Since parser.ts is not
  * exported from the public index, we duplicate the minimal parse here:
  * grab the `<connections>` and `<must_haves>` blocks via regex. This is
  * fine because baseline audit tolerates a simplified shape — any

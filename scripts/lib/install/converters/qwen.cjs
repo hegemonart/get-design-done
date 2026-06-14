@@ -6,8 +6,8 @@
  * Qwen Code SKILL.md converter. Translates Claude-shape source into
  * Qwen's expected shape:
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose pass through as `/gdd-<name>` —
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose pass through as `/hone-<name>` —
  *     Qwen accepts the Claude shape. Mixed-shape inputs are normalized
  *     via the runtime-slash module.
  *   - Tool names in code fences pass through unchanged — per Phase 21
@@ -42,7 +42,7 @@ const shared = require('./shared.cjs');
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'qwen');
   out = shared.ensureAdapterHeader(out, 'Qwen');
   return fm + out;

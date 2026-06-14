@@ -6,14 +6,14 @@ user-invocable: true
 tools: Read, Write, Bash, Grep, Glob
 ---
 
-# gdd-paper-write
+# hone-paper-write
 
 Dispatches the `design-paper-writer` agent to write design decisions back to the active paper.design canvas. The shared probe pattern (ToolSearch → live call → STATE.md write) and connection handshake are documented at `../../reference/shared-preamble.md#connection-handshake-summary` and `../../connections/paper-design.md`.
 
 ## Usage
 
 ```
-/get-design-done paper-write <mode> [--dry-run]
+/hone:paper-write <mode> [--dry-run]
 ```
 
 Modes:
