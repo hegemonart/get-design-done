@@ -217,7 +217,7 @@ describe('Phase 28.8-Z1: README inventory references all 3 Tier-2 channels (D-04
     for (const readmeFile of README_FILES) {
       const content = read(readmeFile);
       // Channel name match is case-insensitive (translated text may vary case).
-      const hasAgentskills = /agentskills\.io/i.test(content);
+      const hasAgentskills = content.toLowerCase().includes('agentskills.io');
       const hasCursor = /cursor/i.test(content);
       // Literal command string per D-03 — must match exactly in every README
       // (commands are verbatim English even in translated files).

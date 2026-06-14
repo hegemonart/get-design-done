@@ -32,7 +32,7 @@ jobs:
         run: npx markdownlint-cli2 "**/*.md" "#node_modules" "#.planning" "#.claude" "#test/fixtures/baselines"
 
       - name: Link check (lychee)
-        uses: lycheeverse/lychee-action@v2
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2
         with:
           # .lycheeignore is auto-discovered at repo root. `--exclude 'file://'`
           # skips local-file link resolution (lychee resolves repo-root-relative
@@ -160,7 +160,7 @@ jobs:
           fi
 
       - name: Shellcheck
-        uses: ludeeus/action-shellcheck@2.0.0
+        uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
         with:
           severity: error
           scandir: scripts
@@ -230,7 +230,7 @@ jobs:
           node-version: 22
 
       - name: Gitleaks scan
-        uses: gitleaks/gitleaks-action@v3
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_ENABLE_COMMENTS: false

@@ -133,7 +133,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.release_check.outputs.exists != 'true'
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
         with:
           tag_name: v${{ needs.detect-version.outputs.version }}
           name: v${{ needs.detect-version.outputs.version }}
@@ -267,7 +267,7 @@ jobs:
       - name: Upload Tier-2 bundles as workflow artifact
         # Persist dist/ as a build artifact so marketplace-publish (or a manual
         # download) can consume the deterministic output without rebuilding.
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tier2-bundles-v${{ needs.detect-version.outputs.version }}
           path: dist/

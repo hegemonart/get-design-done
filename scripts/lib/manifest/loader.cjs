@@ -31,20 +31,29 @@ function load(name, opts) {
   const fallback = Object.prototype.hasOwnProperty.call(o, 'fallback') ? o.fallback : {};
   const abs = path.join(dir, `${name}.json`);
 
-  let stat;
-  try { stat = fs.statSync(abs); } catch {
+  // Open once and operate on the file descriptor (fstat for the mtime-cache key,
+  // then read from the same fd). A single handle resolves the path exactly once,
+  // at open, so there is no statSync→readFileSync TOCTOU window.
+  let fd;
+  try { fd = fs.openSync(abs, 'r'); } catch {
     if (!o.quiet) process.stderr.write(`manifest: ${name}.json not found — using empty fallback (a consumer phase may not have shipped its data yet)\n`);
     return fallback;
   }
-  const cached = _cache.get(abs);
-  if (cached && cached.mtimeMs === stat.mtimeMs) return cached.data;
   try {
-    const data = JSON.parse(fs.readFileSync(abs, 'utf8'));
-    _cache.set(abs, { mtimeMs: stat.mtimeMs, data });
-    return data;
-  } catch (e) {
-    if (!o.quiet) process.stderr.write(`manifest: ${name}.json parse error (${e.message}) — using empty fallback\n`);
-    return fallback;
+    const stat = fs.fstatSync(fd);
+    const cached = _cache.get(abs);
+    if (cached && cached.mtimeMs === stat.mtimeMs) return cached.data;
+    const raw = fs.readFileSync(fd, 'utf8');
+    try {
+      const data = JSON.parse(raw);
+      _cache.set(abs, { mtimeMs: stat.mtimeMs, data });
+      return data;
+    } catch (e) {
+      if (!o.quiet) process.stderr.write(`manifest: ${name}.json parse error (${e.message}) — using empty fallback\n`);
+      return fallback;
+    }
+  } finally {
+    fs.closeSync(fd);
   }
 }
 

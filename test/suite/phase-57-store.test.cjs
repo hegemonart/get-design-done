@@ -365,17 +365,26 @@ test('57-A: txn rollback on forced render throw leaves SQLite unchanged', () => 
     // in the scripts/lib/state/ directory ONLY if there isn't one already
     // (we must not clobber Executor C's real file).
     const renderModPath = path.join(REPO_ROOT, 'scripts', 'lib', 'state', 'render-markdown.cjs');
-    const renderExists = fs.existsSync(renderModPath);
 
-    if (!renderExists) {
-      // Create a temporary broken render module to test rollback.
+    // Atomically create the broken module ONLY if absent (flag 'wx'): a
+    // successful write means we own a temporary stub and should run the
+    // rollback test; an EEXIST means Executor C's real file is present and we
+    // take the skip branch. This collapses the existsSync→writeFileSync TOCTOU
+    // race (and guarantees we never clobber the real file).
+    let createdRenderStub = false;
+    try {
       fs.writeFileSync(renderModPath, `
         'use strict';
         module.exports = {
           renderStateMarkdown: function() { throw new Error('render-test-failure'); }
         };
-      `, 'utf8');
+      `, { encoding: 'utf8', flag: 'wx' });
+      createdRenderStub = true;
+    } catch (e) {
+      if (e.code !== 'EEXIST') throw e;
+    }
 
+    if (createdRenderStub) {
       // Clear the require cache so the store picks up the new module.
       delete require.cache[require.resolve(renderModPath)];
       delete require.cache[require.resolve(storePath)];

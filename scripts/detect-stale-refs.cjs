@@ -46,7 +46,6 @@ const EXCLUDE_FILES = new Set([
 ]);
 
 function ensureDeprecationsExists() {
-  if (fs.existsSync(DEPRECATIONS_PATH)) return;
   const stub = [
     '# Deprecated Namespaces and Names',
     '',
@@ -65,7 +64,13 @@ function ensureDeprecationsExists() {
     '',
   ].join('\n');
   fs.mkdirSync(path.dirname(DEPRECATIONS_PATH), { recursive: true });
-  fs.writeFileSync(DEPRECATIONS_PATH, stub, 'utf8');
+  // Atomic create-if-missing via the 'wx' flag (no existsSync→write TOCTOU
+  // race): an existing file yields EEXIST, which we treat as "already present".
+  try {
+    fs.writeFileSync(DEPRECATIONS_PATH, stub, { encoding: 'utf8', flag: 'wx' });
+  } catch (e) {
+    if (e.code !== 'EEXIST') throw e;
+  }
 }
 
 function walk(dir, out) {

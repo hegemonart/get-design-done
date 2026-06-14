@@ -58,8 +58,12 @@ function readConfig(configPath) {
 //   <binary> mcp add <name> ... -> persists <name>, exit 0
 function persistingSpawnFn(binary, configPath) {
   // Ensure the file exists with an empty registry up front.
-  if (!fs.existsSync(configPath)) {
-    fs.writeFileSync(configPath, JSON.stringify({ servers: {} }) + '\n');
+  // Use the 'wx' flag so the create-if-missing is atomic (no existsSync→write
+  // TOCTOU race); an already-present file is left untouched.
+  try {
+    fs.writeFileSync(configPath, JSON.stringify({ servers: {} }) + '\n', { flag: 'wx' });
+  } catch (e) {
+    if (e.code !== 'EEXIST') throw e;
   }
   return (cmdBinary, args) => {
     if (cmdBinary !== binary) {

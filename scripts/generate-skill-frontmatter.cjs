@@ -205,7 +205,15 @@ function modeForward(check) {
 }
 
 function modeExtract() {
-  const existing = fs.existsSync(SKILLS_JSON) ? readSkillsJson() : { schema_version: 1, skills: [] };
+  // Read directly and treat a missing skills.json as the empty-default seed —
+  // avoids the existsSync→readFileSync TOCTOU race.
+  let existing;
+  try {
+    existing = readSkillsJson();
+  } catch (e) {
+    if (e.code !== 'ENOENT') throw e;
+    existing = { schema_version: 1, skills: [] };
+  }
   const prevMap = recordMap(existing);
   const dirs = listSkillDirs();
   const skills = [];

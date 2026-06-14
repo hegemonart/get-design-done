@@ -27,7 +27,7 @@ test('37.1-03: connections index — 6 Active rows + matrix categories (count-ag
   // count-agnostic: later phases grow the onboarded count — freeze the Wave-2 rows, not the number.
   assert.match(c, /probes all \d+ connections/, 'intro probes all N connections');
   for (const [name] of [['Framer'], ['Penpot'], ['Webflow'], ['v0.dev'], ['Plasmic'], ['Builder.io']]) {
-    assert.match(c, new RegExp(`\\| ${name.replace('.', '\\.')} \\| Active \\|`), `${name} Active row`);
+    assert.ok(c.includes(`| ${name} | Active |`), `${name} Active row`);
   }
   // matrix categories: framer/penpot → canvas ✓; v0/builder-io → generator; plasmic → both
   assert.match(c, /\| Framer \| —[\s\S]*?canvas source[\s\S]*?\| ✓ \| — \| — \| — \|/, 'Framer canvas');
