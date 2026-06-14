@@ -13,7 +13,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/hegemonart/get-design-done/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI)](https://github.com/hegemonart/get-design-done/actions/workflows/ci.yml)
 [![GitHub stars](https://img.shields.io/github/stars/hegemonart/get-design-done?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/get-design-done)
 [![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=for-the-badge)](LICENSE)
 
 ```bash
 npx @hegemonart/get-design-done@latest
@@ -390,7 +390,7 @@ Read: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details. Third-party attributions are listed in [NOTICE](NOTICE).
+Apache-2.0 License. See [LICENSE](LICENSE) for details. Third-party attributions are listed in [NOTICE](NOTICE).
 
 ---
 

@@ -1,7 +1,7 @@
 'use strict';
 // scripts/lib/mcp-tools-lint/index.cjs
 // ---------------------------------------------------------------------------
-// Plan 27.7-03 — static lint for the gdd-mcp tools directory.
+// Plan 27.7-03 — static lint for the hone-mcp tools directory.
 //
 // 4 invariants enforced (origin: Phase 27.7 CONTEXT decisions):
 //
@@ -21,7 +21,7 @@
 //                           clear|write|set)(_|$)/ is rejected. The MCP
 //                           server is read-only by design.
 //
-//   tool-count-cap (D-03):  ≤ 12 files matching `gdd_*.ts` glob in the
+//   tool-count-cap (D-03):  ≤ 12 files matching `hone_*.ts` glob in the
 //                           tools directory. Hard cap. Adding a 13th tool
 //                           requires re-scoping in a new plan.
 //
@@ -29,7 +29,7 @@
 //   lintMcpToolsDir({dir, maxLoc?, toolCap?, exemptions?}) →
 //     { violations: LintViolation[], summary: { files_scanned, violations_count } }
 //
-// Consumed by tests/gdd-mcp-tools-lint.test.cjs and
+// Consumed by tests/hone-mcp-tools-lint.test.cjs and
 // tests/phase-27-7-baseline.test.cjs (Plan 27.7-07).
 
 const fs = require('node:fs');
@@ -38,9 +38,9 @@ const path = require('node:path');
 const DEFAULT_EXEMPTIONS = new Set(['index.ts', 'shared.ts']);
 const DEFAULT_MAX_LOC = 30;
 // Raised 12 -> 13 in Phase 52 (DesignContext keystone, D5) for the read-only
-// `gdd_context_query` tool. Mirrors the cap in sdk/mcp/gdd-mcp/tools/index.ts.
+// `hone_context_query` tool. Mirrors the cap in sdk/mcp/hone-mcp/tools/index.ts.
 const DEFAULT_TOOL_CAP = 13;
-const TOOL_FILE_GLOB = /^gdd_[a-z0-9_]+\.ts$/;
+const TOOL_FILE_GLOB = /^hone_[a-z0-9_]+\.ts$/;
 
 const FORBIDDEN_IMPORT_PATTERNS = Object.freeze([
   /from\s+['"]node:fs['"]/,
@@ -56,8 +56,8 @@ const FORBIDDEN_IMPORT_PATTERNS = Object.freeze([
 ]);
 
 // Write-verb pattern: matches when the verb is preceded by `_` and either
-// followed by `_` or end-of-string. e.g. `gdd_decision_append` matches;
-// `gdd_appendix_list` does NOT (the verb must be the trailing token of a
+// followed by `_` or end-of-string. e.g. `hone_decision_append` matches;
+// `hone_appendix_list` does NOT (the verb must be the trailing token of a
 // `_`-separated name).
 const WRITE_NAME_PATTERN = /_(create|update|delete|append|clear|write|set)(?:_|$)/;
 
@@ -146,7 +146,7 @@ function lintMcpToolsDir(opts) {
   const entries = fs.readdirSync(dir);
   const tsFiles = entries.filter((e) => e.endsWith('.ts'));
 
-  // Rule D — tool-count-cap (matches `gdd_*.ts` files only; index/shared
+  // Rule D — tool-count-cap (matches `hone_*.ts` files only; index/shared
   // never count toward the cap).
   const toolFiles = entries.filter((e) => TOOL_FILE_GLOB.test(e));
   if (toolFiles.length > toolCap) {

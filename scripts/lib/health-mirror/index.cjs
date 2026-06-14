@@ -18,7 +18,7 @@
 //   7. skill_discipline     — using-gdd bootstrap + SessionStart inject (Plan 32-07)
 //   8. harness_freshness    — per-harness last_verified age (Phase 44)
 //   9. stack_addendums      — Phase 54 coverage: N/M detected stacks have addendums
-//  10. dashboard_reachable  — Phase 55: bin/gdd-dashboard on disk + data plane loads
+//  10. dashboard_reachable  — Phase 55: bin/hone-dashboard on disk + data plane loads
 //
 // Check 5 was added in Plan 30-06 — surfaces the report-issue kill-switch
 // (env or config disable) so users can verify why the command is
@@ -55,12 +55,12 @@
 // is wired. GRACEFUL-ABSENT by design (D-8 risk surfacing precedent): the
 // dashboard is an opt-in, read-only surface that also works via file-scrape, so
 // a missing bin or absent data plane is a 'warn' (actionable note), NEVER a
-// hard 'fail'. The status is 'ok' when BOTH the bin/gdd-dashboard trampoline
+// hard 'fail'. The status is 'ok' when BOTH the bin/hone-dashboard trampoline
 // resolves on disk (located via a package-root walk-up — the Phase 53/54 lesson,
 // NEVER a fixed __dirname jump) AND the dashboard data plane module
 // (sdk/dashboard/data/source.cjs) loads + exposes loadDashboardModel. The detail
 // line is one of:
-//   - "dashboard: bin/gdd-dashboard present; data plane ok"
+//   - "dashboard: bin/hone-dashboard present; data plane ok"
 //   - "dashboard: bin missing"                 (trampoline not on disk)
 //   - "dashboard: data plane unavailable"      (bin present, source.cjs absent)
 //   - "dashboard: bin missing; data plane unavailable"
@@ -328,7 +328,7 @@ async function getHealthChecks(rootDir) {
   }
 
   // 10. dashboard_reachable — Phase 55. GRACEFUL-ABSENT: reports whether the
-  // GDD dashboard entrypoint is wired (bin/gdd-dashboard on disk) AND its data
+  // GDD dashboard entrypoint is wired (bin/hone-dashboard on disk) AND its data
   // plane module loads. NEVER 'fail' — a missing bin is a 'warn' note because
   // the dashboard is opt-in and also works via file-scrape. PURE read-only
   // (fs.statSync + a wrapped require); NEVER throws, NEVER networks.
@@ -341,7 +341,7 @@ async function getHealthChecks(rootDir) {
       const dataPlaneOk = dashboardDataPlaneLoads(gddRoot);
       if (binPresent && dataPlaneOk) {
         status = 'ok';
-        detail = 'dashboard: bin/gdd-dashboard present; data plane ok';
+        detail = 'dashboard: bin/hone-dashboard present; data plane ok';
       } else {
         status = 'warn';
         if (!binPresent && !dataPlaneOk) {
@@ -518,18 +518,18 @@ function resolveDashboardRoot(rootDir) {
 }
 
 /**
- * Does the bin/gdd-dashboard trampoline resolve on disk under the authoritative
+ * Does the bin/hone-dashboard trampoline resolve on disk under the authoritative
  * GDD root? (Phase 55, check 10.) `fs.statSync` follows symlinks, so an npm
  * bin-linked trampoline (a symlink resolving to a file) counts as present. PURE
  * read-only; NEVER throws.
  *
  * @param {string} gddRoot authoritative GDD root (or null)
- * @returns {boolean} true iff bin/gdd-dashboard is present on disk
+ * @returns {boolean} true iff bin/hone-dashboard is present on disk
  */
 function dashboardBinResolves(gddRoot) {
   if (!gddRoot) return false;
   try {
-    return fs.statSync(path.join(gddRoot, 'bin', 'gdd-dashboard')).isFile();
+    return fs.statSync(path.join(gddRoot, 'bin', 'hone-dashboard')).isFile();
   } catch {
     return false;
   }

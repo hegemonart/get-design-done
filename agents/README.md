@@ -69,7 +69,7 @@ color: blue
 
 **Introduced in v1.26.0.** Agents may carry an optional `reasoning-class: high|medium|low` field as a runtime-neutral alias for `default-tier`. The alias exists because `default-tier`'s enum (`opus|sonnet|haiku`) hard-codes Anthropic model names, while the multi-runtime installer ships agents to 14 runtimes whose authors do not all use those names. `reasoning-class` describes the *reasoning density* the agent needs without naming a vendor's model lineup.
 
-**This field is additive, not a replacement.** `default-tier: opus|sonnet|haiku` remains the authoritative, required field for v1.26 and is the source of truth that `hooks/budget-enforcer.ts`, `skills/router/SKILL.md`, and `agents/gdd-intel-updater.md` read. Both fields may coexist on the same agent during the transition window. The long-term winner - which field is canonical and which is deprecated - is data-gated by future measurement of adoption rates; no deprecation lands in v1.26.
+**This field is additive, not a replacement.** `default-tier: opus|sonnet|haiku` remains the authoritative, required field for v1.26 and is the source of truth that `hooks/budget-enforcer.ts`, `skills/router/SKILL.md`, and `agents/hone-intel-updater.md` read. Both fields may coexist on the same agent during the transition window. The long-term winner - which field is canonical and which is deprecated - is data-gated by future measurement of adoption rates; no deprecation lands in v1.26.
 
 ### Frontmatter shape
 
@@ -104,17 +104,17 @@ When both are present, the values MUST be equivalent per the table above. Mismat
 
 ### How runtime-aware tooling reads either field
 
-Downstream consumers (`skills/router/SKILL.md`, `hooks/budget-enforcer.ts`, `scripts/lib/budget-enforcer.cjs`, `agents/gdd-intel-updater.md`) accept either field individually and map between them via the equivalence table:
+Downstream consumers (`skills/router/SKILL.md`, `hooks/budget-enforcer.ts`, `scripts/lib/budget-enforcer.cjs`, `agents/hone-intel-updater.md`) accept either field individually and map between them via the equivalence table:
 
 - **`default-tier` only** - consumers read `default-tier` directly. This is the v1.26 baseline state for all 26 shipped agents.
 - **`reasoning-class` only** - consumers map `high → opus`, `medium → sonnet`, `low → haiku` and feed the resulting tier into `tier-resolver.cjs` for runtime-correct model resolution. Consumers that have not yet been updated to read `reasoning-class` natively still see a valid `default-tier` semantically (via the alias), so no consumer breaks when an agent author chooses the runtime-neutral name.
-- **Both present** - consumers prefer `default-tier` for now (v1.26 canonical), with `reasoning-class` carried through to telemetry (`gdd-intel-updater` writes both fields to `.design/intel/agent-tiers.json`) so adoption can be measured for the future deprecation gate.
+- **Both present** - consumers prefer `default-tier` for now (v1.26 canonical), with `reasoning-class` carried through to telemetry (`hone-intel-updater` writes both fields to `.design/intel/agent-tiers.json`) so adoption can be measured for the future deprecation gate.
 
 ### Rollout policy for v1.26
 
 - The 26 existing agents continue to carry `default-tier` only - **no per-agent retrofit lands in v1.26**. New agents MAY carry `reasoning-class` instead of, or alongside, `default-tier`.
 - Validators, intel-updater, router, and budget-enforcer accept either field starting in v1.26.
-- Adoption is measured by `gdd-intel-updater` over `agents/*.md` changes; if alias adoption stays below 50% at the deprecation review, `default-tier` remains canonical and the alias is deprecated. If alias wins majority share, the reverse. **No deprecation in v1.26.**
+- Adoption is measured by `hone-intel-updater` over `agents/*.md` changes; if alias adoption stays below 50% at the deprecation review, `default-tier` remains canonical and the alias is deprecated. If alias wins majority share, the reverse. **No deprecation in v1.26.**
 
 ### Cross-references
 

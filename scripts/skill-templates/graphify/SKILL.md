@@ -30,10 +30,10 @@ Thin command wrapper around the get-design-done (GDD) graphify tools integration
    ```
    STOP.
 4. Execute the requested subcommand via the native CLI:
-   - build:  `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" build`
-   - query:  `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" query "<term>" --budget 2000`
-   - status: `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" status`
-   - diff:   `node "${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph" diff`
+   - build:  `node "${CLAUDE_PLUGIN_ROOT}/bin/hone-graph" build`
+   - query:  `node "${CLAUDE_PLUGIN_ROOT}/bin/hone-graph" query "<term>" --budget 2000`
+   - status: `node "${CLAUDE_PLUGIN_ROOT}/bin/hone-graph" status`
+   - diff:   `node "${CLAUDE_PLUGIN_ROOT}/bin/hone-graph" diff`
 5. After `build` completes, update `.design/STATE.md` `<connections>`: `graphify: available`
 
 ## Required Reading
@@ -43,7 +43,7 @@ Thin command wrapper around the get-design-done (GDD) graphify tools integration
 
 ## Notes
 
-- Graphify is optional. The native CLI ships with the plugin at `${CLAUDE_PLUGIN_ROOT}/bin/gdd-graph` (no external install - Node only).
+- Graphify is optional. The native CLI ships with the plugin at `${CLAUDE_PLUGIN_ROOT}/bin/hone-graph` (no external install - Node only).
 - Graph is stored at `.design/graph/graph.json` (Ajv-validated against `scripts/lib/graph/schema.json`).
 - Graph covers source code (`src/`, `components/`). It does NOT index `.design/` artifacts by default.
 - Use `query` with node IDs from the graph schema: `component:<name>`, `token:color/<name>`, `decision:D-<nn>`, etc.

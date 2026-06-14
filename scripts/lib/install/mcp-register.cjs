@@ -1,17 +1,21 @@
 'use strict';
 // scripts/lib/install/mcp-register.cjs
 // ---------------------------------------------------------------------------
-// Plan 27.7-04 — registers gdd's MCP servers with the two harnesses that
+// Plan 27.7-04 — registers Hone's MCP servers with the two harnesses that
 // matter (Claude Code, Codex) and detects existing registration. Idempotent;
 // graceful absent-CLI fallback (D-07).
 //
-// Phase 59.1 — MCP parity: gdd ships TWO MCP servers, both registered here:
-//   - gdd-mcp   (read-only project tools; launch command `gdd-mcp`)
-//   - gdd-state (typed STATE mutators;   launch command `gdd-state-mcp`)
+// Phase 59.1 — MCP parity: Hone ships TWO MCP servers, both registered here:
+//   - hone-mcp   (read-only project tools; launch command `hone-mcp`)
+//   - hone-state (typed STATE mutators;   launch command `hone-state-mcp`)
 // Each server is described in MCP_SERVERS as {name, launchCommand}. The
 // per-harness add-args are built per server so the registration name and the
-// launch command can differ (gdd-state registers under `gdd-state` but is
-// launched via the `gdd-state-mcp` bin).
+// launch command can differ (hone-state registers under `hone-state` but is
+// launched via the `hone-state-mcp` bin).
+//
+// Phase 61 rebrand (REBRAND-05): the server ids + launch bins are sourced from
+// the frozen identity seam (scripts/lib/pkg-identity.cjs) — single source of
+// truth so a future rename is a one-place edit, not a re-hardcode here.
 //
 // Pure library — no side effects on require. Invoked by:
 //   - scripts/install.cjs --register-mcp (opt-in; default off per D-07)
@@ -27,12 +31,19 @@
 
 const { spawnSync } = require('node:child_process');
 
-// The set of MCP servers gdd registers. `name` is the registration name (and
+const {
+  MCP_SERVER_PRIMARY,
+  MCP_SERVER_STATE,
+  MCP_STATE_LAUNCH_BIN,
+} = require('../pkg-identity.cjs');
+
+// The set of MCP servers Hone registers. `name` is the registration name (and
 // what appears in `<binary> mcp list`); `launchCommand` is the bin on PATH the
-// harness spawns. For gdd-mcp the two coincide; for gdd-state they differ.
+// harness spawns. For hone-mcp the two coincide; for hone-state they differ.
+// Names/bins come from the frozen identity seam (Phase 61, REBRAND-05).
 const MCP_SERVERS = Object.freeze([
-  Object.freeze({ name: 'gdd-mcp', launchCommand: 'gdd-mcp' }),
-  Object.freeze({ name: 'gdd-state', launchCommand: 'gdd-state-mcp' }),
+  Object.freeze({ name: MCP_SERVER_PRIMARY, launchCommand: MCP_SERVER_PRIMARY }),
+  Object.freeze({ name: MCP_SERVER_STATE, launchCommand: MCP_STATE_LAUNCH_BIN }),
 ]);
 
 // Back-compat: the original single-server name. Retained for existing
@@ -49,21 +60,27 @@ function codexAddArgs(server) {
   return ['mcp', 'add', server.name, '--', server.launchCommand];
 }
 
+// Word-boundary matcher for the primary server name in `mcp list` stdout.
+// Built from the seam so the rename stays single-sourced (Phase 61).
+const PRIMARY_LIST_PATTERN = new RegExp(
+  '\\b' + MCP_SERVER_PRIMARY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b',
+);
+
 const HARNESSES = Object.freeze({
   claude: Object.freeze({
     binary: 'claude',
     addArgsFor: claudeAddArgs,
-    // Back-compat: addArgs for the primary (gdd-mcp) server.
+    // Back-compat: addArgs for the primary (hone-mcp) server.
     addArgs: Object.freeze(claudeAddArgs(MCP_SERVERS[0])),
     listArgs: Object.freeze(['mcp', 'list']),
-    listMatchPattern: /\bgdd-mcp\b/,
+    listMatchPattern: PRIMARY_LIST_PATTERN,
   }),
   codex: Object.freeze({
     binary: 'codex',
     addArgsFor: codexAddArgs,
     addArgs: Object.freeze(codexAddArgs(MCP_SERVERS[0])),
     listArgs: Object.freeze(['mcp', 'list']),
-    listMatchPattern: /\bgdd-mcp\b/,
+    listMatchPattern: PRIMARY_LIST_PATTERN,
   }),
 });
 
@@ -121,7 +138,7 @@ function detectHarnessPresent(harness, spawnFn = spawnSync) {
 /**
  * Detect whether a given MCP server is already registered with the harness.
  * Runs `<binary> mcp list` and matches against the server's name. When
- * `serverName` is omitted, falls back to the harness's primary (gdd-mcp)
+ * `serverName` is omitted, falls back to the harness's primary (hone-mcp)
  * pattern for back-compat with the original single-server signature.
  *
  * @param {'claude'|'codex'} harness
@@ -221,7 +238,7 @@ function registerOneServer(harness, server, { mode, dryRun, spawnFn }) {
  * The harness CLI presence is checked ONCE; if absent, no servers are
  * registered. Otherwise each server in MCP_SERVERS is registered (idempotent
  * per server). The return value keeps the original single-server fields at the
- * top level (mirroring the primary gdd-mcp server) for back-compat, and adds a
+ * top level (mirroring the primary hone-mcp server) for back-compat, and adds a
  * `servers` array carrying the per-server results.
  *
  * @param {object} opts

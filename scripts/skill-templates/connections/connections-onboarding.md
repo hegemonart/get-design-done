@@ -159,7 +159,7 @@ Bash: command -v chromatic >/dev/null 2>&1 || npx --yes chromatic --version 2>/d
 ```
 Bash: node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
   → false → graphify: not_configured
-  → true  → Bash: node bin/gdd-graph status --format json
+  → true  → Bash: node bin/hone-graph status --format json
                    → { configured: true, exists: false } → graphify: unavailable
                    → { configured: true, exists: true }  → graphify: available
 ```
