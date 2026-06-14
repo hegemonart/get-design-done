@@ -104,6 +104,9 @@ function lineBearsDeferredHookStem(line) {
 // Full-path allowlist test (rules 4/5/6).
 function isFullPathAllowlisted(relPath) {
   const p = relPath.replace(/\\/g, '/');
+  // rule 0 (self): this scanner's own source necessarily contains every brand
+  // token it searches for (the regexes + allowlist examples). Exclude it.
+  if (p === 'scripts/validate-no-stale-brand.cjs') return true;
   if (p === 'CHANGELOG.md') return true;                 // rule 4
   if (/(^|\/)baselines\//.test(p)) return true;          // rule 5
   if (p.startsWith('test/fixtures/')) return true;       // rule 5
