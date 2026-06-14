@@ -62,7 +62,7 @@ npx @hegemonart/get-design-done@latest
 ### Claude Code
 
 ```bash
-/plugin marketplace add hegemonart/get-design-done
+/plugin marketplace add hegemonart/hone
 /plugin install get-design-done@get-design-done
 /reload-plugins
 ```
@@ -70,7 +70,7 @@ npx @hegemonart/get-design-done@latest
 ### Codex
 
 ```bash
-codex plugin marketplace add hegemonart/get-design-done
+codex plugin marketplace add hegemonart/hone
 ```
 
 ### agentskills.io

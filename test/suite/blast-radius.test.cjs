@@ -9,7 +9,7 @@ const { REPO_ROOT } = require('./helpers.ts');
 const { estimate, estimateMCPCalls, loadConfig, formatDiffSummary, DEFAULTS } = require(path.join(REPO_ROOT, 'scripts', 'lib', 'blast-radius.cjs'));
 
 function scaffoldCfg(configJson) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-br-test-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-br-test-'));
   const designDir = path.join(dir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
   if (configJson !== undefined) {
@@ -108,7 +108,7 @@ test('blast-radius: config override from .design/config.json.blast_radius takes 
 });
 
 test('blast-radius: malformed config falls back to defaults', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-br-bad-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-br-bad-'));
   const designDir = path.join(dir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
   fs.writeFileSync(path.join(designDir, 'config.json'), 'not-json', 'utf8');

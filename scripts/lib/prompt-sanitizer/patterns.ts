@@ -57,19 +57,21 @@ const AT_PREFIX: SanitizePattern = {
 };
 
 /**
- * `/gdd:` slash-command invocations. No dispatch target exists in a headless
- * session — CC's slash-command router is a CC-only construct. Trailing args
- * on the same line are consumed.
+ * `/hone:` (and legacy-alias `/gdd:`) slash-command invocations. No dispatch
+ * target exists in a headless session — CC's slash-command router is a CC-only
+ * construct. Trailing args on the same line are consumed.
  *
- * Example: `Run /gdd:progress` → `Run (slash command removed)`.
+ * Example: `Run /hone:progress` → `Run (slash command removed)`.
  */
 const SLASH_CMD: SanitizePattern = {
   // NOTE: trailing-arg group uses [ \t]+ not \s+ to avoid eating the final
-  // newline on `Run /gdd:progress\n` style inputs (the \s class includes \n).
+  // newline on `Run /hone:progress\n` style inputs (the \s class includes \n).
+  // Phase 61 rebrand: match both the canonical `hone` brand and the still-
+  // accepted legacy `gdd` command alias.
   name: 'slash-cmd',
-  match: /\/gdd:[a-z-]+(?:[ \t]+[^\n]*)?/g,
+  match: /\/(?:hone|gdd):[a-z-]+(?:[ \t]+[^\n]*)?/g,
   replace: '(slash command removed)',
-  description: '/gdd:command invocations (stripped — no dispatch target in headless mode)',
+  description: '/hone:command (and legacy /gdd:) invocations (stripped — no dispatch target in headless mode)',
 };
 
 /**

@@ -1,11 +1,11 @@
 ---
-name: gdd-settings
+name: hone-settings
 description: "Manage .design/config.json settings. Subcommands: profile, parallelism, cleanup, show."
 argument-hint: "<profile <name>|parallelism <key> <value>|cleanup|show>"
 tools: Read, Write, AskUserQuestion, Bash
 ---
 
-# gdd-settings
+# hone-settings
 
 Manages `.design/config.json` — the per-project config for model profile and parallelism. See `reference/config-schema.md` for the full schema.
 

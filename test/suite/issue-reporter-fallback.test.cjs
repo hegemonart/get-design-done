@@ -119,7 +119,7 @@ function makeSpawnAsyncSpy({ exitCode = 0, beforeClose = null } = {}) {
 }
 
 function mkTmpDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-30-06-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-30-06-'));
 }
 
 function rmDir(dir) {

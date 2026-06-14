@@ -5,7 +5,7 @@
 //   - All 11 plan surfaces from Phase 27 (acp/asp clients, spawn-cmd, broker,
 //     5 adapters, registry, capability-matrix doc, validate-frontmatter
 //     delegate_to, session-runner peer-first, bandit delegate dim, event
-//     chain runtime_role, /gdd:peers, customize/add skills, peerBinary).
+//     chain runtime_role, /hone:peers, customize/add skills, peerBinary).
 //   - Manifest alignment via the version-agnostic shape (Phase 27 D-12).
 //   - CHANGELOG `## [1.27.0]` block exists.
 //   - NOTICE Apache 2.0 attribution to cc-multi-cli.
@@ -119,7 +119,7 @@ test('phase-27 baseline: budget-enforcer threads runtime_role + peer_id (Plan 27
 
 // --- Wave D: UX (plans 27-09, 27-10, 27-11) ─────────────────────────────
 
-test('phase-27 baseline: /gdd:peers skill exists (Plan 27-09)', () => {
+test('phase-27 baseline: /hone:peers skill exists (Plan 27-09)', () => {
   assert.ok(exists('skills/peers/SKILL.md'));
   assert.match(read('skills/peers/SKILL.md'), /capability matrix|Capability Matrix/i);
 });

@@ -1,5 +1,11 @@
 'use strict';
 
+// Phase 61 rebrand: consume the brand seam so the installed skill name carries
+// the canonical `hone-` prefix instead of the hardcoded legacy `gdd-`. The
+// converters pass `SKILL_PREFIX` through to buildFrontmatter (replacing the
+// historical `'gdd-'` literal).
+const { SKILL_PREFIX } = require('../../pkg-identity.cjs');
+
 /**
  * scripts/lib/install/converters/shared.cjs — Phase 28.7 (Plan 28.7-04).
  *
@@ -190,11 +196,12 @@ function rewriteSlashRefs(body, targetRuntime) {
   const rt = targetRuntime || 'claude';
 
   const segments = splitByCodeFence(body);
-  // Pattern: optional `/` or `$` prefix, `gdd-` or `gdd:`, then the
+  // Pattern: optional `/` or `$` prefix, the canonical `hone-`/`hone:` brand
+  // (or the legacy `gdd-`/`gdd:` alias, still accepted on input), then the
   // skill-name token. Skill names are lowercase + dashes + digits per
-  // GDD convention; the regex is case-insensitive on the `gdd` letters
-  // to accept malformed inputs.
-  const slashRe = /[/$]?gdd[-:][a-z][a-z0-9-]*/gi;
+  // convention; the regex is case-insensitive on the brand letters to accept
+  // malformed inputs. formatGddSlash re-emits the canonical `hone` form.
+  const slashRe = /[/$]?(?:hone|gdd)[-:][a-z][a-z0-9-]*/gi;
 
   for (let i = 0; i < segments.length; i++) {
     // Even indices are prose; odd are fenced code blocks (passthrough).
@@ -328,10 +335,15 @@ function ensureAdapterHeader(body, runtimeDisplay) {
  * @returns {string}
  */
 function buildFrontmatter(originalFrontmatter, skillName, runtimePrefix) {
-  const prefix = String(runtimePrefix || '');
-  // Normalize input name: strip any prior gdd-/gsd- prefix (case-insensitive)
-  // so we never emit gdd-gdd-foo.
-  const bareName = String(skillName || '').replace(/^(gdd-|gsd-)/i, '');
+  // Phase 61 rebrand: callers historically pass the legacy `'gdd-'` literal
+  // (and the D-05 frozen file-drop converters MUST stay byte-identical, so we
+  // cannot edit their call sites). Normalize any legacy brand prefix to the
+  // canonical seam value here so the emitted `name:` carries `hone-`.
+  let prefix = String(runtimePrefix || '');
+  if (/^(gdd-|gsd-)$/i.test(prefix)) prefix = SKILL_PREFIX;
+  // Normalize input name: strip any prior hone-/gdd-/gsd- prefix
+  // (case-insensitive) so we never emit hone-hone-foo (or legacy gdd-gdd-foo).
+  const bareName = String(skillName || '').replace(/^(hone-|gdd-|gsd-)/i, '');
   const finalName = prefix + bareName;
 
   if (!originalFrontmatter || originalFrontmatter.trim() === '') {
@@ -374,4 +386,5 @@ module.exports = {
   ensureAdapterHeader,
   buildFrontmatter,
   CODEX_TOOL_MAP,
+  SKILL_PREFIX,
 };

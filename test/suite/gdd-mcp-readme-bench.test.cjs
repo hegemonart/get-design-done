@@ -1,5 +1,5 @@
 'use strict';
-// tests/gdd-mcp-readme-bench.test.cjs
+// tests/hone-mcp-readme-bench.test.cjs
 // ---------------------------------------------------------------------------
 // Plan 27.7-06 — README + priming-benchmark fixture tests.
 //
@@ -24,8 +24,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-// gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan 31-5-05 (D-08).
-const README_PATH = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'README.md');
+// hone-mcp moved scripts/mcp-servers/hone-mcp/ -> sdk/mcp/hone-mcp/ in Plan 31-5-05 (D-08).
+const README_PATH = path.join(REPO_ROOT, 'sdk', 'mcp', 'hone-mcp', 'README.md');
 const BENCHMARK_PATH = path.join(
   REPO_ROOT,
   'test', 'fixtures',
@@ -35,18 +35,18 @@ const BENCHMARK_PATH = path.join(
 );
 
 const TOOL_NAMES = [
-  'gdd_status',
-  'gdd_phase_current',
-  'gdd_phases_list',
-  'gdd_plans_list',
-  'gdd_decisions_list',
-  'gdd_intel_get',
-  'gdd_telemetry_query',
-  'gdd_cycle_recap',
-  'gdd_reflections_latest',
-  'gdd_learnings_digest',
-  'gdd_events_tail',
-  'gdd_health',
+  'hone_status',
+  'hone_phase_current',
+  'hone_phases_list',
+  'hone_plans_list',
+  'hone_decisions_list',
+  'hone_intel_get',
+  'hone_telemetry_query',
+  'hone_cycle_recap',
+  'hone_reflections_latest',
+  'hone_learnings_digest',
+  'hone_events_tail',
+  'hone_health',
 ];
 
 describe('27.7-06: README + priming benchmark', () => {

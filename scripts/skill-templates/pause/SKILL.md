@@ -69,7 +69,7 @@ Each invocation writes an **immutable numbered checkpoint** - it does not overwr
 
 ## Do Not
 
-- Do not mutate STATE.md directly - all STATE.md writes go through the `gdd-state` MCP tools above. Checkpoint files + HANDOFF.md are sibling artifacts, written with `Write`.
+- Do not mutate STATE.md directly - all STATE.md writes go through the `hone-state` MCP tools above. Checkpoint files + HANDOFF.md are sibling artifacts, written with `Write`.
 - Do not abort in-progress sketches; just record them.
 - Do not delete previous checkpoint files.
 - Do not call `mcp__hone_state__transition_stage` - pause is status-only, never a stage transition.

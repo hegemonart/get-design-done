@@ -13,8 +13,8 @@ test('42-cfg-01: one config per manifest harness (14)', () => {
   for (const h of harnesses) assert.ok(byId(h.id), `missing config for ${h.id}`);
 });
 
-test('42-cfg-02: claude command_prefix is exactly /gdd: (round-trip anchor)', () => {
-  assert.equal(claude().command_prefix, '/gdd:');
+test('42-cfg-02: claude command_prefix is exactly /hone: (round-trip anchor)', () => {
+  assert.equal(claude().command_prefix, '/hone:');
   assert.equal(claude().bundleSlug, 'claude-code');
 });
 
@@ -48,7 +48,7 @@ test('42-cfg-06: buildConfigs is a pure re-derivation (stable shape)', () => {
 });
 
 test('42-cfg-07: at least one non-claude harness has a distinct command_prefix', () => {
-  const distinct = CONFIGS.filter((c) => c.id !== 'claude' && c.command_prefix !== '/gdd:');
-  assert.ok(distinct.length >= 1, 'expected >=1 harness with a non-/gdd: prefix (codex)');
-  assert.equal(byId('codex').command_prefix, '/gdd-');
+  const distinct = CONFIGS.filter((c) => c.id !== 'claude' && c.command_prefix !== '/hone:');
+  assert.ok(distinct.length >= 1, 'expected >=1 harness with a non-/hone: prefix (codex)');
+  assert.equal(byId('codex').command_prefix, '/hone-');
 });

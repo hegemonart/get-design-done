@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured CodeBuddy model.
+Run /hone:audit and /hone:verify using your configured CodeBuddy model.
 Settings live in .codebuddy/config.json. For help, ask CodeBuddy about the pipeline.
 
 

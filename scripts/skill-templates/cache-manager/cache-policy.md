@@ -17,7 +17,7 @@ so the SKILLs stay under the 100-line cap.
 The two layers (D-08):
 
 - **Layer A** - Anthropic's 5-min prompt cache (owned by `warm-cache`). Keyed on shared-preamble-first prompt prefix. No project-local state.
-- **Layer B** - explicit `.design/cache-manifest.json` (owned by `gdd-cache-manager`). Keyed on deterministic SHA-256 of `(agent-path, sorted-input-file-paths, input-content-hashes)`. Per-repo state.
+- **Layer B** - explicit `.design/cache-manifest.json` (owned by `hone-cache-manager`). Keyed on deterministic SHA-256 of `(agent-path, sorted-input-file-paths, input-content-hashes)`. Per-repo state.
 
 ## Deterministic Input-Hash Algorithm (Layer B)
 

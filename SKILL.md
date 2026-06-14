@@ -1,5 +1,5 @@
 ---
-name: get-design-done
+name: hone
 short_name: gdd
 description: "Master design pipeline for Claude Code. 5-stage workflow: Brief → Explore → Plan → Design → Verify. Run 'brief' first in any new project to capture the design problem, then 'explore' to inventory the codebase and interview for context. Invoke without arguments for status and auto-routing."
 argument-hint: "[brief|explore|plan|design|verify|handoff|map|next|help|status|style|darkmode|live|compare|figma-write|graphify|discuss|list-assumptions|progress|health|todo|stats|note|plant-seed|add-backlog|review-backlog|settings|update|reapply-patches|audit|pause|resume|new-cycle|debug|quick|new-project|complete-cycle|fast|do|ship|undo|pr-branch|sketch|sketch-wrap-up|spike|spike-wrap-up|reflect|apply-reflections|analyze-dependencies|extract-learnings|skill-manifest|pin|unpin|list-pins|new-skill|new-addendum|instinct|warm-cache|optimize|cache-manager|watch-authorities|check-update|benchmark|recall|timeline|continue|zoom-out]"
@@ -8,7 +8,7 @@ user-invocable: true
 
 # Get Design Done - Pipeline Router
 
-Entry point for the get-design-done toolkit. Establishes the `/gdd:` command namespace.
+Entry point for the hone toolkit. Establishes the `/hone:` command namespace.
 
 ```
 Brief → Explore → Plan → Design → Verify  →  next
@@ -22,103 +22,103 @@ Each stage produces artifacts in `.design/` inside the current project.
 
 | Command | Skill | Purpose |
 |---|---|---|
-| `brief` | `get-design-done:gdd-brief` | Stage 1 of 5 - capture problem, audience, constraints, metrics, scope → BRIEF.md |
-| `explore` | `get-design-done:gdd-explore` | Stage 2 of 5 - inventory scan + design interview → DESIGN.md, DESIGN-DEBT.md, DESIGN-CONTEXT.md |
-| `plan` | `get-design-done:plan` | Stage 3 of 5 - decompose into tasks → DESIGN-PLAN.md |
-| `design` | `get-design-done:design` | Stage 4 of 5 - execute tasks → DESIGN-SUMMARY.md |
-| `verify` | `get-design-done:verify` | Stage 5 of 5 - score + audit → DESIGN-VERIFICATION.md |
-| `handoff <path>` | `get-design-done:gdd-handoff` | Skip scan/discover/plan; initialize from Claude Design bundle; route to verify |
-| `map` | `get-design-done:gdd-map` | Parallel codebase mapping - spawns 5 mappers → `.design/map/*.md` + `.design/DESIGN-MAP.md` |
-| `next` | `get-design-done:gdd-next` | Route to the next pipeline stage based on STATE.md |
-| `help` | `get-design-done:gdd-help` | List all commands with one-line descriptions |
-| `style [ComponentName]` | `get-design-done:gdd-style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
-| `darkmode` | `get-design-done:gdd-darkmode` | Audit dark mode architecture + contrast + anti-patterns → .design/DARKMODE-AUDIT.md |
-| `live [--variants N] [--resume <id>] [url]` | `get-design-done:gdd-live` | Phase 47 - in-browser design iteration: pick an element on a running dev server (via the Preview connection), generate N variants, hot-swap via HMR, accept/discard; session persists to .design/live-sessions/. Degraded screenshot-only mode on harnesses without MCP |
-| `compare` | `get-design-done:gdd-compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md → .design/COMPARE-REPORT.md |
-| `figma-write <mode>` | `get-design-done:gdd-figma-write` | Write design decisions to Figma (annotate/tokenize/mappings) |
-| `figma-extract <file-url-or-key>` | `get-design-done:gdd-figma-extract` | Off-context Figma design-system extraction → compact local digest (DESIGN.md + tokens.json + components.json), zero raw JSON in context |
-| `paper-write <mode>` | `get-design-done:gdd-paper-write` | Write design decisions back into paper.design via MCP (annotate/tokenize/roundtrip) |
-| `pencil-write <mode>` | `get-design-done:gdd-pencil-write` | Write design decisions into git-tracked `.pen` spec files (annotate/roundtrip) |
-| `graphify <subcommand>` | `get-design-done:gdd-graphify` | Manage Graphify knowledge graph (build/query/status/diff) |
-| `discuss [topic] [--all] [--spec] [--cycle <name>]` | `get-design-done:gdd-discuss` | Adaptive design interview - spawns design-discussant; appends D-XX decisions to STATE.md |
-| `list-assumptions [--area]` | `get-design-done:gdd-list-assumptions` | Surface implicit design assumptions baked into the codebase |
+| `brief` | `hone:hone-brief` | Stage 1 of 5 - capture problem, audience, constraints, metrics, scope → BRIEF.md |
+| `explore` | `hone:hone-explore` | Stage 2 of 5 - inventory scan + design interview → DESIGN.md, DESIGN-DEBT.md, DESIGN-CONTEXT.md |
+| `plan` | `hone:plan` | Stage 3 of 5 - decompose into tasks → DESIGN-PLAN.md |
+| `design` | `hone:design` | Stage 4 of 5 - execute tasks → DESIGN-SUMMARY.md |
+| `verify` | `hone:verify` | Stage 5 of 5 - score + audit → DESIGN-VERIFICATION.md |
+| `handoff <path>` | `hone:hone-handoff` | Skip scan/discover/plan; initialize from Claude Design bundle; route to verify |
+| `map` | `hone:hone-map` | Parallel codebase mapping - spawns 5 mappers → `.design/map/*.md` + `.design/DESIGN-MAP.md` |
+| `next` | `hone:hone-next` | Route to the next pipeline stage based on STATE.md |
+| `help` | `hone:hone-help` | List all commands with one-line descriptions |
+| `style [ComponentName]` | `hone:hone-style` | Generate component handoff doc → .design/DESIGN-STYLE-[Name].md |
+| `darkmode` | `hone:hone-darkmode` | Audit dark mode architecture + contrast + anti-patterns → .design/DARKMODE-AUDIT.md |
+| `live [--variants N] [--resume <id>] [url]` | `hone:hone-live` | Phase 47 - in-browser design iteration: pick an element on a running dev server (via the Preview connection), generate N variants, hot-swap via HMR, accept/discard; session persists to .design/live-sessions/. Degraded screenshot-only mode on harnesses without MCP |
+| `compare` | `hone:hone-compare` | Delta between DESIGN.md baseline and DESIGN-VERIFICATION.md → .design/COMPARE-REPORT.md |
+| `figma-write <mode>` | `hone:hone-figma-write` | Write design decisions to Figma (annotate/tokenize/mappings) |
+| `figma-extract <file-url-or-key>` | `hone:hone-figma-extract` | Off-context Figma design-system extraction → compact local digest (DESIGN.md + tokens.json + components.json), zero raw JSON in context |
+| `paper-write <mode>` | `hone:hone-paper-write` | Write design decisions back into paper.design via MCP (annotate/tokenize/roundtrip) |
+| `pencil-write <mode>` | `hone:hone-pencil-write` | Write design decisions into git-tracked `.pen` spec files (annotate/roundtrip) |
+| `graphify <subcommand>` | `hone:hone-graphify` | Manage Graphify knowledge graph (build/query/status/diff) |
+| `discuss [topic] [--all] [--spec] [--cycle <name>]` | `hone:hone-discuss` | Adaptive design interview - spawns design-discussant; appends D-XX decisions to STATE.md |
+| `list-assumptions [--area]` | `hone:hone-list-assumptions` | Surface implicit design assumptions baked into the codebase |
 | **Audit & Session** | | |
-| `audit [--retroactive] [--quick] [--no-reflect]` | `get-design-done:gdd-audit` | Wraps design-verifier + design-auditor + design-reflector; `--retroactive` audits full cycle scope |
-| `reflect [--dry-run] [--cycle <slug>]` | `get-design-done:gdd-reflect` | On-demand reflection - reads cycle data, produces improvement proposals → `.design/reflections/<slug>.md` |
-| `apply-reflections [--filter <type>] [--dry-run]` | `get-design-done:gdd-apply-reflections` | Review + selectively apply reflection proposals (FRONTMATTER/REFERENCE/BUDGET/QUESTION/GLOBAL-SKILL) |
-| `pause [context]` | `get-design-done:gdd-pause` | Write numbered checkpoint to `.design/checkpoints/NN-*.md` |
-| `resume [N]` | `get-design-done:gdd-resume` | Restore session from checkpoint N (or list checkpoints if no arg) |
-| `continue [N]` | `get-design-done:gdd-continue` | Alias for `/gdd:resume` |
-| `recall <query>` | `get-design-done:gdd-recall` | Search cross-cycle memory (decisions, learnings, experience archives) |
-| `timeline [N\|N-M\|all]` | `get-design-done:gdd-timeline` | Narrative retrospective across completed cycles |
+| `audit [--retroactive] [--quick] [--no-reflect]` | `hone:hone-audit` | Wraps design-verifier + design-auditor + design-reflector; `--retroactive` audits full cycle scope |
+| `reflect [--dry-run] [--cycle <slug>]` | `hone:hone-reflect` | On-demand reflection - reads cycle data, produces improvement proposals → `.design/reflections/<slug>.md` |
+| `apply-reflections [--filter <type>] [--dry-run]` | `hone:hone-apply-reflections` | Review + selectively apply reflection proposals (FRONTMATTER/REFERENCE/BUDGET/QUESTION/GLOBAL-SKILL) |
+| `pause [context]` | `hone:hone-pause` | Write numbered checkpoint to `.design/checkpoints/NN-*.md` |
+| `resume [N]` | `hone:hone-resume` | Restore session from checkpoint N (or list checkpoints if no arg) |
+| `continue [N]` | `hone:hone-continue` | Alias for `/hone:resume` |
+| `recall <query>` | `hone:hone-recall` | Search cross-cycle memory (decisions, learnings, experience archives) |
+| `timeline [N\|N-M\|all]` | `hone:hone-timeline` | Narrative retrospective across completed cycles |
 | **Lifecycle** | | |
-| `start [--budget <t>] [--skip-interview] [--dismiss-nudge]` | `get-design-done:start` | First-Run Proof Path - scans UI code, returns one concrete first fix. No STATE.md writes. |
-| `new-project [--name <n>]` | `get-design-done:gdd-new-project` | Initialize project - PROJECT.md + STATE.md + cycle-1 |
-| `new-cycle [<goal>]` | `get-design-done:gdd-new-cycle` | Start a new design cycle; writes `.design/CYCLES.md` entry |
-| `complete-cycle [<note>]` | `get-design-done:gdd-complete-cycle` | Archive cycle artifacts to `.design/archive/cycle-N/`; reset STATE.md |
+| `start [--budget <t>] [--skip-interview] [--dismiss-nudge]` | `hone:start` | First-Run Proof Path - scans UI code, returns one concrete first fix. No STATE.md writes. |
+| `new-project [--name <n>]` | `hone:hone-new-project` | Initialize project - PROJECT.md + STATE.md + cycle-1 |
+| `new-cycle [<goal>]` | `hone:hone-new-cycle` | Start a new design cycle; writes `.design/CYCLES.md` entry |
+| `complete-cycle [<note>]` | `hone:hone-complete-cycle` | Archive cycle artifacts to `.design/archive/cycle-N/`; reset STATE.md |
 | **Execution speed** | | |
-| `quick [--skip <agent>] [stage]` | `get-design-done:gdd-quick` | Run pipeline skipping optional agents for speed |
-| `fast <task>` | `get-design-done:gdd-fast` | Trivial inline task - no subagents, no pipeline, no artifacts |
+| `quick [--skip <agent>] [stage]` | `hone:hone-quick` | Run pipeline skipping optional agents for speed |
+| `fast <task>` | `hone:hone-fast` | Trivial inline task - no subagents, no pipeline, no artifacts |
 | **Debug & Workflow** | | |
-| `debug [<symptom>]` | `get-design-done:gdd-debug` | Symptom-driven design investigation; persistent state in `.design/DEBUG.md` |
-| `do <natural language>` | `get-design-done:gdd-do` | Natural-language router - parses intent, confirms, dispatches |
-| `report-issue [<cmd>] [--force-report]` | `get-design-done:report-issue` | Consent-gated GitHub issue reporter - triage, pseudonymize, draft to disk, submit via `gh` (no auto-mode; hardcoded destination) |
+| `debug [<symptom>]` | `hone:hone-debug` | Symptom-driven design investigation; persistent state in `.design/DEBUG.md` |
+| `do <natural language>` | `hone:hone-do` | Natural-language router - parses intent, confirms, dispatches |
+| `report-issue [<cmd>] [--force-report]` | `hone:report-issue` | Consent-gated GitHub issue reporter - triage, pseudonymize, draft to disk, submit via `gh` (no auto-mode; hardcoded destination) |
 | **Ship & Safety** | | |
-| `ship [--title <t>] [--draft]` | `get-design-done:gdd-ship` | Post-verify PR flow - clean branch + `gh pr create` |
-| `pr-branch [<base>]` | `get-design-done:gdd-pr-branch` | Strip `.design/` and `.planning/` commits for clean code-review branch |
-| `undo [<sha>]` | `get-design-done:gdd-undo` | Safe revert with dependency check |
+| `ship [--title <t>] [--draft]` | `hone:hone-ship` | Post-verify PR flow - clean branch + `gh pr create` |
+| `pr-branch [<base>]` | `hone:hone-pr-branch` | Strip `.design/` and `.planning/` commits for clean code-review branch |
+| `undo [<sha>]` | `hone:hone-undo` | Safe revert with dependency check |
 | **Ops** | | |
-| `progress [--forensic]` | `get-design-done:gdd-progress` | Pipeline position + recommended next action; `--forensic` runs 6-check integrity audit |
-| `health` | `get-design-done:gdd-health` | Artifact health report for `.design/` |
-| `todo <add\|list\|pick> [text]` | `get-design-done:gdd-todo` | Design todo list → `.design/TODO.md` |
-| `stats` | `get-design-done:gdd-stats` | Cycle metrics - decisions, commits, todos |
+| `progress [--forensic]` | `hone:hone-progress` | Pipeline position + recommended next action; `--forensic` runs 6-check integrity audit |
+| `health` | `hone:hone-health` | Artifact health report for `.design/` |
+| `todo <add\|list\|pick> [text]` | `hone:hone-todo` | Design todo list → `.design/TODO.md` |
+| `stats` | `hone:hone-stats` | Cycle metrics - decisions, commits, todos |
 | **Idea capture** | | |
-| `note <add\|list\|promote> [text]` | `get-design-done:gdd-note` | Zero-friction notes → `.design/NOTES.md` |
-| `plant-seed [--trigger <cond>] [text]` | `get-design-done:gdd-plant-seed` | Forward-looking idea with trigger → `.design/SEEDS.md` |
-| `add-backlog [text]` | `get-design-done:gdd-add-backlog` | Park an idea → `.design/backlog/BACKLOG.md` |
-| `review-backlog` | `get-design-done:gdd-review-backlog` | Walk parked items; promote/archive |
+| `note <add\|list\|promote> [text]` | `hone:hone-note` | Zero-friction notes → `.design/NOTES.md` |
+| `plant-seed [--trigger <cond>] [text]` | `hone:hone-plant-seed` | Forward-looking idea with trigger → `.design/SEEDS.md` |
+| `add-backlog [text]` | `hone:hone-add-backlog` | Park an idea → `.design/backlog/BACKLOG.md` |
+| `review-backlog` | `hone:hone-review-backlog` | Walk parked items; promote/archive |
 | **Exploration** | | |
-| `sketch [topic] [--variants N] [--quick]` | `get-design-done:gdd-sketch` | Multi-variant HTML exploration → `.design/sketches/<slug>/variant-*.html` |
-| `sketch-wrap-up [slug]` | `get-design-done:gdd-sketch-wrap-up` | Pick winner + rationale → writes `./.claude/skills/design-<area>-conventions.md` |
-| `spike [hypothesis] [--timebox N]` | `get-design-done:gdd-spike` | Timeboxed feasibility experiment → `.design/spikes/<slug>/` |
-| `spike-wrap-up [slug]` | `get-design-done:gdd-spike-wrap-up` | Capture findings + D-XX decision → `.design/spikes/<slug>/FINDINGS.md` |
+| `sketch [topic] [--variants N] [--quick]` | `hone:hone-sketch` | Multi-variant HTML exploration → `.design/sketches/<slug>/variant-*.html` |
+| `sketch-wrap-up [slug]` | `hone:hone-sketch-wrap-up` | Pick winner + rationale → writes `./.claude/skills/design-<area>-conventions.md` |
+| `spike [hypothesis] [--timebox N]` | `hone:hone-spike` | Timeboxed feasibility experiment → `.design/spikes/<slug>/` |
+| `spike-wrap-up [slug]` | `hone:hone-spike-wrap-up` | Capture findings + D-XX decision → `.design/spikes/<slug>/FINDINGS.md` |
 | **Configuration** | | |
-| `settings <profile\|parallelism\|cleanup\|show>` | `get-design-done:gdd-settings` | Manage `.design/config.json` - model profile, parallelism, cleanup |
+| `settings <profile\|parallelism\|cleanup\|show>` | `hone:hone-settings` | Manage `.design/config.json` - model profile, parallelism, cleanup |
 | **Maintenance** | | |
-| `update [--dry-run] [--version <tag>]` | `get-design-done:gdd-update` | Update plugin to latest release; preserves config + local skills |
-| `reapply-patches [--dry-run]` | `get-design-done:gdd-reapply-patches` | Reapply `reference/` customizations after an update |
-| `analyze-dependencies [--slice <name>]` | `get-design-done:analyze-dependencies` | Query the `.design/intel/` store - dependency slices, graph queries, phase-scoped reads |
-| `extract-learnings [--cycle <slug>]` | `get-design-done:extract-learnings` | Extract decisions, lessons, patterns, and surprises from a completed cycle → `.design/cycles/<slug>/LEARNINGS.md` |
-| `skill-manifest [--refresh]` | `get-design-done:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
-| `pin <skill>` | `get-design-done:gdd-pin` | Phase 46 - write standalone shortcut aliases for a gdd skill across every installed harness dir (so `/audit` resolves alongside `/gdd:audit`); metadata comes from the skills.json catalogue |
-| `unpin <skill>` | `get-design-done:gdd-unpin` | Phase 46 - remove pinned aliases for a skill (only files carrying the gdd-pinned-skill marker) |
-| `list-pins` | `get-design-done:gdd-list-pins` | Phase 46 - show pinned aliases per harness with their source skill and last-pinned timestamp |
-| `new-skill <name>` | `get-design-done:gdd-new-skill` | Phase 50 - interactive scaffolder for a new Phase 28.5 + v3-compliant skill (multi-paragraph description, lifecycle stage, optional composes_with); writes source/skills/<name>/SKILL.md |
-| `new-addendum <kind> <name>` | `get-design-done:gdd-new-addendum` | Phase 54 - scaffold a composable reference addendum (kind = system\|framework\|motion); validates the slug, defaults composes_into by kind, writes a 4-section skeleton at reference/{systems\|frameworks\|motion}/<name>.md that an explore mapper composes at spawn time |
-| `instinct [list\|query <kw>\|promote <id>]` | `get-design-done:gdd-instinct` | Phase 51 - inspect and manage atomic instinct learning units (project + global stores); list, search by keyword, or promote a vetted project instinct to global once it clears the cross-project gate |
-| `quality-gate` | `get-design-done:quality-gate` | Phase 25 - parallel lint/type/test/visual command runner; classifies failures via quality-gate-runner agent |
-| `turn-closeout` | `get-design-done:turn-closeout` | Phase 25 - Stop-hook mirror skill; finalizes per-turn STATE blocks and emits closeout events |
-| `bandit-status` | `get-design-done:bandit-status` | Phase 27.5 - read-only diagnostic surface for the bandit posterior; per-(agent, bin, delegate, tier) snapshots (alpha, beta, mean, stddev, count, last-used). Use `/gdd:bandit-reset` to mutate. |
-| `bandit-reset [--yes]` | `get-design-done:bandit-reset` | Phase 23.5 - confirm-then-reset mutation companion to `bandit-status`; backs up `.design/telemetry/posterior.json` to `posterior.json.bak`, then clears it to a fresh empty envelope so the next pull rebootstraps from informed priors. |
-| `openrouter-status [--refresh]` | `get-design-done:gdd-openrouter-status` | Phase 33.6 - read-only OpenRouter catalog + tier-mapping diagnostic; surfaces catalog freshness (vs 24h TTL), last-fetch, resolved opus/sonnet/haiku → model mappings, per-tier preview. `--refresh` re-fetches (needs `OPENROUTER_API_KEY`). |
-| `peers` | `get-design-done:peers` | Phase 27 - `/gdd:peers` capability matrix command; shows installed peer-CLIs (codex/gemini/cursor/copilot/qwen), allowlist status, claimed roles, posterior delta vs local |
-| `peer-cli-customize` | `get-design-done:peer-cli-customize` | Phase 27 - rewire role→peer mappings on a per-agent basis (edits frontmatter `delegate_to:` directly) |
-| `peer-cli-add` | `get-design-done:peer-cli-add` | Phase 27 - guided ladder for adding a brand-new peer (verification ladder + adapter scaffolding + capability-matrix update) |
-| `watch-authorities [--refresh] [--since <date>] [--feed <name>] [--schedule <cadence>]` | `get-design-done:gdd-watch-authorities` | Run design-authority-watcher - fetch curated feeds, diff snapshot, classify new entries → `.design/authority-report.md` (consumed by `/gdd:reflect`) |
-| `benchmark <component\|--wave N\|--list\|--refresh component>` | `get-design-done:gdd-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
-| `export <cycle> --format html\|pdf\|notion [--pseudonymize] [--pr]` | `get-design-done:gdd-export` | Phase 35.5 - package a finished cycle's design output into a stakeholder-shareable artifact (self-contained HTML / Paged.js-print PDF / Notion page); redacts always, `--pseudonymize` masks identity for external sharing, `--pr` posts the HTML preview via pr-commenter |
-| `bootstrap-ds [--primary <color>] [--secondary <color>] [--tone <tags>] [--framework <t>]` | `get-design-done:gdd-bootstrap-ds` | Phase 37.2 - bootstrap a design system for a GREENFIELD project (no DS): brand input → OKLCH token system (color tints + modular type + 4pt/8pt spacing + radius/motion) in 3 variants to pick, then button/input/card proof scaffolding via `ds-generator` |
-| `rollout-status [<cycle>] [--all] [--stuck]` | `get-design-done:gdd-rollout-status` | Phase 38.5 - track a shipped cycle's production rollout (unrolled / staging-only / canary-N% / prod-100%) by reading the feature-flag service via `rollout-coordinator`; surfaces STUCK rollouts; feeds `design_arms` by deployed %. Read-only - never advances or rolls back |
-| `budget [--cycles N] [--scenario best\|typical\|worst]` | `get-design-done:gdd-budget` | Phase 39.2 - forecast design-cycle spend (best/typical/worst from telemetry variance) via `cost-forecaster`; "at the current rate you'll hit your $X project cap in Y cycles." Read-only - never spends, edits `budget.json`, or halts (the budget-enforcer hook halts) |
-| `roi [--since <date>] [--window-days 14]` | `get-design-done:gdd-roi` | Phase 39.2 - ROI table joining per-cycle cost with commits that shipped (survived ≥14d) vs reverted → cost-per-shipped-commit + stick rate. Read-only markdown report |
-| `migrate [--yes] [--dry-run]` | `get-design-done:gdd-migrate` | Phase 39.5 - migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
-| `review-decisions [<id>] [--pending]` | `get-design-done:gdd-review-decisions` | Phase 40 - surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
-| `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `get-design-done:gdd-unlock-decision` | Phase 40 - reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
-| `locale [<code>]` | `get-design-done:gdd-locale` | Phase 40.5 - inspect or set the GDD CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
-| `context [nodes --type X \| edges --type Z \| path <a> <b> \| consumers-of <id> \| unreachable \| cycles \| coverage]` | `get-design-done:gdd-context` | Phase 52 - read-only query front end for the typed DesignContext graph at `.design/context-graph.json`; lists/filters nodes and edges, traces a path between two nodes, finds a node's consumers, and reports unreachable nodes, dependency cycles, and coverage. Never writes |
-| `migrate-context [--dry-run]` | `get-design-done:gdd-migrate-context` | Phase 52 - migrate a pre-Phase-52 project from flat `.design/map/*.md` mapper notes to the typed DesignContext graph; runs the extract-*.mjs passes, merges fragments, validates with `validate-design-context.cjs`, and flags low-confidence transforms for review. Preview-first; `--dry-run` previews without writing |
-| `override <finding-id \| factforce <path>> [--approver <who>] [--reason <text>]` | `get-design-done:gdd-override` | Phase 56 - escalation surface for a risk-gate block or a first-write fact-force hold; with an approver and reason, writes a `D-XX` override-tagged decision (audit trail) for a blocked finding, or clears the fact-force `checked[path]` lock for a path you have legitimately reviewed. Mirrors unlock-decision; never overrides silently |
-| `state <query "<sql>" \| recover \| demigrate>` | `get-design-done:gdd-state` | Phase 57 - operate the opt-in SQLite state backbone: `query` runs a read-only SELECT over the decisions/blockers/plans tables (engine-level readonly), `recover` rebuilds a corrupt `state.sqlite` from the markdown STATE.md, `demigrate` removes `state.sqlite` to fall back to the markdown-only source of truth. Markdown stays the human-editable SoT; SQLite is opportunistic and reversible |
+| `update [--dry-run] [--version <tag>]` | `hone:hone-update` | Update plugin to latest release; preserves config + local skills |
+| `reapply-patches [--dry-run]` | `hone:hone-reapply-patches` | Reapply `reference/` customizations after an update |
+| `analyze-dependencies [--slice <name>]` | `hone:analyze-dependencies` | Query the `.design/intel/` store - dependency slices, graph queries, phase-scoped reads |
+| `extract-learnings [--cycle <slug>]` | `hone:extract-learnings` | Extract decisions, lessons, patterns, and surprises from a completed cycle → `.design/cycles/<slug>/LEARNINGS.md` |
+| `skill-manifest [--refresh]` | `hone:skill-manifest` | List or refresh the local skill manifest used by the router for discovery |
+| `pin <skill>` | `hone:hone-pin` | Phase 46 - write standalone shortcut aliases for a gdd skill across every installed harness dir (so `/audit` resolves alongside `/hone:audit`); metadata comes from the skills.json catalogue |
+| `unpin <skill>` | `hone:hone-unpin` | Phase 46 - remove pinned aliases for a skill (only files carrying the hone-pinned-skill marker) |
+| `list-pins` | `hone:hone-list-pins` | Phase 46 - show pinned aliases per harness with their source skill and last-pinned timestamp |
+| `new-skill <name>` | `hone:hone-new-skill` | Phase 50 - interactive scaffolder for a new Phase 28.5 + v3-compliant skill (multi-paragraph description, lifecycle stage, optional composes_with); writes source/skills/<name>/SKILL.md |
+| `new-addendum <kind> <name>` | `hone:hone-new-addendum` | Phase 54 - scaffold a composable reference addendum (kind = system\|framework\|motion); validates the slug, defaults composes_into by kind, writes a 4-section skeleton at reference/{systems\|frameworks\|motion}/<name>.md that an explore mapper composes at spawn time |
+| `instinct [list\|query <kw>\|promote <id>]` | `hone:hone-instinct` | Phase 51 - inspect and manage atomic instinct learning units (project + global stores); list, search by keyword, or promote a vetted project instinct to global once it clears the cross-project gate |
+| `quality-gate` | `hone:quality-gate` | Phase 25 - parallel lint/type/test/visual command runner; classifies failures via quality-gate-runner agent |
+| `turn-closeout` | `hone:turn-closeout` | Phase 25 - Stop-hook mirror skill; finalizes per-turn STATE blocks and emits closeout events |
+| `bandit-status` | `hone:bandit-status` | Phase 27.5 - read-only diagnostic surface for the bandit posterior; per-(agent, bin, delegate, tier) snapshots (alpha, beta, mean, stddev, count, last-used). Use `/hone:bandit-reset` to mutate. |
+| `bandit-reset [--yes]` | `hone:bandit-reset` | Phase 23.5 - confirm-then-reset mutation companion to `bandit-status`; backs up `.design/telemetry/posterior.json` to `posterior.json.bak`, then clears it to a fresh empty envelope so the next pull rebootstraps from informed priors. |
+| `openrouter-status [--refresh]` | `hone:hone-openrouter-status` | Phase 33.6 - read-only OpenRouter catalog + tier-mapping diagnostic; surfaces catalog freshness (vs 24h TTL), last-fetch, resolved opus/sonnet/haiku → model mappings, per-tier preview. `--refresh` re-fetches (needs `OPENROUTER_API_KEY`). |
+| `peers` | `hone:peers` | Phase 27 - `/hone:peers` capability matrix command; shows installed peer-CLIs (codex/gemini/cursor/copilot/qwen), allowlist status, claimed roles, posterior delta vs local |
+| `peer-cli-customize` | `hone:peer-cli-customize` | Phase 27 - rewire role→peer mappings on a per-agent basis (edits frontmatter `delegate_to:` directly) |
+| `peer-cli-add` | `hone:peer-cli-add` | Phase 27 - guided ladder for adding a brand-new peer (verification ladder + adapter scaffolding + capability-matrix update) |
+| `watch-authorities [--refresh] [--since <date>] [--feed <name>] [--schedule <cadence>]` | `hone:hone-watch-authorities` | Run design-authority-watcher - fetch curated feeds, diff snapshot, classify new entries → `.design/authority-report.md` (consumed by `/hone:reflect`) |
+| `benchmark <component\|--wave N\|--list\|--refresh component>` | `hone:hone-benchmark` | Harvest + synthesize per-component design specs from 18 design systems → `reference/components/<name>.md` |
+| `export <cycle> --format html\|pdf\|notion [--pseudonymize] [--pr]` | `hone:hone-export` | Phase 35.5 - package a finished cycle's design output into a stakeholder-shareable artifact (self-contained HTML / Paged.js-print PDF / Notion page); redacts always, `--pseudonymize` masks identity for external sharing, `--pr` posts the HTML preview via pr-commenter |
+| `bootstrap-ds [--primary <color>] [--secondary <color>] [--tone <tags>] [--framework <t>]` | `hone:hone-bootstrap-ds` | Phase 37.2 - bootstrap a design system for a GREENFIELD project (no DS): brand input → OKLCH token system (color tints + modular type + 4pt/8pt spacing + radius/motion) in 3 variants to pick, then button/input/card proof scaffolding via `ds-generator` |
+| `rollout-status [<cycle>] [--all] [--stuck]` | `hone:hone-rollout-status` | Phase 38.5 - track a shipped cycle's production rollout (unrolled / staging-only / canary-N% / prod-100%) by reading the feature-flag service via `rollout-coordinator`; surfaces STUCK rollouts; feeds `design_arms` by deployed %. Read-only - never advances or rolls back |
+| `budget [--cycles N] [--scenario best\|typical\|worst]` | `hone:hone-budget` | Phase 39.2 - forecast design-cycle spend (best/typical/worst from telemetry variance) via `cost-forecaster`; "at the current rate you'll hit your $X project cap in Y cycles." Read-only - never spends, edits `budget.json`, or halts (the budget-enforcer hook halts) |
+| `roi [--since <date>] [--window-days 14]` | `hone:hone-roi` | Phase 39.2 - ROI table joining per-cycle cost with commits that shipped (survived ≥14d) vs reverted → cost-per-shipped-commit + stick rate. Read-only markdown report |
+| `migrate [--yes] [--dry-run]` | `hone:hone-migrate` | Phase 39.5 - migrate a project off GDD's own deprecated paths after an upgrade; reads `reference/DEPRECATIONS.md` via `deprecation-registry.cjs`, previews a diff, applies on confirm. Preview-first; never edits silently |
+| `review-decisions [<id>] [--pending]` | `hone:hone-review-decisions` | Phase 40 - surface the async decision-review queue (`proposed → reviewing → approved → locked`); `--pending` shows decisions still awaiting action. Read-only |
+| `unlock-decision <id> --approver <who> [--reason <text>] [--dry-run]` | `hone:hone-unlock-decision` | Phase 40 - reopen a LOCKED decision (the only escape hatch); requires an approver + writes an audit entry; previews before writing |
+| `locale [<code>]` | `hone:hone-locale` | Phase 40.5 - inspect or set the GDD CLI locale (en/ru/uk/de/fr/zh/ja) for `--help`, errors, and skill prompt headers; missing keys fall back to English. No arg reports the resolved locale + coverage |
+| `context [nodes --type X \| edges --type Z \| path <a> <b> \| consumers-of <id> \| unreachable \| cycles \| coverage]` | `hone:hone-context` | Phase 52 - read-only query front end for the typed DesignContext graph at `.design/context-graph.json`; lists/filters nodes and edges, traces a path between two nodes, finds a node's consumers, and reports unreachable nodes, dependency cycles, and coverage. Never writes |
+| `migrate-context [--dry-run]` | `hone:hone-migrate-context` | Phase 52 - migrate a pre-Phase-52 project from flat `.design/map/*.md` mapper notes to the typed DesignContext graph; runs the extract-*.mjs passes, merges fragments, validates with `validate-design-context.cjs`, and flags low-confidence transforms for review. Preview-first; `--dry-run` previews without writing |
+| `override <finding-id \| factforce <path>> [--approver <who>] [--reason <text>]` | `hone:hone-override` | Phase 56 - escalation surface for a risk-gate block or a first-write fact-force hold; with an approver and reason, writes a `D-XX` override-tagged decision (audit trail) for a blocked finding, or clears the fact-force `checked[path]` lock for a path you have legitimately reviewed. Mirrors unlock-decision; never overrides silently |
+| `state <query "<sql>" \| recover \| demigrate>` | `hone:hone-state` | Phase 57 - operate the opt-in SQLite state backbone: `query` runs a read-only SELECT over the decisions/blockers/plans tables (engine-level readonly), `recover` rebuilds a corrupt `state.sqlite` from the markdown STATE.md, `demigrate` removes `state.sqlite` to fall back to the markdown-only source of truth. Markdown stays the human-editable SoT; SQLite is opportunistic and reversible |
 
 ## Handoff Routing
 
@@ -127,7 +127,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 1. **Extract bundle path:**
    - `handoff <path>` → bundle path is the second argument
    - `--from-handoff <path>` → bundle path is the value after the flag
-   - Neither has a path → check STATE.md `handoff_path`; if absent, error: "Provide a bundle path: /gdd:handoff ./path/to/bundle.html"
+   - Neither has a path → check STATE.md `handoff_path`; if absent, error: "Provide a bundle path: /hone:handoff ./path/to/bundle.html"
    - Verify the file exists; if not, error: "Bundle not found at <path>"
 
 2. **Initialize STATE.md:**
@@ -156,7 +156,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 
 5. **Route to verify** with `--post-handoff` flag:
    ```
-   Skill("get-design-done:verify", "--post-handoff")
+   Skill("hone:verify", "--post-handoff")
    ```
 
 6. **Optional: Bidirectional write-back** (post-verify, offered to user)
@@ -174,7 +174,7 @@ Each stage produces artifacts in `.design/` inside the current project.
 When invoked without arguments (or with `status`), show pipeline state and suggest next action:
 
 ```
-1. No .design/ and no BRIEF.md → Suggest brief first: "New project — run /gdd:brief to capture the problem."
+1. No .design/ and no BRIEF.md → Suggest brief first: "New project — run /hone:brief to capture the problem."
 2. BRIEF.md exists, no DESIGN.md → Route to explore
 3. DESIGN.md + DESIGN-CONTEXT.md exist, no DESIGN-PLAN.md → Route to plan
 4. DESIGN-PLAN.md exists, DESIGN-SUMMARY.md missing → Route to design
@@ -199,78 +199,78 @@ Use `[✓]` for complete, `[→]` for current, `[ ]` for pending, `[!]` for gaps
 
 If `$ARGUMENTS` is a stage or command name - invoke it directly, no state check:
 
-> This table lists the common stage and shortcut routes. Every skill in `scripts/lib/manifest/skills.json` is auto-resolvable as `/gdd:<name>`; run `/gdd:help` for the complete, always-current command reference (rendered from the manifest, never a hardcoded subset).
+> This table lists the common stage and shortcut routes. Every skill in `scripts/lib/manifest/skills.json` is auto-resolvable as `/hone:<name>`; run `/hone:help` for the complete, always-current command reference (rendered from the manifest, never a hardcoded subset).
 
 ```
-/gdd:brief     → Skill("get-design-done:gdd-brief")
-/gdd:explore   → Skill("get-design-done:gdd-explore")
-/gdd:plan      → Skill("get-design-done:plan")          # stage 3-of-5
-/gdd:design    → Skill("get-design-done:design")        # stage 4-of-5
-/gdd:verify    → Skill("get-design-done:verify")        # stage 5-of-5
-/gdd:handoff   → Skill("get-design-done:gdd-handoff")
-/gdd:map       → Skill("get-design-done:gdd-map")       # parallel codebase mapping
-/gdd:next      → Skill("get-design-done:gdd-next")
-/gdd:help      → Skill("get-design-done:gdd-help")
-/gdd:style     → Skill("get-design-done:gdd-style")
-/gdd:darkmode     → Skill("get-design-done:gdd-darkmode")
-/gdd:compare      → Skill("get-design-done:gdd-compare")
-/gdd:figma-write  → Skill("get-design-done:gdd-figma-write")
-/gdd:graphify     → Skill("get-design-done:gdd-graphify")
-/gdd:discuss          → Skill("get-design-done:gdd-discuss")
-/gdd:list-assumptions → Skill("get-design-done:gdd-list-assumptions")
-/gdd:progress         → Skill("get-design-done:gdd-progress")
-/gdd:health           → Skill("get-design-done:gdd-health")
-/gdd:todo             → Skill("get-design-done:gdd-todo")
-/gdd:stats            → Skill("get-design-done:gdd-stats")
+/hone:brief     → Skill("hone:hone-brief")
+/hone:explore   → Skill("hone:hone-explore")
+/hone:plan      → Skill("hone:plan")          # stage 3-of-5
+/hone:design    → Skill("hone:design")        # stage 4-of-5
+/hone:verify    → Skill("hone:verify")        # stage 5-of-5
+/hone:handoff   → Skill("hone:hone-handoff")
+/hone:map       → Skill("hone:hone-map")       # parallel codebase mapping
+/hone:next      → Skill("hone:hone-next")
+/hone:help      → Skill("hone:hone-help")
+/hone:style     → Skill("hone:hone-style")
+/hone:darkmode     → Skill("hone:hone-darkmode")
+/hone:compare      → Skill("hone:hone-compare")
+/hone:figma-write  → Skill("hone:hone-figma-write")
+/hone:graphify     → Skill("hone:hone-graphify")
+/hone:discuss          → Skill("hone:hone-discuss")
+/hone:list-assumptions → Skill("hone:hone-list-assumptions")
+/hone:progress         → Skill("hone:hone-progress")
+/hone:health           → Skill("hone:hone-health")
+/hone:todo             → Skill("hone:hone-todo")
+/hone:stats            → Skill("hone:hone-stats")
 # --- Idea capture ---
-/gdd:note           → Skill("get-design-done:gdd-note")
-/gdd:plant-seed     → Skill("get-design-done:gdd-plant-seed")
-/gdd:add-backlog    → Skill("get-design-done:gdd-add-backlog")
-/gdd:review-backlog → Skill("get-design-done:gdd-review-backlog")
+/hone:note           → Skill("hone:hone-note")
+/hone:plant-seed     → Skill("hone:hone-plant-seed")
+/hone:add-backlog    → Skill("hone:hone-add-backlog")
+/hone:review-backlog → Skill("hone:hone-review-backlog")
 # --- Configuration ---
-/gdd:settings        → Skill("get-design-done:gdd-settings")
+/hone:settings        → Skill("hone:hone-settings")
 # --- Maintenance ---
-/gdd:update          → Skill("get-design-done:gdd-update")
-/gdd:reapply-patches → Skill("get-design-done:gdd-reapply-patches")
+/hone:update          → Skill("hone:hone-update")
+/hone:reapply-patches → Skill("hone:hone-reapply-patches")
 # --- Audit & Session ---
-/gdd:audit              → Skill("get-design-done:gdd-audit")
-/gdd:reflect            → Skill("get-design-done:gdd-reflect")
-/gdd:apply-reflections  → Skill("get-design-done:gdd-apply-reflections")
-/gdd:watch-authorities  → Skill("get-design-done:gdd-watch-authorities")
-/gdd:benchmark          → Skill("get-design-done:gdd-benchmark")
-/gdd:pause              → Skill("get-design-done:gdd-pause")
-/gdd:resume             → Skill("get-design-done:gdd-resume")
-/gdd:continue           → Skill("get-design-done:gdd-continue")
-/gdd:recall             → Skill("get-design-done:gdd-recall")
-/gdd:timeline           → Skill("get-design-done:gdd-timeline")
+/hone:audit              → Skill("hone:hone-audit")
+/hone:reflect            → Skill("hone:hone-reflect")
+/hone:apply-reflections  → Skill("hone:hone-apply-reflections")
+/hone:watch-authorities  → Skill("hone:hone-watch-authorities")
+/hone:benchmark          → Skill("hone:hone-benchmark")
+/hone:pause              → Skill("hone:hone-pause")
+/hone:resume             → Skill("hone:hone-resume")
+/hone:continue           → Skill("hone:hone-continue")
+/hone:recall             → Skill("hone:hone-recall")
+/hone:timeline           → Skill("hone:hone-timeline")
 # --- Lifecycle ---
-/gdd:start           → Skill("get-design-done:start")          # leaf command, no STATE.md
-/gdd:new-project     → Skill("get-design-done:gdd-new-project")
-/gdd:new-cycle       → Skill("get-design-done:gdd-new-cycle")
-/gdd:complete-cycle  → Skill("get-design-done:gdd-complete-cycle")
+/hone:start           → Skill("hone:start")          # leaf command, no STATE.md
+/hone:new-project     → Skill("hone:hone-new-project")
+/hone:new-cycle       → Skill("hone:hone-new-cycle")
+/hone:complete-cycle  → Skill("hone:hone-complete-cycle")
 # --- Execution speed ---
-/gdd:quick           → Skill("get-design-done:gdd-quick")
-/gdd:fast            → Skill("get-design-done:gdd-fast")
+/hone:quick           → Skill("hone:hone-quick")
+/hone:fast            → Skill("hone:hone-fast")
 # --- Debug & Workflow ---
-/gdd:debug           → Skill("get-design-done:gdd-debug")
-/gdd:do              → Skill("get-design-done:gdd-do")
-/gdd:report-issue    → Skill("get-design-done:report-issue")
+/hone:debug           → Skill("hone:hone-debug")
+/hone:do              → Skill("hone:hone-do")
+/hone:report-issue    → Skill("hone:report-issue")
 # --- Ship & Safety ---
-/gdd:ship            → Skill("get-design-done:gdd-ship")
-/gdd:pr-branch       → Skill("get-design-done:gdd-pr-branch")
-/gdd:undo            → Skill("get-design-done:gdd-undo")
+/hone:ship            → Skill("hone:hone-ship")
+/hone:pr-branch       → Skill("hone:hone-pr-branch")
+/hone:undo            → Skill("hone:hone-undo")
 # --- Exploration ---
-/gdd:sketch          → Skill("get-design-done:gdd-sketch")
-/gdd:sketch-wrap-up  → Skill("get-design-done:gdd-sketch-wrap-up")
-/gdd:spike           → Skill("get-design-done:gdd-spike")
-/gdd:spike-wrap-up   → Skill("get-design-done:gdd-spike-wrap-up")
+/hone:sketch          → Skill("hone:hone-sketch")
+/hone:sketch-wrap-up  → Skill("hone:hone-sketch-wrap-up")
+/hone:spike           → Skill("hone:hone-spike")
+/hone:spike-wrap-up   → Skill("hone:hone-spike-wrap-up")
 # --- Bootstrap (not slash-routed) ---
 # using-gdd → injected at SessionStart by hooks/inject-using-gdd.cjs
 #   (disable-model-invocation: true). The skill-discipline contract;
 #   not a user-invoked command — see skills/using-gdd/SKILL.md.
 ```
 
-Pass remaining arguments through: `/gdd:explore --skip-interview` → `Skill("get-design-done:gdd-explore", "--skip-interview")`.
+Pass remaining arguments through: `/hone:explore --skip-interview` → `Skill("hone:hone-explore", "--skip-interview")`.
 
 ## Do Not
 

@@ -116,6 +116,6 @@ start/end states; this agent extends coverage to keyframe interpolation.
   runtimes / transports / connections / hooks.
 
 The drafter does NOT promote — promotion is the user's `accept` action in
-`/gdd:apply-reflections` (29-05). Until then drafts live under
+`/hone:apply-reflections` (29-05). Until then drafts live under
 `.design/reflections/incubator/<slug>/` only and accumulate the 30-day TTL
 clock (29-06, D-06).

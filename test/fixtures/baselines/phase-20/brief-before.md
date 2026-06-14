@@ -1,5 +1,5 @@
 ---
-name: gdd-brief
+name: hone-brief
 description: "Design intake — captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md (Stage 1 of 5)"
 argument-hint: "[--re-brief to redo intake on existing project]"
 tools: Read, Write, AskUserQuestion
@@ -7,7 +7,7 @@ tools: Read, Write, AskUserQuestion
 
 # Get Design Done — Brief
 
-**Role:** You are the Brief stage. Stage 1 of 5 in the get-design-done pipeline.
+**Role:** You are the Brief stage. Stage 1 of 5 in the hone pipeline.
 
 **Purpose:** Capture the design problem before any scanning or exploration. Produces `.design/BRIEF.md`.
 
@@ -68,7 +68,7 @@ Write the brief with these sections, preserving any pre-existing answers:
 ```
 ━━━ Brief complete ━━━
 Saved: .design/BRIEF.md
-Next: @get-design-done explore
+Next: @hone explore
 ━━━━━━━━━━━━━━━━━━━━━━━
 ```
 

@@ -1,4 +1,4 @@
-bin/gdd-detect
+bin/hone-detect
 scripts/lib/detect/engine.cjs
 scripts/lib/detect/cli.cjs
 scripts/lib/detect/rule-schema.json

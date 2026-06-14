@@ -37,13 +37,13 @@ test('40-05: conflict-resolver + decision-journal-exporter agents wire the cores
   assert.match(je, /## Record/, 'record-contract');
 });
 
-test('40-05: /gdd:review-decisions + /gdd:unlock-decision skills exist with correct frontmatter', () => {
+test('40-05: /hone:review-decisions + /hone:unlock-decision skills exist with correct frontmatter', () => {
   const rd = read('skills/review-decisions/SKILL.md');
-  assert.match(rd, /^name:\s*gdd-review-decisions/m);
+  assert.match(rd, /^name:\s*hone-review-decisions/m);
   assert.match(rd, /^user-invocable:\s*true/m);
   assert.match(rd, /review-queue\.cjs/);
   const ud = read('skills/unlock-decision/SKILL.md');
-  assert.match(ud, /^name:\s*gdd-unlock-decision/m);
+  assert.match(ud, /^name:\s*hone-unlock-decision/m);
   assert.match(ud, /approver/i, 'requires an approver');
   assert.match(ud, /audit/i, 'writes an audit entry');
 });

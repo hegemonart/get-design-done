@@ -15,7 +15,7 @@
 //   - figma-plugin manifest allowedDomains == localhost pair vs manifest-network-scope.txt (D-06).
 //   - token-isolation static scan == 0 violations vs token-isolation-static.txt (D-10).
 //   - CHANGELOG has a ## [1.31.0] block.
-//   - skills/figma-extract/SKILL.md exists with name: gdd-figma-extract.
+//   - skills/figma-extract/SKILL.md exists with name: hone-figma-extract.
 //
 // Tagged `31-10:`. >= 9 tests.
 
@@ -235,9 +235,9 @@ test('31-10: CHANGELOG has a [1.31.0] block', () => {
   assert.match(cl, /## \[1\.31\.0\]/, 'CHANGELOG must carry a ## [1.31.0] entry');
 });
 
-test('31-10: skills/figma-extract/SKILL.md exists with name: gdd-figma-extract', () => {
+test('31-10: skills/figma-extract/SKILL.md exists with name: hone-figma-extract', () => {
   const skillPath = 'skills/figma-extract/SKILL.md';
   assert.ok(fs.existsSync(path.join(REPO_ROOT, skillPath)), `${skillPath} must exist`);
   const body = read(skillPath);
-  assert.match(body, /^name:\s*gdd-figma-extract\s*$/m, 'SKILL.md frontmatter declares name: gdd-figma-extract');
+  assert.match(body, /^name:\s*hone-figma-extract\s*$/m, 'SKILL.md frontmatter declares name: hone-figma-extract');
 });

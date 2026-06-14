@@ -34,7 +34,7 @@ import { dirname, join, resolve } from 'node:path';
 
 /** The plugin's package.json `name` field used to anchor the walk-up in
  *  `resolveStateTemplatePath`. */
-const PLUGIN_PACKAGE_NAME = '@hegemonart/get-design-done';
+const PLUGIN_PACKAGE_NAME = '@hegemonart/hone';
 
 /** Maximum directories to climb looking for the plugin root. Eight
  *  matches session-runner's repo-root discovery depth — a forgiving

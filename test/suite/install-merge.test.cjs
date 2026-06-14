@@ -21,10 +21,10 @@ const CLAUDE_ENTRY = getRuntime('claude').marketplaceEntry;
 test('mergeClaudeSettings: empty existing → registers + enables', () => {
   const { next, changed } = mergeClaudeSettings({}, CLAUDE_ENTRY);
   assert.equal(changed, true);
-  assert.deepEqual(next.extraKnownMarketplaces['get-design-done'], {
-    source: { source: 'github', repo: 'hegemonart/get-design-done' },
+  assert.deepEqual(next.extraKnownMarketplaces['hone'], {
+    source: { source: 'github', repo: 'hegemonart/hone' },
   });
-  assert.equal(next.enabledPlugins['get-design-done@get-design-done'], true);
+  assert.equal(next.enabledPlugins['hone@hone'], true);
 });
 
 test('mergeClaudeSettings: idempotent — second pass not changed', () => {
@@ -37,14 +37,14 @@ test('mergeClaudeSettings: preserves unrelated keys', () => {
   const { next } = mergeClaudeSettings({ theme: 'dark', enabledPlugins: { 'other@other': true } }, CLAUDE_ENTRY);
   assert.equal(next.theme, 'dark');
   assert.equal(next.enabledPlugins['other@other'], true);
-  assert.equal(next.enabledPlugins['get-design-done@get-design-done'], true);
+  assert.equal(next.enabledPlugins['hone@hone'], true);
 });
 
 test('removeClaudeSettings: deletes plugin entries, leaves others', () => {
   const seeded = mergeClaudeSettings({ enabledPlugins: { 'other@other': true } }, CLAUDE_ENTRY).next;
   const { next, changed } = removeClaudeSettings(seeded, CLAUDE_ENTRY);
   assert.equal(changed, true);
-  assert.equal(next.enabledPlugins['get-design-done@get-design-done'], undefined);
+  assert.equal(next.enabledPlugins['hone@hone'], undefined);
   assert.equal(next.enabledPlugins['other@other'], true);
   assert.equal(next.extraKnownMarketplaces, undefined);
 });
@@ -68,7 +68,7 @@ test('isPluginOwned: detects fingerprint', () => {
 });
 
 function tmpDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-install-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-install-test-'));
 }
 
 test('installer: multi-artifact runtime — created → unchanged → removed (Phase 28.7-08)', () => {
@@ -76,7 +76,7 @@ test('installer: multi-artifact runtime — created → unchanged → removed (P
   try {
     // Phase 28.7 (Plan 28.7-08) — opencode now installs via the
     // multi-artifact pipeline. Each source skill produces one file in
-    // <configDir>/command/<gdd-skillName>.md per
+    // <configDir>/command/<hone-skillName>.md per
     // runtime-artifact-layout.cjs#opencode. Top-level result.path now
     // reports the configDir; per-file detail is in result.results[].
     const r1 = installRuntime('opencode', { configDir: dir });
@@ -111,7 +111,7 @@ test('installer: gemini installs into commands/gdd/ (Phase 28.7-08)', () => {
   try {
     // Phase 28.7 (Plan 28.7-08) — gemini is no longer the special-cased
     // `GEMINI.md` runtime. It now installs via the multi-artifact pipeline
-    // into <configDir>/commands/gdd/<gdd-skillName>.md per
+    // into <configDir>/commands/gdd/<hone-skillName>.md per
     // runtime-artifact-layout.cjs#gemini.
     const r = installRuntime('gemini', { configDir: dir });
     assert.equal(r.action, 'created');
@@ -160,8 +160,8 @@ test('installer: claude-marketplace — created → unchanged → removed', () =
     // AFTER the write, so it always read `updated`.
     assert.equal(r1.action, 'created', `fresh install must be 'created', got ${r1.action}`);
     const settings = JSON.parse(fs.readFileSync(r1.path, 'utf8'));
-    assert.ok(settings.extraKnownMarketplaces['get-design-done']);
-    assert.equal(settings.enabledPlugins['get-design-done@get-design-done'], true);
+    assert.ok(settings.extraKnownMarketplaces['hone']);
+    assert.equal(settings.enabledPlugins['hone@hone'], true);
 
     const r2 = installRuntime('claude', { configDir: dir });
     assert.equal(r2.action, 'unchanged');
@@ -179,12 +179,12 @@ test('installer: multi-artifact refuses to clobber a foreign command file (Phase
   const dir = tmpDir();
   try {
     // Phase 28.7 (Plan 28.7-08) — opencode now writes per-skill command
-    // files into <configDir>/command/<gdd-skillName>.md. Foreign-file
+    // files into <configDir>/command/<hone-skillName>.md. Foreign-file
     // protection now applies at the per-file level (writeFingerprinted).
     // Seed one of the expected destinations with a user-authored file.
     fs.mkdirSync(path.join(dir, 'command'), { recursive: true });
-    const foreignPath = path.join(dir, 'command', 'gdd-help.md');
-    fs.writeFileSync(foreignPath, '# My own gdd-help.md (user-authored)\n');
+    const foreignPath = path.join(dir, 'command', 'hone-help.md');
+    fs.writeFileSync(foreignPath, '# My own hone-help.md (user-authored)\n');
 
     const r = installRuntime('opencode', { configDir: dir });
     // Aggregate action is skipped-foreign whenever ANY per-file write
@@ -194,7 +194,7 @@ test('installer: multi-artifact refuses to clobber a foreign command file (Phase
     // Original content preserved.
     assert.equal(
       fs.readFileSync(foreignPath, 'utf8'),
-      '# My own gdd-help.md (user-authored)\n',
+      '# My own hone-help.md (user-authored)\n',
     );
     // The skipped entry surfaces in per-file results.
     const skipped = r.results.find((x) => x.action === 'skipped-foreign');
@@ -208,8 +208,8 @@ test('installer: multi-artifact uninstall refuses to remove foreign command file
   const dir = tmpDir();
   try {
     fs.mkdirSync(path.join(dir, 'command'), { recursive: true });
-    const foreignPath = path.join(dir, 'command', 'gdd-help.md');
-    fs.writeFileSync(foreignPath, '# My own gdd-help.md (user-authored)\n');
+    const foreignPath = path.join(dir, 'command', 'hone-help.md');
+    fs.writeFileSync(foreignPath, '# My own hone-help.md (user-authored)\n');
 
     const r = uninstallRuntime('opencode', { configDir: dir });
     assert.equal(r.action, 'skipped-foreign');

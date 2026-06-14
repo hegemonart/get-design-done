@@ -20,7 +20,7 @@ const AGENT = fs.readFileSync(
 
 test('baseline report has the title + intro line', () => {
   assert.match(REPORT, /^# GDD First-Run Report/);
-  assert.match(REPORT, /> Generated .* by `\/gdd:start`/);
+  assert.match(REPORT, /> Generated .* by `\/hone:start`/);
 });
 
 test('baseline report has all seven H2 sections in order', () => {
@@ -45,7 +45,7 @@ test('baseline report emits exactly one trailing JSON fenced block', () => {
   assert.strictEqual(parsed.findings.length, CONTEXT.scan.findings.length);
   assert.strictEqual(parsed.best_first_proof, CONTEXT.scan.bestFirstProofId);
   assert.ok(parsed.suggested_command);
-  assert.match(parsed.suggested_command.text, /^\/gdd:(fast|brief|scan)/);
+  assert.match(parsed.suggested_command.text, /^\/hone:(fast|brief|scan)/);
   assert.ok(parsed.visual_proof_readiness);
   ['preview', 'storybook', 'figma', 'canvas'].forEach((k) => {
     assert.ok(

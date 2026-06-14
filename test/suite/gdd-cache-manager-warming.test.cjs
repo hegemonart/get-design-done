@@ -1,6 +1,6 @@
-// tests/gdd-cache-manager-warming.test.cjs — Plan 27.6-03
+// tests/hone-cache-manager-warming.test.cjs — Plan 27.6-03
 //
-// Exercises the cache-warming heuristic at scripts/lib/cache/gdd-cache-manager.cjs:
+// Exercises the cache-warming heuristic at scripts/lib/cache/hone-cache-manager.cjs:
 //   - Multiplicative score composition (D-06).
 //   - Component clamping + zero-component kill behavior.
 //   - rankWarmCandidates top-N + default DEFAULT_TOPN.
@@ -22,7 +22,7 @@ const {
   summarizeFalsePositiveRate,
   DEFAULT_TOPN,
   DEFAULT_FALSE_POSITIVE_THRESHOLD_PCT,
-} = require('../../scripts/lib/cache/gdd-cache-manager.cjs');
+} = require('../../scripts/lib/cache/hone-cache-manager.cjs');
 
 // ----- computeWarmingScore ---------------------------------------------------
 

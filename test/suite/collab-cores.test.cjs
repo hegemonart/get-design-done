@@ -19,9 +19,9 @@ const sb = require(path.join(DIR, 'sync-backend.cjs'));
 
 // ── attribution ──────────────────────────────────────────────────────────────
 test('40-05: attribution parses + round-trips the [author= co-author=] suffix', () => {
-  const d = at.parseDecisionLine('D-07: Use OKLCH (locked) [author=alice co-author=gdd-9f]');
-  assert.deepEqual(d, { id: 'D-07', text: 'Use OKLCH', status: 'locked', author: 'alice', coAuthor: 'gdd-9f' });
-  assert.equal(at.formatDecisionLine(d), 'D-07: Use OKLCH (locked) [author=alice co-author=gdd-9f]');
+  const d = at.parseDecisionLine('D-07: Use OKLCH (locked) [author=alice co-author=hone-9f]');
+  assert.deepEqual(d, { id: 'D-07', text: 'Use OKLCH', status: 'locked', author: 'alice', coAuthor: 'hone-9f' });
+  assert.equal(at.formatDecisionLine(d), 'D-07: Use OKLCH (locked) [author=alice co-author=hone-9f]');
   const plain = at.parseDecisionLine('D-01: plain (tentative)');
   assert.equal(plain.author, null);
   assert.equal(at.formatDecisionLine(plain), 'D-01: plain (tentative)');

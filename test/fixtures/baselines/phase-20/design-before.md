@@ -7,7 +7,7 @@ user-invocable: true
 
 # Get Design Done — Design
 
-**Stage 4 of 5** in the get-design-done pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
+**Stage 4 of 5** in the hone pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
 
 ---
 
@@ -20,7 +20,7 @@ user-invocable: true
 2. Probe `<connections>`, update `last_checkpoint`, write STATE.md.
 
 Abort only if `.design/DESIGN-PLAN.md` is missing:
-> "No plan found. Run `/get-design-done:plan` first."
+> "No plan found. Run `/hone:plan` first."
 
 ---
 
@@ -35,7 +35,7 @@ Abort only if `.design/DESIGN-PLAN.md` is missing:
 
 Scan DESIGN-PLAN.md for tasks marked as "directionally open" (exploration-appropriate — e.g., tasks whose acceptance criteria read "explore N directions" or "pick a visual approach"). If any are found, print:
 
-> "Tasks [IDs] appear directionally open — consider running `/gdd:sketch` first to explore variants before implementation."
+> "Tasks [IDs] appear directionally open — consider running `/hone:sketch` first to explore variants before implementation."
 
 Skip if `auto_mode=true`.
 
@@ -244,7 +244,7 @@ Tasks: [N] complete / [M] total
 Deviations: [N]
 Commits: [git log --oneline since stage start]
 
-Next: /get-design-done:verify
+Next: /hone:verify
   → Scores the result against baseline, checks must-haves,
     runs NNG heuristic evaluation, and identifies gaps.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━

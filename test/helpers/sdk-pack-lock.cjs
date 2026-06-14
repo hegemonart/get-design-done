@@ -8,8 +8,8 @@
 //   `npm test` runs `node --test` over a glob; node:test executes each test FILE
 //   in its own child process, in parallel. Several files invoke `npm pack`
 //   against the SAME repo working tree:
-//     • phase-31-5-headless-e2e.test.cjs  — real pack → install → run gdd-sdk
-//     • gdd-mcp-headless-e2e.test.cjs      — real pack → install → MCP handshake
+//     • phase-31-5-headless-e2e.test.cjs  — real pack → install → run hone-sdk
+//     • hone-mcp-headless-e2e.test.cjs      — real pack → install → MCP handshake
 //     • npm-tarball-contents.test.cjs      — `npm pack --dry-run --json` (×3)
 //   Every pack (real AND --dry-run) runs the lifecycle:
 //     prepack  → `build:sdk`            (esbuild writes sdk/cli/index.js + 2 more)
@@ -20,7 +20,7 @@
 //   overlap, one pack's `--clean` (postpack) or `build:sdk` clean-then-build
 //   (prepack) removes/rewrites sdk/cli/index.js WHILE another pack is streaming it
 //   into its tarball. That tarball then ships WITHOUT the compiled bin; the
-//   installed `gdd-sdk` falls back to the raw .ts, which Node ≥22 refuses to
+//   installed `hone-sdk` falls back to the raw .ts, which Node ≥22 refuses to
 //   type-strip under node_modules (ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING).
 //   A local repro at 8+8 concurrency reproduced ~7% corrupt tarballs.
 //
@@ -49,7 +49,7 @@ const crypto = require('node:crypto');
 // don't share a lock.
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const LOCK_ID = crypto.createHash('sha1').update(REPO_ROOT).digest('hex').slice(0, 12);
-const LOCK_PATH = path.join(os.tmpdir(), `gdd-sdk-pack-${LOCK_ID}.lock`);
+const LOCK_PATH = path.join(os.tmpdir(), `hone-sdk-pack-${LOCK_ID}.lock`);
 
 // A single `npm pack` runs in ~5-20s; ≤3 files contend, so real waits are short.
 // STALE > any plausible single pack so we never steal a live, legitimate holder

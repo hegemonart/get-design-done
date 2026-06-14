@@ -78,9 +78,9 @@ test('phase-21 baseline: every Phase-21 module path exists', () => {
 });
 
 // ---------------------------------------------------------------------------
-// 3. cli-subcommands — `gdd-sdk -h` output surfaces every expected subcommand.
+// 3. cli-subcommands — `hone-sdk -h` output surfaces every expected subcommand.
 
-test('phase-21 baseline: gdd-sdk -h lists every baseline subcommand', () => {
+test('phase-21 baseline: hone-sdk -h lists every baseline subcommand', () => {
   const subcommands = readLines('cli-subcommands.txt');
   assert.ok(subcommands.length > 0, 'cli-subcommands.txt is empty');
 
@@ -103,7 +103,7 @@ test('phase-21 baseline: gdd-sdk -h lists every baseline subcommand', () => {
   assert.deepEqual(
     missing,
     [],
-    `gdd-sdk -h output missing subcommand(s): ${missing.join(', ')}\n\n` +
+    `hone-sdk -h output missing subcommand(s): ${missing.join(', ')}\n\n` +
       `Full help text:\n${help}`,
   );
 });

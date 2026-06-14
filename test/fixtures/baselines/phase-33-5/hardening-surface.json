@@ -6,10 +6,10 @@
   "redact_module": "scripts/lib/redact.cjs",
   "sanitize_env_module": "scripts/lib/peer-cli/sanitize-env.cjs",
   "peer_cli_allowlist_key": "peer_cli.env_allowlist",
-  "gdd_state_schema_count": 11,
-  "gdd_state_schema_dir": "sdk/mcp/gdd-state/schemas",
+  "hone_state_schema_count": 11,
+  "hone_state_schema_dir": "sdk/mcp/hone-state/schemas",
   "outbound_allowlist": "scripts/security/outbound-allowlist.json",
-  "threat_model": "reference/gdd-threat-model.md",
-  "runtime_audit": "reference/gdd-runtime-audit.md",
+  "threat_model": "reference/hone-threat-model.md",
+  "runtime_audit": "reference/hone-runtime-audit.md",
   "secret_fuzz_corpus": "test/fixtures/baselines/phase-33-5/secret-fuzz-corpus.json"
 }

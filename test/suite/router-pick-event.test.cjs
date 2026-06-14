@@ -57,10 +57,10 @@ function makeRouterPickEvent(overrides = {}) {
   const basePayload = {
     event_id: randomUUID(),
     source: 'router',
-    picked_skill: 'gdd-explorer',
+    picked_skill: 'hone-explorer',
     context_hash: createHash('sha256').update(intent).digest('hex'),
     rank: 0,
-    alternatives: ['gdd-planner', 'gdd-mapper'],
+    alternatives: ['hone-planner', 'hone-mapper'],
     ts: new Date().toISOString(),
   };
   return {
@@ -82,7 +82,7 @@ test('32-08: well-formed router_pick validates (7-field payload, source=router)'
   if (!ok) console.error('Validation errors:', JSON.stringify(validator.errors, null, 2));
   assert.equal(ok, true, 'expected well-formed router_pick event to validate');
   assert.equal(ev.payload.source, 'router');
-  assert.equal(ev.payload.picked_skill, 'gdd-explorer');
+  assert.equal(ev.payload.picked_skill, 'hone-explorer');
 });
 
 test('32-08: well-formed router_pick validates with empty alternatives array', () => {
@@ -222,10 +222,10 @@ test('32-08: emit surface produces a schema-valid router_pick (appendChainEvent 
     const payload = {
       event_id: randomUUID(),
       source: 'router',
-      picked_skill: 'gdd-explorer',
+      picked_skill: 'hone-explorer',
       context_hash: createHash('sha256').update(intent).digest('hex'),
       rank: 0,
-      alternatives: ['gdd-planner', 'gdd-mapper'],
+      alternatives: ['hone-planner', 'hone-mapper'],
       ts: new Date().toISOString(),
     };
     appendChainEvent({

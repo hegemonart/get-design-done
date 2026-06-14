@@ -1,6 +1,6 @@
-// test/suite/gdd-state-input-validation.test.ts — Plan 33.5-03 (SC#3, D-08/D-12/D-10).
+// test/suite/hone-state-input-validation.test.ts — Plan 33.5-03 (SC#3, D-08/D-12/D-10).
 //
-// Proves the gdd-state MCP input path is hardened per D-08:
+// Proves the hone-state MCP input path is hardened per D-08:
 //   (a) resolveStatePath() rejects a GDD_STATE_PATH that escapes the project
 //       boundary (../../etc/passwd + a Windows ..\..\ variant);
 //   (b) it ACCEPTS a legitimate in-boundary absolute path (cwd/.design/STATE.md);
@@ -13,7 +13,7 @@
 // Hermetic (D-10): no network, no child process. The env override is set +
 // restored in a finally so the suite stays order-independent.
 //
-// Authored .test.ts to match the house gdd-state suite norm (run via
+// Authored .test.ts to match the house hone-state suite norm (run via
 // --experimental-strip-types); imports from shared.ts directly.
 
 import { test } from 'node:test';
@@ -25,14 +25,14 @@ import Ajv from 'ajv';
 import {
   resolveStatePath,
   assertInputWithinLimits,
-} from '../../sdk/mcp/gdd-state/tools/shared.ts';
+} from '../../sdk/mcp/hone-state/tools/shared.ts';
 
 const REPO_ROOT: string = resolve(process.cwd());
 const ADD_BLOCKER_SCHEMA: string = join(
   REPO_ROOT,
   'sdk',
   'mcp',
-  'gdd-state',
+  'hone-state',
   'schemas',
   'add_blocker.schema.json',
 );

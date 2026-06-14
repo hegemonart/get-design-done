@@ -51,7 +51,7 @@ function loadJson(p) {
 }
 
 function mkTmpdir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-codex-plugin-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-codex-plugin-'));
 }
 
 function rmTmpdir(d) {
@@ -67,7 +67,7 @@ function seedFixtureSkills(root) {
   fs.mkdirSync(a, { recursive: true });
   fs.writeFileSync(
     path.join(a, 'SKILL.md'),
-    '---\nname: gdd-sample\ndescription: Sample skill.\n---\n\nSkill body.\n',
+    '---\nname: hone-sample\ndescription: Sample skill.\n---\n\nSkill body.\n',
     'utf8'
   );
   return path.join(root, 'skills');
@@ -77,15 +77,15 @@ function seedFixtureSkills(root) {
 function fixtureSources(overrides = {}) {
   return {
     packageJson: {
-      name: '@hegemonart/get-design-done',
+      name: '@hegemonart/hone',
       version: '1.28.8',
       description:
         'A design-quality pipeline for AI coding agents: brief, plan, implement, and verify UI work against your design system.',
       author: 'Hegemon',
-      homepage: 'https://github.com/hegemonart/get-design-done',
+      homepage: 'https://github.com/hegemonart/hone',
       repository: {
         type: 'git',
-        url: 'https://github.com/hegemonart/get-design-done.git',
+        url: 'https://github.com/hegemonart/hone.git',
       },
       license: 'MIT',
       keywords: Array.from({ length: 50 }, (_, i) => `keyword-${i}`).concat([
@@ -105,7 +105,7 @@ function fixtureSources(overrides = {}) {
       author: { name: 'hegemonart', url: 'https://github.com/hegemonart' },
     },
     marketplaceJson: {
-      plugins: [{ name: 'get-design-done', category: 'design' }],
+      plugins: [{ name: 'hone', category: 'design' }],
     },
     readmeFirstPara: 'Get Design Done is an agent-orchestrated 5-stage design pipeline.',
     ...overrides,
@@ -126,7 +126,7 @@ test('codex-plugin: buildManifest produces required fields', () => {
 test('codex-plugin: buildManifest strips npm scope from name when no marketplaceJson', () => {
   const src = fixtureSources({ marketplaceJson: undefined, claudePlugin: undefined });
   const m = buildManifest(src);
-  assert.equal(m.name, 'get-design-done');
+  assert.equal(m.name, 'hone');
 });
 
 test('codex-plugin: buildManifest prefers marketplaceJson.plugins[0].name (priority order)', () => {
@@ -152,12 +152,12 @@ test('codex-plugin: buildManifest sets skills to literal "./skills/"', () => {
   assert.equal(m.skills, './skills/');
 });
 
-test('codex-plugin: buildManifest sets mcpServers["gdd-mcp"] inline', () => {
+test('codex-plugin: buildManifest sets mcpServers["hone-mcp"] inline', () => {
   const m = buildManifest(fixtureSources());
-  assert.ok(m.mcpServers && m.mcpServers['gdd-mcp'], 'mcpServers.gdd-mcp missing');
-  assert.equal(m.mcpServers['gdd-mcp'].command, 'npx');
-  assert.ok(Array.isArray(m.mcpServers['gdd-mcp'].args), 'args must be array');
-  assert.ok(m.mcpServers['gdd-mcp'].args.includes('gdd-mcp'), 'args must include gdd-mcp bin name');
+  assert.ok(m.mcpServers && m.mcpServers['hone-mcp'], 'mcpServers.hone-mcp missing');
+  assert.equal(m.mcpServers['hone-mcp'].command, 'npx');
+  assert.ok(Array.isArray(m.mcpServers['hone-mcp'].args), 'args must be array');
+  assert.ok(m.mcpServers['hone-mcp'].args.includes('hone-mcp'), 'args must include hone-mcp bin name');
 });
 
 test('codex-plugin: buildManifest capitalizes interface.category', () => {
@@ -367,9 +367,9 @@ test('codex-plugin: committed manifest validates against spec', () => {
   assert.match(m.name, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
   assert.match(m.version, /^\d+\.\d+\.\d+/);
   assert.equal(m.skills, './skills/');
-  assert.ok(m.mcpServers && m.mcpServers['gdd-mcp'], 'mcpServers.gdd-mcp must be present');
+  assert.ok(m.mcpServers && m.mcpServers['hone-mcp'], 'mcpServers.hone-mcp must be present');
   assert.equal(m.interface.category, 'Design');
-  assert.equal(m.interface.displayName, 'Get Design Done');
+  assert.equal(m.interface.displayName, 'Hone');
 });
 
 test('codex-plugin: committed manifest name matches .claude-plugin/marketplace.json', () => {

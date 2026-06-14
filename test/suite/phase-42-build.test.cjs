@@ -77,22 +77,22 @@ test('42-build-06: dist/claude-code/ is NOT committed (polish v1.57.3 removed th
   );
 });
 
-test('42-build-07: codex compile substitutes the flat /gdd- prefix (multi-harness proof)', () => {
+test('42-build-07: codex compile substitutes the flat /hone- prefix (multi-harness proof)', () => {
   const cfg = byId('codex');
   // pick a source file that uses {{command_prefix}}
   const sample = walkMd(SRC).find((f) => fs.readFileSync(f, 'utf8').includes('{{command_prefix}}'));
   assert.ok(sample, 'expected a source file using {{command_prefix}}');
   const out = compile(fs.readFileSync(sample, 'utf8'), cfg);
-  assert.ok(out.includes('/gdd-'), 'codex output must contain the flat /gdd- prefix');
+  assert.ok(out.includes('/hone-'), 'codex output must contain the flat /hone- prefix');
   assert.ok(!out.includes('{{command_prefix}}'), 'no unresolved placeholder');
 });
 
-test('42-build-08: SDK `gdd-sdk build` routes correctly (exit codes)', () => {
+test('42-build-08: SDK `hone-sdk build` routes correctly (exit codes)', () => {
   const cli = path.join(ROOT, 'sdk', 'cli', 'index.ts');
   const run = (args) => spawnSync(process.execPath, ['--experimental-strip-types', cli, ...args], { encoding: 'utf8' });
   assert.equal(run(['build', 'skills', '--check']).status, 0, 'build skills --check -> 0');
   assert.equal(run(['build']).status, 3, 'build (no target) -> 3');
   const help = run(['build', 'skills', '--help']);
   assert.equal(help.status, 0);
-  assert.match(help.stdout, /gdd-sdk build skills/);
+  assert.match(help.stdout, /hone-sdk build skills/);
 });

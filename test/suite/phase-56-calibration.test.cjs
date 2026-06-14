@@ -36,7 +36,7 @@ const SCHEMA = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
 // ── helpers ─────────────────────────────────────────────────────────────────
 
 function mkTmpRoot() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p56-cal-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p56-cal-'));
 }
 function rmTmpRoot(dir) {
   fs.rmSync(dir, { recursive: true, force: true });

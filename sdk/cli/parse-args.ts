@@ -1,6 +1,6 @@
 // sdk/cli/parse-args.ts — Plan 21-09 Task 1 (SDK-21).
 //
-// Hand-rolled argv parser used by the `gdd-sdk` CLI. No external
+// Hand-rolled argv parser used by the `hone-sdk` CLI. No external
 // dependency (no yargs / commander / minimist). Supports the exact
 // subset documented in PLAN.md:
 //
@@ -174,7 +174,7 @@ export function parseArgs(
  * Known boolean-toggle flag names. When the parser encounters one of
  * these WITHOUT an `=value` it should NOT consume the next token even
  * if that token looks like a value — the next token is a positional
- * arg. Keeps `gdd-sdk stage discuss --parallel plan` parsing correctly:
+ * arg. Keeps `hone-sdk stage discuss --parallel plan` parsing correctly:
  * `--parallel` is a bool, `plan` stays in positionals.
  *
  * The list is conservative (only flags the CLI declares as boolean in

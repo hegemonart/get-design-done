@@ -1,5 +1,5 @@
 ---
-gdd_state_version: 1.0
+hone_state_version: 1.0
 stage: brief
 status: initialized
 last_updated: "2026-04-24T00:00:00Z"

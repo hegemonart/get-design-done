@@ -22,7 +22,7 @@
  *       agentskills.io contract length window (DESC_MIN..DESC_MAX chars).
  *   (e) Capability honesty — every MCP server named in plugin.json/marketplace.json
  *       resolves to a real sdk/mcp/<server>/server.ts, and the read-only MCP tool count
- *       claimed in surface text agrees with the count of sdk/mcp/gdd-mcp/tools/gdd_*.ts
+ *       claimed in surface text agrees with the count of sdk/mcp/hone-mcp/tools/hone_*.ts
  *       (derived from disk, never hardcoded).
  *
  * NEAR-DUP THRESHOLD CALIBRATION (check b):
@@ -70,7 +70,7 @@ const TEMPLATES_DIR = path.join(ROOT, 'scripts', 'skill-templates');
 const GENERATED_DIR = path.join(ROOT, 'skills');
 const AGENTS_DIR = path.join(ROOT, 'agents');
 const MCP_DIR = path.join(ROOT, 'sdk', 'mcp');
-const MCP_TOOLS_DIR = path.join(MCP_DIR, 'gdd-mcp', 'tools');
+const MCP_TOOLS_DIR = path.join(MCP_DIR, 'hone-mcp', 'tools');
 const PLUGIN_JSON = path.join(ROOT, '.claude-plugin', 'plugin.json');
 const MARKETPLACE_JSON = path.join(ROOT, '.claude-plugin', 'marketplace.json');
 
@@ -206,7 +206,7 @@ function checkDescriptionSanity(skills) {
  * env: {
  *   declaredServers: string[],          // MCP server names from plugin/marketplace json
  *   serverExists: (name) => boolean,    // sdk/mcp/<name>/server.ts present?
- *   actualToolCount: number,            // count of sdk/mcp/gdd-mcp/tools/gdd_*.ts
+ *   actualToolCount: number,            // count of sdk/mcp/hone-mcp/tools/hone_*.ts
  *   claimedToolCounts: number[],        // "<N> read-only MCP tools" found in surfaces
  * }
  */
@@ -224,7 +224,7 @@ function checkCapabilityHonesty(env) {
     if (claimed !== env.actualToolCount) {
       findings.push({
         kind: 'capability-honesty',
-        message: `claimed ${claimed} read-only MCP tools but sdk/mcp/gdd-mcp/tools/ has ${env.actualToolCount} gdd_*.ts`,
+        message: `claimed ${claimed} read-only MCP tools but sdk/mcp/hone-mcp/tools/ has ${env.actualToolCount} hone_*.ts`,
       });
     }
   }
@@ -281,7 +281,7 @@ function declaredMcpServers() {
 
 function countMcpTools() {
   if (!fs.existsSync(MCP_TOOLS_DIR)) return 0;
-  return fs.readdirSync(MCP_TOOLS_DIR).filter((f) => /^gdd_[a-z0-9_]+\.ts$/.test(f)).length;
+  return fs.readdirSync(MCP_TOOLS_DIR).filter((f) => /^hone_[a-z0-9_]+\.ts$/.test(f)).length;
 }
 
 function claimedToolCountsFromSurfaces() {

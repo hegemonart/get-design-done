@@ -7,7 +7,7 @@ const path = require('path');
 const { readFrontmatter } = require('./helpers.ts');
 
 function tmpMd(content) {
-  const f = path.join(os.tmpdir(), `gdd-fm-test-${Date.now()}.md`);
+  const f = path.join(os.tmpdir(), `hone-fm-test-${Date.now()}.md`);
   fs.writeFileSync(f, content, 'utf8');
   return { path: f, cleanup: () => { try { fs.unlinkSync(f); } catch {} } };
 }

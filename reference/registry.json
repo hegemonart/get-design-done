@@ -498,8 +498,8 @@
       "description": "Default MCP per-task budget (calls + consecutive-timeout thresholds)"
     },
     {
-      "name": "mcp-gdd-tools-schema",
-      "path": "reference/schemas/mcp-gdd-tools.schema.json",
+      "name": "mcp-hone-tools-schema",
+      "path": "reference/schemas/mcp-hone-tools.schema.json",
       "type": "schema",
       "phase": 27.7,
       "description": "Draft-07 input/output schemas for the 12 read-only tools in sdk/mcp/gdd-mcp/ (gdd-mcp MCP server)"
@@ -885,18 +885,18 @@
       "description": "Triage gate catalogue — locally-fixable failure modes (id/pattern/diagnosis/remedy/severity, with optional propose_report whitelist flag) consulted by scripts/lib/issue-reporter/triage-matcher.cjs before the report-issue consent prompt."
     },
     {
-      "name": "gdd-threat-model",
-      "path": "reference/gdd-threat-model.md",
+      "name": "hone-threat-model",
+      "path": "reference/hone-threat-model.md",
       "type": "heuristic",
       "phase": 33.5,
       "description": "STRIDE threat model of GDD's own runtime attack surface — hooks, the gdd-state + gdd-mcp MCP servers, the peer-CLI broker, the WebSocket event-stream transport, and issue-reporter outbound; maps each residual risk to the plan that closes it."
     },
     {
-      "name": "gdd-runtime-audit",
-      "path": "reference/gdd-runtime-audit.md",
+      "name": "hone-runtime-audit",
+      "path": "reference/hone-runtime-audit.md",
       "type": "heuristic",
       "phase": 33.5,
-      "description": "Static security audit of GDD's shipped runtime surface (hooks/scripts/sdk/bin) — outbound-network call sites, secret-handling sites, and external-input surfaces; human-readable companion to scripts/security/outbound-allowlist.json (the canonical active-egress allowlist the scan-outbound-network.cjs gate consumes) and reference/gdd-threat-model.md."
+      "description": "Static security audit of GDD's shipped runtime surface (hooks/scripts/sdk/bin) — outbound-network call sites, secret-handling sites, and external-input surfaces; human-readable companion to scripts/security/outbound-allowlist.json (the canonical active-egress allowlist the scan-outbound-network.cjs gate consumes) and reference/hone-threat-model.md."
     },
     {
       "name": "openrouter-tier-mapping",

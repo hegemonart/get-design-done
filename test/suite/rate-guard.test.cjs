@@ -10,7 +10,7 @@ const { spawn } = require('node:child_process');
 
 // Helper: run each test in its own tmp cwd so state files are isolated.
 function tmpCwd() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-rate-guard-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-rate-guard-'));
   const prev = process.cwd();
   process.chdir(dir);
   return {

@@ -41,9 +41,9 @@ function clientForMode(mode, extraEnv) {
 test('threadStart returns threadId and forwards service_name + experimentalRawEvents', async () => {
   const client = clientForMode('happy', { MOCK_ASP_THREAD_ID: 'thr_alpha' });
   try {
-    const res = await client.threadStart({ service_name: 'gdd_peer_delegation' });
+    const res = await client.threadStart({ service_name: 'hone_peer_delegation' });
     assert.equal(res.threadId, 'thr_alpha');
-    assert.equal(res.echoedServiceName, 'gdd_peer_delegation');
+    assert.equal(res.echoedServiceName, 'hone_peer_delegation');
     // Default per Plan 27-02 contract: experimentalRawEvents is `false`
     // unless the caller explicitly overrides.
     assert.equal(res.echoedExperimentalRawEvents, false);
@@ -56,7 +56,7 @@ test('threadStart honors caller-supplied experimentalRawEvents=true', async () =
   const client = clientForMode('happy');
   try {
     const res = await client.threadStart({
-      service_name: 'gdd_peer_delegation',
+      service_name: 'hone_peer_delegation',
       experimentalRawEvents: true,
     });
     assert.equal(res.echoedExperimentalRawEvents, true);
@@ -68,7 +68,7 @@ test('threadStart honors caller-supplied experimentalRawEvents=true', async () =
 test('threadResume returns server state for the supplied threadId', async () => {
   const client = clientForMode('resume');
   try {
-    const start = await client.threadStart({ service_name: 'gdd_peer_delegation' });
+    const start = await client.threadStart({ service_name: 'hone_peer_delegation' });
     const resumed = await client.threadResume(start.threadId);
     assert.equal(resumed.threadId, start.threadId);
     assert.equal(resumed.state, 'resumed');
@@ -91,7 +91,7 @@ test('threadResume rejects when threadId is missing or empty', async () => {
 test('turn streams notifications then completes with content + usage', async () => {
   const client = clientForMode('happy');
   try {
-    const { threadId } = await client.threadStart({ service_name: 'gdd_peer_delegation' });
+    const { threadId } = await client.threadStart({ service_name: 'hone_peer_delegation' });
     const seen = [];
     const result = await client.turn(threadId, 'hello world', {
       onNotification: (n) => seen.push(n.method),
@@ -114,7 +114,7 @@ test('turn streams notifications then completes with content + usage', async () 
 test('turn error path RESOLVES with {status: error} (does NOT throw)', async () => {
   const client = clientForMode('error_turn');
   try {
-    const { threadId } = await client.threadStart({ service_name: 'gdd_peer_delegation' });
+    const { threadId } = await client.threadStart({ service_name: 'hone_peer_delegation' });
     const result = await client.turn(threadId, 'do something');
     // Critical contract: error path resolves so the caller decides
     // retry-vs-fallback. It does NOT reject the promise.
@@ -131,7 +131,7 @@ test('turn error path RESOLVES with {status: error} (does NOT throw)', async () 
 test('process death mid-turn rejects the in-flight turn promise', async () => {
   const client = clientForMode('die_mid_turn');
   // threadStart succeeds; the kill happens on the first turn() call.
-  const { threadId } = await client.threadStart({ service_name: 'gdd_peer_delegation' });
+  const { threadId } = await client.threadStart({ service_name: 'hone_peer_delegation' });
   await assert.rejects(
     () => client.turn(threadId, 'this will kill the server'),
     (err) => {
@@ -165,7 +165,7 @@ test('turn rejects with TypeError when threadId or text are wrong shape', async 
 
 test('close() rejects all newly arriving requests', async () => {
   const client = clientForMode('happy');
-  await client.threadStart({ service_name: 'gdd_peer_delegation' });
+  await client.threadStart({ service_name: 'hone_peer_delegation' });
   await client.close();
   await assert.rejects(
     () => client.threadStart({ service_name: 'x' }),

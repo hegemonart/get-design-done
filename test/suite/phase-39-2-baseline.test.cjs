@@ -1,7 +1,7 @@
 'use strict';
 // Phase 39.2 — Long-Horizon Cost Governance regression baseline. Second sub-phase of the split
 // Phase 39 (closes the parent). Freezes the v1.39.2 artifact: the 3 pure budget cores, the
-// cost-forecaster agent, the /gdd:budget + /gdd:roi skills, the cost-governance contract, the
+// cost-forecaster agent, the /hone:budget + /hone:roi skills, the cost-governance contract, the
 // project_cap hook branch, and the 6-manifest lockstep. Version-AGNOSTIC. Every test `39.2-03:`.
 
 const test = require('node:test');

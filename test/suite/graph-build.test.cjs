@@ -22,7 +22,7 @@ const REPO_ROOT = resolve(__dirname, '../..');
 const FIXTURE_ROOT = join(REPO_ROOT, 'test', 'fixtures', 'graph', 'sample-intel');
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-graph-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-graph-${prefix}-`));
 }
 
 async function buildLib() {
@@ -71,7 +71,7 @@ test('30.6-02: build from single-node intel renames name->label and stamps sourc
     assert.equal(graph.nodes.length, 1);
     assert.equal(graph.nodes[0].id, 'component:Button');
     assert.equal(graph.nodes[0].label, 'Button');
-    assert.equal(graph.nodes[0].source, 'gdd-intel-store');
+    assert.equal(graph.nodes[0].source, 'hone-intel-store');
     // 'name' field should NOT appear in graph node — it became 'label'.
     assert.equal(graph.nodes[0].name, undefined);
   } finally {
@@ -96,7 +96,7 @@ test('30.6-02: build from dense intel preserves all edges with from/to/kind', as
       assert.ok(e.from, 'from required');
       assert.ok(e.to, 'to required');
       assert.ok(e.kind, 'kind required');
-      assert.equal(e.source, 'gdd-intel-store');
+      assert.equal(e.source, 'hone-intel-store');
     }
     // Extra intel field (hex on primary-500) should land in attrs.
     const t = graph.nodes.find((n) => n.id === 'token:color/primary/500');

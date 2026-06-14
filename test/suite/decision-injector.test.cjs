@@ -10,7 +10,7 @@ const { REPO_ROOT } = require('./helpers.ts');
 const HOOK = path.join(REPO_ROOT, 'hooks', 'gdd-decision-injector.js');
 
 function scaffold({ referenceFile = 'reference/heuristics.md', fileSize = 2000, withArchive = true, withLearnings = true, withState = true } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-di-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-di-'));
 
   // Create the reference file to open (sized above MIN_BYTES by default)
   fs.mkdirSync(path.join(dir, path.dirname(referenceFile)), { recursive: true });

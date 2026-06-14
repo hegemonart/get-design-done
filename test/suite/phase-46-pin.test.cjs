@@ -5,7 +5,7 @@
 // projects under os.tmpdir(). Every test id is prefixed `46-`.
 //
 // Covered:
-//   - pin writes a SKILL.md stub carrying the gdd-pinned-skill marker plus a
+//   - pin writes a SKILL.md stub carrying the hone-pinned-skill marker plus a
 //     skills.json-sourced description into a fake .claude/skills/ dir
 //   - list-pins finds the pinned stub (source + pinnedAt)
 //   - unpin removes a pinned stub
@@ -39,7 +39,7 @@ function pickKnownSkill() {
 // Build a throwaway project root with a fake .claude/skills/ dir. Returns the
 // project root path; caller cleans up.
 function makeTempProject() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-phase46-pin-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-phase46-pin-'));
   fs.mkdirSync(path.join(root, '.claude', 'skills'), { recursive: true });
   return root;
 }
@@ -66,7 +66,7 @@ test('46-01: pin writes a stub with the gdd marker + skills.json-sourced descrip
     const content = fs.readFileSync(claude.path, 'utf8');
     const firstLine = content.split(/\r?\n/)[0];
 
-    // marker is exactly the gdd-pinned-skill line for this source id
+    // marker is exactly the hone-pinned-skill line for this source id
     assert.strictEqual(firstLine, markerFor(skill.name));
     assert.strictEqual(parseMarker(firstLine), skill.name);
 
@@ -76,9 +76,9 @@ test('46-01: pin writes a stub with the gdd marker + skills.json-sourced descrip
       'stub description should match the skills.json record verbatim',
     );
 
-    // name mirrors the generator convention (gdd-<id> unless overridden)
-    const expectedName = skill.frontmatter_name || `gdd-${skill.name}`;
-    assert.ok(content.includes(`name: ${expectedName}`), 'stub name should be gdd-<id>');
+    // name mirrors the generator convention (hone-<id> unless overridden)
+    const expectedName = skill.frontmatter_name || `hone-${skill.name}`;
+    assert.ok(content.includes(`name: ${expectedName}`), 'stub name should be hone-<id>');
   } finally {
     cleanup(root);
   }

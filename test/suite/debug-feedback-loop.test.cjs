@@ -111,9 +111,9 @@ test('skills/debug/SKILL.md cross-links to debug-feedback-loops.md', () => {
   assert.ok(/debug-feedback-loops/.test(content), 'missing cross-link to debug-feedback-loops');
 });
 
-test('skills/debug/SKILL.md name is gdd-debug (unchanged)', () => {
+test('skills/debug/SKILL.md name is hone-debug (unchanged)', () => {
   const { content } = readLines(SKILL);
-  assert.ok(/^name: gdd-debug$/m.test(content), 'frontmatter name must remain "gdd-debug"');
+  assert.ok(/^name: hone-debug$/m.test(content), 'frontmatter name must remain "hone-debug"');
 });
 
 test('skills/debug/SKILL.md is at most 99 lines', () => {

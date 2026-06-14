@@ -88,7 +88,7 @@ test('30-05: searchByFingerprint single-match fixture → 1 match', async () => 
   assert.equal(result.matches.length, 1);
   assert.equal(result.matches[0].number, 142);
   assert.equal(result.matches[0].title, 'Fast-lookup crash on Figma token sync (recurring)');
-  assert.equal(result.matches[0].url, 'https://github.com/hegemonart/get-design-done/issues/142');
+  assert.equal(result.matches[0].url, 'https://github.com/hegemonart/hone/issues/142');
   assert.equal(result.degraded, undefined);
   // argv shape: gh issue list --search "fingerprint:<hash>" --json number,title,url --repo <destination>
   assert.equal(spawn.calls[0].cmd, 'gh');

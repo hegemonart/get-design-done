@@ -66,7 +66,7 @@ test('registry: missingInRegistry detects a new file', () => {
   // below) so we never write into the real reference/ dir. A concurrent test
   // that scans the real reference/ (pipeline-smoke-14.5) would otherwise catch
   // the transient orphan and report false drift. (Phase 59.3 deflake.)
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-reg-orphan-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-reg-orphan-'));
   try {
     fs.mkdirSync(path.join(dir, 'reference'), { recursive: true });
     const reg = JSON.parse(fs.readFileSync(REG_PATH, 'utf8'));
@@ -91,7 +91,7 @@ test('registry: missingInRegistry detects a new file', () => {
 
 test('registry: danglingInRegistry detects a stale entry', () => {
   // Mutate a registry copy in a temp dir and re-validate against it
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-reg-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-reg-'));
   try {
     fs.mkdirSync(path.join(dir, 'reference'), { recursive: true });
     const reg = JSON.parse(fs.readFileSync(REG_PATH, 'utf8'));

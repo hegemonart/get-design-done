@@ -25,9 +25,9 @@
  */
 
 const DESTINATION_OWNER = 'hegemonart';
-const DESTINATION_REPO  = 'hegemonart/get-design-done';
-const DESTINATION_URL   = 'https://github.com/hegemonart/get-design-done';
-const ISSUE_TEMPLATE_URL = 'https://github.com/hegemonart/get-design-done/issues/new?template=bug_report.md';
+const DESTINATION_REPO  = 'hegemonart/hone';
+const DESTINATION_URL   = 'https://github.com/hegemonart/hone';
+const ISSUE_TEMPLATE_URL = 'https://github.com/hegemonart/hone/issues/new?template=bug_report.md';
 
 module.exports = Object.freeze({
   DESTINATION_OWNER,

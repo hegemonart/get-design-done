@@ -1,12 +1,12 @@
 // tests/graph-decoupled.test.cjs — Plan 30.6-04 Task 2
 //
-// 30.6-04: THE acceptance test for Phase 30.6. Proves bin/gdd-graph is
+// 30.6-04: THE acceptance test for Phase 30.6. Proves bin/hone-graph is
 // fully decoupled from ~/.claude/get-shit-done/ by:
 //
 //   1) renaming the user's GSD install to .bak for the test duration
 //      (skipped on Windows-locked-dir, or absent install — the test
 //      still runs and the assertions are still meaningful);
-//   2) running all 6 subcommands of bin/gdd-graph against 5 scenario
+//   2) running all 6 subcommands of bin/hone-graph against 5 scenario
 //      fixtures and asserting expected exit code + stdout shape;
 //   3) static-checking the bin + scripts/lib/graph/ source for any
 //      reference to gsd-tools.cjs or .claude/get-shit-done (catches
@@ -36,7 +36,7 @@ const { join, resolve } = require('node:path');
 // ─── repo + paths ──────────────────────────────────────────────────────────
 
 const REPO_ROOT = resolve(__dirname, '../..');
-const BIN = join(REPO_ROOT, 'bin', 'gdd-graph');
+const BIN = join(REPO_ROOT, 'bin', 'hone-graph');
 const SCENARIO_ROOT = join(REPO_ROOT, 'test', 'fixtures', 'graph', 'scenarios');
 const SCENARIOS = ['empty', 'single-node', 'dense', 'with-cycles', 'malformed-intel'];
 
@@ -110,7 +110,7 @@ before(() => {
   } catch (e) {
     // Windows: locked directory (e.g., explorer/IDE has a handle inside). Skip
     // the rename — every assertion in this file should still hold regardless,
-    // because bin/gdd-graph claims to never reach into GSD_INSTALL at runtime.
+    // because bin/hone-graph claims to never reach into GSD_INSTALL at runtime.
     gsdRenameSkipReason = `rename failed (likely Windows directory lock): ${e.message}`;
     process.stderr.write(`[30.6-04] ${gsdRenameSkipReason}; test still runs.\n`);
   }
@@ -125,11 +125,11 @@ after(() => {
 const SUBCOMMANDS_EXERCISED = new Set();
 
 function tmp(label) {
-  return mkdtempSync(join(tmpdir(), `gdd-decoupled-${label}-`));
+  return mkdtempSync(join(tmpdir(), `hone-decoupled-${label}-`));
 }
 
 /**
- * Spawn bin/gdd-graph with HOME overridden to a path that does NOT contain
+ * Spawn bin/hone-graph with HOME overridden to a path that does NOT contain
  * a .claude/get-shit-done/ tree — so the spawned process is structurally
  * unable to reach the user's GSD install even via os.homedir() lookups.
  *
@@ -138,7 +138,7 @@ function tmp(label) {
  */
 function runCli(args, opts = {}) {
   if (args.length > 0) SUBCOMMANDS_EXERCISED.add(args[0]);
-  const safeHome = opts.safeHome || join(tmpdir(), 'gdd-decoupled-no-home');
+  const safeHome = opts.safeHome || join(tmpdir(), 'hone-decoupled-no-home');
   const r = spawnSync(
     process.execPath,
     [BIN, ...args],
@@ -158,11 +158,11 @@ function runCli(args, opts = {}) {
 }
 
 function parseJsonLine(out) {
-  // bin/gdd-graph emits exactly one JSON line on stdout or stderr.
+  // bin/hone-graph emits exactly one JSON line on stdout or stderr.
   if (!out) return null;
   const trimmed = out.trim();
   if (!trimmed) return null;
-  // Last non-empty line — bin/gdd-graph may have prepended diagnostic noise
+  // Last non-empty line — bin/hone-graph may have prepended diagnostic noise
   // in theory, but in practice emits one line. Last-line is robust.
   const lines = trimmed.split(/\r?\n/).filter(Boolean);
   for (let i = lines.length - 1; i >= 0; i--) {
@@ -229,7 +229,7 @@ test('30.6-04: single-node scenario — build produces 1/0 with name->label rena
     const graph = JSON.parse(readFileSync(out, 'utf8'));
     assert.equal(graph.nodes[0].id, 'component:Button');
     assert.equal(graph.nodes[0].label, 'Button');
-    assert.equal(graph.nodes[0].source, 'gdd-intel-store');
+    assert.equal(graph.nodes[0].source, 'hone-intel-store');
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -469,9 +469,9 @@ test('30.6-04: GDD_NO_GSD=1 — status on a fresh-checkout (no graph) returns de
 
 // ─── tests: static-check defense — no upstream-coupling references in source ──
 
-test('30.6-04: bin/gdd-graph + scripts/lib/graph/ source has zero references to ~/.claude/get-shit-done/', () => {
+test('30.6-04: bin/hone-graph + scripts/lib/graph/ source has zero references to ~/.claude/get-shit-done/', () => {
   const sources = [
-    'bin/gdd-graph',
+    'bin/hone-graph',
     'scripts/lib/graph/build.mjs',
     'scripts/lib/graph/status.mjs',
     'scripts/lib/graph/diff.mjs',
@@ -519,7 +519,7 @@ test('30.6-04: bin/gdd-graph + scripts/lib/graph/ source has zero references to 
 
 // ─── meta: all 6 subcommands exercised ────────────────────────────────────
 
-test('30.6-04: all 6 subcommands of bin/gdd-graph exercised by earlier tests', () => {
+test('30.6-04: all 6 subcommands of bin/hone-graph exercised by earlier tests', () => {
   const expected = ['build', 'status', 'diff', 'query', 'upsert-node', 'upsert-edge'];
   for (const sc of expected) {
     assert.ok(

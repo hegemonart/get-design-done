@@ -102,7 +102,7 @@ function extractDescription(frontmatter) {
  * @returns {string}
  */
 function normalizeSkillName(skillName) {
-  return String(skillName || '').replace(/^(gdd-|gsd-)/i, '');
+  return String(skillName || '').replace(/^(hone-|gdd-|gsd-)/i, '');
 }
 
 // ---------------------------------------------------------------------------
@@ -144,7 +144,7 @@ function convert(content, skillName, opts) {
   // heading directly precedes the body content.
   const prose = shared.rewriteSlashRefs(body, 'cline').trim();
 
-  const heading = `## gdd-${bareName}`;
+  const heading = `## ${shared.SKILL_PREFIX}${bareName}`;
   const descLine = description ? `${description}\n\n` : '';
 
   return `${heading}\n\n${descLine}${prose}\n`;
@@ -175,7 +175,7 @@ function convert(content, skillName, opts) {
  */
 function buildClinerulesFile(skillBlocks) {
   const header = [
-    '# get-design-done rules',
+    '# hone rules',
     '',
     '<!-- Auto-generated from gdd SKILL.md sources. Edit upstream skills, not this file. -->',
     '',

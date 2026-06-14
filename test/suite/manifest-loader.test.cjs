@@ -12,7 +12,7 @@ const REPO_ROOT = path.resolve(__dirname, '../..');
 const loader = require(path.join(REPO_ROOT, 'scripts/lib/manifest/loader.cjs'));
 const index = require(path.join(REPO_ROOT, 'scripts/lib/manifest/index.cjs'));
 
-function tmpdir() { return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-manifest-')); }
+function tmpdir() { return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-manifest-')); }
 
 test('41.5-02: load() returns parsed data for a present manifest', () => {
   loader.reset();

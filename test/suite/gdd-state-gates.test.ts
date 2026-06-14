@@ -1,4 +1,4 @@
-// tests/gdd-state-gates.test.ts — pure transition-gate tests.
+// tests/hone-state-gates.test.ts — pure transition-gate tests.
 //
 // Plan 20-02 (SDK-03). Eight fixture STATE.md files at
 // tests/fixtures/state/gates/ are loaded, parsed, and evaluated by the
@@ -258,7 +258,7 @@ function scaffoldFromFixture(fixtureName: string): {
   before: string;
   cleanup: () => void;
 } {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-state-gates-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-state-gates-'));
   const path = join(dir, 'STATE.md');
   const before = readFileSync(join(FIXTURES, fixtureName), 'utf8');
   writeFileSync(path, before);

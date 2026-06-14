@@ -1,6 +1,6 @@
 'use strict';
 // Phase 40.5 — CLI-localization static contract. Verifies the contract doc (registered), the
-// /gdd:locale skill, the config.schema locale key, and the description_i18n documentation.
+// /hone:locale skill, the config.schema locale key, and the description_i18n documentation.
 // Hermetic: file reads only. Every test tagged `40.5-03:`.
 
 const test = require('node:test');
@@ -26,9 +26,9 @@ test('40.5-03: cli-localization.md has the required sections + is registered', (
   assert.equal(e.phase, 40.5);
 });
 
-test('40.5-03: /gdd:locale skill exists with correct frontmatter', () => {
+test('40.5-03: /hone:locale skill exists with correct frontmatter', () => {
   const s = read('skills/locale/SKILL.md');
-  assert.match(s, /^name:\s*gdd-locale/m);
+  assert.match(s, /^name:\s*hone-locale/m);
   assert.match(s, /^user-invocable:\s*true/m);
   assert.match(s, /scripts\/lib\/i18n\/index\.cjs/, 'uses the resolver');
   assert.match(s, /config\.json/, 'sets config.locale');

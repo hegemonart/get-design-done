@@ -35,7 +35,7 @@ const discovery = require('../../sdk/dashboard/data/discovery.cjs');
 
 /** Make an empty tmp project root (no .design). */
 function tmpRoot(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-dash-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-dash-${prefix}-`));
 }
 
 /** A minimal-but-valid STATE.md the strict sdk/state parser accepts. */

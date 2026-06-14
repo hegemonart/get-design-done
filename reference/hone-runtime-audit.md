@@ -9,7 +9,7 @@
 - `scripts/security/outbound-allowlist.json` - the machine-readable, CANONICAL active-egress
   allowlist that Phase 33.5-04's `scripts/scan-outbound-network.cjs` gate `JSON.parse`s (this
   report is its human-readable rationale).
-- `reference/gdd-threat-model.md` - the STRIDE threat model (Phase 33.5-01).
+- `reference/hone-threat-model.md` - the STRIDE threat model (Phase 33.5-01).
 
 This audit freezes the egress / secret / external-input picture so any *future* surface that is
 not pre-approved trips the 33.5-04 gate at CI time. It is grounded in the CONTEXT real-tree sweep

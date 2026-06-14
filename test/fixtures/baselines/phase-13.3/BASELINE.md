@@ -6,7 +6,7 @@
 
 ## What this baseline locks
 
-The deterministic output of `/gdd:explore` on `test-fixture/src/` as of
+The deterministic output of `/hone:explore` on `test-fixture/src/` as of
 plugin v1.0.7.3. The release-time smoke test diffs against this baseline
 on every tag creation; a diff fails the build and surfaces the manual
 rollback command.

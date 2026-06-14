@@ -59,11 +59,11 @@ test('phase-22 baseline: WebSocket transport module is shipped', () => {
   assert.ok(existsSync(join(REPO_ROOT, 'scripts/lib/transports/ws.cjs')));
 });
 
-test('phase-22 baseline: gdd-events bin entry exists', () => {
+test('phase-22 baseline: hone-events bin entry exists', () => {
   const pkg = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8'));
-  assert.ok(pkg.bin && pkg.bin['gdd-events'], 'gdd-events bin entry missing');
-  assert.equal(pkg.bin['gdd-events'], './scripts/cli/gdd-events.mjs');
-  assert.ok(existsSync(join(REPO_ROOT, 'scripts/cli/gdd-events.mjs')));
+  assert.ok(pkg.bin && pkg.bin['hone-events'], 'hone-events bin entry missing');
+  assert.equal(pkg.bin['hone-events'], './scripts/cli/hone-events.mjs');
+  assert.ok(existsSync(join(REPO_ROOT, 'scripts/cli/hone-events.mjs')));
 });
 
 test('phase-22 baseline: ws is declared as optionalDependency', () => {

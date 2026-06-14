@@ -1,6 +1,6 @@
 // tests/init-runner.test.ts — Plan 21-08 (SDK-20) coverage.
 //
-// Exercises the `gdd-sdk init` runner end-to-end through the
+// Exercises the `hone-sdk init` runner end-to-end through the
 // queryOverride injection point (no real SDK calls, no network).
 //
 // Required test groups (Plan 21-08 Task 6):
@@ -60,7 +60,7 @@ const FIXTURE_TEMPLATE = resolve(FIXTURES_ROOT, 'STATE-TEMPLATE.md');
 const MOCK_OUTPUT_DIR = resolve(FIXTURES_ROOT, 'mock-researcher-outputs');
 
 beforeEach(() => {
-  SANDBOX = mkdtempSync(join(tmpdir(), 'gdd-init-runner-'));
+  SANDBOX = mkdtempSync(join(tmpdir(), 'hone-init-runner-'));
   ORIG_CWD = process.cwd();
   ORIG_SESSION_DIR = process.env['GDD_SESSION_DIR'];
   process.env['GDD_SESSION_DIR'] = join(SANDBOX, 'sessions');

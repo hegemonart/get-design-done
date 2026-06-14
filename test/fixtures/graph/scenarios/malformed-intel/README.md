@@ -7,7 +7,7 @@ validation rejects with two errors:
 - `nodes[0].id` — required field missing (or not a string)
 - `edges[0].from` — required field missing (or not a string)
 
-## Expected bin/gdd-graph behavior
+## Expected bin/hone-graph behavior
 
 | Subcommand | Expected outcome |
 |---|---|

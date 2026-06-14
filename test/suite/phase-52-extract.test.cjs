@@ -30,7 +30,7 @@ function importMjs(name) {
 }
 
 function mkFixture() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52-extract-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52-extract-'));
   const src = path.join(dir, 'src');
   fs.mkdirSync(src, { recursive: true });
 
@@ -250,7 +250,7 @@ const ALL_EXTRACTORS = [
 ];
 
 test('every extractor returns an empty (valid) Fragment on an empty dir', async () => {
-  const empty = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52-empty-'));
+  const empty = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52-empty-'));
   try {
     for (const [file, mapper] of ALL_EXTRACTORS) {
       const mod = await importMjs(file);
@@ -265,7 +265,7 @@ test('every extractor returns an empty (valid) Fragment on an empty dir', async 
 });
 
 test('every extractor tolerates a non-existent path without throwing', async () => {
-  const ghost = path.join(os.tmpdir(), 'gdd-p52-does-not-exist-' + Date.now());
+  const ghost = path.join(os.tmpdir(), 'hone-p52-does-not-exist-' + Date.now());
   for (const [file, mapper] of ALL_EXTRACTORS) {
     const mod = await importMjs(file);
     const frag = mod.extract(ghost);

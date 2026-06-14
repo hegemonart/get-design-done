@@ -27,7 +27,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -160,7 +160,7 @@ test('57-A: openQueryDb returns a readonly connection that rejects writes', () =
   if (!Database) return;
 
   // Create a temporary database file with the schema.
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-'));
   const dbPath = path.join(tmpDir, 'test.sqlite');
   try {
     // First create the database and schema as a writer.
@@ -192,7 +192,7 @@ test('57-A: checkIntegrity returns true on a fresh database', () => {
   const { Database, openStateDb, checkIntegrity } = require(backendPath);
   if (!Database) return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-'));
   const dbPath = path.join(tmpDir, 'integrity.sqlite');
   try {
     const db = openStateDb(dbPath);
@@ -243,7 +243,7 @@ test('57-A: openStateDb with readonly:true skips WAL pragma', () => {
   const { Database, openStateDb } = require(backendPath);
   if (!Database) return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-'));
   const dbPath = path.join(tmpDir, 'wal-test.sqlite');
   try {
     // Create a writable db first so the file exists.

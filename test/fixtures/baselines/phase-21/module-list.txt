@@ -1,4 +1,4 @@
-bin/gdd-sdk
+bin/hone-sdk
 sdk/cli
 scripts/lib/context-engine
 scripts/lib/discuss-parallel-runner

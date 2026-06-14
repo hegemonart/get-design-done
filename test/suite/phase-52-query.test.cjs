@@ -124,7 +124,7 @@ test('coverage() reports present/missing types and an integer pct', () => {
 });
 
 test('load() round-trips a graph from disk', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52q-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52q-'));
   const file = path.join(dir, 'context-graph.json');
   try {
     fs.writeFileSync(file, JSON.stringify(synthGraph()), 'utf8');
@@ -138,7 +138,7 @@ test('load() round-trips a graph from disk', () => {
 });
 
 test('CLI main() coverage returns 0 and emits JSON', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52q-cli-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52q-cli-'));
   const file = path.join(dir, 'context-graph.json');
   try {
     fs.writeFileSync(file, JSON.stringify(synthGraph()), 'utf8');
@@ -154,7 +154,7 @@ test('CLI main() coverage returns 0 and emits JSON', () => {
 });
 
 test('CLI main() path prints the BFS chain', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52q-cli2-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52q-cli2-'));
   const file = path.join(dir, 'context-graph.json');
   try {
     fs.writeFileSync(file, JSON.stringify(synthGraph()), 'utf8');
@@ -169,7 +169,7 @@ test('CLI main() path prints the BFS chain', () => {
 });
 
 test('CLI main() returns 1 on unknown command', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52q-cli3-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52q-cli3-'));
   const file = path.join(dir, 'context-graph.json');
   try {
     fs.writeFileSync(file, JSON.stringify(synthGraph()), 'utf8');

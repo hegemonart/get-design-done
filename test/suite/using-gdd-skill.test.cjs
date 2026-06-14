@@ -1,5 +1,5 @@
 'use strict';
-// test/suite/using-gdd-skill.test.cjs — Phase 32 Plan 01 (Wave A.1)
+// test/suite/using-hone-skill.test.cjs — Phase 32 Plan 01 (Wave A.1)
 //
 // Contract tests for skills/using-gdd/SKILL.md — the SessionStart-injected
 // discipline bootstrap. Asserts: ≤120-line cap, leading <SUBAGENT-STOP> tag,

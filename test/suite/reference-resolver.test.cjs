@@ -82,7 +82,7 @@ test('23-05: excerptOf truncates with ellipsis when over maxChars', () => {
   // Synthesize a temp markdown file inline.
   const { mkdtempSync, writeFileSync, rmSync } = require('node:fs');
   const { tmpdir } = require('node:os');
-  const dir = mkdtempSync(path.join(tmpdir(), 'gdd-excerpt-'));
+  const dir = mkdtempSync(path.join(tmpdir(), 'hone-excerpt-'));
   try {
     const file = path.join(dir, 'big.md');
     const para = 'word '.repeat(100); // 500 chars

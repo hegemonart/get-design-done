@@ -44,7 +44,7 @@ test('stale-colon-refs: no /design:<cmd> references in markdown files', () => {
   assert.deepEqual(
     violations,
     [],
-    `Found stale /design: command references (should be /gdd:):\n${violations.join('\n')}\n\n` +
-    `Replace all /design:<cmd> with /gdd:<cmd> per the Phase 7 namespace rename.`
+    `Found stale /design: command references (should be /hone:):\n${violations.join('\n')}\n\n` +
+    `Replace all /design:<cmd> with /hone:<cmd> per the Phase 7 namespace rename.`
   );
 });

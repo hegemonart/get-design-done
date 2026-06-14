@@ -1,5 +1,5 @@
 'use strict';
-// Phase 35.1 — /gdd:ship wires pr-commenter after PR creation, degrade-to-noop (D-06).
+// Phase 35.1 — /hone:ship wires pr-commenter after PR creation, degrade-to-noop (D-06).
 // Hermetic: file reads only. Tagged `35.1-01:`.
 
 const { test } = require('node:test');

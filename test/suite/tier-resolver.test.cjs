@@ -99,7 +99,7 @@ const EXPECTED = {
  * Returns the parsed event lines emitted during fn execution.
  */
 function withEventsCapture(fn) {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-tier-resolver-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-tier-resolver-'));
   const eventsPath = join(dir, 'events.jsonl');
   const savedPath = process.env.GDD_EVENTS_PATH;
   const savedSession = process.env.GDD_SESSION_ID;

@@ -2,7 +2,7 @@
 /**
  * test/suite/phase-57-consumers.test.cjs - Phase 57 SQLite State Backbone.
  * Tests for the consumer read path (Round 3-E):
- *   - sdk/mcp/gdd-state/tools/get.ts  (read via sdk/state, transparent SQLite gate)
+ *   - sdk/mcp/hone-state/tools/get.ts  (read via sdk/state, transparent SQLite gate)
  *   - sdk/dashboard/data/source.cjs   (loadDashboardModel backend field)
  *
  * Tag: 57-E:
@@ -38,7 +38,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -94,7 +94,7 @@ const MINIMAL_STATE = [
  * Returns { dir, statePath, designDir, cleanup }.
  */
 function scaffoldStateOnly() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57e-md-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57e-md-'));
   const designDir = path.join(dir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
   const statePath = path.join(designDir, 'STATE.md');
@@ -114,7 +114,7 @@ function scaffoldStateOnly() {
  * Returns { dir, statePath, dbPath, designDir, cleanup }.
  */
 function scaffoldStateWithSqlite() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57e-sq-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57e-sq-'));
   const designDir = path.join(dir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
   const statePath = path.join(designDir, 'STATE.md');
@@ -165,22 +165,22 @@ function scaffoldStateWithSqlite() {
 }
 
 // ---------------------------------------------------------------------------
-// Helper: load sdk/mcp/gdd-state/tools/get.ts via dynamic import.
+// Helper: load sdk/mcp/hone-state/tools/get.ts via dynamic import.
 // ---------------------------------------------------------------------------
 
 async function loadGetTool() {
-  const getTsPath = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-state', 'tools', 'get.ts');
+  const getTsPath = path.join(REPO_ROOT, 'sdk', 'mcp', 'hone-state', 'tools', 'get.ts');
   const mod = await import(pathToFileURL(getTsPath).href);
   return mod;
 }
 
 // ---------------------------------------------------------------------------
-// 57-E: MCP gdd_state__get — schema / return-shape assertions (always-on)
+// 57-E: MCP hone_state__get — schema / return-shape assertions (always-on)
 // ---------------------------------------------------------------------------
 
 test('57-E: get.ts exports name, schemaPath, handle as expected (always-on)', async () => {
   const getTool = await loadGetTool();
-  assert.equal(getTool.name, 'gdd_state__get', 'tool name must be gdd_state__get');
+  assert.equal(getTool.name, 'hone_state__get', 'tool name must be hone_state__get');
   assert.equal(typeof getTool.schemaPath, 'string', 'schemaPath must be a string');
   assert.ok(getTool.schemaPath.includes('get.schema.json'), 'schemaPath must reference get.schema.json');
   assert.equal(typeof getTool.handle, 'function', 'handle must be a function');
@@ -360,7 +360,7 @@ test('57-E: loadDashboardModel backend field is markdown when no state.sqlite (a
       const fs = require('node:fs');
       const os = require('node:os');
       const path = require('node:path');
-      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57e-floor-'));
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57e-floor-'));
       const designDir = path.join(dir, '.design');
       fs.mkdirSync(designDir, { recursive: true });
       fs.writeFileSync(path.join(designDir, 'STATE.md'), ${JSON.stringify(MINIMAL_STATE)}, 'utf8');
@@ -387,7 +387,7 @@ test('57-E: loadDashboardModel backend field is markdown when no state.sqlite (a
 test('57-E: loadDashboardModel never throws even with absent .design (always-on)', async () => {
   const source = require(sourcePath);
   // Point at a non-existent project root.
-  const fakeRoot = path.join(os.tmpdir(), 'gdd-57e-absent-' + Date.now());
+  const fakeRoot = path.join(os.tmpdir(), 'hone-57e-absent-' + Date.now());
   let model;
   let threw = false;
   try {

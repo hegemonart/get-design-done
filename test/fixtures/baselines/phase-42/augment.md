@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Augment model.
+Run /hone:audit and /hone:verify using your configured Augment model.
 Settings live in .augment/config.json. For help, ask Augment about the pipeline.
 
 

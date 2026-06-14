@@ -37,7 +37,7 @@ function read(file) {
 }
 
 // Count data rows of the "| Thought | Reality |" table (excludes heading +
-// separator), mirroring the 32-01 idiom (using-gdd-skill.test.cjs).
+// separator), mirroring the 32-01 idiom (using-hone-skill.test.cjs).
 function redFlagRowCount(src) {
   const lines = src.split('\n');
   const headIdx = lines.findIndex((l) => TABLE_HEAD.test(l));

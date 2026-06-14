@@ -54,7 +54,7 @@ test('51: instinct SKILL.md exists', () => {
 
 test('51: instinct frontmatter is valid v3 form with required fields', () => {
   const fm = frontmatter(read(INSTINCT_SKILL));
-  assert.match(fm, /^name: gdd-instinct$/m, 'name: gdd-instinct');
+  assert.match(fm, /^name: hone-instinct$/m, 'name: hone-instinct');
   // Quoted description, 20..1024 chars, single physical line (no folded form here).
   assert.match(fm, /^description: ".{20,1024}"$/m, 'quoted 20..1024 description');
   assert.match(fm, /Use when /i, 'v3 "Use when" trigger sentence');

@@ -7,7 +7,7 @@ started_at: 2026-04-24T00:00:00Z
 last_checkpoint: 2026-04-24T00:00:00Z
 ---
 
-# Pipeline State — gdd-sdk-cli fixture
+# Pipeline State — hone-sdk-cli fixture
 
 <position>
 stage: plan

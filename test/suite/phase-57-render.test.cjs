@@ -34,7 +34,7 @@ function findPackageRoot(startDir) {
     try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch { pkg = null; }
     if (pkg) {
       if (firstWithPkg === null) firstWithPkg = dir;
-      if (pkg.name === 'get-design-done') return dir;
+      if (pkg.name === 'hone') return dir;
     }
     const parent = path.dirname(dir);
     if (parent === dir) break;

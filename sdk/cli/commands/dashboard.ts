@@ -3,7 +3,7 @@
 // `gdd dashboard [--web] [--once] [--no-open]` — the launcher that surfaces the GDD
 // dashboard. Two paths, ONE entrypoint:
 //
-//   * `gdd dashboard`            -> spawn the TUI (`bin/gdd-dashboard`, executor D's CJS
+//   * `gdd dashboard`            -> spawn the TUI (`bin/hone-dashboard`, executor D's CJS
 //                                   trampoline) and forward stdio + the child exit code.
 //   * `gdd dashboard --web`      -> load `.design/context-graph.json` (via the dep-free
 //                                   design-context-query `load`; absent/invalid -> a graceful
@@ -52,11 +52,11 @@ const DASHBOARD_FLAGS: readonly FlagSpec[] = [
   { name: 'root', type: 'string' },
 ];
 
-export const DASHBOARD_USAGE = `gdd-sdk dashboard [flags]
+export const DASHBOARD_USAGE = `hone-sdk dashboard [flags]
 
 Open the GDD dashboard. Read-only. Dep-free (Node builtins only).
 
-Default (no --web) launches the terminal UI (bin/gdd-dashboard). With --web it
+Default (no --web) launches the terminal UI (bin/hone-dashboard). With --web it
 emits a self-contained HTML graph of the design-context, serves it on an ephemeral
 local port, and opens your browser.
 
@@ -106,7 +106,7 @@ export interface DashboardDeps {
  * `import.meta`/`__dirname` are unavailable here (tsc rejects `import.meta` for
  * CommonJS output, and strip-types reparses this module as ESM at runtime so
  * `__dirname` is undefined) — so we anchor on the CLI entry (process.argv[1] is
- * `<root>/sdk/cli/index.{ts,js}` or `<root>/bin/gdd-sdk` in every real launch,
+ * `<root>/sdk/cli/index.{ts,js}` or `<root>/bin/hone-sdk` in every real launch,
  * the same anchor build.ts uses) and on cwd (a consumer running from their
  * project root, where the lib lives under node_modules/get-design-done/).
  */
@@ -202,7 +202,7 @@ function loadGraphGraceful(root: string, stderr: NodeJS.WritableStream): unknown
     if (typeof query.load === 'function') return query.load(graphPath);
   } catch (err) {
     stderr.write(
-      `gdd-sdk dashboard: no design-context graph at ${graphPath} (${errMsg(err)}); rendering an empty graph.\n`,
+      `hone-sdk dashboard: no design-context graph at ${graphPath} (${errMsg(err)}); rendering an empty graph.\n`,
     );
   }
   return { nodes: [], edges: [] };
@@ -316,7 +316,7 @@ export async function dashboardCommand(
   try {
     flags = coerceFlags(parsed, DASHBOARD_FLAGS);
   } catch {
-    stderr.write(`gdd-sdk dashboard: invalid flags\n${DASHBOARD_USAGE}`);
+    stderr.write(`hone-sdk dashboard: invalid flags\n${DASHBOARD_USAGE}`);
     return 3;
   }
 
@@ -343,7 +343,7 @@ export async function dashboardCommand(
     try {
       writeFileSync(outFile, html, 'utf8');
     } catch (err) {
-      stderr.write(`gdd-sdk dashboard: could not write ${outFile}: ${errMsg(err)}\n`);
+      stderr.write(`hone-sdk dashboard: could not write ${outFile}: ${errMsg(err)}\n`);
       return 3;
     }
     stdout.write(`Wrote dashboard HTML to ${outFile}\n`);
@@ -355,7 +355,7 @@ export async function dashboardCommand(
   try {
     served = await serveHtml(html);
   } catch (err) {
-    stderr.write(`gdd-sdk dashboard: could not start the web server: ${errMsg(err)}\n`);
+    stderr.write(`hone-sdk dashboard: could not start the web server: ${errMsg(err)}\n`);
     return 3;
   }
 
@@ -388,7 +388,7 @@ export async function dashboardCommand(
 }
 
 // ---------------------------------------------------------------------------
-// TUI launch (default path). Spawn bin/gdd-dashboard, forward stdio + exit code.
+// TUI launch (default path). Spawn bin/hone-dashboard, forward stdio + exit code.
 // ---------------------------------------------------------------------------
 
 function runTui(
@@ -399,12 +399,12 @@ function runTui(
   let bin = deps.tuiBin;
   if (!bin) {
     const root = findPackageRoot();
-    const candidate = join(root, 'bin', 'gdd-dashboard');
+    const candidate = join(root, 'bin', 'hone-dashboard');
     bin = existsSync(candidate) ? candidate : undefined;
   }
   if (!bin || !existsSync(bin)) {
     stderr.write(
-      'gdd-sdk dashboard: could not locate bin/gdd-dashboard (the terminal UI).\n' +
+      'hone-sdk dashboard: could not locate bin/hone-dashboard (the terminal UI).\n' +
         'Try `gdd dashboard --web` for the browser graph instead.\n',
     );
     return 3;
@@ -412,7 +412,7 @@ function runTui(
   const stdio = deps.tuiStdio ?? 'inherit';
   const res = spawnSync(process.execPath, [bin], { stdio });
   if (res.error) {
-    stderr.write(`gdd-sdk dashboard: failed to launch the TUI: ${res.error.message}\n`);
+    stderr.write(`hone-sdk dashboard: failed to launch the TUI: ${res.error.message}\n`);
     return 3;
   }
   return typeof res.status === 'number' ? res.status : 0;

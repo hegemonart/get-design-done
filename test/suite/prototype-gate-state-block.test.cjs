@@ -9,7 +9,7 @@
 //
 // This is the surface-level closeout test for the prototype-gate sub-feature.
 // Deeper structural coverage (mutation-after-parse, multi-cycle round-trips,
-// extra_attrs forwards-compat) lives in tests/gdd-state-prototyping.test.ts;
+// extra_attrs forwards-compat) lives in tests/hone-state-prototyping.test.ts;
 // this file exercises the *minimum* contract Plan 25-09 acceptance asks for
 // (one sketch + one spike + one skipped, byte-identical re-serialization, and
 // the block-omission rule when nothing is set).

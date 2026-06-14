@@ -8,8 +8,8 @@
 //     additive).
 //   * The Path Selection Heuristic table documents all four bucket labels
 //     (`S`, `M`, `L`, `XL`).
-//   * The canonical mapping rows are present: /gdd:scan→M, /gdd:help→S,
-//     /gdd:plan (standalone)→L, /gdd:next (autonomous)→XL.
+//   * The canonical mapping rows are present: /hone:scan→M, /hone:help→S,
+//     /hone:plan (standalone)→L, /hone:next (autonomous)→XL.
 //
 // The router itself is a deterministic skill (no model call) and its
 // behavior is purely documented in the SKILL.md; the budget-enforcer
@@ -97,38 +97,38 @@ test('25-09 router: canonical mapping S→fast, M→fast, L→quick, XL→full i
   assert.match(md, /\|\s*`XL`\s*\|\s*`full`/, 'XL must map to full — SKILL + reference/router-rules.md');
 });
 
-test('25-09 router: bucket assignment lists /gdd:help in S', () => {
+test('25-09 router: bucket assignment lists /hone:help in S', () => {
   // Phase 28.5-06 extracted bucket-assignment table to reference/router-rules.md.
   const md = readRouterSurface();
-  // Find the row that mentions /gdd:help and confirm it tags as S.
-  const helpLine = md.split('\n').find((l) => l.includes('/gdd:help'));
-  assert.ok(helpLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference /gdd:help');
-  assert.match(helpLine, /`S`/, '/gdd:help must be assigned complexity_class S');
+  // Find the row that mentions /hone:help and confirm it tags as S.
+  const helpLine = md.split('\n').find((l) => l.includes('/hone:help'));
+  assert.ok(helpLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference /hone:help');
+  assert.match(helpLine, /`S`/, '/hone:help must be assigned complexity_class S');
 });
 
-test('25-09 router: bucket assignment lists /gdd:scan in M', () => {
+test('25-09 router: bucket assignment lists /hone:scan in M', () => {
   const md = readRouterSurface();
-  const scanLine = md.split('\n').find((l) => l.includes('/gdd:scan'));
-  assert.ok(scanLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference /gdd:scan');
-  assert.match(scanLine, /`M`/, '/gdd:scan must be assigned complexity_class M');
+  const scanLine = md.split('\n').find((l) => l.includes('/hone:scan'));
+  assert.ok(scanLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference /hone:scan');
+  assert.match(scanLine, /`M`/, '/hone:scan must be assigned complexity_class M');
 });
 
-test('25-09 router: bucket assignment lists /gdd:plan in L', () => {
+test('25-09 router: bucket assignment lists /hone:plan in L', () => {
   const md = readRouterSurface();
-  // The L-row mentions standalone /gdd:plan / /gdd:verify / /gdd:explore /
-  // /gdd:discover. Match the line that calls out /gdd:plan in the L bucket.
+  // The L-row mentions standalone /hone:plan / /hone:verify / /hone:explore /
+  // /hone:discover. Match the line that calls out /hone:plan in the L bucket.
   const planLine = md
     .split('\n')
-    .find((l) => /standalone[^|]*\/gdd:plan/.test(l) || (/\/gdd:plan/.test(l) && /`L`/.test(l)));
-  assert.ok(planLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference standalone /gdd:plan');
-  assert.match(planLine, /`L`/, 'standalone /gdd:plan must be assigned complexity_class L');
+    .find((l) => /standalone[^|]*\/hone:plan/.test(l) || (/\/hone:plan/.test(l) && /`L`/.test(l)));
+  assert.ok(planLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference standalone /hone:plan');
+  assert.match(planLine, /`L`/, 'standalone /hone:plan must be assigned complexity_class L');
 });
 
-test('25-09 router: bucket assignment lists /gdd:next in XL', () => {
+test('25-09 router: bucket assignment lists /hone:next in XL', () => {
   const md = readRouterSurface();
-  const nextLine = md.split('\n').find((l) => l.includes('/gdd:next'));
-  assert.ok(nextLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference /gdd:next');
-  assert.match(nextLine, /`XL`/, '/gdd:next must be assigned complexity_class XL');
+  const nextLine = md.split('\n').find((l) => l.includes('/hone:next'));
+  assert.ok(nextLine, 'router heuristic table (SKILL + reference/router-rules.md) must reference /hone:next');
+  assert.match(nextLine, /`XL`/, '/hone:next must be assigned complexity_class XL');
 });
 
 test('25-09 router: S-class short-circuit is documented', () => {

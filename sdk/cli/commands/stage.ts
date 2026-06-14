@@ -1,6 +1,6 @@
 // sdk/cli/commands/stage.ts — Plan 21-09 Task 3 (SDK-21).
 //
-// `gdd-sdk stage <name>` — run a single pipeline stage. Delegates to
+// `hone-sdk stage <name>` — run a single pipeline stage. Delegates to
 // `pipeline-runner.run()` with `stages: [<name>]` for design-pipeline
 // stages. `--parallel` routes explore/discuss through their dedicated
 // parallel runners instead.
@@ -54,7 +54,7 @@ const STAGE_FLAGS: readonly FlagSpec[] = [
   { name: 'aggregator-prompt-file', type: 'string' },
 ];
 
-const USAGE = `gdd-sdk stage <name> [flags]
+const USAGE = `hone-sdk stage <name> [flags]
 
 Run a single stage.
 
@@ -110,8 +110,8 @@ const VALID_STAGE_NAMES = new Set<string>([
   'discuss',
 ]);
 
-// Names of top-level `gdd-sdk` subcommands that users sometimes try to invoke
-// as stages (e.g. `gdd-sdk stage audit`). When a stage name collides with one,
+// Names of top-level `hone-sdk` subcommands that users sometimes try to invoke
+// as stages (e.g. `hone-sdk stage audit`). When a stage name collides with one,
 // surface a "did you mean" hint pointing at the real invocation.
 const TOP_LEVEL_COMMANDS_OFTEN_CONFUSED_FOR_STAGES = new Set<string>([
   'audit',
@@ -137,18 +137,18 @@ export async function stageCommand(
   // First positional after the subcommand is the stage name.
   const stageName: string | undefined = args.positionals[0];
   if (stageName === undefined || stageName.length === 0) {
-    stderr.write('gdd-sdk stage: missing stage name\n');
+    stderr.write('hone-sdk stage: missing stage name\n');
     stderr.write(USAGE);
     return 3;
   }
 
   if (!VALID_STAGE_NAMES.has(stageName)) {
     stderr.write(
-      `gdd-sdk stage: "${stageName}" is not one of brief|explore|plan|design|verify|discuss\n`,
+      `hone-sdk stage: "${stageName}" is not one of brief|explore|plan|design|verify|discuss\n`,
     );
     if (TOP_LEVEL_COMMANDS_OFTEN_CONFUSED_FOR_STAGES.has(stageName)) {
       stderr.write(
-        `gdd-sdk stage: did you mean \`gdd-sdk ${stageName}\`? "${stageName}" is a top-level subcommand, not a pipeline stage.\n`,
+        `hone-sdk stage: did you mean \`hone-sdk ${stageName}\`? "${stageName}" is a top-level subcommand, not a pipeline stage.\n`,
       );
     }
     return 3;
@@ -158,7 +158,7 @@ export async function stageCommand(
   try {
     flags = coerceFlags(args, STAGE_FLAGS);
   } catch (err) {
-    stderr.write(`gdd-sdk stage: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk stage: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -169,7 +169,7 @@ export async function stageCommand(
   // `discuss` is leaf-only: always requires --parallel.
   if (stageName === 'discuss') {
     if (!parallel) {
-      stderr.write('gdd-sdk stage discuss: requires --parallel\n');
+      stderr.write('hone-sdk stage discuss: requires --parallel\n');
       return 3;
     }
     return await runDiscussParallel(flags, cwd, stdout, stderr, deps);
@@ -208,7 +208,7 @@ async function runPipelineStage(
   try {
     promptBody = loadSingleStagePrompt(stage, flags, cwd);
   } catch (err) {
-    stderr.write(`gdd-sdk stage: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk stage: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -260,7 +260,7 @@ async function runPipelineStage(
     } catch {
       // swallow
     }
-    stderr.write(`gdd-sdk stage: unexpected error: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk stage: unexpected error: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -293,7 +293,7 @@ async function runExploreParallel(
   try {
     synthesizerPrompt = loadExploreSynthesizerPrompt(flags, cwd);
   } catch (err) {
-    stderr.write(`gdd-sdk stage explore --parallel: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk stage explore --parallel: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -330,7 +330,7 @@ async function runExploreParallel(
     });
   } catch (err) {
     stderr.write(
-      `gdd-sdk stage explore --parallel: unexpected error: ${errMessage(err)}\n`,
+      `hone-sdk stage explore --parallel: unexpected error: ${errMessage(err)}\n`,
     );
     return 3;
   }
@@ -399,7 +399,7 @@ async function runDiscussParallel(
   } catch (err) {
     // discuss-parallel-runner throws OperationFailedError when all
     // discussants fail — surface as exit 1.
-    stderr.write(`gdd-sdk stage discuss --parallel: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk stage discuss --parallel: ${errMessage(err)}\n`);
     return 1;
   }
 

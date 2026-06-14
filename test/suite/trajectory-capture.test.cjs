@@ -34,7 +34,7 @@ test('22-03: trajectoryPath sanitizes cycle name', () => {
 });
 
 test('22-03: recordCall writes one JSONL line with all fields', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-traj-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-traj-'));
   try {
     const path = join(dir, 'cycle.jsonl');
     const line = recordCall({
@@ -64,7 +64,7 @@ test('22-03: recordCall writes one JSONL line with all fields', () => {
 });
 
 test('22-03: multiple recordCall appends produce N lines', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-traj-multi-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-traj-multi-'));
   try {
     const path = join(dir, 'multi.jsonl');
     for (let i = 0; i < 5; i++) {
@@ -79,7 +79,7 @@ test('22-03: multiple recordCall appends produce N lines', () => {
 });
 
 test('22-03: hook reads stdin JSON and writes a trajectory line', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-traj-hook-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-traj-hook-'));
   try {
     const hookInput = JSON.stringify({
       tool_name: 'Bash',
@@ -116,7 +116,7 @@ test('22-03: hook reads stdin JSON and writes a trajectory line', () => {
 });
 
 test('22-03: hook tags status=error when tool_response.is_error is true', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-traj-err-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-traj-err-'));
   try {
     const hookInput = JSON.stringify({
       tool_name: 'Bash',

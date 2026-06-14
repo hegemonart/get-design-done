@@ -47,7 +47,12 @@ const MODELS_JSON_SCHEMA_VERSION = 1;
 const MODELS_JSON_FILE = 'models.json';
 const MODELS_JSON_SOURCE = 'reference/runtime-models.md';
 const MODELS_JSON_FINGERPRINT_KEY = 'generated_by';
-const MODELS_JSON_FINGERPRINT_VALUE = 'get-design-done';
+// Phase 61 rebrand: the models.json provenance fingerprint is seam-sourced
+// (`hone`). Uninstall matches on this value to decide ownership; previously
+// installed files stamped with the legacy `get-design-done` value are a
+// breaking-change casualty of the v2.0 rebrand (documented in CHANGELOG).
+const { PLUGIN_NAME } = require('../pkg-identity.cjs');
+const MODELS_JSON_FINGERPRINT_VALUE = PLUGIN_NAME;
 
 function loadJsonOr(empty, filePath) {
   if (!fs.existsSync(filePath)) return empty;

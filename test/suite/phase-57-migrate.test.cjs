@@ -74,7 +74,7 @@ const { migrateToSqlite } = require('../../scripts/lib/state/migrate-to-sqlite.c
 // ---------------------------------------------------------------------------
 
 function mkTmp(prefix) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), `gdd-57b-${prefix}-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `hone-57b-${prefix}-`));
 }
 
 function rmrf(dir) {

@@ -223,7 +223,7 @@ test('hooks-ts-rewrite: Plan 20-13 owned hooks use .ts + --experimental-strip-ty
 // ── Suite 2: behavior equivalence via fixtures ──────────────────────────────
 
 test('hooks-ts-rewrite: budget-enforcer allow-path produces continue:true + modified_tool_input', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-budget-allow-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-budget-allow-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'budget-enforcer-allow.stdin.json'),
@@ -257,7 +257,7 @@ test('hooks-ts-rewrite: budget-enforcer allow-path produces continue:true + modi
 });
 
 test('hooks-ts-rewrite: budget-enforcer block-path produces continue:false + budget-cap message', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-budget-block-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-budget-block-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'budget-enforcer-block.stdin.json'),
@@ -291,7 +291,7 @@ test('hooks-ts-rewrite: budget-enforcer block-path produces continue:false + bud
 });
 
 test('hooks-ts-rewrite: context-exhaustion below-threshold produces empty stdout', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-ctx-ok-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-ctx-ok-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'context-exhaustion-ok.stdin.json'),
@@ -311,7 +311,7 @@ test('hooks-ts-rewrite: context-exhaustion below-threshold produces empty stdout
 });
 
 test('hooks-ts-rewrite: gdd-read-injection-scanner clean content produces empty stdout', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-scan-clean-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-scan-clean-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'gdd-read-injection-scanner-clean.stdin.json'),
@@ -331,7 +331,7 @@ test('hooks-ts-rewrite: gdd-read-injection-scanner clean content produces empty 
 });
 
 test('hooks-ts-rewrite: gdd-read-injection-scanner matched content produces warning message', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-scan-blocked-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-scan-blocked-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'gdd-read-injection-scanner-blocked.stdin.json'),
@@ -365,7 +365,7 @@ test('hooks-ts-rewrite: gdd-read-injection-scanner matched content produces warn
 // ── Suite 3: event-stream emission ──────────────────────────────────────────
 
 test('hooks-ts-rewrite: budget-enforcer emits hook.fired event on allow path', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-budget-event-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-budget-event-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'budget-enforcer-allow.stdin.json'),
@@ -387,7 +387,7 @@ test('hooks-ts-rewrite: budget-enforcer emits hook.fired event on allow path', (
 });
 
 test('hooks-ts-rewrite: budget-enforcer emits hook.fired event with decision=block on cap breach', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-budget-block-event-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-budget-block-event-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'budget-enforcer-block.stdin.json'),
@@ -406,7 +406,7 @@ test('hooks-ts-rewrite: budget-enforcer emits hook.fired event with decision=blo
 });
 
 test('hooks-ts-rewrite: context-exhaustion emits hook.fired event with decision=ok', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-ctx-event-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-ctx-event-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'context-exhaustion-ok.stdin.json'),
@@ -425,7 +425,7 @@ test('hooks-ts-rewrite: context-exhaustion emits hook.fired event with decision=
 });
 
 test('hooks-ts-rewrite: gdd-read-injection-scanner emits hook.fired event with decision=allow on clean', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-scan-clean-event-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-scan-clean-event-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'gdd-read-injection-scanner-clean.stdin.json'),
@@ -444,7 +444,7 @@ test('hooks-ts-rewrite: gdd-read-injection-scanner emits hook.fired event with d
 });
 
 test('hooks-ts-rewrite: gdd-read-injection-scanner emits hook.fired event with decision=block on match', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-scan-block-event-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-scan-block-event-');
   try {
     const stdin = readFileSync(
       join(FIXTURES_DIR, 'gdd-read-injection-scanner-blocked.stdin.json'),

@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd-audit and /gdd-verify using your configured Codex model.
+Run /hone-audit and /hone-verify using your configured Codex model.
 Settings live in .codex/config.toml. For help, ask Codex about the pipeline.
 
 

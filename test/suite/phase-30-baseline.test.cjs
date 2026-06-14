@@ -238,14 +238,14 @@ test('30-08 baseline: scripts/lib/issue-reporter/payload-assembly.cjs exists + e
 test('30-08 baseline: destination URL literal appears EXACTLY ONCE under issue-reporter/ in destination.cjs (D-02/D-03)', () => {
   // Per CONTEXT.md D-02/D-03: destination.cjs is the SOLE FILE under
   // scripts/lib/issue-reporter/ allowed to carry the destination URL literal.
-  // The literal `https?://github.com/hegemonart/get-design-done` must NOT
+  // The literal `https?://github.com/hegemonart/hone` must NOT
   // appear in any other file under that tree.
   assert.ok(fs.existsSync(DESTINATION_PATH),
     'scripts/lib/issue-reporter/destination.cjs missing (30-04 deliverable)');
   const destText = readText(DESTINATION_PATH);
   // Use full character-class escape per CodeQL js/incomplete-sanitization.
   const urlPattern = new RegExp(
-    escapeRegExp('https://github.com/hegemonart/get-design-done'),
+    escapeRegExp('https://github.com/hegemonart/hone'),
     'g'
   );
   const matches = destText.match(urlPattern) || [];

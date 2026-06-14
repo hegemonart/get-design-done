@@ -28,7 +28,7 @@ const bundler = require('../../scripts/build-distribution-bundles.cjs');
 // ----------------------------------------------------------------------
 
 function mkTmp(prefix) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), prefix || 'gdd-bundler-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), prefix || 'hone-bundler-test-'));
 }
 
 function writeFixtureSkill(sourceRoot, skillName, files) {
@@ -46,7 +46,7 @@ function writeFixtureSkill(sourceRoot, skillName, files) {
  * Returns the temp directory path.
  */
 function buildFixtureSourceRoot() {
-  const root = mkTmp('gdd-bundler-src-');
+  const root = mkTmp('hone-bundler-src-');
   writeFixtureSkill(root, 'alpha', {
     'SKILL.md': '---\nname: alpha\ndescription: alpha skill\n---\n\n# alpha body\n',
     'extra.md': 'alpha extra\n',
@@ -123,7 +123,7 @@ test('discoverTier2Channels filters by kind + always includes agentskills-io pas
 
 test('agentskills-io bundle is passthrough copy of skills/ — byte-identical, no manifest', () => {
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot = mkTmp('gdd-bundler-out-');
+  const outRoot = mkTmp('hone-bundler-out-');
   const rtm = fakeRuntimesModule([]); // no Tier-2 runtimes — only passthrough builds
   const results = bundler.buildAllChannels({
     sourceRoot, outRoot, runtimesModule: rtm,
@@ -155,8 +155,8 @@ test('agentskills-io bundle is passthrough copy of skills/ — byte-identical, n
 
 test('buildAllChannels — passthrough determinism (two runs byte-identical)', () => {
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot1 = mkTmp('gdd-bundler-det1-');
-  const outRoot2 = mkTmp('gdd-bundler-det2-');
+  const outRoot1 = mkTmp('hone-bundler-det1-');
+  const outRoot2 = mkTmp('hone-bundler-det2-');
   const rtm = fakeRuntimesModule([]);
   const pkgJson = { name: 'fixture', version: '0.0.0', description: 'fixture' };
   bundler.buildAllChannels({ sourceRoot, outRoot: outRoot1, runtimesModule: rtm, packageJson: pkgJson });
@@ -170,7 +170,7 @@ test('buildAllChannels — passthrough determinism (two runs byte-identical)', (
 
 test('--channel agentskills-io filter — only that channel built', () => {
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot = mkTmp('gdd-bundler-filter-');
+  const outRoot = mkTmp('hone-bundler-filter-');
   const rtm = fakeRuntimesModule([
     // Advertise tier-2 channels but only build the passthrough — verifies
     // that the filter scopes the build even when other channels are available.
@@ -223,7 +223,7 @@ test('main(--channel bogus) returns 2 with informative error message', () => {
 
 test('missing converter file — buildChannel throws MISSING_CONVERTER (→ exit 2 via main)', () => {
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot = mkTmp('gdd-bundler-missing-');
+  const outRoot = mkTmp('hone-bundler-missing-');
   const fakeChannel = {
     id: 'phantom-channel',
     kind: 'phantom-kind',
@@ -241,10 +241,10 @@ test('missing converter file — buildChannel throws MISSING_CONVERTER (→ exit
 
 test('converter convert() throws — buildChannel surfaces CONVERTER_EXEC_FAILED (→ exit 1)', () => {
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot = mkTmp('gdd-bundler-throw-');
+  const outRoot = mkTmp('hone-bundler-throw-');
   // Write a stub converter to a tmp path. NOT to scripts/lib/install/converters/ —
   // this respects D-10 (no production-path writes from tests).
-  const stubDir = mkTmp('gdd-bundler-stub-');
+  const stubDir = mkTmp('hone-bundler-stub-');
   const stubConverterPath = path.join(stubDir, 'throwing-converter.cjs');
   fs.writeFileSync(stubConverterPath, [
     "'use strict';",
@@ -271,8 +271,8 @@ test('converter convert() throws — buildChannel surfaces CONVERTER_EXEC_FAILED
 
 test('converter buildManifest() throws — buildChannel surfaces MANIFEST_BUILD_FAILED (→ exit 1)', () => {
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot = mkTmp('gdd-bundler-mfthrow-');
-  const stubDir = mkTmp('gdd-bundler-stub-');
+  const outRoot = mkTmp('hone-bundler-mfthrow-');
+  const stubDir = mkTmp('hone-bundler-stub-');
   const stubConverterPath = path.join(stubDir, 'mf-throwing-converter.cjs');
   fs.writeFileSync(stubConverterPath, [
     "'use strict';",
@@ -307,7 +307,7 @@ test('buildAllChannels with real Wave-B converters — 3 bundles + correct manif
   }
 
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot = mkTmp('gdd-bundler-waveb-');
+  const outRoot = mkTmp('hone-bundler-waveb-');
   const rtm = fakeRuntimesModule([
     { id: 'cursor-marketplace', kind: 'cursor-marketplace' },
     { id: 'codex-plugin', kind: 'codex-plugin' },
@@ -378,8 +378,8 @@ test('buildAllChannels with real Wave-B converters — full determinism (two run
     return;
   }
   const sourceRoot = buildFixtureSourceRoot();
-  const outRoot1 = mkTmp('gdd-bundler-detb1-');
-  const outRoot2 = mkTmp('gdd-bundler-detb2-');
+  const outRoot1 = mkTmp('hone-bundler-detb1-');
+  const outRoot2 = mkTmp('hone-bundler-detb2-');
   const rtm = fakeRuntimesModule([
     { id: 'cursor-marketplace', kind: 'cursor-marketplace' },
     { id: 'codex-plugin', kind: 'codex-plugin' },

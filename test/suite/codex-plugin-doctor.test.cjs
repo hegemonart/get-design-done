@@ -301,7 +301,7 @@ test('codex-plugin-doctor: install.cjs --doctor exits 0 + emits Codex Plugin sub
     assert.match(stdout, /## Tier-2 Distribution Channels/);
     assert.match(stdout, /### Codex Plugin/);
     assert.match(stdout, /ready-to-install/);
-    assert.match(stdout, /codex plugin marketplace add hegemonart\/get-design-done/);
+    assert.match(stdout, /codex plugin marketplace add hegemonart\/hone/);
     // Cursor Marketplace subsection co-renders alongside — must not regress.
     assert.match(stdout, /### Cursor Marketplace/);
   } finally {
@@ -315,7 +315,7 @@ test('codex-plugin-doctor: install.cjs --doctor exits 0 + emits Codex Plugin sub
 
 test('codex-plugin-doctor: validateCodexManifest accepts a full C1-shaped manifest', () => {
   const r = validateCodexManifest({
-    name: 'get-design-done',
+    name: 'hone',
     version: '1.28.8',
     description: 'pipeline',
   });
@@ -341,7 +341,7 @@ test('codex-plugin-doctor: validateCodexManifest rejects non-kebab-case names', 
 
 test('codex-plugin-doctor: validateCodexManifest rejects non-semver version', () => {
   const r = validateCodexManifest({
-    name: 'get-design-done',
+    name: 'hone',
     version: 'banana',
     description: 'pipeline',
   });
@@ -355,8 +355,8 @@ test('codex-plugin-doctor: module exports match the C2 contract', () => {
   assert.equal(typeof checkCodexPlugin, 'function');
   assert.equal(typeof computeCacheSimulationPath, 'function');
   assert.equal(typeof renderCodexPluginSection, 'function');
-  assert.equal(MARKETPLACE_NAME, 'get-design-done');
-  assert.equal(PLUGIN_NAME, 'get-design-done');
+  assert.equal(MARKETPLACE_NAME, 'hone');
+  assert.equal(PLUGIN_NAME, 'hone');
   assert.equal(MANIFEST_REL_PATH, '.codex-plugin/plugin.json');
   assert.equal(CATALOG_REL_PATH, '.claude-plugin/marketplace.json');
 });

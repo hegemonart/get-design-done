@@ -189,7 +189,7 @@ test('prompt-sanitizer: empty string input returns empty result', () => {
 test('prompt-sanitizer: determinism — repeated calls return identical results', () => {
   const raw: string = [
     'First, @file:./a.md for setup.',
-    'Then run /gdd:plan --phase=99 now.',
+    'Then run /hone:plan --phase=99 now.',
     'Ask the user for approval.',
     '',
     'STOP when done.',
@@ -228,11 +228,11 @@ test('prompt-sanitizer: opts.preserveCodeFences=false runs patterns inside fence
 });
 
 test('prompt-sanitizer: opts.preserveFrontmatter=false runs patterns inside frontmatter', () => {
-  const raw: string = ['---', 'alias: /gdd:progress', '---', '', '# body'].join('\n');
+  const raw: string = ['---', 'alias: /hone:progress', '---', '', '# body'].join('\n');
   const result: SanitizeResult = sanitize(raw, { preserveFrontmatter: false });
   assert.ok(
     result.sanitized.includes('(slash command removed)'),
-    `expected frontmatter /gdd: to be rewritten when preserveFrontmatter=false; got ${JSON.stringify(result.sanitized)}`,
+    `expected frontmatter /hone: to be rewritten when preserveFrontmatter=false; got ${JSON.stringify(result.sanitized)}`,
   );
 });
 

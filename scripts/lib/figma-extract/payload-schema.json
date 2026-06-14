@@ -8,7 +8,7 @@
   "additionalProperties": true,
   "properties": {
     "source": {
-      "const": "gdd-plugin",
+      "const": "hone-plugin",
       "description": "Path C marker. digest.cjs (31-02) routes a variables.json carrying this top-level field to the plugin path (NOT the Variables-API path)."
     },
     "fileKey": {

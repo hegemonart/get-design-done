@@ -1,57 +1,57 @@
 [
   {
-    "name": "gdd_state__add_blocker",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/add_blocker.schema.json",
-    "schemaHash": "13b52b4dbe8d0903c6a96af08ee0ab8fe9dc3f20f145859c9fa3940f56da492b"
+    "name": "hone_state__add_blocker",
+    "schemaPath": "sdk/mcp/hone-state/schemas/add_blocker.schema.json",
+    "schemaHash": "1523907187f72855a22d53335b2de40d56990ae85bcc6f301f81ef6656064a28"
   },
   {
-    "name": "gdd_state__add_decision",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/add_decision.schema.json",
-    "schemaHash": "4287a37637c188ade1e274eefbed74e39cece0819bd256347dd51638a1a70fac"
+    "name": "hone_state__add_decision",
+    "schemaPath": "sdk/mcp/hone-state/schemas/add_decision.schema.json",
+    "schemaHash": "aa07e26ed84984117a2720ad84ff51ff6a4b8b856ac5af63a837a2bfaf6bd5c1"
   },
   {
-    "name": "gdd_state__add_must_have",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/add_must_have.schema.json",
-    "schemaHash": "f83e0cc3f86b834f2e4db4616cf67896bb2444ace3703146984ff12367ae7089"
+    "name": "hone_state__add_must_have",
+    "schemaPath": "sdk/mcp/hone-state/schemas/add_must_have.schema.json",
+    "schemaHash": "26b9bb2e6b299db7881d8f3c4a055f75699db2e193211d1204e242cc9a3de6da"
   },
   {
-    "name": "gdd_state__checkpoint",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/checkpoint.schema.json",
-    "schemaHash": "9f5f60aa3bc30ab218012333f70abd2c061fdeb2af6bdc6c09ac27092db7a4cd"
+    "name": "hone_state__checkpoint",
+    "schemaPath": "sdk/mcp/hone-state/schemas/checkpoint.schema.json",
+    "schemaHash": "ca850b013150615da04dcf615cd6c2696199547c832f903aeec7445bca25197d"
   },
   {
-    "name": "gdd_state__frontmatter_update",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/frontmatter_update.schema.json",
-    "schemaHash": "ae856dcaa64f1b7f3d616613b7e04b47f740488695d83e8fe1048abde2a15ee6"
+    "name": "hone_state__frontmatter_update",
+    "schemaPath": "sdk/mcp/hone-state/schemas/frontmatter_update.schema.json",
+    "schemaHash": "add579d97a2daab06df73590475c4054b508da373130a20ed25f4bdbcf0a1d5c"
   },
   {
-    "name": "gdd_state__get",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/get.schema.json",
-    "schemaHash": "83c14f78f00f1d16f8d7b1f087715d259b0f575da98f40bad17b0ff3a8392cf1"
+    "name": "hone_state__get",
+    "schemaPath": "sdk/mcp/hone-state/schemas/get.schema.json",
+    "schemaHash": "2cbfbce6c325d6c8e24c36588cc88ed1ecd0db95d7485e80cebeff00a9ee2e35"
   },
   {
-    "name": "gdd_state__probe_connections",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/probe_connections.schema.json",
-    "schemaHash": "7558e8a81c90be9fa74281636461a113e4de5c26d34dd4829637ca6956a22275"
+    "name": "hone_state__probe_connections",
+    "schemaPath": "sdk/mcp/hone-state/schemas/probe_connections.schema.json",
+    "schemaHash": "70c9b71968a90dafb521a7d2418675e1dea15ed7b0c74e15b36a10a13aba0275"
   },
   {
-    "name": "gdd_state__resolve_blocker",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/resolve_blocker.schema.json",
-    "schemaHash": "60dbe5628ae7919daa4e4a0732be8ae2e07cec5673ef615f68a0f10d0232af7a"
+    "name": "hone_state__resolve_blocker",
+    "schemaPath": "sdk/mcp/hone-state/schemas/resolve_blocker.schema.json",
+    "schemaHash": "3338a96d0a40c7cb2c86baac95134e3f9632e2dc53ad1218527ec1a5fdabaff8"
   },
   {
-    "name": "gdd_state__set_status",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/set_status.schema.json",
-    "schemaHash": "53a9be08e5aebf83afba99f1efbcc70ec6bf12d9e75a321ac2a65b4b84f588c2"
+    "name": "hone_state__set_status",
+    "schemaPath": "sdk/mcp/hone-state/schemas/set_status.schema.json",
+    "schemaHash": "1c990c2c55edc87d4aaaabaeb85188b86048dea5f7e6cc90123035ba913df887"
   },
   {
-    "name": "gdd_state__transition_stage",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/transition_stage.schema.json",
-    "schemaHash": "7d84503f5969ab8e52b024cab6fb29dd75208630bd787e55254028b905142ca0"
+    "name": "hone_state__transition_stage",
+    "schemaPath": "sdk/mcp/hone-state/schemas/transition_stage.schema.json",
+    "schemaHash": "42a461fd8fc026615d6555251c24c9d413d7842ffecfc29c501fdd6f7d901f7c"
   },
   {
-    "name": "gdd_state__update_progress",
-    "schemaPath": "sdk/mcp/gdd-state/schemas/update_progress.schema.json",
-    "schemaHash": "aed72a3f20d0d493aae1d05faf03913efc2182899bd0f013ea66de0af79ada28"
+    "name": "hone_state__update_progress",
+    "schemaPath": "sdk/mcp/hone-state/schemas/update_progress.schema.json",
+    "schemaHash": "b8141f35b113f5dd47d1df2dbf6882d23d28ff1662776359f36efe313379bdd8"
   }
 ]

@@ -95,8 +95,8 @@ blank = still shimmed) · `Old` (pre-move path) · `New` (current path) · `Migr
 | 1.31.5 | 1.33.0 | `scripts/lib/iteration-budget.cjs` | `sdk/primitives/iteration-budget.cjs` | Require `sdk/primitives/iteration-budget.cjs`. |
 | 1.31.5 | 1.33.0 | `scripts/lib/jittered-backoff.cjs` | `sdk/primitives/jittered-backoff.cjs` | Require `sdk/primitives/jittered-backoff.cjs`. |
 | 1.31.5 | 1.33.0 | `scripts/lib/lockfile.cjs` | `sdk/primitives/lockfile.cjs` | Require `sdk/primitives/lockfile.cjs`. |
-| 1.31.5 | 1.33.0 | `scripts/mcp-servers/gdd-state/server.ts` | `sdk/mcp/gdd-state/server.ts` | Point the MCP server config at `sdk/mcp/gdd-state/server.ts`. |
-| 1.31.5 | 1.33.0 | `scripts/mcp-servers/gdd-mcp/server.ts` | `sdk/mcp/gdd-mcp/server.ts` | Point the MCP server config at `sdk/mcp/gdd-mcp/server.ts`. |
+| 1.31.5 | 1.33.0 | `scripts/mcp-servers/hone-state/server.ts` | `sdk/mcp/hone-state/server.ts` | Point the MCP server config at `sdk/mcp/hone-state/server.ts`. |
+| 1.31.5 | 1.33.0 | `scripts/mcp-servers/hone-mcp/server.ts` | `sdk/mcp/hone-mcp/server.ts` | Point the MCP server config at `sdk/mcp/hone-mcp/server.ts`. |
 
 All ten rows are **removed** as of the current release (the Phase 31.5 → `sdk/` reorg; shims removed
 in v1.33.0). The completeness gate confirms none of the `Old` paths remain in the tree.

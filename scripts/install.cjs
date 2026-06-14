@@ -33,6 +33,8 @@ const path = require('node:path');
 const { listRuntimes, listRuntimeIds, detectInstalledPeers, listPeerCapableRuntimes } = require('./lib/install/runtimes.cjs');
 const { installRuntime, uninstallRuntime } = require('./lib/install/installer.cjs');
 const fs = require('node:fs');
+// Phase 61 rebrand: installer CLI identity strings are seam-sourced.
+const { NPM_NAME, PLUGIN_NAME } = require('./lib/pkg-identity.cjs');
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -58,7 +60,7 @@ function helpText() {
     .map((r) => `  --${r.id.padEnd(12)} ${r.displayName}`)
     .join('\n');
   return [
-    'npx @hegemonart/get-design-done — install the plugin into one or more runtimes',
+    `npx ${NPM_NAME} — install the plugin into one or more runtimes`,
     '',
     'Zero-flag in a TTY launches the interactive multi-select.',
     'Zero-flag in a non-TTY (CI, pipes) defaults to --claude --global.',
@@ -225,8 +227,8 @@ async function main() {
           'interactive terminal.',
           '',
           'Re-run with an explicit runtime flag, e.g.:',
-          '  npx @hegemonart/get-design-done --uninstall --claude',
-          '  npx @hegemonart/get-design-done --uninstall --all',
+          `  npx ${NPM_NAME} --uninstall --claude`,
+          `  npx ${NPM_NAME} --uninstall --all`,
           '',
           'Run with --help to list available runtime flags.',
           '',
@@ -268,7 +270,7 @@ async function main() {
   if (allUnchanged && !dryRun) {
     process.stdout.write(
       [
-        `get-design-done is already registered (${runtimes.length} runtime(s) unchanged):`,
+        `${PLUGIN_NAME} is already registered (${runtimes.length} runtime(s) unchanged):`,
         summariseResults(results),
         '',
         'Nothing to do. Restart the affected runtime(s) if you have not yet.',
@@ -441,7 +443,7 @@ main().catch((err) => {
     process.stderr.write(`${err.message}\n`);
   } else {
     process.stderr.write(
-      `get-design-done installer error: ${err && err.stack ? err.stack : err}\n`,
+      `${PLUGIN_NAME} installer error: ${err && err.stack ? err.stack : err}\n`,
     );
   }
   process.exit(1);

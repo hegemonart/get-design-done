@@ -1,6 +1,6 @@
 // sdk/cli/commands/build.ts — Phase 42 (COMPILE-06).
 //
-// `gdd-sdk build skills [--harness <id>] [--zip] [--check]` — compile the per-harness skill bundles
+// `hone-sdk build skills [--harness <id>] [--zip] [--check]` — compile the per-harness skill bundles
 // from scripts/skill-templates/ via the orchestrator scripts/build-skills.cjs. The orchestrator is a separate
 // dep-free CJS process (no bundling entanglement with the SDK); we resolve it relative to the package
 // root and spawn it, forwarding stdout/stderr.
@@ -28,7 +28,7 @@ const BUILD_FLAGS: readonly FlagSpec[] = [
   { name: 'check', type: 'boolean' },
 ];
 
-export const BUILD_USAGE = `gdd-sdk build skills [flags]
+export const BUILD_USAGE = `hone-sdk build skills [flags]
 
 Compile per-harness skill bundles from scripts/skill-templates/ into dist/<bundle>/ (and regenerate the
 committed Claude-Code surface skills/). One source, N provider bundles.
@@ -69,7 +69,7 @@ export async function buildCommand(parsed: ParsedArgs, ctx: CommandCtx): Promise
 
   const target = parsed.positionals[0];
   if (target !== 'skills') {
-    ctx.stderr.write(`gdd-sdk build: expected target "skills" (got ${target ? `"${target}"` : 'nothing'})\n${BUILD_USAGE}`);
+    ctx.stderr.write(`hone-sdk build: expected target "skills" (got ${target ? `"${target}"` : 'nothing'})\n${BUILD_USAGE}`);
     return 3;
   }
 
@@ -77,13 +77,13 @@ export async function buildCommand(parsed: ParsedArgs, ctx: CommandCtx): Promise
   try {
     flags = coerceFlags(parsed, BUILD_FLAGS);
   } catch {
-    ctx.stderr.write(`gdd-sdk build: invalid flags\n${BUILD_USAGE}`);
+    ctx.stderr.write(`hone-sdk build: invalid flags\n${BUILD_USAGE}`);
     return 3;
   }
 
   const script = findOrchestrator();
   if (!script) {
-    ctx.stderr.write('gdd-sdk build: could not locate scripts/build-skills.cjs\n');
+    ctx.stderr.write('hone-sdk build: could not locate scripts/build-skills.cjs\n');
     return 3;
   }
 
@@ -99,7 +99,7 @@ export async function buildCommand(parsed: ParsedArgs, ctx: CommandCtx): Promise
   if (res.stdout) ctx.stdout.write(res.stdout);
   if (res.stderr) ctx.stderr.write(res.stderr);
   if (res.error) {
-    ctx.stderr.write(`gdd-sdk build: failed to run orchestrator: ${res.error.message}\n`);
+    ctx.stderr.write(`hone-sdk build: failed to run orchestrator: ${res.error.message}\n`);
     return 3;
   }
   return typeof res.status === 'number' ? res.status : 3;

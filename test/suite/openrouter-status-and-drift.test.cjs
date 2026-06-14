@@ -213,7 +213,7 @@ test('33.6-03: connections/openrouter.md exists with required shape (key + Fallb
 test('33.6-03: skills/openrouter-status/SKILL.md exists with disable-model-invocation: true', () => {
   assert.ok(fs.existsSync(SKILL_PATH), 'skills/openrouter-status/SKILL.md must exist');
   const sk = fs.readFileSync(SKILL_PATH, 'utf8');
-  assert.match(sk, /name:\s*gdd-openrouter-status/, 'frontmatter name gdd-openrouter-status');
+  assert.match(sk, /name:\s*hone-openrouter-status/, 'frontmatter name hone-openrouter-status');
   assert.match(sk, /disable-model-invocation:\s*true/, 'must carry disable-model-invocation: true');
   assert.match(sk, /tools:\s*Read,\s*Bash/, 'tools Read, Bash');
   assert.match(sk, /OPENROUTER-STATUS COMPLETE/, 'completion marker present');

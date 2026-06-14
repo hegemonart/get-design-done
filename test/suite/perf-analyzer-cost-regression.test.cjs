@@ -20,7 +20,7 @@ const {
 } = require('../../scripts/lib/perf-analyzer/cost-regression.cjs');
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-perf-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-perf-${prefix}-`));
 }
 
 function writeJsonl(filePath, rows) {

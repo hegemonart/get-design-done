@@ -4,7 +4,7 @@
  *
  * Static-analysis regression test for Plan 20-07: verifies that
  * `skills/brief/SKILL.md` routes STATE.md mutations through the
- * `gdd-state` MCP tools introduced in Plan 20-05, while preserving
+ * `hone-state` MCP tools introduced in Plan 20-05, while preserving
  * user-facing interview prose byte-for-byte.
  *
  * Runtime invocation of the skill (confirming the actual MCP tool
@@ -107,10 +107,10 @@ test('skill-brief-mcp-migration: baseline fixtures exist', () => {
 test('skill-brief-mcp-migration: frontmatter tools lists MCP entries', () => {
   const fm = frontmatter(readSkill());
   const required = [
-    'mcp__gdd_state__frontmatter_update',
-    'mcp__gdd_state__set_status',
-    'mcp__gdd_state__update_progress',
-    'mcp__gdd_state__get',
+    'mcp__hone_state__frontmatter_update',
+    'mcp__hone_state__set_status',
+    'mcp__hone_state__update_progress',
+    'mcp__hone_state__get',
   ];
   for (const tool of required) {
     assert.ok(
@@ -140,15 +140,15 @@ test('skill-brief-mcp-migration: no direct STATE.md mutation outside bootstrap',
   }
 });
 
-test('skill-brief-mcp-migration: Step 5 calls mcp__gdd_state__update_progress', () => {
+test('skill-brief-mcp-migration: Step 5 calls mcp__hone_state__update_progress', () => {
   const body = readSkill();
   // Extract Step 5 block (heading through end-of-file or next `##` at root).
   const match = body.match(/## Step 5 -[\s\S]*?(?=\n## |$)/);
   assert.ok(match, 'SKILL.md must have a "## Step 5 -" heading');
   assert.match(
     match[0],
-    /mcp__gdd_state__update_progress/,
-    'Step 5 must call mcp__gdd_state__update_progress at least once',
+    /mcp__hone_state__update_progress/,
+    'Step 5 must call mcp__hone_state__update_progress at least once',
   );
 });
 

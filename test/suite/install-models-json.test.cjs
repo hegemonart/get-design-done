@@ -35,7 +35,7 @@ const {
 const { parseRuntimeModels } = require('../../scripts/lib/install/parse-runtime-models.cjs');
 
 function mktmp() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-install-models-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-install-models-'));
 }
 
 function readJson(p) {
@@ -79,7 +79,7 @@ test('buildModelsJsonPayload: returns CONTEXT D-06 schema with flattened tier→
   assert.equal(payload.schema_version, MODELS_JSON_SCHEMA_VERSION);
   assert.equal(payload.source, MODELS_JSON_SOURCE);
   assert.equal(payload.generated_at, '2026-04-29T00:00:00.000Z');
-  assert.equal(payload.generated_by, 'get-design-done');
+  assert.equal(payload.generated_by, 'hone');
 
   // Tier map — strings, not nested {model: …} rows.
   for (const tier of ['opus', 'sonnet', 'haiku']) {
@@ -115,7 +115,7 @@ test('install (claude): writes models.json next to settings.json with full schem
     assert.equal(data.runtime, 'claude');
     assert.equal(data.schema_version, MODELS_JSON_SCHEMA_VERSION);
     assert.equal(data.source, MODELS_JSON_SOURCE);
-    assert.equal(data.generated_by, 'get-design-done');
+    assert.equal(data.generated_by, 'hone');
     assert.ok(Number.isFinite(Date.parse(data.generated_at)));
     for (const tier of ['opus', 'sonnet', 'haiku']) {
       assert.equal(typeof data.tier_to_model[tier], 'string');
@@ -226,7 +226,7 @@ test('install --dry-run on existing models.json: would update, no write', () => 
       schema_version: 1,
       generated_at: '2020-01-01T00:00:00.000Z',
       source: MODELS_JSON_SOURCE,
-      generated_by: 'get-design-done',
+      generated_by: 'hone',
     };
     const target = path.join(tmp, MODELS_JSON_FILE);
     fs.writeFileSync(target, JSON.stringify(stale, null, 2) + '\n');

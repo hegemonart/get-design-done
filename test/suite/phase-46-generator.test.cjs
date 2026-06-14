@@ -203,8 +203,8 @@ test('46-generator: frontmatterFromRecord quotes description, orders managed key
   // Quoting escapes embedded quotes and backslashes (round-trips via unquote).
   assert.equal(gen.unquote(descLine.slice('description: '.length)), rec.description);
 
-  // name uses the gdd-<id> default when no frontmatter_name override is present.
-  assert.equal(lines[0], 'name: gdd-synthetic');
+  // name uses the hone-<id> default when no frontmatter_name override is present.
+  assert.equal(lines[0], 'name: hone-synthetic');
 
   // Managed keys appear in MANAGED order, before any extra line.
   const managedKeysEmitted = lines
@@ -229,14 +229,14 @@ test('46-generator: frontmatterFromRecord quotes description, orders managed key
   assert.deepEqual(lines.slice(colorIdx), ['color: amber', 'model: inherit'], 'extra lines not verbatim/trailing');
 });
 
-test('46-generator: frontmatter_name override replaces the gdd- prefix in the name line', () => {
+test('46-generator: frontmatter_name override replaces the hone- prefix in the name line', () => {
   const rec = {
     name: 'design',
     frontmatter_name: 'design',
     description: 'A budget-length synthetic description used for the override test here.',
   };
   const lines = frontmatterFromRecord(rec).split('\n');
-  assert.equal(lines[0], 'name: design', 'frontmatter_name should override the gdd- prefix');
+  assert.equal(lines[0], 'name: design', 'frontmatter_name should override the hone- prefix');
 });
 
 test('46-generator: absent managed scalars are omitted, not emitted as empty/null', () => {
@@ -245,7 +245,7 @@ test('46-generator: absent managed scalars are omitted, not emitted as empty/nul
   const lines = frontmatterFromRecord(rec).split('\n');
   assert.deepEqual(
     lines,
-    ['name: gdd-sparse', `description: ${gen.quote(rec.description)}`],
+    ['name: hone-sparse', `description: ${gen.quote(rec.description)}`],
     'absent managed keys must be omitted entirely',
   );
 });

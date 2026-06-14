@@ -1,5 +1,5 @@
 {
-  "name": "using-gdd-description-format-ab",
+  "name": "using-hone-description-format-ab",
   "target_skill": "using-gdd",
   "pressures": ["scope-minimization"],
   "setup_prompt": "Using the `using-gdd` skill: when more than one GDD skill could apply, what is the skill PRIORITY ORDER — which of process, implementation, and audit skills wins, in what sequence, and what does each group contain? Answer from the skill's body; the one-line description summary is not enough.",

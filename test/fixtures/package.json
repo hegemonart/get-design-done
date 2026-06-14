@@ -1,6 +1,6 @@
 {
-  "name": "get-design-done-smoke-fixture",
+  "name": "hone-smoke-fixture",
   "version": "1.0.0",
-  "description": "Smoke-test fixture for get-design-done Phase 2 — seeded with BAN-01 violation + AI-slop signals",
+  "description": "Smoke-test fixture for hone Phase 2 — seeded with BAN-01 violation + AI-slop signals",
   "private": true
 }

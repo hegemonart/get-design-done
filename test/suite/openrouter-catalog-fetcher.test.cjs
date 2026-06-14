@@ -109,7 +109,7 @@ function alwaysThrowStub() {
 }
 
 function freshTmpCache() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-or-cat-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-or-cat-'));
   return { dir, cachePath: path.join(dir, 'openrouter-models.json') };
 }
 

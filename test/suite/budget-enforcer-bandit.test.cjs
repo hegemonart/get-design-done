@@ -32,7 +32,7 @@ const REPO_ROOT = resolve(__dirname, '../..');
 const HOOK_PATH = join(REPO_ROOT, 'hooks', 'budget-enforcer.ts');
 
 function tmp(prefix) {
-  const dir = mkdtempSync(join(tmpdir(), `gdd-be-bandit-${prefix}-`));
+  const dir = mkdtempSync(join(tmpdir(), `hone-be-bandit-${prefix}-`));
   mkdirSync(join(dir, '.design', 'telemetry'), { recursive: true });
   return dir;
 }

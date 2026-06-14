@@ -33,12 +33,12 @@ const {
 // ── fixtures ──────────────────────────────────────────────────────────────────
 
 function mkOutDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-receiver-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-receiver-'));
 }
 
 function validPayload() {
   return {
-    source: PLUGIN_PAYLOAD_MARKER, // 'gdd-plugin'
+    source: PLUGIN_PAYLOAD_MARKER, // 'hone-plugin'
     fileKey: 'ABC123',
     collections: [
       { id: 'c1', name: 'core', modes: [{ modeId: 'm1', name: 'Light' }] },
@@ -247,14 +247,14 @@ test('31-06: valid localhost POST /variables -> resolves {received:true, path}, 
   assert.equal(await connectRefused(), true, 'server must be closed after a valid receipt');
 });
 
-test("31-06: written variables.json contains source:'gdd-plugin' + the posted variables", async () => {
+test("31-06: written variables.json contains source:'hone-plugin' + the posted variables", async () => {
   const outDir = mkOutDir();
   const p = startReceiver({ outDir, timeoutMs: 5000 });
   await new Promise((r) => setTimeout(r, 100));
   await postVariables(JSON.stringify(validPayload()));
   const result = await p;
   const written = JSON.parse(fs.readFileSync(result.path, 'utf8'));
-  assert.equal(written.source, 'gdd-plugin', 'the Path C marker must be present for digest.cjs');
+  assert.equal(written.source, 'hone-plugin', 'the Path C marker must be present for digest.cjs');
   assert.equal(Array.isArray(written.variables), true);
   assert.equal(written.variables.length, 2, 'all posted variables must be persisted (D-13)');
   assert.equal(written.variables[0].name, 'color/bg');

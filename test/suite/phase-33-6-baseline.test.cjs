@@ -74,7 +74,7 @@ test('33.6-04: golden tier-resolution matches resolve() over the fixture catalog
 // ── 2. TTL skip + fallback-no-key (hermetic — stub fetch, tmpdir cache) ─────────
 
 test('33.6-04: fresh cache TTL-skips the stub fetch (recorded ttl_hours)', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-33-6-04-ttl-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-33-6-04-ttl-'));
   const cachePath = path.join(dir, 'openrouter-models.json');
   const nowMs = Date.UTC(2026, 4, 31, 12, 0, 0); // fixed clock
   // A FRESH cache: fetched_at one hour ago, well within the 24h TTL.
@@ -108,7 +108,7 @@ test('33.6-04: fresh cache TTL-skips the stub fetch (recorded ttl_hours)', async
 });
 
 test('33.6-04: no-key + empty cache resolves to the recorded fallback (null, graceful)', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-33-6-04-nokey-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-33-6-04-nokey-'));
   const cachePath = path.join(dir, 'absent-openrouter-models.json'); // never written
 
   let stubCalls = 0;

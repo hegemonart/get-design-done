@@ -9,7 +9,7 @@
 // so links from SKILL.md resolved to nothing on Cursor installs.
 //
 // These tests build a throwaway fixture repo in an isolated temp dir and point
-// the installer at it via the `.gdd-source` marker hook documented in
+// the installer at it via the `.hone-source` marker hook documented in
 // `runtime-artifact-layout.cjs#findInstallSourceRoot`. No real ~/.<runtime>
 // path is ever touched (every install passes an explicit tmp `configDir`).
 //
@@ -33,7 +33,7 @@ const TMP_ROOT = fs.realpathSync(os.tmpdir());
 const _createdDirs = [];
 
 function mkTmpDir(label) {
-  const dir = fs.mkdtempSync(path.join(TMP_ROOT, `gdd-sibling-${label}-`));
+  const dir = fs.mkdtempSync(path.join(TMP_ROOT, `hone-sibling-${label}-`));
   _createdDirs.push(dir);
   return dir;
 }
@@ -49,7 +49,7 @@ function setupFixtureRepo() {
     path.join(skillDir, 'SKILL.md'),
     [
       '---',
-      'name: gdd-sample',
+      'name: hone-sample',
       'description: "Sample skill with a sibling reference file."',
       '---',
       '',
@@ -77,7 +77,7 @@ function setupFixtureRepo() {
 }
 
 function placeSourceMarker(configDir, sourceRoot) {
-  fs.writeFileSync(path.join(configDir, '.gdd-source'), sourceRoot, 'utf8');
+  fs.writeFileSync(path.join(configDir, '.hone-source'), sourceRoot, 'utf8');
 }
 
 after(() => {
@@ -102,8 +102,8 @@ test('cursor install carries the SKILL.md sibling reference file', () => {
     `install should succeed, got skipped-foreign (${result.reason || ''})`,
   );
 
-  const skillMd = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
-  const siblingMd = path.join(cfg, 'skills', 'gdd-sample', 'sample-procedure.md');
+  const skillMd = path.join(cfg, 'skills', 'hone-sample', 'SKILL.md');
+  const siblingMd = path.join(cfg, 'skills', 'hone-sample', 'sample-procedure.md');
 
   assert.ok(fs.existsSync(skillMd), 'SKILL.md must land');
   assert.ok(
@@ -124,7 +124,7 @@ test('cursor install carries the SKILL.md sibling reference file', () => {
   );
 
   // Nested-subdir files are out of scope for the minimal sibling-carry.
-  const nested = path.join(cfg, 'skills', 'gdd-sample', 'procedures', 'deep.md');
+  const nested = path.join(cfg, 'skills', 'hone-sample', 'procedures', 'deep.md');
   assert.equal(
     fs.existsSync(nested),
     false,
@@ -157,7 +157,7 @@ test('cursor uninstall removes the carried sibling and trims the skill dir', () 
   placeSourceMarker(cfg, repo);
 
   installRuntime('cursor', { configDir: cfg, scope: 'global' });
-  const skillDir = path.join(cfg, 'skills', 'gdd-sample');
+  const skillDir = path.join(cfg, 'skills', 'hone-sample');
   const siblingMd = path.join(skillDir, 'sample-procedure.md');
   assert.ok(fs.existsSync(siblingMd), 'precondition: sibling should exist');
 
@@ -184,7 +184,7 @@ test('cursor uninstall leaves a foreign (user-authored) sibling in place', () =>
   placeSourceMarker(cfg, repo);
 
   installRuntime('cursor', { configDir: cfg, scope: 'global' });
-  const skillDir = path.join(cfg, 'skills', 'gdd-sample');
+  const skillDir = path.join(cfg, 'skills', 'hone-sample');
   // Simulate a user dropping their own reference file (no plugin fingerprint).
   const userSibling = path.join(skillDir, 'user-notes.md');
   fs.writeFileSync(userSibling, '# My notes (no fingerprint)\n', 'utf8');
@@ -215,8 +215,8 @@ test('non-cursor skills runtime (codex) ALSO carries the sibling (AR6 generaliza
 
   installRuntime('codex', { configDir: cfg, scope: 'global' });
 
-  const skillMd = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
-  const siblingMd = path.join(cfg, 'skills', 'gdd-sample', 'sample-procedure.md');
+  const skillMd = path.join(cfg, 'skills', 'hone-sample', 'SKILL.md');
+  const siblingMd = path.join(cfg, 'skills', 'hone-sample', 'sample-procedure.md');
   assert.ok(fs.existsSync(skillMd), 'codex SKILL.md must still land');
   assert.ok(
     fs.existsSync(siblingMd),
@@ -233,7 +233,7 @@ test('non-cursor skills runtime (codex) ALSO carries the sibling (AR6 generaliza
   );
 
   // Nested-subdir files remain out of scope for sibling-carry.
-  const nested = path.join(cfg, 'skills', 'gdd-sample', 'procedures', 'deep.md');
+  const nested = path.join(cfg, 'skills', 'hone-sample', 'procedures', 'deep.md');
   assert.equal(
     fs.existsSync(nested),
     false,
@@ -248,8 +248,8 @@ test('cursor dry-run writes neither SKILL.md nor the sibling', () => {
 
   installRuntime('cursor', { configDir: cfg, scope: 'global', dryRun: true });
 
-  const skillMd = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
-  const siblingMd = path.join(cfg, 'skills', 'gdd-sample', 'sample-procedure.md');
+  const skillMd = path.join(cfg, 'skills', 'hone-sample', 'SKILL.md');
+  const siblingMd = path.join(cfg, 'skills', 'hone-sample', 'sample-procedure.md');
   assert.equal(fs.existsSync(skillMd), false, 'SKILL.md must NOT be written in dry-run');
   assert.equal(fs.existsSync(siblingMd), false, 'sibling must NOT be written in dry-run');
 });

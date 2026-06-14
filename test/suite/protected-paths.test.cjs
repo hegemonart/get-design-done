@@ -22,7 +22,7 @@ function runHook(payload, cwd) {
 function safeParse(s) { try { return JSON.parse(s); } catch { return null; } }
 
 function scaffoldConfig(paths) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-pp-test-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-pp-test-'));
   const designDir = path.join(dir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
   if (paths !== undefined) {
@@ -268,7 +268,7 @@ test('protected-paths: quoted target `rm "reference/heuristics.md"` is detected'
 // A real temp cwd so absolute/relative/symlink forms are constructed from the
 // test's actual working directory (cross-platform).
 function scaffoldCwd() {
-  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-pp-canon-')));
+  const dir = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'hone-pp-canon-')));
   // Materialize the protected dirs so realpath of existing files succeeds.
   fs.mkdirSync(path.join(dir, 'hooks'), { recursive: true });
   fs.mkdirSync(path.join(dir, 'skills'), { recursive: true });

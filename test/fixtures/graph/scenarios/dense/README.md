@@ -6,7 +6,7 @@
 `depends_on`). Designed to exercise scoring/ranking in any subcommand that
 walks the graph (e.g., `query`).
 
-## Expected bin/gdd-graph behavior
+## Expected bin/hone-graph behavior
 
 | Subcommand | Expected outcome |
 |---|---|

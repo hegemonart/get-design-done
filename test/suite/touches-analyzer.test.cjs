@@ -52,7 +52,7 @@ test('23-03: parseTouches returns [] on empty input', () => {
 });
 
 test('23-03: parseTouchesFile derives taskId from filename', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-touches-file-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-touches-file-'));
   try {
     const fp = join(dir, '23-04-PLAN.md');
     writeFileSync(fp, 'Touches: a.ts, b.ts\n');

@@ -18,7 +18,7 @@ function runInstall(env, args = []) {
 }
 
 function mktmp() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-install-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-install-test-'));
 }
 
 test('install.cjs exists and is declared as the npm bin', () => {
@@ -27,7 +27,7 @@ test('install.cjs exists and is declared as the npm bin', () => {
   const pkg = JSON.parse(
     fs.readFileSync(path.join(REPO_ROOT, 'package.json'), 'utf8'),
   );
-  assert.equal(pkg.bin['get-design-done'], './scripts/install.cjs');
+  assert.equal(pkg.bin['hone'], './scripts/install.cjs');
   // 31-5-08 (D-09): the install bin ships via the explicit `scripts/install.cjs`
   // entry, not the old wholesale `scripts/` (which dragged maintainer-only files
   // into node_modules). Wholesale `scripts/` must NOT be present.
@@ -44,7 +44,7 @@ test('install.cjs exists and is declared as the npm bin', () => {
 test('install.cjs --help exits 0 with usage text', () => {
   const result = runInstall({}, ['--help']);
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /npx @hegemonart\/get-design-done/);
+  assert.match(result.stdout, /npx @hegemonart\/hone/);
   assert.match(result.stdout, /--dry-run/);
   assert.match(result.stdout, /CLAUDE_CONFIG_DIR/);
 });
@@ -58,11 +58,11 @@ test('install.cjs fresh install writes marketplace + enabledPlugins entries', ()
     const settings = JSON.parse(
       fs.readFileSync(path.join(tmp, 'settings.json'), 'utf8'),
     );
-    assert.deepEqual(settings.extraKnownMarketplaces['get-design-done'], {
-      source: { source: 'github', repo: 'hegemonart/get-design-done' },
+    assert.deepEqual(settings.extraKnownMarketplaces['hone'], {
+      source: { source: 'github', repo: 'hegemonart/hone' },
     });
     assert.equal(
-      settings.enabledPlugins['get-design-done@get-design-done'],
+      settings.enabledPlugins['hone@hone'],
       true,
     );
   } finally {
@@ -104,7 +104,7 @@ test('install.cjs preserves unrelated settings keys', () => {
     assert.deepEqual(settings.extraKnownMarketplaces.other, {
       source: { source: 'github', repo: 'foo/bar' },
     });
-    assert.ok(settings.extraKnownMarketplaces['get-design-done']);
+    assert.ok(settings.extraKnownMarketplaces['hone']);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
@@ -149,7 +149,7 @@ test('install.cjs bare --uninstall in non-TTY refuses (B4)', () => {
       fs.readFileSync(path.join(tmp, 'settings.json'), 'utf8'),
     );
     assert.equal(
-      settings.enabledPlugins['get-design-done@get-design-done'],
+      settings.enabledPlugins['hone@hone'],
       true,
       'bare --uninstall must not have removed the claude registration',
     );

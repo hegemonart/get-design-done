@@ -2,13 +2,13 @@
 
 // Phase 33.5 — Plan 01 — STRIDE runtime threat-model structural baseline.
 //
-// Hermetic (D-10): reads ONLY reference/gdd-threat-model.md from disk — no
+// Hermetic (D-10): reads ONLY reference/hone-threat-model.md from disk — no
 // network, no live peer, no API key — so the default `npm test` stays green.
 //
 // Asserts the SC#1 deliverable is present and structurally complete:
 //   1. The threat-model doc exists at the D-05 path (reference/).
 //   2. All 5 in-scope components have a recognizable section:
-//      hooks / gdd-state(MCP) / peer-CLI / WebSocket(ws.cjs) / issue-reporter.
+//      hooks / hone-state(MCP) / peer-CLI / WebSocket(ws.cjs) / issue-reporter.
 //   3. All 6 STRIDE categories are referenced (case-insensitive, >=1 each):
 //      Spoofing / Tampering / Repudiation / Information(disclosure) /
 //      Denial(of service) / Elevation(of privilege).
@@ -25,7 +25,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const DOC_REL = 'reference/gdd-threat-model.md';
+const DOC_REL = 'reference/hone-threat-model.md';
 const DOC_ABS = path.join(REPO_ROOT, DOC_REL);
 
 /** Read the threat-model doc once; null if absent. */
@@ -51,7 +51,7 @@ test('33.5-01: all 5 components have a section', () => {
   /** @type {Array<[string, RegExp]>} */
   const components = [
     ['hooks (SessionStart + budget/context-monitor)', /hook/i],
-    ['MCP servers (gdd-state / gdd-mcp)', /gdd-state|MCP/i],
+    ['MCP servers (hone-state / hone-mcp)', /hone-state|MCP/i],
     ['peer-CLI broker (acp + asp)', /peer-cli/i],
     ['WebSocket event-stream transport', /websocket|ws\.cjs/i],
     ['issue-reporter outbound (gh)', /issue-reporter/i],

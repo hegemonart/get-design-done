@@ -25,7 +25,7 @@ function setupTmp(prefix) {
   // realpathSync resolves macOS /var → /private/var symlink so paths
   // returned by writeSnapshot() match what the hook records after its
   // own filesystem walk.
-  const raw = mkdtempSync(join(tmpdir(), `gdd-ssr-${prefix}-`));
+  const raw = mkdtempSync(join(tmpdir(), `hone-ssr-${prefix}-`));
   const dir = require('node:fs').realpathSync(raw);
   mkdirSync(join(dir, '.design', 'snapshots'), { recursive: true });
   mkdirSync(join(dir, '.design', 'telemetry'), { recursive: true });
@@ -70,7 +70,7 @@ function readRecap(dir) {
 // 1. Absent snapshot dir — recap exits 0 with notice
 // ---------------------------------------------------------------------------
 test("27.6-05: absent snapshot dir — recap exits 0 with 'no prior snapshot' notice", () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-ssr-absent-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-ssr-absent-'));
   try {
     // Do not create .design/snapshots/ at all.
     const r = runHook(dir, {});

@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Claude model.
+Run /hone:audit and /hone:verify using your configured Claude model.
 Settings live in .claude/settings.json. For help, ask Claude Code about the pipeline.
 
 

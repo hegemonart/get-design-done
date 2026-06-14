@@ -32,7 +32,7 @@ const {
 // ---------------------------------------------------------------------------
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-conc-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-conc-${prefix}-`));
 }
 
 /**

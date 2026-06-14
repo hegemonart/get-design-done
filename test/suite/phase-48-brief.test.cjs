@@ -1,7 +1,7 @@
 'use strict';
 // Phase 48 (BRIEF-CRITIC) — brief-auditor agent + brief-quality-rubric + the non-blocking
 // brief-skill wiring. Asserts the advisory critic exists, carries valid frontmatter, the rubric
-// names all five anti-patterns, and the brief skill tail offers /gdd:discuss brief WITHOUT blocking
+// names all five anti-patterns, and the brief skill tail offers /hone:discuss brief WITHOUT blocking
 // the brief-to-explore transition.
 
 const test = require('node:test');
@@ -121,7 +121,7 @@ test('phase-48-brief: rubric has a good and bad example per anti-pattern', () =>
   assert.ok(badCount >= 5, `expected >=5 Bad examples, found ${badCount}`);
 });
 
-test('phase-48-brief: brief skill tail offers /gdd:discuss brief, non-blocking, before the HARD-GATE', () => {
+test('phase-48-brief: brief skill tail offers /hone:discuss brief, non-blocking, before the HARD-GATE', () => {
   const skill = fs.readFileSync(BRIEF_SKILL, 'utf8');
 
   // Offers the discuss-brief pointer (placeholder-tokenized command prefix preserved).

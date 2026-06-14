@@ -14,8 +14,8 @@
 //
 // Coverage:
 //   - frontmatter preserved on all 4 (starts with `---\n`)
-//   - cursor / copilot / antigravity keep `/gdd-` slash form unchanged
-//   - codex rewrites `/gdd-explore` → `$gdd-explore` in PROSE
+//   - cursor / copilot / antigravity keep `/hone-` slash form unchanged
+//   - codex rewrites `/hone-explore` → `$hone-explore` in PROSE
 //   - codex rewrites tool names ONLY inside fenced code blocks
 //   - codex preserves prose Bash/Read mentions (documentation untouched)
 //   - all 4 inject their adapter header exactly once (idempotency)
@@ -73,13 +73,13 @@ for (const c of CONVERTERS) {
     );
   });
 
-  test('converters-wave1: ' + c.name + ' normalizes name to gdd-<skill>', () => {
+  test('converters-wave1: ' + c.name + ' normalizes name to hone-<skill>', () => {
     const out = c.mod.convert(SOURCE, 'sample', { runtime: c.name });
-    // Source already had `name: gdd-sample` — but rerunning the
-    // converter must NOT yield `gdd-gdd-sample`.
-    assert.equal(out.includes('gdd-gdd-'), false, c.name + ': no double prefix');
-    // name should reference gdd-sample.
-    assert.ok(/name:\s*"?gdd-sample"?/.test(out), c.name + ': name has gdd-sample');
+    // Source already had `name: hone-sample` — but rerunning the
+    // converter must NOT yield `hone-hone-sample`.
+    assert.equal(out.includes('hone-hone-'), false, c.name + ': no double prefix');
+    // name should reference hone-sample.
+    assert.ok(/name:\s*"?hone-sample"?/.test(out), c.name + ': name has hone-sample');
   });
 
   test('converters-wave1: ' + c.name + ' injects exactly one adapter header', () => {
@@ -112,23 +112,23 @@ for (const c of CONVERTERS) {
   });
 
   test('converters-wave1: ' + c.name + ' handles no-frontmatter input', () => {
-    const noFm = '# Header\n\nBody content with /gdd-explore reference.\n';
+    const noFm = '# Header\n\nBody content with /hone-explore reference.\n';
     const out = c.mod.convert(noFm, 'sample', { runtime: c.name });
     assert.equal(typeof out, 'string');
     // buildFrontmatter prepends a minimal frontmatter when none exists.
     assert.ok(out.startsWith('---\n'), c.name + ': frontmatter prepended');
-    assert.ok(/name:\s*"?gdd-sample"?/.test(out), c.name + ': name set');
+    assert.ok(/name:\s*"?hone-sample"?/.test(out), c.name + ': name set');
   });
 }
 
 // ── Cursor-specific invariants ────────────────────────────────────────────
 
-test('converters-wave1: cursor preserves /gdd-* slash form in prose', () => {
+test('converters-wave1: cursor preserves /hone-* slash form in prose', () => {
   const out = cursor.convert(SOURCE, 'sample', { runtime: 'cursor' });
-  assert.ok(out.includes('/gdd-explore'), 'cursor keeps /gdd-explore');
-  assert.ok(out.includes('/gdd-debug'), 'cursor keeps /gdd-debug');
+  assert.ok(out.includes('/hone-explore'), 'cursor keeps /hone-explore');
+  assert.ok(out.includes('/hone-debug'), 'cursor keeps /hone-debug');
   // Codex shell-var form must NOT leak into cursor output.
-  assert.equal(out.includes('$gdd-'), false, 'cursor does not emit $gdd-');
+  assert.equal(out.includes('$hone-'), false, 'cursor does not emit $hone-');
 });
 
 test('converters-wave1: cursor preserves Claude tool names inside fences', () => {
@@ -142,12 +142,12 @@ test('converters-wave1: cursor preserves Claude tool names inside fences', () =>
 
 // ── Codex-specific invariants ─────────────────────────────────────────────
 
-test('converters-wave1: codex rewrites /gdd-explore → $gdd-explore in prose', () => {
+test('converters-wave1: codex rewrites /hone-explore → $hone-explore in prose', () => {
   const out = codex.convert(SOURCE, 'sample', { runtime: 'codex' });
-  assert.ok(out.includes('$gdd-explore'), 'codex emits $gdd-explore');
-  assert.ok(out.includes('$gdd-debug'), 'codex emits $gdd-debug');
-  assert.equal(out.includes('/gdd-explore'), false, 'codex strips /gdd-explore');
-  assert.equal(out.includes('/gdd-debug'), false, 'codex strips /gdd-debug');
+  assert.ok(out.includes('$hone-explore'), 'codex emits $hone-explore');
+  assert.ok(out.includes('$hone-debug'), 'codex emits $hone-debug');
+  assert.equal(out.includes('/hone-explore'), false, 'codex strips /hone-explore');
+  assert.equal(out.includes('/hone-debug'), false, 'codex strips /hone-debug');
 });
 
 test('converters-wave1: codex rewrites Bash( → shell( inside fenced code', () => {
@@ -217,10 +217,10 @@ test('converters-wave1: copilot preserves Claude tool names (no rewrites)', () =
   assert.equal(out.includes('shell(command='), false);
 });
 
-test('converters-wave1: copilot keeps /gdd-* slash form in prose', () => {
+test('converters-wave1: copilot keeps /hone-* slash form in prose', () => {
   const out = copilot.convert(SOURCE, 'sample', { runtime: 'copilot' });
-  assert.ok(out.includes('/gdd-explore'));
-  assert.equal(out.includes('$gdd-'), false);
+  assert.ok(out.includes('/hone-explore'));
+  assert.equal(out.includes('$hone-'), false);
 });
 
 test('converters-wave1: copilot injects Copilot adapter header', () => {
@@ -237,10 +237,10 @@ test('converters-wave1: antigravity preserves Claude tool names', () => {
   assert.equal(out.includes('shell(command='), false);
 });
 
-test('converters-wave1: antigravity keeps /gdd-* slash form in prose', () => {
+test('converters-wave1: antigravity keeps /hone-* slash form in prose', () => {
   const out = antigravity.convert(SOURCE, 'sample', { runtime: 'antigravity' });
-  assert.ok(out.includes('/gdd-explore'));
-  assert.equal(out.includes('$gdd-'), false);
+  assert.ok(out.includes('/hone-explore'));
+  assert.equal(out.includes('$hone-'), false);
 });
 
 test('converters-wave1: antigravity injects Antigravity adapter header', () => {

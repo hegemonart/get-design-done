@@ -122,7 +122,7 @@ test('27.6-baseline: agent-list + hook-list baselines updated', () => {
 
 test('27.6-baseline: 4 phase 27.6 libraries all exist (perf-analyzer + cache + parallelism-engine + prompt-dedup)', () => {
   assert.ok(fs.existsSync(path.join(REPO_ROOT, 'scripts', 'lib', 'perf-analyzer', 'index.cjs')));
-  assert.ok(fs.existsSync(path.join(REPO_ROOT, 'scripts', 'lib', 'cache', 'gdd-cache-manager.cjs')));
+  assert.ok(fs.existsSync(path.join(REPO_ROOT, 'scripts', 'lib', 'cache', 'hone-cache-manager.cjs')));
   assert.ok(fs.existsSync(path.join(REPO_ROOT, 'scripts', 'lib', 'parallelism-engine', 'concurrency-tuner.cjs')));
   assert.ok(fs.existsSync(path.join(REPO_ROOT, 'scripts', 'lib', 'prompt-dedup', 'index.cjs')));
 });

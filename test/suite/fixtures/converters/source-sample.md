@@ -1,5 +1,5 @@
 ---
-name: gdd-sample
+name: hone-sample
 description: "Sample skill exercising all converter rewrite paths for Phase 28.7 wave-1 (cursor, codex, copilot, antigravity)."
 tools: Read, Write, Bash, Edit, Grep
 disable-model-invocation: false
@@ -10,7 +10,7 @@ disable-model-invocation: false
 **Role:** Exercise every conversion path so that converter golden tests can
 assert prose vs. code-fence behavior independently.
 
-This skill calls `/gdd-explore` first, then routes through `/gdd-debug` on
+This skill calls `/hone-explore` first, then routes through `/hone-debug` on
 failure. The Bash tool is the primary execution surface — prose references
 to "Bash" or "Read" do not get rewritten by the codex converter (they are
 documentation, not invocations).
@@ -51,8 +51,8 @@ WebSearch(query="codex tool surface")
 
 ## Cross-references
 
-See the [companion](https://github.com/hegemonart/get-design-done/tree/main/skills/debug) for failure-mode recovery. The
-`/gdd-progress` skill reports state. Legacy colon shapes like `gdd:audit`
+See the [companion](https://github.com/hegemonart/hone/tree/main/skills/debug) for failure-mode recovery. The
+`/hone-progress` skill reports state. Legacy colon shapes like `gdd:audit`
 are accepted but normalized.
 
 ## Notes

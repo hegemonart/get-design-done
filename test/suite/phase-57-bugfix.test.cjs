@@ -12,7 +12,7 @@
  *   BUG-09 - blocker comment lines round-trip verbatim via _block_meta.raw_body
  *   BUG-10 - appendDecision returns skip result when no active cycle_id
  *   BUG-11 - WITH ... SELECT CTE allowed by _assertReadonly
- *   NIT     - findPackageRoot uses scoped name '@hegemonart/get-design-done'
+ *   NIT     - findPackageRoot uses scoped name '@hegemonart/hone'
  *
  * All SQLite assertions are guarded with `if (!Database || BACKEND !== 'sqlite') return;`
  * so this suite stays green on the markdown floor (CI).
@@ -33,7 +33,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -61,7 +61,7 @@ const FIXTURE_FULL = fs.readFileSync(path.join(FIXTURE_DIR, 'sample-state-full.m
 // Helpers.
 // ---------------------------------------------------------------------------
 function mkTmp(prefix) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), `gdd-57fix-${prefix}-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `hone-57fix-${prefix}-`));
 }
 function rmrf(dir) {
   try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* ignore */ }
@@ -77,7 +77,7 @@ function mkProject(fixtureMd) {
 // NIT: findPackageRoot uses scoped package name.
 // ---------------------------------------------------------------------------
 
-test('NIT: state-store findPackageRoot uses @hegemonart/get-design-done (always-on)', () => {
+test('NIT: state-store findPackageRoot uses @hegemonart/hone (always-on)', () => {
   // Verify by checking that the store loads correctly (it uses findPackageRoot internally).
   assert.equal(typeof store.backendName, 'function', 'state-store must load without error');
   // If the wrong name were used, PKG_ROOT would be wrong and SDK loading would fail.
@@ -349,7 +349,7 @@ test('BUG-07: directory named state.sqlite does not cause migrationActive to ret
     const fs = require('node:fs');
     const os = require('node:os');
     const path = require('node:path');
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-bug07-'));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-bug07-'));
     const statePath = path.join(dir, 'STATE.md');
     // Create a DIRECTORY named state.sqlite (the trigger for the bug).
     const fakeSqliteDir = path.join(dir, 'state.sqlite');

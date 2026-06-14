@@ -221,10 +221,10 @@ describe('Phase 28.8-Z1: README inventory references all 3 Tier-2 channels (D-04
       const hasCursor = /cursor/i.test(content);
       // Literal command string per D-03 — must match exactly in every README
       // (commands are verbatim English even in translated files).
-      const hasCodexCmd = content.includes('codex plugin marketplace add hegemonart/get-design-done');
+      const hasCodexCmd = content.includes('codex plugin marketplace add hegemonart/hone');
       if (!hasAgentskills) missing.push(`${readmeFile}: missing 'agentskills.io'`);
       if (!hasCursor) missing.push(`${readmeFile}: missing 'cursor' (case-insensitive)`);
-      if (!hasCodexCmd) missing.push(`${readmeFile}: missing literal 'codex plugin marketplace add hegemonart/get-design-done'`);
+      if (!hasCodexCmd) missing.push(`${readmeFile}: missing literal 'codex plugin marketplace add hegemonart/hone'`);
     }
     assert.equal(missing.length, 0, `READMEs missing Tier-2 mentions:\n  ${missing.join('\n  ')}`);
   });

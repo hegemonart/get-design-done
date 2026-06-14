@@ -5,7 +5,7 @@
  * Static-analysis regression suite for the six utility-skill migrations
  * (pause, resume, progress, health, todo, settings). After Plan 20-12
  * migration, every STATE.md read/mutation in these skills goes through
- * `gdd-state` MCP tools introduced in Plan 20-05. The user-facing prose
+ * `hone-state` MCP tools introduced in Plan 20-05. The user-facing prose
  * is preserved byte-for-byte modulo the MCP-call substitutions; the
  * before/after baseline pair at `test/fixtures/baselines/phase-20/utility-skills/<skill>-{before,after}.md`
  * anchors line-count drift and the `after.md` twin matches the live file.
@@ -14,7 +14,7 @@
  * a single file with one `describe()` per skill, multiple `test()` each.
  *
  * Runtime invocation (confirming the MCP tools actually fire) is covered
- * by tests/mcp-gdd-state.test.ts (Plan 20-05) and the Plan 20-15 end-to-end
+ * by tests/mcp-hone-state.test.ts (Plan 20-05) and the Plan 20-15 end-to-end
  * suite. This suite is a structural drift guard, not a runtime validator.
  */
 
@@ -38,50 +38,50 @@ const BASELINE_DIR = path.join(
 /**
  * Per-skill test spec. `mutationTools` is the complete set of MCP mutators
  * the skill must reference in its body (beyond `get`). `readOnly` skills
- * may only reference `mcp__gdd_state__get` - any mutator reference fails.
+ * may only reference `mcp__hone_state__get` - any mutator reference fails.
  */
 const SKILLS = [
   {
     name: 'pause',
     skillPath: path.join(REPO_ROOT, 'skills', 'pause', 'SKILL.md'),
     requiredTools: [
-      'mcp__gdd_state__get',
-      'mcp__gdd_state__set_status',
-      'mcp__gdd_state__add_blocker',
-      'mcp__gdd_state__checkpoint',
+      'mcp__hone_state__get',
+      'mcp__hone_state__set_status',
+      'mcp__hone_state__add_blocker',
+      'mcp__hone_state__checkpoint',
     ],
     readOnly: false,
     mutationTools: [
-      'mcp__gdd_state__set_status',
-      'mcp__gdd_state__checkpoint',
+      'mcp__hone_state__set_status',
+      'mcp__hone_state__checkpoint',
     ],
   },
   {
     name: 'resume',
     skillPath: path.join(REPO_ROOT, 'skills', 'resume', 'SKILL.md'),
     requiredTools: [
-      'mcp__gdd_state__get',
-      'mcp__gdd_state__set_status',
-      'mcp__gdd_state__resolve_blocker',
-      'mcp__gdd_state__checkpoint',
+      'mcp__hone_state__get',
+      'mcp__hone_state__set_status',
+      'mcp__hone_state__resolve_blocker',
+      'mcp__hone_state__checkpoint',
     ],
     readOnly: false,
     mutationTools: [
-      'mcp__gdd_state__set_status',
-      'mcp__gdd_state__checkpoint',
+      'mcp__hone_state__set_status',
+      'mcp__hone_state__checkpoint',
     ],
   },
   {
     name: 'progress',
     skillPath: path.join(REPO_ROOT, 'skills', 'progress', 'SKILL.md'),
-    requiredTools: ['mcp__gdd_state__get'],
+    requiredTools: ['mcp__hone_state__get'],
     readOnly: true,
     mutationTools: [],
   },
   {
     name: 'health',
     skillPath: path.join(REPO_ROOT, 'skills', 'health', 'SKILL.md'),
-    requiredTools: ['mcp__gdd_state__get'],
+    requiredTools: ['mcp__hone_state__get'],
     readOnly: true,
     mutationTools: [],
   },
@@ -89,25 +89,25 @@ const SKILLS = [
     name: 'todo',
     skillPath: path.join(REPO_ROOT, 'skills', 'todo', 'SKILL.md'),
     requiredTools: [
-      'mcp__gdd_state__get',
-      'mcp__gdd_state__add_decision',
-      'mcp__gdd_state__add_must_have',
+      'mcp__hone_state__get',
+      'mcp__hone_state__add_decision',
+      'mcp__hone_state__add_must_have',
     ],
     readOnly: false,
     mutationTools: [
-      'mcp__gdd_state__add_decision',
-      'mcp__gdd_state__add_must_have',
+      'mcp__hone_state__add_decision',
+      'mcp__hone_state__add_must_have',
     ],
   },
   {
     name: 'settings',
     skillPath: path.join(REPO_ROOT, 'skills', 'settings', 'SKILL.md'),
     requiredTools: [
-      'mcp__gdd_state__get',
-      'mcp__gdd_state__frontmatter_update',
+      'mcp__hone_state__get',
+      'mcp__hone_state__frontmatter_update',
     ],
     readOnly: false,
-    mutationTools: ['mcp__gdd_state__frontmatter_update'],
+    mutationTools: ['mcp__hone_state__frontmatter_update'],
   },
 ];
 
@@ -115,21 +115,21 @@ const SKILLS = [
 // reference. `probe_connections` is also a mutator (writes <connections>)
 // but is not used by any utility skill.
 const ALL_MUTATORS = [
-  'mcp__gdd_state__update_progress',
-  'mcp__gdd_state__transition_stage',
-  'mcp__gdd_state__add_blocker',
-  'mcp__gdd_state__resolve_blocker',
-  'mcp__gdd_state__add_decision',
-  'mcp__gdd_state__add_must_have',
-  'mcp__gdd_state__set_status',
-  'mcp__gdd_state__checkpoint',
-  'mcp__gdd_state__probe_connections',
-  'mcp__gdd_state__frontmatter_update',
+  'mcp__hone_state__update_progress',
+  'mcp__hone_state__transition_stage',
+  'mcp__hone_state__add_blocker',
+  'mcp__hone_state__resolve_blocker',
+  'mcp__hone_state__add_decision',
+  'mcp__hone_state__add_must_have',
+  'mcp__hone_state__set_status',
+  'mcp__hone_state__checkpoint',
+  'mcp__hone_state__probe_connections',
+  'mcp__hone_state__frontmatter_update',
 ];
 
 // Utility skills must never issue a stage transition - that discipline
 // belongs to the five stage skills only (brief/explore/plan/design/verify).
-const FORBIDDEN_UTILITY_TOOLS = ['mcp__gdd_state__transition_stage'];
+const FORBIDDEN_UTILITY_TOOLS = ['mcp__hone_state__transition_stage'];
 
 // Patterns that indicate direct STATE.md mutation paths the migration
 // should have eliminated. These are checked against every utility skill
@@ -232,7 +232,7 @@ for (const spec of SKILLS) {
     });
 
     if (readOnly) {
-      test('read-only skill references only mcp__gdd_state__get (no mutators)', () => {
+      test('read-only skill references only mcp__hone_state__get (no mutators)', () => {
         const body = bodyOnly(readSkill(skillPath));
         for (const tool of ALL_MUTATORS) {
           assert.doesNotMatch(
@@ -244,8 +244,8 @@ for (const spec of SKILLS) {
         // And it MUST reference get at least once.
         assert.match(
           body,
-          /mcp__gdd_state__get/,
-          `read-only skill "${name}" must reference mcp__gdd_state__get`,
+          /mcp__hone_state__get/,
+          `read-only skill "${name}" must reference mcp__hone_state__get`,
         );
       });
     } else {
@@ -310,7 +310,7 @@ describe('utility-skill settings: stage-patch guard prose', () => {
     );
     assert.match(
       body,
-      /Use \/gdd:brief, \/gdd:explore/,
+      /Use \/hone:brief, \/hone:explore/,
       'settings skill must route stage transitions to the stage skills in its rejection message',
     );
   });
@@ -326,7 +326,7 @@ describe('utility-skill progress: snapshot reuse', () => {
     // rather than a fresh STATE.md read.
     assert.match(
       body,
-      /`<connections>`[^\n]*(?:mcp__gdd_state__get|snapshot)/,
+      /`<connections>`[^\n]*(?:mcp__hone_state__get|snapshot)/,
       'progress skill must source <connections> from the MCP get snapshot',
     );
   });

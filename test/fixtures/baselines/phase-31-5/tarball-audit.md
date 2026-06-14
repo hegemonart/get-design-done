@@ -12,21 +12,21 @@ TS-entry bins to self-contained CommonJS SIBLINGS that NOW SHIP so a fresh
 `--experimental-strip-types` from inside `node_modules`). The `.ts` remain the
 source of truth (the `.js` are gitignored build artifacts regenerated each
 pack; `postpack` cleans them). 617 → 620:
-  - `sdk/cli/index.js`            (gdd-sdk compiled entry)
-  - `sdk/mcp/gdd-state/server.js` (gdd-state-mcp compiled entry)
-  - `sdk/mcp/gdd-mcp/server.js`   (gdd-mcp compiled entry)
+  - `sdk/cli/index.js`            (hone-sdk compiled entry)
+  - `sdk/mcp/hone-state/server.js` (hone-state-mcp compiled entry)
+  - `sdk/mcp/hone-mcp/server.js`   (hone-mcp compiled entry)
 
 One line per top-level entry (or notable subtree): KEPT (why it ships) / DROPPED (why removed) / ADDED.
 
 ## KEPT — runtime-required (the D-09 keep-runtime-subtrees guarantee)
 
 - `scripts/lib/` (190 files) — KEPT (runtime). Includes the two pinned subtrees below plus ~50 helper libs, deprecation-shim primitives, recipe-loader.
-- `scripts/lib/graph/` — KEPT (gdd-graph bin runtime; D-14).
+- `scripts/lib/graph/` — KEPT (hone-graph bin runtime; D-14).
 - `scripts/lib/figma-extract/` — KEPT (figma-extract SKILL runs `node scripts/lib/figma-extract/*.cjs`; D-15).
-- `scripts/mcp-servers/` (2 files: gdd-state/server.ts, gdd-mcp/server.ts) — KEPT (gdd-state + gdd-mcp deprecation shims; external grace window → v1.33.0; 31-5-06).
-- `scripts/cli/` (1 file: gdd-events.mjs) — KEPT (gdd-events bin target).
-- `scripts/install.cjs` — KEPT (get-design-done install bin / npm postinstall entry).
-- `bin/` (4 files: gdd-graph, gdd-mcp, gdd-sdk, gdd-state-mcp) — KEPT (bin trampolines).
+- `scripts/mcp-servers/` (2 files: hone-state/server.ts, hone-mcp/server.ts) — KEPT (hone-state + hone-mcp deprecation shims; external grace window → v1.33.0; 31-5-06).
+- `scripts/cli/` (1 file: hone-events.mjs) — KEPT (hone-events bin target).
+- `scripts/install.cjs` — KEPT (hone install bin / npm postinstall entry).
+- `bin/` (4 files: hone-graph, hone-mcp, hone-sdk, hone-state-mcp) — KEPT (bin trampolines).
 - `.claude-plugin/` (2) — KEPT (marketplace.json + plugin.json; plugin discovery).
 - `agents/` (41) — KEPT (public agent surface).
 - `skills/` (95) — KEPT (public skill surface).
@@ -38,7 +38,7 @@ One line per top-level entry (or notable subtree): KEPT (why it ships) / DROPPED
 
 ## ADDED (new in this allowlist vs prior tarball)
 
-- `sdk/` (86 files) — ADDED (the new SDK: cli, state, event-stream, errors, primitives, mcp/gdd-state, mcp/gdd-mcp, index.ts barrel, README.md; plugin.json advertises it). Includes the 3 compiled-bin `.js` siblings (31-5-9.5, D-16): `sdk/cli/index.js`, `sdk/mcp/gdd-state/server.js`, `sdk/mcp/gdd-mcp/server.js`.
+- `sdk/` (86 files) — ADDED (the new SDK: cli, state, event-stream, errors, primitives, mcp/hone-state, mcp/hone-mcp, index.ts barrel, README.md; plugin.json advertises it). Includes the 3 compiled-bin `.js` siblings (31-5-9.5, D-16): `sdk/cli/index.js`, `sdk/mcp/hone-state/server.js`, `sdk/mcp/hone-mcp/server.js`.
 - `recipes/` (1 file: `.gitkeep`) — ADDED (scaffold; ships empty of recipes).
 - `docs/i18n/` (6 files: README.{de,fr,it,ja,ko,zh-CN}.md) — ADDED (translations relocated from root in 31-5-07; D-11).
 - `NOTICE` — ADDED (third-party attributions; was missing from prior `files`).

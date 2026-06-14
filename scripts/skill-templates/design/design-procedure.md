@@ -98,7 +98,7 @@ For each wave:
 
 Every spawned executor receives the following STATE.md contract in its prompt:
 
-> **STATE.md mutation protocol** - When you complete a task in your assigned batch, update STATE.md ONLY via the `gdd-state` MCP tools. Specifically:
+> **STATE.md mutation protocol** - When you complete a task in your assigned batch, update STATE.md ONLY via the `hone-state` MCP tools. Specifically:
 > - Report task progress: `mcp__hone_state__update_progress` with your new `task_progress` fraction.
 > - Add blockers: `mcp__hone_state__add_blocker` with `{ stage: "design", date: <today>, text: "..." }`.
 > - Resolve your own blockers on fix: `mcp__hone_state__resolve_blocker` with the blocker id.

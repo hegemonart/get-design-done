@@ -7,7 +7,7 @@
 // spike's Variables-API-403 Enterprise blocker) and POSTs them here. This
 // receiver validates the payload against payload-schema.json and writes it into
 // the raw/ cache as variables.json, where digest.cjs (31-02) consumes it as
-// Path C via the `source:'gdd-plugin'` marker.
+// Path C via the `source:'hone-plugin'` marker.
 //
 // Security properties are the WHOLE point (D-06):
 //   - Binds 127.0.0.1 ONLY (host '127.0.0.1', never 0.0.0.0) — unreachable off
@@ -40,7 +40,7 @@ const RECEIVER_HOST = '127.0.0.1'; // loopback ONLY
 const RECEIVER_PORT = 5179; // HARDCODED — intentionally not read from process.env
 
 // The marker digest.cjs (31-02) keys on to route variables.json to Path C.
-const PLUGIN_PAYLOAD_MARKER = 'gdd-plugin';
+const PLUGIN_PAYLOAD_MARKER = 'hone-plugin';
 
 // Defensive body cap. Large design systems can ship sizeable variable sets
 // (the risk register notes streaming for the raw pull); 50MB is generous for a

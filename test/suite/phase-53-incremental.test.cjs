@@ -40,7 +40,7 @@ const { classify } = classifyMod;
 
 /** Make a unique hermetic temp dir to act as a fake repo root. */
 function mkTmpRoot(label) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), `gdd-53-04-${label}-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `hone-53-04-${label}-`));
 }
 
 /** Best-effort recursive cleanup. */

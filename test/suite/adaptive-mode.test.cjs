@@ -21,7 +21,7 @@ const {
 } = require('../../scripts/lib/adaptive-mode.cjs');
 
 function tmp(prefix) {
-  const d = mkdtempSync(join(tmpdir(), `gdd-mode-${prefix}-`));
+  const d = mkdtempSync(join(tmpdir(), `hone-mode-${prefix}-`));
   mkdirSync(join(d, '.design'), { recursive: true });
   return d;
 }
@@ -31,7 +31,7 @@ function writeBudget(dir, body) {
 }
 
 test('23.5-04: getMode returns "static" when budget.json is missing', () => {
-  const d = mkdtempSync(join(tmpdir(), 'gdd-mode-missing-'));
+  const d = mkdtempSync(join(tmpdir(), 'hone-mode-missing-'));
   try {
     assert.equal(getMode({ baseDir: d }), 'static');
   } finally {
@@ -147,7 +147,7 @@ test('23.5-04: setMode persists + preserves other budget.json fields', () => {
 });
 
 test('23.5-04: setMode creates budget.json + parent dir if missing', () => {
-  const d = mkdtempSync(join(tmpdir(), 'gdd-mode-create-'));
+  const d = mkdtempSync(join(tmpdir(), 'hone-mode-create-'));
   try {
     const p = setMode('hedge', { baseDir: d });
     const cfg = JSON.parse(readFileSync(p, 'utf8'));
@@ -172,7 +172,7 @@ test('23.5-04: VALID_MODES + DEFAULT_MODE exports', () => {
 });
 
 test('23.5-04: setMode honors absolute budgetPath', () => {
-  const d = mkdtempSync(join(tmpdir(), 'gdd-mode-abs-'));
+  const d = mkdtempSync(join(tmpdir(), 'hone-mode-abs-'));
   try {
     const abs = join(d, 'custom-budget.json');
     setMode('full', { budgetPath: abs });

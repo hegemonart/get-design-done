@@ -1,6 +1,6 @@
 // sdk/cli/commands/query.ts — Plan 21-09 Task 4 (SDK-21).
 //
-// `gdd-sdk query <op>` — typed STATE.md read operations. Mirrors the
+// `hone-sdk query <op>` — typed STATE.md read operations. Mirrors the
 // read side of the gdd-state MCP server. Never mutates — use the
 // dedicated MCP tools (via Claude Code) for writes.
 //
@@ -42,7 +42,7 @@ const QUERY_FLAGS: readonly FlagSpec[] = [
   { name: 'events-path', type: 'string' },
 ];
 
-const USAGE = `gdd-sdk query <op> [args] [flags]
+const USAGE = `hone-sdk query <op> [args] [flags]
 
 Typed STATE.md read operations.
 
@@ -113,13 +113,13 @@ export async function queryCommand(
 
   const op: string | undefined = args.positionals[0];
   if (op === undefined || op.length === 0) {
-    stderr.write('gdd-sdk query: missing operation\n');
+    stderr.write('hone-sdk query: missing operation\n');
     stderr.write(USAGE);
     return 3;
   }
   if (!KNOWN_OPS.has(op)) {
     stderr.write(
-      `gdd-sdk query: unknown operation "${op}"\n` +
+      `hone-sdk query: unknown operation "${op}"\n` +
         `Valid: get | stage | position | decisions | must-haves | blockers | status | events | can-transition\n`,
     );
     return 3;
@@ -129,7 +129,7 @@ export async function queryCommand(
   try {
     flags = coerceFlags(args, QUERY_FLAGS);
   } catch (err) {
-    stderr.write(`gdd-sdk query: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk query: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -149,7 +149,7 @@ export async function queryCommand(
   // Every other op needs STATE.md.
   if (!existsSync(statePath)) {
     stderr.write(
-      `gdd-sdk query: STATE.md not found at ${statePath}\n`,
+      `hone-sdk query: STATE.md not found at ${statePath}\n`,
     );
     return 1;
   }
@@ -159,7 +159,7 @@ export async function queryCommand(
   try {
     state = await readFn(statePath);
   } catch (err) {
-    stderr.write(`gdd-sdk query: failed to read STATE.md: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk query: failed to read STATE.md: ${errMessage(err)}\n`);
     return 1;
   }
 
@@ -193,7 +193,7 @@ export async function queryCommand(
     case 'can-transition':
       return handleCanTransition(args, state, stdout, stderr, flags);
     default: {
-      stderr.write(`gdd-sdk query: unhandled op "${op}"\n`);
+      stderr.write(`hone-sdk query: unhandled op "${op}"\n`);
       return 3;
     }
   }
@@ -212,12 +212,12 @@ function handleCanTransition(
 ): number {
   const to: string | undefined = args.positionals[1];
   if (to === undefined || to.length === 0) {
-    stderr.write('gdd-sdk query can-transition: missing target stage\n');
+    stderr.write('hone-sdk query can-transition: missing target stage\n');
     return 3;
   }
   if (!isStage(to)) {
     stderr.write(
-      `gdd-sdk query can-transition: "${to}" is not a valid Stage (brief|explore|plan|design|verify)\n`,
+      `hone-sdk query can-transition: "${to}" is not a valid Stage (brief|explore|plan|design|verify)\n`,
     );
     return 3;
   }
@@ -260,14 +260,14 @@ function handleEvents(
   const tail: number =
     typeof flags['tail'] === 'number' ? (flags['tail'] as number) : 20;
   if (!Number.isFinite(tail) || tail < 0) {
-    stderr.write(`gdd-sdk query events: --tail must be a non-negative integer\n`);
+    stderr.write(`hone-sdk query events: --tail must be a non-negative integer\n`);
     return 3;
   }
 
   if (!existsSync(eventsPath)) {
     // Missing events file is a tool error: operator expected events but
     // the stream was never written.
-    stderr.write(`gdd-sdk query events: events.jsonl not found at ${eventsPath}\n`);
+    stderr.write(`hone-sdk query events: events.jsonl not found at ${eventsPath}\n`);
     return 1;
   }
 
@@ -276,7 +276,7 @@ function handleEvents(
     raw = readFileSync(eventsPath, 'utf8');
   } catch (err) {
     stderr.write(
-      `gdd-sdk query events: failed to read events.jsonl: ${errMessage(err)}\n`,
+      `hone-sdk query events: failed to read events.jsonl: ${errMessage(err)}\n`,
     );
     return 1;
   }

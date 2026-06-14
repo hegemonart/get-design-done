@@ -1,7 +1,7 @@
 'use strict';
-// tests/gdd-health-mcp-row.test.cjs
+// tests/hone-health-mcp-row.test.cjs
 // ---------------------------------------------------------------------------
-// Plan 27.7-04 — structural assertions for the gdd-health SKILL's
+// Plan 27.7-04 — structural assertions for the hone-health SKILL's
 // check-mcp-registration step block. Verifies the row strings and the
 // .design/config.json#mcp_nudge=false dismissal hook landed in
 // skills/health/SKILL.md (NOT a fictitious scripts/cli/gsd-health.cjs).
@@ -28,7 +28,7 @@ const HEALTH_MCP_REF_PATH = path.join(
   'health-mcp-detection.md',
 );
 
-describe('27.7-04: gdd-health SKILL MCP-row block', () => {
+describe('27.7-04: hone-health SKILL MCP-row block', () => {
   const SKILL = fs.readFileSync(SKILL_PATH, 'utf8');
   const HEALTH_MCP_REF = fs.existsSync(HEALTH_MCP_REF_PATH)
     ? fs.readFileSync(HEALTH_MCP_REF_PATH, 'utf8')

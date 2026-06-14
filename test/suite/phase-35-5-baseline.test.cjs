@@ -1,5 +1,5 @@
 'use strict';
-// Phase 35.5 — Design-Artifact Export (/gdd:export) regression baseline. Freezes the
+// Phase 35.5 — Design-Artifact Export (/hone:export) regression baseline. Freezes the
 // v1.35.5 artifact: the pure build-html assembler, the export skill, the Notion write-path
 // connection, the registered format contract, and the 6-manifest lockstep. Also freezes a
 // build-html GOLDEN (stored input → stored HTML) so any format drift is caught. Version-

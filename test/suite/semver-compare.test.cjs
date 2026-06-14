@@ -48,23 +48,23 @@ const EXPECTED_SEQUENCE = [
 //   - 1.14.5 → Safety + Recall Floor scaffolding (Phase 14.5 CI/test hygiene).
 //   - 1.14.6 → Phase 14.5 Safety + Recall Floor (shipped on main).
 //   - 1.14.7 → Phase 14.6 Test Coverage Completion closeout (shipped on main).
-//   - 1.14.8 → Phase 14.7 First-Run Proof Path (/gdd:start skill, nudge hook,
+//   - 1.14.8 → Phase 14.7 First-Run Proof Path (/hone:start skill, nudge hook,
 //     design-start-writer agent, detect-ui-root + findings-engine helpers).
-//   - 1.20.0 → Phase 20 SDK foundation (gdd-sdk-foundation milestone). Jumps
+//   - 1.20.0 → Phase 20 SDK foundation (hone-sdk-foundation milestone). Jumps
 //     the 1.19.x sequence to mark the shift from "design pipeline" to
 //     "typed SDK + MCP server + resilience primitives + event stream".
-//     16 plans complete (20-00 through 20-15): TS toolchain, gdd-state
+//     16 plans complete (20-00 through 20-15): TS toolchain, hone-state
 //     module, transition gates, prompt sanitizer, GDDError taxonomy,
-//     gdd-state MCP server (11 tools), event stream foundation, 5 stage
+//     hone-state MCP server (11 tools), event stream foundation, 5 stage
 //     skill migrations, 6 utility skill migrations, hooks TS rewrite,
 //     resilience primitives (jittered-backoff / rate-guard /
 //     error-classifier / iteration-budget). Closeout shipped the
 //     race-condition test (4 workers × 500 ops), phase-20 regression
 //     baseline, v1.20.0 CHANGELOG, and version-sync across manifests.
-//   - 1.21.0 → Phase 21 GDD SDK Headless (gdd-sdk-headless milestone).
+//   - 1.21.0 → Phase 21 GDD SDK Headless (hone-sdk-headless milestone).
 //     12 plans (21-01 through 21-12): session-runner, context-engine,
 //     tool-scoping, logger, pipeline-runner state machine, 3 parallel
-//     runners (explore-parallel / discuss-parallel / init), gdd-sdk CLI
+//     runners (explore-parallel / discuss-parallel / init), hone-sdk CLI
 //     (run/stage/query/audit/init), cross-harness layer (Codex + Gemini
 //     support via AGENTS.md / GEMINI.md), E2E headless test harness.
 //     Closeout shipped README + CHANGELOG + manifest bumps + Phase-21
@@ -96,7 +96,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   '1.24.0',
   '1.24.1',
   '1.24.2',
-  //   - 1.25.0 → Phase 25 Pipeline Hardening (gdd-pipeline-hardening
+  //   - 1.25.0 → Phase 25 Pipeline Hardening (hone-pipeline-hardening
   //     milestone). 9 plans (25-01 through 25-09): prototype gate
   //     (agent + STATE <prototyping> block + sketch/spike-wrap-up
   //     dual-writes + decision-injector outcomes); router S/M/L/XL
@@ -108,7 +108,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     wiring). Closeout shipped 5 new tests + Phase-25 baseline +
   //     CHANGELOG.
   '1.25.0',
-  //   - 1.26.0 → Phase 26 Headless Model Resolver (gdd-headless-model-
+  //   - 1.26.0 → Phase 26 Headless Model Resolver (hone-headless-model-
   //     resolver milestone). 9 plans (26-01 through 26-09): per-runtime
   //     tier→model adapter (`reference/runtime-models.md` + JSON schema
   //     + parser); `tier-resolver.cjs` + `runtime-detect.cjs` with the
@@ -126,7 +126,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     both fields current. Closeout shipped 4 new tests + Phase-26
   //     baseline + CHANGELOG + `docs/MULTI-RUNTIME-MODELS.md` ops guide.
   '1.26.0',
-  //   - 1.27.0 → Phase 27 Peer-CLI Delegation Layer (gdd-peer-cli-
+  //   - 1.27.0 → Phase 27 Peer-CLI Delegation Layer (hone-peer-cli-
   //     delegation milestone). 11 feature plans (27-01..27-11) + closeout
   //     (27-12). Closes the OUTBOUND half of multi-runtime: Phase 24 made
   //     gdd installable on 14 runtimes; Phase 21 made the same pipeline
@@ -146,7 +146,7 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     D-06) + session-runner peer-first dispatch + Phase 23.5 bandit
   //     posterior `delegate?` context dimension (D-08) + Phase 22 event
   //     chain `runtime_role: host|peer` + `peer_id` + `peer_call_*`
-  //     events (D-09). Wave D (27-09..27-11): `/gdd:peers` capability
+  //     events (D-09). Wave D (27-09..27-11): `/hone:peers` capability
   //     matrix command (D-10) + `peer-cli-customize` + `peer-cli-add`
   //     skills + `peerBinary` field on runtimes.cjs + install-time peer-
   //     detection nudge (opt-in per D-11). Closeout (27-12) shipped 2
@@ -180,11 +180,11 @@ const OFF_CADENCE_VERSIONS = new Set([
   //     optimization-decimal phase per CONTEXT.md D-12.
   '1.27.6',
   //   - 1.27.7 → Phase 27.7 GDD MCP Server. 7 plans (27.7-01..27.7-07):
-  //     gdd-mcp server scaffold + 12 read-only tools (gdd_status,
-  //     gdd_cycle_recap, gdd_decisions_list, gdd_events_tail, gdd_health,
-  //     gdd_intel_get, gdd_learnings_digest, gdd_phase_current,
-  //     gdd_phases_list, gdd_plans_list, gdd_reflections_latest,
-  //     gdd_telemetry_query); mcp-tools-lint (4 invariants: forbid-fs-path,
+  //     hone-mcp server scaffold + 12 read-only tools (hone_status,
+  //     hone_cycle_recap, hone_decisions_list, hone_events_tail, hone_health,
+  //     hone_intel_get, hone_learnings_digest, hone_phase_current,
+  //     hone_phases_list, hone_plans_list, hone_reflections_latest,
+  //     hone_telemetry_query); mcp-tools-lint (4 invariants: forbid-fs-path,
   //     max-loc 30, no-write-names, tool-count-cap 12); installer
   //     --register-mcp + skills/health MCP row; skills/{progress,resume,next}
   //     MCP-path + File-read-path fork; README + priming-benchmark
@@ -253,7 +253,7 @@ OFF_CADENCE_VERSIONS.add('1.29.0');
 // Even though 1.30.0 is on-cadence (not a decimal off-cadence), the existing
 // suite contract requires registering every post-1.0.x release in OFF_CADENCE_VERSIONS
 // to keep semver-ordering tests green (Phase 29 precedent — see Phase 29 retrospective).
-// Phase 30 adds the Consent-First GitHub Issue Reporter — `/gdd:report-issue` skill +
+// Phase 30 adds the Consent-First GitHub Issue Reporter — `/hone:report-issue` skill +
 // pseudonymization helpers + payload assembly + dedup matching + kill-switch.
 //   - 1.30.0 → Phase 30 (issue-reporter); on-cadence minor from 1.29.0.
 OFF_CADENCE_VERSIONS.add('1.30.0');
@@ -265,18 +265,18 @@ OFF_CADENCE_VERSIONS.add('1.30.0');
 // extended schema-v2 (11 fields per entry), ships the fuzzy
 // bag-of-words matcher (`scripts/lib/failure-mode-matcher.cjs`), and
 // wires reflector + authority-watcher proposal flows into a 6th
-// `/gdd:apply-reflections` proposal class (`kfm-candidate`). 6-manifest
+// `/hone:apply-reflections` proposal class (`kfm-candidate`). 6-manifest
 // lockstep at 1.30.5 (D-01 + D-11 ship-together).
 //   - 1.30.5 → Phase 30.5 (failure-mode-catalogue); decimal sub-phase from 1.30.0.
 OFF_CADENCE_VERSIONS.add('1.30.5');
 
 // Phase 30.6 — Graphify Self-Ownership — Decouple from get-shit-done CLI
 // (v1.30.6, 2026-05-28). Removes the last runtime touchpoint between
-// get-design-done and the user's ~/.claude/get-shit-done/ install. Replaces
+// hone and the user's ~/.claude/get-shit-done/ install. Replaces
 // 8 callsites that dispatched `gsd-tools.cjs graphify *` with native
-// bin/gdd-graph (build/query/status/diff/upsert-node/upsert-edge). Drops the
+// bin/hone-graph (build/query/status/diff/upsert-node/upsert-edge). Drops the
 // intel→graphify translation layer (intel and graph now share {from,to,kind,
-// weight?} schema per D-03.b). Renames gdd-graphify-sync → hone-graph-refresh
+// weight?} schema per D-03.b). Renames hone-graphify-sync → hone-graph-refresh
 // and gsd-health-mirror → health-mirror (cosmetic, D-10). Deletes 10MB
 // vendored upstream snapshot at .planning/get-shit-done-main/. Off-cadence
 // decimal from v1.30.5 parent — sequence 1.30.0 -> 1.30.5 -> 1.30.6.
@@ -291,7 +291,7 @@ OFF_CADENCE_VERSIONS.add('1.30.6');
 // semver-ordering tests green — the EXPECTED_SEQUENCE check covers only the
 // original 1.0.x patch cadence, so mainline MINORs (1.14.0 / 1.20.0 / 1.25.0 /
 // 1.28.0 / 1.29.0 / 1.30.0) are all recognized via this Set (the 1.29.0 / 1.30.0
-// precedent comments above). Phase 31 ships the `gdd-figma-extract` off-context
+// precedent comments above). Phase 31 ships the `hone-figma-extract` off-context
 // extractor (pull + digest + styles-resolver) + the "GDD Sync" Figma plugin +
 // localhost receiver (Path C) + the figma_extract health check; 10 plans across
 // Waves A-D, closing the spike's (commit c3a9cf6) Variables-403 + 0-tokens gaps.
@@ -346,7 +346,7 @@ OFF_CADENCE_VERSIONS.add('1.33.0');
 // Phase 33.5 — GDD Runtime Security Hardening (v1.33.5, 2026-05-31). Decimal
 // sub-phase on the v1.33.x arc (1.33.0 -> 1.33.5; CHANGELOG-only, D-01).
 // Ships the STRIDE threat model + runtime audit + outbound-network CI gate,
-// WebSocket localhost-default bind + timing-safe token, gdd-state path-traversal
+// WebSocket localhost-default bind + timing-safe token, hone-state path-traversal
 // guard + payload cap + 11 tightened schemas, peer-CLI env sandbox (allowlist-
 // forward), the redact secret-scan extension (Gemini + GitHub fine-grained/server)
 // + fuzz, and SECURITY.md. Registered off-cadence from the 1.33.0 parent.
@@ -358,7 +358,7 @@ OFF_CADENCE_VERSIONS.add('1.33.5');
 // the dynamic OpenRouter catalog-fetcher (24h TTL, atomic, injectable fetch,
 // hermetic) under the 33.5 outbound allowlist + the tier-resolver-openrouter
 // adapter (opus/sonnet/haiku heuristic + overrides, graceful-degrade) + the
-// connection + /gdd:openrouter-status skill + the optional cost.update provider
+// connection + /hone:openrouter-status skill + the optional cost.update provider
 // tag + tier-mapping/prices docs + authority-watcher catalog-drift. Registered
 // off-cadence from the 1.33.0 parent.
 //   - 1.33.6 → Phase 33.6 (openrouter); off-cadence sub-phase from 1.33.0.
@@ -413,7 +413,7 @@ OFF_CADENCE_VERSIONS.add('1.34.4');
 // 1.35.1 → Phase 35.1 (Team Surfaces: PR Inline Integration — first sub-phase of the
 // split Phase 35). Opens the v1.35.x arc (1.34.4 → 1.35.1, minor+patch jump, off-cadence).
 // Adds agents/pr-commenter.md (gh-api inline PR review + gdd/design-review check-run) +
-// reference/pr-review-integration.md + /gdd:ship wiring. No new runtime dependency (gh only).
+// reference/pr-review-integration.md + /hone:ship wiring. No new runtime dependency (gh only).
 OFF_CADENCE_VERSIONS.add('1.35.1');
 
 // 1.35.2 → Phase 35.2 (Team Surfaces: Notification Backplane — Slack + Discord).
@@ -428,7 +428,7 @@ OFF_CADENCE_VERSIONS.add('1.35.2');
 // No new runtime dependency, no new egress (MCP tools only).
 OFF_CADENCE_VERSIONS.add('1.35.3');
 
-// 1.35.5 → Phase 35.5 (Design-Artifact Export — /gdd:export). Decimal on the v1.35.x arc
+// 1.35.5 → Phase 35.5 (Design-Artifact Export — /hone:export). Decimal on the v1.35.x arc
 // AFTER the Team Surfaces sub-phases (1.35.3 → 1.35.5; 1.35.4 not used). Adds the pure
 // build-html assembler (scripts/lib/export/build-html.cjs), skills/export/SKILL.md, the
 // Notion write-path connection, and reference/export-formats.md. No new runtime dependency
@@ -466,7 +466,7 @@ OFF_CADENCE_VERSIONS.add('1.37.1');
 // 1.37.2 → Phase 37.2 (Greenfield DS Bootstrap). FINAL sub-phase of the split Phase 37 —
 // completing it marks the parent Phase 37 COMPLETE (Wave-2 tools 37.1 + greenfield 37.2). Adds
 // scripts/lib/ds/token-scale.cjs (pure OKLCH token generator), reference/ds-bootstrap-rubric.md,
-// agents/ds-generator.md, and skills/bootstrap-ds/SKILL.md (/gdd:bootstrap-ds). No new runtime
+// agents/ds-generator.md, and skills/bootstrap-ds/SKILL.md (/hone:bootstrap-ds). No new runtime
 // dependency (native CSS oklch(), no color library), no new egress.
 OFF_CADENCE_VERSIONS.add('1.37.2');
 
@@ -481,7 +481,7 @@ OFF_CADENCE_VERSIONS.add('1.38.0');
 
 // 1.38.5 → Phase 38.5 (Deployment Coordination Loop). Off-cadence decimal from the v1.38.x arc.
 // Adds scripts/lib/rollout/rollout-status.cjs (pure), agents/rollout-coordinator.md, the
-// /gdd:rollout-status skill, reference/rollout-coordination.md, and the verify_outcome / rollout_*
+// /hone:rollout-status skill, reference/rollout-coordination.md, and the verify_outcome / rollout_*
 // event seeds. Reads the Phase-38 flag connections (read-only); feeds design_arms by deployed_pct.
 // No new runtime dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.38.5');
@@ -503,7 +503,7 @@ OFF_CADENCE_VERSIONS.add('1.39.2');
 // 1.39.5 → Phase 39.5 (GDD Self-Migration Tooling). Formalizes GDD's own breaking-change story: a
 // machine-readable path-migration table in reference/DEPRECATIONS.md, the pure
 // scripts/lib/deprecation-registry.cjs reader, scripts/lint-changelog.cjs (forward-only Breaking-changes
-// gate, floor 1.39.0), the /gdd:migrate skill, a /gdd:update advisory, and a deprecation-completeness
+// gate, floor 1.39.0), the /hone:migrate skill, a /hone:update advisory, and a deprecation-completeness
 // gate. No new runtime dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.39.5');
 
@@ -517,12 +517,12 @@ OFF_CADENCE_VERSIONS.add('1.40.0');
 
 // 1.40.5 → Phase 40.5 (GDD CLI Localization). Decimal sub-patch on 1.40.0. Adds scripts/lib/i18n/
 // (locale resolver: config.locale > env LANG > en, fallback chain locale->base->en) + 7 flat-JSON
-// message tables (en complete, ru full, uk/de/fr/zh/ja placeholders), the /gdd:locale skill, the
+// message tables (en complete, ru full, uk/de/fr/zh/ja placeholders), the /hone:locale skill, the
 // opt-in description_i18n frontmatter, and reference/cli-localization.md. No new runtime dependency,
 // no new egress. The final phase of the directed 38.5->40.5 sequence.
 OFF_CADENCE_VERSIONS.add('1.40.5');
 
-// 1.41.0 → Phase 41 (Deterministic Anti-Pattern CLI gdd-detect). A MINOR bump. Ships bin/gdd-detect +
+// 1.41.0 → Phase 41 (Deterministic Anti-Pattern CLI hone-detect). A MINOR bump. Ships bin/hone-detect +
 // scripts/lib/detect/ (dep-free regex-fast engine + 11 BAN rule matchers ported from the catalogue's
 // own **Grep**; jsdom/puppeteer are soft try-require optionals, no package.json dep), the
 // sync-rule-catalogue parity gate, lint:design, and a pre-commit scaffold. First minor since the 39.5
@@ -539,7 +539,7 @@ OFF_CADENCE_VERSIONS.add('1.41.5');
 // skill-templates/ with placeholders ({{command_prefix}} et al.) and compiles per-harness bundles via a
 // pure transformer factory (scripts/lib/build/) reading the 41.5 manifest SoT; the committed skills/ tree
 // becomes a generated artifact drift-gated by build:skills:check; dist/claude-code/ ships in the tarball;
-// gdd-sdk build skills exposes the CLI. Authoring-surface move (skills/ -> skill-templates/) is the
+// hone-sdk build skills exposes the CLI. Authoring-surface move (skills/ -> skill-templates/) is the
 // `### Breaking changes` declared in the 1.42.0 CHANGELOG entry. No new runtime dependency, no new egress.
 OFF_CADENCE_VERSIONS.add('1.42.0');
 
@@ -565,15 +565,15 @@ OFF_CADENCE_VERSIONS.add('1.45.0');
 
 // 1.46.0 -> Phase 46 (Skill UX Polish). Minor on 1.45.0. scripts/lib/manifest/skills.json becomes the
 // skill-metadata single source of truth + scripts/generate-skill-frontmatter.cjs (order-preserving forward
-// generator) + generate:skill-frontmatter:check CI drift gate; /gdd:pin + /gdd:unpin + /gdd:list-pins
-// power-user shortcut skills (scripts/lib/pin/, atomic write, gdd-pinned-skill marker, harness discovery via
+// generator) + generate:skill-frontmatter:check CI drift gate; /hone:pin + /hone:unpin + /hone:list-pins
+// power-user shortcut skills (scripts/lib/pin/, atomic write, hone-pinned-skill marker, harness discovery via
 // manifest/harnesses.cjs); the >=1024 description budget (Phase 28.5) hardened with an explicit lint:agentskills
 // CI gate. Two new CI gates = the `### Breaking changes`. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.46.0');
 
-// 1.47.0 -> Phase 47 (In-Browser Design Iteration / Live Mode). Minor on 1.46.0. /gdd:live: pick a DOM element
+// 1.47.0 -> Phase 47 (In-Browser Design Iteration / Live Mode). Minor on 1.46.0. /hone:live: pick a DOM element
 // on a running dev server (via the Preview MCP connection, no new dependency), generate N variants in one batch,
-// post-check each with gdd-detect, hot-swap via HMR, accept/discard; session persists to .design/live-sessions/
+// post-check each with hone-detect, hot-swap via HMR, accept/discard; session persists to .design/live-sessions/
 // with resume. New scripts/lib/live/ substrate (session-store, scope-guard, postcheck, events, bandit-feed,
 // harness-mode, runtime); 6 typed live_* events; accepted variants feed the Phase 38 bandit store with a dev_time
 // source tag (Beta(2,8) prior). Degraded screenshot-only mode on harnesses without MCP. Planned/executed via
@@ -584,14 +584,14 @@ OFF_CADENCE_VERSIONS.add('1.47.0');
 // pillar (agents/copy-auditor.md + reference/copy-quality.md; design-auditor 7-pillar contract formalized with a
 // scoring_contract_version marker + reserved 8th slot); a project-wide retroactive debt crawler
 // (agents/design-debt-crawler.md + reference/debt-categories.md -> .design/debt/DEBT-CATALOG.md); a brief critic
-// (agents/brief-auditor.md + reference/brief-quality-rubric.md, non-blocking tail-wire into /gdd:brief); and an a11y
+// (agents/brief-auditor.md + reference/brief-quality-rubric.md, non-blocking tail-wire into /hone:brief); and an a11y
 // quality-gate (hooks/gdd-a11y-gate.js + axe/pa11y/lighthouse/jsx-a11y auto-detect + quality-gate-runner a11y 5th
 // bucket). 3 new agents, 3 new reference docs, 1 hook. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.48.0');
 
 // 1.49.0 -> Phase 49 (Quick Anti-Slop Floor). Minor on 1.48.0. Three atomic safety/policy primitives:
 // scripts/lib/worktree-resolve.cjs redirects .design/.planning writes to the main repo root when run inside a git
-// worktree (wired into the gdd-state resolveStatePath + 7 writer agents; fixes the recurring .planning leak);
+// worktree (wired into the hone-state resolveStatePath + 7 writer agents; fixes the recurring .planning leak);
 // hooks/gdd-design-quality-check.js (advisory PostToolUse, 8 visual-tell regex rules over .tsx/.vue/.svelte/.astro,
 // design_quality_warn event) + reference/visual-tells.md; a reviewer confidence gate (4-question Pre-Report Gate +
 // confidence 0.0-1.0 field on design-auditor/verifier/debt-crawler findings, design-fixer drops Tentative + sub-0.8
@@ -604,7 +604,7 @@ OFF_CADENCE_VERSIONS.add('1.49.0');
 // no pillar change) + visual-tells.md v2 (13 categories); and a machine-parseable skill-composition manifest
 // (composes_with/next_skills frontmatter + scripts/validate-composition-graph.cjs DAG gate + auto-generated
 // reference/skill-graph.md) plus the skill-authoring-contract v3 multi-paragraph description form (transition window),
-// a boilerplate-cohort lint (scripts/validate-skill-frontmatter.cjs), a /gdd:new-skill scaffolder, and the migration
+// a boilerplate-cohort lint (scripts/validate-skill-frontmatter.cjs), a /hone:new-skill scaffolder, and the migration
 // of 18 high-traffic skill descriptions to the v3 form. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.50.0');
 
@@ -612,13 +612,13 @@ OFF_CADENCE_VERSIONS.add('1.50.0');
 // skills/audit + skills/verify + skill-authoring-contract + registry (design-auditor has been 7-pillar since
 // Phase 48); refreshed .claude-plugin positioning counts (59 agents / 88 skills / 41 connections); seeded the
 // Phase-50 composition graph with the real next_skills pipeline chain (new-project -> brief -> ... -> ship);
-// de-duplicated the benchmark command row; fixed the codex defaultPrompt to the /gdd- prefix. Patch, no new surface.
+// de-duplicated the benchmark command row; fixed the codex defaultPrompt to the /hone- prefix. Patch, no new surface.
 OFF_CADENCE_VERSIONS.add('1.50.1');
 
 // 1.51.0 -> Phase 51 (Instinct-Based Learnings). Minor on 1.50.1. Restructures learnings from prose to atomic
 // confidence-weighted instinct units (reference/instinct-format.md + reference/schemas/instinct.schema.json), stored
 // project + global via scripts/lib/instinct-store.cjs (JSON-canonical + optional better-sqlite3 FTS5 acceleration,
-// no new dependency, mirroring the Phase 19.5 design-search pattern); a /gdd:instinct skill (list/query/promote);
+// no new dependency, mirroring the Phase 19.5 design-search pattern); a /hone:instinct skill (list/query/promote);
 // a K=2/M=2 promotion gate with a Beta(2,8) prior; decision-injector surfaces top-3 relevant instincts; design-reflector
 // dual-emits atomic instincts + narrative; apply-reflections gains an [INSTINCT] proposal class; TTL decay + archive.
 // Planned/executed via parallel GSD subagents.
@@ -628,7 +628,7 @@ OFF_CADENCE_VERSIONS.add('1.51.0');
 // design-semantic graph: a Draft-07 schema (reference/schemas/design-context.schema.json) over 10 node
 // types and 12 edge types, a dep-free validator (scripts/validate-design-context.cjs) + pure query lib
 // (scripts/lib/design-context-query.cjs), regex extract/merge passes (scripts/lib/design-context/*.mjs),
-// a 13th read-only gdd-mcp tool (gdd_context_query, cap raised 12 -> 13), /gdd:context + /gdd:migrate-context
+// a 13th read-only hone-mcp tool (hone_context_query, cap raised 12 -> 13), /hone:context + /hone:migrate-context
 // skills, and dual-emit graph fragments from the 5 mapper agents + the synthesizer. No new dependency.
 // Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.52.0');
@@ -637,7 +637,7 @@ OFF_CADENCE_VERSIONS.add('1.52.0');
 // (scripts/lib/mappers/compute-batches.mjs + graph-adjacency.mjs), a neighborMap sidecar (neighbor-map.mjs),
 // a SHA-256 fingerprint engine (sdk/fingerprint/index.ts) + 4-action change classifier + rolling store
 // (sdk/fingerprint/classify.cjs + store.cjs), incremental discover wiring (explore-parallel-runner +
-// /gdd:discover --incremental default / --full opt-out), and a design-context-reviewer agent + gate. No new
+// /hone:discover --incremental default / --full opt-out), and a design-context-reviewer agent + gate. No new
 // dependency (node:crypto + optional better-sqlite3 via probeOptional). Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.53.0');
 
@@ -645,11 +645,11 @@ OFF_CADENCE_VERSIONS.add('1.53.0');
 // addendums (reference/systems/*.md x8, reference/frameworks/*.md x6, reference/motion/*.md x4) composed into
 // the explore mapper prompts at spawn time by stack detection (scripts/lib/detect/stack.cjs) +
 // scripts/lib/mapper-spawn.cjs (cap 3), a registry "stack-addendum" type + composes_into field, a
-// /gdd:new-addendum scaffolder skill, and a gsd-health coverage row. No new dependency. Planned/executed via parallel GSD subagents.
+// /hone:new-addendum scaffolder skill, and a gsd-health coverage row. No new dependency. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.54.0');
 
 // 1.55.0 -> Phase 55 (GDD Dashboard). Minor on 1.54.0. Adds a DEP-FREE read-only multi-harness control plane
-// (maintainer Rule-4 decision: no Ink, no React/Vite/React Flow): a hand-rolled ANSI TUI (bin/gdd-dashboard +
+// (maintainer Rule-4 decision: no Ink, no React/Vite/React Flow): a hand-rolled ANSI TUI (bin/hone-dashboard +
 // sdk/dashboard/tui + sdk/dashboard/data data plane reading the shared state/event/graph libs in-process) and a
 // self-contained-HTML graph view (scripts/lib/dashboard/graph-html.cjs, inline SVG + vanilla JS, layered layout)
 // launched via `gdd dashboard --web`; plus a gsd-health dashboard_reachable check + risk/confidence placeholder
@@ -660,7 +660,7 @@ OFF_CADENCE_VERSIONS.add('1.55.0');
 // layer: a pure deterministic risk scorer (scripts/lib/risk/compute-risk.cjs + frozen tables.cjs + route.cjs) feeding
 // two PreToolUse hooks - gdd-risk-gate (scores Write/Edit/MultiEdit/Bash, emits a risk_assessment event, blocks on
 // suggested_action=block) and gdd-fact-force (holds the first write to a file until its consumers/decisions were read,
-// softens to a warning when the Phase 52 graph is absent) - plus a /gdd:override escalation skill (D-XX override-tagged
+// softens to a warning when the Phase 52 graph is absent) - plus a /hone:override escalation skill (D-XX override-tagged
 // decision or factforce checked[path] clear), design-fixer Step 2.5 confidence x risk routing, and rolling-50
 // calibration (calibration.cjs) feeding the bandit reward. No new dependency. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.56.0');
@@ -670,7 +670,7 @@ OFF_CADENCE_VERSIONS.add('1.56.0');
 // + FTS5 probe, state-store.cjs dual-backend dispatch, migrate-to-sqlite.cjs idempotent --migrate-state, render-markdown.cjs
 // byte-equal STATE.md round-trip) + sdk/state/schema.sql (14 tables + FTS5) + sdk/state dual-write behind a migration-active
 // gate (markdown stays the human-editable + fallback SoT; the frozen read/mutate/transition API is unchanged) + consumers
-// (gdd_state__get + dashboard read SQLite-direct, gdd-fact-force FTS5 tier-0) + a /gdd:state skill (readonly query / recover
+// (hone_state__get + dashboard read SQLite-direct, gdd-fact-force FTS5 tier-0) + a /hone:state skill (readonly query / recover
 // / demigrate). Markdown remains authoritative when the module is absent (the CI surface); SQLite verified locally. No new
 // dependency. Planned/executed via parallel GSD subagents.
 OFF_CADENCE_VERSIONS.add('1.57.0');
@@ -678,7 +678,7 @@ OFF_CADENCE_VERSIONS.add('1.57.0');
 // 1.57.1 -> post-1.57.0 debug-analysis bug-fix patch (no new features). Fixes confirmed by a 4-agent post-wave
 // debug sweep: design-search FTS5 query now quotes dotted/slashed terms (recall returned EMPTY for every .md file
 // whenever better-sqlite3 was present); the Phase 57 state-store R8 freshness guard now actually folds hand-edits
-// (was an empty try-block -> silent data loss); blocker rows de-duplicate on re-migrate; /gdd:state recover awaits
+// (was an empty try-block -> silent data loss); blocker rows de-duplicate on re-migrate; /hone:state recover awaits
 // the async migration; FTS5 virtual tables are populated by migrate; state getters return empty instead of throwing
 // on an absent db; migrationActive guards against a directory named state.sqlite; the risk_assessment event now
 // conforms to its own schema (tool_name/risk_score/event_id); the dashboard risk column is wired + case-correct;
@@ -687,7 +687,7 @@ OFF_CADENCE_VERSIONS.add('1.57.0');
 OFF_CADENCE_VERSIONS.add('1.57.1');
 
 // 1.57.2 -> polish-wave patch (no new features). Single grooming wave closing the v1.57 audit-flagged debt:
-// 8 critical bug fixes (injection scanner shipping, gdd-sdk stage CLI helpful error, Codex generator HTML
+// 8 critical bug fixes (injection scanner shipping, hone-sdk stage CLI helpful error, Codex generator HTML
 // wrapper, worktree-aware hook path resolution, MCP circuit-breaker substring false-positive, Windows
 // SessionStart .sh -> .cjs port, protected-paths regex bypass closure with 12 regression tests, figma-write
 // dispatch syntax fix) + 5 new CI gates (validate:feature-counts, validate:registry-tiers,
@@ -703,12 +703,12 @@ OFF_CADENCE_VERSIONS.add('1.57.2');
 // 1.57.3 -> polish-residuals patch (continuation of v1.57.2 grooming wave). Closes the remaining open
 // POLISH-PLAN items: skill-templates/ documented as canonical (skills/ + dist/ are build artifacts);
 // .planning/STATE.md user-facing references scrubbed (.design/STATE.md is the sole user SoT); prefix
-// convention claim softened in agents/README + reference/model-tiers (gdd-* vs design-* is just a name);
+// convention claim softened in agents/README + reference/model-tiers (hone-* vs design-* is just a name);
 // Phase 58 added to ROADMAP for composes_with mandatory rollout (74 of 96 skills need backfill); Codex +
 // Cursor plugin manifest drift gate added (scripts/check-codex-plugin-drift.cjs + npm script + test).
 // Deleted as orphans / obsolete: agents/prototype-gate.md (functionality absorbed by sketch-wrap-up +
 // spike-wrap-up); skills/scan/ + skills/discover/ + skill-templates/scan/ + skill-templates/discover/
-// (deprecated aliases of /gdd:explore); hooks/run-hook.cmd (obsolete after .sh -> .cjs port);
+// (deprecated aliases of /hone:explore); hooks/run-hook.cmd (obsolete after .sh -> .cjs port);
 // scripts/lib/worktree-resolve.cjs#resolvePlanningRoot (unused export); skills/new-cycle/milestone-
 // completeness-rubric.md (plugin-internal doc moved to docs/MAINTAINER-NOTES.md); 6 stale i18n READMEs
 // (frozen at v1.24.0; main README will be rewritten separately). Structural cleanup: dist/claude-code/

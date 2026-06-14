@@ -38,7 +38,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -93,7 +93,7 @@ const MINIMAL_STATE = [
  * Returns { dir, statePath, cleanup }.
  */
 function scaffoldStateOnly() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57d-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57d-'));
   const statePath = path.join(dir, 'STATE.md');
   fs.writeFileSync(statePath, MINIMAL_STATE, 'utf8');
   return {
@@ -111,7 +111,7 @@ function scaffoldStateOnly() {
  * This helper is only called from SQLite-guarded tests.
  */
 async function scaffoldStateWithSqlite() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57d-migrated-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57d-migrated-'));
   const statePath = path.join(dir, 'STATE.md');
   const dbPath = path.join(dir, 'state.sqlite');
   fs.writeFileSync(statePath, MINIMAL_STATE, 'utf8');
@@ -321,7 +321,7 @@ test('57-D: migrationActive=false: STATE.md content is byte-equal round-trip', a
     // Fixture not available — skip gracefully (test infrastructure issue).
     return;
   }
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57d-rt-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57d-rt-'));
   const statePath = path.join(dir, 'STATE.md');
   const content = fs.readFileSync(fixturePath, 'utf8');
   fs.writeFileSync(statePath, content, 'utf8');
@@ -348,7 +348,7 @@ test('57-D: migrationActive=false: read+mutate return consistent ParsedState sha
     const os = require('node:os');
     const path = require('node:path');
     const MINIMAL = ${JSON.stringify(MINIMAL_STATE)};
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57d-floor-'));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57d-floor-'));
     const statePath = path.join(dir, 'STATE.md');
     fs.writeFileSync(statePath, MINIMAL, 'utf8');
     (async () => {
@@ -544,7 +544,7 @@ test('57-D: migrationActive is false when no state.sqlite sibling (even with sql
     const os = require('node:os');
     const path = require('node:path');
     const MINIMAL = ${JSON.stringify(MINIMAL_STATE)};
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57d-nodbcheck-'));
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57d-nodbcheck-'));
     const statePath = path.join(dir, 'STATE.md');
     fs.writeFileSync(statePath, MINIMAL, 'utf8');
     (async () => {

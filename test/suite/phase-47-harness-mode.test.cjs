@@ -2,7 +2,7 @@
 // Phase 47 (Live Mode) — harness-mode capability gate.
 // liveModeFor maps mcp_support:true -> 'puppeteer' and everything else -> 'degraded';
 // degradedHarnesses lists the screenshot-only harnesses. The mode is the live-mode
-// capability signal because /gdd:live drives the Preview MCP at runtime.
+// capability signal because /hone:live drives the Preview MCP at runtime.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');

@@ -14,7 +14,7 @@
 //
 // Coverage:
 //   - frontmatter preserved on all 4 (starts with `---\n`)
-//   - all 4 keep `/gdd-` slash form in prose (none of them emit $gdd-)
+//   - all 4 keep `/hone-` slash form in prose (none of them emit $hone-)
 //   - windsurf / trae / qwen preserve Claude tool names verbatim inside fences
 //   - augment rewrites Bash( → launch-process( inside fenced code
 //   - augment rewrites Edit( → str-replace-editor( inside fenced code
@@ -75,10 +75,10 @@ for (const c of CONVERTERS) {
     );
   });
 
-  test('converters-wave2: ' + c.name + ' normalizes name to gdd-<skill>', () => {
+  test('converters-wave2: ' + c.name + ' normalizes name to hone-<skill>', () => {
     const out = c.mod.convert(SOURCE, 'sample', { runtime: c.name });
-    assert.equal(out.includes('gdd-gdd-'), false, c.name + ': no double prefix');
-    assert.ok(/name:\s*"?gdd-sample"?/.test(out), c.name + ': name has gdd-sample');
+    assert.equal(out.includes('hone-hone-'), false, c.name + ': no double prefix');
+    assert.ok(/name:\s*"?hone-sample"?/.test(out), c.name + ': name has hone-sample');
   });
 
   test('converters-wave2: ' + c.name + ' injects exactly one adapter header', () => {
@@ -111,18 +111,18 @@ for (const c of CONVERTERS) {
   });
 
   test('converters-wave2: ' + c.name + ' handles no-frontmatter input', () => {
-    const noFm = '# Header\n\nBody content with /gdd-explore reference.\n';
+    const noFm = '# Header\n\nBody content with /hone-explore reference.\n';
     const out = c.mod.convert(noFm, 'sample', { runtime: c.name });
     assert.equal(typeof out, 'string');
     assert.ok(out.startsWith('---\n'), c.name + ': frontmatter prepended');
-    assert.ok(/name:\s*"?gdd-sample"?/.test(out), c.name + ': name set');
+    assert.ok(/name:\s*"?hone-sample"?/.test(out), c.name + ': name set');
   });
 
-  test('converters-wave2: ' + c.name + ' keeps /gdd-* slash form in prose', () => {
+  test('converters-wave2: ' + c.name + ' keeps /hone-* slash form in prose', () => {
     const out = c.mod.convert(SOURCE, 'sample', { runtime: c.name });
-    assert.ok(out.includes('/gdd-explore'), c.name + ': keeps /gdd-explore');
-    assert.ok(out.includes('/gdd-debug'), c.name + ': keeps /gdd-debug');
-    assert.equal(out.includes('$gdd-'), false, c.name + ': does not emit codex $gdd-');
+    assert.ok(out.includes('/hone-explore'), c.name + ': keeps /hone-explore');
+    assert.ok(out.includes('/hone-debug'), c.name + ': keeps /hone-debug');
+    assert.equal(out.includes('$hone-'), false, c.name + ': does not emit codex $hone-');
   });
 }
 

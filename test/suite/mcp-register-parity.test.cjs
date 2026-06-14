@@ -2,8 +2,8 @@
 // test/suite/mcp-register-parity.test.cjs
 // ---------------------------------------------------------------------------
 // Phase 59.1 — installer MCP parity. gdd ships TWO MCP servers:
-//   - gdd-mcp   (read-only project tools; launch command `gdd-mcp`)
-//   - gdd-state (typed STATE mutators;   launch command `gdd-state-mcp`)
+//   - hone-mcp   (read-only project tools; launch command `hone-mcp`)
+//   - hone-state (typed STATE mutators;   launch command `hone-state-mcp`)
 //
 // These tests assert that --register-mcp registers BOTH servers (for the
 // harnesses the installer targets: claude + codex) and that --no-register-mcp
@@ -39,7 +39,7 @@ afterEach(() => {
 });
 
 function mkTmpConfig() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-mcp-parity-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-mcp-parity-'));
   tmpDirs.push(dir);
   return path.join(dir, 'harness-mcp.json');
 }
@@ -97,14 +97,14 @@ function persistingSpawnFn(binary, configPath) {
   };
 }
 
-describe('59.1: installer MCP parity (gdd-mcp + gdd-state)', () => {
-  test('59.1: MCP_SERVERS lists both gdd-mcp and gdd-state with launch commands', () => {
+describe('59.1: installer MCP parity (hone-mcp + hone-state)', () => {
+  test('59.1: MCP_SERVERS lists both hone-mcp and hone-state with launch commands', () => {
     const byName = Object.fromEntries(MCP_SERVERS.map((s) => [s.name, s]));
-    assert.ok(byName['gdd-mcp'], 'gdd-mcp must be a registered server');
-    assert.ok(byName['gdd-state'], 'gdd-state must be a registered server');
-    assert.equal(byName['gdd-mcp'].launchCommand, 'gdd-mcp');
-    // gdd-state registers under `gdd-state` but launches via the gdd-state-mcp bin.
-    assert.equal(byName['gdd-state'].launchCommand, 'gdd-state-mcp');
+    assert.ok(byName['hone-mcp'], 'hone-mcp must be a registered server');
+    assert.ok(byName['hone-state'], 'hone-state must be a registered server');
+    assert.equal(byName['hone-mcp'].launchCommand, 'hone-mcp');
+    // hone-state registers under `hone-state` but launches via the hone-state-mcp bin.
+    assert.equal(byName['hone-state'].launchCommand, 'hone-state-mcp');
   });
 
   test('59.1: --register-mcp registers BOTH servers with claude', () => {
@@ -115,12 +115,12 @@ describe('59.1: installer MCP parity (gdd-mcp + gdd-state)', () => {
 
     // Both servers appear in the written (temp) config.
     const cfg = readConfig(configPath);
-    assert.ok(cfg.servers['gdd-mcp'], 'gdd-mcp must be in the written config');
-    assert.ok(cfg.servers['gdd-state'], 'gdd-state must be in the written config');
+    assert.ok(cfg.servers['hone-mcp'], 'hone-mcp must be in the written config');
+    assert.ok(cfg.servers['hone-state'], 'hone-state must be in the written config');
 
     // Each persisted entry uses the correct launch command.
-    assert.equal(cfg.servers['gdd-mcp'].command, 'gdd-mcp');
-    assert.equal(cfg.servers['gdd-state'].command, 'gdd-state-mcp');
+    assert.equal(cfg.servers['hone-mcp'].command, 'hone-mcp');
+    assert.equal(cfg.servers['hone-state'].command, 'hone-state-mcp');
 
     // The aggregate result reports both servers as applied.
     assert.equal((result.servers || []).length, 2);
@@ -137,9 +137,9 @@ describe('59.1: installer MCP parity (gdd-mcp + gdd-state)', () => {
     registerMcp({ harness: 'codex', spawnFn });
 
     const cfg = readConfig(configPath);
-    assert.ok(cfg.servers['gdd-mcp'], 'gdd-mcp must be in the written codex config');
-    assert.ok(cfg.servers['gdd-state'], 'gdd-state must be in the written codex config');
-    assert.equal(cfg.servers['gdd-state'].command, 'gdd-state-mcp');
+    assert.ok(cfg.servers['hone-mcp'], 'hone-mcp must be in the written codex config');
+    assert.ok(cfg.servers['hone-state'], 'hone-state must be in the written codex config');
+    assert.equal(cfg.servers['hone-state'].command, 'hone-state-mcp');
   });
 
   test('59.1: --no-register-mcp (registerMcp not invoked) writes NEITHER server', () => {
@@ -156,8 +156,8 @@ describe('59.1: installer MCP parity (gdd-mcp + gdd-state)', () => {
     }
 
     const cfg = readConfig(configPath);
-    assert.equal(cfg.servers['gdd-mcp'], undefined, 'gdd-mcp must NOT be registered');
-    assert.equal(cfg.servers['gdd-state'], undefined, 'gdd-state must NOT be registered');
+    assert.equal(cfg.servers['hone-mcp'], undefined, 'hone-mcp must NOT be registered');
+    assert.equal(cfg.servers['hone-state'], undefined, 'hone-state must NOT be registered');
     assert.deepEqual(Object.keys(cfg.servers), []);
   });
 
@@ -195,8 +195,8 @@ describe('59.1: installer MCP parity (gdd-mcp + gdd-state)', () => {
     assert.equal(result.detected, false);
     assert.deepEqual(result.servers, []);
     // Notice mentions both servers being skipped.
-    assert.match(result.notice, /gdd-mcp/);
-    assert.match(result.notice, /gdd-state/);
+    assert.match(result.notice, /hone-mcp/);
+    assert.match(result.notice, /hone-state/);
 
     const cfg = readConfig(configPath);
     assert.deepEqual(Object.keys(cfg.servers), []);

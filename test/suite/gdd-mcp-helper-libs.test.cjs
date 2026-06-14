@@ -1,5 +1,5 @@
 'use strict';
-// tests/gdd-mcp-helper-libs.test.cjs
+// tests/hone-mcp-helper-libs.test.cjs
 // ---------------------------------------------------------------------------
 // Plan 27.7-02 — helper-lib tests for the 5 NEW scripts/lib/* modules:
 //   roadmap-reader, snapshot-reader, intel-store, reflections-reader,

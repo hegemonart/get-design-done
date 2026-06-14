@@ -22,6 +22,7 @@ mmr-rerank.cjs
 model-id.cjs
 new-addendum.cjs
 parse-contract.cjs
+pkg-identity.cjs
 probe-optional.cjs
 pseudonymize.cjs
 quality-gate-detect.cjs

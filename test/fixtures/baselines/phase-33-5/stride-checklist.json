@@ -1,10 +1,10 @@
 {
-  "_comment": "Phase 33.5 STRIDE checklist snapshot. Machine-readable mirror of reference/gdd-threat-model.md: the 5 in-scope components and the residual-risk -> closing-plan map. A regression that re-opens a closed residual (or drops a component) trips test/suite/phase-33-5-baseline.test.cjs.",
-  "source": "reference/gdd-threat-model.md",
+  "_comment": "Phase 33.5 STRIDE checklist snapshot. Machine-readable mirror of reference/hone-threat-model.md: the 5 in-scope components and the residual-risk -> closing-plan map. A regression that re-opens a closed residual (or drops a component) trips test/suite/phase-33-5-baseline.test.cjs.",
+  "source": "reference/hone-threat-model.md",
   "taxonomy": "STRIDE",
   "components": [
     "hooks",
-    "mcp-gdd-state",
+    "mcp-hone-state",
     "peer-cli",
     "websocket",
     "issue-reporter"
@@ -17,7 +17,7 @@
     },
     {
       "risk": "GDD_STATE_PATH path traversal (no guard) + no payload-size cap + un-tightened tool schemas",
-      "component": "mcp-gdd-state",
+      "component": "mcp-hone-state",
       "plan": "33.5-03"
     },
     {

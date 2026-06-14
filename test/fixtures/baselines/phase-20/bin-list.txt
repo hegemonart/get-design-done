@@ -1,5 +1,5 @@
-gdd-events
-gdd-mcp
-gdd-sdk
-gdd-state-mcp
-get-design-done
+hone-events
+hone-mcp
+hone-sdk
+hone-state-mcp
+hone

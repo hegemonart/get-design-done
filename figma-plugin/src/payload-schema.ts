@@ -80,7 +80,7 @@ export interface GddSyncToken {
 
 export interface GddSyncPayload {
   /** Path C marker the digest/receiver key on. Literal — never anything else. */
-  source: 'gdd-plugin';
+  source: 'hone-plugin';
   fileKey?: string;
   exportedAt?: string;
   collections: GddSyncCollection[];
@@ -225,7 +225,7 @@ export function buildPayload(
   }
 
   const payload: GddSyncPayload = {
-    source: 'gdd-plugin',
+    source: 'hone-plugin',
     collections,
     variables,
     tokens,
@@ -243,7 +243,7 @@ export function isGddSyncPayload(x: unknown): x is GddSyncPayload {
   if (typeof x !== 'object' || x === null) return false;
   const p = x as Partial<GddSyncPayload>;
   return (
-    p.source === 'gdd-plugin' &&
+    p.source === 'hone-plugin' &&
     Array.isArray(p.collections) &&
     Array.isArray(p.variables)
   );

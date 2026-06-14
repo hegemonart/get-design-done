@@ -18,7 +18,7 @@
  *       * agents:      ls agents/*.md  (excluding README.md)
  *       * skills:      ls skills/      (dirs only)
  *       * connections: ls connections/*.md
- *       * mcp tools:   ls sdk/mcp/gdd-mcp/tools/gdd_*.ts (one per tool)
+ *       * mcp tools:   ls sdk/mcp/hone-mcp/tools/hone_*.ts (one per tool)
  *   - Scans these surfaces for "<N> <noun>" patterns:
  *       * .claude-plugin/plugin.json#description
  *       * .claude-plugin/marketplace.json#description
@@ -73,10 +73,10 @@ function listConnections() {
 }
 
 function listMcpTools() {
-  const dir = path.join(ROOT, 'sdk', 'mcp', 'gdd-mcp', 'tools');
+  const dir = path.join(ROOT, 'sdk', 'mcp', 'hone-mcp', 'tools');
   if (!fs.existsSync(dir)) return 0;
   return fs.readdirSync(dir)
-    .filter((f) => /^gdd_[a-z_]+\.ts$/.test(f))
+    .filter((f) => /^hone_[a-z_]+\.ts$/.test(f))
     .length;
 }
 

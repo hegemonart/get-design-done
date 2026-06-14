@@ -1,5 +1,5 @@
 'use strict';
-// Phase 38.5 — rollout-coordinator + /gdd:rollout-status static contract. Hermetic (D-07):
+// Phase 38.5 — rollout-coordinator + /hone:rollout-status static contract. Hermetic (D-07):
 // file reads only, no live flag-service call. Every test tagged `38.5-02:`.
 
 const test = require('node:test');
@@ -33,10 +33,10 @@ test('38.5-02: verify_outcome + rollout_* registered in the events schema seed l
   }
 });
 
-test('38.5-02: /gdd:rollout-status skill surfaces state + stuck, read-only', () => {
+test('38.5-02: /hone:rollout-status skill surfaces state + stuck, read-only', () => {
   const lines = SKILL.split('\n').length;
   assert.ok(lines <= 100, `skill ${lines} lines (<=100)`);
-  assert.match(SKILL, /name:\s*gdd-rollout-status/, 'name');
+  assert.match(SKILL, /name:\s*hone-rollout-status/, 'name');
   assert.match(SKILL, /--stuck/, '--stuck flag');
   assert.match(SKILL, /rollout-coordinator/, 'delegates to the coordinator');
   assert.match(SKILL, /never (advance|drive|roll back)|read-only/i, 'read-only');

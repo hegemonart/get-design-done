@@ -21,13 +21,13 @@
 //
 // Coverage:
 //   - frontmatter preserved on all 3 (starts with `---\n`)
-//   - opencode keeps `/gdd-` slash form in prose (no $gdd-, no /gdd:)
+//   - opencode keeps `/hone-` slash form in prose (no $hone-, no /hone:)
 //   - opencode preserves Claude tool names inside fences (no tool map)
 //   - opencode injects 'OpenCode adapter' header exactly once
-//   - kilo keeps `/gdd-` slash form in prose (no $gdd-, no /gdd:)
+//   - kilo keeps `/hone-` slash form in prose (no $hone-, no /hone:)
 //   - kilo preserves Claude tool names inside fences (no tool map)
 //   - kilo injects 'Kilo adapter' header exactly once
-//   - gemini keeps `/gdd-` slash form in prose (no $gdd-, no /gdd:)
+//   - gemini keeps `/hone-` slash form in prose (no $hone-, no /hone:)
 //   - gemini rewrites Bash( → run_shell_command( inside fenced code
 //   - gemini rewrites Read( → read_file( inside fenced code
 //   - gemini rewrites Edit( → replace( inside fenced code
@@ -35,7 +35,7 @@
 //   - gemini injects 'Gemini adapter' header exactly once
 //   - all 3 inject their adapter header idempotently (no duplicate on re-convert)
 //   - all 3 export `convert` as a function and return strings
-//   - all 3 normalize name to gdd-<skill> (no gdd-gdd- double prefix)
+//   - all 3 normalize name to hone-<skill> (no hone-hone- double prefix)
 //   - all 3 cite gsd-build per D-02; gemini also cites reference/gemini-tools.md
 //   - GEMINI_TOOL_MAP is exported, frozen, and contains the Phase 21 mapping
 
@@ -84,12 +84,12 @@ for (const c of CONVERTERS) {
     );
   });
 
-  test('converters-wave4: ' + c.name + ' normalizes name to gdd-<skill>', () => {
+  test('converters-wave4: ' + c.name + ' normalizes name to hone-<skill>', () => {
     const out = c.mod.convert(SOURCE, 'sample', { runtime: c.name });
-    // Source already had `name: gdd-sample` — but rerunning the
-    // converter must NOT yield `gdd-gdd-sample`.
-    assert.equal(out.includes('gdd-gdd-'), false, c.name + ': no double prefix');
-    assert.ok(/name:\s*"?gdd-sample"?/.test(out), c.name + ': name has gdd-sample');
+    // Source already had `name: hone-sample` — but rerunning the
+    // converter must NOT yield `hone-hone-sample`.
+    assert.equal(out.includes('hone-hone-'), false, c.name + ': no double prefix');
+    assert.ok(/name:\s*"?hone-sample"?/.test(out), c.name + ': name has hone-sample');
   });
 
   test('converters-wave4: ' + c.name + ' injects exactly one adapter header', () => {
@@ -122,22 +122,22 @@ for (const c of CONVERTERS) {
   });
 
   test('converters-wave4: ' + c.name + ' handles no-frontmatter input', () => {
-    const noFm = '# Header\n\nBody content with /gdd-explore reference.\n';
+    const noFm = '# Header\n\nBody content with /hone-explore reference.\n';
     const out = c.mod.convert(noFm, 'sample', { runtime: c.name });
     assert.equal(typeof out, 'string');
     assert.ok(out.startsWith('---\n'), c.name + ': frontmatter prepended');
-    assert.ok(/name:\s*"?gdd-sample"?/.test(out), c.name + ': name set');
+    assert.ok(/name:\s*"?hone-sample"?/.test(out), c.name + ': name set');
   });
 
-  test('converters-wave4: ' + c.name + ' keeps /gdd-* slash form in prose', () => {
+  test('converters-wave4: ' + c.name + ' keeps /hone-* slash form in prose', () => {
     const out = c.mod.convert(SOURCE, 'sample', { runtime: c.name });
-    assert.ok(out.includes('/gdd-explore'), c.name + ': keeps /gdd-explore');
-    assert.ok(out.includes('/gdd-debug'), c.name + ': keeps /gdd-debug');
+    assert.ok(out.includes('/hone-explore'), c.name + ': keeps /hone-explore');
+    assert.ok(out.includes('/hone-debug'), c.name + ': keeps /hone-debug');
     // Codex shell-var form must NOT leak into wave 4 output.
     assert.equal(
-      out.includes('$gdd-'),
+      out.includes('$hone-'),
       false,
-      c.name + ': does not emit $gdd-'
+      c.name + ': does not emit $hone-'
     );
   });
 }

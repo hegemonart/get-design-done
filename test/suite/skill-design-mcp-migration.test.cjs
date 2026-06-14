@@ -4,7 +4,7 @@
  *
  * Static-analysis regression test for Plan 20-10: verifies that
  * `skills/design/SKILL.md` routes STATE.md mutations through the
- * `gdd-state` MCP tools introduced in Plan 20-05, while preserving
+ * `hone-state` MCP tools introduced in Plan 20-05, while preserving
  * the worktree-isolation orchestration and design-executor spawn
  * discipline byte-for-byte.
  *
@@ -53,13 +53,13 @@ const LINE_COUNT_TOLERANCE = 0.15;
 
 // The 7 MCP tool names required in the frontmatter per the plan spec.
 const REQUIRED_TOOLS = [
-  'mcp__gdd_state__get',
-  'mcp__gdd_state__transition_stage',
-  'mcp__gdd_state__update_progress',
-  'mcp__gdd_state__set_status',
-  'mcp__gdd_state__add_blocker',
-  'mcp__gdd_state__resolve_blocker',
-  'mcp__gdd_state__checkpoint',
+  'mcp__hone_state__get',
+  'mcp__hone_state__transition_stage',
+  'mcp__hone_state__update_progress',
+  'mcp__hone_state__set_status',
+  'mcp__hone_state__add_blocker',
+  'mcp__hone_state__resolve_blocker',
+  'mcp__hone_state__checkpoint',
 ];
 
 // Patterns that indicate direct STATE.md mutation paths the migration
@@ -175,9 +175,9 @@ test('skill-design-mcp-migration: frontmatter tools lists all 7 required MCP ent
 test('skill-design-mcp-migration: exactly one transition_stage call in prose', () => {
   // Exclude the frontmatter `tools:` declaration - it's a capability
   // declaration, not a call. The prose must contain exactly one
-  // invocation of `mcp__gdd_state__transition_stage` (Stage entry).
+  // invocation of `mcp__hone_state__transition_stage` (Stage entry).
   const prose = bodyWithoutFrontmatter(readSkill());
-  const matches = prose.match(/mcp__gdd_state__transition_stage/g) || [];
+  const matches = prose.match(/mcp__hone_state__transition_stage/g) || [];
   assert.equal(
     matches.length,
     1,
@@ -201,8 +201,8 @@ test('skill-design-mcp-migration: executor-spawn prompt contains STATE.md mutati
   // And must explicitly tell executors to funnel mutations through MCP tools.
   assert.match(
     body,
-    /update STATE\.md ONLY via the `gdd-state` MCP tools/,
-    'STATE.md mutation protocol must direct executors to use gdd-state MCP tools exclusively',
+    /update STATE\.md ONLY via the `hone-state` MCP tools/,
+    'STATE.md mutation protocol must direct executors to use hone-state MCP tools exclusively',
   );
   // And must forbid direct Read + Write on STATE.md.
   assert.match(

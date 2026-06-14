@@ -6,7 +6,7 @@
 //      (incl. .design/debt/DEBT-CATALOG.md in writes) and the M size budget.
 //   2. The crawler body declares PROJECT-WIDE scope: it does NOT read STATE.md
 //      completed_tasks, it walks the whole tree, and it writes
-//      .design/debt/DEBT-CATALOG.md. It is a pure catalog suggesting /gdd:fast.
+//      .design/debt/DEBT-CATALOG.md. It is a pure catalog suggesting /hone:fast.
 //   3. reference/debt-categories.md enumerates the seven debt classes and the
 //      priority formula (visible-delta × effort × prevalence).
 //
@@ -115,16 +115,16 @@ test('phase-48-debt: crawler body declares project-wide scope (NOT cycle-scoped)
   );
 });
 
-test('phase-48-debt: crawler is a pure catalog that suggests /gdd:fast', () => {
+test('phase-48-debt: crawler is a pure catalog that suggests /hone:fast', () => {
   const body = fs.readFileSync(CRAWLER, 'utf8');
   assert.ok(/pure catalog/i.test(body), 'crawler must declare itself a pure catalog');
   assert.ok(/no auto-fix/i.test(body), 'crawler must declare no auto-fix');
-  assert.ok(body.includes('/gdd:fast'), 'crawler must suggest a /gdd:fast command per finding');
+  assert.ok(body.includes('/hone:fast'), 'crawler must suggest a /hone:fast command per finding');
 });
 
-test('phase-48-debt: crawler leans on gdd-detect for anti-pattern finding', () => {
+test('phase-48-debt: crawler leans on hone-detect for anti-pattern finding', () => {
   const body = fs.readFileSync(CRAWLER, 'utf8');
-  assert.ok(body.includes('gdd-detect'), 'crawler should invoke gdd-detect for anti-pattern scanning');
+  assert.ok(body.includes('hone-detect'), 'crawler should invoke hone-detect for anti-pattern scanning');
 });
 
 // ── 4. debt-categories.md enumerates classes + priority formula ────────────

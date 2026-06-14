@@ -122,7 +122,7 @@ test('phase-49-design-quality: main() always returns {continue:true} (advisory, 
 
 test('phase-49-design-quality: emits a design_quality_warn record to a temp event log', () => {
   const hook = require(HOOK_JS);
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-dq-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-dq-'));
   try {
     const decision = hook.main(postPayload('Hero.tsx', SLOP_SNIPPET, 'Write', tmp));
     assert.equal(decision.continue, true);

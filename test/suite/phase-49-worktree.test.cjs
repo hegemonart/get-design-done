@@ -26,8 +26,8 @@ const { execFileSync } = require('node:child_process');
 const wt = require('../../scripts/lib/worktree-resolve.cjs');
 
 // Cross-platform absolute roots for the fakes (avoids hard-coding "/" on win32).
-const MAIN = path.resolve(path.join(os.tmpdir(), 'gdd-main-repo'));
-const WORKTREE_CWD = path.join(MAIN, '..', 'gdd-wt', 'feature');
+const MAIN = path.resolve(path.join(os.tmpdir(), 'hone-main-repo'));
+const WORKTREE_CWD = path.join(MAIN, '..', 'hone-wt', 'feature');
 
 /**
  * Build a fake `exec` whose `git rev-parse` answers are driven by a table.
@@ -135,7 +135,7 @@ function gitAvailable() {
 }
 
 test('49-worktree: [integration] real worktree resolves to the main checkout', { skip: !gitAvailable() }, () => {
-  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-wt-it-'));
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-wt-it-'));
   // The paths do not exist yet — realpath canonicalization (macOS /var ->
   // /private/var) is applied AFTER creation, just before the assertions.
   const mainRepo = path.join(base, 'main');
@@ -148,13 +148,13 @@ test('49-worktree: [integration] real worktree resolves to the main checkout', {
     fs.mkdirSync(mainRepo, { recursive: true });
     run(['init', '-q'], mainRepo);
     run(['config', 'user.email', 'gdd@test.local'], mainRepo);
-    run(['config', 'user.name', 'gdd-test'], mainRepo);
+    run(['config', 'user.name', 'hone-test'], mainRepo);
     run(['config', 'commit.gpgsign', 'false'], mainRepo);
     fs.writeFileSync(path.join(mainRepo, 'seed.txt'), 'seed\n', 'utf8');
     run(['add', 'seed.txt'], mainRepo);
     run(['commit', '-q', '-m', 'seed'], mainRepo);
     // Create a linked worktree on a new branch.
-    run(['worktree', 'add', '-q', '-b', 'gdd-feature', wtDir], mainRepo);
+    run(['worktree', 'add', '-q', '-b', 'hone-feature', wtDir], mainRepo);
   } catch {
     // Environment cannot create worktrees — treat as skip rather than fail.
     fs.rmSync(base, { recursive: true, force: true });

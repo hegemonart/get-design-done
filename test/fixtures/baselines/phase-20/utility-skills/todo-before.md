@@ -1,11 +1,11 @@
 ---
-name: gdd-todo
+name: hone-todo
 description: "Design backlog — add/list/pick design tasks. Writes to .design/TODO.md."
 argument-hint: "<add|list|pick> [text]"
 tools: Read, Write, AskUserQuestion
 ---
 
-# /gdd:todo
+# /hone:todo
 
 **Role:** Design todo list. Three subcommands: `add`, `list`, `pick`. Backing store: `.design/TODO.md`.
 

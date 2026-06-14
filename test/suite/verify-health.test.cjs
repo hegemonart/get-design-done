@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { REPO_ROOT, scaffoldDesignDir } = require('./helpers.ts');
 
-// The /gdd:health command reads .design/ and produces a report.
+// The /hone:health command reads .design/ and produces a report.
 // This test verifies the contract: given a .design/STATE.md with known content,
 // the health check function (if extracted) returns the expected shape.
 // Since health is implemented in a SKILL.md (not a callable JS module),

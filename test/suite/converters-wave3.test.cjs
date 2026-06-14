@@ -24,19 +24,19 @@
 //   Codebuddy (uniform):
 //     - convert is a function, output starts with `---\n`
 //     - frontmatter description preserved
-//     - name normalized to `gdd-sample` (no double prefix)
+//     - name normalized to `hone-sample` (no double prefix)
 //     - exactly one `CodeBuddy adapter` header, idempotent
 //     - Claude tool names preserved inside fenced code
-//     - /gdd-* slash form preserved in prose (no $gdd-)
+//     - /hone-* slash form preserved in prose (no $hone-)
 //
 //   Cline (special-case):
-//     - convert returns a rule-block starting with `## gdd-<name>`
+//     - convert returns a rule-block starting with `## hone-<name>`
 //     - convert does NOT emit YAML frontmatter (no leading `---`)
 //     - convert does NOT emit adapter HTML comment (`<!-- gdd: ... adapter -->`)
 //     - description from source frontmatter included in the block
-//     - /gdd-* slash form preserved in the block body (cline = Claude-shape)
-//     - convert normalizes the skill name (strips gdd-/gsd- prefix to prevent double)
-//     - buildClinerulesFile starts with `# get-design-done rules`
+//     - /hone-* slash form preserved in the block body (cline = Claude-shape)
+//     - convert normalizes the skill name (strips hone-/gsd- prefix to prevent double)
+//     - buildClinerulesFile starts with `# hone rules`
 //     - buildClinerulesFile separates blocks with a blank line
 //     - buildClinerulesFile assembles multiple blocks correctly
 //     - buildClinerulesFile handles empty / null input (header-only file)
@@ -87,12 +87,12 @@ test('converters-wave3: codebuddy preserves source description in frontmatter', 
   );
 });
 
-test('converters-wave3: codebuddy normalizes name to gdd-<skill>', () => {
+test('converters-wave3: codebuddy normalizes name to hone-<skill>', () => {
   const out = codebuddy.convert(SOURCE, 'sample', { runtime: 'codebuddy' });
-  assert.equal(out.includes('gdd-gdd-'), false, 'codebuddy: no double prefix');
+  assert.equal(out.includes('hone-hone-'), false, 'codebuddy: no double prefix');
   assert.ok(
-    /name:\s*"?gdd-sample"?/.test(out),
-    'codebuddy: name has gdd-sample'
+    /name:\s*"?hone-sample"?/.test(out),
+    'codebuddy: name has hone-sample'
   );
 });
 
@@ -127,11 +127,11 @@ test('converters-wave3: codebuddy preserves Claude tool names inside fences', ()
   );
 });
 
-test('converters-wave3: codebuddy keeps /gdd-* slash form in prose', () => {
+test('converters-wave3: codebuddy keeps /hone-* slash form in prose', () => {
   const out = codebuddy.convert(SOURCE, 'sample', { runtime: 'codebuddy' });
-  assert.ok(out.includes('/gdd-explore'), 'codebuddy keeps /gdd-explore');
-  assert.ok(out.includes('/gdd-debug'), 'codebuddy keeps /gdd-debug');
-  assert.equal(out.includes('$gdd-'), false, 'codebuddy does not emit $gdd-');
+  assert.ok(out.includes('/hone-explore'), 'codebuddy keeps /hone-explore');
+  assert.ok(out.includes('/hone-debug'), 'codebuddy keeps /hone-debug');
+  assert.equal(out.includes('$hone-'), false, 'codebuddy does not emit $hone-');
 });
 
 // ── Cline — special-case rule-block converter (D-09) ──────────────────────
@@ -141,12 +141,12 @@ test('converters-wave3: cline exports convert + buildClinerulesFile as functions
   assert.equal(typeof cline.buildClinerulesFile, 'function');
 });
 
-test('converters-wave3: cline convert returns rule-block starting with ## gdd-<name>', () => {
+test('converters-wave3: cline convert returns rule-block starting with ## hone-<name>', () => {
   const block = cline.convert(SOURCE, 'sample', { runtime: 'cline' });
   assert.equal(typeof block, 'string');
   assert.ok(
-    block.startsWith('## gdd-sample'),
-    'cline block starts with `## gdd-sample`; got: ' + block.slice(0, 80)
+    block.startsWith('## hone-sample'),
+    'cline block starts with `## hone-sample`; got: ' + block.slice(0, 80)
   );
 });
 
@@ -193,66 +193,66 @@ test('converters-wave3: cline convert includes source description in block body'
   );
 });
 
-test('converters-wave3: cline convert preserves /gdd-* slash form in body', () => {
-  // Cline uses Claude-shape slashes (runtime-slash.cjs emits /gdd- for
-  // every runtime except codex). The block body should keep /gdd-explore.
+test('converters-wave3: cline convert preserves /hone-* slash form in body', () => {
+  // Cline uses Claude-shape slashes (runtime-slash.cjs emits /hone- for
+  // every runtime except codex). The block body should keep /hone-explore.
   const block = cline.convert(SOURCE, 'sample', { runtime: 'cline' });
-  assert.ok(block.includes('/gdd-explore'), 'cline keeps /gdd-explore');
-  assert.ok(block.includes('/gdd-debug'), 'cline keeps /gdd-debug');
+  assert.ok(block.includes('/hone-explore'), 'cline keeps /hone-explore');
+  assert.ok(block.includes('/hone-debug'), 'cline keeps /hone-debug');
   assert.equal(
-    block.includes('$gdd-'),
+    block.includes('$hone-'),
     false,
     'cline does not emit codex shell-var form'
   );
 });
 
-test('converters-wave3: cline convert normalizes skill name (strips gdd-/gsd- prefix)', () => {
-  // Passing `gdd-sample` as skillName should NOT yield `## gdd-gdd-sample`.
-  const block1 = cline.convert(SOURCE, 'gdd-sample', { runtime: 'cline' });
+test('converters-wave3: cline convert normalizes skill name (strips hone-/gsd- prefix)', () => {
+  // Passing `hone-sample` as skillName should NOT yield `## hone-hone-sample`.
+  const block1 = cline.convert(SOURCE, 'hone-sample', { runtime: 'cline' });
   assert.ok(
-    block1.startsWith('## gdd-sample'),
-    'gdd- prefix stripped from input: ' + block1.slice(0, 80)
+    block1.startsWith('## hone-sample'),
+    'hone- prefix stripped from input: ' + block1.slice(0, 80)
   );
   // Same for upstream gsd- prefix.
   const block2 = cline.convert(SOURCE, 'gsd-sample', { runtime: 'cline' });
   assert.ok(
-    block2.startsWith('## gdd-sample'),
+    block2.startsWith('## hone-sample'),
     'gsd- prefix stripped from input: ' + block2.slice(0, 80)
   );
 });
 
 test('converters-wave3: cline convert handles no-frontmatter input (no description line)', () => {
-  const noFm = '# Header\n\nBody content with /gdd-explore reference.\n';
+  const noFm = '# Header\n\nBody content with /hone-explore reference.\n';
   const block = cline.convert(noFm, 'sample', { runtime: 'cline' });
   assert.ok(
-    block.startsWith('## gdd-sample'),
+    block.startsWith('## hone-sample'),
     'heading emitted even without source frontmatter'
   );
   assert.ok(
-    block.includes('/gdd-explore'),
+    block.includes('/hone-explore'),
     'body slash refs preserved'
   );
   // Should not include double newlines from an empty description line.
   assert.equal(
-    block.includes('## gdd-sample\n\n\n\n'),
+    block.includes('## hone-sample\n\n\n\n'),
     false,
     'no extra blank line where description would have been'
   );
 });
 
-test('converters-wave3: cline buildClinerulesFile starts with `# get-design-done rules`', () => {
+test('converters-wave3: cline buildClinerulesFile starts with `# hone rules`', () => {
   const file = cline.buildClinerulesFile([
-    { name: 'a', block: '## gdd-a\n\nbody a' },
+    { name: 'a', block: '## hone-a\n\nbody a' },
   ]);
   assert.ok(
-    file.startsWith('# get-design-done rules'),
+    file.startsWith('# hone rules'),
     'cline file starts with rules header: ' + file.slice(0, 80)
   );
 });
 
 test('converters-wave3: cline buildClinerulesFile includes auto-generated comment', () => {
   const file = cline.buildClinerulesFile([
-    { name: 'a', block: '## gdd-a\n\nbody a' },
+    { name: 'a', block: '## hone-a\n\nbody a' },
   ]);
   assert.ok(
     file.includes('Auto-generated from gdd SKILL.md sources'),
@@ -262,13 +262,13 @@ test('converters-wave3: cline buildClinerulesFile includes auto-generated commen
 
 test('converters-wave3: cline buildClinerulesFile assembles multiple blocks', () => {
   const file = cline.buildClinerulesFile([
-    { name: 'explore', block: '## gdd-explore\n\nExplore body' },
-    { name: 'debug', block: '## gdd-debug\n\nDebug body' },
-    { name: 'help', block: '## gdd-help\n\nHelp body' },
+    { name: 'explore', block: '## hone-explore\n\nExplore body' },
+    { name: 'debug', block: '## hone-debug\n\nDebug body' },
+    { name: 'help', block: '## hone-help\n\nHelp body' },
   ]);
-  assert.ok(file.includes('## gdd-explore'), 'explore block present');
-  assert.ok(file.includes('## gdd-debug'), 'debug block present');
-  assert.ok(file.includes('## gdd-help'), 'help block present');
+  assert.ok(file.includes('## hone-explore'), 'explore block present');
+  assert.ok(file.includes('## hone-debug'), 'debug block present');
+  assert.ok(file.includes('## hone-help'), 'help block present');
   assert.ok(file.includes('Explore body'), 'explore body present');
   assert.ok(file.includes('Debug body'), 'debug body present');
   assert.ok(file.includes('Help body'), 'help body present');
@@ -276,13 +276,13 @@ test('converters-wave3: cline buildClinerulesFile assembles multiple blocks', ()
 
 test('converters-wave3: cline buildClinerulesFile separates blocks with blank line', () => {
   const file = cline.buildClinerulesFile([
-    { name: 'a', block: '## gdd-a\n\nbody a' },
-    { name: 'b', block: '## gdd-b\n\nbody b' },
+    { name: 'a', block: '## hone-a\n\nbody a' },
+    { name: 'b', block: '## hone-b\n\nbody b' },
   ]);
   // Between two blocks: closing line of block A, then `\n\n` separator,
-  // then opening line of block B. Concretely: `body a\n\n## gdd-b`.
+  // then opening line of block B. Concretely: `body a\n\n## hone-b`.
   assert.ok(
-    file.includes('body a\n\n## gdd-b'),
+    file.includes('body a\n\n## hone-b'),
     'blocks separated by blank line: ' + JSON.stringify(file)
   );
 });
@@ -291,20 +291,20 @@ test('converters-wave3: cline buildClinerulesFile handles empty array', () => {
   const file = cline.buildClinerulesFile([]);
   // Empty input → header-only file, still ends in newline.
   assert.ok(
-    file.startsWith('# get-design-done rules'),
+    file.startsWith('# hone rules'),
     'empty input still yields header'
   );
   assert.ok(file.endsWith('\n'), 'empty file ends with newline');
   // No skill headings.
-  assert.equal(file.includes('## gdd-'), false, 'no skill headings');
+  assert.equal(file.includes('## hone-'), false, 'no skill headings');
 });
 
 test('converters-wave3: cline buildClinerulesFile handles null / non-array', () => {
   // Defensive: installer might pass null on dry-run no-op.
   const fileNull = cline.buildClinerulesFile(null);
-  assert.ok(fileNull.startsWith('# get-design-done rules'));
+  assert.ok(fileNull.startsWith('# hone rules'));
   const fileUndef = cline.buildClinerulesFile(undefined);
-  assert.ok(fileUndef.startsWith('# get-design-done rules'));
+  assert.ok(fileUndef.startsWith('# hone rules'));
 });
 
 test('converters-wave3: cline integration — convert + buildClinerulesFile round-trip', () => {
@@ -315,9 +315,9 @@ test('converters-wave3: cline integration — convert + buildClinerulesFile roun
     { name: 'sample', block: block1 },
     { name: 'other', block: block2 },
   ]);
-  assert.ok(file.startsWith('# get-design-done rules'));
-  assert.ok(file.includes('## gdd-sample'));
-  assert.ok(file.includes('## gdd-other'));
+  assert.ok(file.startsWith('# hone rules'));
+  assert.ok(file.includes('## hone-sample'));
+  assert.ok(file.includes('## hone-other'));
   // Both blocks share the same source description.
   const descCount = (
     file.match(/Sample skill exercising all converter rewrite paths/g) || []

@@ -36,13 +36,13 @@ test('39.2-03: cost-forecaster agent — reads costs.jsonl, --scenario, report-o
   assert.match(a, /^default-tier:\s*sonnet/m, 'sonnet tier');
 });
 
-test('39.2-03: /gdd:budget + /gdd:roi skills exist with correct frontmatter', () => {
+test('39.2-03: /hone:budget + /hone:roi skills exist with correct frontmatter', () => {
   const budget = read('skills/budget/SKILL.md');
-  assert.match(budget, /^name:\s*gdd-budget/m, 'gdd-budget name');
+  assert.match(budget, /^name:\s*hone-budget/m, 'hone-budget name');
   assert.match(budget, /^user-invocable:\s*true/m, 'user-invocable');
   assert.match(budget, /cost-forecaster|cost-forecast/i, 'wires the forecaster');
   const roi = read('skills/roi/SKILL.md');
-  assert.match(roi, /^name:\s*gdd-roi/m, 'gdd-roi name');
+  assert.match(roi, /^name:\s*hone-roi/m, 'hone-roi name');
   assert.match(roi, /^user-invocable:\s*true/m, 'user-invocable');
   assert.match(roi, /scripts\/lib\/budget\/roi\.cjs/, 'uses the pure roi lib');
   assert.match(roi, /14|window/i, 'documents the stick window');

@@ -12,7 +12,7 @@
 //   - agent-list.txt              — every *.md in agents/ (sorted)
 //   - skill-list.txt              — every directory in skills/ (sorted)
 //   - agent-frontmatter-snapshot  — { "<file>": [sorted frontmatter keys] }
-//   - mcp-tools-manifest          — 11 gdd-state tools × schema sha256
+//   - mcp-tools-manifest          — 11 hone-state tools × schema sha256
 //   - event-schema-snapshot       — reference/schemas/events.schema.json sha256
 //   - hook-list.txt               — hooks/ entries (post TS-rewrite: .ts + hooks.json + .sh)
 //   - resilience-primitives.txt   — scripts/lib/*.cjs (post Plan 20-14)
@@ -152,12 +152,12 @@ test('phase-20 baseline: agent frontmatter keys match snapshot (no silent drift)
 // MCP tools manifest — hash every schema file and compare to the snapshot.
 // Also double-check the tool count (PLAN.md: exactly 11 tools).
 
-test('phase-20 baseline: mcp-tools manifest has 11 gdd-state tools', () => {
+test('phase-20 baseline: mcp-tools manifest has 11 hone-state tools', () => {
   const manifest = JSON.parse(readBaseline('mcp-tools-manifest.json'));
   assert.equal(
     manifest.length,
     11,
-    `expected exactly 11 gdd-state MCP tools in manifest, found ${manifest.length}`,
+    `expected exactly 11 hone-state MCP tools in manifest, found ${manifest.length}`,
   );
 });
 
@@ -175,13 +175,13 @@ test('phase-20 baseline: mcp-tools schema sha256 matches snapshot (catches schem
   }
 });
 
-test('phase-20 baseline: mcp-tools covers every schema in sdk/mcp/gdd-state/schemas/', () => {
+test('phase-20 baseline: mcp-tools covers every schema in sdk/mcp/hone-state/schemas/', () => {
   const manifest = JSON.parse(readBaseline('mcp-tools-manifest.json'));
   const schemaDir = path.join(
     REPO_ROOT,
     'sdk',
     'mcp',
-    'gdd-state',
+    'hone-state',
     'schemas',
   );
   const onDisk = fs

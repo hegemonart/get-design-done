@@ -36,7 +36,7 @@ function loadLoader() {
 
 /** Make a fresh temp recipes dir; registered for cleanup by the caller's after(). */
 function mkRecipesDir(t) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-recipes-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-recipes-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   return dir;
 }

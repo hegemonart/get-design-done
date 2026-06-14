@@ -5,11 +5,11 @@
  * Static-analysis migration checks for skills/plan/SKILL.md.
  *
  * After Plan 20-09 migration, every STATE.md mutation in skills/plan/SKILL.md
- * goes through `gdd-state` MCP tools. Prose (research orchestration,
+ * goes through `hone-state` MCP tools. Prose (research orchestration,
  * planner-checker loop, DESIGN-PLAN.md write instructions) is preserved
  * byte-identical from the pre-migration snapshot. This test suite is a
  * structural guard against drift, not a runtime validator — the MCP tools
- * themselves are exercised by tests/mcp-gdd-state.test.ts (Plan 20-05).
+ * themselves are exercised by tests/mcp-hone-state.test.ts (Plan 20-05).
  */
 
 const { test } = require('node:test');
@@ -68,14 +68,14 @@ function readFrontmatter(body) {
 
 // Required MCP tools per Plan 20-09 contract (8 total).
 const REQUIRED_MCP_TOOLS = [
-  'mcp__gdd_state__get',
-  'mcp__gdd_state__transition_stage',
-  'mcp__gdd_state__add_decision',
-  'mcp__gdd_state__add_must_have',
-  'mcp__gdd_state__update_progress',
-  'mcp__gdd_state__set_status',
-  'mcp__gdd_state__add_blocker',
-  'mcp__gdd_state__checkpoint',
+  'mcp__hone_state__get',
+  'mcp__hone_state__transition_stage',
+  'mcp__hone_state__add_decision',
+  'mcp__hone_state__add_must_have',
+  'mcp__hone_state__update_progress',
+  'mcp__hone_state__set_status',
+  'mcp__hone_state__add_blocker',
+  'mcp__hone_state__checkpoint',
 ];
 
 test('plan-migration: SKILL.md exists', () => {
@@ -98,7 +98,7 @@ test('plan-migration: exactly one transition_stage call at stage entry', () => {
   // An actual CALL takes the form `...transition_stage` with `to: "..."`. The
   // frontmatter `tools:` line and the stage-exit documentation prose reference
   // the tool name without invoking it; we explicitly exclude those.
-  const calls = body.match(/`mcp__gdd_state__transition_stage`\s+with\b/g) || [];
+  const calls = body.match(/`mcp__hone_state__transition_stage`\s+with\b/g) || [];
   assert.equal(
     calls.length,
     1,
@@ -107,7 +107,7 @@ test('plan-migration: exactly one transition_stage call at stage entry', () => {
   // And the one call must target the "plan" stage.
   assert.match(
     body,
-    /`mcp__gdd_state__transition_stage`\s+with\s+`to:\s+"plan"`/,
+    /`mcp__hone_state__transition_stage`\s+with\s+`to:\s+"plan"`/,
     'the single transition_stage call must set to: "plan"'
   );
 });
@@ -116,7 +116,7 @@ test('plan-migration: add_decision appears (per-D-XX sequential calls)', () => {
   const body = readSkill();
   assert.match(
     body,
-    /mcp__gdd_state__add_decision/,
+    /mcp__hone_state__add_decision/,
     'research-synthesis block must call add_decision per D-XX'
   );
 });
@@ -125,7 +125,7 @@ test('plan-migration: add_must_have appears (per-M-XX sequential calls)', () => 
   const body = readSkill();
   assert.match(
     body,
-    /mcp__gdd_state__add_must_have/,
+    /mcp__hone_state__add_must_have/,
     'research-synthesis block must call add_must_have per M-XX'
   );
 });
@@ -180,7 +180,7 @@ test('plan-migration: update_progress is invoked (progress ticks + parallelism)'
   // Read SKILL + linked reference together to verify the contract is
   // preserved across the extraction.
   const body = readSkillSurface();
-  const matches = body.match(/mcp__gdd_state__update_progress/g) || [];
+  const matches = body.match(/mcp__hone_state__update_progress/g) || [];
   // At least: parallelism status + three task_progress ticks (1/3, 1/3 after map, 2/3, 3/3)
   assert.ok(
     matches.length >= 4,
@@ -192,7 +192,7 @@ test('plan-migration: stage-exit calls checkpoint (no direct last_checkpoint wri
   const body = readSkill();
   assert.match(
     body,
-    /mcp__gdd_state__checkpoint/,
+    /mcp__hone_state__checkpoint/,
     'stage exit must call checkpoint to stamp last_checkpoint via MCP'
   );
 });

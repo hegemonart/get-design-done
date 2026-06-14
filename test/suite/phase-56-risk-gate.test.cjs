@@ -36,7 +36,7 @@ const bigDiff = (n) => Array.from({ length: n }, (_, i) => `line ${i}`).join('\n
  * result, the parsed stdout JSON (or null), and the parsed events.jsonl lines.
  */
 function runHook(stdinJson, opts = {}) {
-  const dir = opts.dir || mkdtempSync(join(tmpdir(), 'gdd-riskgate-'));
+  const dir = opts.dir || mkdtempSync(join(tmpdir(), 'hone-riskgate-'));
   const eventsPath = join(dir, 'events.jsonl');
   const env = {
     ...process.env,
@@ -87,7 +87,7 @@ test('56-02: Edit STATE.md large-diff -> { continue: false } with a risk stopRea
       assert.equal(stdout.continue, false, 'large-diff STATE.md edit is blocked');
       assert.equal(typeof stdout.stopReason, 'string');
       assert.match(stdout.stopReason, /risk/i, 'stopReason mentions risk');
-      assert.match(stdout.stopReason, /override/i, 'stopReason points at /gdd:override');
+      assert.match(stdout.stopReason, /override/i, 'stopReason points at /hone:override');
     },
   );
 });
@@ -322,7 +322,7 @@ test('57-H2: blocked call writes accepted:false to the calibration store', () =>
 
 test('57-H2: multiple scored calls accumulate in the rolling window for one agent', () => {
   // Same tmp cwd across two runs -> the store grows.
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-riskgate-roll-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-riskgate-roll-'));
   try {
     runHook({ tool_name: 'Write', tool_input: { file_path: 'README.md', content: 'a' } }, { dir, env: { GDD_AGENT: 'design-fixer' } });
     runHook({ tool_name: 'Write', tool_input: { file_path: 'docs/guide.md', content: 'b' } }, { dir, env: { GDD_AGENT: 'design-fixer' } });
@@ -360,7 +360,7 @@ test('57-H2: a read-only agent never triggers a calibration write (it short-circ
 
 test('57-H2: recordCalibration unit — assessment shape + tmp root produces a valid store', () => {
   const mod = require('../../hooks/gdd-risk-gate.js');
-  const root = mkdtempSync(join(tmpdir(), 'gdd-riskgate-unit-'));
+  const root = mkdtempSync(join(tmpdir(), 'hone-riskgate-unit-'));
   try {
     // allow band
     mod.recordCalibration('agent-x', { score: 0.1, suggested_action: 'allow', reasons: [] }, root);
@@ -378,7 +378,7 @@ test('57-H2: recordCalibration unit — assessment shape + tmp root produces a v
 
 test('57-H2: recordCalibration is a no-op when the agent is empty / falsy', () => {
   const mod = require('../../hooks/gdd-risk-gate.js');
-  const root = mkdtempSync(join(tmpdir(), 'gdd-riskgate-noop-'));
+  const root = mkdtempSync(join(tmpdir(), 'hone-riskgate-noop-'));
   try {
     mod.recordCalibration('', { score: 0.5, suggested_action: 'review', reasons: [] }, root);
     mod.recordCalibration(undefined, { score: 0.5, suggested_action: 'review', reasons: [] }, root);
@@ -392,7 +392,7 @@ test('57-H2: recordCalibration is a no-op when the agent is empty / falsy', () =
 
 test('57-H2: recordCalibration never throws on a malformed assessment', () => {
   const mod = require('../../hooks/gdd-risk-gate.js');
-  const root = mkdtempSync(join(tmpdir(), 'gdd-riskgate-mal-'));
+  const root = mkdtempSync(join(tmpdir(), 'hone-riskgate-mal-'));
   try {
     // These must all silently no-op, not throw.
     assert.doesNotThrow(() => mod.recordCalibration('a', null, root));

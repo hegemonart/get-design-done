@@ -1,5 +1,5 @@
 ---
-name: gdd-pause
+name: hone-pause
 description: "Write a numbered checkpoint so work can resume in a new session without re-running completed stages."
 argument-hint: "[context note]"
 tools: Read, Write, Bash, AskUserQuestion
@@ -8,11 +8,11 @@ tools: Read, Write, Bash, AskUserQuestion
 @reference/retrieval-contract.md
 @reference/cycle-handoff-preamble.md
 
-# /gdd:pause
+# /hone:pause
 
-Captures enough state that a killed or stopped session can resume cleanly via `/gdd:resume` or `/gdd:continue`.
+Captures enough state that a killed or stopped session can resume cleanly via `/hone:resume` or `/hone:continue`.
 
-Each invocation writes an **immutable numbered checkpoint** — it does not overwrite previous pauses. This enables branched cycles: you can pause, take a detour via `/gdd:sketch`, compare, and resume an older snapshot via `/gdd:resume N`.
+Each invocation writes an **immutable numbered checkpoint** — it does not overwrite previous pauses. This enables branched cycles: you can pause, take a detour via `/hone:sketch`, compare, and resume an older snapshot via `/hone:resume N`.
 
 ## Steps
 
@@ -56,10 +56,10 @@ Each invocation writes an **immutable numbered checkpoint** — it does not over
    ```markdown
    # Session Handoff (pointer)
    Latest checkpoint: `.design/checkpoints/NN-<stage>-<ISO-date>.md`
-   Run `/gdd:resume` to restore, or `/gdd:resume N` for a specific checkpoint.
+   Run `/hone:resume` to restore, or `/hone:resume N` for a specific checkpoint.
    ```
 
-6. Print: "Checkpoint NN saved. Run `/gdd:resume` or `/gdd:continue` to pick back up."
+6. Print: "Checkpoint NN saved. Run `/hone:resume` or `/hone:continue` to pick back up."
 
 ## Do Not
 

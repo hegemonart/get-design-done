@@ -180,7 +180,7 @@ const allowOnly: (stage: Stage, _agent?: string) => readonly string[] = () =>
   Object.freeze(['Read', 'Grep']);
 
 beforeEach(() => {
-  sandbox = mkdtempSync(join(tmpdir(), 'gdd-pipeline-runner-'));
+  sandbox = mkdtempSync(join(tmpdir(), 'hone-pipeline-runner-'));
   mkdirSync(join(sandbox, '.design'), { recursive: true });
   writeFileSync(
     join(sandbox, '.design/telemetry.jsonl'),

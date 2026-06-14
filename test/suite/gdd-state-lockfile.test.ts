@@ -1,4 +1,4 @@
-// tests/gdd-state-lockfile.test.ts — lockfile concurrency + stale detection.
+// tests/hone-state-lockfile.test.ts — lockfile concurrency + stale detection.
 //
 // Plan 20-01 acceptance:
 //   * Two concurrent acquire() calls serialize.
@@ -22,7 +22,7 @@ import { acquire } from '../../sdk/state/lockfile.ts';
 import { LockAcquisitionError } from '../../sdk/state/types.ts';
 
 function tmpPath(): { path: string; cleanup: () => void } {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-lockfile-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-lockfile-'));
   const path = join(dir, 'STATE.md');
   writeFileSync(path, '---\nstage: brief\n---\n', 'utf8');
   return {

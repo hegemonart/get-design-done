@@ -27,7 +27,7 @@ const { spawnSync } = require('node:child_process');
 const HOOK_PATH = resolve(__dirname, '../..', 'hooks', 'gdd-precompact-snapshot.js');
 
 function setupTmp(prefix) {
-  const dir = mkdtempSync(join(tmpdir(), `gdd-pc-${prefix}-`));
+  const dir = mkdtempSync(join(tmpdir(), `hone-pc-${prefix}-`));
   mkdirSync(join(dir, '.design'), { recursive: true });
   mkdirSync(join(dir, '.design', 'telemetry'), { recursive: true });
   return dir;
@@ -280,7 +280,7 @@ test('27.6-05: snapshot write does not leave .tmp orphan on success', () => {
 // 8. Missing .design/snapshots/ directory is created by hook
 // ---------------------------------------------------------------------------
 test('27.6-05: missing .design/snapshots/ directory is created by hook', () => {
-  const dir = mkdtempSync(join(tmpdir(), `gdd-pc-mkdir-`));
+  const dir = mkdtempSync(join(tmpdir(), `hone-pc-mkdir-`));
   try {
     mkdirSync(join(dir, '.design'), { recursive: true });
     // Deliberately do NOT create .design/snapshots/ or telemetry/.

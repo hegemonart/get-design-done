@@ -199,9 +199,9 @@ async function gatherFromMock(overrides) {
 
 // ── tests ─────────────────────────────────────────────────────────────────────
 
-test("31-05: buildPayload emits source:'gdd-plugin'", async () => {
+test("31-05: buildPayload emits source:'hone-plugin'", async () => {
   const { payload } = await gatherFromMock();
-  assert.equal(payload.source, 'gdd-plugin');
+  assert.equal(payload.source, 'hone-plugin');
 });
 
 test('31-05: ALL local variables emitted regardless of publication (D-13)', async () => {
@@ -278,8 +278,8 @@ test('31-05: payload satisfies BOTH consumers — receiver schema AND digest tok
   assert.ok(validateSchema(payload), 'receiver schema');
   // (b) digest half: feed the payload as a Path C variables.json through the REAL digest.
   const { digest } = require(DIGEST_PATH);
-  const raw = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-raw-'));
-  const out = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-out-'));
+  const raw = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-raw-'));
+  const out = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-out-'));
   try {
     fs.writeFileSync(path.join(raw, 'variables.json'), JSON.stringify(payload));
     fs.writeFileSync(
@@ -329,7 +329,7 @@ test('31-05: exportVariables POST body is the built payload (source + arrays)', 
   const fetchBox = installFetch();
   await exportVarsMod.exportVariables();
   const body = JSON.parse(fetchBox.calls[0].init.body);
-  assert.equal(body.source, 'gdd-plugin');
+  assert.equal(body.source, 'hone-plugin');
   assert.equal(body.variables.length, m.variables.length);
   assert.ok(Array.isArray(body.tokens), 'body carries the digest tokens[]');
   assert.ok(validateSchema(body), 'POSTed body validates against the receiver schema');

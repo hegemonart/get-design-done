@@ -1,13 +1,13 @@
 // sdk/cli/index.ts — Plan 21-09 Task 7 (SDK-21).
 //
-// Main dispatcher for the `gdd-sdk` CLI. Invoked by `bin/gdd-sdk` (the
+// Main dispatcher for the `hone-sdk` CLI. Invoked by `bin/hone-sdk` (the
 // CJS trampoline) with `--experimental-strip-types` so TS runs without
 // a build step.
 //
 // Responsibilities:
 //   * Parse argv via parseArgs().
 //   * Route by first positional to the matching subcommand module.
-//   * Print top-level USAGE on bare `gdd-sdk` / `-h` / `--help`.
+//   * Print top-level USAGE on bare `hone-sdk` / `-h` / `--help`.
 //   * Exit with the subcommand's return code. Unknown subcommands
 //     exit 3 and print USAGE to stderr.
 //
@@ -28,7 +28,7 @@ import { dashboardCommand } from './commands/dashboard.ts';
 // Top-level USAGE.
 // ---------------------------------------------------------------------------
 
-export const USAGE = `gdd-sdk <command> [flags]
+export const USAGE = `hone-sdk <command> [flags]
 
 Commands:
   run              Run the full design pipeline headlessly.
@@ -39,7 +39,7 @@ Commands:
   build skills     Compile per-harness skill bundles from scripts/skill-templates/.
   dashboard        Open the GDD dashboard (TUI; --web for the browser graph).
 
-Use 'gdd-sdk <command> -h' for command-specific flags.
+Use 'hone-sdk <command> -h' for command-specific flags.
 
 Exit codes (general):
   0  success
@@ -100,7 +100,7 @@ export async function dispatch(
     (parsed.flags['help'] === true || parsed.flags['h'] === true) &&
     // Top-level --help (no subcommand recognized yet; --help before the
     // first positional lands here). Subcommands also honor --help
-    // themselves, so this branch only fires for `gdd-sdk --help`.
+    // themselves, so this branch only fires for `hone-sdk --help`.
     parsed.positionals.length === 0 &&
     !KNOWN_SUBCOMMANDS.has(parsed.subcommand)
   ) {
@@ -125,7 +125,7 @@ export async function dispatch(
       return await commands.dashboard(parsed, { stdout, stderr });
     default:
       stderr.write(
-        `gdd-sdk: unknown subcommand "${parsed.subcommand}"\n${USAGE}`,
+        `hone-sdk: unknown subcommand "${parsed.subcommand}"\n${USAGE}`,
       );
       return 3;
   }
@@ -142,7 +142,7 @@ const KNOWN_SUBCOMMANDS: ReadonlySet<string> = new Set([
 ]);
 
 // ---------------------------------------------------------------------------
-// Bootstrap entry point — called by bin/gdd-sdk trampoline.
+// Bootstrap entry point — called by bin/hone-sdk trampoline.
 // ---------------------------------------------------------------------------
 
 /**
@@ -179,7 +179,7 @@ if (/\/sdk\/cli\/index\.(ts|js|cjs|mjs)$/.test(entryPath)) {
     (code) => process.exit(code),
     (err) => {
       // eslint-disable-next-line no-console
-      console.error('gdd-sdk: unexpected error:', err);
+      console.error('hone-sdk: unexpected error:', err);
       process.exit(3);
     },
   );

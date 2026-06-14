@@ -59,7 +59,7 @@ function readBudgetThreshold(budgetPath) {
 }
 
 function tmpDir(prefix) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), `gdd-perf-budget-${prefix}-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `hone-perf-budget-${prefix}-`));
 }
 
 function cleanup(dir) {

@@ -64,7 +64,7 @@ function runValidator(targetPath) {
  * coherence axis. Returns `{ path, cleanup }`.
  */
 function makeAgentFixture({ name = 'test-agent', model, tier }) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-fm-mt-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-fm-mt-'));
   const file = path.join(tmpDir, `${name}.md`);
   const lines = [
     '---',

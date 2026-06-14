@@ -1,4 +1,4 @@
-// tests/gdd-state-mutator.test.ts — mutator + serializer coverage.
+// tests/hone-state-mutator.test.ts — mutator + serializer coverage.
 //
 // Plan 20-01 acceptance:
 //   * Adding a decision appends to the <decisions> block without touching
@@ -181,7 +181,7 @@ test('mutator.apply: add_must_have with existing id updates in-place', () => {
   const beforeCount = before.must_haves.length;
   const beforeM01Index = before.must_haves.findIndex((m) => m.id === 'M-01');
 
-  // Consumer fn simulates what `mcp__gdd_state__add_must_have` should
+  // Consumer fn simulates what `mcp__hone_state__add_must_have` should
   // do when an id matches an existing entry — find-or-push.
   const out = apply(raw, (s): ParsedState => {
     const incoming: MustHave = {

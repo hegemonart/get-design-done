@@ -1,4 +1,4 @@
-// tests/gdd-state-prototyping.test.ts — <prototyping> block round-trip.
+// tests/hone-state-prototyping.test.ts — <prototyping> block round-trip.
 //
 // Phase 25 Plan 25-01 acceptance:
 //   * Parsing a STATE.md that carries a populated <prototyping> block

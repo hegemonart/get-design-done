@@ -1,6 +1,6 @@
 ---
 name: hone-live
-description: "Live in-browser design mode. The user picks a DOM element on a running dev server (via the Claude Preview MCP), the agent generates N design variants in one batch, they hot-swap in place through HMR or preview_eval using a data-gdd-variant marker, the user accepts or discards, and the whole pick-generate-accept loop persists to .design/live-sessions so it survives a crash or resume. Use when the user wants to iterate on the look of a live component against a real running server, asks to try variants on a page, or runs the live command with a url; falls back to a screenshot-only degraded mode on harnesses without MCP support. Activates for requests involving in-browser design iteration, picking an element on a dev server, or generating variants with hot-swap."
+description: "Live in-browser design mode. The user picks a DOM element on a running dev server (via the Claude Preview MCP), the agent generates N design variants in one batch, they hot-swap in place through HMR or preview_eval using a data-hone-variant marker, the user accepts or discards, and the whole pick-generate-accept loop persists to .design/live-sessions so it survives a crash or resume. Use when the user wants to iterate on the look of a live component against a real running server, asks to try variants on a page, or runs the live command with a url; falls back to a screenshot-only degraded mode on harnesses without MCP support. Activates for requests involving in-browser design iteration, picking an element on a dev server, or generating variants with hot-swap."
 argument-hint: "[--variants N] [--resume <session-id>] [url]"
 tools: Read, Write, Edit, Bash, Glob, Grep, Task
 user-invocable: true
@@ -36,7 +36,7 @@ For the full surface (the Preview MCP tools, the six `live_*` events, the sessio
 
 ## INJECT
 
-Inject the browser runtime once. Read `RUNTIME_JS` from `scripts/lib/live/runtime.cjs` and evaluate it in the page with `mcp__Claude_Preview__preview_eval`. The runtime is an idempotent IIFE bound to `window.__gddLive`, so a re-inject after navigation rebinds the same singleton rather than stacking listeners. It installs the pick handler and the variant-swap helpers, and stamps the live variant on the element via the `data-gdd-variant` attribute.
+Inject the browser runtime once. Read `RUNTIME_JS` from `scripts/lib/live/runtime.cjs` and evaluate it in the page with `mcp__Claude_Preview__preview_eval`. The runtime is an idempotent IIFE bound to `window.__gddLive`, so a re-inject after navigation rebinds the same singleton rather than stacking listeners. It installs the pick handler and the variant-swap helpers, and stamps the live variant on the element via the `data-hone-variant` attribute.
 
 ---
 
@@ -52,7 +52,7 @@ Inject the browser runtime once. Read `RUNTIME_JS` from `scripts/lib/live/runtim
 
 1. Load the relevant Phase 45 canonical reference index FIRST, so variants are grounded in real guidance: the domain index that matches the picked element (for example `../../reference/spatial.md` for layout, `../../reference/interaction.md` for components and a11y, `../../reference/color.md` for color, `../../reference/typography.md` for type, `../../reference/motion.md` for animation).
 2. Generate all N variants in ONE batch (default 3), each a distinct, hypothesis-tagged design direction for the picked element. Do not generate them one at a time.
-3. For each variant: write the change atomically to the implicated source file, then make it live. With HMR running, the file write is enough; otherwise apply the variant in place with `window.__gddLive.swapVariant({ n, style, html })`, which sets `data-gdd-variant="n"` and applies the variant's style or markup.
+3. For each variant: write the change atomically to the implicated source file, then make it live. With HMR running, the file write is enough; otherwise apply the variant in place with `window.__gddLive.swapVariant({ n, style, html })`, which sets `data-hone-variant="n"` and applies the variant's style or markup.
 
 ---
 

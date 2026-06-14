@@ -125,7 +125,7 @@ test('23-07: validateKey rejects path traversal', () => {
 });
 
 test('23-07: compareToBaseline absent → drifted with mode=absent', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-vbsn-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-vbsn-'));
   try {
     const r = compareToBaseline('button', Buffer.from('foo'), { cwd: dir });
     assert.equal(r.drifted, true);
@@ -137,7 +137,7 @@ test('23-07: compareToBaseline absent → drifted with mode=absent', () => {
 });
 
 test('23-07: applyBaseline + compareToBaseline round-trip', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-vbsn-rt-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-vbsn-rt-'));
   try {
     const buf = PNGJS_AVAILABLE
       ? makePng(8, 8, [10, 20, 30])

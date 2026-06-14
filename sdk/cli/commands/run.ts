@@ -1,7 +1,7 @@
 // sdk/cli/commands/run.ts — Plan 21-09 Task 2 (SDK-21),
 // extended by Plan 21-11 Task 3 (dry-run).
 //
-// `gdd-sdk run` — drives the full design pipeline via
+// `hone-sdk run` — drives the full design pipeline via
 // `pipeline-runner.run()`. Builds a PipelineConfig from CLI flags,
 // loads per-stage prompts (from --prompt-file mapping, from
 // `.design/prompts/<stage>.md`, or embedded defaults), wires the
@@ -64,7 +64,7 @@ const RUN_FLAGS: readonly FlagSpec[] = [
   { name: 'fixture', type: 'string' },
 ];
 
-const USAGE = `gdd-sdk run [flags]
+const USAGE = `hone-sdk run [flags]
 
 Drive the full design pipeline headlessly.
 
@@ -126,7 +126,7 @@ export interface RunCommandDeps {
 const ALL_STAGES: readonly Stage[] = ['brief', 'explore', 'plan', 'design', 'verify'];
 
 /**
- * Entry point for `gdd-sdk run`. Returns the process exit code (never
+ * Entry point for `hone-sdk run`. Returns the process exit code (never
  * throws). All diagnostic output goes to stderr; result output to stdout.
  */
 export async function runCommand(
@@ -145,7 +145,7 @@ export async function runCommand(
   try {
     flags = coerceFlags(args, RUN_FLAGS);
   } catch (err) {
-    stderr.write(`gdd-sdk run: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk run: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -156,14 +156,14 @@ export async function runCommand(
   try {
     stages = parseStageList(flags['stages']);
   } catch (err) {
-    stderr.write(`gdd-sdk run: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk run: ${errMessage(err)}\n`);
     return 3;
   }
   let skipStages: readonly Stage[] | undefined;
   try {
     skipStages = parseStageList(flags['skip']);
   } catch (err) {
-    stderr.write(`gdd-sdk run: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk run: ${errMessage(err)}\n`);
     return 3;
   }
   const resumeFrom = parseSingleStage(flags['resume-from']);
@@ -177,7 +177,7 @@ export async function runCommand(
   try {
     prompts = loadPrompts(effectiveStages, flags, cwd);
   } catch (err) {
-    stderr.write(`gdd-sdk run: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk run: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -207,7 +207,7 @@ export async function runCommand(
     // Always surface gate info to stderr so operators see it even in
     // --json mode (where stdout carries the result JSON).
     stderr.write(
-      `gdd-sdk run: human gate "${info.gateName}" at stage "${info.stage}"\n`,
+      `hone-sdk run: human gate "${info.gateName}" at stage "${info.stage}"\n`,
     );
     if (gateReply === undefined) return { decision: 'stop' };
     if (gateReply === 'stop') return { decision: 'stop' };
@@ -216,7 +216,7 @@ export async function runCommand(
       return { decision: 'resume', payload: gateReply.slice('resume:'.length) };
     }
     stderr.write(
-      `gdd-sdk run: unrecognized --gate-reply "${gateReply}"; defaulting to stop\n`,
+      `hone-sdk run: unrecognized --gate-reply "${gateReply}"; defaulting to stop\n`,
     );
     return { decision: 'stop' };
   };
@@ -248,7 +248,7 @@ export async function runCommand(
     try {
       overrides = buildDryRunOverrides(cwd, fixtureDir);
     } catch (err) {
-      stderr.write(`gdd-sdk run: ${errMessage(err)}\n`);
+      stderr.write(`hone-sdk run: ${errMessage(err)}\n`);
       return 3;
     }
     try {
@@ -274,7 +274,7 @@ export async function runCommand(
     } catch {
       // Swallow logger failures.
     }
-    stderr.write(`gdd-sdk run: unexpected error: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk run: unexpected error: ${errMessage(err)}\n`);
     return 3;
   }
 

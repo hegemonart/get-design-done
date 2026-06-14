@@ -29,7 +29,7 @@ function extractSchemaKeys(intelSchemaContent, sliceName) {
  * slice conforms to. The test validates the *fixture* JSON files under
  * test/fixtures/mapper-outputs/ against the schema slice where it exists, or
  * falls back to a declared top-level-key check where the intel-schema.md does
- * not document the slice (a11y, motion, hierarchy are gdd-specific extensions
+ * not document the slice (a11y, motion, hierarchy are hone-specific extensions
  * not yet in the intel-schema.md contract — the fixture is the ground truth).
  */
 const MAPPERS = [

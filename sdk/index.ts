@@ -2,7 +2,7 @@
 //
 // Storybloq-style two-line-per-module re-export of the public SDK surface.
 // The documented import contract (sdk/README.md, D-04) prefers EXPLICIT
-// per-module paths (`@hegemonart/get-design-done/sdk/state`, `/sdk/cli`, …);
+// per-module paths (`@hegemonart/hone/sdk/state`, `/sdk/cli`, …);
 // this barrel exists for callers who want a single entry point.
 //
 // NOTE: `state` re-exports the three taxonomy error classes

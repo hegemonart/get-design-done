@@ -26,17 +26,17 @@ When you catch yourself thinking any of the following, STOP and check for a skil
 | Thought | Reality |
 | --- | --- |
 | This is just a simple design question. | Questions are tasks. Check for a skill. |
-| I'll just tweak the CSS directly. | Token changes go through the pipeline - check /gdd:design. |
+| I'll just tweak the CSS directly. | Token changes go through the pipeline - check /hone:design. |
 | I already know the codebase, skip explore. | Explore probes connections you haven't re-checked this cycle. |
-| This change is too small to plan. | Plan-skipped tasks blow scope per cycle telemetry. Run /gdd:plan. |
-| I can write the brief later. | No brief means no shared problem statement - /gdd:brief comes first. |
-| The user clearly wants X, I'll skip discuss. | Ambiguity hides here. /gdd:discuss surfaces the real constraint. |
-| I'll verify by eyeballing it. | Verification is a stage with criteria - run /gdd:verify, don't guess. |
-| It's obviously a dark-mode tweak. | Color-scheme work has its own skill - check /gdd:darkmode. |
-| Let me just compare these two designs quickly. | Comparison is an audit task - /gdd:compare has the rubric. |
+| This change is too small to plan. | Plan-skipped tasks blow scope per cycle telemetry. Run /hone:plan. |
+| I can write the brief later. | No brief means no shared problem statement - /hone:brief comes first. |
+| The user clearly wants X, I'll skip discuss. | Ambiguity hides here. /hone:discuss surfaces the real constraint. |
+| I'll verify by eyeballing it. | Verification is a stage with criteria - run /hone:verify, don't guess. |
+| It's obviously a dark-mode tweak. | Color-scheme work has its own skill - check /hone:darkmode. |
+| Let me just compare these two designs quickly. | Comparison is an audit task - /hone:compare has the rubric. |
 | This is a one-off, no skill needed. | "One-off" is the most common rationalization in the telemetry. Check anyway. |
-| I'll refactor the style tokens by hand. | /gdd:style owns token edits so the pipeline stays consistent. |
-| The audit can wait until after I ship. | An un-audited cycle is an unverified cycle - /gdd:audit before close. |
+| I'll refactor the style tokens by hand. | /hone:style owns token edits so the pipeline stays consistent. |
+| The audit can wait until after I ship. | An un-audited cycle is an unverified cycle - /hone:audit before close. |
 
 ## Skill priority order
 
@@ -64,15 +64,15 @@ conflict. If your instinct contradicts a GDD skill, the skill wins.
 
 The core flow is **Brief → Explore → Plan → Design → Verify**, with branch points:
 
-- **Brief** captures the problem (`/gdd:brief`). Branch: a rough idea can sketch or spike
+- **Brief** captures the problem (`/hone:brief`). Branch: a rough idea can sketch or spike
   off the brief before exploration; a changed problem loops back via `--re-brief`.
-- **Explore** scans the codebase and connections (`/gdd:explore`) - even on a familiar
+- **Explore** scans the codebase and connections (`/hone:explore`) - even on a familiar
   repo, because connections drift each cycle.
-- **Plan** decomposes work into tasks (`/gdd:plan`). Skipping it is the top cause of scope
+- **Plan** decomposes work into tasks (`/hone:plan`). Skipping it is the top cause of scope
   blow-up; small tasks still get a plan.
-- **Design** implements (`/gdd:design`, with `/gdd:style` and `/gdd:darkmode` as
+- **Design** implements (`/hone:design`, with `/hone:style` and `/hone:darkmode` as
   implementation peers). Implementation never runs ahead of an approved plan.
-- **Verify** checks against criteria (`/gdd:verify`), then `/gdd:audit` / `/gdd:compare`
+- **Verify** checks against criteria (`/hone:verify`), then `/hone:audit` / `/hone:compare`
   close the loop. On pass the cycle completes; on fail it loops back to the failing stage.
 
-`/gdd:discuss` runs alongside any stage to resolve ambiguity before it propagates.
+`/hone:discuss` runs alongside any stage to resolve ambiguity before it propagates.

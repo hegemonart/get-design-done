@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Trae model.
+Run /hone:audit and /hone:verify using your configured Trae model.
 Settings live in .trae/config.json. For help, ask Trae about the pipeline.
 
 

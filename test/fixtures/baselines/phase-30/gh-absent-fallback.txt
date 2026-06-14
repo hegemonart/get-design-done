@@ -12,7 +12,7 @@ windows: clip
 draft-on-disk-path: <repo-root>/.design/issue-drafts/<ISO-timestamp>-<slug>.md
 
 # Clipboard content (issue-template URL, hardcoded in destination.cjs):
-clipboard-url: https://github.com/hegemonart/get-design-done/issues/new?template=bug_report.md
+clipboard-url: https://github.com/hegemonart/hone/issues/new?template=bug_report.md
 
 # User-facing output:
 # - prints the draft path

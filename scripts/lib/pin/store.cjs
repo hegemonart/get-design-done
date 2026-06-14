@@ -30,7 +30,7 @@ const path = require('path');
 const { readSkills } = require('../manifest/index.cjs');
 const { detectHarnessSkillDirs, harnessSkillDirCandidates } = require('./harness-detect.cjs');
 
-const MARKER_PREFIX = '<!-- gdd-pinned-skill source=';
+const MARKER_PREFIX = '<!-- hone-pinned-skill source=';
 const MARKER_SUFFIX = ' -->';
 
 /** Build the exact marker line for a skill id. */
@@ -89,7 +89,7 @@ function quote(s) {
  * `frontmatter_name`.
  */
 function renderStub(skillId, rec) {
-  const fmName = rec.frontmatter_name || `gdd-${skillId}`;
+  const fmName = rec.frontmatter_name || `hone-${skillId}`;
   const lines = [];
   lines.push(markerFor(skillId));
   lines.push('---');

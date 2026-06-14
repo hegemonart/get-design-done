@@ -1,7 +1,7 @@
-// tests/gdd-sdk-cli.test.ts — Plan 21-09 Task 8 (SDK-21) coverage.
+// tests/hone-sdk-cli.test.ts — Plan 21-09 Task 8 (SDK-21) coverage.
 //
-// Exercises the gdd-sdk CLI: argv parser, each subcommand's dispatch
-// logic, and the bin/gdd-sdk trampoline integration. Uses dep-injection
+// Exercises the hone-sdk CLI: argv parser, each subcommand's dispatch
+// logic, and the bin/hone-sdk trampoline integration. Uses dep-injection
 // (mocked pipelineRun / initRun / exploreParallelRun / discussParallelRun)
 // so no real Agent SDK invocations happen during tests.
 //
@@ -46,7 +46,7 @@ import type { DiscussRunnerResult } from '../../scripts/lib/discuss-parallel-run
 // Helpers
 // ==========================================================================
 
-const FIXTURES_ROOT = resolvePath(process.cwd(), 'test', 'suite', 'fixtures', 'gdd-sdk-cli');
+const FIXTURES_ROOT = resolvePath(process.cwd(), 'test', 'suite', 'fixtures', 'hone-sdk-cli');
 const SCAFFOLD_PROJECT = resolvePath(FIXTURES_ROOT, 'scaffold-project');
 const SCAFFOLD_STATE = resolvePath(SCAFFOLD_PROJECT, '.design', 'STATE.md');
 const SCAFFOLD_EVENTS = resolvePath(SCAFFOLD_PROJECT, '.design', 'events.jsonl');
@@ -430,7 +430,7 @@ test('queryCommand: can-transition uses gateFor()', async () => {
 });
 
 test('queryCommand: missing STATE.md exits 1', async () => {
-  const tmp = mkdtempSync(join(tmpdir(), 'gdd-sdk-query-'));
+  const tmp = mkdtempSync(join(tmpdir(), 'hone-sdk-query-'));
   try {
     const parsed = parseArgs(['query', 'get', '--cwd', tmp]);
     const stderr = new CaptureStream();
@@ -581,10 +581,10 @@ test('dispatcher: bare invocation prints USAGE', async () => {
     stdout: stdout as unknown as NodeJS.WritableStream,
   });
   assert.equal(code, 0);
-  assert.match(stdout.buffer, /gdd-sdk <command> \[flags\]/);
+  assert.match(stdout.buffer, /hone-sdk <command> \[flags\]/);
 });
 
-// bin/gdd-sdk is a dual-mode trampoline resolving sdk/cli/index.{js,ts}. On a
+// bin/hone-sdk is a dual-mode trampoline resolving sdk/cli/index.{js,ts}. On a
 // loaded CI runner the compiled sdk/cli/index.js can momentarily vanish — a
 // CONCURRENT test's `npm pack` postpack (`build:sdk --clean`) removes the
 // compiled SDK bins mid-suite — making a single spawn non-deterministic. Retry a
@@ -592,7 +592,7 @@ test('dispatcher: bare invocation prints USAGE', async () => {
 // regression returns the wrong status on EVERY attempt, so this masks the race
 // (a brief mid-clean window) without masking a real bug.
 function spawnTrampoline(args: string[], expectedStatus: number) {
-  const trampoline = resolvePath(process.cwd(), 'bin', 'gdd-sdk');
+  const trampoline = resolvePath(process.cwd(), 'bin', 'hone-sdk');
   let res = spawnSync(process.execPath, [trampoline, ...args], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -606,13 +606,13 @@ function spawnTrampoline(args: string[], expectedStatus: number) {
   return res;
 }
 
-test('bin/gdd-sdk --help via spawnSync prints USAGE + exit 0', () => {
+test('bin/hone-sdk --help via spawnSync prints USAGE + exit 0', () => {
   const res = spawnTrampoline(['--help'], 0);
   assert.equal(res.status, 0, `stderr: ${res.stderr}`);
-  assert.match(res.stdout, /gdd-sdk <command> \[flags\]/);
+  assert.match(res.stdout, /hone-sdk <command> \[flags\]/);
 });
 
-test('bin/gdd-sdk unknown-cmd prints error + exits 3', () => {
+test('bin/hone-sdk unknown-cmd prints error + exits 3', () => {
   const res = spawnTrampoline(['bogus-cmd'], 3);
   assert.equal(res.status, 3);
   assert.match(res.stderr, /unknown subcommand/);

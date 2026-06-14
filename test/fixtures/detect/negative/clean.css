@@ -1,4 +1,4 @@
-/* Phase 41 negative fixture — the compliant equivalents; gdd-detect must find NOTHING here. */
+/* Phase 41 negative fixture — the compliant equivalents; hone-detect must find NOTHING here. */
 
 .card {
   border-left: 1px solid rgba(0, 0, 0, 0.08);   /* thin hairline, not a side-stripe */

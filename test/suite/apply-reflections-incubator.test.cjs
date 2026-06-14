@@ -1,6 +1,6 @@
 // tests/apply-reflections-incubator.test.cjs — Plan 29-05
 //
-// Test coverage for /gdd:apply-reflections incubator-proposal class:
+// Test coverage for /hone:apply-reflections incubator-proposal class:
 //
 //   * Task 1: scripts/validate-incubator-scope.cjs (validateScope() + CLI)
 //   * Task 2: scripts/lib/apply-reflections/incubator-proposals.cjs

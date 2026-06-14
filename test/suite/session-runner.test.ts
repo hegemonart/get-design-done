@@ -94,7 +94,7 @@ let ORIGINAL_CWD: string = process.cwd();
 let ORIGINAL_SESSION_DIR: string | undefined;
 
 beforeEach(() => {
-  SANDBOX_ROOT = mkdtempSync(join(tmpdir(), 'gdd-session-runner-'));
+  SANDBOX_ROOT = mkdtempSync(join(tmpdir(), 'hone-session-runner-'));
   SESSIONS_DIR = join(SANDBOX_ROOT, 'sessions');
   EVENTS_PATH = join(SANDBOX_ROOT, 'telemetry', 'events.jsonl');
   RATE_DIR = join(SANDBOX_ROOT, 'rate-limits');

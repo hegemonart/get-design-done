@@ -41,7 +41,7 @@ const FIXTURES = [];
 
 /** Make a fresh tmpdir and register it for teardown. */
 function mkroot(label) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `gdd-p54-${label}-`));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `hone-p54-${label}-`));
   FIXTURES.push(dir);
   return dir;
 }
@@ -148,7 +148,7 @@ test('54-01: bare-html (no package.json) -> all null / empty, with an explanator
 });
 
 test('54-01: a non-existent root never throws and reports the missing path', () => {
-  const ghost = path.join(os.tmpdir(), 'gdd-p54-does-not-exist-' + Date.now());
+  const ghost = path.join(os.tmpdir(), 'hone-p54-does-not-exist-' + Date.now());
   const res = detectStack(ghost);
   assert.equal(res.ds, null);
   assert.equal(res.framework, null);

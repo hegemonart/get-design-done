@@ -5,7 +5,7 @@
 // Per-runtime install SIMULATION suite — covers all 14 GDD runtimes
 // (Phase 24 D-02 lockset) plus cross-cutting invariants. Every test
 // uses `mkdtempSync` + `fs.realpathSync` (macOS symlink discipline)
-// and points the installer at a tmp fixture repo via the `.gdd-source`
+// and points the installer at a tmp fixture repo via the `.hone-source`
 // marker hook documented in `runtime-artifact-layout.cjs#findInstallSourceRoot`.
 //
 // Per D-13 (NO real ~/.<runtime> writes) — every install/uninstall test
@@ -17,7 +17,7 @@
 //   -  1× install-per-runtime: claude global → settings.json enabledPlugins
 //   -  1× install-per-runtime: claude local → commands/gdd + agents
 //   -  1× install-per-runtime: cline → .clinerules with rule-block heading
-//   -  1× install-per-runtime: codex → $gdd- shell-var slash rewrite
+//   -  1× install-per-runtime: codex → $hone- shell-var slash rewrite
 //   -  1× install-per-runtime: idempotency
 //   -  1× install-per-runtime: uninstall symmetry
 //   -  1× install-per-runtime: foreign-file protection
@@ -55,17 +55,17 @@ const TMP_ROOT = fs.realpathSync(os.tmpdir());
 const _createdDirs = [];
 
 function mkTmpConfigDir(label) {
-  const dir = fs.mkdtempSync(path.join(TMP_ROOT, `gdd-install-${label}-`));
+  const dir = fs.mkdtempSync(path.join(TMP_ROOT, `hone-install-${label}-`));
   _createdDirs.push(dir);
   return dir;
 }
 
 function placeSourceMarker(configDir, sourceRoot) {
-  // The `.gdd-source` marker hook documented in
+  // The `.hone-source` marker hook documented in
   // `runtime-artifact-layout.cjs#findInstallSourceRoot`. Points the
   // installer at our tmp fixture repo so we don't walk up to the real
   // skills/ tree.
-  fs.writeFileSync(path.join(configDir, '.gdd-source'), sourceRoot, 'utf8');
+  fs.writeFileSync(path.join(configDir, '.hone-source'), sourceRoot, 'utf8');
 }
 
 // ── Fixture repo ───────────────────────────────────────────────────────────
@@ -73,7 +73,7 @@ function placeSourceMarker(configDir, sourceRoot) {
 let REPO_ROOT;
 
 function setupFixtureRepo() {
-  const repoRoot = fs.mkdtempSync(path.join(TMP_ROOT, 'gdd-fixture-repo-'));
+  const repoRoot = fs.mkdtempSync(path.join(TMP_ROOT, 'hone-fixture-repo-'));
   _createdDirs.push(repoRoot);
   fs.mkdirSync(path.join(repoRoot, 'skills', 'sample'), { recursive: true });
   fs.copyFileSync(
@@ -85,8 +85,8 @@ function setupFixtureRepo() {
   //
   // AR7 regression (Phase 59.8): the agents kind now ENUMERATES agents/ rather
   // than deriving names from skill names. We seed three shapes:
-  //   - `gdd-sample.md`   — already gdd-prefixed; must NOT become
-  //                         `gdd-gdd-sample.md` (prefix-strip guard).
+  //   - `hone-sample.md`   — already hone-prefixed; must NOT become
+  //                         `hone-hone-sample.md` (prefix-strip guard).
   //   - `a11y-mapper.md`  — a real-shaped agent name that does NOT match any
   //                         skill name; the OLD skill-name-derived path would
   //                         have missed it entirely.
@@ -94,8 +94,8 @@ function setupFixtureRepo() {
   //   - `empty-agent.md`  — empty file, must be SKIPPED (no 0-byte write).
   fs.mkdirSync(path.join(repoRoot, 'agents'), { recursive: true });
   fs.writeFileSync(
-    path.join(repoRoot, 'agents', 'gdd-sample.md'),
-    '---\nname: gdd-sample\ndescription: Sample agent for tests.\n---\n\n<!-- gdd: auto-generated from Claude SKILL.md. Agent fixture -->\nExecutor agent body.\n',
+    path.join(repoRoot, 'agents', 'hone-sample.md'),
+    '---\nname: hone-sample\ndescription: Sample agent for tests.\n---\n\n<!-- gdd: auto-generated from Claude SKILL.md. Agent fixture -->\nExecutor agent body.\n',
     'utf8',
   );
   fs.writeFileSync(
@@ -130,40 +130,40 @@ after(() => {
 
 const EXPECTED = {
   claude: { check: 'marketplace' },
-  cursor: { dest: 'skills/gdd-sample/SKILL.md', adapter: 'Cursor adapter' },
+  cursor: { dest: 'skills/hone-sample/SKILL.md', adapter: 'Cursor adapter' },
   codex: {
-    dest: 'skills/gdd-sample/SKILL.md',
+    dest: 'skills/hone-sample/SKILL.md',
     adapter: 'Codex adapter',
-    extra: '$gdd-',
+    extra: '$hone-',
   },
-  copilot: { dest: 'skills/gdd-sample/SKILL.md', adapter: 'Copilot adapter' },
+  copilot: { dest: 'skills/hone-sample/SKILL.md', adapter: 'Copilot adapter' },
   antigravity: {
-    dest: 'skills/gdd-sample/SKILL.md',
+    dest: 'skills/hone-sample/SKILL.md',
     adapter: 'Antigravity adapter',
   },
   windsurf: {
-    dest: 'skills/gdd-sample/SKILL.md',
+    dest: 'skills/hone-sample/SKILL.md',
     adapter: 'Windsurf adapter',
   },
-  augment: { dest: 'skills/gdd-sample/SKILL.md', adapter: 'Augment adapter' },
-  trae: { dest: 'skills/gdd-sample/SKILL.md', adapter: 'Trae adapter' },
-  qwen: { dest: 'skills/gdd-sample/SKILL.md', adapter: 'Qwen adapter' },
+  augment: { dest: 'skills/hone-sample/SKILL.md', adapter: 'Augment adapter' },
+  trae: { dest: 'skills/hone-sample/SKILL.md', adapter: 'Trae adapter' },
+  qwen: { dest: 'skills/hone-sample/SKILL.md', adapter: 'Qwen adapter' },
   codebuddy: {
-    dest: 'skills/gdd-sample/SKILL.md',
+    dest: 'skills/hone-sample/SKILL.md',
     adapter: 'CodeBuddy adapter',
   },
   cline: {
     dest: '.clinerules',
-    headerSubstring: '# get-design-done rules',
-    blockSubstring: '## gdd-sample',
+    headerSubstring: '# hone rules',
+    blockSubstring: '## hone-sample',
   },
   opencode: {
-    dest: 'command/gdd-sample.md',
+    dest: 'command/hone-sample.md',
     adapter: 'OpenCode adapter',
   },
-  kilo: { dest: 'command/gdd-sample.md', adapter: 'Kilo adapter' },
+  kilo: { dest: 'command/hone-sample.md', adapter: 'Kilo adapter' },
   gemini: {
-    dest: 'commands/gdd/gdd-sample.md',
+    dest: 'commands/gdd/hone-sample.md',
     adapter: 'Gemini adapter',
   },
 };
@@ -202,7 +202,7 @@ for (const id of Object.keys(EXPECTED)) {
       );
       const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
       assert.equal(
-        settings.enabledPlugins['get-design-done@get-design-done'],
+        settings.enabledPlugins['hone@hone'],
         true,
         `${id}: enabledPlugins not flipped true`,
       );
@@ -253,12 +253,12 @@ test('install-per-runtime: claude global writes settings.json with enabledPlugin
     fs.readFileSync(path.join(cfg, 'settings.json'), 'utf8'),
   );
   assert.equal(
-    settings.enabledPlugins['get-design-done@get-design-done'],
+    settings.enabledPlugins['hone@hone'],
     true,
   );
   assert.deepEqual(
-    settings.extraKnownMarketplaces['get-design-done'],
-    { source: { source: 'github', repo: 'hegemonart/get-design-done' } },
+    settings.extraKnownMarketplaces['hone'],
+    { source: { source: 'github', repo: 'hegemonart/hone' } },
   );
 });
 
@@ -269,8 +269,8 @@ test('install-per-runtime: claude local writes commands/gdd + agents', () => {
   placeSourceMarker(cfg, REPO_ROOT);
   const result = installRuntime('claude', { configDir: cfg, scope: 'local' });
   assert.equal(result.runtime, 'claude');
-  const commandPath = path.join(cfg, 'commands', 'gdd', 'gdd-sample.md');
-  const agentPath = path.join(cfg, 'agents', 'gdd-sample.md');
+  const commandPath = path.join(cfg, 'commands', 'gdd', 'hone-sample.md');
+  const agentPath = path.join(cfg, 'agents', 'hone-sample.md');
   assert.ok(
     fs.existsSync(commandPath),
     `expected ${commandPath} to exist`,
@@ -282,11 +282,11 @@ test('install-per-runtime: claude local writes commands/gdd + agents', () => {
   // Verify the command file is the passthrough copy of the source SKILL.md
   // (claude local commandsKind has no converter — direct copy).
   const cmd = fs.readFileSync(commandPath, 'utf8');
-  assert.ok(cmd.includes('gdd-sample'), 'command file should retain skill name');
+  assert.ok(cmd.includes('hone-sample'), 'command file should retain skill name');
 
   // AR7 regression (Phase 59.8): real-named agents are installed, README is
   // excluded, empty agents are skipped, and no double-prefix occurs.
-  const realAgentPath = path.join(cfg, 'agents', 'gdd-a11y-mapper.md');
+  const realAgentPath = path.join(cfg, 'agents', 'hone-a11y-mapper.md');
   assert.ok(
     fs.existsSync(realAgentPath),
     `real-named agent must install (got missing ${realAgentPath})`,
@@ -296,15 +296,15 @@ test('install-per-runtime: claude local writes commands/gdd + agents', () => {
     realAgent.includes('A11y mapper agent body.'),
     'real agent must carry its source content, not an empty placeholder',
   );
-  // The pre-prefixed `gdd-sample.md` agent must NOT double-prefix.
+  // The pre-prefixed `hone-sample.md` agent must NOT double-prefix.
   assert.equal(
-    fs.existsSync(path.join(cfg, 'agents', 'gdd-gdd-sample.md')),
+    fs.existsSync(path.join(cfg, 'agents', 'hone-hone-sample.md')),
     false,
     'agent filename must not be double-prefixed',
   );
   // README.md must be excluded from the agents install.
   assert.equal(
-    fs.existsSync(path.join(cfg, 'agents', 'gdd-README.md')),
+    fs.existsSync(path.join(cfg, 'agents', 'hone-README.md')),
     false,
     'agents/README.md must not be installed as an agent',
   );
@@ -315,7 +315,7 @@ test('install-per-runtime: claude local writes commands/gdd + agents', () => {
   );
   // Empty agent file must be skipped (no 0-byte placeholder written).
   assert.equal(
-    fs.existsSync(path.join(cfg, 'agents', 'gdd-empty-agent.md')),
+    fs.existsSync(path.join(cfg, 'agents', 'hone-empty-agent.md')),
     false,
     'empty agent file must be skipped (no 0-byte write)',
   );
@@ -332,26 +332,26 @@ test('install-per-runtime: cline writes .clinerules with header + skill block', 
   assert.ok(fs.existsSync(target), 'expected .clinerules to exist');
   const content = fs.readFileSync(target, 'utf8');
   assert.ok(
-    content.includes('# get-design-done rules'),
+    content.includes('# hone rules'),
     '.clinerules header missing',
   );
   assert.ok(
-    content.includes('## gdd-sample'),
+    content.includes('## hone-sample'),
     '.clinerules skill block missing',
   );
 });
 
-// ── Codex → $gdd- shell-var slash rewrite ─────────────────────────────────
+// ── Codex → $hone- shell-var slash rewrite ─────────────────────────────────
 
-test('install-per-runtime: codex rewrites /gdd-explore → $gdd-explore in prose', () => {
+test('install-per-runtime: codex rewrites /hone-explore → $hone-explore in prose', () => {
   const cfg = mkTmpConfigDir('codex-slash');
   placeSourceMarker(cfg, REPO_ROOT);
   installRuntime('codex', { configDir: cfg, scope: 'global' });
-  const dest = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
+  const dest = path.join(cfg, 'skills', 'hone-sample', 'SKILL.md');
   const content = fs.readFileSync(dest, 'utf8');
   assert.ok(
-    content.includes('$gdd-explore'),
-    'codex converter must rewrite /gdd-explore → $gdd-explore',
+    content.includes('$hone-explore'),
+    'codex converter must rewrite /hone-explore → $hone-explore',
   );
 });
 
@@ -385,7 +385,7 @@ test('install-per-runtime: uninstall is symmetric — fingerprinted files remove
   const cfg = mkTmpConfigDir('uninstall-sym');
   placeSourceMarker(cfg, REPO_ROOT);
   installRuntime('cursor', { configDir: cfg, scope: 'global' });
-  const dest = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
+  const dest = path.join(cfg, 'skills', 'hone-sample', 'SKILL.md');
   assert.ok(fs.existsSync(dest), 'precondition: SKILL.md should exist');
   const uninstall = uninstallRuntime('cursor', {
     configDir: cfg,
@@ -407,7 +407,7 @@ test('install-per-runtime: uninstall is symmetric — fingerprinted files remove
 test('install-per-runtime: foreign-file protection refuses to overwrite user file', () => {
   const cfg = mkTmpConfigDir('foreign');
   placeSourceMarker(cfg, REPO_ROOT);
-  const userFile = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
+  const userFile = path.join(cfg, 'skills', 'hone-sample', 'SKILL.md');
   fs.mkdirSync(path.dirname(userFile), { recursive: true });
   const userContent =
     '---\nname: user-authored\n---\n\nUser content (no gdd fingerprint).\n';
@@ -435,13 +435,13 @@ test('install-per-runtime: --dry-run writes nothing to disk', () => {
     scope: 'global',
     dryRun: true,
   });
-  const dest = path.join(cfg, 'skills', 'gdd-sample', 'SKILL.md');
+  const dest = path.join(cfg, 'skills', 'hone-sample', 'SKILL.md');
   assert.equal(
     fs.existsSync(dest),
     false,
     'SKILL.md must NOT exist after dry-run',
   );
-  // The cfg dir + .gdd-source marker stay; the per-runtime install file
+  // The cfg dir + .hone-source marker stay; the per-runtime install file
   // must be absent. Also verify no models.json was written.
   assert.equal(
     fs.existsSync(path.join(cfg, 'models.json')),
@@ -511,7 +511,7 @@ test('install-per-runtime: no two Tier-1 runtimes share a destination path (Phas
       // Same relative dest path used by another runtime — that IS a collision
       // if both ever target the same configDir (which happens when, say, two
       // runtimes share an env var). cursor/codex/copilot etc. all target
-      // `skills/gdd-sample/SKILL.md`, which is by design (they each have a
+      // `skills/hone-sample/SKILL.md`, which is by design (they each have a
       // SEPARATE config dir). We only assert that no relative dest is
       // accidentally reused by a runtime that should be on a DIFFERENT shape.
       // The genuine cross-runtime invariant from the plan is that

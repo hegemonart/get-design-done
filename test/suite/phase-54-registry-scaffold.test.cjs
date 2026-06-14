@@ -13,7 +13,7 @@
  *      reference/registry.json, the round-trip (validateRegistry) is clean, and
  *      each entry resolves to its on-disk file with a frontmatter-matching
  *      composes_into.
- *   3. The /gdd:new-addendum scaffolder (scripts/lib/new-addendum.cjs) rejects
+ *   3. The /hone:new-addendum scaffolder (scripts/lib/new-addendum.cjs) rejects
  *      bad names ('../x', 'A', '') + bad kinds, accepts a good one ('my-lib'),
  *      and the rendered skeleton carries the 4 mandatory sections.
  *   4. scripts/skill-templates/new-addendum/SKILL.md exists with the contract frontmatter.
@@ -282,7 +282,7 @@ test('54-09: targetPathFor maps each kind to its reference subdir', () => {
 });
 
 // ---------------------------------------------------------------------------
-// 4. The /gdd:new-addendum SKILL.md exists with the contract frontmatter
+// 4. The /hone:new-addendum SKILL.md exists with the contract frontmatter
 // ---------------------------------------------------------------------------
 
 test('54-09: scripts/skill-templates/new-addendum/SKILL.md exists with contract frontmatter', () => {
@@ -292,7 +292,7 @@ test('54-09: scripts/skill-templates/new-addendum/SKILL.md exists with contract 
   const fm = text.match(/^---\n([\s\S]*?)\n---/);
   assert.ok(fm, 'SKILL.md has frontmatter');
   const block = fm[1];
-  assert.match(block, /^name: gdd-new-addendum$/m, 'name is gdd-new-addendum (gdd-prefixed, matches dir)');
+  assert.match(block, /^name: hone-new-addendum$/m, 'name is hone-new-addendum (hone-prefixed, matches dir)');
   assert.match(block, /^argument-hint: "<kind> <name>"$/m, 'argument-hint is "<kind> <name>"');
   assert.match(block, /^user-invocable: true$/m, 'user-invocable: true');
   assert.match(block, /^tools:/m, 'tools declared');
@@ -311,7 +311,7 @@ test('54-09: scripts/skill-templates/new-addendum/SKILL.md exists with contract 
 
 test('54-09: gsd-health stack_addendums row is present + graceful when no stack', async () => {
   const os = require('node:os');
-  const bare = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p54-health-'));
+  const bare = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p54-health-'));
   try {
     const { checks } = await getHealthChecks(bare);
     const row = checks.find((c) => c.name === 'stack_addendums');
@@ -327,7 +327,7 @@ test('54-09: gsd-health stack_addendums row is present + graceful when no stack'
 
 test('54-09: gsd-health stack_addendums reports N/M coverage when a stack is detected', async () => {
   const os = require('node:os');
-  const proj = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p54-health-cov-'));
+  const proj = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p54-health-cov-'));
   try {
     // Detected stack: tailwind + nextjs + framer-motion (all have addendums).
     fs.writeFileSync(
@@ -350,7 +350,7 @@ test('54-09: gsd-health stack_addendums reports N/M coverage when a stack is det
 
 test('54-09: gsd-health stack_addendums warns (never throws) when registry is unavailable', async () => {
   const os = require('node:os');
-  const proj = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p54-health-noreg-'));
+  const proj = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p54-health-noreg-'));
   try {
     fs.writeFileSync(
       path.join(proj, 'package.json'),

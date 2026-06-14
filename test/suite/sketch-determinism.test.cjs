@@ -2,7 +2,7 @@
 /**
  * TST-25 — sketch-determinism
  *
- * Validates that /gdd:sketch contract declared in skills/sketch/SKILL.md is
+ * Validates that /hone:sketch contract declared in skills/sketch/SKILL.md is
  * deterministic with respect to file structure and skeleton (not content).
  *
  * Does NOT invoke Claude. Asserts against shipped contract in the skill body.

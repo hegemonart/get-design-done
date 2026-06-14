@@ -1,13 +1,13 @@
 {
   "schema_version": "1",
   "generated_at": "2026-05-18T00:00:00.000Z",
-  "fixture_project": "synthetic-gdd-mid-cycle",
+  "fixture_project": "synthetic-hone-mid-cycle",
   "notes": "Synthetic baseline modeled on Storybloq v1.2.0 measured numbers (CONTEXT.md). Replace with measured GDD numbers after 5-10 real cycles per research-tail. D-09: informational, not CI hard-block. Math: tokens_pct = (32000 - 46500) / 46500 * 100 = -31.18. wall_speedup_x = 101000 / 3000 = 33.6667.",
   "mcp_path": {
     "calls": [
-      { "tool": "gdd_status", "tokens": 12000, "wall_ms": 1100 },
-      { "tool": "gdd_phase_current", "tokens": 8000, "wall_ms": 900 },
-      { "tool": "gdd_plans_list", "tokens": 12000, "wall_ms": 1000 }
+      { "tool": "hone_status", "tokens": 12000, "wall_ms": 1100 },
+      { "tool": "hone_phase_current", "tokens": 8000, "wall_ms": 900 },
+      { "tool": "hone_plans_list", "tokens": 12000, "wall_ms": 1000 }
     ],
     "total_tokens": 32000,
     "wall_ms": 3000

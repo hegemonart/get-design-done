@@ -15,14 +15,14 @@
  * branches are deliberately NOT ported.
  *
  * Layout table (D-03 + D-05 + D-09 + D-10):
- *   claude global → [{skills, 'skills', 'gdd-', passthrough}]
- *   claude local  → [{commands, 'commands/gdd', 'gdd-', passthrough},
- *                    {agents, 'agents', 'gdd-', passthrough}]
+ *   claude global → [{skills, 'skills', SKILL_PREFIX, passthrough}]
+ *   claude local  → [{commands, 'commands/gdd', SKILL_PREFIX, passthrough},
+ *                    {agents, 'agents', SKILL_PREFIX, passthrough}]
  *   cursor / codex / copilot / antigravity / windsurf / augment / trae /
- *     qwen / codebuddy → [{skills, 'skills', 'gdd-', <runtime>-converter}]
- *   gemini    → [{commands, 'commands/gdd', 'gdd-', gemini-converter}]
- *   opencode  → [{commands, 'command', 'gdd-', opencode-converter}]
- *   kilo      → [{commands, 'command', 'gdd-', kilo-converter}]
+ *     qwen / codebuddy → [{skills, 'skills', SKILL_PREFIX, <runtime>-converter}]
+ *   gemini    → [{commands, 'commands/gdd', SKILL_PREFIX, gemini-converter}]
+ *   opencode  → [{commands, 'command', SKILL_PREFIX, opencode-converter}]
+ *   kilo      → [{commands, 'command', SKILL_PREFIX, kilo-converter}]
  *   cline     → []  (D-09: rules-based, embeds in `.clinerules` — wiring
  *                    handled by installer.cjs + converters/cline.cjs)
  *
@@ -47,6 +47,10 @@
 
 const path = require('path');
 const fs = require('fs');
+// Phase 61 rebrand: the per-runtime skill/agent/command FILENAME prefix is
+// seam-sourced (`hone-`). The command-dir namespace (`commands/gdd`) is
+// deliberately retained — see install-per-runtime expectations.
+const { SKILL_PREFIX } = require('../pkg-identity.cjs');
 
 // ---------------------------------------------------------------------------
 // Allowlisted runtimes (D-03 + D-10)
@@ -85,7 +89,7 @@ const ALLOWED_RUNTIMES = new Set([
  * Locate the GDD repo's `skills/` source root.
  *
  * Resolution order:
- *   1. If `runtimeConfigDir` is provided AND `<runtimeConfigDir>/.gdd-source`
+ *   1. If `runtimeConfigDir` is provided AND `<runtimeConfigDir>/.hone-source`
  *      exists, read its first line as an absolute path override (test-mode
  *      hook — Plan 28.7-09 can point the resolver at a fixture skills dir).
  *   2. Walk up from `__dirname` up to 6 levels looking for `<dir>/skills/`.
@@ -102,7 +106,7 @@ const ALLOWED_RUNTIMES = new Set([
 function findInstallSourceRoot(runtimeConfigDir) {
   // Step 1 — marker override
   if (runtimeConfigDir) {
-    const markerPath = path.join(runtimeConfigDir, '.gdd-source');
+    const markerPath = path.join(runtimeConfigDir, '.hone-source');
     if (fs.existsSync(markerPath)) {
       try {
         const src = fs.readFileSync(markerPath, 'utf8').trim();
@@ -163,7 +167,7 @@ function findInstallSourceRoot(runtimeConfigDir) {
  * Build a `skills` artifact-kind descriptor.
  *
  * @param {string} destSubpath  e.g. `'skills'`.
- * @param {string} prefix       e.g. `'gdd-'`.
+ * @param {string} prefix       e.g. `SKILL_PREFIX`.
  * @param {string|null} converterPath  relative require path to the converter
  *   module (e.g. `'./converters/cursor.cjs'`), or `null` for passthrough
  *   copy (claude global skills).
@@ -267,12 +271,13 @@ function agentsKind(destSubpath, prefix) {
         if (!ent.isFile()) continue;
         if (!ent.name.toLowerCase().endsWith('.md')) continue;
         if (ent.name.toLowerCase() === 'readme.md') continue;
-        // Strip any pre-existing gdd-/gsd- prefix on the agent filename before
-        // re-applying `prefix`, so an agent already named `gdd-foo.md` does not
-        // become `gdd-gdd-foo.md`. Real agents ship un-prefixed
-        // (`a11y-mapper.md`); this guard keeps both shapes correct.
+        // Strip any pre-existing hone-/gdd-/gsd- prefix on the agent filename
+        // before re-applying `prefix`, so an agent already named `hone-foo.md`
+        // (or legacy `gdd-foo.md`) does not become `hone-hone-foo.md`. Real
+        // agents ship un-prefixed (`a11y-mapper.md`); this guard keeps every
+        // shape correct.
         const fileBase = ent.name.slice(0, -'.md'.length);
-        const bareName = fileBase.replace(/^(gdd-|gsd-)/i, '');
+        const bareName = fileBase.replace(/^(hone-|gdd-|gsd-)/i, '');
         const srcPath = path.join(agentsRoot, ent.name);
         let raw = '';
         try {
@@ -321,18 +326,18 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
     case 'claude':
       if (scope === 'local') {
         kinds = [
-          commandsKind('commands/gdd', 'gdd-', null, 'claude'),
-          agentsKind('agents', 'gdd-'),
+          commandsKind('commands/gdd', SKILL_PREFIX, null, 'claude'),
+          agentsKind('agents', SKILL_PREFIX),
         ];
       } else {
         // Global claude install — passthrough skills/ tree (no conversion).
-        kinds = [skillsKind('skills', 'gdd-', null, 'claude')];
+        kinds = [skillsKind('skills', SKILL_PREFIX, null, 'claude')];
       }
       break;
 
     case 'cursor':
       kinds = [
-        skillsKind('skills', 'gdd-', './converters/cursor.cjs', 'cursor'),
+        skillsKind('skills', SKILL_PREFIX, './converters/cursor.cjs', 'cursor'),
       ];
       break;
 
@@ -340,7 +345,7 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
       kinds = [
         commandsKind(
           'commands/gdd',
-          'gdd-',
+          SKILL_PREFIX,
           './converters/gemini.cjs',
           'gemini'
         ),
@@ -349,13 +354,13 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
 
     case 'codex':
       kinds = [
-        skillsKind('skills', 'gdd-', './converters/codex.cjs', 'codex'),
+        skillsKind('skills', SKILL_PREFIX, './converters/codex.cjs', 'codex'),
       ];
       break;
 
     case 'copilot':
       kinds = [
-        skillsKind('skills', 'gdd-', './converters/copilot.cjs', 'copilot'),
+        skillsKind('skills', SKILL_PREFIX, './converters/copilot.cjs', 'copilot'),
       ];
       break;
 
@@ -363,7 +368,7 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
       kinds = [
         skillsKind(
           'skills',
-          'gdd-',
+          SKILL_PREFIX,
           './converters/antigravity.cjs',
           'antigravity'
         ),
@@ -374,7 +379,7 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
       kinds = [
         skillsKind(
           'skills',
-          'gdd-',
+          SKILL_PREFIX,
           './converters/windsurf.cjs',
           'windsurf'
         ),
@@ -383,13 +388,13 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
 
     case 'augment':
       kinds = [
-        skillsKind('skills', 'gdd-', './converters/augment.cjs', 'augment'),
+        skillsKind('skills', SKILL_PREFIX, './converters/augment.cjs', 'augment'),
       ];
       break;
 
     case 'trae':
       kinds = [
-        skillsKind('skills', 'gdd-', './converters/trae.cjs', 'trae'),
+        skillsKind('skills', SKILL_PREFIX, './converters/trae.cjs', 'trae'),
       ];
       break;
 
@@ -398,7 +403,7 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
       // re-uses convertClaudeCommandToClaudeSkill with runtime='qwen'). Our
       // modular equivalent is `./converters/qwen.cjs` (Plan 28.7-05 ships).
       kinds = [
-        skillsKind('skills', 'gdd-', './converters/qwen.cjs', 'qwen'),
+        skillsKind('skills', SKILL_PREFIX, './converters/qwen.cjs', 'qwen'),
       ];
       break;
 
@@ -406,7 +411,7 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
       kinds = [
         skillsKind(
           'skills',
-          'gdd-',
+          SKILL_PREFIX,
           './converters/codebuddy.cjs',
           'codebuddy'
         ),
@@ -427,7 +432,7 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
       kinds = [
         commandsKind(
           'command',
-          'gdd-',
+          SKILL_PREFIX,
           './converters/opencode.cjs',
           'opencode'
         ),
@@ -436,7 +441,7 @@ function resolveRuntimeArtifactLayout(runtime, configDir, scope = 'global') {
 
     case 'kilo':
       kinds = [
-        commandsKind('command', 'gdd-', './converters/kilo.cjs', 'kilo'),
+        commandsKind('command', SKILL_PREFIX, './converters/kilo.cjs', 'kilo'),
       ];
       break;
 

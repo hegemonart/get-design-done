@@ -38,16 +38,16 @@ const REMOVED_SHIMS = [
   // Group A — 4 TS index shims (export * from sdk/...).
   { old: 'scripts/lib/cli/index.ts', sdk: 'sdk/cli/index.ts', kind: 'ts' },
   { old: 'scripts/lib/event-stream/index.ts', sdk: 'sdk/event-stream/index.ts', kind: 'ts' },
-  { old: 'scripts/lib/gdd-state/index.ts', sdk: 'sdk/state/index.ts', kind: 'ts' },
-  { old: 'scripts/lib/gdd-errors/index.ts', sdk: 'sdk/errors/index.ts', kind: 'ts' },
+  { old: 'scripts/lib/hone-state/index.ts', sdk: 'sdk/state/index.ts', kind: 'ts' },
+  { old: 'scripts/lib/hone-errors/index.ts', sdk: 'sdk/errors/index.ts', kind: 'ts' },
   // Group B — 4 root .cjs primitive shims (module.exports = require(sdk)).
   { old: 'scripts/lib/error-classifier.cjs', sdk: 'sdk/primitives/error-classifier.cjs', kind: 'cjs' },
   { old: 'scripts/lib/iteration-budget.cjs', sdk: 'sdk/primitives/iteration-budget.cjs', kind: 'cjs' },
   { old: 'scripts/lib/jittered-backoff.cjs', sdk: 'sdk/primitives/jittered-backoff.cjs', kind: 'cjs' },
   { old: 'scripts/lib/lockfile.cjs', sdk: 'sdk/primitives/lockfile.cjs', kind: 'cjs' },
   // Group C — 2 mcp-server .ts shims (export * from sdk/mcp/...).
-  { old: 'scripts/mcp-servers/gdd-state/server.ts', sdk: 'sdk/mcp/gdd-state/server.ts', kind: 'ts' },
-  { old: 'scripts/mcp-servers/gdd-mcp/server.ts', sdk: 'sdk/mcp/gdd-mcp/server.ts', kind: 'ts' },
+  { old: 'scripts/mcp-servers/hone-state/server.ts', sdk: 'sdk/mcp/hone-state/server.ts', kind: 'ts' },
+  { old: 'scripts/mcp-servers/hone-mcp/server.ts', sdk: 'sdk/mcp/hone-mcp/server.ts', kind: 'ts' },
 ];
 
 // ── (a) every old shim path is GONE ───────────────────────────────────────────

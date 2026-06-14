@@ -1,6 +1,6 @@
-// tests/mcp-gdd-state.test.ts — Plan 20-05 (SDK-06 / SDK-07).
+// tests/mcp-hone-state.test.ts — Plan 20-05 (SDK-06 / SDK-07).
 //
-// End-to-end integration tests for the `gdd-state` MCP server. Each test
+// End-to-end integration tests for the `hone-state` MCP server. Each test
 // spawns the server as a child process via stdio, sends JSON-RPC
 // messages over its stdin, and reads JSON-RPC responses from its stdout.
 // This exercises every layer — transport, protocol, request dispatch,
@@ -35,7 +35,7 @@ const SERVER_ENTRY = join(
   REPO_ROOT,
   'sdk',
   'mcp',
-  'gdd-state',
+  'hone-state',
   'server.ts',
 );
 
@@ -193,7 +193,7 @@ async function handshake(server: ServerHandle): Promise<JsonRpcResponse> {
     params: {
       protocolVersion: '2024-11-05',
       capabilities: {},
-      clientInfo: { name: 'gdd-state-test', version: '0.0.1' },
+      clientInfo: { name: 'hone-state-test', version: '0.0.1' },
     },
   });
   const initResp = await server.await_(1);
@@ -252,7 +252,7 @@ interface ScaffoldHandle {
  * cwd=<dir>; we expose the expected path so tests can read events back.
  */
 function scaffold(initialState?: string): ScaffoldHandle {
-  const dir = mkdtempSync(join(tmpdir(), 'mcp-gdd-state-'));
+  const dir = mkdtempSync(join(tmpdir(), 'mcp-hone-state-'));
   const statePath = join(dir, 'STATE.md');
   const eventsPath = join(dir, '.design', 'telemetry', 'events.jsonl');
   writeFileSync(statePath, initialState ?? fixtureState(), 'utf8');
@@ -291,7 +291,7 @@ test('server: responds to initialize handshake', async () => {
       serverInfo: { name: string; version: string };
       capabilities: { tools?: Record<string, unknown> };
     };
-    assert.equal(result.serverInfo.name, 'gdd-state');
+    assert.equal(result.serverInfo.name, 'hone-state');
     assert.ok(result.capabilities.tools !== undefined, 'advertises tools capability');
   } finally {
     await server.close();
@@ -299,7 +299,7 @@ test('server: responds to initialize handshake', async () => {
   }
 });
 
-test('server: tools/list returns exactly 11 tools with prefix gdd_state__', async () => {
+test('server: tools/list returns exactly 11 tools with prefix hone_state__', async () => {
   const { dir, statePath, eventsPath, cleanup } = scaffold();
   const server = startServer(dir, {
     GDD_STATE_PATH: statePath,
@@ -313,7 +313,7 @@ test('server: tools/list returns exactly 11 tools with prefix gdd_state__', asyn
     };
     assert.equal(result.tools.length, 11, 'exactly 11 tools advertised');
     for (const t of result.tools) {
-      assert.match(t.name, /^gdd_state__/, `tool ${t.name} has correct prefix`);
+      assert.match(t.name, /^hone_state__/, `tool ${t.name} has correct prefix`);
       assert.equal(
         t.inputSchema['type'],
         'object',
@@ -322,17 +322,17 @@ test('server: tools/list returns exactly 11 tools with prefix gdd_state__', asyn
     }
     const names = result.tools.map((t) => t.name).sort();
     const expected = [
-      'gdd_state__add_blocker',
-      'gdd_state__add_decision',
-      'gdd_state__add_must_have',
-      'gdd_state__checkpoint',
-      'gdd_state__frontmatter_update',
-      'gdd_state__get',
-      'gdd_state__probe_connections',
-      'gdd_state__resolve_blocker',
-      'gdd_state__set_status',
-      'gdd_state__transition_stage',
-      'gdd_state__update_progress',
+      'hone_state__add_blocker',
+      'hone_state__add_decision',
+      'hone_state__add_must_have',
+      'hone_state__checkpoint',
+      'hone_state__frontmatter_update',
+      'hone_state__get',
+      'hone_state__probe_connections',
+      'hone_state__resolve_blocker',
+      'hone_state__set_status',
+      'hone_state__transition_stage',
+      'hone_state__update_progress',
     ];
     assert.deepEqual(names, expected, 'tool catalog matches plan');
   } finally {
@@ -341,14 +341,14 @@ test('server: tools/list returns exactly 11 tools with prefix gdd_state__', asyn
   }
 });
 
-test('gdd_state__get: returns parsed STATE.md matching read() output', async () => {
+test('hone_state__get: returns parsed STATE.md matching read() output', async () => {
   const { dir, statePath, eventsPath, cleanup } = scaffold();
   const server = startServer(dir, {
     GDD_STATE_PATH: statePath,
   });
   try {
     await handshake(server);
-    const result = await callTool(server, 'gdd_state__get', {});
+    const result = await callTool(server, 'hone_state__get', {});
     assert.equal(result.isError, undefined, 'get is not an error');
     const payload = result.structuredContent as {
       success: boolean;
@@ -366,21 +366,21 @@ test('gdd_state__get: returns parsed STATE.md matching read() output', async () 
   }
 });
 
-test('gdd_state__add_decision: appends to <decisions> and emits state.mutation', async () => {
+test('hone_state__add_decision: appends to <decisions> and emits state.mutation', async () => {
   const { dir, statePath, eventsPath, cleanup } = scaffold();
   const server = startServer(dir, {
     GDD_STATE_PATH: statePath,
   });
   try {
     await handshake(server);
-    const before = await callTool(server, 'gdd_state__get', {});
+    const before = await callTool(server, 'hone_state__get', {});
     const beforeCount = (
       before.structuredContent as {
         data: { state: { decisions: unknown[] } };
       }
     ).data.state.decisions.length;
 
-    const add = await callTool(server, 'gdd_state__add_decision', {
+    const add = await callTool(server, 'hone_state__add_decision', {
       text: 'Adopt 8px spacing grid for all layout primitives',
       status: 'locked',
     });
@@ -398,7 +398,7 @@ test('gdd_state__add_decision: appends to <decisions> and emits state.mutation',
     assert.equal(addPayload.data.decision.status, 'locked');
 
     // Re-read and confirm the new entry is present.
-    const after = await callTool(server, 'gdd_state__get', {});
+    const after = await callTool(server, 'hone_state__get', {});
     const afterPayload = after.structuredContent as {
       data: { state: { decisions: Array<{ id: string; text: string }> } };
     };
@@ -412,14 +412,14 @@ test('gdd_state__add_decision: appends to <decisions> and emits state.mutation',
     const stateMutation = events.find((e) => e['type'] === 'state.mutation');
     assert.ok(stateMutation !== undefined, 'state.mutation event emitted');
     const payloadCheck = stateMutation['payload'] as { tool?: string };
-    assert.equal(payloadCheck.tool, 'gdd_state__add_decision');
+    assert.equal(payloadCheck.tool, 'hone_state__add_decision');
   } finally {
     await server.close();
     cleanup();
   }
 });
 
-test('gdd_state__transition_stage: gate veto returns {success:false, TRANSITION_GATE_FAILED} without crashing server', async () => {
+test('hone_state__transition_stage: gate veto returns {success:false, TRANSITION_GATE_FAILED} without crashing server', async () => {
   // mid-pipeline fixture has stage=design and a <blockers> entry; design→verify
   // will pass the gate unless one of the must_haves is pending+design-keyword.
   // Our fixture has M-02 pending "Navigation collapses…" (no design keyword) so
@@ -475,7 +475,7 @@ figma: available
   });
   try {
     await handshake(server);
-    const result = await callTool(server, 'gdd_state__transition_stage', {
+    const result = await callTool(server, 'hone_state__transition_stage', {
       to: 'design',
     });
     assert.equal(result.isError, true, 'gate veto marks call as isError');
@@ -497,7 +497,7 @@ figma: available
     );
 
     // Server still responsive — a follow-up tool call must succeed.
-    const readBack = await callTool(server, 'gdd_state__get', {});
+    const readBack = await callTool(server, 'hone_state__get', {});
     assert.equal(readBack.isError, undefined);
     assert.equal(
       (
@@ -540,7 +540,7 @@ test('invalid input: missing required field returns {success:false, VALIDATION_*
   try {
     await handshake(server);
     // add_blocker requires `text` — omit it.
-    const result = await callTool(server, 'gdd_state__add_blocker', {});
+    const result = await callTool(server, 'hone_state__add_blocker', {});
     assert.equal(result.isError, true);
     const payload = result.structuredContent as {
       success: boolean;
@@ -555,7 +555,7 @@ test('invalid input: missing required field returns {success:false, VALIDATION_*
     assert.equal(payload.error.kind, 'validation');
 
     // Server still responsive.
-    const read = await callTool(server, 'gdd_state__get', {});
+    const read = await callTool(server, 'hone_state__get', {});
     assert.equal(read.isError, undefined);
   } finally {
     await server.close();
@@ -563,14 +563,14 @@ test('invalid input: missing required field returns {success:false, VALIDATION_*
   }
 });
 
-test('gdd_state__frontmatter_update: rejects patching "stage" with VALIDATION_FORBIDDEN_KEY', async () => {
+test('hone_state__frontmatter_update: rejects patching "stage" with VALIDATION_FORBIDDEN_KEY', async () => {
   const { dir, statePath, eventsPath, cleanup } = scaffold();
   const server = startServer(dir, {
     GDD_STATE_PATH: statePath,
   });
   try {
     await handshake(server);
-    const result = await callTool(server, 'gdd_state__frontmatter_update', {
+    const result = await callTool(server, 'hone_state__frontmatter_update', {
       patch: { stage: 'verify' },
     });
     assert.equal(result.isError, true);
@@ -583,7 +583,7 @@ test('gdd_state__frontmatter_update: rejects patching "stage" with VALIDATION_FO
     assert.equal(payload.error.kind, 'validation');
 
     // Fixture stage is untouched.
-    const read = await callTool(server, 'gdd_state__get', {});
+    const read = await callTool(server, 'hone_state__get', {});
     const stage = (
       read.structuredContent as {
         data: { state: { position: { stage: string } } };
@@ -612,7 +612,7 @@ test('concurrent add_blocker calls: 3 children serialize through the lockfile (n
     await Promise.all(servers.map((s) => handshake(s)));
     const results = await Promise.all(
       servers.map((s, i) =>
-        callTool(s, 'gdd_state__add_blocker', {
+        callTool(s, 'hone_state__add_blocker', {
           text: `concurrent blocker ${i}`,
           stage: 'design',
           date: '2026-04-24',
@@ -625,7 +625,7 @@ test('concurrent add_blocker calls: 3 children serialize through the lockfile (n
 
     // Read back via any server; we expect the fixture's 2 blockers plus
     // all 3 new ones = 5, with no dropped writes.
-    const final = await callTool(servers[0]!, 'gdd_state__get', {});
+    const final = await callTool(servers[0]!, 'hone_state__get', {});
     const blockers = (
       final.structuredContent as {
         data: { state: { blockers: Array<{ text: string }> } };

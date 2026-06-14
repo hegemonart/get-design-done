@@ -23,7 +23,7 @@ keeps the essential workflow + decision tree, this file holds the deep methodolo
 
 ## Stage entry
 
-All STATE.md persistence in this skill goes through `gdd-state` MCP tools - no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
+All STATE.md persistence in this skill goes through `hone-state` MCP tools - no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
 
 1. Call `mcp__hone_state__transition_stage` with `to: "explore"`.
    - On success: proceed to probes.

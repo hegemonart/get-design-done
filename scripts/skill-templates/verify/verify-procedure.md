@@ -65,7 +65,7 @@ When verification concludes that M-XX is satisfied (or failed), record the resul
 { "id": "M-03", "text": "Dark mode toggle persists to localStorage", "status": "pass" }
 ```
 
-The gdd-state mutator treats an `add_must_have` with an existing id as an **update-in-place**, not a duplicate append. The entry's position in the `<must_haves>` block is preserved. This is intentional design - verify doesn't need a dedicated `update_must_have_status` tool because `add_must_have` handles both cases correctly.
+The hone-state mutator treats an `add_must_have` with an existing id as an **update-in-place**, not a duplicate append. The entry's position in the `<must_haves>` block is preserved. This is intentional design - verify doesn't need a dedicated `update_must_have_status` tool because `add_must_have` handles both cases correctly.
 
 Pass the original `text` verbatim when you're only flipping the status; supplying a changed `text` overwrites the prose in-place as well (useful when the M-XX description was imprecise and the verifier can restate it). Omit `text` by passing the value from the earlier `mcp__hone_state__get` snapshot.
 

@@ -83,7 +83,7 @@ test('30-07: rendering — destination diff shows old and new URLs', () => {
   const diff = pd.computePrivacyDiff(OLD_ROOT, NEW_ROOT);
   const out = pd.renderPrivacyDiff(diff);
   assert.ok(out.includes('old-owner/old-repo'), 'old URL substring missing');
-  assert.ok(out.includes('hegemonart/get-design-done'), 'new URL substring missing');
+  assert.ok(out.includes('hegemonart/hone'), 'new URL substring missing');
 });
 
 test('30-07: shouldAutoShow — prevVersion null → false', () => {

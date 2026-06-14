@@ -16,7 +16,7 @@ const REPO_ROOT = join(__dirname, '../..');
  * events.jsonl lines (or [] if file absent).
  */
 function runHook(hookPath, stdinJson, opts = {}) {
-  const dir = opts.dir || mkdtempSync(join(tmpdir(), 'gdd-emit-'));
+  const dir = opts.dir || mkdtempSync(join(tmpdir(), 'hone-emit-'));
   const eventsPath = join(dir, 'events.jsonl');
   const env = {
     ...process.env,
@@ -78,7 +78,7 @@ test('22-09: gdd-bash-guard emits hook.fired block on dangerous command', () => 
 
 test('22-09: gdd-protected-paths emits hook.fired allow when path not protected', () => {
   const hook = join(REPO_ROOT, 'hooks', 'gdd-protected-paths.js');
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-emit-pp-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-emit-pp-'));
   // Need a config so the hook resolves protected_paths from defaults.
   try {
     const { res, events } = runHook(hook, {

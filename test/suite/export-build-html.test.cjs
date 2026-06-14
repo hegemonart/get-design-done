@@ -1,5 +1,5 @@
 'use strict';
-// Phase 35.5 — /gdd:export build-html unit test. Verifies the pure, dep-free HTML
+// Phase 35.5 — /hone:export build-html unit test. Verifies the pure, dep-free HTML
 // assembler (scripts/lib/export/build-html.cjs) emits a SELF-CONTAINED document:
 // inline <style>, base64-embedded images, ZERO external resource refs; renders the
 // markdown subset GDD's .design artifacts use; the print variant adds Paged.js @page
@@ -48,7 +48,7 @@ test('35.5-02: CSS is inlined in a <style> block (no external stylesheet)', () =
 test('35.5-02: title + subtitle + section headings render', () => {
   const html = buildHtml(FIXTURE);
   assert.match(html, /<h1>Checkout Redesign<\/h1>/, 'doc title → h1');
-  assert.match(html, /class="gdd-meta">Cycle demo-1/, 'subtitle → meta line');
+  assert.match(html, /class="hone-meta">Cycle demo-1/, 'subtitle → meta line');
   assert.match(html, /<h2>Experience<\/h2>/, 'section heading → h2');
   assert.match(html, /<h2>Evidence<\/h2>/, 'second section heading → h2');
 });

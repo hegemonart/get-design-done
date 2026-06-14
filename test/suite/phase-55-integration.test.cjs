@@ -8,7 +8,7 @@
 //      — GRACEFUL-ABSENT: a valid status is always present and getHealthChecks
 //        NEVER throws, whether the dashboard bin is present OR absent. We drive
 //        both arms with hermetic fixture roots (a fake GDD package root that
-//        either plants bin/gdd-dashboard or omits it), and additionally assert
+//        either plants bin/hone-dashboard or omits it), and additionally assert
 //        the bin-present fixture surfaces status 'ok'.
 //
 //   2. sdk/dashboard/data/risk-surface.cjs `surfaceRisk()`
@@ -33,7 +33,7 @@ const {
 // --- helpers ---------------------------------------------------------------
 
 function makeRoot() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-55-11-int-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-55-11-int-'));
 }
 
 function rmRoot(root) {
@@ -54,7 +54,7 @@ function rmRoot(root) {
  * fixture, never the real shipped tree). When false, the fixture is an
  * unrelated consumer project and the probe falls back to the shipped root.
  *
- * `plantBin` writes a bin/gdd-dashboard trampoline file under the fixture.
+ * `plantBin` writes a bin/hone-dashboard trampoline file under the fixture.
  * `plantDataPlane` writes a MINIMAL sdk/dashboard/data/source.cjs stub that
  * exports loadDashboardModel — enough for dashboardDataPlaneLoads to detect a
  * loadable data plane without coupling the test to the real source.cjs.
@@ -69,14 +69,14 @@ function writeProject(
   fs.writeFileSync(
     path.join(root, 'package.json'),
     JSON.stringify({
-      name: gddName ? 'get-design-done' : 'some-consumer-project',
+      name: gddName ? 'hone' : 'some-consumer-project',
       version: '0.0.1',
     })
   );
   if (plantBin) {
     fs.mkdirSync(path.join(root, 'bin'), { recursive: true });
     fs.writeFileSync(
-      path.join(root, 'bin', 'gdd-dashboard'),
+      path.join(root, 'bin', 'hone-dashboard'),
       '#!/usr/bin/env node\n// fixture trampoline\n'
     );
   }
@@ -102,7 +102,7 @@ function dashboardCheck(result) {
 test('55-11: getHealthChecks includes a dashboard_reachable check with a valid status (consumer-project root, bin absent)', async () => {
   // A non-GDD consumer project: the rootDir walk-up finds no GDD marker, so the
   // check falls back to the shipped package root. Whether or not executor D has
-  // landed bin/gdd-dashboard yet, the check must be present with a valid status
+  // landed bin/hone-dashboard yet, the check must be present with a valid status
   // and MUST NOT be a hard 'fail'.
   const root = makeRoot();
   try {
@@ -125,7 +125,7 @@ test('55-11: getHealthChecks includes a dashboard_reachable check with a valid s
 });
 
 test('55-11: dashboard_reachable is graceful-absent — bin missing -> warn, never throws (fake GDD root, no bin)', async () => {
-  // A fake GDD package root WITHOUT bin/gdd-dashboard planted. The rootDir
+  // A fake GDD package root WITHOUT bin/hone-dashboard planted. The rootDir
   // walk-up treats this as the GDD root, finds no bin -> 'warn'. (The shipped
   // root fallback also has no bin until executor D lands it.)
   const root = makeRoot();
@@ -146,8 +146,8 @@ test('55-11: dashboard_reachable is graceful-absent — bin missing -> warn, nev
   }
 });
 
-test('55-11: dashboard_reachable -> ok when bin/gdd-dashboard present AND data plane loads (fake GDD root, bin planted)', async () => {
-  // A fake GDD package root WITH bin/gdd-dashboard planted: the bin resolves via
+test('55-11: dashboard_reachable -> ok when bin/hone-dashboard present AND data plane loads (fake GDD root, bin planted)', async () => {
+  // A fake GDD package root WITH bin/hone-dashboard planted: the bin resolves via
   // the rootDir walk-up; the data plane (sdk/dashboard/data/source.cjs) loads via
   // the shipped package root -> status 'ok' + the exact detail string.
   const root = makeRoot();
@@ -157,7 +157,7 @@ test('55-11: dashboard_reachable -> ok when bin/gdd-dashboard present AND data p
     const dc = dashboardCheck(result);
     assert.ok(dc, 'dashboard_reachable check must be present');
     assert.equal(dc.status, 'ok', 'bin present + data plane ok -> ok');
-    assert.equal(dc.detail, 'dashboard: bin/gdd-dashboard present; data plane ok');
+    assert.equal(dc.detail, 'dashboard: bin/hone-dashboard present; data plane ok');
   } finally {
     rmRoot(root);
   }

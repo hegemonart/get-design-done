@@ -36,7 +36,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -96,7 +96,7 @@ test('dbg-A: _quoteFts5Query wraps dotted filenames in double-quotes', () => {
 // better-sqlite3-gated: end-to-end reindex + search with dotted path query
 
 test('dbg-A: FTS5 search returns hits for dotted-path OR query (regression)', { skip: hasBetterSqlite3 ? false : 'better-sqlite3 not installed — skip FTS5 path' }, () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-fts5-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-fts5-'));
   try {
     // Seed a tiny corpus: .design/archive/cycle-1/reference/heuristics.md
     // with content that mentions a recognisable token.
@@ -150,7 +150,7 @@ test('dbg-A: FTS5 search returns hits for dotted-path OR query (regression)', { 
 });
 
 test('dbg-A: FTS5 search with space-separated query also works after fix', { skip: hasBetterSqlite3 ? false : 'better-sqlite3 not installed — skip FTS5 path' }, () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-fts5b-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-fts5b-'));
   try {
     const archiveDir = path.join(dir, '.design', 'archive', 'cycle-1');
     fs.mkdirSync(archiveDir, { recursive: true });

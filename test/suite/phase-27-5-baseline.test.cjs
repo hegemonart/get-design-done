@@ -61,7 +61,7 @@ test('27.5-baseline: skills/bandit-status/SKILL.md exists with frontmatter', () 
   assert.ok(fs.existsSync(skillPath), 'skills/bandit-status/SKILL.md must exist');
   const content = fs.readFileSync(skillPath, 'utf8');
   assert.ok(content.startsWith('---'), 'bandit-status SKILL.md must start with frontmatter delimiter');
-  assert.ok(/name:\s*gdd-bandit-status/.test(content), 'bandit-status SKILL.md must have name: gdd-bandit-status');
+  assert.ok(/name:\s*hone-bandit-status/.test(content), 'bandit-status SKILL.md must have name: hone-bandit-status');
 });
 
 test('27.5-baseline: docs/BANDIT-INTEGRATION.md and reference/bandit-integration.md exist', () => {

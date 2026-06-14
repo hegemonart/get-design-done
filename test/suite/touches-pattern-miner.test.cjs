@@ -17,7 +17,7 @@ const {
 } = require('../../scripts/lib/touches-pattern-miner.cjs');
 
 function seedFixture() {
-  const root = mkdtempSync(join(tmpdir(), 'gdd-miner-'));
+  const root = mkdtempSync(join(tmpdir(), 'hone-miner-'));
   const archive = join(root, '.design', 'archive');
   // Two cycles, 2 tasks each.
   const cycle1 = join(archive, 'cycle-2026-04-01', 'tasks');
@@ -110,7 +110,7 @@ test('23-06: minCycles threshold prunes proposals below cutoff', async () => {
 });
 
 test('23-06: mine returns empty envelope when archive dir missing', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'gdd-miner-empty-'));
+  const root = mkdtempSync(join(tmpdir(), 'hone-miner-empty-'));
   try {
     const proposal = await mine({ cwd: root });
     assert.equal(proposal.proposals.length, 0);
@@ -138,7 +138,7 @@ test('23-06: writeProposals atomic + idempotent', async () => {
 });
 
 test('23-06: writeProposals creates parent dirs', async () => {
-  const root = mkdtempSync(join(tmpdir(), 'gdd-miner-mkdir-'));
+  const root = mkdtempSync(join(tmpdir(), 'hone-miner-mkdir-'));
   try {
     const env = await mine({ cwd: root });
     const p = writeProposals(env, { cwd: root });

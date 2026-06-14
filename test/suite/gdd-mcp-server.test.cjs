@@ -1,7 +1,7 @@
 'use strict';
-// tests/gdd-mcp-server.test.cjs
+// tests/hone-mcp-server.test.cjs
 // ---------------------------------------------------------------------------
-// Plan 27.7-01 — gdd-mcp server scaffold tests.
+// Plan 27.7-01 — hone-mcp server scaffold tests.
 //
 // Covers (>= 6 tests, every name prefixed with `27.7-01: `):
 //   1. handshake — buildServer() returns a Server instance with .connect
@@ -22,7 +22,7 @@
 //
 // The test uses dynamic `import()` against the .ts module so node:test
 // can run with `--experimental-strip-types` (matches the pattern in
-// `tests/mcp-gdd-state.test.ts`).
+// `tests/mcp-hone-state.test.ts`).
 
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
@@ -31,21 +31,21 @@ const path = require('node:path');
 const os = require('node:os');
 
 // Path roots — the test file lives in tests/, the server one level up.
-// gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan
+// hone-mcp moved scripts/mcp-servers/hone-mcp/ -> sdk/mcp/hone-mcp/ in Plan
 // 31-5-05 (D-08); these paths follow the move.
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const SERVER_PATH = path.join(
   REPO_ROOT,
   'sdk',
   'mcp',
-  'gdd-mcp',
+  'hone-mcp',
   'server.ts',
 );
 const SHARED_PATH = path.join(
   REPO_ROOT,
   'sdk',
   'mcp',
-  'gdd-mcp',
+  'hone-mcp',
   'tools',
   'shared.ts',
 );
@@ -80,7 +80,7 @@ async function loadShared() {
   return await import(url.href);
 }
 
-describe('27.7-01: gdd-mcp server scaffold', () => {
+describe('27.7-01: hone-mcp server scaffold', () => {
   // -------------------------------------------------------------------------
   // Test 1 — handshake: buildServer returns a Server-shaped instance.
 
@@ -114,7 +114,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
             REPO_ROOT,
             'sdk',
             'mcp',
-            'gdd-mcp',
+            'hone-mcp',
             'tools',
             'index.ts',
           )
@@ -125,7 +125,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
     assert.equal(
       toolsMod.TOOL_MODULES.length,
       13,
-      'Plan 27.7-02 populates 12 tools; Phase 52 adds gdd_context_query → 13 (D-03 cap raised 12 -> 13)',
+      'Plan 27.7-02 populates 12 tools; Phase 52 adds hone_context_query → 13 (D-03 cap raised 12 -> 13)',
     );
     assert.equal(
       toolsMod.TOOL_COUNT,
@@ -143,7 +143,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
   // (GDD_PROJECT_ROOT) is unset for these tests.
 
   test('27.7-01: walk-up — resolveProjectRoot finds .design/ marker', async () => {
-    const root = tmp('gdd-mcp-walkup-design');
+    const root = tmp('hone-mcp-walkup-design');
     fs.mkdirSync(path.join(root, '.design'), { recursive: true });
     const deep = path.join(root, 'a', 'b', 'c');
     fs.mkdirSync(deep, { recursive: true });
@@ -170,7 +170,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
   });
 
   test('27.7-01: walk-up — resolveProjectRoot finds .planning/ marker', async () => {
-    const root = tmp('gdd-mcp-walkup-planning');
+    const root = tmp('hone-mcp-walkup-planning');
     fs.mkdirSync(path.join(root, '.planning'), { recursive: true });
     const deep = path.join(root, 'sub', 'sub2');
     fs.mkdirSync(deep, { recursive: true });
@@ -197,7 +197,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
   });
 
   test('27.7-01: walk-up — resolveProjectRoot finds .claude-plugin/plugin.json marker', async () => {
-    const root = tmp('gdd-mcp-walkup-plugin');
+    const root = tmp('hone-mcp-walkup-plugin');
     fs.mkdirSync(path.join(root, '.claude-plugin'), { recursive: true });
     fs.writeFileSync(
       path.join(root, '.claude-plugin', 'plugin.json'),
@@ -238,7 +238,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
     // Use a deeply-nested isolated tmp tree to escape any developer-machine
     // markers between os.tmpdir() and /. We DELETE the .design/ etc.
     // files inside if they exist (they shouldn't, but defensively scrub).
-    const isolated = tmp('gdd-mcp-walkup-none');
+    const isolated = tmp('hone-mcp-walkup-none');
     // Defensive scrub: ensure no markers exist in the test root itself.
     for (const marker of ['.design', '.planning']) {
       const p = path.join(isolated, marker);
@@ -365,7 +365,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
   // the parent project's `.design/`. Post-fix it must throw "not found".
 
   test('S8: walk-up stops at the first .git boundary (no cross-project bleed)', async () => {
-    const outer = tmp('gdd-mcp-s8-outer');
+    const outer = tmp('hone-mcp-s8-outer');
     fs.mkdirSync(path.join(outer, '.design'), { recursive: true });
     const nested = path.join(outer, 'nested');
     fs.mkdirSync(path.join(nested, '.git'), { recursive: true });
@@ -408,7 +408,7 @@ describe('27.7-01: gdd-mcp server scaffold', () => {
   test('S8: a marker AT the .git repo root is still found', async () => {
     // The boundary guard must not break the legitimate case where the repo
     // root itself holds the GDD marker alongside `.git`.
-    const root = tmp('gdd-mcp-s8-atroot');
+    const root = tmp('hone-mcp-s8-atroot');
     fs.mkdirSync(path.join(root, '.git'), { recursive: true });
     fs.mkdirSync(path.join(root, '.design'), { recursive: true });
     const deep = path.join(root, 'x', 'y');

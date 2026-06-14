@@ -40,7 +40,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -58,7 +58,7 @@ const qs = require(querySurfacePath);
 // ---------------------------------------------------------------------------
 
 function mkTmp(label) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), `gdd-bak-rotcap-${label}-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `hone-bak-rotcap-${label}-`));
 }
 
 function cleanup(dir) {

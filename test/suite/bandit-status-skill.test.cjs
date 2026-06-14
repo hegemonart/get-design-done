@@ -30,11 +30,11 @@ test('27.5-05: skills/bandit-status/SKILL.md exists', () => {
     `expected ${BANDIT_STATUS_SKILL} to exist`);
 });
 
-test('27.5-05: bandit-status skill frontmatter declares name=gdd-bandit-status', () => {
+test('27.5-05: bandit-status skill frontmatter declares name=hone-bandit-status', () => {
   const content = fs.readFileSync(BANDIT_STATUS_SKILL, 'utf8');
   assert.ok(content.startsWith('---\n'), 'expected frontmatter block to start file');
-  assert.match(content, /^name: gdd-bandit-status$/m,
-    'expected `name: gdd-bandit-status` in frontmatter');
+  assert.match(content, /^name: hone-bandit-status$/m,
+    'expected `name: hone-bandit-status` in frontmatter');
 });
 
 test('27.5-05: bandit-status skill frontmatter has description', () => {
@@ -74,10 +74,10 @@ test('27.5-05: bandit-status skill references canonical posterior path', () => {
     'stale .design/intel/bandit-posterior.json must not be referenced');
 });
 
-test('27.5-05: bandit-status skill cross-references /gdd:bandit-reset (mutation surface)', () => {
+test('27.5-05: bandit-status skill cross-references /hone:bandit-reset (mutation surface)', () => {
   const content = fs.readFileSync(BANDIT_STATUS_SKILL, 'utf8');
-  assert.match(content, /gdd:bandit-reset/,
-    'expected cross-reference to /gdd:bandit-reset (the only mutation surface)');
+  assert.match(content, /hone:bandit-reset/,
+    'expected cross-reference to /hone:bandit-reset (the only mutation surface)');
 });
 
 test('27.5-05: bandit-status skill body asserts read-only discipline (D-11)', () => {
