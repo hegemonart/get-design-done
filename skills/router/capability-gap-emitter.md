@@ -13,7 +13,7 @@ event before returning the conservative-fallback JSON output to the caller.
 This feeds Phase 29 Stage-0 telemetry - the reflector pattern-detection pass
 (Plan 29-02) and aggregation (Plan 29-03) read these events from the chain
 file (`.design/gep/events.jsonl`) to surface recurring router-unmatched
-intents as candidate agents in `/gdd:apply-reflections`.
+intents as candidate agents in `/hone:apply-reflections`.
 
 ## Synchronous emitter snippet
 

@@ -1,5 +1,5 @@
 ---
-name: gdd-paper-write
+name: hone-paper-write
 description: "Push design decisions from `.design/DESIGN-CONTEXT.md` into the active paper.design canvas by dispatching the `design-paper-writer` agent in one of three modes (annotate / tokenize / roundtrip). Use when the user has completed a design pipeline cycle and wants the decisions reflected in their paper.design canvas. Operates proposal->confirm with `--dry-run`."
 argument-hint: "<annotate|tokenize|roundtrip> [--dry-run]"
 user-invocable: true

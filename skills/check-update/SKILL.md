@@ -1,11 +1,11 @@
 ---
-name: gdd-check-update
+name: hone-check-update
 description: "Manual plugin-update check. Shows cached state by default; --refresh bypasses the 24h TTL; --dismiss hides the nudge until a newer release ships; --prompt spawns design-update-checker for a richer summary."
 argument-hint: "[--refresh] [--dismiss] [--prompt]"
 tools: Read, Write, Bash, Task
 ---
 
-# /gdd:check-update
+# /hone:check-update
 
 **Role:** Manual entry point for the plugin-update checker. The SessionStart hook (`hooks/update-check.sh`) already runs on its own 24h cadence and writes `.design/update-cache.json` + `.design/update-available.md`. This command lets the user inspect / force / dismiss / enrich that state on demand. See `./reference/heuristics.md` §"Version-cadence" for the off-cadence / preview-suffix handling background.
 
@@ -32,7 +32,7 @@ Flags combine: `--refresh --prompt` is valid (re-fetch, then enrich). `--dismiss
 
     This re-fetches `/releases/latest`, rewrites `.design/update-cache.json`, and re-renders `.design/update-available.md` subject to state/dismissal gates.
 
-3. **Read cache.** After any optional refresh, read `.design/update-cache.json`. If missing: print `No cache. Network may be unreachable or the hook has not run yet. Try /gdd:check-update --refresh.` and exit.
+3. **Read cache.** After any optional refresh, read `.design/update-cache.json`. If missing: print `No cache. Network may be unreachable or the hook has not run yet. Try /hone:check-update --refresh.` and exit.
 
 4. **`--dismiss` path** (if set): Compute new config contents and write atomically via the env-prefix Python heredoc pattern below. The pattern is essential - passing variables as trailing `KEY=VALUE` argv treats them as `sys.argv`, not `os.environ`. Use env-prefix form only.
 
@@ -71,7 +71,7 @@ Flags combine: `--refresh --prompt` is valid (re-fetch, then enrich). `--dismiss
 5. **Print default state** (always, unless exited early):
 
     ```
-    ━━━ /gdd:check-update ━━━
+    ━━━ /hone:check-update ━━━
     Current:   v<X.Y.Z>
     Latest:    v<A.B.C>   (delta: <major|minor|patch|off-cadence|none>)
     Newer:     <true|false>

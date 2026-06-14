@@ -1,5 +1,5 @@
 ---
-name: gdd-apply-reflections
+name: hone-apply-reflections
 description: "Review and selectively apply proposals from .design/reflections/<cycle-slug>.md. Diffs each proposal, prompts user to accept/skip/edit, then writes changes."
 argument-hint: "[--cycle <slug>] [--filter <FRONTMATTER|REFERENCE|BUDGET|QUESTION|GLOBAL-SKILL>] [--dry-run]"
 tools: Read, Write, Edit, Bash, Glob

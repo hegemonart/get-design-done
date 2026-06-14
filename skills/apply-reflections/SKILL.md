@@ -1,11 +1,11 @@
 ---
-name: gdd-apply-reflections
+name: hone-apply-reflections
 description: "Review and selectively apply proposals from .design/reflections/<cycle-slug>.md. Diffs each proposal, prompts user to accept/skip/edit, then writes changes."
 argument-hint: "[--cycle <slug>] [--filter <FRONTMATTER|REFERENCE|BUDGET|QUESTION|GLOBAL-SKILL>] [--dry-run]"
 tools: Read, Write, Edit, Bash, Glob
 ---
 
-# /gdd:apply-reflections
+# /hone:apply-reflections
 
 Interactive proposal review loop. Reads `.design/reflections/<cycle-slug>.md`, walks each numbered proposal, and applies accepted ones to the appropriate target file. Nothing is applied without explicit user confirmation.
 
@@ -15,7 +15,7 @@ Interactive proposal review loop. Reads `.design/reflections/<cycle-slug>.md`, w
 
 - If `--cycle <slug>` given: load `.design/reflections/<slug>.md`
 - Else: glob `.design/reflections/*.md`, sort by modified time descending, load the most recent
-- If no file found: error "No reflections found. Run `/gdd:reflect` first."
+- If no file found: error "No reflections found. Run `/hone:reflect` first."
 - Print: "Reviewing reflections: <filename>"
 
 ### 2. Parse proposals
@@ -48,7 +48,7 @@ Based on user choice:
 - **a** - apply (see Apply Logic below)
 - **s** - mark proposal as `**Reviewed: skipped**` in the reflections file; continue
 - **e** - show the Change text, ask user to provide edited version, then apply the edited version
-- **q** - stop processing; print "Stopped at proposal N. Resume with `/gdd:apply-reflections --cycle <slug>`."
+- **q** - stop processing; print "Stopped at proposal N. Resume with `/hone:apply-reflections --cycle <slug>`."
 
 ### 4. Apply Logic by Proposal Type
 
@@ -86,7 +86,7 @@ KFM-catalogue proposals authored by `scripts/lib/reflector-kfm-proposer.cjs` (Ph
 
 ## [INSTINCT]
 
-Atomic instinct units emitted by `design-reflector` (and surfaced from `/gdd:extract-learnings`) appear as a distinct proposal class, alongside `[INCUBATOR]` and `[KFM-CANDIDATE]`. Each unit is a fenced `yaml` block under the reflector's `## Atomic instincts` section, shaped per `reference/instinct-format.md` (`id`, `trigger`, `confidence`, `domain`, `scope`, `project_id`, `source`, `cycles_seen`, `first_seen`, `last_seen`, plus a short body). A unit is a proposal, never a stored fact - nothing lands until the user accepts it.
+Atomic instinct units emitted by `design-reflector` (and surfaced from `/hone:extract-learnings`) appear as a distinct proposal class, alongside `[INCUBATOR]` and `[KFM-CANDIDATE]`. Each unit is a fenced `yaml` block under the reflector's `## Atomic instincts` section, shaped per `reference/instinct-format.md` (`id`, `trigger`, `confidence`, `domain`, `scope`, `project_id`, `source`, `cycles_seen`, `first_seen`, `last_seen`, plus a short body). A unit is a proposal, never a stored fact - nothing lands until the user accepts it.
 
 Mirror the `[INCUBATOR]` flow:
 
@@ -99,7 +99,7 @@ Mirror the `[INCUBATOR]` flow:
 1. **accept** - call `scripts/lib/instinct-store.cjs` `add(unit, { scope, baseDir })` with the unit at its emitted `confidence`. The store owns de-duplication and `cycles_seen` bookkeeping. On success print `Stored instinct <id> (<domain>, confidence <n>).` and append `**Applied**: <date>` to the proposal block.
 2. **reject** - do not store the unit. Append `**Reviewed: rejected**` to the reflections file.
 3. **defer** - no-op; the unit re-surfaces next run. Append `**Reviewed: deferred**`.
-4. **edit** - let the user adjust `trigger`, `confidence`, or `domain`, then accept the edited unit through the same `add(...)` call. Default `scope: 'project'` (write `global` only when the unit's frontmatter says so); never edit `.design/instincts/instincts.json` directly, and promote to global via the separate gated `/gdd:instinct promote`.
+4. **edit** - let the user adjust `trigger`, `confidence`, or `domain`, then accept the edited unit through the same `add(...)` call. Default `scope: 'project'` (write `global` only when the unit's frontmatter says so); never edit `.design/instincts/instincts.json` directly, and promote to global via the separate gated `/hone:instinct promote`.
 
 ## Do Not
 

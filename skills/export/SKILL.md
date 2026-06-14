@@ -1,12 +1,12 @@
 ---
-name: gdd-export
+name: hone-export
 description: "Packages a completed design cycle (.design artifacts + decisions + screenshots) into a stakeholder-shareable artifact - self-contained HTML, print-styled PDF (Paged.js-compatible), or a Notion page. Redacts secrets; --pseudonymize masks identity for external sharing; --pr posts the HTML preview as a PR comment. Use to hand a design-review packet to PMs/execs/brand who aren't in the repo."
 argument-hint: "<cycle-id> --format html|pdf|notion [--pseudonymize] [--pr]"
 user-invocable: true
 tools: Read, Write, Bash, Glob, Grep, ToolSearch, Task
 ---
 
-# /gdd:export
+# /hone:export
 
 Turns a completed cycle's in-repo design output into a shareable artifact. Closes the gap that `.design/*.md` lives only in the repo - stakeholders not in code can't consume it. The format contract + source set live in `../../reference/export-formats.md`; the Notion write-path in `../../connections/notion.md`.
 

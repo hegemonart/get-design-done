@@ -1,5 +1,5 @@
 ---
-name: gdd-pencil-write
+name: hone-pencil-write
 description: "Update local `.pen` source files with design decisions from `.design/DESIGN-CONTEXT.md` by dispatching the `design-pencil-writer` agent in one of two modes (annotate / roundtrip). Use when the user has completed a design pipeline cycle and wants the decisions reflected in their `.pen` files. Operates proposal->confirm with `--dry-run`."
 argument-hint: "<annotate|roundtrip> [--dry-run]"
 user-invocable: true

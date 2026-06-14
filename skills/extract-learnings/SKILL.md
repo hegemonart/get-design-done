@@ -1,16 +1,16 @@
 ---
-name: gdd-extract-learnings
+name: hone-extract-learnings
 description: "Extracts project-specific design patterns and decisions from .design/ artifacts and writes them to .design/learnings/. Optionally proposes updates to reference/ files for user review."
 tools: Bash, Read, Write, Glob, Grep
 ---
 
-# /gdd:extract-learnings
+# /hone:extract-learnings
 
 **Role:** Scan `.design/` artifacts for recurring patterns, successful decisions, and validated approaches. Write structured learnings to `.design/learnings/`. Optionally propose additions to tracked `reference/` files for the user to review and approve.
 
 ## When to run
 
-- After `/gdd:complete-cycle` (auto-suggested by complete-cycle skill)
+- After `/hone:complete-cycle` (auto-suggested by complete-cycle skill)
 - After a major verify/audit pass surfaces new patterns
 - Manually, to checkpoint what the project has learned
 

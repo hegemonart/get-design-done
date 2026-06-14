@@ -9,8 +9,9 @@
 //   3. substitute            {{command_prefix}} {{model}} {{config_file}} {{ask_instruction}}
 //   4. restore escapes       sentinel -> {{ x }}
 //
-// D-01: for the Claude config (command_prefix === '/gdd:') this is the exact inverse of the migration
-// (/gdd: -> {{command_prefix}}), so compile(source, claude) reproduces skills/ byte-for-byte.
+// D-01: for the Claude config (command_prefix === '/hone:') this is the exact inverse of the migration
+// (/hone: -> {{command_prefix}}), so compile(source, claude) reproduces skills/ byte-for-byte.
+// Phase 61 rebrand (REBRAND-03): the Claude prefix is now '/hone:' sourced from the identity seam.
 
 const PLACEHOLDERS = ['command_prefix', 'model', 'config_file', 'ask_instruction'];
 const ESCAPE_OPEN = '@@GDD_ESC_';

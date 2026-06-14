@@ -1,5 +1,5 @@
 ---
-name: gdd-handoff
+name: hone-handoff
 description: "Handoff-first entry point that initializes a cycle from a Claude Design handoff bundle (URL, ZIP, HTML, PDF, or PPTX), skips the explore/plan stages, and routes straight to post-handoff verify. Thin wrapper over the Handoff Routing logic in the root pipeline router and the claude-design connection. Use when a Claude Design bundle was sent or dropped into the project and you want to implement and verify it without re-running discovery, or when arguments start with handoff or contain --from-handoff."
 argument-hint: "<bundle-path-or-url>"
 user-invocable: true
@@ -10,7 +10,7 @@ tools: Read, Write, Bash, Glob, Grep, Task
 
 Initialize a design cycle from a Claude Design handoff bundle, then route to verify in
 post-handoff mode. This skill is the named home for the inline **Handoff Routing** block in
-the root pipeline router (`SKILL.md`); invoking `/gdd:handoff <path>` runs the
+the root pipeline router (`SKILL.md`); invoking `/hone:handoff <path>` runs the
 same sequence. See `connections/claude-design.md` for bundle formats and parsing rules.
 
 ## Role
@@ -30,11 +30,11 @@ verify skill. Stages scan/discover/plan are skipped by design - a handoff bundle
 
 ### 1. Resolve the bundle path
 
-- `/gdd:handoff <path>` -> bundle path is the argument.
+- `/hone:handoff <path>` -> bundle path is the argument.
 - `--from-handoff <path>` -> bundle path is the value after the flag.
 - A `https://api.anthropic.com/v1/design/h/<hash>` URL in the arguments -> treat as the bundle.
 - None of the above -> read `handoff_path` from `.design/STATE.md`. Still absent -> error:
-  "Provide a bundle path: /gdd:handoff ./path/to/bundle.html".
+  "Provide a bundle path: /hone:handoff ./path/to/bundle.html".
 - For a file path: verify the file exists; if not, error "Bundle not found at <path>".
 
 ### 2. Initialize STATE.md

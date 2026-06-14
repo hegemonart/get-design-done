@@ -1,5 +1,5 @@
 ---
-name: gdd-review-backlog
+name: hone-review-backlog
 description: "Review parked backlog items and promote any to active cycle todo."
 tools: Read, Write, AskUserQuestion
 disable-model-invocation: true

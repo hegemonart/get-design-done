@@ -1,5 +1,5 @@
 ---
-name: gdd-router
+name: hone-router
 description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. A SKILL.md prompt the model executes to emit a routing-decision JSON from rule tables (no separate agent spawn). Optional/advisory - invoked only by the skills that opt into routing; the budget-enforcer hook tolerates its absence. Read by hooks/budget-enforcer.ts."
 argument-hint: "<intent-string> [<target-artifacts-csv>]"
 tools: Read, Bash, Grep

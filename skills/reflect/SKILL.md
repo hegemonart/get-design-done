@@ -1,13 +1,13 @@
 ---
-name: gdd-reflect
-description: "Run design-reflector on demand - produces .design/reflections/<cycle-slug>.md with improvement proposals. Review proposals with /gdd:apply-reflections."
+name: hone-reflect
+description: "Run design-reflector on demand - produces .design/reflections/<cycle-slug>.md with improvement proposals. Review proposals with /hone:apply-reflections."
 argument-hint: "[--dry-run] [--cycle <slug>]"
 tools: Read, Write, Task
 ---
 
 @reference/retrieval-contract.md
 
-# /gdd:reflect
+# /hone:reflect
 
 Run `design-reflector` on demand against the current (or specified) cycle. Produces `.design/reflections/<cycle-slug>.md` with numbered improvement proposals. Every proposal requires explicit user review - nothing is auto-applied.
 
@@ -18,7 +18,7 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
 2. **Resolve cycle slug**:
    - If `--cycle <slug>` given: use that slug directly
    - Else: read `.design/STATE.md`, extract the active `cycle:` ID from the `<position>` block
-   - If STATE.md not found: abort with "No .design/STATE.md found. Run `/gdd:new-project` first."
+   - If STATE.md not found: abort with "No .design/STATE.md found. Run `/hone:new-project` first."
 
 3. **Build required-reading list**:
    ```
@@ -39,7 +39,7 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
    ```
    node "${CLAUDE_PLUGIN_ROOT}/scripts/lib/reflector/capability-gap-scan.cjs" --dry-run
    ```
-   The scan emits `capability_gap` events (`source: "reflector_pattern"`) for recurring patterns lacking a dedicated executable owner; Plan 29-03 aggregates these for `/gdd:apply-reflections`.
+   The scan emits `capability_gap` events (`source: "reflector_pattern"`) for recurring patterns lacking a dedicated executable owner; Plan 29-03 aggregates these for `/hone:apply-reflections`.
 
 4. **Spawn design-reflector**:
    ```
@@ -74,7 +74,7 @@ Run `design-reflector` on demand against the current (or specified) cycle. Produ
        [QUESTION] N
        [GLOBAL-SKILL] N
 
-     Review and apply: /gdd:apply-reflections
+     Review and apply: /hone:apply-reflections
      ```
 
 ## Do Not

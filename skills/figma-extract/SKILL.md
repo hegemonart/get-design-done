@@ -1,5 +1,5 @@
 ---
-name: gdd-figma-extract
+name: hone-figma-extract
 description: "Off-context Figma design-system extraction into a compact local digest (DESIGN.md + tokens.json + components.json). Pulls the file via the Figma REST API and digests it without the raw JSON ever entering the model context."
 ---
 
@@ -10,8 +10,8 @@ Pull a whole Figma design system into a compact, queryable local digest - **with
 ## Usage
 
 ```
-/gdd:figma-extract <file-key-or-url>                  # full design-system digest
-/gdd:figma-extract <file-key-or-url> --component Button  # ~500-token single-component slice
+/hone:figma-extract <file-key-or-url>                  # full design-system digest
+/hone:figma-extract <file-key-or-url> --component Button  # ~500-token single-component slice
 ```
 
 `<file-key-or-url>` is a Figma file URL (`https://www.figma.com/file/<key>/…` or `/design/<key>/…`) or a bare file key.

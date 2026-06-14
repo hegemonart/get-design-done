@@ -1,5 +1,5 @@
 ---
-name: gdd-map
+name: hone-map
 description: "Dispatches 5 specialist codebase mappers in parallel. Produces .design/map/*.md files consumed by the explore stage."
 argument-hint: "[--only tokens|components|visual-hierarchy|a11y|motion]"
 tools: Read, Write, Bash, Task
@@ -82,7 +82,7 @@ Write `.design/DESIGN-MAP.md` - thin index linking to each `.design/map/*.md` wi
 ━━━ Map complete ━━━
 Files: .design/map/tokens.md, components.md, visual-hierarchy.md, a11y.md, motion.md
 Index: .design/DESIGN-MAP.md
-Next: /gdd:explore (consumes .design/DESIGN-PATTERNS.md on happy path; .design/map/*.md available for drill-down)
+Next: /hone:explore (consumes .design/DESIGN-PATTERNS.md on happy path; .design/map/*.md available for drill-down)
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 

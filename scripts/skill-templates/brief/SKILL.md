@@ -1,8 +1,8 @@
 ---
-name: gdd-brief
+name: hone-brief
 description: "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before {{command_prefix}}explore. Activates for requests involving capturing a problem statement, defining audience and constraints, or starting a new design brief."
 argument-hint: "[--re-brief to redo intake on existing project]"
-tools: Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get
+tools: Read, Write, AskUserQuestion, mcp__hone_state__frontmatter_update, mcp__hone_state__set_status, mcp__hone_state__update_progress, mcp__hone_state__get
 ---
 
 # Get Design Done - Brief
@@ -74,11 +74,11 @@ If `.design/STATE.md` does not exist, copy the template block from `reference/ST
 
 With `.design/STATE.md` seeded from the template:
 
-1. Stamp timestamps + cycle id: call `mcp__gdd_state__frontmatter_update` with `patch: { started_at: <ISO>, last_checkpoint: <ISO>, cycle: <cycle-id> }`.
-2. Mark brief progress: call `mcp__gdd_state__update_progress` with `task_progress: "5/5"`, `status: "brief_complete"`.
-3. Set handoff status: call `mcp__gdd_state__set_status` with `status: "brief_complete"`.
+1. Stamp timestamps + cycle id: call `mcp__hone_state__frontmatter_update` with `patch: { started_at: <ISO>, last_checkpoint: <ISO>, cycle: <cycle-id> }`.
+2. Mark brief progress: call `mcp__hone_state__update_progress` with `task_progress: "5/5"`, `status: "brief_complete"`.
+3. Set handoff status: call `mcp__hone_state__set_status` with `status: "brief_complete"`.
 
-Do NOT call `mcp__gdd_state__transition_stage` from brief - explore calls it on entry, keeping the transition atomic with the stage that owns the new state.
+Do NOT call `mcp__hone_state__transition_stage` from brief - explore calls it on entry, keeping the transition atomic with the stage that owns the new state.
 
 ## Step 6 - Inline glossary (CONTEXT.md) + ADR pointer
 

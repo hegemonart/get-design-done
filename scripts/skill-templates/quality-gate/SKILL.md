@@ -58,7 +58,7 @@ Else: increment `iteration`, emit `quality_gate_iteration`, spawn `design-fixer`
 
 ## Step 5 - STATE write
 
-Mutate `state.quality_gate.run` to `{started_at, completed_at, status, iteration, commands_run, extra_attrs:{}}`. Persist via `mcp__gdd_state__set_quality_gate` or `apply()` mutator from `sdk/state/mutator.ts` - identical on-disk shape.
+Mutate `state.quality_gate.run` to `{started_at, completed_at, status, iteration, commands_run, extra_attrs:{}}`. Persist via `mcp__hone_state__set_quality_gate` or `apply()` mutator from `sdk/state/mutator.ts` - identical on-disk shape.
 
 ## Step 6 - Event emission (D-09)
 

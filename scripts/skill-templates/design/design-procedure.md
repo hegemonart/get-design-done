@@ -23,10 +23,10 @@ the full executor prompts and parallelism semantics.
 
 ## Stage entry
 
-1. Call `mcp__gdd_state__transition_stage` with `to: "design"`.
+1. Call `mcp__hone_state__transition_stage` with `to: "design"`.
    - Gate failure surfaces `error.context.blockers` to the user; do not advance.
    - If the transition succeeds and the prior stage was already `design` with `status: in_progress`, this is a RESUME - use `task_progress` numerator as source of truth and skip tasks that already have a corresponding `.design/tasks/task-NN.md` file.
-2. Call `mcp__gdd_state__get` -> snapshot `state`; read `state.position.wave` to decide execution plan.
+2. Call `mcp__hone_state__get` -> snapshot `state`; read `state.position.wave` to decide execution plan.
 
 Abort only if `.design/DESIGN-PLAN.md` is missing:
 > "No plan found. Run `/get-design-done:plan` first."
@@ -91,7 +91,7 @@ For each wave:
 1. Read `.design/config.json` `parallelism` (or defaults from `reference/config-schema.md`).
 2. Collect candidates in the wave; check `Touches:`, `writes:`, `parallel-safe`, and `typical-duration-seconds` fields.
 3. Apply rules in order from `reference/parallelism-rules.md` (hard -> soft). Overlapping Touches split into sequential sub-waves.
-4. Record the parallelism decision for this wave via `mcp__gdd_state__update_progress` with `task_progress: "<completed>/<total>"` and `status: "design_wave_<N>_parallelism: <parallel|serial>, reason=<short-reason>"` - the status string is the canonical carrier (mirrors the plan-stage convention from Plan 20-09; a dedicated tool may be added in a follow-on plan).
+4. Record the parallelism decision for this wave via `mcp__hone_state__update_progress` with `task_progress: "<completed>/<total>"` and `status: "design_wave_<N>_parallelism: <parallel|serial>, reason=<short-reason>"` - the status string is the canonical carrier (mirrors the plan-stage convention from Plan 20-09; a dedicated tool may be added in a follow-on plan).
 5. If `parallel`: spawn all candidates via concurrent `Task()` calls in one response. If `serial`: spawn sequentially.
 
 ### Executor prompt template (applies to every spawned design-executor)
@@ -99,9 +99,9 @@ For each wave:
 Every spawned executor receives the following STATE.md contract in its prompt:
 
 > **STATE.md mutation protocol** - When you complete a task in your assigned batch, update STATE.md ONLY via the `gdd-state` MCP tools. Specifically:
-> - Report task progress: `mcp__gdd_state__update_progress` with your new `task_progress` fraction.
-> - Add blockers: `mcp__gdd_state__add_blocker` with `{ stage: "design", date: <today>, text: "..." }`.
-> - Resolve your own blockers on fix: `mcp__gdd_state__resolve_blocker` with the blocker id.
+> - Report task progress: `mcp__hone_state__update_progress` with your new `task_progress` fraction.
+> - Add blockers: `mcp__hone_state__add_blocker` with `{ stage: "design", date: <today>, text: "..." }`.
+> - Resolve your own blockers on fix: `mcp__hone_state__resolve_blocker` with the blocker id.
 >
 > Do NOT `Read` + `Write` `.design/STATE.md` directly - the MCP tools enforce the lockfile and emit mutation events. Direct writes corrupt parallel state.
 
@@ -175,8 +175,8 @@ Merge each worktree branch back into the working directory. Each agent touched n
 
 After merge, roll up the batch's progress:
 
-- Call `mcp__gdd_state__update_progress` with `task_progress: "<completed>/<total>"` and `status: "design_wave_<N>_parallel_batch_complete"`.
-- Call `mcp__gdd_state__checkpoint` - records the wave boundary in `<timestamps>` and bumps `last_checkpoint`.
+- Call `mcp__hone_state__update_progress` with `task_progress: "<completed>/<total>"` and `status: "design_wave_<N>_parallel_batch_complete"`.
+- Call `mcp__hone_state__checkpoint` - records the wave boundary in `<timestamps>` and bumps `last_checkpoint`.
 
 ### Sequential tail (Parallel: false tasks, or all tasks if `parallel_mode=false`)
 
@@ -220,9 +220,9 @@ Emit `## EXECUTION COMPLETE` when done.
 """, subagent_type="design-executor")
 ```
 
-After each task completes, call `mcp__gdd_state__update_progress` with the new `task_progress: "<completed>/<total>"` and `status: "design_wave_<N>_task_<NN>_complete"`.
+After each task completes, call `mcp__hone_state__update_progress` with the new `task_progress: "<completed>/<total>"` and `status: "design_wave_<N>_task_<NN>_complete"`.
 
-After the final sequential task of the wave, call `mcp__gdd_state__checkpoint` - records the wave boundary in `<timestamps>` and bumps `last_checkpoint`.
+After the final sequential task of the wave, call `mcp__hone_state__checkpoint` - records the wave boundary in `<timestamps>` and bumps `last_checkpoint`.
 
 ---
 
@@ -247,17 +247,17 @@ Skip checkpoint if `auto_mode=true`.
 
 After each wave, check task-NN.md files for `status: deviation`. If any found:
 
-- Call `mcp__gdd_state__get` -> read `state.blockers`; present affected task IDs and their blocker descriptions from the returned snapshot.
+- Call `mcp__hone_state__get` -> read `state.blockers`; present affected task IDs and their blocker descriptions from the returned snapshot.
 - Offer: (a) stop stage, (b) continue remaining tasks
 - In `auto_mode`: continue automatically, log all deviations
-- When a blocker is addressed (fix committed by a follow-up task), call `mcp__gdd_state__resolve_blocker` with the blocker id to clear it from the live state.
+- When a blocker is addressed (fix committed by a follow-up task), call `mcp__hone_state__resolve_blocker` with the blocker id to clear it from the live state.
 
 ---
 
 ## State Update (exit)
 
-1. Call `mcp__gdd_state__set_status` with `status: "design_complete"` - marks the stage completed without transitioning; verify calls `transition_stage` on its entry, keeping the transition atomic with the owning stage.
-2. Call `mcp__gdd_state__checkpoint` - stamps `last_checkpoint` and appends a `design_completed_at` entry to `<timestamps>`.
+1. Call `mcp__hone_state__set_status` with `status: "design_complete"` - marks the stage completed without transitioning; verify calls `transition_stage` on its entry, keeping the transition atomic with the owning stage.
+2. Call `mcp__hone_state__checkpoint` - stamps `last_checkpoint` and appends a `design_completed_at` entry to `<timestamps>`.
 
 ---
 

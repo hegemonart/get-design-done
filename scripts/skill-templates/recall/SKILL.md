@@ -1,5 +1,5 @@
 ---
-name: gdd-recall
+name: hone-recall
 description: "Search cross-cycle memory: decisions, learnings, experience archives. Returns ranked matches."
 argument-hint: "<query> [--reindex]"
 tools: Read, Write, Bash

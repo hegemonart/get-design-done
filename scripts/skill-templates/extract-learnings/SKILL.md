@@ -1,5 +1,5 @@
 ---
-name: gdd-extract-learnings
+name: hone-extract-learnings
 description: "Extracts project-specific design patterns and decisions from .design/ artifacts and writes them to .design/learnings/. Optionally proposes updates to reference/ files for user review."
 tools: Bash, Read, Write, Glob, Grep
 ---

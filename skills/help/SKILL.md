@@ -1,5 +1,5 @@
 ---
-name: gdd-help
+name: hone-help
 description: "Lists all available get-design-done commands with one-line descriptions"
 tools: Read
 disable-model-invocation: true
@@ -7,17 +7,17 @@ disable-model-invocation: true
 
 # Get Design Done - Help
 
-**Role:** Print a complete, formatted reference of every `/gdd:` command with a one-line description. The list is built from the skill manifest at runtime so it can never drift from the installed skills.
+**Role:** Print a complete, formatted reference of every `/hone:` command with a one-line description. The list is built from the skill manifest at runtime so it can never drift from the installed skills.
 
 ---
 
 ## Procedure
 
-1. **Read the manifest.** Open `scripts/lib/manifest/skills.json`. Its `skills` array is the source of truth: one object per skill, each with a `name` (the command, used as `/gdd:<name>`) and a `description`. Some records also carry `user_invocable`, `disable_model_invocation`, `composes_with`, `next_skills`, and `registered_in_phase` - use those only to refine grouping, never to drop a skill.
+1. **Read the manifest.** Open `scripts/lib/manifest/skills.json`. Its `skills` array is the source of truth: one object per skill, each with a `name` (the command, used as `/hone:<name>`) and a `description`. Some records also carry `user_invocable`, `disable_model_invocation`, `composes_with`, `next_skills`, and `registered_in_phase` - use those only to refine grouping, never to drop a skill.
 
 2. **Cover every skill.** The output must include every object in `skills` exactly once. Do not hardcode a command list and do not print a fixed count - the only authority is the manifest you just read. If a skill is in the manifest, it appears in the help; if it is removed from the manifest, it disappears from the help automatically.
 
-3. **One-line each.** For every skill, emit `/gdd:<name>` followed by a single condensed line drawn from its `description`. Trim each description to its first sentence (cut at the first sentence-ending period) so the table stays scannable. Strip any leading "Stage N of 5" boilerplate into a short `Stage N` tag where it helps. Never invent a description - if a record has only a terse `description`, use it verbatim (condensed).
+3. **One-line each.** For every skill, emit `/hone:<name>` followed by a single condensed line drawn from its `description`. Trim each description to its first sentence (cut at the first sentence-ending period) so the table stays scannable. Strip any leading "Stage N of 5" boilerplate into a short `Stage N` tag where it helps. Never invent a description - if a record has only a terse `description`, use it verbatim (condensed).
 
 4. **Group sensibly.** The manifest has no explicit category field, so derive groups from what each skill does and lead with the ones users reach for first. A good order:
    - **Pipeline stages (run in order):** `brief`, `explore`, `plan`, `design`, `verify` - the five-stage spine, in that sequence.
@@ -45,7 +45,7 @@ Standalone analysis:
 (continue for every group, ending with the alphabetical catch-all)
 ```
 
-   Pad command names to a consistent column so descriptions align. Keep the `/gdd:` convention: show the bare name in the table (it is already understood to be a `/gdd:` command), and use the full `/gdd:<name>` form in any surrounding prose.
+   Pad command names to a consistent column so descriptions align. Keep the `/hone:` convention: show the bare name in the table (it is already understood to be a `/hone:` command), and use the full `/hone:<name>` form in any surrounding prose.
 
 ## Update notice (safe-window surface)
 

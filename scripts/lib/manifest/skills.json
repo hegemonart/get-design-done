@@ -59,7 +59,7 @@
       "name": "brief",
       "description": "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before {{command_prefix}}explore. Activates for requests involving capturing a problem statement, defining audience and constraints, or starting a new design brief.",
       "argument_hint": "[--re-brief to redo intake on existing project]",
-      "tools": "Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get",
+      "tools": "Read, Write, AskUserQuestion, mcp__hone_state__frontmatter_update, mcp__hone_state__set_status, mcp__hone_state__update_progress, mcp__hone_state__get",
       "composes_with": [
         "explore"
       ],
@@ -148,7 +148,7 @@
       "description": "Stage 4 of 5 orchestrator that reads DESIGN-PLAN.md, partitions tasks by wave + parallel-safe flag, and spawns design-executor agents with the appropriate isolation (worktree for parallel batches, in-place for sequential tail). Use when DESIGN-PLAN.md is approved and ready for implementation. Activates for requests involving implementing UI, building components, or turning a plan into working interface code.",
       "argument_hint": "[--auto] [--parallel] [--variants N]",
       "user_invocable": true,
-      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint",
+      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__transition_stage, mcp__hone_state__update_progress, mcp__hone_state__set_status, mcp__hone_state__add_blocker, mcp__hone_state__resolve_blocker, mcp__hone_state__checkpoint",
       "composes_with": [
         "figma-write",
         "paper-write",
@@ -177,7 +177,7 @@
       "name": "explore",
       "description": "Stage 2 of 5 - unified exploration merging inventory grep + design interview. Probes 6 connections, scans the codebase, conducts the AskUserQuestion interview, and writes .design/DESIGN.md + DESIGN-DEBT.md + DESIGN-CONTEXT.md. Use after {{command_prefix}}brief to map the existing system and lock decisions before planning. Activates for requests involving researching design direction, gathering references, or exploring visual options.",
       "argument_hint": "[--skip-interview] [--skip-scan] [--incremental] [--full]",
-      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__probe_connections, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__add_decision",
+      "tools": "Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__transition_stage, mcp__hone_state__probe_connections, mcp__hone_state__update_progress, mcp__hone_state__set_status, mcp__hone_state__add_blocker, mcp__hone_state__checkpoint, mcp__hone_state__add_decision",
       "composes_with": [
         "discuss",
         "list-assumptions",
@@ -234,7 +234,7 @@
     {
       "name": "health",
       "description": "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions. Activates for requests involving checking .design artifact health, staleness, token drift, or broken state transitions.",
-      "tools": "Read, Bash, Glob, Grep, mcp__gdd_state__get",
+      "tools": "Read, Bash, Glob, Grep, mcp__hone_state__get",
       "disable_model_invocation": true
     },
     {
@@ -341,7 +341,7 @@
     {
       "name": "next",
       "description": "Routes to the next pipeline stage based on current STATE.md position",
-      "tools": "Read, Write, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list",
+      "tools": "Read, Write, mcp__hone_status, mcp__hone_phase_current, mcp__hone_plans_list",
       "disable_model_invocation": true
     },
     {
@@ -392,7 +392,7 @@
       "name": "pause",
       "description": "Write a numbered checkpoint so work can resume in a new session without re-running completed stages.",
       "argument_hint": "[context note]",
-      "tools": "Read, Write, Bash, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint",
+      "tools": "Read, Write, Bash, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__set_status, mcp__hone_state__add_blocker, mcp__hone_state__checkpoint",
       "disable_model_invocation": true
     },
     {
@@ -428,7 +428,7 @@
       "description": "Stage 3 of 5 orchestrator that reads DESIGN-CONTEXT.md, runs optional research (phase-researcher / pattern-mapper / assumptions-analyzer / synthesizer), spawns design-planner + design-plan-checker, and writes DESIGN-PLAN.md. Use when DESIGN-CONTEXT.md is locked and you need a wave-ordered execution plan. Activates for requests involving breaking design work into steps, sequencing implementation, or planning a build.",
       "argument_hint": "[--auto] [--parallel]",
       "user_invocable": true,
-      "tools": "Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections",
+      "tools": "Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__hone_state__get, mcp__hone_state__transition_stage, mcp__hone_state__add_decision, mcp__hone_state__add_must_have, mcp__hone_state__update_progress, mcp__hone_state__set_status, mcp__hone_state__add_blocker, mcp__hone_state__checkpoint, mcp__hone_state__probe_connections",
       "next_skills": [
         "design"
       ]
@@ -451,7 +451,7 @@
       "name": "progress",
       "description": "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit. Activates for requests involving showing current project state, routing to the next action, or a status check.",
       "argument_hint": "[--forensic]",
-      "tools": "Read, Bash, Grep, Glob, mcp__gdd_state__get, mcp__gdd_status, mcp__gdd_phase_current"
+      "tools": "Read, Bash, Grep, Glob, mcp__hone_state__get, mcp__hone_status, mcp__hone_phase_current"
     },
     {
       "name": "quality-gate",
@@ -509,7 +509,7 @@
       "name": "resume",
       "description": "Restore session context from a numbered checkpoint. Lists available checkpoints when no argument given.",
       "argument_hint": "[<N>]",
-      "tools": "Read, Write, Bash, Glob, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list, mcp__gdd_decisions_list",
+      "tools": "Read, Write, Bash, Glob, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__set_status, mcp__hone_state__resolve_blocker, mcp__hone_state__checkpoint, mcp__hone_status, mcp__hone_phase_current, mcp__hone_plans_list, mcp__hone_decisions_list",
       "disable_model_invocation": true
     },
     {
@@ -549,7 +549,7 @@
       "name": "settings",
       "description": "Manage .design/config.json settings. Subcommands: profile, parallelism, cleanup, show.",
       "argument_hint": "<profile <name>|parallelism <key> <value>|cleanup|show>",
-      "tools": "Read, Write, AskUserQuestion, Bash, mcp__gdd_state__get, mcp__gdd_state__frontmatter_update",
+      "tools": "Read, Write, AskUserQuestion, Bash, mcp__hone_state__get, mcp__hone_state__frontmatter_update",
       "disable_model_invocation": true
     },
     {
@@ -644,7 +644,7 @@
       "name": "todo",
       "description": "Design backlog - add/list/pick design tasks. Writes to .design/TODO.md.",
       "argument_hint": "<add|list|pick> [text]",
-      "tools": "Read, Write, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have",
+      "tools": "Read, Write, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__add_decision, mcp__hone_state__add_must_have",
       "disable_model_invocation": true
     },
     {
@@ -693,7 +693,7 @@
       "description": "Stage 5 of 5 orchestrator that spawns design-auditor, design-verifier, and design-integration-checker in sequence, interprets pass/gap result, and drives the gap-response loop (inline fix, save-and-exit, or accept-as-is). Use when implementation is complete and ready for final pre-ship verification. Activates for requests involving checking finished UI against the design system, running a pre-ship review, or final verification.",
       "argument_hint": "[--auto] [--post-handoff]",
       "user_invocable": true,
-      "tools": "mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_must_have, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections",
+      "tools": "mcp__hone_state__get, mcp__hone_state__transition_stage, mcp__hone_state__add_must_have, mcp__hone_state__add_blocker, mcp__hone_state__resolve_blocker, mcp__hone_state__update_progress, mcp__hone_state__set_status, mcp__hone_state__checkpoint, mcp__hone_state__probe_connections",
       "composes_with": [
         "audit",
         "debug"

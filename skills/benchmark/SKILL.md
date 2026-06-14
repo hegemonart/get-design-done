@@ -1,11 +1,11 @@
 ---
-name: gdd-benchmark
+name: hone-benchmark
 description: "Harvest and synthesize per-component design benchmarks from 18 design systems and produce canonical component specs at `reference/components/<name>.md`. Use when adding a new component spec, running a benchmark wave, listing corpus coverage, or refreshing a spec after a design-system version bump."
 argument-hint: "<component> | --wave <N> | --list | --refresh <component>"
 tools: Read, Write, Bash, Grep, Glob, Task, WebFetch
 ---
 
-# /gdd:benchmark
+# /hone:benchmark
 
 Harvest per-component design knowledge from 18 design systems and synthesize canonical
 specs at `reference/components/<name>.md`. The 18-source corpus + fallback chain lives in
@@ -16,12 +16,12 @@ conventions are at `../../reference/shared-preamble.md#output-contract-reminders
 
 | Invocation | Action |
 |------------|--------|
-| `/gdd:benchmark <component>` | Harvest + synthesize a single component |
-| `/gdd:benchmark --wave <N>` | Run a full wave (1 = Inputs, 2 = Containers, etc.) |
-| `/gdd:benchmark --list` | Show corpus coverage - which specs exist, which are pending |
-| `/gdd:benchmark --refresh <component>` | Re-harvest a spec (for design-system version bumps) |
+| `/hone:benchmark <component>` | Harvest + synthesize a single component |
+| `/hone:benchmark --wave <N>` | Run a full wave (1 = Inputs, 2 = Containers, etc.) |
+| `/hone:benchmark --list` | Show corpus coverage - which specs exist, which are pending |
+| `/hone:benchmark --refresh <component>` | Re-harvest a spec (for design-system version bumps) |
 
-## Single-Component Flow (`/gdd:benchmark <component>`)
+## Single-Component Flow (`/hone:benchmark <component>`)
 
 1. **Check if spec exists** - `Glob("reference/components/<component>.md")`. If found and `--refresh` was not passed, confirm before overwriting.
 
@@ -31,7 +31,7 @@ conventions are at `../../reference/shared-preamble.md#output-contract-reminders
 
 4. **Report** - print spec path, line count, systems cited.
 
-## Wave Mode (`/gdd:benchmark --wave <N>`)
+## Wave Mode (`/hone:benchmark --wave <N>`)
 
 Read the wave definition from `reference/components/README.md` and run each component sequentially (not parallel - each harvest is network-bound and the raw files are large).
 
@@ -42,11 +42,11 @@ Read the wave definition from `reference/components/README.md` and run each comp
 
 Print progress per component: `[N/total] harvesting <component>…`
 
-## List Mode (`/gdd:benchmark --list`)
+## List Mode (`/hone:benchmark --list`)
 
 Read `reference/components/README.md` and diff against `reference/components/*.md` files. Print a table with columns: Component, Status, Wave, Lines.
 
-## Refresh Mode (`/gdd:benchmark --refresh <component>`)
+## Refresh Mode (`/hone:benchmark --refresh <component>`)
 
 Same as single-component flow but skips the "already exists" guard. Use when a design system ships a breaking update to a component's spec.
 

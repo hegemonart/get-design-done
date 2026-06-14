@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/mcp-hone-state-tools.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/reference/schemas/mcp-hone-state-tools.schema.json",
   "title": "McpHoneStateTools",
   "description": "Combined manifest of all 11 hone-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under sdk/mcp/hone-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.",
   "type": "object",

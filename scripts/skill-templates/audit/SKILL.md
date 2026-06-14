@@ -1,5 +1,5 @@
 ---
-name: gdd-audit
+name: hone-audit
 description: "Run a design audit by spawning design-auditor, design-integration-checker, and (optionally) design-verifier + design-reflector agents, then printing a consolidated 7-pillar score summary. Use when the user wants to score the current design, retroactively verify a completed cycle, or quickly re-check after a fix. Activates for requests involving scoring an existing design, retroactively reviewing quality, or re-checking after a fix."
 argument-hint: "[--retroactive] [--quick] [--no-reflect]"
 tools: Read, Write, Task, Glob, Bash

@@ -1,6 +1,6 @@
 ---
 name: warm-cache
-description: "Pre-warms Anthropic's 5-min prompt cache across all agents that import reference/shared-preamble.md. Issues one no-op Haiku ping per agent so the identical preamble-first prefix lives in Anthropic's cache before a design sprint starts. Layer A of the D-08 two-layer cache. Run this once at the start of a /gdd:* sprint for ~90% input-cost savings on the first repeated spawn."
+description: "Pre-warms Anthropic's 5-min prompt cache across all agents that import reference/shared-preamble.md. Issues one no-op Haiku ping per agent so the identical preamble-first prefix lives in Anthropic's cache before a design sprint starts. Layer A of the D-08 two-layer cache. Run this once at the start of a /hone:* sprint for ~90% input-cost savings on the first repeated spawn."
 user-invocable: true
 argument-hint: "[--agents <comma-list>]"
 tools: Read, Bash, Grep
@@ -15,8 +15,8 @@ You are the Layer A cache primer. You enumerate the agent roster by scanning `ag
 
 ## Invocation Contract
 
-- **Command form**: `/gdd:warm-cache` - warms all agents that import the shared preamble.
-- **With filter**: `/gdd:warm-cache --agents design-verifier,design-planner,design-integration-checker` - warms only the named agents (comma-separated, no spaces, matches agent file basename without `.md`).
+- **Command form**: `/hone:warm-cache` - warms all agents that import the shared preamble.
+- **With filter**: `/hone:warm-cache --agents design-verifier,design-planner,design-integration-checker` - warms only the named agents (comma-separated, no spaces, matches agent file basename without `.md`).
 - **Output**: a single markdown summary to stdout -
   ```
   ## Warm-cache complete
@@ -60,7 +60,7 @@ Full + filtered command-output examples live in `./../cache-manager/cache-policy
 
 ## Integration Points
 
-- **Pre-sprint**: `/gdd:warm-cache` is the recommended first line of a `/gdd:discover`, `/gdd:plan`, or `/gdd:verify` sprint. Users type it before the real command, or an orchestrator-level wrapper runs it automatically if `agent-metrics.json` (Plan 10.1-05) indicates the last sprint was > 5 min ago.
+- **Pre-sprint**: `/hone:warm-cache` is the recommended first line of a `/hone:discover`, `/hone:plan`, or `/hone:verify` sprint. Users type it before the real command, or an orchestrator-level wrapper runs it automatically if `agent-metrics.json` (Plan 10.1-05) indicates the last sprint was > 5 min ago.
 - **`reference/shared-preamble.md`** (authored in Plan 10.1-04) is the essential file for this command - agents import it first per D-17, which makes the first N tokens of every agent's rendered system prompt identical, which is what Anthropic's prompt cache keys on.
 - **No interaction with `hooks/budget-enforcer.ts`** - the hook is a PreToolUse gate; warm-cache runs as an ordinary Agent tool call itself and is subject to the hook (each no-op Haiku ping is budgeted and logged like any other spawn). This is intentional: warm-cache's own telemetry rows in `.design/telemetry/costs.jsonl` are the evidence that cache priming happened.
 

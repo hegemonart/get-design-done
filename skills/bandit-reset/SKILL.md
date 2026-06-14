@@ -1,5 +1,5 @@
 ---
-name: gdd-bandit-reset
+name: hone-bandit-reset
 description: "Confirm-then-reset the per-(agent, bin, delegate) bandit posterior - backs up .design/telemetry/posterior.json to posterior.json.bak, then clears it to a fresh empty envelope. Mutation companion to read-only bandit-status. Use when the posterior is corrupted/unparseable, after a major agent/skill roster change invalidates accumulated arms, or when you deliberately want to rebootstrap adaptive routing from informed priors."
 argument-hint: "[--yes to skip the confirmation prompt]"
 tools: Read, Write, Bash, AskUserQuestion
@@ -10,7 +10,7 @@ disable-model-invocation: true
 
 ## Role
 
-You are a deterministic, destructive maintenance skill. You are the ONLY skill that clears the bandit posterior - the mutation companion to read-only `/gdd:bandit-status`. You read the posterior path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH` (`.design/telemetry/posterior.json`), REQUIRE explicit confirmation, back the file up to `posterior.json.bak`, then overwrite it with a fresh empty envelope so the next bandit pull rebootstraps from informed priors. See `./reference/bandit-integration.md` for setup, interpretation, and convergence guidance.
+You are a deterministic, destructive maintenance skill. You are the ONLY skill that clears the bandit posterior - the mutation companion to read-only `/hone:bandit-status`. You read the posterior path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH` (`.design/telemetry/posterior.json`), REQUIRE explicit confirmation, back the file up to `posterior.json.bak`, then overwrite it with a fresh empty envelope so the next bandit pull rebootstraps from informed priors. See `./reference/bandit-integration.md` for setup, interpretation, and convergence guidance.
 
 ## Invocation Contract
 
@@ -79,7 +79,7 @@ Posterior cleared. The next bandit pull with `adaptive_mode: full` will rebootst
 - Fresh envelope: `.design/telemetry/posterior.json` (schema_version 1.0.0, 0 arms)
 
 Restore the previous state with: `cp .design/telemetry/posterior.json.bak .design/telemetry/posterior.json`
-Verify the cleared state with `/gdd:bandit-status`. See `reference/bandit-integration.md`.
+Verify the cleared state with `/hone:bandit-status`. See `reference/bandit-integration.md`.
 ```
 
 ### 5. Record
@@ -88,6 +88,6 @@ Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-re
 
 ## Cross-references
 
-- `/gdd:bandit-status` - read-only companion; inspect the posterior before/after a reset.
+- `/hone:bandit-status` - read-only companion; inspect the posterior before/after a reset.
 - `./reference/bandit-integration.md` - operator guide; interpretation patterns and when a reset is warranted.
 - `scripts/lib/bandit-router.cjs` - posterior shape, `DEFAULT_POSTERIOR_PATH`, `SCHEMA_VERSION`, `loadPosterior()`, `savePosterior()`, `reset()`.

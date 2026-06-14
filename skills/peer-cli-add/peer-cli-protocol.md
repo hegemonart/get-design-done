@@ -39,7 +39,7 @@ Spawn the peer with the protocol entry point:
   differ).
 
 Send an `initialize` JSON-RPC message over stdin with `protocolVersion: '2025-06-18'`
-(ACP) or `service_name: 'gdd_peer_delegation'` (ASP). Capture the reply on stdout. A
+(ACP) or `service_name: 'hone_peer_delegation'` (ASP). Capture the reply on stdout. A
 valid JSON-RPC response with `result.protocolVersion` (ACP) or `result.threadId` (ASP)
 means the peer speaks the protocol. No valid reply within 5 seconds means either
 wrong-protocol or non-standard entry point - stop and ask the user for the correct

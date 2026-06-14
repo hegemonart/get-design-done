@@ -1,5 +1,5 @@
 ---
-name: gdd-debug
+name: hone-debug
 description: "Symptom-driven design debugger with persistent state. Phase 1 builds a feedback loop; Phase 2 hypothesizes. Writes findings to .design/DEBUG.md. Use when a symptom needs systematic, one-variable-at-a-time tracking."
 argument-hint: "[<symptom description>]"
 tools: Read, Write, Grep, Glob, AskUserQuestion, Task

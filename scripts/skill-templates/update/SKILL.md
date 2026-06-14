@@ -1,5 +1,5 @@
 ---
-name: gdd-update
+name: hone-update
 description: "Update get-design-done to the latest release. Preserves .design/config.json and ./.claude/skills/."
 argument-hint: "[--dry-run] [--version <tag>] [--show-privacy-diff]"
 tools: Read, Write, Bash

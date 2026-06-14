@@ -1,5 +1,5 @@
 ---
-name: gdd-new-cycle
+name: hone-new-cycle
 description: "Start a new design cycle. Creates cycle scope in STATE.md, initializes .design/CYCLES.md entry. Each cycle has its own goal and tracks its own decisions/tasks/pipeline runs."
 argument-hint: "[<goal>]"
 tools: Read, Write, AskUserQuestion

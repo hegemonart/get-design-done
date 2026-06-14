@@ -1,5 +1,5 @@
 ---
-name: gdd-cache-manager
+name: hone-cache-manager
 description: "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.ts before every Agent spawn."
 user-invocable: false
 tools: Read, Bash, Write
@@ -58,7 +58,7 @@ Per D-09:
 
 - No semantic / graph-based lookup. Manifest is a dumb KV store keyed by content hash.
 - No cross-project cache sharing. Manifest lives at `.design/cache-manifest.json`, scoped per repo.
-- No eviction beyond lazy expiry on read. A `/gdd:cache-prune` command is a Phase 11 reflector candidate, not 10.1 scope.
+- No eviction beyond lazy expiry on read. A `/hone:cache-prune` command is a Phase 11 reflector candidate, not 10.1 scope.
 - No hash-algorithm tuning. SHA-256 is fixed; if a future phase wants BLAKE3, bump the manifest schema version (not relevant in v1).
 
 ## TTL Semantics

@@ -1,5 +1,5 @@
 ---
-name: gdd-state
+name: hone-state
 description: "Query, recover, or roll back the Phase 57 SQLite state backbone. Use when you need to inspect the decisions/blockers/plans tables with a raw SELECT, rebuild a corrupt state.sqlite from the markdown STATE.md, or revert to the markdown-only source of truth by removing state.sqlite. Activates for requests involving querying the SQLite state database, recovering from SQLite corruption, or reverting the migration (demigrate)."
 argument-hint: "<query \"<sql>\" | recover | demigrate>"
 user-invocable: true

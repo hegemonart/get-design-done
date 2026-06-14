@@ -39,12 +39,12 @@
     },
     "update_dismissed": {
       "type": "string",
-      "description": "Latest plugin tag (e.g. \"v1.0.7.3\") whose update nudge the user has dismissed. Set by /gdd:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears."
+      "description": "Latest plugin tag (e.g. \"v1.0.7.3\") whose update nudge the user has dismissed. Set by /hone:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears."
     },
     "locale": {
       "type": "string",
       "enum": ["en", "ru", "uk", "de", "fr", "zh", "ja"],
-      "description": "Phase 40.5 CLI locale override for GDD's own --help, error messages, and skill prompt headers. Set via /gdd:locale <code>. Precedence: this key > env LANG/LC_ALL > en. Missing message keys fall back to English per scripts/lib/i18n/index.cjs (locale -> base -> en). en + ru are complete; uk/de/fr/zh/ja are placeholders that fall back to English."
+      "description": "Phase 40.5 CLI locale override for GDD's own --help, error messages, and skill prompt headers. Set via /hone:locale <code>. Precedence: this key > env LANG/LC_ALL > en. Missing message keys fall back to English per scripts/lib/i18n/index.cjs (locale -> base -> en). en + ru are complete; uk/de/fr/zh/ja are placeholders that fall back to English."
     },
     "gdd_cycle_mode": {
       "type": "string",

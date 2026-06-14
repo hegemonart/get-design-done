@@ -1,5 +1,5 @@
 ---
-name: gdd-pr-branch
+name: hone-pr-branch
 description: "Create a clean PR branch by filtering out .design/ and .planning/ commits. Code-review-ready branch for the design implementation work."
 argument-hint: "[<base-branch>]"
 tools: Read, Write, Bash

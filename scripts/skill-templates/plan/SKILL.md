@@ -3,7 +3,7 @@ name: plan
 description: "Stage 3 of 5 orchestrator that reads DESIGN-CONTEXT.md, runs optional research (phase-researcher / pattern-mapper / assumptions-analyzer / synthesizer), spawns design-planner + design-plan-checker, and writes DESIGN-PLAN.md. Use when DESIGN-CONTEXT.md is locked and you need a wave-ordered execution plan. Activates for requests involving breaking design work into steps, sequencing implementation, or planning a build."
 argument-hint: "[--auto] [--parallel]"
 user-invocable: true
-tools: Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint, mcp__gdd_state__probe_connections
+tools: Read, Write, Bash, Glob, Task, AskUserQuestion, ToolSearch, mcp__hone_state__get, mcp__hone_state__transition_stage, mcp__hone_state__add_decision, mcp__hone_state__add_must_have, mcp__hone_state__update_progress, mcp__hone_state__set_status, mcp__hone_state__add_blocker, mcp__hone_state__checkpoint, mcp__hone_state__probe_connections
 ---
 
 # Get Design Done - Plan
@@ -16,8 +16,8 @@ Full procedure detail: `./plan-procedure.md`.
 
 ## Stage entry
 
-1. `mcp__gdd_state__transition_stage` with `to: "plan"`. Gate failure surfaces `error.context.blockers`; do not advance.
-2. `mcp__gdd_state__get` -> snapshot `state` for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>`. Do not re-read STATE.md directly.
+1. `mcp__hone_state__transition_stage` with `to: "plan"`. Gate failure surfaces `error.context.blockers`; do not advance.
+2. `mcp__hone_state__get` -> snapshot `state` for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>`. Do not re-read STATE.md directly.
 3. Abort only if `.design/DESIGN-CONTEXT.md` is missing - that is the true prerequisite, not STATE.md.
 
 ---
@@ -26,11 +26,11 @@ Full procedure detail: `./plan-procedure.md`.
 
 - `--auto` -> `auto_mode=true` (skip approvals, skip optional research).
 - `--parallel` -> `parallel_mode=true` (planner fills `Touches:`/`Parallel:` fields).
-- **Parallelism decision**: read `.design/config.json` + `reference/parallelism-rules.md`. Plan pipeline is inherently sequential (researcher -> pattern-mapper -> planner -> checker) so the expected verdict is **serial** (rule 1). Record via `mcp__gdd_state__update_progress` with `status: "plan_parallelism_decided: batch_size=<N>, reason=<short-reason>"`.
+- **Parallelism decision**: read `.design/config.json` + `reference/parallelism-rules.md`. Plan pipeline is inherently sequential (researcher -> pattern-mapper -> planner -> checker) so the expected verdict is **serial** (rule 1). Record via `mcp__hone_state__update_progress` with `status: "plan_parallelism_decided: batch_size=<N>, reason=<short-reason>"`.
 
 ## Probe Chromatic connection
 
-Probe `chromatic` (CLI presence + `CHROMATIC_PROJECT_TOKEN` check; auto-`unavailable` if `storybook: not_configured`), then write status via `mcp__gdd_state__probe_connections` (single-entry array, never edit `<connections>` directly). Detail: `./plan-procedure.md` §Probe Chromatic connection.
+Probe `chromatic` (CLI presence + `CHROMATIC_PROJECT_TOKEN` check; auto-`unavailable` if `storybook: not_configured`), then write status via `mcp__hone_state__probe_connections` (single-entry array, never edit `<connections>` directly). Detail: `./plan-procedure.md` §Probe Chromatic connection.
 
 When `chromatic: available`, run change-risk scoping before writing DESIGN-PLAN.md: identify token/component files in scope from DESIGN-CONTEXT.md, run `npx chromatic --trace-changed=expanded --dry-run`, count story files that depend on changed source files, and pass the story count to the design-planner spawn prompt. Detail: `./plan-procedure.md` §Chromatic Change-Risk Scoping.
 
@@ -52,7 +52,7 @@ If assumptions analysis is enabled: spawn `design-assumptions-analyzer` -> surfa
 
 If 2+ pre-plan agents ran (Step 1, 1.5, 1.6), invoke `Skill("synthesize", { outputs, directive, output_shape: "markdown" })` to merge their outputs into `.design/DESIGN-PREPLAN-BRIEF.md` (~150 lines, per-source headers preserved). Add the brief to the planner's `<required_reading>` in Step 2. If only one agent ran, skip. Full call signature + parallel-synthesizer note: `./plan-procedure.md` §Step 1.7.
 
-**Research-synthesis persistence:** for each D-XX the synthesizer produces, `mcp__gdd_state__add_decision`; for each M-XX, `mcp__gdd_state__add_must_have`. Issue sequentially (lockfile-bound). Detail: `./plan-procedure.md` §Research-synthesis persistence.
+**Research-synthesis persistence:** for each D-XX the synthesizer produces, `mcp__hone_state__add_decision`; for each M-XX, `mcp__hone_state__add_must_have`. Issue sequentially (lockfile-bound). Detail: `./plan-procedure.md` §Research-synthesis persistence.
 
 ---
 
@@ -68,10 +68,10 @@ Spawn `design-plan-checker` to validate DESIGN-PLAN.md against DESIGN-CONTEXT.md
 
 ## Stage exit
 
-1. `mcp__gdd_state__set_status` -> `"plan_complete"`.
-2. `mcp__gdd_state__checkpoint` - stamps `last_checkpoint` and finalizes the plan stage.
+1. `mcp__hone_state__set_status` -> `"plan_complete"`.
+2. `mcp__hone_state__checkpoint` - stamps `last_checkpoint` and finalizes the plan stage.
 
-The next stage (design) calls `mcp__gdd_state__transition_stage` on entry - this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline.
+The next stage (design) calls `mcp__hone_state__transition_stage` on entry - this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline.
 
 ## After Completion
 

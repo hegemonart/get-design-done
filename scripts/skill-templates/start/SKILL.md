@@ -35,7 +35,7 @@ disable-model-invocation: true
 | `--budget balanced` *(default)* | 3-minute wall-clock cap. All detectors, bounded file walk. |
 | `--budget thorough` | 5-minute wall-clock cap. Used only when the user opts in. |
 | `--skip-interview` | Skip the 5-question interview; use sane defaults (pain=unspecified, area=detected, budget=balanced, framework=detected, figma=skip). |
-| `--dismiss-nudge` | Touch `~/.claude/gdd-nudge-dismissed` and exit. Does not run the scan. |
+| `--dismiss-nudge` | Touch `~/.claude/hone-nudge-dismissed` and exit. Does not run the scan. |
 
 ---
 

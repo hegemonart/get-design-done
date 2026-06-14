@@ -1,5 +1,5 @@
 ---
-name: gdd-do
+name: hone-do
 description: "Natural-language design task router. Parses your intent, maps to the right gdd command(s), confirms before executing. Activates for requests involving a natural-language design request, routing intent to the right command, or not knowing which skill to use."
 argument-hint: "<natural language description>"
 tools: Read, Write, AskUserQuestion

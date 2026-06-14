@@ -1,12 +1,12 @@
 ---
-name: gdd-budget
+name: hone-budget
 description: "Forecasts GDD design-cycle spend before the bill arrives. Reads .design/telemetry/costs.jsonl (cost per cycle) + .design/budget.json (the project_cap), runs the pure cost-forecast model via agents/cost-forecaster.md, and projects the next N cycles - surfacing 'at the current rate you'll hit your $X project cap in Y cycles.' Supports --scenario best|typical|worst and --cycles N. Read-only - it forecasts and warns; it never spends, edits budget.json, or halts (the budget-enforcer hook halts). Use to sanity-check spend trajectory before a long run."
 argument-hint: "[--cycles N] [--scenario best|typical|worst]"
 user-invocable: true
 tools: Read, Bash, Grep, Glob, ToolSearch, Task
 ---
 
-# /gdd:budget
+# /hone:budget
 
 Closes the long-horizon cost gap: Phase 10.1 per-task caps + Phase 26 per-runtime telemetry track
 *cost*, but nothing **forecasts** it. This skill projects the next N cycles of spend and tells you how
@@ -18,9 +18,9 @@ only thing that blocks a spawn). Contract: `../../reference/cost-governance.md`.
 
 | Command | Behavior |
 |---|---|
-| `/gdd:budget` | Typical-scenario forecast over the next 5 cycles + cycles-to-cap. |
-| `/gdd:budget --cycles N` | Forecast over the next N cycles. |
-| `/gdd:budget --scenario best\|typical\|worst` | Pick the projection rate (best / steady / worst). |
+| `/hone:budget` | Typical-scenario forecast over the next 5 cycles + cycles-to-cap. |
+| `/hone:budget --cycles N` | Forecast over the next N cycles. |
+| `/hone:budget --scenario best\|typical\|worst` | Pick the projection rate (best / steady / worst). |
 
 ## Steps
 

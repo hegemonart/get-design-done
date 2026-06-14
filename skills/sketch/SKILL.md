@@ -1,5 +1,5 @@
 ---
-name: gdd-sketch
+name: hone-sketch
 description: "Multi-variant HTML design exploration that creates .design/sketches/<slug>/ with N standalone variants (default 3), browser-openable directly via file:// without a build step. Use when answering 'what could this look like?' before committing to a direction."
 argument-hint: "[topic] [--variants N] [--quick]"
 tools: Read, Write, AskUserQuestion, Bash
@@ -9,7 +9,7 @@ tools: Read, Write, AskUserQuestion, Bash
 
 **Role:** Multi-variant HTML exploration. Answers "what could this look like?" by generating N standalone HTML variants from a topic prompt. Variants are browser-openable directly - no build step - and can be screenshot by Phase 8 Preview/Playwright tooling later.
 
-Unlike `/gdd:spike` (which tests feasibility), `/gdd:sketch` explores visual/directional variants.
+Unlike `/hone:spike` (which tests feasibility), `/hone:sketch` explores visual/directional variants.
 
 ## Flag parsing
 
@@ -55,7 +55,7 @@ Write `.design/sketches/<slug>/README.md` with:
 - Topic + one-line summary
 - List of variants: `variant-1.html` - direction label - one-line description
 - How to view: "Open each `variant-*.html` in a browser."
-- Next step: "Run `/gdd:sketch-wrap-up <slug>` when ready to pick a winner."
+- Next step: "Run `/hone:sketch-wrap-up <slug>` when ready to pick a winner."
 
 ## After writing
 
@@ -65,7 +65,7 @@ Slug: <slug>
 Directory: .design/sketches/<slug>/
 Variants: N standalone HTML files
 Open variant-*.html in a browser.
-Next: /gdd:sketch-wrap-up <slug>
+Next: /hone:sketch-wrap-up <slug>
 ━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 

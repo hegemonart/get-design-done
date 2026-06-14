@@ -1,5 +1,5 @@
 ---
-name: gdd-handoff
+name: hone-handoff
 description: "Handoff-first entry point that initializes a cycle from a Claude Design handoff bundle (URL, ZIP, HTML, PDF, or PPTX), skips the explore/plan stages, and routes straight to post-handoff verify. Thin wrapper over the Handoff Routing logic in the root pipeline router and the claude-design connection. Use when a Claude Design bundle was sent or dropped into the project and you want to implement and verify it without re-running discovery, or when arguments start with handoff or contain --from-handoff."
 argument-hint: "<bundle-path-or-url>"
 user-invocable: true

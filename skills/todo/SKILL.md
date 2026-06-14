@@ -1,12 +1,12 @@
 ---
-name: gdd-todo
+name: hone-todo
 description: "Design backlog - add/list/pick design tasks. Writes to .design/TODO.md."
 argument-hint: "<add|list|pick> [text]"
-tools: Read, Write, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__add_decision, mcp__gdd_state__add_must_have
+tools: Read, Write, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__add_decision, mcp__hone_state__add_must_have
 disable-model-invocation: true
 ---
 
-# /gdd:todo
+# /hone:todo
 
 **Role:** Design todo list. Three subcommands: `add`, `list`, `pick`. Backing store: `.design/TODO.md`. For items that are pipeline-level decisions or must-haves (not free-form backlog), route through the `gdd-state` MCP tools instead - see **Pipeline-linked items** below.
 
@@ -38,7 +38,7 @@ If text omitted, use `AskUserQuestion`: "What todo item? (include priority P0-P3
 Create TODO.md from the template above if missing.
 
 ### list
-1. Call `mcp__gdd_state__get` → pipeline-level decisions + must-haves (shown as context at the top).
+1. Call `mcp__hone_state__get` → pipeline-level decisions + must-haves (shown as context at the top).
 2. Read `.design/TODO.md` (file outside the MCP catalog). Print all `- [ ]` and `- [-]` items grouped by priority section, with index numbers.
 
 ### pick
@@ -52,8 +52,8 @@ Print "Picked: <item>".
 
 When the user promotes a todo to a pipeline decision or must-have, route through MCP instead of TODO.md:
 
-- Decision → `mcp__gdd_state__add_decision` with `{ id: "D-XX", text: "...", status: "locked"|"tentative" }`.
-- Must-have → `mcp__gdd_state__add_must_have` with `{ id: "M-XX", text: "...", status: "pending" }`.
+- Decision → `mcp__hone_state__add_decision` with `{ id: "D-XX", text: "...", status: "locked"|"tentative" }`.
+- Must-have → `mcp__hone_state__add_must_have` with `{ id: "M-XX", text: "...", status: "pending" }`.
 
 ## Constraints
 

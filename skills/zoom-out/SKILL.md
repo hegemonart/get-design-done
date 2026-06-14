@@ -21,6 +21,6 @@ When invoked, produce a one-screen map that names:
 
 Do not propose fixes. Do not write code. The output is a map.
 
-If `CONTEXT.md` is absent, suggest `/gdd:discuss` to start one, but still produce the map using basenames and inferred terms.
+If `CONTEXT.md` is absent, suggest `/hone:discuss` to start one, but still produce the map using basenames and inferred terms.
 
 ## ZOOM-OUT COMPLETE

@@ -1,5 +1,5 @@
 ---
-name: gdd-instinct
+name: hone-instinct
 description: "Inspects and manages atomic instinct learning units - small, scoped, confidence-weighted patterns the pipeline accumulates across cycles. Lists the project and global instinct stores, searches them by keyword, and promotes a vetted project instinct to the global store once it has cleared the cross-project gate. Use when the user wants to see what instincts exist, find an instinct by topic, or promote one to global scope. Activates for requests involving instincts, learned patterns, instinct promotion, instinct search, or the instinct store."
 argument-hint: "[list | query <keyword> | promote <id>] [--scope project|global] [--domain <d>]"
 tools: Read, Bash

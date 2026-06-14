@@ -1,5 +1,5 @@
 ---
-name: gdd-pin
+name: hone-pin
 description: "Writes standalone shortcut aliases for a gdd skill across installed harness skill dirs. Use when you want a skill directly discoverable as its own command in every installed runtime."
 argument-hint: "<skill-name>"
 tools: Read, Bash

@@ -1,5 +1,5 @@
 ---
-name: gdd-bandit-reset
+name: hone-bandit-reset
 description: "Confirm-then-reset the per-(agent, bin, delegate) bandit posterior - backs up .design/telemetry/posterior.json to posterior.json.bak, then clears it to a fresh empty envelope. Mutation companion to read-only bandit-status. Use when the posterior is corrupted/unparseable, after a major agent/skill roster change invalidates accumulated arms, or when you deliberately want to rebootstrap adaptive routing from informed priors."
 argument-hint: "[--yes to skip the confirmation prompt]"
 tools: Read, Write, Bash, AskUserQuestion

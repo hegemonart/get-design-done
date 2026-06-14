@@ -1,10 +1,10 @@
 ---
-name: gdd-skill-manifest
+name: hone-skill-manifest
 description: "Lists all registered GDD skills and agents, with descriptions, from the intel store. Falls back to directory scan if intel store not present."
 tools: Bash, Read, Glob
 ---
 
-# /gdd:skill-manifest
+# /hone:skill-manifest
 
 **Role:** Print a manifest of all registered skills (commands) and agents available in this plugin installation.
 
@@ -24,14 +24,14 @@ Generated from intel store: .design/intel/exports.json
 
 SKILLS (Commands)
 ─────────────────
-/gdd:scan               gdd-scan
-/gdd:discover           gdd-discover
-/gdd:plan               gdd-plan
-/gdd:design             gdd-design
-/gdd:verify             gdd-verify
-/gdd:style              gdd-style
-/gdd:darkmode           gdd-darkmode
-/gdd:compare            gdd-compare
+/hone:scan               gdd-scan
+/hone:discover           gdd-discover
+/hone:plan               gdd-plan
+/hone:design             gdd-design
+/hone:verify             gdd-verify
+/hone:style              gdd-style
+/hone:darkmode           gdd-darkmode
+/hone:compare            gdd-compare
 ... (all skills)
 
 AGENTS
@@ -68,9 +68,9 @@ AGENTS: design-advisor.md, design-auditor.md, ...
 
 ## Filter mode
 
-`/gdd:skill-manifest agents` - show agents only
-`/gdd:skill-manifest skills` - show skills only
-`/gdd:skill-manifest <keyword>` - filter by keyword in name or description
+`/hone:skill-manifest agents` - show agents only
+`/hone:skill-manifest skills` - show skills only
+`/hone:skill-manifest <keyword>` - filter by keyword in name or description
 
 ## Required reading (conditional)
 

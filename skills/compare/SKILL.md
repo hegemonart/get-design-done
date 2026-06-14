@@ -1,5 +1,5 @@
 ---
-name: gdd-compare
+name: hone-compare
 description: "Compute the delta between the `DESIGN.md` baseline (from explore) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`. Activates for requests involving diffing a design baseline against verification output, or a before-after design delta."
 argument-hint: ""
 user-invocable: true

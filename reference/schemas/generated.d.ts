@@ -98,11 +98,11 @@ export interface DesignConfigJson {
     [k: string]: unknown;
   };
   /**
-   * Latest plugin tag (e.g. "v1.0.7.3") whose update nudge the user has dismissed. Set by /gdd:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears.
+   * Latest plugin tag (e.g. "v1.0.7.3") whose update nudge the user has dismissed. Set by /hone:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears.
    */
   update_dismissed?: string;
   /**
-   * Phase 40.5 CLI locale override for GDD's own --help, error messages, and skill prompt headers. Set via /gdd:locale <code>. Precedence: this key > env LANG/LC_ALL > en. Missing message keys fall back to English per scripts/lib/i18n/index.cjs (locale -> base -> en). en + ru are complete; uk/de/fr/zh/ja are placeholders that fall back to English.
+   * Phase 40.5 CLI locale override for GDD's own --help, error messages, and skill prompt headers. Set via /hone:locale <code>. Precedence: this key > env LANG/LC_ALL > en. Missing message keys fall back to English per scripts/lib/i18n/index.cjs (locale -> base -> en). en + ru are complete; uk/de/fr/zh/ja are placeholders that fall back to English.
    */
   locale?: 'en' | 'ru' | 'uk' | 'de' | 'fr' | 'zh' | 'ja';
   /**
@@ -565,7 +565,7 @@ export type IterationBudgetSchema = IterationBudget;
 
 // ---- live-session.schema.json ----
 /**
- * A single `/gdd:live` session record persisted at .design/live-sessions/<session-id>.json. Captures the pick -> generate -> accept/discard loop as an append-only event log so a session survives a crash or --resume. Written atomically by scripts/lib/live/session-store.cjs.
+ * A single `/hone:live` session record persisted at .design/live-sessions/<session-id>.json. Captures the pick -> generate -> accept/discard loop as an append-only event log so a session survives a crash or --resume. Written atomically by scripts/lib/live/session-store.cjs.
  */
 export interface LiveSession {
   /**
@@ -666,23 +666,23 @@ export interface MCPBudget {
 
 export type McpBudgetSchema = MCPBudget;
 
-// ---- mcp-gdd-state-tools.schema.json ----
+// ---- mcp-hone-state-tools.schema.json ----
 /**
- * Combined manifest of all 11 gdd-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under sdk/mcp/gdd-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.
+ * Combined manifest of all 11 hone-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under sdk/mcp/hone-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.
  */
-export interface McpGddStateTools {
+export interface McpHoneStateTools {
   tools: {
-    gdd_state__get: ToolSchemaEntry;
-    gdd_state__update_progress: ToolSchemaEntry;
-    gdd_state__transition_stage: ToolSchemaEntry;
-    gdd_state__add_blocker: ToolSchemaEntry;
-    gdd_state__resolve_blocker: ToolSchemaEntry;
-    gdd_state__add_decision: ToolSchemaEntry;
-    gdd_state__add_must_have: ToolSchemaEntry;
-    gdd_state__set_status: ToolSchemaEntry;
-    gdd_state__checkpoint: ToolSchemaEntry;
-    gdd_state__probe_connections: ToolSchemaEntry;
-    gdd_state__frontmatter_update: ToolSchemaEntry;
+    hone_state__get: ToolSchemaEntry;
+    hone_state__update_progress: ToolSchemaEntry;
+    hone_state__transition_stage: ToolSchemaEntry;
+    hone_state__add_blocker: ToolSchemaEntry;
+    hone_state__resolve_blocker: ToolSchemaEntry;
+    hone_state__add_decision: ToolSchemaEntry;
+    hone_state__add_must_have: ToolSchemaEntry;
+    hone_state__set_status: ToolSchemaEntry;
+    hone_state__checkpoint: ToolSchemaEntry;
+    hone_state__probe_connections: ToolSchemaEntry;
+    hone_state__frontmatter_update: ToolSchemaEntry;
   };
 }
 export interface ToolSchemaEntry {
@@ -698,18 +698,18 @@ export interface ToolSchemaEntry {
   };
 }
 
-export type McpGddStateToolsSchema = McpGddStateTools;
+export type McpHoneStateToolsSchema = McpHoneStateTools;
 
-// ---- mcp-gdd-tools.schema.json ----
+// ---- mcp-hone-tools.schema.json ----
 /**
- * Combined manifest of all gdd-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under sdk/mcp/gdd-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).
+ * Combined manifest of all hone-mcp tool input+output schemas (Plan 27.7-02). Individual tool schemas live under sdk/mcp/hone-mcp/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface (D-11).
  */
-export interface McpGddTools {
+export interface McpHoneTools {
   /**
-   * Per-tool input/output schemas keyed by tool name. Exactly 13 entries (D-03 cap, raised 12 -> 13 in Phase 52 for gdd_context_query).
+   * Per-tool input/output schemas keyed by tool name. Exactly 13 entries (D-03 cap, raised 12 -> 13 in Phase 52 for hone_context_query).
    */
   tools?: {
-    gdd_status?: {
+    hone_status?: {
       input: {};
       output: {
         phase: string | null;
@@ -719,7 +719,7 @@ export interface McpGddTools {
         blocker_count: number;
       };
     };
-    gdd_context_query?: {
+    hone_context_query?: {
       input: {
         op: 'nodes' | 'edges' | 'path' | 'consumers-of' | 'unreachable' | 'cycles' | 'coverage';
         type?: string;
@@ -735,7 +735,7 @@ export interface McpGddTools {
         result: unknown[] | {} | null;
       };
     };
-    gdd_phase_current?: {
+    hone_phase_current?: {
       input: {};
       output: {
         phase: string | null;
@@ -744,7 +744,7 @@ export interface McpGddTools {
         status: string | null;
       };
     };
-    gdd_phases_list?: {
+    hone_phases_list?: {
       input: {};
       output: {
         phases: {
@@ -755,7 +755,7 @@ export interface McpGddTools {
         }[];
       };
     };
-    gdd_plans_list?: {
+    hone_plans_list?: {
       input: {
         phase?: string;
       };
@@ -768,7 +768,7 @@ export interface McpGddTools {
         }[];
       };
     };
-    gdd_decisions_list?: {
+    hone_decisions_list?: {
       input: {
         status?: 'locked' | 'tentative';
       };
@@ -780,7 +780,7 @@ export interface McpGddTools {
         }[];
       };
     };
-    gdd_intel_get?: {
+    hone_intel_get?: {
       input: {
         slice_id: string;
         shape?: string[];
@@ -790,7 +790,7 @@ export interface McpGddTools {
         data: {};
       };
     };
-    gdd_telemetry_query?: {
+    hone_telemetry_query?: {
       input: {
         type?: string;
         since?: string;
@@ -800,7 +800,7 @@ export interface McpGddTools {
         events: {}[];
       };
     };
-    gdd_cycle_recap?: {
+    hone_cycle_recap?: {
       input: {
         since_snapshot?: string;
       };
@@ -813,7 +813,7 @@ export interface McpGddTools {
         };
       };
     };
-    gdd_reflections_latest?: {
+    hone_reflections_latest?: {
       input: {};
       output: {
         cycle: string | null;
@@ -821,7 +821,7 @@ export interface McpGddTools {
         content_excerpt: string;
       };
     };
-    gdd_learnings_digest?: {
+    hone_learnings_digest?: {
       input: {
         cycles?: number;
       };
@@ -830,7 +830,7 @@ export interface McpGddTools {
         cycles_included: number;
       };
     };
-    gdd_events_tail?: {
+    hone_events_tail?: {
       input: {
         type?: string;
         limit?: number;
@@ -839,7 +839,7 @@ export interface McpGddTools {
         events: {}[];
       };
     };
-    gdd_health?: {
+    hone_health?: {
       input: {};
       output: {
         checks: {
@@ -852,7 +852,7 @@ export interface McpGddTools {
   };
 }
 
-export type McpGddToolsSchema = McpGddTools;
+export type McpHoneToolsSchema = McpHoneTools;
 
 // ---- plugin.schema.json ----
 /**

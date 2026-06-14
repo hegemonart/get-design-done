@@ -1,12 +1,12 @@
 ---
-name: gdd-new-skill
+name: hone-new-skill
 description: "Scaffolds a new Phase-28.5 + Phase-50-compliant skill: gathers a name, a multi-paragraph v3 description, a lifecycle stage, an allowed-tools list, and optional composes_with neighbours, then writes scripts/skill-templates/<name>/SKILL.md from the pure generator. Use when adding a brand-new gdd skill and you want the frontmatter, length cap, and v3 description form correct from the first commit. Activates for requests involving authoring a skill, scaffolding a command, creating a new SKILL.md, or adding a slash command."
 argument-hint: "<skill-name>"
 tools: Read, Write, Bash, AskUserQuestion
 user-invocable: true
 ---
 
-# /gdd:new-skill
+# /hone:new-skill
 
 **Role:** Interactively scaffold a contract-compliant skill. Gather the fields, then write `scripts/skill-templates/<name>/SKILL.md` from the pure generator at `scripts/lib/manifest/scaffolder.cjs`. This skill writes ONE source file. It does NOT touch `scripts/lib/manifest/skills.json` and does NOT run the build; it prints the exact follow-up commands instead.
 

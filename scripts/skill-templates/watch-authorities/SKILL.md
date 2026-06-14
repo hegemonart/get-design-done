@@ -1,5 +1,5 @@
 ---
-name: gdd-watch-authorities
+name: hone-watch-authorities
 description: "Fetches the design-authority feed whitelist, diffs against .design/authority-snapshot.json, and writes .design/authority-report.md (consumed by {{command_prefix}}reflect). Authority monitoring only - no trend-watching."
 argument-hint: "[--refresh] [--since <date>] [--feed <name>] [--schedule <weekly|daily|monthly>]"
 tools: Read, Write, Task, Bash

@@ -21,8 +21,8 @@ defaults, and validation rules. This file documents what `{{command_prefix}}star
 
 If invoked with `--dismiss-nudge`:
 
-1. `touch ~/.claude/gdd-nudge-dismissed` (Windows: equivalent). Ignore errors silently.
-2. Print exactly: `Nudge dismissed. Delete ~/.claude/gdd-nudge-dismissed to re-enable.`
+1. `touch ~/.claude/hone-nudge-dismissed` (Windows: equivalent). Ignore errors silently.
+2. Print exactly: `Nudge dismissed. Delete ~/.claude/hone-nudge-dismissed to re-enable.`
 3. Exit with `## START COMPLETE` marker.
 
 Do not proceed to any other step.

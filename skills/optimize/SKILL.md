@@ -6,11 +6,11 @@ user-invocable: true
 tools: Read, Bash, Grep, Write
 ---
 
-# /gdd:optimize - Optimization Advisor
+# /hone:optimize - Optimization Advisor
 
 ## Role
 
-Read the telemetry ledger (`.design/telemetry/costs.jsonl`) and per-agent aggregate (`.design/agent-metrics.json`), apply a fixed set of rule-based heuristics, and emit recommendations to `.design/OPTIMIZE-RECOMMENDATIONS.md`. Never modify agent files, budget config, or cache state. Output is a markdown table of proposals the user reviews manually, mirroring Phase 11 `/gdd:apply-reflections`. **Advisory only**: never edits `agents/*.md`, `.design/budget.json`, `.design/cache-manifest.json`. Never makes model calls - every rule is deterministic. See `./reference/heuristics.md` §"Optimization rules" for the full rule catalog.
+Read the telemetry ledger (`.design/telemetry/costs.jsonl`) and per-agent aggregate (`.design/agent-metrics.json`), apply a fixed set of rule-based heuristics, and emit recommendations to `.design/OPTIMIZE-RECOMMENDATIONS.md`. Never modify agent files, budget config, or cache state. Output is a markdown table of proposals the user reviews manually, mirroring Phase 11 `/hone:apply-reflections`. **Advisory only**: never edits `agents/*.md`, `.design/budget.json`, `.design/cache-manifest.json`. Never makes model calls - every rule is deterministic. See `./reference/heuristics.md` §"Optimization rules" for the full rule catalog.
 
 ## Refresh Step
 
@@ -77,11 +77,11 @@ The `## OPTIMIZE COMPLETE` marker is the completion sentinel.
 
 ## No Auto-Apply
 
-This skill **never modifies** `agents/*.md`, `.design/budget.json`, `.design/cache-manifest.json`, or any other configuration. **Never auto-applies** proposals. If the user wants to act, they do so manually. Discipline mirrors `/gdd:apply-reflections` from Phase 11.
+This skill **never modifies** `agents/*.md`, `.design/budget.json`, `.design/cache-manifest.json`, or any other configuration. **Never auto-applies** proposals. If the user wants to act, they do so manually. Discipline mirrors `/hone:apply-reflections` from Phase 11.
 
 ## Integration with Phase 11 Reflector
 
-The Phase 11 reflector (`agents/design-reflector.md`) reads both `costs.jsonl` and `agent-metrics.json` on its own cadence. `/gdd:optimize` is user-facing; the reflector is automation-facing. Outputs land in different files (`.design/OPTIMIZE-RECOMMENDATIONS.md` vs `.design/reflections/*.md`) and never collide.
+The Phase 11 reflector (`agents/design-reflector.md`) reads both `costs.jsonl` and `agent-metrics.json` on its own cadence. `/hone:optimize` is user-facing; the reflector is automation-facing. Outputs land in different files (`.design/OPTIMIZE-RECOMMENDATIONS.md` vs `.design/reflections/*.md`) and never collide.
 
 ## Non-Goals
 
@@ -92,6 +92,6 @@ The Phase 11 reflector (`agents/design-reflector.md`) reads both `costs.jsonl` a
 
 ## Failure Modes
 
-- Missing `.design/telemetry/costs.jsonl` → emit `No telemetry data yet — run /gdd:* commands to accumulate data, then retry.` + `## OPTIMIZE COMPLETE`.
+- Missing `.design/telemetry/costs.jsonl` → emit `No telemetry data yet — run /hone:* commands to accumulate data, then retry.` + `## OPTIMIZE COMPLETE`.
 - Missing `.design/agent-metrics.json` after refresh → emit `Aggregator failed — check node --experimental-strip-types scripts/aggregate-agent-metrics.ts output manually.`
 - Zero rules matched → write `No recommendations — all agents within healthy thresholds.` + `## OPTIMIZE COMPLETE`.

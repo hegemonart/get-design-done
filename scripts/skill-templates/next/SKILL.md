@@ -1,7 +1,7 @@
 ---
-name: gdd-next
+name: hone-next
 description: "Routes to the next pipeline stage based on current STATE.md position"
-tools: Read, Write, mcp__gdd_status, mcp__gdd_phase_current, mcp__gdd_plans_list
+tools: Read, Write, mcp__hone_status, mcp__hone_phase_current, mcp__hone_plans_list
 disable-model-invocation: true
 ---
 
@@ -17,12 +17,12 @@ Two paths - MCP preferred when available, file-read fallback otherwise.
 
 ### MCP path (preferred)
 
-When `mcp__gdd_phase_current` is exposed (Phase 27.7+, registered via `npx @hegemonart/get-design-done --register-mcp`):
+When `mcp__hone_phase_current` is exposed (Phase 27.7+, registered via `npx @hegemonart/get-design-done --register-mcp`):
 
-1. Call `mcp__gdd_status` (no args) → `{phase, branch, last_decisions, last_completed_plans, blocker_count}`. Gives cycle + branch context for the output block in one call.
-2. Call `mcp__gdd_phase_current` (no args) → `{phase, stage, task_progress, status}`. Use `stage` to drive the routing table below.
-3. (Optional) Call `mcp__gdd_plans_list` (no args) → current phase plans + status, to identify the next incomplete plan and refine the recommendation.
-4. If `mcp__gdd_status` returns a "STATE.md missing" error, print: "No STATE.md found. Run `{{command_prefix}}new-project` to initialize, or `@get-design-done brief` to start the pipeline." and stop. Otherwise, skip to the routing table.
+1. Call `mcp__hone_status` (no args) → `{phase, branch, last_decisions, last_completed_plans, blocker_count}`. Gives cycle + branch context for the output block in one call.
+2. Call `mcp__hone_phase_current` (no args) → `{phase, stage, task_progress, status}`. Use `stage` to drive the routing table below.
+3. (Optional) Call `mcp__hone_plans_list` (no args) → current phase plans + status, to identify the next incomplete plan and refine the recommendation.
+4. If `mcp__hone_status` returns a "STATE.md missing" error, print: "No STATE.md found. Run `{{command_prefix}}new-project` to initialize, or `@get-design-done brief` to start the pipeline." and stop. Otherwise, skip to the routing table.
 
 Two to three MCP calls = full routing decision (~3s, ~32k tokens - Storybloq benchmark).
 

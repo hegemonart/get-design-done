@@ -1,6 +1,6 @@
 ---
-name: gdd-openrouter-status
-description: "Read-only OpenRouter catalog + tier-mapping diagnostic - surfaces catalog freshness (fetched_at vs the 24h TTL), the last-fetch timestamp, the resolved opus/sonnet/haiku → model mappings (via the Phase-33.6 adapter), and a per-tier preview. Use when investigating which OpenRouter model a tier resolves to, or whether the catalog cache is fresh/stale. Phase 33.6 (v1.33.6) diagnostic - /gdd:openrouter-status."
+name: hone-openrouter-status
+description: "Read-only OpenRouter catalog + tier-mapping diagnostic - surfaces catalog freshness (fetched_at vs the 24h TTL), the last-fetch timestamp, the resolved opus/sonnet/haiku → model mappings (via the Phase-33.6 adapter), and a per-tier preview. Use when investigating which OpenRouter model a tier resolves to, or whether the catalog cache is fresh/stale. Phase 33.6 (v1.33.6) diagnostic - /hone:openrouter-status."
 argument-hint: "[--refresh]"
 tools: Read, Bash
 disable-model-invocation: true
@@ -38,7 +38,7 @@ Read `.design/cache/openrouter-models.json` via `readCatalog`. Missing or empty 
 ```
 ## OpenRouter Status
 
-No OpenRouter catalog yet — set OPENROUTER_API_KEY and run a cycle, or `/gdd:openrouter-status --refresh`.
+No OpenRouter catalog yet — set OPENROUTER_API_KEY and run a cycle, or `/hone:openrouter-status --refresh`.
 
 Tier resolution is currently falling back to the native provider (graceful degrade — D-08).
 ```

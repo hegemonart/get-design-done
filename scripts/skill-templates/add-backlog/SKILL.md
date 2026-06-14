@@ -1,5 +1,5 @@
 ---
-name: gdd-add-backlog
+name: hone-add-backlog
 description: "Park a design idea for a future cycle. Writes to .design/backlog/BACKLOG.md."
 argument-hint: "[text]"
 tools: Read, Write, AskUserQuestion

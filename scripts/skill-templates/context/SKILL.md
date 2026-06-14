@@ -1,5 +1,5 @@
 ---
-name: gdd-context
+name: hone-context
 description: "Queries the typed DesignContext graph at .design/context-graph.json - the design-semantic map of tokens, components, variants, states, motion, a11y patterns, screens, layers, and design patterns plus the edges between them. Lists and filters nodes and edges, traces a path between two nodes, finds the consumers of a node, and reports unreachable nodes, dependency cycles, and coverage. Use when the user wants to inspect the design graph, find what depends on a token or component, trace how one node reaches another, or check graph health. Activates for requests involving the design context graph, design dependencies, token consumers, component composition, unreachable design nodes, design cycles, or design coverage."
 argument-hint: "[nodes --type X | edges --type Z | path <a> <b> | consumers-of <id> | unreachable | cycles | coverage]"
 tools: Read, Bash

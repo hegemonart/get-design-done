@@ -1,5 +1,5 @@
 ---
-name: gdd-update
+name: hone-update
 description: "Update get-design-done to the latest release. Preserves .design/config.json and ./.claude/skills/."
 argument-hint: "[--dry-run] [--version <tag>] [--show-privacy-diff]"
 tools: Read, Write, Bash
@@ -21,7 +21,7 @@ Updates the `get-design-done` plugin to the latest release (or a specific tag), 
 6. **Preserve local skills** - `./.claude/skills/` is project-local and outside the plugin tree. Re-list the directory and confirm none of the pre-update files disappeared. Warn loudly if any did.
 7. **Post-update advisory** - print:
 
-   > Run `/gdd:reapply-patches` if you have customized any `reference/` files to restore your modifications.
+   > Run `/hone:reapply-patches` if you have customized any `reference/` files to restore your modifications.
 
 7.5. **Deprecation advisory** (Phase 39.5) - load the path-migration registry and report anything that
    crossed into `deprecated` or `removed` over the `[prevVersion → currentVersion]` window:
@@ -39,7 +39,7 @@ Updates the `get-design-done` plugin to the latest release (or a specific tag), 
    ```
 
    If any entry crossed, print a `## Deprecations in this update` list (old → new + status) and point
-   the user at **`/gdd:migrate`** to rewrite their local references. If none crossed, say nothing.
+   the user at **`/hone:migrate`** to rewrite their local references. If none crossed, say nothing.
 
 8. Print the new version and the changelog URL (`https://github.com/hegemonart/get-design-done/releases`).
 

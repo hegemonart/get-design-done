@@ -1,5 +1,5 @@
 ---
-name: gdd-list-pins
+name: hone-list-pins
 description: "Lists pinned skill aliases per harness with their source skill and pin timestamp. Use when you want to see which gdd skills have been pinned as standalone shortcuts and where."
 tools: Read, Bash
 ---

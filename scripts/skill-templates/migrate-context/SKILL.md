@@ -1,5 +1,5 @@
 ---
-name: gdd-migrate-context
+name: hone-migrate-context
 description: "Migrates a pre-Phase-52 project from the flat .design/map/*.md mapper notes to the typed DesignContext graph at .design/context-graph.json. Reads the old map notes, runs the deterministic extract-*.mjs passes to build mapper fragments, merges them with merge-fragments.mjs, validates the result with validate-design-context.cjs, and flags every low-confidence transform for human review before anything is trusted. Read-first and reversible; --dry-run previews the plan without writing. Use when upgrading a project to the DesignContext graph and .design/map/*.md still holds the only structured design notes. Activates for requests involving migrating design maps, building the context graph from old notes, or DesignContext graph migration."
 argument-hint: "[--dry-run]"
 tools: Read, Write, Bash

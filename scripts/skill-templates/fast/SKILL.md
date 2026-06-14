@@ -1,5 +1,5 @@
 ---
-name: gdd-fast
+name: hone-fast
 description: "Trivial inline design task. No subagents, no planning documents, no pipeline stages. Just do the thing described. Activates for requests involving a single quick design fix, a one-shot change, or a fast targeted edit."
 argument-hint: "<task description>"
 tools: Read, Write, Edit, Bash, Grep, Glob

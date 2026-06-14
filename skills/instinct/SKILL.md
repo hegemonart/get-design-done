@@ -1,14 +1,14 @@
 ---
-name: gdd-instinct
+name: hone-instinct
 description: "Inspects and manages atomic instinct learning units - small, scoped, confidence-weighted patterns the pipeline accumulates across cycles. Lists the project and global instinct stores, searches them by keyword, and promotes a vetted project instinct to the global store once it has cleared the cross-project gate. Use when the user wants to see what instincts exist, find an instinct by topic, or promote one to global scope. Activates for requests involving instincts, learned patterns, instinct promotion, instinct search, or the instinct store."
 argument-hint: "[list | query <keyword> | promote <id>] [--scope project|global] [--domain <d>]"
 tools: Read, Bash
 user-invocable: true
 ---
 
-# /gdd:instinct
+# /hone:instinct
 
-**Role:** Front end for the atomic instinct store. An instinct is a single learned pattern with a trigger, a confidence between 0.3 and 0.9, a domain, and a scope. This skill lists, searches, and promotes instincts. It never edits stored units by hand and never invents new ones - the reflector and `/gdd:extract-learnings` author them.
+**Role:** Front end for the atomic instinct store. An instinct is a single learned pattern with a trigger, a confidence between 0.3 and 0.9, a domain, and a scope. This skill lists, searches, and promotes instincts. It never edits stored units by hand and never invents new ones - the reflector and `/hone:extract-learnings` author them.
 
 The store engine ships at `scripts/lib/instinct-store.cjs` (authored elsewhere - this skill only calls it). Unit shape (YAML frontmatter plus a short body) is specified in `reference/instinct-format.md`. The project store lives at `.design/instincts/instincts.json`; the global store at `~/.claude/gdd/global-instincts.json`.
 
@@ -28,9 +28,9 @@ node -e "const s=require('${CLAUDE_PLUGIN_ROOT}/scripts/lib/instinct-store.cjs')
 
 | Command | Behavior |
 |---|---|
-| `/gdd:instinct list` | Compact table of stored instincts (default mode). |
-| `/gdd:instinct query "<keyword>"` | Search instincts by keyword; show the top matches. |
-| `/gdd:instinct promote <id>` | Promote one project instinct to the global store (gated). |
+| `/hone:instinct list` | Compact table of stored instincts (default mode). |
+| `/hone:instinct query "<keyword>"` | Search instincts by keyword; show the top matches. |
+| `/hone:instinct promote <id>` | Promote one project instinct to the global store (gated). |
 
 Flags apply across modes:
 
@@ -59,7 +59,7 @@ in-91bc   layout     0.55   2       cards overflow on the 320px breakpoint
 - `CYCLES` is `cycles_seen`.
 - Truncate `TRIGGER` to keep each line on one row.
 
-If the store is empty, print: `No instincts in the <scope> store yet. Run /gdd:reflect or /gdd:extract-learnings to accumulate some.`
+If the store is empty, print: `No instincts in the <scope> store yet. Run /hone:reflect or /hone:extract-learnings to accumulate some.`
 
 ## query
 
@@ -77,7 +77,7 @@ Print the top matches in the same table shape as `list`, ordered by the engine's
 
 Promote a single project instinct into the global store so it applies across every project. Promotion is **gated**: `instinct-store.promote(id, { baseDir })` only succeeds when the instinct has been seen across at least K cycles (K=2) spanning at least M distinct project ids (M=2). The engine enforces the gate; this skill surfaces the outcome and asks the user to confirm before the write.
 
-Confirm first. Prefer `@clack/prompts`, and fall back to `AskUserQuestion` when it is absent (mirror the probe in `/gdd:new-skill`):
+Confirm first. Prefer `@clack/prompts`, and fall back to `AskUserQuestion` when it is absent (mirror the probe in `/hone:new-skill`):
 
 ```bash
 node -e "try { require.resolve('@clack/prompts'); console.log('clack'); } catch { console.log('fallback'); }"
@@ -97,14 +97,14 @@ Branch on the engine result:
 
 - Promotion succeeded: print `Promoted <id> to the global store.` and show the new global row.
 - Gate not met: the engine reports how far the instinct is from the K=2 / M=2 bar. Print that plainly, for example `<id> needs 2 cycles across 2 projects; seen 1 cycle in 1 project so far. Not promoted.` Do not retry and do not force the write.
-- Unknown id: print `No instinct <id> in the project store.` and suggest `/gdd:instinct list`.
+- Unknown id: print `No instinct <id> in the project store.` and suggest `/hone:instinct list`.
 
 If the user answers no at the confirm step, print `Promotion cancelled.` and exit without writing.
 
 ## Do Not
 
 - Do not edit `.design/instincts/instincts.json` or the global store by hand. All writes go through `scripts/lib/instinct-store.cjs`.
-- Do not author new instincts here. The reflector and `/gdd:extract-learnings` emit units; this skill reads and promotes them.
+- Do not author new instincts here. The reflector and `/hone:extract-learnings` emit units; this skill reads and promotes them.
 - Do not bypass the promotion gate. If the K=2 / M=2 bar is not met, report it and stop.
 - Do not modify `reference/instinct-format.md` or the store engine.
 

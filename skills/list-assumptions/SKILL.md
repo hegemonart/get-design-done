@@ -1,12 +1,12 @@
 ---
-name: gdd-list-assumptions
+name: hone-list-assumptions
 description: "Surfaces hidden design assumptions baked into the codebase before planning - pattern-based detection plus user-surfaced items."
 argument-hint: "[--area typography|color|layout|motion|a11y]"
 tools: Read, Grep, Glob
 disable-model-invocation: true
 ---
 
-# /gdd:list-assumptions
+# /hone:list-assumptions
 
 **Role:** Surface implicit design assumptions that were never explicitly decided. Output a numbered list tagging each as `[EXPLICIT]` (found in STATE.md/DESIGN-CONTEXT.md decisions) or `[IMPLICIT]` (inferred from code patterns).
 
@@ -49,12 +49,12 @@ Typography
   02 [IMPLICIT] 18 px font-size values found — scale not explicit (src/Card.css:12, ...)
 
 Color
-  03 [IMPLICIT] 47 hex literals — no token layer (see /gdd:discuss color)
+  03 [IMPLICIT] 47 hex literals — no token layer (see /hone:discuss color)
 
 ...
 
 N assumptions total — M implicit.
-Next: /gdd:discuss --all to resolve implicit ones.
+Next: /hone:discuss --all to resolve implicit ones.
 ━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 

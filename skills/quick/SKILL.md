@@ -1,12 +1,12 @@
 ---
-name: gdd-quick
+name: hone-quick
 description: "Run the pipeline with optional agents skipped for speed. Skips: phase-researcher, design-assumptions-analyzer, design-integration-checker. Keeps: planner, executor, verifier, auditor. Activates for requests involving a lightweight design pass, a fast iteration, or a quick low-ceremony change."
 argument-hint: "[--skip <agent-name>] [stage]"
 tools: Read, Task
 disable-model-invocation: true
 ---
 
-# /gdd:quick
+# /hone:quick
 
 Fast pipeline run. Skips optional-quality agents for speed while keeping the core decision chain (planner → executor → verifier → auditor) intact.
 
@@ -30,7 +30,7 @@ Fast pipeline run. Skips optional-quality agents for speed while keeping the cor
 4. After each stage, print: "Stage <name> done. Skipped: <list>."
 5. Final summary prints which agents were skipped across the full run.
 
-Mechanism note: `/gdd:quick` is a lighter-touch *invocation* of the normal stages, not a special stage mode. It reduces ceremony by leaving the listed optional-quality agents out of the spawn graph it orchestrates. There is no flag the stage skills parse - if invoked directly (not via this skill) the stages run their full agent set.
+Mechanism note: `/hone:quick` is a lighter-touch *invocation* of the normal stages, not a special stage mode. It reduces ceremony by leaving the listed optional-quality agents out of the spawn graph it orchestrates. There is no flag the stage skills parse - if invoked directly (not via this skill) the stages run their full agent set.
 
 ## Use When
 

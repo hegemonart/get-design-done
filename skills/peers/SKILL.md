@@ -1,5 +1,5 @@
 ---
-name: gdd-peers
+name: hone-peers
 description: "Discover peer-CLI capability matrix - which of {codex, gemini, cursor, copilot, qwen} are installed, allowlisted in .design/config.json, and (if Phase 23.5 has data) their cost/quality delta vs local. Single command, no flags. Read by users investigating delegation setup."
 argument-hint: ""
 tools: Read, Bash

@@ -15,14 +15,14 @@ operational detail (interview JSON shape, scan invocation, writer spawn payload,
 template) lives here so the SKILL stays under the 100-line cap.
 
 The companion file `./start-interview.md` (Phase 27 ship) holds the 5-question copy,
-defaults, and validation rules. This file documents what `/gdd:start` does WITH the answers.
+defaults, and validation rules. This file documents what `/hone:start` does WITH the answers.
 
 ## Step 0 - Dismiss-only shortcut
 
 If invoked with `--dismiss-nudge`:
 
-1. `touch ~/.claude/gdd-nudge-dismissed` (Windows: equivalent). Ignore errors silently.
-2. Print exactly: `Nudge dismissed. Delete ~/.claude/gdd-nudge-dismissed to re-enable.`
+1. `touch ~/.claude/hone-nudge-dismissed` (Windows: equivalent). Ignore errors silently.
+2. Print exactly: `Nudge dismissed. Delete ~/.claude/hone-nudge-dismissed to re-enable.`
 3. Exit with `## START COMPLETE` marker.
 
 Do not proceed to any other step.
@@ -38,7 +38,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/lib/detect-ui-root.cjs" "$(pwd)"
 Capture the JSON output. Branches:
 
 - `kind: "backend-only"` → print the frontend-only diagnostic below, write nothing, exit with `## START COMPLETE`. The diagnostic copy is:
-  > `/gdd:start` is for frontend codebases. This repo looks backend-only (detected `<framework>`). The plugin can still help with design references and component libraries imported by your clients - but there is no UI surface here to scan. Exiting without creating `.design/`.
+  > `/hone:start` is for frontend codebases. This repo looks backend-only (detected `<framework>`). The plugin can still help with design references and component libraries imported by your clients - but there is no UI surface here to scan. Exiting without creating `.design/`.
 - `kind: null` (no package.json, no UI dir) → print a short "Nothing recognizable here - point me at a frontend repo and try again." and exit.
 - Any other `kind` → proceed with `detected.path` as the scan root.
 
@@ -56,7 +56,7 @@ Otherwise, ask the five questions in order using `AskUserQuestion`:
 4. Framework + design-system confirmation (from detection)
 5. Figma / canvas workflow (enum: figma / canvas / neither / skip)
 
-Any early exit at Q1 → abort with a one-line pointer to `/gdd:scan`.
+Any early exit at Q1 → abort with a one-line pointer to `/hone:scan`.
 
 Store the answers + detection result in `.design/.start-context.json`:
 
@@ -106,7 +106,7 @@ Print exactly (one line, no emoji):
 Report written to .design/START-REPORT.md. Next: run <suggested_command> to see the first proof.
 ```
 
-If `bestFirstProofId` was null, the suggested command is `/gdd:brief` (the default fallback).
+If `bestFirstProofId` was null, the suggested command is `/hone:brief` (the default fallback).
 
 Emit `## START COMPLETE` and exit.
 

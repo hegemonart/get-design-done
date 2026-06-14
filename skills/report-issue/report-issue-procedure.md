@@ -1,4 +1,4 @@
-# `/gdd:report-issue` - Full Procedure
+# `/hone:report-issue` - Full Procedure
 
 Long-form companion to [SKILL.md](./SKILL.md). Phase 28.5 keeps SKILL.md ≤100 lines; step-by-step + rationale live here.
 

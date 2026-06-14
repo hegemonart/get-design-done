@@ -1,5 +1,5 @@
 ---
-name: gdd-map
+name: hone-map
 description: "Dispatches 5 specialist codebase mappers in parallel. Produces .design/map/*.md files consumed by the explore stage."
 argument-hint: "[--only tokens|components|visual-hierarchy|a11y|motion]"
 tools: Read, Write, Bash, Task

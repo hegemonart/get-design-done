@@ -1,5 +1,5 @@
 ---
-name: gdd-timeline
+name: hone-timeline
 description: "Narrative retrospective across cycles: reads EXPERIENCE.md files and git log to produce a timeline view."
 argument-hint: "[<cycle-N> | <from>-<to> | all]"
 tools: Read, Bash, Glob

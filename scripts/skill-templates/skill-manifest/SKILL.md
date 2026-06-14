@@ -1,5 +1,5 @@
 ---
-name: gdd-skill-manifest
+name: hone-skill-manifest
 description: "Lists all registered GDD skills and agents, with descriptions, from the intel store. Falls back to directory scan if intel store not present."
 tools: Bash, Read, Glob
 ---

@@ -1,5 +1,5 @@
 ---
-name: gdd-stats
+name: hone-stats
 description: "Cycle stats - decisions made, tasks completed, commits, timeline, git metrics."
 tools: Read, Bash
 disable-model-invocation: true

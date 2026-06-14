@@ -1,13 +1,13 @@
 ---
-name: gdd-watch-authorities
-description: "Fetches the design-authority feed whitelist, diffs against .design/authority-snapshot.json, and writes .design/authority-report.md (consumed by /gdd:reflect). Authority monitoring only - no trend-watching."
+name: hone-watch-authorities
+description: "Fetches the design-authority feed whitelist, diffs against .design/authority-snapshot.json, and writes .design/authority-report.md (consumed by /hone:reflect). Authority monitoring only - no trend-watching."
 argument-hint: "[--refresh] [--since <date>] [--feed <name>] [--schedule <weekly|daily|monthly>]"
 tools: Read, Write, Task, Bash
 ---
 
-# /gdd:watch-authorities
+# /hone:watch-authorities
 
-Runs `design-authority-watcher` on demand. Fetches the curated design-authority feed whitelist, diffs against the prior snapshot, classifies new entries into five buckets, and writes `.design/authority-report.md`. Phase 11's reflector picks up the report automatically when you next run `/gdd:reflect`.
+Runs `design-authority-watcher` on demand. Fetches the curated design-authority feed whitelist, diffs against the prior snapshot, classifies new entries into five buckets, and writes `.design/authority-report.md`. Phase 11's reflector picks up the report automatically when you next run `/hone:reflect`.
 
 Authority-monitoring only. Not trend-watching. See `reference/authority-feeds.md` §"Rejected kinds" for what this skill will never fetch.
 
@@ -30,11 +30,11 @@ Authority-monitoring only. Not trend-watching. See `reference/authority-feeds.md
      ```
 
    - If the probe returns an empty result set: print `scheduled-tasks MCP not connected. Install it with: claude mcp add scheduled-tasks ... then retry with --schedule.` - this is a documented fallback (not an error). Terminate with `## WATCH COMPLETE` and exit 0.
-   - If the probe returns one or more `scheduled-tasks` tools: register the cron. Discover the MCP's registration tool name at runtime from the ToolSearch result and follow its schema. Target command: `/gdd:watch-authorities` with NO flags (the cron invokes the default diff-and-report behavior). Cadence → cron expression mapping:
+   - If the probe returns one or more `scheduled-tasks` tools: register the cron. Discover the MCP's registration tool name at runtime from the ToolSearch result and follow its schema. Target command: `/hone:watch-authorities` with NO flags (the cron invokes the default diff-and-report behavior). Cadence → cron expression mapping:
      - `weekly`  → `0 9 * * 1` (Mondays 09:00 local)
      - `daily`   → `0 9 * * *` (every day 09:00 local)
      - `monthly` → `0 9 1 * *` (1st of each month 09:00 local)
-   - After registration: print `Scheduled /gdd:watch-authorities to run <cadence>.` and terminate with `## WATCH COMPLETE`.
+   - After registration: print `Scheduled /hone:watch-authorities to run <cadence>.` and terminate with `## WATCH COMPLETE`.
 
 3. **Validate `--since <date>`** (if present).
 
@@ -70,7 +70,7 @@ Authority-monitoring only. Not trend-watching. See `reference/authority-feeds.md
 
    After the agent returns:
    - If STATE.md gained a `<blocker type="contract-violation">` on this run (snapshot version mismatch, hash-format violation, or over-200 entries per feed), surface the blocker verbatim and stop - do not print the default "review and reflect" line.
-   - Otherwise print the agent's one-line stdout summary (normal mode: `Surfaced N entries across M feeds. K skipped. See .design/authority-report.md.`; first-run / refresh mode: `Seeded snapshot for N feeds — next run will surface new entries.`) followed by: `Review and reflect: /gdd:reflect`.
+   - Otherwise print the agent's one-line stdout summary (normal mode: `Surfaced N entries across M feeds. K skipped. See .design/authority-report.md.`; first-run / refresh mode: `Seeded snapshot for N feeds — next run will surface new entries.`) followed by: `Review and reflect: /hone:reflect`.
 
 6. **Terminate with `## WATCH COMPLETE`.**
 

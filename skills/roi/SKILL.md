@@ -1,14 +1,14 @@
 ---
-name: gdd-roi
+name: hone-roi
 description: "Shows whether GDD spend actually shipped anything. Joins per-cycle cost (.design/telemetry/costs.jsonl) with what each cycle shipped - commits that SURVIVED in main vs commits that were reverted - and reports cost-per-shipped-commit + a stick rate per cycle. 'Shipped' = a commit surviving >= the window (default 14 days), which catches revert-after-bug-discovery. Markdown table, not a GUI. Read-only - it reads git log + cost telemetry and reports. Use to see which cycles were worth their spend."
 argument-hint: "[--since <date>] [--window-days 14]"
 user-invocable: true
 tools: Read, Bash, Grep, Glob
 ---
 
-# /gdd:roi
+# /hone:roi
 
-Closes the loop on cost: `/gdd:budget` forecasts *spend*, this shows the *return*. It joins per-cycle
+Closes the loop on cost: `/hone:budget` forecasts *spend*, this shows the *return*. It joins per-cycle
 cost with the commits that actually stuck, so you can see cost-per-shipped-commit and which cycles
 were worth it. **Read-only** - it reads `git log` + cost telemetry and prints a table. Contract +
 the "shipped" definition: `../../reference/cost-governance.md`.
@@ -17,9 +17,9 @@ the "shipped" definition: `../../reference/cost-governance.md`.
 
 | Command | Behavior |
 |---|---|
-| `/gdd:roi` | ROI table across all cycles with cost telemetry (14-day stick window). |
-| `/gdd:roi --since <date>` | Only cycles since `<date>`. |
-| `/gdd:roi --window-days N` | "Shipped" = a commit surviving ≥ N days (default 14). |
+| `/hone:roi` | ROI table across all cycles with cost telemetry (14-day stick window). |
+| `/hone:roi --since <date>` | Only cycles since `<date>`. |
+| `/hone:roi --window-days N` | "Shipped" = a commit surviving ≥ N days (default 14). |
 
 ## Steps
 

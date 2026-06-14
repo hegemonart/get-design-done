@@ -1,5 +1,5 @@
 ---
-name: gdd-spike-wrap-up
+name: hone-spike-wrap-up
 description: "Close a spike - capture findings, write decision to STATE.md, update SUMMARY.md."
 argument-hint: "[slug]"
 tools: Read, Write, Glob, AskUserQuestion
@@ -48,7 +48,7 @@ Write `.design/spikes/<slug>/FINDINGS.md`:
 
 ## Step 5 - Record decision in STATE.md
 
-Append under `<decisions>`: `D-XX: spike/<slug> — <verdict> — <recommendation>\n  Rationale: <one line>\n  Source: .design/spikes/<slug>/FINDINGS.md`. Compute `D-XX` as max existing `D-NN` + 1 (scan for `D-\d+:`, zero-pad to 2 digits). Prefer MCP `gdd_state` typed mutator when available: `mcp__gdd_state__add_decision({id, text, status:"locked"})`.
+Append under `<decisions>`: `D-XX: spike/<slug> — <verdict> — <recommendation>\n  Rationale: <one line>\n  Source: .design/spikes/<slug>/FINDINGS.md`. Compute `D-XX` as max existing `D-NN` + 1 (scan for `D-\d+:`, zero-pad to 2 digits). Prefer MCP `hone_state` typed mutator when available: `mcp__hone_state__add_decision({id, text, status:"locked"})`.
 
 ## Step 6 - Append `<prototyping>` outcome to STATE.md
 
@@ -56,7 +56,7 @@ Coupled with Step 5 - both must succeed so the spike resolution surfaces in `<de
 
 If `<prototyping>` block does not exist, materialize between `<must_haves>` and `<connections>` per STATE template; append `<spike …/>` as first child.
 
-Prefer MCP typed mutator (byte-identical output): `mcp__gdd_state__add_prototyping({type:"spike", slug, cycle, decision:"D-XX", verdict, status:"resolved"})`. Without MCP, edit `.design/STATE.md` directly via Read + Write.
+Prefer MCP typed mutator (byte-identical output): `mcp__hone_state__add_prototyping({type:"spike", slug, cycle, decision:"D-XX", verdict, status:"resolved"})`. Without MCP, edit `.design/STATE.md` directly via Read + Write.
 
 ## Step 7 - Update spikes SUMMARY.md
 

@@ -1,5 +1,5 @@
 ---
-name: gdd-reapply-patches
+name: hone-reapply-patches
 description: "Reapply user modifications to reference/ files after a plugin update. Detects customizations via git diff against pristine baseline."
 argument-hint: "[--dry-run]"
 tools: Read, Write, Bash

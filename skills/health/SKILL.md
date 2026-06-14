@@ -1,18 +1,18 @@
 ---
-name: gdd-health
+name: hone-health
 description: "Reports .design/ artifact health - staleness, missing files, token drift, broken state transitions. Activates for requests involving checking .design artifact health, staleness, token drift, or broken state transitions."
-tools: Read, Bash, Glob, Grep, mcp__gdd_state__get
+tools: Read, Bash, Glob, Grep, mcp__hone_state__get
 disable-model-invocation: true
 ---
 
-# /gdd:health
+# /hone:health
 
 **Role:** Report the health of the `.design/` directory. Print a score and list the checks that failed.
 
 ## Checks
 
 1. **Artifact inventory** - `ls -la .design/*.md` with size and mtime. Print a table.
-2. **Missing expected artifacts** - by `stage` field from the `mcp__gdd_state__get` snapshot:
+2. **Missing expected artifacts** - by `stage` field from the `mcp__hone_state__get` snapshot:
    - `brief` expects BRIEF.md
    - `explore` expects DESIGN.md, DESIGN-DEBT.md, DESIGN-CONTEXT.md
    - `plan` expects DESIGN-PLAN.md
@@ -27,7 +27,7 @@ disable-model-invocation: true
 
 ## State snapshot
 
-Call `mcp__gdd_state__get` once at the start to pull the snapshot used by checks 2, 5, and 7. Aggregate health math stays prose-level:
+Call `mcp__hone_state__get` once at the start to pull the snapshot used by checks 2, 5, and 7. Aggregate health math stays prose-level:
 - Count available connections from `<connections>`.
 - Count open blockers from `<blockers>` where `resolved` is absent.
 - Count pending must-haves from `<must_haves>` where `status: "pending"`.
@@ -55,7 +55,7 @@ Health: 5 / 6 checks passing.
 
 ## Figma-extract readiness (figma_extract)
 
-After the health table, the `gdd_health` MCP surface (`scripts/lib/health-mirror/index.cjs`) reports a `figma_extract` check so a user knows whether figma-extract is usable. The detail is one of three exact strings:
+After the health table, the `hone_health` MCP surface (`scripts/lib/health-mirror/index.cjs`) reports a `figma_extract` check so a user knows whether figma-extract is usable. The detail is one of three exact strings:
 
 - `figma extract: ready (token set)` - `FIGMA_TOKEN` (or `FIGMA_PERSONAL_ACCESS_TOKEN`) is present (status `ok`).
 - `figma extract: token missing` - no token env is set (status `warn`).
@@ -65,7 +65,7 @@ Token PRESENCE only is detected (D-10) - the token value is never read, logged, 
 
 ## Skill-discipline bootstrap (skill_discipline)
 
-The `gdd_health` MCP surface also reports a `skill_discipline` check (Phase 32) confirming the using-gdd SessionStart bootstrap is live - detail is one of three exact strings:
+The `hone_health` MCP surface also reports a `skill_discipline` check (Phase 32) confirming the using-gdd SessionStart bootstrap is live - detail is one of three exact strings:
 - `skill-discipline: ready` - `skills/using-gdd/SKILL.md` exists AND `hooks/hooks.json` SessionStart wires `inject-using-gdd.sh` (status `ok`).
 - `skill-discipline: missing using-gdd` (skill absent) or `skill-discipline: hook not wired` (skill present, no SessionStart inject) - both `warn`. The MCP surface also reports a `harness_freshness` check (Phase 44): per-harness `last_verified` age, status-aware (only `tested` harnesses warn at 60d / fail at 180d; others `n/a`). Full taxonomy in `HARNESSES.md`; refresh with `npm run verify:harness <id>`.
 
@@ -94,6 +94,6 @@ Thresholds: warn >=100, block >=250 (D-01). Strict description-format off by def
 
 ## Do Not
 
-- Do not mutate STATE.md - this skill is read-only. Only `mcp__gdd_state__get` is permitted.
+- Do not mutate STATE.md - this skill is read-only. Only `mcp__hone_state__get` is permitted.
 
 ## HEALTH COMPLETE

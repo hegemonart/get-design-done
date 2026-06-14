@@ -87,7 +87,7 @@ See `./config-schema.md` §.design/cache-manifest.json Schema (Phase 10.1) for t
 Full invocation:
 
 ```
-$ /gdd:warm-cache
+$ /hone:warm-cache
 
 Warming Anthropic prompt cache for 14 agents (5 min TTL)...
 [1/14] design-verifier ... ok (0.3s)
@@ -106,7 +106,7 @@ Warming Anthropic prompt cache for 14 agents (5 min TTL)...
 Filtered invocation:
 
 ```
-$ /gdd:warm-cache --agents design-verifier,design-planner
+$ /hone:warm-cache --agents design-verifier,design-planner
 
 Warming Anthropic prompt cache for 2 agents (filtered from 14)...
 [1/2] design-verifier ... ok (0.3s)

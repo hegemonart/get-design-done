@@ -1,5 +1,5 @@
 ---
-name: gdd-turn-closeout
+name: hone-turn-closeout
 description: "Portable mirror of the gdd-turn-closeout Stop hook (D-11). Closes the events.jsonl gap at turn-end and surfaces a stage-completion or paused-mid-task nudge. Tail-called by orchestrator skills ({{command_prefix}}next, {{command_prefix}}design, {{command_prefix}}verify) at exit on the 13 non-Claude runtimes that lack a Stop hook surface. Idempotent, non-blocking, ≤10ms typical."
 argument-hint: "(none - reads .design/STATE.md and .design/telemetry/events.jsonl from cwd)"
 tools: Read, Bash
@@ -9,7 +9,7 @@ tools: Read, Bash
 
 ## Role
 
-You are a deterministic **closeout** skill. You close the per-turn telemetry gap on runtimes that don't expose a Stop event (codex, gemini, and 11 others). You are a code-level mirror of `hooks/gdd-turn-closeout.js` (D-10): same conditions, same idempotence, same emitted event shape. The only difference: the JS hook emits the nudge as `additionalContext` via the harness; this skill prints the nudge directly to the user. A turn is "complete" when the verify command exits 0, the `<done>` criterion is observable, and the diff stays within the declared scope - any deviation is logged for the run summary.
+You are a deterministic **closeout** skill. You close the per-turn telemetry gap on runtimes that don't expose a Stop event (codex, gemini, and 11 others). You are a code-level mirror of `hooks/hone-turn-closeout.js` (D-10): same conditions, same idempotence, same emitted event shape. The only difference: the JS hook emits the nudge as `additionalContext` via the harness; this skill prints the nudge directly to the user. A turn is "complete" when the verify command exits 0, the `<done>` criterion is observable, and the diff stays within the declared scope - any deviation is logged for the run summary.
 
 **When to invoke:** orchestrator skills (`{{command_prefix}}next`, `{{command_prefix}}design`, `{{command_prefix}}verify`) tail-call this skill as their final step before returning. Adoption is incremental - each orchestrator can wire the tail-call independently; the skill exists as a stable, callable surface today.
 
@@ -82,7 +82,7 @@ One line exactly. No commentary - the nudge is the user-facing surface.
 
 ## Equivalence with the JS hook
 
-This skill and `hooks/gdd-turn-closeout.js` MUST stay code-level equivalent: same four early-return branches, same 60-second staleness threshold, same idempotence guard (`type=turn_end, stage, payload.task_progress`), same event shape (only `_meta.source` differs: `gdd-turn-closeout` vs `gdd-turn-closeout-skill` so reflector telemetry can distinguish hook-driven vs skill-driven). Same nudge wording for both N/N and mid-task cases. Change one → change the other in the same plan. Plan 25-09's `tests/turn-closeout-hook.test.cjs` covers the JS hook.
+This skill and `hooks/hone-turn-closeout.js` MUST stay code-level equivalent: same four early-return branches, same 60-second staleness threshold, same idempotence guard (`type=turn_end, stage, payload.task_progress`), same event shape (only `_meta.source` differs: `gdd-turn-closeout` vs `gdd-turn-closeout-skill` so reflector telemetry can distinguish hook-driven vs skill-driven). Same nudge wording for both N/N and mid-task cases. Change one → change the other in the same plan. Plan 25-09's `tests/turn-closeout-hook.test.cjs` covers the JS hook.
 
 ## Non-Goals
 
