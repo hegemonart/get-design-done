@@ -13,7 +13,7 @@ Phase 10.1 (OPT-06) locked the initial per-agent tier assignment. Phase 11's `de
 Pick `haiku` when the agent is:
 - Applying a fixed scoring rubric (`design-verifier` runs five deterministic passes with numeric category scores).
 - Producing a boolean + rationale answer (`design-plan-checker`, `design-context-checker`, `design-integration-checker` all return "gaps found" + structured list).
-- Performing a read-only state sync (`gdd-graph-refresh` mirrors graph state - no reasoning density beyond schema matching).
+- Performing a read-only state sync (`hone-graph-refresh` mirrors graph state - no reasoning density beyond schema matching).
 - Running at high frequency where cost compounds (checkers run on every `/gdd:verify` pass - cost multiplies with iterations).
 
 Haiku's ~20x price advantage over Opus per 1M tokens (see `reference/model-prices.md`) makes it correct for deterministic-rubric work where the marginal quality gain of larger models is negligible.
@@ -25,7 +25,7 @@ Pick `sonnet` when the agent is:
 - Synthesizing prose from structured input (`design-doc-writer`, `design-research-synthesizer`, `design-context-builder`).
 - Executing a concrete plan under supervision (`design-executor`, `design-fixer`, `design-figma-writer`).
 - Conducting targeted research under a time budget (`design-phase-researcher` - 2-minute web-search budget).
-- Updating / extracting / maintaining project state (`gdd-intel-updater`, `gdd-learnings-extractor`, `design-auditor`).
+- Updating / extracting / maintaining project state (`hone-intel-updater`, `hone-learnings-extractor`, `design-auditor`).
 
 Sonnet balances reasoning density against cost. This is the default - if you're uncertain about an agent's role, it's probably sonnet.
 
@@ -49,7 +49,7 @@ Opus cost (~5x Sonnet, ~25x Haiku) is justified only when a single wrong decisio
 | design-plan-checker | Checker | haiku | Checks the plan against a fixed schema - boolean + gap-list output. |
 | design-context-checker | Checker | haiku | Checks context completeness against a schema - boolean + gap-list output. |
 | design-integration-checker | Checker | haiku | Checks cross-artifact references - deterministic link-integrity work. |
-| gdd-graph-refresh | Refresh agent | haiku | Rebuilds graph at .design/graph/graph.json from intel slices - no reasoning density required. |
+| hone-graph-refresh | Refresh agent | haiku | Rebuilds graph at .design/graph/graph.json from intel slices - no reasoning density required. |
 | a11y-mapper | Mapper | sonnet | Open-ended a11y pattern recognition across many files; Sonnet's breadth matters. |
 | component-taxonomy-mapper | Mapper | sonnet | Classifies components by role - requires nuance Haiku lacks, not enough to warrant Opus. |
 | design-auditor | Worker | sonnet | Emits structured findings from code inspection; Sonnet balances depth with cost. |
@@ -61,8 +61,8 @@ Opus cost (~5x Sonnet, ~25x Haiku) is justified only when a single wrong decisio
 | design-pattern-mapper | Mapper | sonnet | Catalogs design patterns present in codebase. |
 | design-phase-researcher | Researcher | sonnet | Time-budgeted research on project-type conventions. |
 | design-research-synthesizer | Synthesizer | sonnet | Collapses multiple research outputs into one; synthesis is Sonnet territory. |
-| gdd-intel-updater | Updater | sonnet | Refreshes .planning/intel/ files from current codebase. |
-| gdd-learnings-extractor | Extractor | sonnet | Pulls decisions + lessons + patterns from phase artifacts. |
+| hone-intel-updater | Updater | sonnet | Refreshes .planning/intel/ files from current codebase. |
+| hone-learnings-extractor | Extractor | sonnet | Pulls decisions + lessons + patterns from phase artifacts. |
 | motion-mapper | Mapper | sonnet | Inventories motion patterns - open-ended visual reasoning. |
 | token-mapper | Mapper | sonnet | Extracts design tokens from source - pattern recognition across files. |
 | visual-hierarchy-mapper | Mapper | sonnet | Maps visual hierarchy signals - breadth across many files. |

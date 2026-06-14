@@ -200,8 +200,8 @@ The graph is a performance optimization and accuracy enhancer. It is never a har
 | `query <term>` | `node bin/gdd-graph query "<term>" --budget 2000` | Query the graph for a node and its neighbors |
 | `status` | `node bin/gdd-graph status` | Check graph age, node count, enabled status |
 | `diff` | `node bin/gdd-graph diff` | Show topology changes since last build |
-| `upsert-node` | `node bin/gdd-graph upsert-node --id X --type T --label L` | Programmatic single-node insert (used by gdd-graph-refresh agent) |
-| `upsert-edge` | `node bin/gdd-graph upsert-edge --from A --to B --kind R` | Programmatic single-edge insert (used by gdd-graph-refresh agent) |
+| `upsert-node` | `node bin/gdd-graph upsert-node --id X --type T --label L` | Programmatic single-node insert (used by hone-graph-refresh agent) |
+| `upsert-edge` | `node bin/gdd-graph upsert-edge --from A --to B --kind R` | Programmatic single-edge insert (used by hone-graph-refresh agent) |
 
 If `graphify.enabled` is `false` (or `.design/config.json` is missing), the `bin/gdd-graph` subcommands graceful-degrade — `status` returns `{ configured: false, exists: false }`, other subcommands no-op with exit 0 and a one-line stderr notice.
 

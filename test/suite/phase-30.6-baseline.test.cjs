@@ -14,7 +14,7 @@
 //   - scripts/lib/graph/schema.json structural shape matches baseline.
 //   - .planning/get-shit-done-main/ does NOT exist (vendored snapshot deleted).
 //   - scripts/lib/gsd-health-mirror/ does NOT exist (renamed to health-mirror).
-//   - agents/gdd-graphify-sync.md does NOT exist (renamed to gdd-graph-refresh).
+//   - agents/gdd-graphify-sync.md does NOT exist (renamed to hone-graph-refresh).
 //   - Only allowed paths reference upstream gsd-tools / ~/.claude/get-shit-done.
 
 const test = require('node:test');
@@ -183,14 +183,14 @@ test('30.6-07: scripts/lib/gsd-health-mirror does not exist (renamed to health-m
   );
 });
 
-test('30.6-07: agents/gdd-graphify-sync.md does not exist (renamed to gdd-graph-refresh.md, D-08)', () => {
+test('30.6-07: agents/gdd-graphify-sync.md does not exist (renamed to hone-graph-refresh.md, D-08)', () => {
   assert.ok(
     !exists('agents/gdd-graphify-sync.md'),
-    'gdd-graphify-sync should be renamed to gdd-graph-refresh (30.6-06, D-08 one-way)',
+    'gdd-graphify-sync should be renamed to hone-graph-refresh (30.6-06, D-08 one-way)',
   );
   assert.ok(
-    exists('agents/gdd-graph-refresh.md'),
-    'renamed gdd-graph-refresh.md should exist',
+    exists('agents/hone-graph-refresh.md'),
+    'renamed hone-graph-refresh.md should exist',
   );
 });
 

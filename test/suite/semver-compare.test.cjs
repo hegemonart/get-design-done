@@ -276,7 +276,7 @@ OFF_CADENCE_VERSIONS.add('1.30.5');
 // 8 callsites that dispatched `gsd-tools.cjs graphify *` with native
 // bin/gdd-graph (build/query/status/diff/upsert-node/upsert-edge). Drops the
 // intel→graphify translation layer (intel and graph now share {from,to,kind,
-// weight?} schema per D-03.b). Renames gdd-graphify-sync → gdd-graph-refresh
+// weight?} schema per D-03.b). Renames gdd-graphify-sync → hone-graph-refresh
 // and gsd-health-mirror → health-mirror (cosmetic, D-10). Deletes 10MB
 // vendored upstream snapshot at .planning/get-shit-done-main/. Off-cadence
 // decimal from v1.30.5 parent — sequence 1.30.0 -> 1.30.5 -> 1.30.6.
