@@ -69,9 +69,14 @@ if (process.argv.includes('--regen')) {
 // On first run (golden.md missing), bootstrap it. This is the documented
 // workflow in the file header: first `npm test` writes the golden, then
 // every subsequent run asserts byte-equality.
-if (!fs.existsSync(GOLDEN_PATH)) {
+// Use the 'wx' flag so the bootstrap write is atomic (no existsSync→write
+// TOCTOU race): it creates golden.md only when absent and leaves an existing
+// golden untouched (an EEXIST means it was already bootstrapped).
+try {
   const out = runAssembleFromFixture();
-  fs.writeFileSync(GOLDEN_PATH, out, 'utf8');
+  fs.writeFileSync(GOLDEN_PATH, out, { encoding: 'utf8', flag: 'wx' });
+} catch (e) {
+  if (e.code !== 'EEXIST') throw e;
 }
 
 // ---------------------------------------------------------------------------

@@ -148,11 +148,16 @@ export function stateFileHasPausedBlock(): boolean {
 }
 
 function appendPausedBlock(block: string): void {
-  if (!existsSync(dirname(STATE_PATH))) {
-    mkdirSync(dirname(STATE_PATH), { recursive: true });
-  }
-  if (!existsSync(STATE_PATH)) {
-    writeFileSync(STATE_PATH, '# Design State\n\n', 'utf8');
+  // mkdir recursive is idempotent — no existsSync check needed.
+  mkdirSync(dirname(STATE_PATH), { recursive: true });
+  // Seed the header only when the file is new, atomically via the 'wx' flag:
+  // an EEXIST means STATE.md already exists, so we skip the header and append
+  // to it. This collapses the existsSync→writeFileSync/appendFileSync TOCTOU
+  // race that previously sat between the check and the writes.
+  try {
+    writeFileSync(STATE_PATH, '# Design State\n\n', { encoding: 'utf8', flag: 'wx' });
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code !== 'EEXIST') throw e;
   }
   appendFileSync(STATE_PATH, block, 'utf8');
 }

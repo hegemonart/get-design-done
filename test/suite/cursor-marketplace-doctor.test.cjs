@@ -123,7 +123,7 @@ test('cursor-marketplace-doctor: state-not-submitted fixture → state=not-submi
     assert.equal(r.approvedAt, null);
     assert.equal(r.marketplaceUrl, null);
     assert.equal(r.rejectionReason, null);
-    assert.match(r.guidance, /cursor\.com\/marketplace\/publish/);
+    assert.ok(r.guidance.includes('cursor.com/marketplace/publish'), 'guidance points to cursor.com/marketplace/publish');
   } finally {
     rmRf(root);
   }
@@ -163,7 +163,7 @@ test('cursor-marketplace-doctor: state-approved-published fixture → state=appr
     assert.equal(r.submittedAt, '2026-05-22T14:00:00Z');
     assert.equal(r.approvedAt, '2026-06-01T09:30:00Z');
     assert.match(r.guidance, /live at/);
-    assert.match(r.guidance, /cursor\.com/);
+    assert.ok(r.guidance.includes('cursor.com'), 'guidance mentions cursor.com');
   } finally {
     rmRf(root);
   }

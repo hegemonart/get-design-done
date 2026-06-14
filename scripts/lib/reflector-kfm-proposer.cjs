@@ -425,11 +425,16 @@ function applyReject(draftPath, _options) {
  */
 function applyDefer(draftPath, options) {
   const opts = options || {};
-  if (!fs.existsSync(draftPath)) {
-    throw new Error(`KFM draft not found: ${draftPath}`);
-  }
   const deferredUntil = opts.deferredUntil || new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
-  const orig = fs.readFileSync(draftPath, 'utf8');
+  // Read directly and treat ENOENT as "draft not found" — avoids the
+  // existsSync→readFileSync TOCTOU race.
+  let orig;
+  try {
+    orig = fs.readFileSync(draftPath, 'utf8');
+  } catch (e) {
+    if (e.code === 'ENOENT') throw new Error(`KFM draft not found: ${draftPath}`);
+    throw e;
+  }
   let updated;
   if (/^deferred_until:/m.test(orig)) {
     updated = orig.replace(/^deferred_until:.*$/m, `deferred_until: ${deferredUntil}`);

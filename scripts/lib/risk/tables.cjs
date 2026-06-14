@@ -73,7 +73,7 @@ const FILE_SENSITIVITY = Object.freeze([
   // De-risking: tests + fixtures are low-stakes.
   { test: /(^|\/)(tests?|fixtures?|__tests__|__fixtures__)\//i, mult: 0.6, add: 0, label: 'test-or-fixture' },
   // De-risking: docs / markdown.
-  { test: /(^|\/)docs?\/|\.mdx?$/i, mult: 0.5, add: 0, label: 'docs' },
+  { test: /(?:(?:^|\/)docs?\/)|(?:\.mdx?$)/i, mult: 0.5, add: 0, label: 'docs' },
 ]);
 
 // ── Severity -> addend for destructive bash (via dangerous-patterns.cjs) ────
