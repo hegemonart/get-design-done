@@ -17,3 +17,6 @@
 ^https://www\.lightningdesignsystem\.com/.*
 ^https://www\.w3\.org/WAI/ARIA/apg/.*
 ^https://lawsofux\.com/.*
+# Phase 61 rebrand: the new repo URL 404s until the GitHub repo is renamed
+# get-design-done -> hone (an owner ship-step). Remove this line after the rename.
+^https://github\.com/hegemonart/hone.*
