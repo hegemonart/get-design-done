@@ -1,6 +1,6 @@
 'use strict';
 
-// Per-runtime install matrix for the get-design-done plugin.
+// Per-runtime install matrix for the Hone plugin.
 //
 // Each entry is pure data describing how to install / uninstall the plugin
 // into one runtime. The 14 runtimes listed below are roadmap-locked
@@ -23,9 +23,9 @@
 // alphabetised baseline at test-fixture/baselines/phase-24/runtimes.txt,
 // and add a matching branch in runtime-artifact-layout.cjs (Phase 28.7).
 
-const REPO = 'hegemonart/get-design-done';
-const MARKETPLACE_NAME = 'get-design-done';
-const PLUGIN_NAME = 'get-design-done';
+// Identity SoT (Phase 61 rebrand, REBRAND-02): REPO/MARKETPLACE_NAME/PLUGIN_NAME
+// are sourced from the frozen seam instead of hardcoding 'get-design-done'.
+const { REPO, MARKETPLACE_NAME, PLUGIN_NAME } = require('../pkg-identity.cjs');
 
 const RUNTIMES = Object.freeze([
   {
@@ -168,7 +168,7 @@ const RUNTIMES = Object.freeze([
   // (kind: 'multi-artifact') which remains the Tier-1 file-drop AGENTS.md
   // install target (Phase 28.7). Per CONTEXT D-05 (additive), the two
   // coexist — file-drop users and marketplace consumers are independent
-  // flows. Installed via `codex plugin marketplace add hegemonart/get-design-done`
+  // flows. Installed via `codex plugin marketplace add hegemonart/hone`
   // per .planning/research/codex-plugins-2026-05-19.md § Distribution Mechanism.
   //
   // build-distribution-bundles.cjs (Plan 28-8-X1) and install.cjs --doctor

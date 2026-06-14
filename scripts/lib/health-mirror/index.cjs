@@ -453,13 +453,15 @@ function figmaVariablesBlockedLocally(rootDir) {
 }
 
 /**
- * Walk UP from `startDir` to the GDD package root (the first ancestor whose
- * package.json `name` is the GDD package). This mirrors the Phase 53/54 lesson
+ * Walk UP from `startDir` to the Hone package root (the first ancestor whose
+ * package.json `name` is the Hone package). This mirrors the Phase 53/54 lesson
  * (sdk/dashboard/data/_pkg-root.cjs): NEVER resolve a cross-tree sibling via a
  * fixed __dirname-relative jump. The shipped package name is scoped
- * ("@hegemonart/get-design-done"); dev/self-host/fixture roots may use the bare
- * "get-design-done" — both match. Bounded climb; defensive. Returns null if no
- * GDD root marker is found.
+ * ("@hegemonart/hone"); dev/self-host/fixture roots may use the bare "hone" —
+ * both match. During the Phase 61 rebrand migration window we ALSO accept the
+ * legacy "@hegemonart/get-design-done" / bare "get-design-done" (REBRAND-02,
+ * threat T-61-02 dual-read) so the dashboard self-detects under either package
+ * name in-place. Bounded climb; defensive. Returns null if no root marker found.
  *
  * @param {string} startDir
  * @returns {string|null} absolute package-root dir, or null
@@ -471,7 +473,13 @@ function findGddPackageRoot(startDir) {
       try {
         const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
         if (pkg && typeof pkg.name === 'string') {
-          if (pkg.name === 'get-design-done' || /\/get-design-done$/.test(pkg.name)) {
+          if (
+            pkg.name === 'hone' ||
+            /\/hone$/.test(pkg.name) ||
+            // legacy (Phase 61 migration window): accept the prior name in-place
+            pkg.name === 'get-design-done' ||
+            /\/get-design-done$/.test(pkg.name)
+          ) {
             return dir;
           }
         }
