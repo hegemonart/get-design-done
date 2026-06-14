@@ -96,5 +96,5 @@ dist/*.tgz
 # EXPLICITLY (not a `sdk/**/*.js` glob) so the hand-written, committed
 # `sdk/primitives/*.cjs` + `*.d.cts` are never at risk.
 sdk/cli/index.js
-sdk/mcp/gdd-state/server.js
-sdk/mcp/gdd-mcp/server.js
+sdk/mcp/hone-state/server.js
+sdk/mcp/hone-mcp/server.js
