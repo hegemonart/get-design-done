@@ -294,18 +294,31 @@ test('cursor-marketplace: convert does not touch any path outside outDir', () =>
     function listTree(root) {
       const out = [];
       function walk(dir) {
-        const entries = fs.readdirSync(dir).sort();
+        // Use withFileTypes so dir/file classification comes from the single
+        // readdir syscall (the dirent), not a follow-up statSync — and read
+        // file content directly, treating ENOENT as the "not a regular file"
+        // case. This collapses the statSync→readFileSync TOCTOU race.
+        const entries = fs.readdirSync(dir, { withFileTypes: true })
+          .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
         for (const e of entries) {
-          const p = path.join(dir, e);
-          const stat = fs.statSync(p);
+          const p = path.join(dir, e.name);
+          const isDir = e.isDirectory();
+          let content = null;
+          if (e.isFile()) {
+            try {
+              content = fs.readFileSync(p, 'utf8');
+            } catch (err) {
+              if (err.code !== 'ENOENT') throw err;
+            }
+          }
           out.push({
             rel: path.relative(root, p),
-            isDir: stat.isDirectory(),
+            isDir,
             // Include content hash for files so even an edit-in-place would
             // be caught.
-            content: stat.isFile() ? fs.readFileSync(p, 'utf8') : null,
+            content,
           });
-          if (stat.isDirectory()) walk(p);
+          if (isDir) walk(p);
         }
       }
       walk(root);

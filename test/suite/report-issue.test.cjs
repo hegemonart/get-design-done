@@ -199,7 +199,7 @@ test('30-04 [D-03] C4: TTY answers "y" → mocked gh issue create invoked exactl
   });
   assert.equal(result.submitted, true);
   assert.equal(submitCalls, 1);
-  assert.match(result.url, /github\.com\/hegemonart\/get-design-done\/issues/);
+  assert.match(result.url, /^https:\/\/github\.com\/hegemonart\/get-design-done\/issues\//);
   assert.ok(captured && typeof captured.title === 'string' && captured.title.length > 0);
 });
 

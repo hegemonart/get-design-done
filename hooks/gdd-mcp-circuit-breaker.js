@@ -197,9 +197,24 @@ function appendJsonl(filePath, row) {
 
 function appendStateBlocker(cwd, message) {
   const statePath = path.join(cwd, '.design', 'STATE.md');
-  if (!fs.existsSync(statePath)) return; // silent if STATE missing
   const line = `\n<!-- mcp-circuit-breaker: ${new Date().toISOString()} --> 🛑 BLOCKER: ${message}\n`;
-  try { fs.appendFileSync(statePath, line, 'utf8'); } catch { /* best-effort */ }
+  // Open with 'r+' (no-create) so we append ONLY to an already-existing STATE
+  // and never create it — opening fails with ENOENT when STATE is missing,
+  // which we swallow as "silent if STATE missing". This collapses the old
+  // existsSync→appendFileSync TOCTOU race into a single atomic open.
+  let fd;
+  try {
+    fd = fs.openSync(statePath, 'r+');
+  } catch {
+    return; // STATE missing (ENOENT) or otherwise unopenable — best-effort, stay silent
+  }
+  try {
+    fs.writeSync(fd, line, fs.fstatSync(fd).size, 'utf8');
+  } catch {
+    /* best-effort */
+  } finally {
+    try { fs.closeSync(fd); } catch { /* best-effort */ }
+  }
 }
 
 async function main() {

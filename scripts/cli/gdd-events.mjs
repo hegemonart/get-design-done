@@ -29,7 +29,7 @@
 //
 // Default --path is `.design/telemetry/events.jsonl` (relative to cwd).
 
-import { existsSync, statSync, openSync, readSync, closeSync } from 'node:fs';
+import { statSync, openSync, readSync, closeSync } from 'node:fs';
 import { resolve, isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { argv, exit, stdout, stderr } from 'node:process';
@@ -146,22 +146,42 @@ async function cmdTail(parsed) {
     return 0;
   }
   // Follow mode: stream existing content, then poll for appends.
+  // Read directly and treat ENOENT as "file not present yet" (offset stays 0,
+  // the poll loop below picks it up once it appears) — avoids the
+  // existsSync→read/statSync TOCTOU race.
   let offset = 0;
-  if (existsSync(path)) {
+  try {
     for await (const ev of readEvents({ path })) {
       stdout.write(JSON.stringify(ev) + '\n');
     }
     offset = statSync(path).size;
+  } catch (e) {
+    if (e.code !== 'ENOENT') throw e;
+    offset = 0;
   }
   // Poll loop. Reads new bytes since last offset, splits on \n, writes each.
   let buf = '';
   // eslint-disable-next-line no-constant-condition
   while (true) {
     await new Promise((r) => setTimeout(r, 250));
-    if (!existsSync(path)) continue;
-    const size = statSync(path).size;
+    // Stat + open directly and treat ENOENT as "file not there this tick"
+    // (skip and re-poll) — avoids the existsSync→statSync/openSync TOCTOU race
+    // where the file could be removed between the check and the use.
+    let size;
+    try {
+      size = statSync(path).size;
+    } catch (e) {
+      if (e.code === 'ENOENT') continue;
+      throw e;
+    }
     if (size <= offset) continue;
-    const fd = openSync(path, 'r');
+    let fd;
+    try {
+      fd = openSync(path, 'r');
+    } catch (e) {
+      if (e.code === 'ENOENT') continue;
+      throw e;
+    }
     try {
       const need = size - offset;
       const chunk = Buffer.allocUnsafe(need);

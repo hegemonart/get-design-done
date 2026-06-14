@@ -23,6 +23,10 @@ const DEFAULT_ARMS_PATH = '.design/telemetry/design-arms.json';
 // user-outcome data shifts it (D-03 — advisory, never directive).
 const DESIGN_ARM_PRIOR = Object.freeze({ alpha: 2, beta: 8 });
 
+// Monotonic per-process counter so two saves within the same millisecond still get
+// distinct tmp names (no `crypto` — this module is "no crypto, no egress").
+let _tmpSeq = 0;
+
 /** Inline FNV-1a (32-bit) hash → 8-char hex. Deterministic, dependency-free. */
 function fnv1a(str) {
   let h = 0x811c9dc5;
@@ -62,7 +66,10 @@ function save(store, opts = {}) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
   store.schema_version = SCHEMA_VERSION;
   store.generated_at = new Date().toISOString();
-  const tmp = p + '.tmp';
+  // Unique per-writer tmp name: prevents symlink/race attacks on a static `.tmp`
+  // path AND stops concurrent writers from clobbering each other's tmp file before
+  // the atomic rename. pid + time + counter — no crypto (see module header).
+  const tmp = `${p}.${process.pid}.${Date.now()}.${_tmpSeq++}.tmp`;
   fs.writeFileSync(tmp, JSON.stringify(store, null, 2));
   fs.renameSync(tmp, p);
 }

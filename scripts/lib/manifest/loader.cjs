@@ -38,8 +38,21 @@ function load(name, opts) {
   }
   const cached = _cache.get(abs);
   if (cached && cached.mtimeMs === stat.mtimeMs) return cached.data;
+  let raw;
   try {
-    const data = JSON.parse(fs.readFileSync(abs, 'utf8'));
+    raw = fs.readFileSync(abs, 'utf8');
+  } catch (e) {
+    // ENOENT here means the file vanished between statSync and readFileSync —
+    // collapse the existsSync/stat→read TOCTOU race into the same "not found"
+    // fallback the statSync catch above produces.
+    if (e.code === 'ENOENT') {
+      if (!o.quiet) process.stderr.write(`manifest: ${name}.json not found — using empty fallback (a consumer phase may not have shipped its data yet)\n`);
+      return fallback;
+    }
+    throw e;
+  }
+  try {
+    const data = JSON.parse(raw);
     _cache.set(abs, { mtimeMs: stat.mtimeMs, data });
     return data;
   } catch (e) {

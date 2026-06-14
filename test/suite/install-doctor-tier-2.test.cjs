@@ -243,7 +243,7 @@ test('doctor tier-2: partial state — only codex ready', () => {
     // Confirm the summary mentions each channel by name.
     assert.match(status.summary.oneLineSummary, /codex/);
     assert.match(status.summary.oneLineSummary, /cursor/);
-    assert.match(status.summary.oneLineSummary, /agentskills\.io/);
+    assert.match(status.summary.oneLineSummary, /\bagentskills\.io\b/);
   } finally {
     rmRf(tmpDir);
   }
@@ -272,7 +272,7 @@ test('doctor tier-2: summary line counts match per-channel verdicts (all fixture
         `[${stateName}] summary mentions codex`);
       assert.match(status.summary.oneLineSummary, /cursor/,
         `[${stateName}] summary mentions cursor`);
-      assert.match(status.summary.oneLineSummary, /agentskills\.io/,
+      assert.match(status.summary.oneLineSummary, /\bagentskills\.io\b/,
         `[${stateName}] summary mentions agentskills.io`);
 
       // The numeric readyCount in summary text must match the field.

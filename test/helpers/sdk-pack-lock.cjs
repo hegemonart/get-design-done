@@ -49,7 +49,23 @@ const crypto = require('node:crypto');
 // don't share a lock.
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const LOCK_ID = crypto.createHash('sha1').update(REPO_ROOT).digest('hex').slice(0, 12);
-const LOCK_PATH = path.join(os.tmpdir(), `gdd-sdk-pack-${LOCK_ID}.lock`);
+
+// The lock file is, by design, a SHARED rendezvous: every test process for this
+// checkout must converge on the SAME path, so the name cannot be randomized. To
+// avoid a symlink/race on a predictable name living directly in the world-writable
+// system temp dir, nest it inside a per-checkout private directory created with
+// owner-only (0700) perms and pre-cleared of any pre-existing entry. Combined with
+// the atomic `wx` (O_EXCL) create below, an attacker can neither pre-plant a
+// symlink at LOCK_PATH nor traverse a hostile parent dir.
+const LOCK_DIR = path.join(os.tmpdir(), `gdd-sdk-pack-${LOCK_ID}`);
+try {
+  // lstat (not stat) so a pre-planted symlink at LOCK_DIR is detected and removed
+  // rather than followed.
+  const st = fs.lstatSync(LOCK_DIR);
+  if (!st.isDirectory()) fs.rmSync(LOCK_DIR, { force: true, recursive: true });
+} catch { /* ENOENT — nothing to clear */ }
+fs.mkdirSync(LOCK_DIR, { recursive: true, mode: 0o700 });
+const LOCK_PATH = path.join(LOCK_DIR, 'pack.lock');
 
 // A single `npm pack` runs in ~5-20s; ≤3 files contend, so real waits are short.
 // STALE > any plausible single pack so we never steal a live, legitimate holder
