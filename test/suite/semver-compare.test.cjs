@@ -767,6 +767,9 @@ OFF_CADENCE_VERSIONS.add('1.60.1');
 // v1.60.2 — Phase 60.2 security & CI hardening (CodeQL + npm-audit gate + hono
 // override + dangerous-link detection), an off-cadence patch on the 1.60 minor.
 OFF_CADENCE_VERSIONS.add('1.60.2');
+// v2.0.0 — Phase 61 "Hone": the major rebrand (npm -> @hegemonart/hone, command
+// prefix -> /hone:, MIT -> Apache-2.0). First major bump; off-cadence from the 1.x arc.
+OFF_CADENCE_VERSIONS.add('2.0.0');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

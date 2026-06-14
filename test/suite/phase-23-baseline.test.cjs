@@ -95,9 +95,11 @@ test('phase-23 baseline: pngjs declared as optionalDependency', () => {
 
 test('phase-23 baseline: package.json version is ≥1.23.0', () => {
   const pkg = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8'));
-  const m = pkg.version.match(/^1\.(\d+)\./);
+  // Phase 61 (v2.0.0): major bumped past the 1.x arc. Accept any version ≥1.23.0.
+  const m = pkg.version.match(/^(\d+)\.(\d+)\./);
   assert.ok(m, `unexpected version shape: ${pkg.version}`);
-  assert.ok(Number(m[1]) >= 23, `expected ≥1.23.0, got ${pkg.version}`);
+  const [maj, min] = [Number(m[1]), Number(m[2])];
+  assert.ok(maj > 1 || (maj === 1 && min >= 23), `expected ≥1.23.0, got ${pkg.version}`);
 });
 
 test('phase-23 baseline: CHANGELOG has [1.23.0] section', () => {
