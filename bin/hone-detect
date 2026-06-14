@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// bin/gdd-detect — Phase 41 deterministic anti-pattern CLI.
+// bin/hone-detect — Phase 41 deterministic anti-pattern CLI.
 //
 // Thin CJS entry: the engine + CLI are plain dep-free CommonJS under scripts/lib/detect/, so unlike
-// bin/gdd-sdk this needs no compiled/strip-types dual mode — it just requires the CLI and forwards
+// bin/hone-sdk this needs no compiled/strip-types dual mode — it just requires the CLI and forwards
 // argv + the exit code (0 clean · 2 findings · 1 invocation error).
 
 'use strict';
@@ -13,7 +13,7 @@ let cli;
 try {
   cli = require(path.resolve(__dirname, '..', 'scripts', 'lib', 'detect', 'cli.cjs'));
 } catch (err) {
-  process.stderr.write('gdd-detect: failed to load the detector: ' + (err && err.message ? err.message : String(err)) + '\n');
+  process.stderr.write('hone-detect: failed to load the detector: ' + (err && err.message ? err.message : String(err)) + '\n');
   process.exit(1);
 }
 

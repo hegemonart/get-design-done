@@ -1,22 +1,22 @@
 #!/usr/bin/env node
-// bin/gdd-dashboard — Phase 55 (GDD Dashboard, DEP-FREE), TUI-01 (executor D).
+// bin/hone-dashboard — Phase 55 (GDD Dashboard, DEP-FREE), TUI-01 (executor D).
 //
 // CJS trampoline that launches the terminal dashboard
 // (sdk/dashboard/tui/index.cjs) under `node`, forwarding argv + the child's
 // exit code / signal. Windows-safe.
 //
-// SIMPLER than bin/gdd-sdk (R8): the TUI is plain `.cjs` (Node builtins only),
+// SIMPLER than bin/hone-sdk (R8): the TUI is plain `.cjs` (Node builtins only),
 // so there is NO esbuild bundle and NO `--experimental-strip-types` flag — we
 // just `node <entry>`. The only reason this is a spawning trampoline (rather
-// than a direct require) is the same one gdd-sdk documents: npm's
-// auto-generated Windows `.cmd` shim invokes `node bin/gdd-dashboard` and we
+// than a direct require) is the same one hone-sdk documents: npm's
+// auto-generated Windows `.cmd` shim invokes `node bin/hone-dashboard` and we
 // want a single, platform-uniform launch path that cleanly forwards the exit
 // code and re-raises a terminating signal (so Ctrl-C tears down correctly).
 //
 // Sibling resolution uses a PACKAGE-ROOT WALK-UP (the Phase 53/54 lesson, D7),
 // never a fixed `__dirname`-relative cross-tree jump: we climb from this file's
 // directory to the GDD package root (package.json with name
-// "get-design-done") and resolve `sdk/dashboard/tui/index.cjs` from there. This
+// "hone") and resolve `sdk/dashboard/tui/index.cjs` from there. This
 // keeps the bin correct even if it is copied/relocated within the tree.
 
 'use strict';
@@ -54,7 +54,7 @@ function findPackageRoot(startDir) {
         /\/hone$/.test(pkg.name) ||
         // legacy (Phase 61 migration window): accept the prior name in-place
         pkg.name === 'get-design-done' ||
-        /\/get-design-done$/.test(pkg.name)
+        /\/hone$/.test(pkg.name)
       ) {
         return dir;
       }
@@ -71,7 +71,7 @@ const entry = path.join(root, 'sdk', 'dashboard', 'tui', 'index.cjs');
 
 if (!fs.existsSync(entry)) {
   // eslint-disable-next-line no-console
-  console.error(`gdd-dashboard: TUI entry not found at ${entry}`);
+  console.error(`hone-dashboard: TUI entry not found at ${entry}`);
   process.exit(3);
 }
 
@@ -98,6 +98,6 @@ child.on('exit', (code, signal) => {
 child.on('error', (err) => {
   // Failure to spawn node itself — extremely rare; surface to stderr.
   // eslint-disable-next-line no-console
-  console.error('gdd-dashboard: failed to launch the TUI:', err.message);
+  console.error('hone-dashboard: failed to launch the TUI:', err.message);
   process.exit(3);
 });

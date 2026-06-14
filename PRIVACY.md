@@ -1,8 +1,8 @@
 # Privacy Policy
 
 **Effective date:** 2026-04-21
-**Plugin:** Get Design Done (`get-design-done`)
-**Repository:** https://github.com/hegemonart/get-design-done
+**Plugin:** Get Design Done (`hone`)
+**Repository:** https://github.com/hegemonart/hone
 
 ## Summary
 
@@ -25,10 +25,10 @@ All of the above stays on your machine. None of it is uploaded by the plugin its
 The plugin makes network calls **only** when you explicitly invoke a command that requires one. The calls it can make are:
 
 1. **Anthropic API** — every Claude Code session already communicates with Anthropic to run the model. The plugin does not add or bypass this; it uses the model you are already running. Your prompts and file contents included in those prompts are governed by Anthropic's own privacy policy.
-2. **Figma MCP** (`get-design-done:figma-*`, connection: `figma.md`) — reads Figma metadata and writes annotations, tokens, and Code Connect mappings to files you specify. Only runs when you invoke a Figma command and have the Figma MCP server connected.
-3. **Design authority feeds** (`/gdd:watch-authorities`) — fetches a curated list of public design RSS/Atom feeds listed in `reference/authority-feeds.md`. No credentials, no identifying headers beyond a standard user agent.
-4. **GitHub releases** (`/gdd:check-update`) — checks the plugin's own GitHub releases endpoint for new versions. A 24-hour cache is kept in `.design/update-cache.json`.
-5. **Third-party tool connections** you choose to enable via `/gdd:connections` — such as 21st.dev Magic MCP, Magic Patterns, Chromatic, Storybook, Graphify, Pencil.dev, Paper.design, Refero, Preview, Pinterest. Each is opt-in, configured by you, and governed by its own privacy policy. The plugin does not proxy traffic through the author's infrastructure.
+2. **Figma MCP** (`hone:figma-*`, connection: `figma.md`) — reads Figma metadata and writes annotations, tokens, and Code Connect mappings to files you specify. Only runs when you invoke a Figma command and have the Figma MCP server connected.
+3. **Design authority feeds** (`/hone:watch-authorities`) — fetches a curated list of public design RSS/Atom feeds listed in `reference/authority-feeds.md`. No credentials, no identifying headers beyond a standard user agent.
+4. **GitHub releases** (`/hone:check-update`) — checks the plugin's own GitHub releases endpoint for new versions. A 24-hour cache is kept in `.design/update-cache.json`.
+5. **Third-party tool connections** you choose to enable via `/hone:connections` — such as 21st.dev Magic MCP, Magic Patterns, Chromatic, Storybook, Graphify, Pencil.dev, Paper.design, Refero, Preview, Pinterest. Each is opt-in, configured by you, and governed by its own privacy policy. The plugin does not proxy traffic through the author's infrastructure.
 6. **`WebFetch` / `WebSearch`** — only when an agent is explicitly configured to research and you approve the tool call.
 
 The plugin has no analytics, no crash reporting, and no "phone home" behavior.
@@ -47,4 +47,4 @@ Updates will be committed to this file in the repository. The effective date abo
 
 ## Contact
 
-Open an issue at https://github.com/hegemonart/get-design-done/issues.
+Open an issue at https://github.com/hegemonart/hone/issues.

@@ -29,7 +29,7 @@
   "interface": {
     "displayName": "Hone",
     "shortDescription": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design",
-    "longDescription": "A design-quality pipeline for AI coding agents: brief -> explore -> plan -> design -> verify.",
+    "longDescription": "Hone every design to shipped.",
     "developerName": "hegemonart",
     "category": "Design",
     "capabilities": [

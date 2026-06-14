@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// bin/gdd-sdk — Plan 21-09 Task 7 (SDK-21); dual-mode since Plan 31-5-9.5 (D-16).
+// bin/hone-sdk — Plan 21-09 Task 7 (SDK-21); dual-mode since Plan 31-5-9.5 (D-16).
 //
 // DUAL-MODE CJS trampoline. Resolves the SDK CLI entry and re-launches it under
 // `node`, forwarding argv + exit code/signal. Two modes:
@@ -17,7 +17,7 @@
 // Why a trampoline at all:
 //   POSIX shebangs can use `#!/usr/bin/env -S node --experimental-strip-types`,
 //   but Windows cmd.exe does not honor shebangs and npm's auto-generated .cmd
-//   shim invokes plain `node bin/gdd-sdk` with no way to inject the flag. The
+//   shim invokes plain `node bin/hone-sdk` with no way to inject the flag. The
 //   trampoline re-launches node correctly on both platforms.
 
 'use strict';
@@ -60,6 +60,6 @@ child.on('exit', (code, signal) => {
 child.on('error', (err) => {
   // Failure to spawn node itself — extremely rare; surface to stderr.
   // eslint-disable-next-line no-console
-  console.error('gdd-sdk: failed to launch SDK CLI entry:', err.message);
+  console.error('hone-sdk: failed to launch SDK CLI entry:', err.message);
   process.exit(3);
 });

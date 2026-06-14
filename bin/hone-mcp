@@ -1,25 +1,25 @@
 #!/usr/bin/env node
-// bin/gdd-mcp — Plan 31-5-05 (SDK-04, D-08); dual-mode since Plan 31-5-9.5 (D-16).
+// bin/hone-mcp — Plan 31-5-05 (SDK-04, D-08); dual-mode since Plan 31-5-9.5 (D-16).
 //
-// DUAL-MODE CJS trampoline for the `gdd-mcp` MCP server. Resolves the server
+// DUAL-MODE CJS trampoline for the `hone-mcp` MCP server. Resolves the server
 // entry and re-launches it under `node`, forwarding argv + exit code/signal.
 // Two modes:
 //
 //   • COMPILED (installed / packed): if the esbuild-bundled sibling
-//     `sdk/mcp/gdd-mcp/server.js` exists, spawn `node <js>` with NO flag.
+//     `sdk/mcp/hone-mcp/server.js` exists, spawn `node <js>` with NO flag.
 //     This is the path a user gets from `npm i` — the entry lives under
 //     node_modules where Node refuses --experimental-strip-types on `.ts`
 //     (ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING). `prepack` compiles the .js
 //     before every pack/publish (see scripts/build-sdk-bins.cjs).
 //   • SOURCE (in-repo dev): otherwise spawn
-//     `node --experimental-strip-types sdk/mcp/gdd-mcp/server.ts` — raw TS, no
+//     `node --experimental-strip-types sdk/mcp/hone-mcp/server.ts` — raw TS, no
 //     build step, exactly as before this plan.
 //
 // Why a trampoline at all:
 //   POSIX shebangs can use `#!/usr/bin/env -S node --experimental-strip-types`,
 //   but Windows cmd.exe does not honor shebangs and npm's auto-generated .cmd
-//   shim invokes plain `node bin/gdd-mcp` with no way to inject the flag.
-//   Mirrors the proven bin/gdd-sdk trampoline pattern.
+//   shim invokes plain `node bin/hone-mcp` with no way to inject the flag.
+//   Mirrors the proven bin/hone-sdk trampoline pattern.
 
 'use strict';
 
@@ -84,6 +84,6 @@ child.on('exit', (code, signal) => {
 child.on('error', (err) => {
   // Failure to spawn node itself — extremely rare; surface to stderr.
   // eslint-disable-next-line no-console
-  console.error('gdd-mcp: failed to launch MCP server entry:', err.message);
+  console.error('hone-mcp: failed to launch MCP server entry:', err.message);
   process.exit(3);
 });

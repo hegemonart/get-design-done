@@ -1,8 +1,8 @@
-# Gitleaks config for get-design-done — D-12
+# Gitleaks config for hone — D-12
 # Extends the default v8 rule set with allowlist overrides for planning dirs,
 # dev-only paths, and documentation-example tokens.
 
-title = "get-design-done gitleaks config"
+title = "hone gitleaks config"
 
 [extend]
 useDefault = true

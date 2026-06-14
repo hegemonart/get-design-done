@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// bin/gdd-graph — Plan 30.6-02 Task 3
+// bin/hone-graph — Plan 30.6-02 Task 3
 //
 // Native CLI replacing every `gsd-tools.cjs graphify *` dispatch in our
 // tree. This bin is a thin CJS dispatcher that dynamic-imports the ESM
@@ -29,7 +29,7 @@ const SUBCOMMANDS = new Set([
 
 function printUsage(stream) {
   stream.write([
-    'Usage: gdd-graph <subcommand> [options]',
+    'Usage: hone-graph <subcommand> [options]',
     '',
     'Subcommands:',
     '  build  [--intel <path>] [--out <path>] [--now <iso>]',
