@@ -1,11 +1,11 @@
 ---
-name: gdd-debug
+name: hone-debug
 description: "Symptom-driven design debugger with persistent state. Phase 1 builds a feedback loop; Phase 2 hypothesizes. Writes findings to .design/DEBUG.md. Use when a symptom needs systematic, one-variable-at-a-time tracking."
 argument-hint: "[<symptom description>]"
 tools: Read, Write, Grep, Glob, AskUserQuestion, Task
 ---
 
-# /gdd:debug
+# /hone:debug
 
 Systematic, checkpoint-driven design debugger. Loads framing from `./../reference/debugger-philosophy.md` (five principles) and the feedback-loop construction catalog from `./debug-feedback-loops.md` (10 priority-ordered loop paths). Phase 1 builds the loop; Phase 2 generates hypotheses. Writes every step to `.design/DEBUG.md` so killed sessions can resume.
 
@@ -30,7 +30,7 @@ Systematic, checkpoint-driven design debugger. Loads framing from `./../referenc
      ```
 
    - Ask (AskUserQuestion): "Continue investigating? (yes / found it / dead end)"
-8. **When found**: Write `### Fix Proposal` block with a concrete patch description. Re-run the Phase 1 loop to confirm the fix flips it from fail to pass. Ask: "Create a todo with `/gdd:todo add`, or execute the fix now?"
+8. **When found**: Write `### Fix Proposal` block with a concrete patch description. Re-run the Phase 1 loop to confirm the fix flips it from fail to pass. Ask: "Create a todo with `/hone:todo add`, or execute the fix now?"
 
 ## Do Not
 

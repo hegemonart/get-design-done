@@ -1,6 +1,6 @@
 'use strict';
 // Phase 40.5 — GDD CLI Localization regression baseline. The FINAL phase of the 38.5→40.5 sequence.
-// Freezes the v1.40.5 artifact: the i18n resolver, the 7 message tables, the /gdd:locale skill, the
+// Freezes the v1.40.5 artifact: the i18n resolver, the 7 message tables, the /hone:locale skill, the
 // cli-localization contract, and the 6-manifest lockstep. Version-AGNOSTIC. Every test `40.5-03:`.
 
 const test = require('node:test');

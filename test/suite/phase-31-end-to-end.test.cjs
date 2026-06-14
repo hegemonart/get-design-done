@@ -240,11 +240,11 @@ test('31-10: Path C — a plugin payload (buildPayload, with tokens[]) surfaces 
       { id: 'V2', name: 'space/md', resolvedType: 'FLOAT', collectionId: 'C1', valuesByMode: { m1: 16 } },
     ];
     const payload = buildPayload(cols, vars, { fileKey: FILE_KEY });
-    assert.equal(payload.source, 'gdd-plugin', 'payload carries the Path C marker');
+    assert.equal(payload.source, 'hone-plugin', 'payload carries the Path C marker');
     assert.ok(Array.isArray(payload.tokens) && payload.tokens.length === 2, 'buildPayload emits the flat tokens[] for the digest');
 
     // Lay down a raw cache: file.json (for components) + variables.json = the
-    // receiver-written Path C payload (carrying source:'gdd-plugin').
+    // receiver-written Path C payload (carrying source:'hone-plugin').
     fs.mkdirSync(ws.rawDir, { recursive: true });
     fs.writeFileSync(path.join(ws.rawDir, 'file.json'), JSON.stringify(loadFixture('files-response')));
     fs.writeFileSync(path.join(ws.rawDir, 'variables.json'), JSON.stringify(payload));

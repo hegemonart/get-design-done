@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Gemini model.
+Run /hone:audit and /hone:verify using your configured Gemini model.
 Settings live in .gemini/settings.json. For help, ask Gemini about the pipeline.
 
 

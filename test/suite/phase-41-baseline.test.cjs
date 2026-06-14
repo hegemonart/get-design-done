@@ -1,5 +1,5 @@
 'use strict';
-// Phase 41 — gdd-detect regression baseline. Freezes v1.41.0: the CLI + engine + 11 rules + the
+// Phase 41 — hone-detect regression baseline. Freezes v1.41.0: the CLI + engine + 11 rules + the
 // golden findings on the positive fixture + the 6-manifest lockstep. v1.41.0 is the first MINOR since
 // the Phase 39.5 lint-changelog floor (1.39.0), so the [1.41.0] entry MUST carry a Breaking-changes
 // section. Version-AGNOSTIC. Every test tagged `41-03:`.
@@ -20,7 +20,7 @@ const { lintChangelog } = require(path.join(REPO_ROOT, 'scripts/lint-changelog.c
 
 test('41-03: all deliverables exist', () => {
   for (const f of [
-    'bin/gdd-detect',
+    'bin/hone-detect',
     'scripts/lib/detect/engine.cjs',
     'scripts/lib/detect/cli.cjs',
     'scripts/lib/detect/rule-schema.json',
@@ -32,7 +32,7 @@ test('41-03: all deliverables exist', () => {
   }
   // package.json wiring
   const pkg = readJsonRel('package.json');
-  assert.equal(pkg.bin['gdd-detect'], './bin/gdd-detect', 'bin entry');
+  assert.equal(pkg.bin['hone-detect'], './bin/hone-detect', 'bin entry');
   assert.ok(pkg.scripts['lint:design'], 'lint:design script');
 });
 
@@ -40,7 +40,7 @@ test('41-03: golden findings on the positive fixture (normalized)', () => {
   const res = engine.run(path.join(REPO_ROOT, 'test/fixtures/detect/positive'), { cwd: REPO_ROOT });
   const norm = res.findings.map((f) => ({ ruleId: f.ruleId, file: f.file, line: f.line, column: f.column, match: f.match }));
   const golden = JSON.parse(readBaseline('detect-golden.json'));
-  assert.deepEqual(norm, golden, 'gdd-detect output drifted from the golden; regenerate phase-41/detect-golden.json if intentional');
+  assert.deepEqual(norm, golden, 'hone-detect output drifted from the golden; regenerate phase-41/detect-golden.json if intentional');
 });
 
 test('41-03: 6-manifest version lockstep', () => {

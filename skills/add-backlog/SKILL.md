@@ -1,12 +1,12 @@
 ---
-name: gdd-add-backlog
+name: hone-add-backlog
 description: "Park a design idea for a future cycle. Writes to .design/backlog/BACKLOG.md."
 argument-hint: "[text]"
 tools: Read, Write, AskUserQuestion
 disable-model-invocation: true
 ---
 
-# /gdd:add-backlog
+# /hone:add-backlog
 
 **Role:** Long-term parking lot for design ideas. Backing store: `.design/backlog/BACKLOG.md`.
 
@@ -36,13 +36,13 @@ Derive `<title>` = first 60 characters of the text (strip newlines). Append:
 ━━━ Backlog entry parked ━━━
 Title: <title>
 Status: parked
-Promote later via: /gdd:review-backlog
+Promote later via: /hone:review-backlog
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
 ## Constraints
 
 - Do not modify files outside `.design/backlog/`.
-- Do not set status to anything other than `parked` here - `/gdd:review-backlog` owns status transitions.
+- Do not set status to anything other than `parked` here - `/hone:review-backlog` owns status transitions.
 
 ## ADD-BACKLOG COMPLETE

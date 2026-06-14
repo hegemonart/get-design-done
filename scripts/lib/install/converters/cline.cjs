@@ -11,7 +11,7 @@
  * this converter. Instead of one SKILL.md file per skill, all installed
  * skills are concatenated into a single `.clinerules` file written at
  * `<cline-config>/.clinerules`. That file contains a stack of markdown
- * rule-blocks, one per skill, with a `## gdd-<skillName>` heading and
+ * rule-blocks, one per skill, with a `## hone-<skillName>` heading and
  * description + body prose.
  *
  * This file exports TWO functions:
@@ -30,7 +30,7 @@
  *
  * Output shape (one block):
  *
- *     ## gdd-<skillName>
+ *     ## hone-<skillName>
  *
  *     <description from source frontmatter>
  *
@@ -38,7 +38,7 @@
  *
  * The block contains NO YAML frontmatter (cline rules are pure
  * markdown), NO `<!-- ... adapter -->` HTML comment (rules-format does
- * not embed adapter headers), and NO `name:` field — the `## gdd-<name>`
+ * not embed adapter headers), and NO `name:` field — the `## hone-<name>`
  * heading IS the skill identifier in cline's rule-block model.
  *
  * Architecture ported from gsd-build/get-shit-done (MIT) — per Phase
@@ -94,15 +94,15 @@ function extractDescription(frontmatter) {
 }
 
 /**
- * Normalize the skill name by stripping any prior `gdd-`/`gsd-` prefix
- * (case-insensitive) so we never emit `gdd-gdd-foo`. Matches
+ * Normalize the skill name by stripping any prior `hone-`/`gsd-` prefix
+ * (case-insensitive) so we never emit `hone-hone-foo`. Matches
  * `shared.buildFrontmatter`'s normalization for consistency.
  *
  * @param {string} skillName
  * @returns {string}
  */
 function normalizeSkillName(skillName) {
-  return String(skillName || '').replace(/^(gdd-|gsd-)/i, '');
+  return String(skillName || '').replace(/^(hone-|hone-|gsd-)/i, '');
 }
 
 // ---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ function normalizeSkillName(skillName) {
  *
  * The returned block has this shape:
  *
- *     ## gdd-<skillName>
+ *     ## hone-<skillName>
  *
  *     <description if present>
  *
@@ -128,7 +128,7 @@ function normalizeSkillName(skillName) {
  *
  * @param {string} content        Full source SKILL.md content (frontmatter + body).
  * @param {string} skillName      The bare skill name (e.g. `'help'`, `'explore'`).
- *   `gdd-`/`gsd-` prefixes are stripped to prevent double-prefix.
+ *   `hone-`/`gsd-` prefixes are stripped to prevent double-prefix.
  * @param {{ runtime?: string }} [opts]  Optional context — `runtime` defaults
  *   to `'cline'`. Currently informational only.
  * @returns {string}  The rule-block markdown fragment.
@@ -138,13 +138,13 @@ function convert(content, skillName, opts) {
   const description = extractDescription(frontmatter);
   const bareName = normalizeSkillName(skillName);
 
-  // Slash refs rewrite to `/gdd-name` form — cline accepts Claude-shape
-  // slashes (runtime-slash.cjs emits `/gdd-` for every non-codex runtime,
+  // Slash refs rewrite to `/hone-name` form — cline accepts Claude-shape
+  // slashes (runtime-slash.cjs emits `/hone-` for every non-codex runtime,
   // and cline is not codex). Trim leading/trailing whitespace so the
   // heading directly precedes the body content.
   const prose = shared.rewriteSlashRefs(body, 'cline').trim();
 
-  const heading = `## gdd-${bareName}`;
+  const heading = `## ${shared.SKILL_PREFIX}${bareName}`;
   const descLine = description ? `${description}\n\n` : '';
 
   return `${heading}\n\n${descLine}${prose}\n`;
@@ -175,7 +175,7 @@ function convert(content, skillName, opts) {
  */
 function buildClinerulesFile(skillBlocks) {
   const header = [
-    '# get-design-done rules',
+    '# hone rules',
     '',
     '<!-- Auto-generated from gdd SKILL.md sources. Edit upstream skills, not this file. -->',
     '',

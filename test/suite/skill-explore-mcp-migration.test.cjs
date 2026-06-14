@@ -3,15 +3,15 @@
  * skill-explore-mcp-migration
  *
  * Plan 20-08 regression check: `skills/explore/SKILL.md` routes every
- * STATE.md mutation through `gdd-state` MCP tools. Prose, synthesizer
+ * STATE.md mutation through `hone-state` MCP tools. Prose, synthesizer
  * contracts, connections-probe outputs, and the handoff to plan are
  * preserved verbatim - only the mutation surface changes.
  *
  * Assertions (static-analysis only; no MCP server is booted):
  *   - Frontmatter `tools:` lists all 7 required MCP tool names.
- *   - Exactly ONE `mcp__gdd_state__transition_stage` invocation in the body
+ *   - Exactly ONE `mcp__hone_state__transition_stage` invocation in the body
  *     (Stage entry). The frontmatter listing is excluded from the count.
- *   - At most ONE `mcp__gdd_state__probe_connections` invocation in the body
+ *   - At most ONE `mcp__hone_state__probe_connections` invocation in the body
  *     - the batch-commit pattern must not be re-expanded to N calls.
  *   - No prose directs an `Edit`, `Write`, or "update" action at STATE.md
  *     - every STATE.md mutation goes through an MCP tool.
@@ -34,13 +34,13 @@ const BEFORE_FIXTURE = path.join(FIXTURE_DIR, 'explore-before.md');
 const AFTER_FIXTURE = path.join(FIXTURE_DIR, 'explore-after.md');
 
 const REQUIRED_MCP_TOOLS = [
-  'mcp__gdd_state__get',
-  'mcp__gdd_state__transition_stage',
-  'mcp__gdd_state__probe_connections',
-  'mcp__gdd_state__update_progress',
-  'mcp__gdd_state__set_status',
-  'mcp__gdd_state__add_blocker',
-  'mcp__gdd_state__checkpoint',
+  'mcp__hone_state__get',
+  'mcp__hone_state__transition_stage',
+  'mcp__hone_state__probe_connections',
+  'mcp__hone_state__update_progress',
+  'mcp__hone_state__set_status',
+  'mcp__hone_state__add_blocker',
+  'mcp__hone_state__checkpoint',
 ];
 
 function readBody() {
@@ -90,7 +90,7 @@ test('skill-explore-mcp-migration: frontmatter tools lists all 7 required MCP to
 
 test('skill-explore-mcp-migration: exactly one transition_stage invocation in body (Stage entry)', () => {
   const body = stripFrontmatter(readBody());
-  const count = countOccurrences(body, 'mcp__gdd_state__transition_stage');
+  const count = countOccurrences(body, 'mcp__hone_state__transition_stage');
   assert.equal(
     count,
     1,
@@ -100,7 +100,7 @@ test('skill-explore-mcp-migration: exactly one transition_stage invocation in bo
 
 test('skill-explore-mcp-migration: at most one probe_connections invocation in body (batch commit)', () => {
   const body = stripFrontmatter(readBody());
-  const count = countOccurrences(body, 'mcp__gdd_state__probe_connections');
+  const count = countOccurrences(body, 'mcp__hone_state__probe_connections');
   assert.ok(
     count >= 1 && count <= 1,
     `expected exactly 1 probe_connections invocation in body (batch pattern), got ${count}`

@@ -8,7 +8,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const HOOK = path.resolve(__dirname, '../..', 'hooks', 'first-run-nudge.cjs');
-const NUDGE_LINE = 'Tip: run /gdd:start to let GDD inspect this codebase and suggest one first fix.';
+const NUDGE_LINE = 'Tip: run /hone:start to let GDD inspect this codebase and suggest one first fix.';
 
 function runHook({ cwd, home }) {
   try {
@@ -29,8 +29,8 @@ function tmpDir(prefix) {
 }
 
 test('hook fires in a fresh directory with no design state', () => {
-  const cwd = tmpDir('gdd-nudge-fire-');
-  const home = tmpDir('gdd-home-');
+  const cwd = tmpDir('hone-nudge-fire-');
+  const home = tmpDir('hone-home-');
   try {
     const r = runHook({ cwd, home });
     assert.ok(r.ok, `hook must exit cleanly; stderr=${r.stderr || ''}`);
@@ -42,8 +42,8 @@ test('hook fires in a fresh directory with no design state', () => {
 });
 
 test('hook is silent when .design/config.json exists', () => {
-  const cwd = tmpDir('gdd-nudge-existing-');
-  const home = tmpDir('gdd-home-');
+  const cwd = tmpDir('hone-nudge-existing-');
+  const home = tmpDir('hone-home-');
   fs.mkdirSync(path.join(cwd, '.design'));
   fs.writeFileSync(path.join(cwd, '.design', 'config.json'), '{}', 'utf8');
   try {
@@ -57,10 +57,10 @@ test('hook is silent when .design/config.json exists', () => {
 });
 
 test('hook is silent when the dismissal flag is present', () => {
-  const cwd = tmpDir('gdd-nudge-dismissed-');
-  const home = tmpDir('gdd-home-');
+  const cwd = tmpDir('hone-nudge-dismissed-');
+  const home = tmpDir('hone-home-');
   fs.mkdirSync(path.join(home, '.claude'));
-  fs.writeFileSync(path.join(home, '.claude', 'gdd-nudge-dismissed'), '', 'utf8');
+  fs.writeFileSync(path.join(home, '.claude', 'hone-nudge-dismissed'), '', 'utf8');
   try {
     const r = runHook({ cwd, home });
     assert.ok(r.ok);
@@ -72,8 +72,8 @@ test('hook is silent when the dismissal flag is present', () => {
 });
 
 test('hook is silent when STATE.md declares an active stage', () => {
-  const cwd = tmpDir('gdd-nudge-stage-');
-  const home = tmpDir('gdd-home-');
+  const cwd = tmpDir('hone-nudge-stage-');
+  const home = tmpDir('hone-home-');
   fs.mkdirSync(path.join(cwd, '.design'));
   fs.writeFileSync(
     path.join(cwd, '.design', 'STATE.md'),
@@ -101,6 +101,6 @@ test('hook is registered in hooks.json SessionStart', () => {
 
 test('hook contains the locked nudge copy', () => {
   const body = fs.readFileSync(HOOK, 'utf8');
-  const matches = (body.match(/Tip: run \/gdd:start/g) || []).length;
+  const matches = (body.match(/Tip: run \/hone:start/g) || []).length;
   assert.strictEqual(matches, 1, 'exactly one occurrence of the locked nudge copy');
 });

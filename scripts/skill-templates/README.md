@@ -17,7 +17,7 @@ It stays in git because the Claude Code marketplace install path git-clones the 
 briefly gitignored it and broke that path; v1.58.1 restored it as a committed, drift-gated
 build output.
 
-End users installing `@hegemonart/get-design-done` from the npm registry receive a tarball
+End users installing `@hegemonart/hone` from the npm registry receive a tarball
 with `skills/` already built; no build step runs on their machine.
 
 ## Why two directories, not one
@@ -62,7 +62,7 @@ only to seed the manifest from current sources when reconciling drift.
 
 Four substitution slots are supported by `scripts/lib/build/factory.cjs`:
 
-- `{{command_prefix}}` - slash-command prefix (`/gdd:` for Claude, `/gdd-` for Codex, etc.)
+- `{{command_prefix}}` - slash-command prefix (`/hone:` for Claude, `/hone-` for Codex, etc.)
 - `{{model}}` - human-readable model phrase ("your configured Claude model", etc.)
 - `{{config_file}}` - per-harness config path (`.claude/settings.json`, `.codex/config.toml`, ...)
 - `{{ask_instruction}}` - "ask Claude Code", "ask Codex", etc.

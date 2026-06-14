@@ -2,7 +2,7 @@
 //
 // End-to-end headless integration test. Proves the Phase-21 runner
 // stack (session-runner -> context-engine -> tool-scoping -> pipeline-
-// runner) composes correctly by spawning `bin/gdd-sdk run` against
+// runner) composes correctly by spawning `bin/hone-sdk run` against
 // the fixture at `test/fixtures/headless-e2e/` and asserting artifact
 // shape.
 //

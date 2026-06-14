@@ -20,7 +20,7 @@ test('22-04: DEFAULT_CHAIN_PATH points at .design/gep/events.jsonl', () => {
 });
 
 test('22-04: appendChainEvent generates UUID when not provided', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-gep-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-gep-'));
   try {
     const id = appendChainEvent({
       path: join(dir, 'chain.jsonl'),
@@ -34,7 +34,7 @@ test('22-04: appendChainEvent generates UUID when not provided', () => {
 });
 
 test('22-04: appendChainEvent honours supplied event_id', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-gep-id-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-gep-id-'));
   try {
     const path = join(dir, 'chain.jsonl');
     const myId = '00000000-1111-2222-3333-444444444444';
@@ -53,7 +53,7 @@ test('22-04: appendChainEvent throws on missing agent or outcome', () => {
 });
 
 test('22-04: walkParents returns A→root chain for A→B→C', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-gep-walk-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-gep-walk-'));
   try {
     const path = join(dir, 'chain.jsonl');
     const a = appendChainEvent({ path, agent: 'design-planner', outcome: 'pass' });
@@ -84,7 +84,7 @@ test('22-04: walkParents returns A→root chain for A→B→C', () => {
 });
 
 test('22-04: readChain skips invalid lines but yields valid ones', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-gep-bad-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-gep-bad-'));
   try {
     const path = join(dir, 'chain.jsonl');
     appendChainEvent({ path, agent: 'a', outcome: 'pass' });
@@ -101,7 +101,7 @@ test('22-04: readChain skips invalid lines but yields valid ones', () => {
 });
 
 test('22-04: walkParents returns [] for unknown event_id', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-gep-unknown-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-gep-unknown-'));
   try {
     const path = join(dir, 'chain.jsonl');
     appendChainEvent({ path, agent: 'a', outcome: 'pass' });
@@ -113,7 +113,7 @@ test('22-04: walkParents returns [] for unknown event_id', () => {
 });
 
 test('22-04: opaque extra fields preserved in record', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-gep-opaque-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-gep-opaque-'));
   try {
     const path = join(dir, 'chain.jsonl');
     appendChainEvent({
@@ -141,7 +141,7 @@ test('22-04: chainPathFor handles relative + absolute', () => {
 });
 
 test('22-04: walkParents safe against self-cycle (defensive)', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-gep-cycle-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-gep-cycle-'));
   try {
     const path = join(dir, 'chain.jsonl');
     const fixed = '11111111-1111-1111-1111-111111111111';

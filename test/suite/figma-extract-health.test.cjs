@@ -29,7 +29,7 @@ const SENTINEL_TOKEN = 'figd_SENTINEL_DO_NOT_LEAK_31_09';
 
 /** Create an isolated temp project root for a single test. */
 function makeRoot() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-31-09-health-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-31-09-health-'));
 }
 
 function rmRoot(root) {

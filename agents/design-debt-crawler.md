@@ -115,7 +115,7 @@ It returns every statically matchable rule with `file`, `line`, `ruleId`, and a 
 link, offline.
 
 ```bash
-node "${CLAUDE_PLUGIN_ROOT:-.}/bin/gdd-detect" src/ --json 2>/dev/null || true
+node "${CLAUDE_PLUGIN_ROOT:-.}/bin/hone-detect" src/ --json 2>/dev/null || true
 ```
 
 Parse the JSON `findings` array. The detector cannot match the two subjective rules (BAN-04
@@ -241,10 +241,10 @@ note: "Project-scoped retroactive debt catalog. Does NOT read STATE.md completed
 
 | Priority | Class | Location | Finding | V × E × P | Confidence | Suggested command |
 |----------|-------|----------|---------|-----------|------------|-------------------|
-| 18 | color-literal | src/Card.tsx:42 | Raw #1a73e8 instead of token | 3×3×2 | 0.9 | `/gdd:fast "replace #1a73e8 with semantic token in Card.tsx"` |
-| 12 | anti-pattern | src/Hero.tsx:8 | BAN-02 gradient text on heading | 3×2×2 | 0.85 | `/gdd:fast "remove BAN-02 gradient text in Hero.tsx"` |
+| 18 | color-literal | src/Card.tsx:42 | Raw #1a73e8 instead of token | 3×3×2 | 0.9 | `/hone:fast "replace #1a73e8 with semantic token in Card.tsx"` |
+| 12 | anti-pattern | src/Hero.tsx:8 | BAN-02 gradient text on heading | 3×2×2 | 0.85 | `/hone:fast "remove BAN-02 gradient text in Hero.tsx"` |
 
-(One row per finding with `confidence >= 0.5`. The Suggested command column always carries a `/gdd:fast "<finding>"` string. Findings below `0.5` go in `## Tentative` below, not in this table.)
+(One row per finding with `confidence >= 0.5`. The Suggested command column always carries a `/hone:fast "<finding>"` string. Findings below `0.5` go in `## Tentative` below, not in this table.)
 
 ---
 
@@ -265,7 +265,7 @@ Items the deterministic scans cannot decide on their own:
 - Contrast pairs built from unresolvable runtime color values.
 ```
 
-Every finding row MUST carry a `/gdd:fast "<finding>"` suggestion. This agent never
+Every finding row MUST carry a `/hone:fast "<finding>"` suggestion. This agent never
 applies the fix; it only catalogs and suggests.
 
 ---
@@ -281,7 +281,7 @@ applies the fix; it only catalogs and suggests.
 
 **MAY:**
 - Read any file in the repository
-- Run `grep`, `find`, and `gdd-detect` for static analysis
+- Run `grep`, `find`, and `hone-detect` for static analysis
 - Read `.design/STATE.md` solely to learn `source_roots`
 - Note a `<blocker>` entry in `.design/STATE.md` if the crawl cannot proceed, then still emit the completion marker
 

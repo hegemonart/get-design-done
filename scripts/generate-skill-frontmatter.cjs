@@ -28,6 +28,9 @@
  */
 const fs = require('fs');
 const path = require('path');
+// Identity SoT (Phase 61 rebrand, REBRAND-03): skill-name prefix from the seam
+// ('hone-', trailing hyphen included) replaces the hardcoded 'hone-'.
+const { SKILL_PREFIX } = require('./lib/pkg-identity.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(ROOT, 'scripts', 'skill-templates');
@@ -108,7 +111,7 @@ function recordFromFrontmatter(id, fmLines) {
     if (managed && block.length === 1) {
       const v = rawVal.trim();
       if (managed.kind === 'name') {
-        if (v !== `gdd-${id}`) rec.frontmatter_name = v;
+        if (v !== `${SKILL_PREFIX}${id}`) rec.frontmatter_name = v;
       } else if (managed.kind === 'bool') {
         rec[managed.rec] = v === 'true';
       } else if (managed.kind === 'qstr') {
@@ -136,7 +139,7 @@ function recordFromFrontmatter(id, fmLines) {
  * skills.json get whatever key order their record uses.
  */
 function frontmatterFromRecord(rec) {
-  const out = [`name: ${rec.frontmatter_name || `gdd-${rec.name}`}`];
+  const out = [`name: ${rec.frontmatter_name || `${SKILL_PREFIX}${rec.name}`}`];
   const byRec = new Map(MANAGED.filter((m) => m.kind !== 'name').map((m) => [m.rec, m]));
   for (const key of Object.keys(rec)) {
     const m = byRec.get(key);

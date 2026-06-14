@@ -1,5 +1,5 @@
 // test/suite/phase-56-override.test.cjs — Phase 56 (Risk-Scoring + Fact-Forcing
-// Gate), executor D: routing + the /gdd:override skill.
+// Gate), executor D: routing + the /hone:override skill.
 //
 // Proves:
 //   * the confidence x risk routing matrix on SYNTHETIC gaps, composing A's two
@@ -115,7 +115,7 @@ test('56-04: routing — the four named matrix cells produce auto/confirm/skip/o
   }
 });
 
-// ── The /gdd:override skill SKILL.md ─────────────────────────────────────────
+// ── The /hone:override skill SKILL.md ─────────────────────────────────────────
 
 test('56-04: override SKILL.md exists', () => {
   assert.ok(fs.existsSync(SKILL_PATH), `expected ${SKILL_PATH}`);
@@ -123,7 +123,7 @@ test('56-04: override SKILL.md exists', () => {
 
 test('56-04: override SKILL.md has valid v3 frontmatter (mirrors unlock-decision)', () => {
   const fm = readFrontmatter(SKILL_PATH);
-  assert.equal(fm.name, 'gdd-override', 'name is gdd-override');
+  assert.equal(fm.name, 'hone-override', 'name is hone-override');
   assert.equal(typeof fm.description, 'string');
   assert.ok(fm.description.length > 40, 'description is substantive');
   // v3 description grammar: a "Use when ..." trigger + an "Activates for ..." clause.

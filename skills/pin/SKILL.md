@@ -1,15 +1,15 @@
 ---
-name: gdd-pin
+name: hone-pin
 description: "Writes standalone shortcut aliases for a gdd skill across installed harness skill dirs. Use when you want a skill directly discoverable as its own command in every installed runtime."
 argument-hint: "<skill-name>"
 tools: Read, Bash
 ---
 
-# /gdd:pin
+# /hone:pin
 
 **Role:** Write a standalone shortcut alias (a small SKILL.md stub) for one gdd skill into every installed harness `skills/` directory, so that skill is directly discoverable as its own command in each runtime (Claude Code, Codex, Cursor, Gemini, and the rest).
 
-Each pinned stub starts with the marker line `<!-- gdd-pinned-skill source=<skill> -->`, then carries frontmatter (name, description, argument-hint, tools) pulled from the manifest source of truth, then a one-line body pointing back at the canonical skill. Stubs are written atomically (temp file plus rename), so a failed write never leaves a half-written file.
+Each pinned stub starts with the marker line `<!-- hone-pinned-skill source=<skill> -->`, then carries frontmatter (name, description, argument-hint, tools) pulled from the manifest source of truth, then a one-line body pointing back at the canonical skill. Stubs are written atomically (temp file plus rename), so a failed write never leaves a half-written file.
 
 ## Steps
 

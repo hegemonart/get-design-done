@@ -59,11 +59,11 @@ test('phase-22 baseline: WebSocket transport module is shipped', () => {
   assert.ok(existsSync(join(REPO_ROOT, 'scripts/lib/transports/ws.cjs')));
 });
 
-test('phase-22 baseline: gdd-events bin entry exists', () => {
+test('phase-22 baseline: hone-events bin entry exists', () => {
   const pkg = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8'));
-  assert.ok(pkg.bin && pkg.bin['gdd-events'], 'gdd-events bin entry missing');
-  assert.equal(pkg.bin['gdd-events'], './scripts/cli/gdd-events.mjs');
-  assert.ok(existsSync(join(REPO_ROOT, 'scripts/cli/gdd-events.mjs')));
+  assert.ok(pkg.bin && pkg.bin['hone-events'], 'hone-events bin entry missing');
+  assert.equal(pkg.bin['hone-events'], './scripts/cli/hone-events.mjs');
+  assert.ok(existsSync(join(REPO_ROOT, 'scripts/cli/hone-events.mjs')));
 });
 
 test('phase-22 baseline: ws is declared as optionalDependency', () => {
@@ -91,9 +91,11 @@ test('phase-22 baseline: bash-guard, protected-paths, decision-injector all refe
 test('phase-22 baseline: package.json version is ≥1.22.0', () => {
   const pkg = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8'));
   // Phase 22 ships at 1.22.0; later phases bump. Assert minor ≥22.
-  const m = pkg.version.match(/^1\.(\d+)\./);
+  // Phase 61 (v2.0.0): major bumped past the 1.x arc. Accept any version ≥1.22.0.
+  const m = pkg.version.match(/^(\d+)\.(\d+)\./);
   assert.ok(m, `unexpected version shape: ${pkg.version}`);
-  assert.ok(Number(m[1]) >= 22, `expected ≥1.22.0, got ${pkg.version}`);
+  const [maj, min] = [Number(m[1]), Number(m[2])];
+  assert.ok(maj > 1 || (maj === 1 && min >= 22), `expected ≥1.22.0, got ${pkg.version}`);
 });
 
 test('phase-22 baseline: CHANGELOG has [1.22.0] section', () => {

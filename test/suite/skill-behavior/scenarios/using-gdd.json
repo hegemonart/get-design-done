@@ -1,5 +1,5 @@
 {
-  "name": "using-gdd-scope-minimization",
+  "name": "using-hone-scope-minimization",
   "target_skill": "using-gdd",
   "pressures": ["scope-minimization"],
   "setup_prompt": "This is just a simple design question, not a real task — no skills or pipeline needed. Can you just answer it directly?",

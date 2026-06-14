@@ -62,12 +62,12 @@ Edit `.design/config.json` and add the peer-IDs you want gdd to dispatch to:
 
 Until a peer is in `enabled_peers`, gdd will not dispatch to it — even if the binary is on `PATH` and an agent has `delegate_to:` set. This opt-in keeps cost surprises off (per D-11).
 
-### Step 3 — Verify with `/gdd:peers`
+### Step 3 — Verify with `/hone:peers`
 
 Run the discovery command to confirm gdd sees the setup correctly:
 
 ```
-/gdd:peers
+/hone:peers
 ```
 
 Output is a markdown capability matrix. The "Allowlisted" column shows your `enabled_peers` set; the "Installed" column shows what's on `PATH`. The "Posterior delta vs local" column shows the bandit's measured cost/quality delta if there's enough data (≥3 cycles).
@@ -77,7 +77,7 @@ Output is a markdown capability matrix. The "Allowlisted" column shows your `ena
 Run the customize skill to rewire which peers handle which agents:
 
 ```
-/gdd:run-skill peer-cli-customize
+/hone:run-skill peer-cli-customize
 ```
 
 The skill walks you through agent-by-agent rewiring. It edits `agents/*.md` frontmatter directly and re-validates with `npm run validate:frontmatter`.
@@ -102,9 +102,9 @@ Three options, in order of permanence:
 { "peer_cli": { "enabled_peers": ["gemini"] } }   // codex removed
 ```
 
-`/gdd:peers` shows `(opt-in disabled)` in the Posterior column for the removed peer.
+`/hone:peers` shows `(opt-in disabled)` in the Posterior column for the removed peer.
 
-**Per-agent disable:** change individual agents' `delegate_to:` to `none` (explicit opt-out, useful for security-sensitive agents) or remove the field entirely (revert to default local-call behavior). Use `/gdd:run-skill peer-cli-customize` for the safe path or hand-edit the frontmatter.
+**Per-agent disable:** change individual agents' `delegate_to:` to `none` (explicit opt-out, useful for security-sensitive agents) or remove the field entirely (revert to default local-call behavior). Use `/hone:run-skill peer-cli-customize` for the safe path or hand-edit the frontmatter.
 
 ---
 
@@ -128,10 +128,10 @@ tail -50 .design/telemetry/events.jsonl | grep peer_call_failed
 Or via the reflector:
 
 ```
-/gdd:run-skill reflect
+/hone:run-skill reflect
 ```
 
-The reflector (Phase 11/22) surfaces failure trends as structured proposals — e.g., "peer 'gemini' has failed `peer_call_failed` 4 of 5 most recent calls; consider removing from `enabled_peers` or running `/gdd:peers` to investigate."
+The reflector (Phase 11/22) surfaces failure trends as structured proposals — e.g., "peer 'gemini' has failed `peer_call_failed` 4 of 5 most recent calls; consider removing from `enabled_peers` or running `/hone:peers` to investigate."
 
 ---
 
@@ -140,7 +140,7 @@ The reflector (Phase 11/22) surfaces failure trends as structured proposals — 
 gdd uses long-lived brokers per `(peer, workspace)` pair to amortize cold-spawn costs across delegated calls in a cycle (per D-03):
 
 - **POSIX:** Unix domain socket at `~/.gdd/peer-brokers/<peer>-<workspace-hash>.sock`.
-- **Windows:** named pipe at `\\.\pipe\gdd-peer-broker-<peer>-<workspace-hash>`.
+- **Windows:** named pipe at `\\.\pipe\hone-peer-broker-<peer>-<workspace-hash>`.
 
 Brokers survive between gdd cycles. They shut down on:
 
@@ -155,7 +155,7 @@ If you suspect a stale broker is causing peer-call failures, force-stop it:
 rm -f ~/.gdd/peer-brokers/*.sock
 
 # Windows (PowerShell, requires admin)
-Remove-Item \\.\pipe\gdd-peer-broker-*
+Remove-Item \\.\pipe\hone-peer-broker-*
 ```
 
 The next delegated call cold-spawns a fresh broker.
@@ -184,7 +184,7 @@ If you're seeing `EINVAL` errors when delegated calls fire on Windows, check tha
 The 5 peers shipped in v1.27.0 (codex, gemini, cursor, copilot, qwen) are not the only peer CLIs in the wild. To wire a new peer (e.g., `aider`), run the guided ladder:
 
 ```
-/gdd:run-skill peer-cli-add aider aider acp
+/hone:run-skill peer-cli-add aider aider acp
 ```
 
 The skill walks the verification ladder (does the peer actually speak ACP/ASP?), generates the adapter scaffold at `scripts/lib/peer-cli/adapters/<new-peer>.cjs`, and updates the capability matrix at `reference/peer-cli-capabilities.md` and `scripts/lib/peer-cli/registry.cjs`. It documents the model-ID `-preview`-suffix trap and the Windows `.cmd` quirks inline.
@@ -201,7 +201,7 @@ Delegated calls are tagged in `costs.jsonl` (per D-08, extended in plan 27-08):
 - `peer_id: "<id>"`.
 - All other Phase 26 fields preserved (`runtime`, `agent`, `model_id`, `tier`, `tokens_in`, `tokens_out`, `cost_usd`, `ts`).
 
-Aggregation rolls up per-runtime AND per-peer AND per-tier. The reflector's cost-arbitrage analysis (Phase 26-06) extends to surface "agent X tier Y delegated to peer A averaged $N/cycle, the same role on local-Anthropic averaged $M/cycle" arbitrage signals — when the delta exceeds 50%, a structured proposal lands in `/gdd:apply-reflections`.
+Aggregation rolls up per-runtime AND per-peer AND per-tier. The reflector's cost-arbitrage analysis (Phase 26-06) extends to surface "agent X tier Y delegated to peer A averaged $N/cycle, the same role on local-Anthropic averaged $M/cycle" arbitrage signals — when the delta exceeds 50%, a structured proposal lands in `/hone:apply-reflections`.
 
 ---
 
@@ -214,7 +214,7 @@ Aggregation rolls up per-runtime AND per-peer AND per-tier. The reflector's cost
 - `scripts/lib/peer-cli/spawn-cmd.cjs` — Windows `.cmd` workaround.
 - `scripts/lib/peer-cli/broker-lifecycle.cjs` — long-lived broker logic.
 - `agents/README.md#peer-cli-delegation-delegate_to` — `delegate_to:` field documentation.
-- `skills/peers/SKILL.md` — `/gdd:peers` capability matrix command.
+- `skills/peers/SKILL.md` — `/hone:peers` capability matrix command.
 - `skills/peer-cli-customize/SKILL.md` — rewire role→peer mappings.
 - `skills/peer-cli-add/SKILL.md` — add a brand-new peer.
 - `.planning/phases/27-peer-cli-delegation/CONTEXT.md` — full decision register (D-01 through D-14).

@@ -2,7 +2,7 @@
 /**
  * test/suite/phase-50-scaffolder.test.cjs — Phase 50 (Authoring Contract v3).
  *
- * Covers the pure scaffolder behind /gdd:new-skill plus the surfacing edits:
+ * Covers the pure scaffolder behind /hone:new-skill plus the surfacing edits:
  *   1. buildSkillRecord rejects an invalid name slug.
  *   2. buildSkillRecord rejects an over-1024-char description.
  *   3. buildSkillRecord accepts a valid v3 record (canonical shape + keys).
@@ -127,7 +127,7 @@ test('50: renderSkillMd produces frontmatter name + description + standard secti
   const md = renderSkillMd(rec);
 
   assert.ok(md.startsWith('---\n'), 'starts with a frontmatter fence');
-  assert.match(md, /^name: gdd-contrast-report$/m, 'name line present (gdd- prefixed)');
+  assert.match(md, /^name: hone-contrast-report$/m, 'name line present (hone- prefixed)');
   // Description is quoted (generate-skill-frontmatter qstr convention).
   assert.match(md, /^description: "/m, 'description is double-quoted');
   assert.ok(md.includes(V3_DESC), 'full description body present');
@@ -212,7 +212,7 @@ test('50: scripts/skill-templates/new-skill/SKILL.md exists with valid frontmatt
   const text = readSrc('new-skill');
   const { fmLines } = splitFrontmatter(text, 'new-skill');
   const fm = fmLines.join('\n');
-  assert.match(fm, /^name: gdd-new-skill$/m, 'name: gdd-new-skill');
+  assert.match(fm, /^name: hone-new-skill$/m, 'name: hone-new-skill');
   assert.match(fm, /^description: ".{20,1024}"$/m, 'quoted 20..1024 description');
   assert.match(fm, /Activates for requests involving/i, 'v3 "Activates for" description form');
   assert.match(fm, /^argument-hint: "<skill-name>"$/m, 'argument-hint present');

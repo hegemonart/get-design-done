@@ -17,7 +17,7 @@ so the SKILLs stay under the 100-line cap.
 The two layers (D-08):
 
 - **Layer A** - Anthropic's 5-min prompt cache (owned by `warm-cache`). Keyed on shared-preamble-first prompt prefix. No project-local state.
-- **Layer B** - explicit `.design/cache-manifest.json` (owned by `gdd-cache-manager`). Keyed on deterministic SHA-256 of `(agent-path, sorted-input-file-paths, input-content-hashes)`. Per-repo state.
+- **Layer B** - explicit `.design/cache-manifest.json` (owned by `hone-cache-manager`). Keyed on deterministic SHA-256 of `(agent-path, sorted-input-file-paths, input-content-hashes)`. Per-repo state.
 
 ## Deterministic Input-Hash Algorithm (Layer B)
 
@@ -87,7 +87,7 @@ See `./config-schema.md` §.design/cache-manifest.json Schema (Phase 10.1) for t
 Full invocation:
 
 ```
-$ /gdd:warm-cache
+$ /hone:warm-cache
 
 Warming Anthropic prompt cache for 14 agents (5 min TTL)...
 [1/14] design-verifier ... ok (0.3s)
@@ -106,7 +106,7 @@ Warming Anthropic prompt cache for 14 agents (5 min TTL)...
 Filtered invocation:
 
 ```
-$ /gdd:warm-cache --agents design-verifier,design-planner
+$ /hone:warm-cache --agents design-verifier,design-planner
 
 Warming Anthropic prompt cache for 2 agents (filtered from 14)...
 [1/2] design-verifier ... ok (0.3s)

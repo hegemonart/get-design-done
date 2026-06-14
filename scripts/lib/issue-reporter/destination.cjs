@@ -2,7 +2,7 @@
 /**
  * destination.cjs — Phase 30 Plans 30-04 + 30-07 hardcoded destination (D-02).
  *
- * Single source of truth for the GitHub repo that /gdd:report-issue
+ * Single source of truth for the GitHub repo that /hone:report-issue
  * submits to. No env-var lookup, no config override, no flag override.
  *
  * Frozen module export -> runtime immutability. Static tests in
@@ -25,9 +25,9 @@
  */
 
 const DESTINATION_OWNER = 'hegemonart';
-const DESTINATION_REPO  = 'hegemonart/get-design-done';
-const DESTINATION_URL   = 'https://github.com/hegemonart/get-design-done';
-const ISSUE_TEMPLATE_URL = 'https://github.com/hegemonart/get-design-done/issues/new?template=bug_report.md';
+const DESTINATION_REPO  = 'hegemonart/hone';
+const DESTINATION_URL   = 'https://github.com/hegemonart/hone';
+const ISSUE_TEMPLATE_URL = 'https://github.com/hegemonart/hone/issues/new?template=bug_report.md';
 
 module.exports = Object.freeze({
   DESTINATION_OWNER,

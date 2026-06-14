@@ -2,7 +2,7 @@
 /**
  * scripts/lib/manifest/scaffolder.cjs — Phase 50 (Authoring Contract v3).
  *
- * Pure, dependency-free generator behind the `/gdd:new-skill` scaffolder skill.
+ * Pure, dependency-free generator behind the `/hone:new-skill` scaffolder skill.
  * The SKILL.md (scripts/skill-templates/new-skill/SKILL.md) drives the interactive
  * prompts; this module is the deterministic core it (and the test suite) call.
  *
@@ -75,7 +75,7 @@ function normalizeTools(tools) {
   if (cleaned.length === 0) fail('tools, when provided, must name at least one tool');
   // Each token: a Tool name or an mcp__* identifier. No commas, no empty.
   // `\w` already includes `_`, so a single `[\w-]*` class matches plain names
-  // (Read) AND mcp__* identifiers (mcp__gdd_state__get) in linear time. The old
+  // (Read) AND mcp__* identifiers (mcp__hone_state__get) in linear time. The old
   // `(__[\w-]+)*` suffix overlapped `[\w-]*` and caused exponential backtracking
   // (CodeQL js/redos) on inputs like `A__-__-__...`; it was redundant. Removed.
   for (const t of cleaned) {

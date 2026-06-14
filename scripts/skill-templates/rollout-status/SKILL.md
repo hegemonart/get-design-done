@@ -1,5 +1,5 @@
 ---
-name: gdd-rollout-status
+name: hone-rollout-status
 description: "Shows where a finished design cycle actually is in production rollout - unrolled / staging-only / canary-N% / prod-100% - by reading the feature-flag service (LaunchDarkly/Statsig/GrowthBook) via the rollout-coordinator. Surfaces STUCK rollouts (a canary that hasn't advanced for N days) and the design_arms outcome weighting. Read-only - GDD never advances or rolls back; it reports and notifies. Use after {{command_prefix}}ship to track the post-merge journey."
 argument-hint: "[<cycle>] [--all] [--stuck]"
 user-invocable: true

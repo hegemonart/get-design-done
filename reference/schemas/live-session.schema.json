@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/live-session.schema.json",
+  "$id": "https://github.com/hegemonart/hone/reference/schemas/live-session.schema.json",
   "title": "Live Session",
-  "description": "A single `/gdd:live` session record persisted at .design/live-sessions/<session-id>.json. Captures the pick -> generate -> accept/discard loop as an append-only event log so a session survives a crash or --resume. Written atomically by scripts/lib/live/session-store.cjs.",
+  "description": "A single `/hone:live` session record persisted at .design/live-sessions/<session-id>.json. Captures the pick -> generate -> accept/discard loop as an append-only event log so a session survives a crash or --resume. Written atomically by scripts/lib/live/session-store.cjs.",
   "type": "object",
   "required": ["schema_version", "session_id", "status", "started_at", "ended_at", "events"],
   "properties": {

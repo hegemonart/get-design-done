@@ -77,11 +77,11 @@ test('31-07: SKILL.md is <=100 lines (Phase 28.5 warn threshold)', () => {
   assert.ok(count <= 100, `SKILL.md is ${count} lines; Phase 28.5 warn threshold is 100`);
 });
 
-test('31-07: SKILL.md frontmatter has name: gdd-figma-extract + description', () => {
+test('31-07: SKILL.md frontmatter has name: hone-figma-extract + description', () => {
   const fmMatch = SKILL.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   assert.ok(fmMatch, 'SKILL.md must open with a YAML frontmatter block');
   const fm = fmMatch[1];
-  assert.match(fm, /^name:\s*gdd-figma-extract\s*$/m, 'frontmatter name must be exactly gdd-figma-extract');
+  assert.match(fm, /^name:\s*hone-figma-extract\s*$/m, 'frontmatter name must be exactly hone-figma-extract');
   assert.match(fm, /^description:\s*\S+/m, 'frontmatter must include a non-empty description');
 });
 

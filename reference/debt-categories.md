@@ -50,7 +50,7 @@ or type scale; remove the arbitrary brackets.
 
 **Definition:** A confirmed instance of a banned construct (BAN-NN) or an AI-slop
 tell (SLOP-NN) from `reference/anti-patterns.md`.
-**Detection signal:** Run `gdd-detect <path> --json`. Each finding carries its
+**Detection signal:** Run `hone-detect <path> --json`. Each finding carries its
 `ruleId`, `file`, `line`, and a link back to the matching paragraph. The detector
 covers the statically matchable BAN rules; the two subjective rules it cannot match
 (BAN-04 keyboard-action animation, BAN-10 nested equal radius) are noted as a

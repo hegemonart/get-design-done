@@ -289,7 +289,7 @@ Collect findings from the micro-polish sections of the mapper outputs (`.design/
 # rule. One pass, --json, every BAN rule (transition:all, will-change:all, gradient text, bounce
 # easing, scale(0), naked outline:none, pure-black dark mode, disabled zoom, tinted image outline),
 # each finding linked to its reference/anti-patterns.md paragraph. Offline + zero-LLM.
-node "${CLAUDE_PLUGIN_ROOT:-.}/bin/gdd-detect" src/ --json 2>/dev/null || true
+node "${CLAUDE_PLUGIN_ROOT:-.}/bin/hone-detect" src/ --json 2>/dev/null || true
 
 # Missing AnimatePresence initial={false}
 grep -rEn "<AnimatePresence" src/ --include="*.tsx" --include="*.jsx" 2>/dev/null | grep -v "initial={false}" | head -10

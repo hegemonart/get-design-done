@@ -58,7 +58,7 @@
 //      is torn down on completion regardless of status.
 //
 //   4. service_name is supplied by the caller on `threadStart`. The
-//      canonical value gdd uses is `"gdd_peer_delegation"` (per Plan
+//      canonical value gdd uses is `"hone_peer_delegation"` (per Plan
 //      27-02 contract); the registry layer (Plan 27-05) sets it. We
 //      don't hard-code it here so unit tests can exercise multiple
 //      service names without monkey-patching.

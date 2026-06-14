@@ -1,11 +1,11 @@
 ---
-name: gdd-new-project
-description: "Initialize a new get-design-done project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage."
+name: hone-new-project
+description: "Initialize a new hone project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage."
 argument-hint: "[--name <project-name>]"
 tools: Read, Write, AskUserQuestion, Bash, Glob
 ---
 
-# /gdd:new-project
+# /hone:new-project
 
 One-time project initialization. Replaces "run scan cold" by gathering context up front and producing PROJECT.md + STATE.md + cycle-1.
 
@@ -41,9 +41,9 @@ One-time project initialization. Replaces "run scan cold" by gathering context u
 
    Auto-loaded by gdd pipeline stages. See `reference/project-skills-guide.md` in the plugin.
    Files named `design-*-conventions.md` are read by explore/plan/design.
-   Populated by `/gdd:sketch-wrap-up` and manual edits.
+   Populated by `/hone:sketch-wrap-up` and manual edits.
    ```
-10. Print: "Project initialized. Run `/gdd:brief` to capture your design problem, or `/gdd:explore` to scan directly. Run `/gdd:connections` to wire up optional integrations (Figma, Storybook, Chromatic, etc.)."
+10. Print: "Project initialized. Run `/hone:brief` to capture your design problem, or `/hone:explore` to scan directly. Run `/hone:connections` to wire up optional integrations (Figma, Storybook, Chromatic, etc.)."
 
 ## Do Not
 

@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Cline model.
+Run /hone:audit and /hone:verify using your configured Cline model.
 Settings live in .cline/config.json. For help, ask Cline about the pipeline.
 
 

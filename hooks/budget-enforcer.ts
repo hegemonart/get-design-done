@@ -867,14 +867,14 @@ export function writeTelemetry(partial: TelemetryRowPartial): void {
  * Emit one hook.fired event per hook decision. Uses the pre-registered
  * HookFiredEvent subtype from sdk/event-stream/types.ts and
  * stamps sessionId from the process PID + boot time — same scheme as
- * sdk/mcp/gdd-state/tools/shared.ts but inlined here so the
+ * sdk/mcp/hone-state/tools/shared.ts but inlined here so the
  * hook stays dependency-light.
  */
 let CACHED_SESSION_ID: string | null = null;
 function getSessionId(): string {
   if (CACHED_SESSION_ID === null) {
     const iso = new Date().toISOString().replace(/[:.]/g, '-');
-    CACHED_SESSION_ID = `gdd-hook-${iso}-${process.pid}`;
+    CACHED_SESSION_ID = `hone-hook-${iso}-${process.pid}`;
   }
   return CACHED_SESSION_ID;
 }
@@ -989,7 +989,7 @@ function emitCostLookupFallback(
  * is consulted (regardless of whether it overrode the prior tier). The
  * event captures the prior tier, the bandit's pick, the sampled posterior
  * (when applicable), the delegate dimension, and the runtime tag so
- * Phase 11 reflector (27.5-04) and `/gdd:bandit-status` (27.5-05) can
+ * Phase 11 reflector (27.5-04) and `/hone:bandit-status` (27.5-05) can
  * reconstruct decision history without re-reading the posterior file.
  *
  * Fail-open like every other emit in this hook.
@@ -1164,7 +1164,7 @@ export async function main(): Promise<void> {
       const response: ToolOutput = {
         continue: true,
         suppressOutput: false,
-        message: `gdd-budget-enforcer: SkippedCached — returning cached result for ${agent}:${inputHash}`,
+        message: `hone-budget-enforcer: SkippedCached — returning cached result for ${agent}:${inputHash}`,
         hookSpecificOutput: {
           hookEventName: 'PreToolUse',
           permissionDecision: 'deny',
@@ -1207,7 +1207,7 @@ export async function main(): Promise<void> {
     const response: ToolOutput = {
       continue: false,
       suppressOutput: false,
-      stopReason: `gdd-budget-enforcer: rate-limited on anthropic, retry in ${waitSeconds}s (resetAt=${rateState.resetAt})`,
+      stopReason: `hone-budget-enforcer: rate-limited on anthropic, retry in ${waitSeconds}s (resetAt=${rateState.resetAt})`,
     };
     process.stdout.write(JSON.stringify(response));
     return;
@@ -1248,7 +1248,7 @@ export async function main(): Promise<void> {
       } catch {
         // fail-open — event-stream errors never block the hook.
       }
-      process.stderr.write(`gdd-budget-enforcer WARN: ${projectCap.capMessage(projClass)}\n`);
+      process.stderr.write(`hone-budget-enforcer WARN: ${projectCap.capMessage(projClass)}\n`);
     } else if (projClass.level === 'halt') {
       try {
         appendEvent({
@@ -1288,7 +1288,7 @@ export async function main(): Promise<void> {
         return;
       }
       // warn / log mode: surface the 100% breach but allow the spawn.
-      process.stderr.write(`gdd-budget-enforcer WARN: ${projectCap.capMessage(projClass)}\n`);
+      process.stderr.write(`hone-budget-enforcer WARN: ${projectCap.capMessage(projClass)}\n`);
     }
   }
 
@@ -1324,7 +1324,7 @@ export async function main(): Promise<void> {
       : budget.enforcement_mode;
   if (budget.enforcement_mode === 'enforce' && runtimeIsUnverified) {
     process.stderr.write(
-      `gdd-budget-enforcer WARN: runtime '${guardRuntimeId}' has provenance status ` +
+      `hone-budget-enforcer WARN: runtime '${guardRuntimeId}' has provenance status ` +
         `'${runtimeStatus(guardRuntimeId)}' (BYOK/unverified tier→model row); ` +
         `hard budget caps degraded to advisory for this spawn so an unverified ` +
         `cost estimate never hard-blocks you.\n`,
@@ -1398,7 +1398,7 @@ export async function main(): Promise<void> {
   } else if (effectiveEnforcementMode === 'warn') {
     if (estCost >= perSpawnCap) {
       process.stderr.write(
-        `gdd-budget-enforcer WARN: per-spawn cap will be exceeded ($${estCost.toFixed(4)} >= $${perSpawnCap})\n`,
+        `hone-budget-enforcer WARN: per-spawn cap will be exceeded ($${estCost.toFixed(4)} >= $${perSpawnCap})\n`,
       );
     }
     // Phase 59.5 P1: when enforce was degraded to advisory for a byok/unverified
@@ -1409,7 +1409,7 @@ export async function main(): Promise<void> {
       phaseSpend + estCost >= budget.per_phase_cap_usd
     ) {
       process.stderr.write(
-        `gdd-budget-enforcer WARN: per-phase cap will be exceeded for ${phase} ` +
+        `hone-budget-enforcer WARN: per-phase cap will be exceeded for ${phase} ` +
           `($${(phaseSpend + estCost).toFixed(4)} >= $${budget.per_phase_cap_usd.toFixed(2)})\n`,
       );
     }

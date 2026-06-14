@@ -40,7 +40,7 @@ const {
 // ---------------------------------------------------------------------------
 
 function mkFixture() {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p54-compose-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p54-compose-'));
   const refDir = path.join(root, 'reference');
   for (const sub of ['systems', 'frameworks', 'motion']) {
     fs.mkdirSync(path.join(refDir, sub), { recursive: true });

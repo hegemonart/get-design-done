@@ -1,6 +1,6 @@
 # Greenfield Design-System Bootstrap Rubric
 
-Emission rules for `/gdd:bootstrap-ds` + `agents/ds-generator.md` - how to turn a brand input (a primary color + optional secondary + tone tags + target framework) into a coherent token system, **without inventing a brand**. The deterministic math lives in `scripts/lib/ds/token-scale.cjs`; the color-theory grounding lives in `reference/color-theory.md`. This file is the rulebook the generator obeys.
+Emission rules for `/hone:bootstrap-ds` + `agents/ds-generator.md` - how to turn a brand input (a primary color + optional secondary + tone tags + target framework) into a coherent token system, **without inventing a brand**. The deterministic math lives in `scripts/lib/ds/token-scale.cjs`; the color-theory grounding lives in `reference/color-theory.md`. This file is the rulebook the generator obeys.
 
 GDD does not author a brand identity (logomarks, voice) - it emits a **starter token system + a few proof components** a greenfield project can build on.
 

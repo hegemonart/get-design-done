@@ -85,7 +85,7 @@ test('engine does not spawn child_process or execSync', () => {
 });
 
 test('scan handles empty/non-existent root without throwing', () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-empty-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-empty-'));
   try {
     const r = scan({ root: tmp, budget: 'fast', rootCwd: process.cwd() });
     assert.strictEqual(r.findings.length, 0);

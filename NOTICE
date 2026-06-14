@@ -1,8 +1,8 @@
-get-design-done
+Hone (formerly get-design-done)
 Copyright (c) 2026 hegemonart
 
-This product includes software developed by third parties under the
-Apache License, Version 2.0. See https://www.apache.org/licenses/LICENSE-2.0
+This product is licensed under the Apache License, Version 2.0, and includes
+software developed by third parties under the Apache License, Version 2.0. See https://www.apache.org/licenses/LICENSE-2.0
 for the full license text.
 
 ──────────────────────────────────────────────────────────────────────────────
@@ -130,8 +130,8 @@ the GDD codebase free of upstream version drift and the bundled
 
   scripts/lib/install/runtime-slash.cjs
     └─ Per-runtime slash-command surface emitter. Adapted from gsd-build's
-       `bin/lib/runtime-slash.cjs`. Codex uses `$gdd-<name>` shell-var form;
-       other runtimes use `/gdd-<name>`.
+       `bin/lib/runtime-slash.cjs`. Codex uses `$hone-<name>` shell-var form;
+       other runtimes use `/hone-<name>`.
 
   scripts/lib/install/converters/{antigravity,augment,cline,codebuddy,codex,
                                   copilot,cursor,gemini,kilo,opencode,qwen,
@@ -170,17 +170,17 @@ library.
 
 The Phase 30 — Inbound Feedback Channel design itself (consent-first issue
 reporter, hardcoded destination, no plugin-side credentials, gh-CLI-only
-outbound) is original to get-design-done. The architectural rationale lives
+outbound) is original to hone. The architectural rationale lives
 in .planning/phases/30-issue-reporter/CONTEXT.md.
 
 ──────────────────────────────────────────────────────────────────────────────
 Phase 30.6 — Graphify Self-Ownership (v1.30.6, 2026-05-28)
 ──────────────────────────────────────────────────────────────────────────────
 
-Version 1.30.6 removes the last runtime touchpoint between get-design-done
+Version 1.30.6 removes the last runtime touchpoint between hone
 and the user's `~/.claude/get-shit-done/` install. Eight callsites
 previously dispatched `node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs"
-graphify *` at runtime; they now dispatch a native `bin/gdd-graph` CLI
+graphify *` at runtime; they now dispatch a native `bin/hone-graph` CLI
 owned end-to-end in this repository.
 
 No historical MIT/Apache attributions in this NOTICE are removed or
@@ -209,7 +209,7 @@ is referenced in `README.md` for users seeking a current download.
 
 See `.planning/phases/30.6-graphify-self-ownership/` for full phase
 documentation including the 10 architectural decisions (D-01 through D-10)
-and the migration of the 8 dispatching callsites to native `bin/gdd-graph`.
+and the migration of the 8 dispatching callsites to native `bin/hone-graph`.
 
 ──────────────────────────────────────────────────────────────────────────────
 Phase 32 — Skill Auto-Trigger Discipline + Defensive Guardrails (v1.32.0, 2026-05-30)
@@ -247,7 +247,7 @@ Three ported artifacts:
        GDD-specific.
 
 The mechanism is the contribution being attributed; the discipline content is
-original to get-design-done.
+original to hone.
 
 ──────────────────────────────────────────────────────────────────────────────
 Phase 33 — Skill Behavior Tests (Pressure-Scenario Harness) (v1.33.0, 2026-05-30)
@@ -284,11 +284,11 @@ runtime and skill set:
     └─ The scenario-manifest contract formalizing the pattern. GDD original.
 
 The methodology + pattern are the contribution being attributed; the scenarios,
-rubrics, runner implementation, and skills are original to get-design-done.
+rubrics, runner implementation, and skills are original to hone.
 
 ────────────────────────────────────────────────────────────────────────
 
-Note on the broader codebase: get-design-done as a whole is licensed under
+Note on the broader codebase: hone as a whole is licensed under
 the MIT License (see LICENSE). The Apache 2.0 attribution above applies
 specifically to the cc-multi-cli-derived files listed under the Phase 27
 block. The MIT attributions under Phase 28.5, Phase 28.7, Phase 32, and

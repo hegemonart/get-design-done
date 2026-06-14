@@ -6,8 +6,8 @@
  * Augment Code SKILL.md converter. Translates Claude-shape source into
  * Augment's expected shape:
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose pass through as `/gdd-<name>` —
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose pass through as `/hone-<name>` —
  *     Augment accepts the Claude shape for slash references.
  *   - Tool names in code fences are rewritten per `AUGMENT_TOOL_MAP`:
  *       Bash → launch-process
@@ -58,7 +58,7 @@ const AUGMENT_TOOL_MAP = Object.freeze({
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'augment');
   out = shared.rewriteCodeFenceTools(out, AUGMENT_TOOL_MAP);
   out = shared.ensureAdapterHeader(out, 'Augment');

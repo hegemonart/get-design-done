@@ -1,5 +1,5 @@
 ---
-name: gdd-benchmark
+name: hone-benchmark
 description: "Harvest and synthesize per-component design benchmarks from 18 design systems and produce canonical component specs at `reference/components/<name>.md`. Use when adding a new component spec, running a benchmark wave, listing corpus coverage, or refreshing a spec after a design-system version bump."
 argument-hint: "<component> | --wave <N> | --list | --refresh <component>"
 tools: Read, Write, Bash, Grep, Glob, Task, WebFetch

@@ -1,5 +1,5 @@
 ---
-name: gdd-new-addendum
+name: hone-new-addendum
 description: "Scaffolds a new Phase-54 composable reference addendum for a design-system, framework, or motion library: validates the kind and the slug, defaults composes_into by kind, and writes a 4-section skeleton at reference/{systems|frameworks|motion}/<name>.md from the pure generator. Use when adding stack-specific guidance that an explore mapper should compose at spawn time and you want the frontmatter, the composes_into wiring, and the mandatory sections correct from the first commit. Activates for requests involving authoring a reference addendum, adding stack-specific mapper guidance, scaffolding a systems or frameworks or motion doc, or registering a new design-system."
 argument-hint: "<kind> <name>"
 tools: Read, Write, Bash, AskUserQuestion

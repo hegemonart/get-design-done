@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Windsurf model.
+Run /hone:audit and /hone:verify using your configured Windsurf model.
 Settings live in .windsurf/settings.json. For help, ask Cascade about the pipeline.
 
 

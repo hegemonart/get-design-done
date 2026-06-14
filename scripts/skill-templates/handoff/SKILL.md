@@ -1,12 +1,12 @@
 ---
-name: gdd-handoff
+name: hone-handoff
 description: "Handoff-first entry point that initializes a cycle from a Claude Design handoff bundle (URL, ZIP, HTML, PDF, or PPTX), skips the explore/plan stages, and routes straight to post-handoff verify. Thin wrapper over the Handoff Routing logic in the root pipeline router and the claude-design connection. Use when a Claude Design bundle was sent or dropped into the project and you want to implement and verify it without re-running discovery, or when arguments start with handoff or contain --from-handoff."
 argument-hint: "<bundle-path-or-url>"
 user-invocable: true
 tools: Read, Write, Bash, Glob, Grep, Task
 ---
 
-# gdd-handoff
+# hone-handoff
 
 Initialize a design cycle from a Claude Design handoff bundle, then route to verify in
 post-handoff mode. This skill is the named home for the inline **Handoff Routing** block in
@@ -24,7 +24,7 @@ verify skill. Stages scan/discover/plan are skipped by design - a handoff bundle
 - **Input**: a bundle path or hosted URL as the argument, OR `--from-handoff <path>`, OR a
   previously-recorded `handoff_path` in `.design/STATE.md`.
 - **Output**: a handoff-sourced `.design/STATE.md` and a routed call to
-  `Skill("get-design-done:verify", "--post-handoff")`.
+  `Skill("hone:verify", "--post-handoff")`.
 
 ## Procedure
 
@@ -73,7 +73,7 @@ handoff failure mode.
 ### 5. Route to verify
 
 ```
-Skill("get-design-done:verify", "--post-handoff")
+Skill("hone:verify", "--post-handoff")
 ```
 
 Verify relaxes the DESIGN-PLAN.md prerequisite for handoff flows and adds a Handoff
@@ -96,4 +96,4 @@ Skip silently when figma is `not_configured` or `unavailable`.
 
 - `connections/claude-design.md` - bundle formats, field catalogue, confidence tagging.
 - Root `SKILL.md` `## Handoff Routing` - the inline routing this skill wraps.
-- `get-design-done:verify` (`--post-handoff`) - the stage this skill routes to.
+- `hone:verify` (`--post-handoff`) - the stage this skill routes to.

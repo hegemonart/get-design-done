@@ -59,7 +59,7 @@ const POSTERIOR_REL = '.design/telemetry/posterior.json';
 
 /** Create a fresh tmp dir with .design/ subdir, return its path. */
 function tmp(prefix) {
-  const dir = mkdtempSync(join(tmpdir(), `gdd-sr-bandit-${prefix}-`));
+  const dir = mkdtempSync(join(tmpdir(), `hone-sr-bandit-${prefix}-`));
   mkdirSync(join(dir, '.design', 'telemetry'), { recursive: true });
   mkdirSync(join(dir, '.design', 'rate-limits'), { recursive: true });
   return dir;

@@ -1,5 +1,5 @@
 // scripts/lib/init-runner/types.ts — public type surface for the
-// `gdd-sdk init` runner (Plan 21-08, SDK-20).
+// `hone-sdk init` runner (Plan 21-08, SDK-20).
 //
 // The init runner bootstraps a new project's `.design/` directory by
 // spawning a fixed roster of 4 researchers in parallel through the

@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/reference/schemas/mcp-hone-state-tools.schema.json",
+  "title": "McpHoneStateTools",
+  "description": "Combined manifest of all 11 hone-state MCP tool input+output schemas (Plan 20-05). Individual tool schemas live under sdk/mcp/hone-state/schemas/ and the tool handlers reference them; this combined schema exists so downstream validators and codegen can compile a single surface.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["tools"],
+  "properties": {
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hone_state__get",
+        "hone_state__update_progress",
+        "hone_state__transition_stage",
+        "hone_state__add_blocker",
+        "hone_state__resolve_blocker",
+        "hone_state__add_decision",
+        "hone_state__add_must_have",
+        "hone_state__set_status",
+        "hone_state__checkpoint",
+        "hone_state__probe_connections",
+        "hone_state__frontmatter_update"
+      ],
+      "properties": {
+        "hone_state__get": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__update_progress": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__transition_stage": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__add_blocker": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__resolve_blocker": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__add_decision": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__add_must_have": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__set_status": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__checkpoint": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__probe_connections": { "$ref": "#/definitions/ToolSchemaEntry" },
+        "hone_state__frontmatter_update": { "$ref": "#/definitions/ToolSchemaEntry" }
+      }
+    }
+  },
+  "definitions": {
+    "ToolSchemaEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input", "output"],
+      "properties": {
+        "input": {
+          "type": "object",
+          "description": "JSON Schema fragment describing the tool's input parameters."
+        },
+        "output": {
+          "type": "object",
+          "description": "JSON Schema fragment describing the tool's response envelope.",
+          "required": ["type"],
+          "properties": {
+            "type": { "type": "string", "enum": ["object"] }
+          }
+        }
+      }
+    },
+    "ToolError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "kind"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": ["validation", "state_conflict", "operation_failed", "unknown"]
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "ToolResponseEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "data": { "type": "object" },
+        "error": { "$ref": "#/definitions/ToolError" }
+      }
+    }
+  }
+}

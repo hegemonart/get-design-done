@@ -11,7 +11,7 @@
  *
  * Invoked:
  *   1. Detached child of hooks/budget-enforcer.ts after every telemetry write.
- *   2. Directly by /gdd:optimize skill as an explicit refresh step.
+ *   2. Directly by /hone:optimize skill as an explicit refresh step.
  *   3. Manually: `node --experimental-strip-types scripts/aggregate-agent-metrics.ts`
  *   4. With `--help` to print usage (used by the Plan 20-00 smoke check).
  *
@@ -243,7 +243,7 @@ function printHelp(): void {
       `\n` +
       `Invoked:\n` +
       `  - Detached child of hooks/budget-enforcer.ts after every telemetry row.\n` +
-      `  - Directly by /gdd:optimize as an explicit refresh step.\n` +
+      `  - Directly by /hone:optimize as an explicit refresh step.\n` +
       `  - Manually, on demand.\n`,
   );
 }
@@ -275,7 +275,7 @@ function main(): void {
 try {
   main();
 } catch (err) {
-  // Fail open: aggregator must never block the hook or /gdd:optimize flow.
+  // Fail open: aggregator must never block the hook or /hone:optimize flow.
   const msg: string = err instanceof Error ? err.message : String(err);
   process.stderr.write(`aggregate-agent-metrics: ${msg}\n`);
   process.exit(0);

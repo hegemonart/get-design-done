@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/hegemonart/get-design-done/main/reference/schemas/recipe.schema.json",
+  "$id": "https://raw.githubusercontent.com/hegemonart/hone/main/reference/schemas/recipe.schema.json",
   "title": "Recipe",
   "description": "Shape of a declarative recipe loaded from recipes/<name>.json by scripts/lib/recipe-loader.cjs (Plan 31-5-03, RECIPE-01 / SC#14). The recipes/ directory ships EMPTY of recipes and is populated downstream by Phase 32 (skill-trigger recipes), Phase 33.6 (per-provider), Phase 26 (per-runtime/per-model), and Phase 23.5 (bandit-arm shape). This is a minimal, forward-compatible envelope: a recipe MUST carry name/version/steps; additionalProperties:true lets the populating phases extend the envelope without breaking the loader contract. Modelled on Storybloq's src/autonomous/recipes/ loader.ts pattern.",
   "type": "object",

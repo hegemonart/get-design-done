@@ -39,7 +39,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch {
       // not this level
     }
@@ -93,7 +93,7 @@ function seedDesign(dir) {
 }
 
 test('budget-enforcer (A1): tool_name=Task triggers enforcement (does not exit 0 silently)', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-task-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-task-');
   try {
     seedDesign(dir);
 
@@ -115,7 +115,7 @@ test('budget-enforcer (A1): tool_name=Task triggers enforcement (does not exit 0
 });
 
 test('budget-enforcer (A2): allow-with-override emits hookSpecificOutput.updatedInput', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-allow-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-allow-');
   try {
     seedDesign(dir);
 
@@ -144,7 +144,7 @@ test('budget-enforcer (A2): allow-with-override emits hookSpecificOutput.updated
 });
 
 test('budget-enforcer (A2): cache-hit blocks via hookSpecificOutput.permissionDecision=deny', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-cache-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-cache-');
   try {
     seedDesign(dir);
 

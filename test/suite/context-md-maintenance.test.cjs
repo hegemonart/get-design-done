@@ -8,7 +8,7 @@
  * agent follows during interviews, so the test surface is grep-on-content.
  *
  * Per D-05 skills MUST NOT be renamed; the canonical frontmatter names stay
- * `gdd-discuss` and `gdd-brief`.
+ * `hone-discuss` and `hone-brief`.
  */
 
 const test = require('node:test');
@@ -51,10 +51,10 @@ test('discuss skill stays under 99-line warn threshold', () => {
 
 test('discuss skill name unchanged (D-05 no renames)', () => {
   const c = read(DISCUSS);
-  // D-05: no renames. The canonical name set by Phase 28.5-04 stays gdd-discuss.
+  // D-05: no renames. The canonical name set by Phase 28.5-04 stays hone-discuss.
   const nameMatch = c.match(/^name:\s*(\S+)$/m);
   assert.ok(nameMatch, 'discuss must have a name: frontmatter field');
-  assert.equal(nameMatch[1], 'gdd-discuss', 'D-05: discuss skill name must remain gdd-discuss');
+  assert.equal(nameMatch[1], 'hone-discuss', 'D-05: discuss skill name must remain hone-discuss');
 });
 
 test('brief skill mentions CONTEXT.md write trigger', () => {
@@ -84,5 +84,5 @@ test('brief skill name unchanged (D-05 no renames)', () => {
   const c = read(BRIEF);
   const nameMatch = c.match(/^name:\s*(\S+)$/m);
   assert.ok(nameMatch, 'brief must have a name: frontmatter field');
-  assert.equal(nameMatch[1], 'gdd-brief', 'D-05: brief skill name must remain gdd-brief');
+  assert.equal(nameMatch[1], 'hone-brief', 'D-05: brief skill name must remain hone-brief');
 });

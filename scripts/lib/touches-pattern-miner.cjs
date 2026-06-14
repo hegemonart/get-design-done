@@ -6,7 +6,7 @@
  * `Touches:` signatures, and emits a JSON proposal file when a
  * signature recurs in ≥ minTasks tasks across ≥ minCycles cycles.
  *
- * NEVER auto-applies. The reflector + `/gdd:apply-reflections`
+ * NEVER auto-applies. The reflector + `/hone:apply-reflections`
  * pipeline consumes the proposal JSON separately and asks the user
  * before materializing anything.
  *

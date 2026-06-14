@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/instinct.schema.json",
+  "$id": "https://github.com/hegemonart/hone/reference/schemas/instinct.schema.json",
   "title": "Instinct Unit",
   "description": "An atomic, confidence-weighted design instinct learned across cycles. Validates the YAML frontmatter object of an instinct unit (see reference/instinct-format.md). Project-scoped units live at <root>/instincts/instincts.json; promoted global units live at ~/.claude/gdd/global-instincts.json. Persisted + queried by scripts/lib/instinct-store.cjs.",
   "type": "object",

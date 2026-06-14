@@ -27,7 +27,7 @@ test('35.1-02: pr-commenter agent + pr-review-integration reference exist + regi
 });
 
 // ── 2. Ship wiring — pr-commenter spawned after PR create, degrade-to-noop ────────────
-test('35.1-02: /gdd:ship wires pr-commenter (post-create, degrade-to-noop)', () => {
+test('35.1-02: /hone:ship wires pr-commenter (post-create, degrade-to-noop)', () => {
   const ship = read('skills/ship/SKILL.md');
   assert.match(ship, /pr-commenter/, 'ship SKILL references pr-commenter');
   assert.match(ship, /degrade|noop/i, 'degrade-to-noop posture present');

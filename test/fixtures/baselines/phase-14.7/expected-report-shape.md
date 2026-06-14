@@ -1,6 +1,6 @@
 # GDD First-Run Report
 
-> Generated 2026-04-24T01:00:00Z by `/gdd:start`. This report does not start a pipeline cycle — it is a 0→1 proof path. Run the suggested next command to continue.
+> Generated 2026-04-24T01:00:00Z by `/hone:start`. This report does not start a pipeline cycle — it is a 0→1 proof path. Run the suggested next command to continue.
 
 ## What I inspected
 
@@ -46,7 +46,7 @@
 ## Suggested next command
 
 ```bash
-/gdd:fast "Replace the bare `transition` utility on src/components/Card.tsx line 6 with transition-transform"
+/hone:fast "Replace the bare `transition` utility on src/components/Card.tsx line 6 with transition-transform"
 ```
 
 <rationale placeholder>
@@ -55,10 +55,10 @@
 
 | Surface | Status | Unlock |
 |---------|--------|--------|
-| Preview MCP | unconfigured | /gdd:connections preview |
-| Storybook | unconfigured | /gdd:connections storybook |
-| Figma | unconfigured | /gdd:connections figma |
-| Canvas (.canvas) | unconfigured | /gdd:connections canvas |
+| Preview MCP | unconfigured | /hone:connections preview |
+| Storybook | unconfigured | /hone:connections storybook |
+| Figma | unconfigured | /hone:connections figma |
+| Canvas (.canvas) | unconfigured | /hone:connections canvas |
 
 <workflow note placeholder>
 
@@ -83,7 +83,7 @@
     { "id": "F3", "title": "Tinted outline on <img>", "file": "src/components/Thumb.tsx", "line": 2, "severity": "minor", "category": "tinted-image-outline", "blast_radius": "single-file" }
   ],
   "best_first_proof": "F1",
-  "suggested_command": { "kind": "fast", "text": "/gdd:fast \"Replace the bare `transition` utility on src/components/Card.tsx line 6 with transition-transform\"" },
+  "suggested_command": { "kind": "fast", "text": "/hone:fast \"Replace the bare `transition` utility on src/components/Card.tsx line 6 with transition-transform\"" },
   "visual_proof_readiness": { "preview": "unconfigured", "storybook": "unconfigured", "figma": "unconfigured", "canvas": "unconfigured" }
 }
 ```

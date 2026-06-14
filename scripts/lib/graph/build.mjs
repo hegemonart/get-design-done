@@ -11,7 +11,7 @@ import { atomicWriteJson } from './atomic-write.mjs';
 const DEFAULT_INTEL = '.design/intel/graph.json';
 const DEFAULT_OUT = '.design/graph/graph.json';
 const DEFAULT_BUILDER_VERSION = '1.30.6';
-const DEFAULT_SOURCE_MARKER = 'gdd-intel-store';
+const DEFAULT_SOURCE_MARKER = 'hone-intel-store';
 
 /**
  * Build .design/graph/graph.json from a .design/intel/graph.json slice.

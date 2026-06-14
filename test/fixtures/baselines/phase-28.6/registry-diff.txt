@@ -77,7 +77,7 @@ information-architecture: reference/information-architecture.md
 insight-line.schema: reference/schemas/insight-line.schema.json
 intel-schema: reference/intel-schema.md
 mcp-budget.default: reference/mcp-budget.default.json
-mcp-gdd-tools-schema: reference/schemas/mcp-gdd-tools.schema.json
+mcp-hone-tools-schema: reference/schemas/mcp-hone-tools.schema.json
 meta-rules: reference/meta-rules.md
 model-prices: reference/model-prices.md
 prices-claude: reference/prices/claude.md
@@ -135,8 +135,8 @@ skill-metadata: reference/skill-metadata.md
 live-mode-integration: reference/live-mode-integration.md
 capability-gap-stage-gate: reference/capability-gap-stage-gate.md
 known-failure-modes: reference/known-failure-modes.md
-gdd-threat-model: reference/gdd-threat-model.md
-gdd-runtime-audit: reference/gdd-runtime-audit.md
+hone-threat-model: reference/hone-threat-model.md
+hone-runtime-audit: reference/hone-runtime-audit.md
 openrouter-tier-mapping: reference/openrouter-tier-mapping.md
 prices-openrouter: reference/prices.openrouter.md
 native-platforms: reference/native-platforms.md

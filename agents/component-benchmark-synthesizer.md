@@ -1,6 +1,6 @@
 ---
 name: component-benchmark-synthesizer
-description: Reads a raw harvest file from .design/benchmarks/raw/<component>.md and emits a canonical component spec at reference/components/<name>.md using the locked TEMPLATE.md shape. Spawned by /gdd:benchmark after harvesting.
+description: Reads a raw harvest file from .design/benchmarks/raw/<component>.md and emits a canonical component spec at reference/components/<name>.md using the locked TEMPLATE.md shape. Spawned by /hone:benchmark after harvesting.
 tools: Read, Write, Grep, Glob
 color: green
 default-tier: sonnet

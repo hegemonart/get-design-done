@@ -82,12 +82,12 @@ test('32-07: phase-32/manifests-version.txt baseline matches the live version', 
 // ── 5. golden using-gdd snapshot ────────────────────────────────────────────────
 
 test('32-07: golden using-gdd snapshot matches skills/using-gdd/SKILL.md', () => {
-  const golden = readBaseline('using-gdd-snapshot.md');
+  const golden = readBaseline('using-hone-snapshot.md');
   const live = read('skills/using-gdd/SKILL.md');
   assert.equal(
     live,
     golden,
-    'test/fixtures/baselines/phase-32/using-gdd-snapshot.md must match skills/using-gdd/SKILL.md byte-for-byte (regen the golden if the bootstrap skill intentionally changed).'
+    'test/fixtures/baselines/phase-32/using-hone-snapshot.md must match skills/using-gdd/SKILL.md byte-for-byte (regen the golden if the bootstrap skill intentionally changed).'
   );
 });
 

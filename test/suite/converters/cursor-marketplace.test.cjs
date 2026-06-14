@@ -46,17 +46,17 @@ function rmTmpdir(d) {
 }
 
 function seedFixtureSkills(root) {
-  const a = path.join(root, 'skills', 'gdd-alpha');
-  const b = path.join(root, 'skills', 'gdd-beta');
+  const a = path.join(root, 'skills', 'hone-alpha');
+  const b = path.join(root, 'skills', 'hone-beta');
   fs.mkdirSync(a, { recursive: true });
   fs.mkdirSync(b, { recursive: true });
   fs.writeFileSync(
     path.join(a, 'SKILL.md'),
-    '---\nname: gdd-alpha\ndescription: alpha\n---\nAlpha body.\n'
+    '---\nname: hone-alpha\ndescription: alpha\n---\nAlpha body.\n'
   );
   fs.writeFileSync(
     path.join(b, 'SKILL.md'),
-    '---\nname: gdd-beta\ndescription: beta\n---\nBeta body.\n'
+    '---\nname: hone-beta\ndescription: beta\n---\nBeta body.\n'
   );
   return path.join(root, 'skills');
 }
@@ -71,9 +71,9 @@ function realSources() {
 
 // ── buildManifest tests ────────────────────────────────────────────────
 
-test('cursor-marketplace: buildManifest returns name "get-design-done" from real sources', () => {
+test('cursor-marketplace: buildManifest returns name "hone" from real sources', () => {
   const m = c.buildManifest(realSources());
-  assert.equal(m.name, 'get-design-done');
+  assert.equal(m.name, 'hone');
 });
 
 test('cursor-marketplace: buildManifest version equals packageJson.version verbatim', () => {
@@ -90,15 +90,15 @@ test('cursor-marketplace: buildManifest author is object {name: hegemonart} with
 });
 
 test('cursor-marketplace: buildManifest strips trailing .git from repository URL', () => {
-  // Real package.json: repository.url = "https://github.com/hegemonart/get-design-done.git"
+  // Real package.json: repository.url = "https://github.com/hegemonart/hone.git"
   const m = c.buildManifest(realSources());
-  assert.equal(m.repository, 'https://github.com/hegemonart/get-design-done');
+  assert.equal(m.repository, 'https://github.com/hegemonart/hone');
   assert.equal(m.repository.endsWith('.git'), false);
 });
 
-test('cursor-marketplace: buildManifest license is "MIT" verbatim', () => {
+test('cursor-marketplace: buildManifest license is "Apache-2.0" verbatim', () => {
   const m = c.buildManifest(realSources());
-  assert.equal(m.license, 'MIT');
+  assert.equal(m.license, 'Apache-2.0');
 });
 
 test('cursor-marketplace: buildManifest keywords default is the 8-tag CURATED_KEYWORDS', () => {
@@ -212,17 +212,17 @@ test('cursor-marketplace: convert copies skills/ tree byte-for-byte', () => {
     c.convert({ skillsDir: skills, outDir: out, manifest: m });
 
     // Compare source vs dest byte-for-byte.
-    const srcAlpha = fs.readFileSync(path.join(skills, 'gdd-alpha', 'SKILL.md'));
+    const srcAlpha = fs.readFileSync(path.join(skills, 'hone-alpha', 'SKILL.md'));
     const dstAlpha = fs.readFileSync(
-      path.join(out, 'skills', 'gdd-alpha', 'SKILL.md')
+      path.join(out, 'skills', 'hone-alpha', 'SKILL.md')
     );
-    assert.equal(srcAlpha.equals(dstAlpha), true, 'gdd-alpha SKILL.md byte-identical');
+    assert.equal(srcAlpha.equals(dstAlpha), true, 'hone-alpha SKILL.md byte-identical');
 
-    const srcBeta = fs.readFileSync(path.join(skills, 'gdd-beta', 'SKILL.md'));
+    const srcBeta = fs.readFileSync(path.join(skills, 'hone-beta', 'SKILL.md'));
     const dstBeta = fs.readFileSync(
-      path.join(out, 'skills', 'gdd-beta', 'SKILL.md')
+      path.join(out, 'skills', 'hone-beta', 'SKILL.md')
     );
-    assert.equal(srcBeta.equals(dstBeta), true, 'gdd-beta SKILL.md byte-identical');
+    assert.equal(srcBeta.equals(dstBeta), true, 'hone-beta SKILL.md byte-identical');
   } finally {
     rmTmpdir(tmp);
   }
@@ -264,7 +264,7 @@ test('cursor-marketplace: convert is idempotent', () => {
       'utf8'
     );
     const alpha1 = fs.readFileSync(
-      path.join(out, 'skills', 'gdd-alpha', 'SKILL.md'),
+      path.join(out, 'skills', 'hone-alpha', 'SKILL.md'),
       'utf8'
     );
     // Re-run.
@@ -274,7 +274,7 @@ test('cursor-marketplace: convert is idempotent', () => {
       'utf8'
     );
     const alpha2 = fs.readFileSync(
-      path.join(out, 'skills', 'gdd-alpha', 'SKILL.md'),
+      path.join(out, 'skills', 'hone-alpha', 'SKILL.md'),
       'utf8'
     );
     assert.equal(sig1, sig2, 'manifest stable on re-run');

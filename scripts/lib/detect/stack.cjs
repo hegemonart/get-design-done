@@ -378,7 +378,7 @@ function detectStack(root) {
 }
 
 // ---------------------------------------------------------------------------
-// CLI. `gdd-detect-stack <root> [--json]` — prints the fingerprint. JSON by default
+// CLI. `hone-detect-stack <root> [--json]` — prints the fingerprint. JSON by default
 // for machine consumption (mapper-spawn / health-mirror); --pretty for a human read.
 // Exit codes: 0 always (detection is non-judgmental — absence is not an error).
 // ---------------------------------------------------------------------------

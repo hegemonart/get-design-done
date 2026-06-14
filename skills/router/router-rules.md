@@ -30,18 +30,18 @@ Bucket assignment:
 
 | Signal | complexity_class | path |
 |--------|------------------|------|
-| Command is `/gdd:help`, `/gdd:stats`, `/gdd:note`, `/gdd:health`, single-Haiku skill | `S` | `fast` (short-circuited - see below) |
-| Command is `/gdd:scan`, `/gdd:brief`, `/gdd:sketch`, `/gdd:spike`, `/gdd:fast` | `M` | `fast` |
+| Command is `/hone:help`, `/hone:stats`, `/hone:note`, `/hone:health`, single-Haiku skill | `S` | `fast` (short-circuited - see below) |
+| Command is `/hone:scan`, `/hone:brief`, `/hone:sketch`, `/hone:spike`, `/hone:fast` | `M` | `fast` |
 | Command spawns exactly one agent (no orchestration), not in S list | `M` | `fast` |
-| Command is `/gdd:explore`, `/gdd:discover`, standalone `/gdd:verify`, standalone `/gdd:plan` | `L` | `quick` |
-| Command spawns parallel mappers but no planners/auditors (`/gdd:discover` in `--auto` mode) | `L` | `quick` |
-| Command is `/gdd:next`, `/gdd:do`, `/gdd:autonomous`, end-to-end Brief→Verify, anything spawning planners + auditors + verifiers in series | `XL` | `full` |
-| Command spawns planners, auditors, verifiers, or integration-checkers (`/gdd:plan`, `/gdd:verify`, `/gdd:audit`) and is not standalone | `XL` | `full` |
+| Command is `/hone:explore`, `/hone:discover`, standalone `/hone:verify`, standalone `/hone:plan` | `L` | `quick` |
+| Command spawns parallel mappers but no planners/auditors (`/hone:discover` in `--auto` mode) | `L` | `quick` |
+| Command is `/hone:next`, `/hone:do`, `/hone:autonomous`, end-to-end Brief→Verify, anything spawning planners + auditors + verifiers in series | `XL` | `full` |
+| Command spawns planners, auditors, verifiers, or integration-checkers (`/hone:plan`, `/hone:verify`, `/hone:audit`) and is not standalone | `XL` | `full` |
 | `--dry-run` flag present on any command | downgrade one tier (XL→L→M→S; `path` follows the mapping table) |
 
 ### S-class short-circuit
 
-When `complexity_class` would be `S`, the router itself **does not run** for that invocation - the deterministic skip list is encoded in the `/gdd:*` SKILL.md entry of the matching command. The budget-enforcer hook treats "no router decision payload + matching command name" as the S-class signal and skips enforcement entirely (no telemetry row, no cache lookup, no event emission). When the router *is* invoked explicitly (e.g., debugging) it still emits `complexity_class: "S"` in the JSON for observability, but the runtime path is the no-op.
+When `complexity_class` would be `S`, the router itself **does not run** for that invocation - the deterministic skip list is encoded in the `/hone:*` SKILL.md entry of the matching command. The budget-enforcer hook treats "no router decision payload + matching command name" as the S-class signal and skips enforcement entirely (no telemetry row, no cache lookup, no event emission). When the router *is* invoked explicitly (e.g., debugging) it still emits `complexity_class: "S"` in the JSON for observability, but the runtime path is the no-op.
 
 ## Cost Estimation Algorithm
 

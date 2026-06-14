@@ -2,7 +2,7 @@
 /**
  * scripts/lib/live/runtime.cjs — Phase 47 (Live Mode) browser-side runtime.
  *
- * The `/gdd:live` skill injects a small browser runtime into the running dev
+ * The `/hone:live` skill injects a small browser runtime into the running dev
  * server via the Claude Preview MCP `preview_eval` tool. That runtime does two
  * jobs:
  *
@@ -10,7 +10,7 @@
  *      user clicks and reports `{selector, computedStyle subset, boundingRect,
  *      tagName, classList}` back to the agent (the live_pick payload).
  *   2. SWAP — apply one of the N generated design variants in-place by setting a
- *      `data-gdd-variant="N"` attribute on the picked element and applying that
+ *      `data-hone-variant="N"` attribute on the picked element and applying that
  *      variant's inline style / markup, and read back which variant is live.
  *
  * Why a string and not a real module: `preview_eval` ships a JS source string to
@@ -31,12 +31,12 @@
  *   - pickReportShape a plain object documenting the live_pick payload fields.
  *   - buildSelector   pure helper a test can assert against (id > data-attr >
  *                     nth-of-type class path), shared with the in-page logic.
- *   - DATA_ATTR       the variant marker attribute name ("data-gdd-variant").
+ *   - DATA_ATTR       the variant marker attribute name ("data-hone-variant").
  *   - GLOBAL_KEY      the window singleton key ("__gddLive").
  */
 
 /** The attribute the runtime stamps on the picked element to mark the live variant. */
-const DATA_ATTR = 'data-gdd-variant';
+const DATA_ATTR = 'data-hone-variant';
 
 /** The window-singleton key the IIFE installs itself under (idempotent re-inject). */
 const GLOBAL_KEY = '__gddLive';
@@ -55,7 +55,7 @@ const pickReportShape = {
     'object — a curated subset of getComputedStyle: color, backgroundColor, fontSize, ' +
     'fontWeight, fontFamily, lineHeight, padding, margin, borderRadius, borderColor, ' +
     'borderWidth, display, boxShadow',
-  variant: 'number|null — the current data-gdd-variant value on the element, or null',
+  variant: 'number|null — the current data-hone-variant value on the element, or null',
 };
 
 /**

@@ -1,6 +1,6 @@
 # Claude Design — Connection Specification
 
-This file is the connection specification for Claude Design (https://claude.ai/design, Anthropic Labs) within the get-design-done pipeline. Its primary role is to enable handoff-first workflows: when a Claude Design handoff bundle is available, users can skip the scan/discover/plan stages and route directly to verify. Claude Design is not an MCP server — it is a browser-based design tool that produces exportable handoff bundles. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for Claude Design (https://claude.ai/design, Anthropic Labs) within the hone pipeline. Its primary role is to enable handoff-first workflows: when a Claude Design handoff bundle is available, users can skip the scan/discover/plan stages and route directly to verify. Claude Design is not an MCP server — it is a browser-based design tool that produces exportable handoff bundles. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 
@@ -170,7 +170,7 @@ skipped_stages: scan, discover, plan
 
 After a successful implementation cycle, the pipeline can produce a design spec document that can be shared back with Claude Design (or any AI design tool) as an onboarding artifact:
 
-1. Run `/gdd:style` to generate `DESIGN-STYLE-[Component].md` for key components
+1. Run `/hone:style` to generate `DESIGN-STYLE-[Component].md` for key components
 2. Collect the D-XX decisions from STATE.md `<decisions>` block
 3. Combine into `DESIGN.md` (or use the existing one if it was produced by the pipeline)
 

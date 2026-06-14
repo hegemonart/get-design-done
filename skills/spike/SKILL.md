@@ -1,5 +1,5 @@
 ---
-name: gdd-spike
+name: hone-spike
 description: "Timeboxed feasibility experiment that creates .design/spikes/<slug>/ with HYPOTHESIS.md, success/failure criteria, scratch/ subdirectory, and a default 60-minute timebox. Use when answering 'can this work?' before betting design or implementation effort on a risky approach."
 argument-hint: "[hypothesis] [--timebox <minutes>]"
 tools: Read, Write, Bash, AskUserQuestion
@@ -7,7 +7,7 @@ tools: Read, Write, Bash, AskUserQuestion
 
 # Get Design Done - Spike
 
-**Role:** Timeboxed feasibility experiment. Answers "can this work?" - e.g., "can we use view transitions for this flow?", "does this animation perform on mobile?". Unlike `/gdd:sketch` (visual variants), `/gdd:spike` tests a hypothesis.
+**Role:** Timeboxed feasibility experiment. Answers "can this work?" - e.g., "can we use view transitions for this flow?", "does this animation perform on mobile?". Unlike `/hone:sketch` (visual variants), `/hone:spike` tests a hypothesis.
 
 ## Flag parsing
 
@@ -55,7 +55,7 @@ Experimental code in `./scratch/` — not committed to src/.
 Slug: <slug>
 Timebox: <N> minutes
 Work in: .design/spikes/<slug>/scratch/
-When done: /gdd:spike-wrap-up <slug>
+When done: /hone:spike-wrap-up <slug>
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 

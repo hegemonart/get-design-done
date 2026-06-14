@@ -1,7 +1,7 @@
 // test/suite/description-format-ab.test.cjs — Plan 33-04: description-format A/B (SC#5)
 //
 // Structural (NO live LLM — D-06) assertions for the description-format A/B harness:
-//   1. test/suite/skill-behavior/scenarios/using-gdd-ab.json is present and
+//   1. test/suite/skill-behavior/scenarios/using-hone-ab.json is present and
 //      schema-valid against reference/schemas/pressure-scenario.schema.json
 //      (reuses the Ajv idiom from test/suite/pressure-scenario-schema.test.cjs).
 //   1b. every regex source in the A/B manifest compiles via `new RegExp(source)`
@@ -38,7 +38,7 @@ const AB_SCENARIO_PATH = join(
   'suite',
   'skill-behavior',
   'scenarios',
-  'using-gdd-ab.json',
+  'using-hone-ab.json',
 );
 const EVIDENCE_DOC_PATH = join(REPO_ROOT, 'docs', 'research', 'description-format-ab.md');
 const GITIGNORED_DOC_PATH = join(REPO_ROOT, '.design', 'research', 'description-format-ab.md');
@@ -59,12 +59,12 @@ function loadAbScenario() {
 }
 
 // ---------------------------------------------------------------------------
-// 1. using-gdd-ab scenario is present + schema-valid against the 33-02 schema
+// 1. using-hone-ab scenario is present + schema-valid against the 33-02 schema
 // ---------------------------------------------------------------------------
-test('33-04: using-gdd-ab scenario present + schema-valid', () => {
+test('33-04: using-hone-ab scenario present + schema-valid', () => {
   assert.ok(
     existsSync(AB_SCENARIO_PATH),
-    'test/suite/skill-behavior/scenarios/using-gdd-ab.json must exist',
+    'test/suite/skill-behavior/scenarios/using-hone-ab.json must exist',
   );
 
   const manifest = loadAbScenario();
@@ -72,7 +72,7 @@ test('33-04: using-gdd-ab scenario present + schema-valid', () => {
   const ok = validate(manifest);
   assert.ok(
     ok,
-    `using-gdd-ab.json must validate against pressure-scenario.schema.json — errors: ${JSON.stringify(validate.errors)}`,
+    `using-hone-ab.json must validate against pressure-scenario.schema.json — errors: ${JSON.stringify(validate.errors)}`,
   );
 
   // It targets using-gdd (the skill the A/B extends) and carries the base keys.

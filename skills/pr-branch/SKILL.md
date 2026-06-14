@@ -1,12 +1,12 @@
 ---
-name: gdd-pr-branch
+name: hone-pr-branch
 description: "Create a clean PR branch by filtering out .design/ and .planning/ commits. Code-review-ready branch for the design implementation work."
 argument-hint: "[<base-branch>]"
 tools: Read, Write, Bash
 disable-model-invocation: true
 ---
 
-# /gdd:pr-branch
+# /hone:pr-branch
 
 Produces a branch that contains only code changes (under `src/`) so reviewers are not forced to read through `.design/` planning churn.
 
@@ -27,6 +27,6 @@ Produces a branch that contains only code changes (under `src/`) so reviewers ar
 
 - Do not rewrite history on the original branch.
 - Do not include `.design/` or `.planning/` paths - if a mixed commit contains them, the cherry-pick carries them through, but reviewers are warned.
-- Do not push the branch automatically - let `/gdd:ship` or the user push.
+- Do not push the branch automatically - let `/hone:ship` or the user push.
 
 ## PR-BRANCH COMPLETE

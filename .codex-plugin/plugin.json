@@ -1,14 +1,14 @@
 {
-  "name": "get-design-done",
-  "version": "1.60.2",
+  "name": "hone",
+  "version": "2.0.0",
   "description": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design system.",
   "author": {
     "name": "hegemonart",
     "url": "https://github.com/hegemonart"
   },
-  "homepage": "https://github.com/hegemonart/get-design-done",
-  "repository": "https://github.com/hegemonart/get-design-done",
-  "license": "MIT",
+  "homepage": "https://github.com/hegemonart/hone",
+  "repository": "https://github.com/hegemonart/hone",
+  "license": "Apache-2.0",
   "keywords": [
     "design",
     "design-system",
@@ -17,29 +17,29 @@
   ],
   "skills": "./skills/",
   "mcpServers": {
-    "gdd-mcp": {
+    "hone-mcp": {
       "command": "npx",
       "args": [
         "-y",
-        "--package=@hegemonart/get-design-done",
-        "gdd-mcp"
+        "--package=@hegemonart/hone",
+        "hone-mcp"
       ]
     }
   },
   "interface": {
-    "displayName": "Get Design Done",
+    "displayName": "Hone",
     "shortDescription": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design",
-    "longDescription": "A design-quality pipeline for AI coding agents: brief -> explore -> plan -> design -> verify.",
+    "longDescription": "Hone every design to shipped.",
     "developerName": "hegemonart",
     "category": "Design",
     "capabilities": [
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/hegemonart/get-design-done",
+    "websiteURL": "https://github.com/hegemonart/hone",
     "defaultPrompt": [
-      "Run /gdd-brief to start a design cycle.",
-      "Run /gdd-explore to audit a screen."
+      "Run /hone-brief to start a design cycle.",
+      "Run /hone-explore to audit a screen."
     ],
     "brandColor": "#10A37F"
   }

@@ -7,8 +7,8 @@ const path = require('node:path');
 const factory = require('../../scripts/lib/build/factory.cjs');
 const { compile, placeholdersUsed, stripHarnessOnly, PLACEHOLDERS } = factory;
 
-const CLAUDE = { id: 'claude', command_prefix: '/gdd:', model: 'M', config_file: 'C', ask_instruction: 'A' };
-const CODEX = { id: 'codex', command_prefix: '/gdd-', model: 'gpt', config_file: '.codex/config.toml', ask_instruction: 'ask Codex' };
+const CLAUDE = { id: 'claude', command_prefix: '/hone:', model: 'M', config_file: 'C', ask_instruction: 'A' };
+const CODEX = { id: 'codex', command_prefix: '/hone-', model: 'gpt', config_file: '.codex/config.toml', ask_instruction: 'ask Codex' };
 
 test('42-factory-01: factory.cjs is pure (no require, no fs)', () => {
   const src = fs.readFileSync(path.join(__dirname, '../../scripts/lib/build/factory.cjs'), 'utf8');
@@ -18,13 +18,13 @@ test('42-factory-01: factory.cjs is pure (no require, no fs)', () => {
 
 test('42-factory-02: substitutes all four placeholders', () => {
   const t = '{{command_prefix}}audit uses {{model}} via {{config_file}}; {{ask_instruction}}.';
-  assert.equal(compile(t, CLAUDE), '/gdd:audit uses M via C; A.');
+  assert.equal(compile(t, CLAUDE), '/hone:audit uses M via C; A.');
 });
 
 test('42-factory-03: codex command_prefix differs from claude', () => {
   const t = 'Run {{command_prefix}}audit';
-  assert.equal(compile(t, CLAUDE), 'Run /gdd:audit');
-  assert.equal(compile(t, CODEX), 'Run /gdd-audit');
+  assert.equal(compile(t, CLAUDE), 'Run /hone:audit');
+  assert.equal(compile(t, CODEX), 'Run /hone-audit');
 });
 
 test('42-factory-04: harness-only kept iff id listed', () => {
@@ -36,12 +36,12 @@ test('42-factory-04: harness-only kept iff id listed', () => {
 
 test('42-factory-05: escape \\{{...}} emits a literal placeholder, never substituted', () => {
   const t = 'literal \\{{command_prefix}} and real {{command_prefix}}go';
-  assert.equal(compile(t, CLAUDE), 'literal {{command_prefix}} and real /gdd:go');
+  assert.equal(compile(t, CLAUDE), 'literal {{command_prefix}} and real /hone:go');
 });
 
-test('42-factory-06: byte-identity round-trip — /gdd: <-> {{command_prefix}} is a pure inverse', () => {
-  const original = 'See /gdd:audit, /gdd:plan, and /gdd:verify. No other tokens.';
-  const sourced = original.split('/gdd:').join('{{command_prefix}}'); // the migration transform
+test('42-factory-06: byte-identity round-trip — /hone: <-> {{command_prefix}} is a pure inverse', () => {
+  const original = 'See /hone:audit, /hone:plan, and /hone:verify. No other tokens.';
+  const sourced = original.split('/hone:').join('{{command_prefix}}'); // the migration transform
   assert.equal(compile(sourced, CLAUDE), original, 'Claude compile must reproduce the original byte-for-byte');
 });
 

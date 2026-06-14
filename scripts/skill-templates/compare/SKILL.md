@@ -1,11 +1,11 @@
 ---
-name: gdd-compare
+name: hone-compare
 description: "Compute the delta between the `DESIGN.md` baseline (from explore) and the `DESIGN-VERIFICATION.md` result (from verify), reporting per-category score delta, anti-pattern delta (resolved vs new), must-have pass/fail change, and design drift (regressions without covering tasks in `DESIGN-PLAN.md`). Use after `verify` to measure whether a design pipeline cycle actually improved the design. Writes `.design/COMPARE-REPORT.md`. Activates for requests involving diffing a design baseline against verification output, or a before-after design delta."
 argument-hint: ""
 user-invocable: true
 ---
 
-# gdd-compare - Baseline vs Result Delta
+# hone-compare - Baseline vs Result Delta
 
 Standalone delta command. Computes the difference between the scan baseline (`DESIGN.md`) and the verification result (`DESIGN-VERIFICATION.md`), and flags design drift for any regression not covered by an explicit task in `DESIGN-PLAN.md`. Writes one artifact: `.design/COMPARE-REPORT.md`.
 
@@ -29,8 +29,8 @@ This command is **standalone** - not a pipeline stage:
 
 Required files - abort if either is missing:
 
-- `.design/DESIGN.md` missing → `"No baseline found. Run /get-design-done scan first."`
-- `.design/DESIGN-VERIFICATION.md` missing → `"No verification result found. Run /get-design-done verify first to produce DESIGN-VERIFICATION.md."`
+- `.design/DESIGN.md` missing → `"No baseline found. Run {{command_prefix}}scan first."`
+- `.design/DESIGN-VERIFICATION.md` missing → `"No verification result found. Run {{command_prefix}}verify first to produce DESIGN-VERIFICATION.md."`
 
 **Optional files (graceful degradation if absent):**
 

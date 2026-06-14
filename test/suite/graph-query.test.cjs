@@ -19,7 +19,7 @@ const REPO_ROOT = resolve(__dirname, '../..');
 const FIXTURE_ROOT = join(REPO_ROOT, 'test', 'fixtures', 'graph', 'sample-intel');
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-graph-query-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-graph-query-${prefix}-`));
 }
 
 async function buildLib() {
@@ -45,13 +45,13 @@ function writeSampleGraph(path) {
       builderVersion: '1.30.6',
     },
     nodes: [
-      { id: 'component:Button', type: 'component', label: 'Button', source: 'gdd-intel-store' },
-      { id: 'token:color/primary', type: 'token-color', label: 'primary', source: 'gdd-intel-store' },
-      { id: 'decision:D-01', type: 'decision', label: 'Use brand primary', source: 'gdd-intel-store' },
+      { id: 'component:Button', type: 'component', label: 'Button', source: 'hone-intel-store' },
+      { id: 'token:color/primary', type: 'token-color', label: 'primary', source: 'hone-intel-store' },
+      { id: 'decision:D-01', type: 'decision', label: 'Use brand primary', source: 'hone-intel-store' },
     ],
     edges: [
-      { from: 'component:Button', to: 'token:color/primary', kind: 'uses', weight: 0.9, source: 'gdd-intel-store' },
-      { from: 'decision:D-01', to: 'token:color/primary', kind: 'specifies', weight: 0.8, source: 'gdd-intel-store' },
+      { from: 'component:Button', to: 'token:color/primary', kind: 'uses', weight: 0.9, source: 'hone-intel-store' },
+      { from: 'decision:D-01', to: 'token:color/primary', kind: 'specifies', weight: 0.8, source: 'hone-intel-store' },
     ],
   };
   writeFileSync(path, JSON.stringify(graph, null, 2));

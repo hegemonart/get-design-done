@@ -64,7 +64,7 @@ The scanner excludes `.planning/`, `.claude/`, `.design/`, `node_modules/`,
 ## Path migrations (machine-readable)
 
 Phase 39.5 adds a machine-readable registry of **path** migrations - modules/files GDD moved or
-removed. `scripts/lib/deprecation-registry.cjs` parses the table below; `/gdd:migrate` consults it to
+removed. `scripts/lib/deprecation-registry.cjs` parses the table below; `/hone:migrate` consults it to
 help users update local references; `test/suite/deprecation-completeness.test.cjs` asserts every row
 is honest (a `removed` row's `Old` path must be gone from the tree; a `deprecated` row's `Old` path
 must still carry a shim).
@@ -89,14 +89,14 @@ blank = still shimmed) · `Old` (pre-move path) · `New` (current path) · `Migr
 |---|---|---|---|---|
 | 1.31.5 | 1.33.0 | `scripts/lib/cli` | `sdk/cli` | Import the CLI barrel from `sdk/cli` instead of `scripts/lib/cli`. |
 | 1.31.5 | 1.33.0 | `scripts/lib/event-stream` | `sdk/event-stream` | Import the event-stream barrel from `sdk/event-stream`. |
-| 1.31.5 | 1.33.0 | `scripts/lib/gdd-state` | `sdk/state` | Import the STATE primitives from `sdk/state`. |
-| 1.31.5 | 1.33.0 | `scripts/lib/gdd-errors` | `sdk/errors` | Import the error types from `sdk/errors`. |
+| 1.31.5 | 1.33.0 | `scripts/lib/hone-state` | `sdk/state` | Import the STATE primitives from `sdk/state`. |
+| 1.31.5 | 1.33.0 | `scripts/lib/hone-errors` | `sdk/errors` | Import the error types from `sdk/errors`. |
 | 1.31.5 | 1.33.0 | `scripts/lib/error-classifier.cjs` | `sdk/primitives/error-classifier.cjs` | Require `sdk/primitives/error-classifier.cjs`. |
 | 1.31.5 | 1.33.0 | `scripts/lib/iteration-budget.cjs` | `sdk/primitives/iteration-budget.cjs` | Require `sdk/primitives/iteration-budget.cjs`. |
 | 1.31.5 | 1.33.0 | `scripts/lib/jittered-backoff.cjs` | `sdk/primitives/jittered-backoff.cjs` | Require `sdk/primitives/jittered-backoff.cjs`. |
 | 1.31.5 | 1.33.0 | `scripts/lib/lockfile.cjs` | `sdk/primitives/lockfile.cjs` | Require `sdk/primitives/lockfile.cjs`. |
-| 1.31.5 | 1.33.0 | `scripts/mcp-servers/gdd-state/server.ts` | `sdk/mcp/gdd-state/server.ts` | Point the MCP server config at `sdk/mcp/gdd-state/server.ts`. |
-| 1.31.5 | 1.33.0 | `scripts/mcp-servers/gdd-mcp/server.ts` | `sdk/mcp/gdd-mcp/server.ts` | Point the MCP server config at `sdk/mcp/gdd-mcp/server.ts`. |
+| 1.31.5 | 1.33.0 | `scripts/mcp-servers/hone-state/server.ts` | `sdk/mcp/hone-state/server.ts` | Point the MCP server config at `sdk/mcp/hone-state/server.ts`. |
+| 1.31.5 | 1.33.0 | `scripts/mcp-servers/hone-mcp/server.ts` | `sdk/mcp/hone-mcp/server.ts` | Point the MCP server config at `sdk/mcp/hone-mcp/server.ts`. |
 
 All ten rows are **removed** as of the current release (the Phase 31.5 → `sdk/` reorg; shims removed
 in v1.33.0). The completeness gate confirms none of the `Old` paths remain in the tree.

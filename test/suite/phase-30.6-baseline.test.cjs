@@ -10,11 +10,11 @@
 //     test/fixtures/baselines/phase-30.6/manifests-version.txt.
 //   - 2 Tier-2 marketplace lockstep (metadata.version + plugins[0].version).
 //   - Zero `gsd-tools.cjs.*graphify` callsites in the 7 surface dirs.
-//   - bin/gdd-graph implements exactly the 6 subcommands baselined.
+//   - bin/hone-graph implements exactly the 6 subcommands baselined.
 //   - scripts/lib/graph/schema.json structural shape matches baseline.
 //   - .planning/get-shit-done-main/ does NOT exist (vendored snapshot deleted).
 //   - scripts/lib/gsd-health-mirror/ does NOT exist (renamed to health-mirror).
-//   - agents/gdd-graphify-sync.md does NOT exist (renamed to gdd-graph-refresh).
+//   - agents/hone-graphify-sync.md does NOT exist (renamed to hone-graph-refresh).
 //   - Only allowed paths reference upstream gsd-tools / ~/.claude/get-shit-done.
 
 const test = require('node:test');
@@ -97,16 +97,16 @@ test('30.6-07: zero gsd-tools.cjs+graphify callsites in 7 surface dirs', () => {
   assert.equal(count, expected, `expected ${expected} callsites, found ${count}`);
 });
 
-// --- gdd-graph subcommand inventory ─────────────────────────────────────
+// --- hone-graph subcommand inventory ─────────────────────────────────────
 
-test('30.6-07: bin/gdd-graph subcommand inventory matches baseline', () => {
-  const baseline = readBaseline('gdd-graph-subcommand-inventory.txt')
+test('30.6-07: bin/hone-graph subcommand inventory matches baseline', () => {
+  const baseline = readBaseline('hone-graph-subcommand-inventory.txt')
     .trim()
     .split(/\r?\n/)
     .sort();
   assert.equal(baseline.length, 6, 'baseline must list 6 subcommands');
 
-  const src = read('bin/gdd-graph');
+  const src = read('bin/hone-graph');
   // The CLI declares its supported subcommands via a Set literal in the
   // dispatcher. We verify the source explicitly mentions each of the 6
   // baseline subcommands as a quoted literal — this catches both add and
@@ -117,7 +117,7 @@ test('30.6-07: bin/gdd-graph subcommand inventory matches baseline', () => {
       found.push(sub);
     }
   }
-  assert.deepEqual(found.sort(), baseline, 'bin/gdd-graph subcommand inventory drift vs baseline');
+  assert.deepEqual(found.sort(), baseline, 'bin/hone-graph subcommand inventory drift vs baseline');
 });
 
 // --- Graph schema 1.0 shape ─────────────────────────────────────────────
@@ -183,14 +183,14 @@ test('30.6-07: scripts/lib/gsd-health-mirror does not exist (renamed to health-m
   );
 });
 
-test('30.6-07: agents/gdd-graphify-sync.md does not exist (renamed to gdd-graph-refresh.md, D-08)', () => {
+test('30.6-07: agents/hone-graphify-sync.md does not exist (renamed to hone-graph-refresh.md, D-08)', () => {
   assert.ok(
-    !exists('agents/gdd-graphify-sync.md'),
-    'gdd-graphify-sync should be renamed to gdd-graph-refresh (30.6-06, D-08 one-way)',
+    !exists('agents/hone-graphify-sync.md'),
+    'hone-graphify-sync should be renamed to hone-graph-refresh (30.6-06, D-08 one-way)',
   );
   assert.ok(
-    exists('agents/gdd-graph-refresh.md'),
-    'renamed gdd-graph-refresh.md should exist',
+    exists('agents/hone-graph-refresh.md'),
+    'renamed hone-graph-refresh.md should exist',
   );
 });
 

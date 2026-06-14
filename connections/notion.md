@@ -1,10 +1,10 @@
 # Notion — Connection Specification
 
-This file is the connection specification for Notion within the get-design-done pipeline. See `connections/connections.md` for the index + capability matrix (the notion row is added at the 35.5 closeout).
+This file is the connection specification for Notion within the hone pipeline. See `connections/connections.md` for the index + capability matrix (the notion row is added at the 35.5 closeout).
 
 ---
 
-Notion is the **export write-path** for `/gdd:export --format notion` (Phase 35.5). GDD generates a Notion page from a completed cycle's design artifacts — a stakeholder-shareable design-review packet. MCP-based (`mcp__notion__*`) — GDD calls MCP tools, not raw HTTP; no bundled Notion SDK, no new outbound egress. Outbound content is redacted; degrades to the self-contained HTML format when Notion is absent or disabled.
+Notion is the **export write-path** for `/hone:export --format notion` (Phase 35.5). GDD generates a Notion page from a completed cycle's design artifacts — a stakeholder-shareable design-review packet. MCP-based (`mcp__notion__*`) — GDD calls MCP tools, not raw HTTP; no bundled Notion SDK, no new outbound egress. Outbound content is redacted; degrades to the self-contained HTML format when Notion is absent or disabled.
 
 ---
 
@@ -28,13 +28,13 @@ Expect Notion page/block tools (`mcp__notion__*`). If empty → `notion: not_con
 
 ## What GDD does
 
-On `/gdd:export --format notion`, GDD creates a page from the export source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots): headings → toggle/section blocks, screenshots → image-upload blocks. Every text block is **redacted** (`scripts/lib/redact.cjs`); `--pseudonymize` additionally masks identity. Write-only (export); GDD does not read/sync Notion content.
+On `/hone:export --format notion`, GDD creates a page from the export source set (EXPERIENCE.md + DESIGN.md + DESIGN-VERIFICATION.md + decisions + screenshots): headings → toggle/section blocks, screenshots → image-upload blocks. Every text block is **redacted** (`scripts/lib/redact.cjs`); `--pseudonymize` additionally masks identity. Write-only (export); GDD does not read/sync Notion content.
 
 ## Redaction + kill-switch + degrade
 
 - Every block body passes through `scripts/lib/redact.cjs` (the single chokepoint).
 - Kill-switch: `GDD_DISABLE_NOTION=1` (env) or `.design/config.json` `"export": { "notion": { "enabled": false } }`. `gsd-health` surfaces it.
-- **Degrade:** `notion: not_configured` / disabled / an MCP error → `/gdd:export` falls back to the self-contained `html` format + a note (the export never fails on Notion absence — D-03/D-07).
+- **Degrade:** `notion: not_configured` / disabled / an MCP error → `/hone:export` falls back to the self-contained `html` format + a note (the export never fails on Notion absence — D-03/D-07).
 
 ## STATE.md integration + probe
 

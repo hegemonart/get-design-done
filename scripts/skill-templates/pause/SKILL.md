@@ -1,8 +1,8 @@
 ---
-name: gdd-pause
+name: hone-pause
 description: "Write a numbered checkpoint so work can resume in a new session without re-running completed stages."
 argument-hint: "[context note]"
-tools: Read, Write, Bash, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__checkpoint
+tools: Read, Write, Bash, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__set_status, mcp__hone_state__add_blocker, mcp__hone_state__checkpoint
 disable-model-invocation: true
 ---
 
@@ -17,7 +17,7 @@ Each invocation writes an **immutable numbered checkpoint** - it does not overwr
 
 ## Steps
 
-1. `mcp__gdd_state__get` → snapshot current pipeline state. Extract:
+1. `mcp__hone_state__get` → snapshot current pipeline state. Extract:
    - Current `stage` and `cycle`
    - `last_checkpoint` timestamp
    - `task_progress` and `status` for the current run
@@ -34,9 +34,9 @@ Each invocation writes an **immutable numbered checkpoint** - it does not overwr
    "What are you in the middle of? (optional context to capture)"
 
 4. **Flip status via MCP** so `{{command_prefix}}resume` can detect the pause and recover the prior status:
-   1. `mcp__gdd_state__set_status` with `status: "paused:<prior-status>"` - the `paused:` prefix preserves the prior status for resume parsing.
-   2. If the user supplied a context/blocker message: `mcp__gdd_state__add_blocker` with `{ stage: <current>, date: <today>, text: <message> }`.
-   3. `mcp__gdd_state__checkpoint` to stamp `last_checkpoint` via MCP.
+   1. `mcp__hone_state__set_status` with `status: "paused:<prior-status>"` - the `paused:` prefix preserves the prior status for resume parsing.
+   2. If the user supplied a context/blocker message: `mcp__hone_state__add_blocker` with `{ stage: <current>, date: <today>, text: <message> }`.
+   3. `mcp__hone_state__checkpoint` to stamp `last_checkpoint` via MCP.
 
 5. **Write numbered checkpoint**: create `.design/checkpoints/` with `mkdir -p`, then write:
    ```
@@ -69,9 +69,9 @@ Each invocation writes an **immutable numbered checkpoint** - it does not overwr
 
 ## Do Not
 
-- Do not mutate STATE.md directly - all STATE.md writes go through the `gdd-state` MCP tools above. Checkpoint files + HANDOFF.md are sibling artifacts, written with `Write`.
+- Do not mutate STATE.md directly - all STATE.md writes go through the `hone-state` MCP tools above. Checkpoint files + HANDOFF.md are sibling artifacts, written with `Write`.
 - Do not abort in-progress sketches; just record them.
 - Do not delete previous checkpoint files.
-- Do not call `mcp__gdd_state__transition_stage` - pause is status-only, never a stage transition.
+- Do not call `mcp__hone_state__transition_stage` - pause is status-only, never a stage transition.
 
 ## PAUSE COMPLETE

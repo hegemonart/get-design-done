@@ -87,7 +87,7 @@ function buildManifest(sources, opts) {
   }
 
   // name — prefer .claude-plugin/plugin.json.name (canonical, already
-  // kebab-case as "get-design-done"); fall back to stripping npm scope
+  // kebab-case as "hone"); fall back to stripping npm scope
   // prefix from package.json.name.
   let name;
   if (claudePlugin && typeof claudePlugin.name === 'string') {

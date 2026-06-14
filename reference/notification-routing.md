@@ -12,7 +12,7 @@ Event type → channels (overridable via `.design/config.json#notifications.rout
 |---|---|---|
 | `verify_fail` | a verify must-have failed | slack + discord (the "critical" surface) |
 | `audit_pass` | an audit cleared the quality floor | slack + discord (the "digest" surface) |
-| `ship` | a PR was created (`/gdd:ship`) | slack + discord (digest - PR URL + top-line audit) |
+| `ship` | a PR was created (`/hone:ship`) | slack + discord (digest - PR URL + top-line audit) |
 
 A user narrows or splits this in `.design/config.json`:
 

@@ -1,11 +1,11 @@
 'use strict';
 // test/suite/phase-52-context-mcp.test.cjs
 // ---------------------------------------------------------------------------
-// Phase 52 (DesignContext keystone) — gdd_context_query MCP tool + context skill.
+// Phase 52 (DesignContext keystone) — hone_context_query MCP tool + context skill.
 //
 // Covers:
 //   - the tool module exports name / schemaPath / handle (mirrors every other
-//     gdd-mcp tool module);
+//     hone-mcp tool module);
 //   - handle returns a STRUCTURED result on a temp graph (success when the
 //     sibling query engine is present, structured engine-unavailable error when
 //     it is not — the engine is authored by Phase 52 sibling A in parallel);
@@ -23,7 +23,7 @@ const path = require('node:path');
 const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const TOOLS_DIR = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'tools');
+const TOOLS_DIR = path.join(REPO_ROOT, 'sdk', 'mcp', 'hone-mcp', 'tools');
 const SKILL_PATH = path.join(REPO_ROOT, 'scripts', 'skill-templates', 'context', 'SKILL.md');
 const QUERY_ENGINE = path.join(REPO_ROOT, 'scripts', 'lib', 'design-context-query.cjs');
 
@@ -76,11 +76,11 @@ function writeGraph(root) {
 // Module surface
 // ---------------------------------------------------------------------------
 
-test('52: gdd_context_query exports name/schemaPath/handle', async () => {
-  const mod = await loadTool('gdd_context_query');
-  assert.equal(mod.name, 'gdd_context_query');
+test('52: hone_context_query exports name/schemaPath/handle', async () => {
+  const mod = await loadTool('hone_context_query');
+  assert.equal(mod.name, 'hone_context_query');
   assert.equal(typeof mod.schemaPath, 'string');
-  assert.match(mod.schemaPath, /gdd_context_query\.schema\.json$/);
+  assert.match(mod.schemaPath, /hone_context_query\.schema\.json$/);
   assert.equal(typeof mod.handle, 'function');
 });
 
@@ -92,7 +92,7 @@ test('52: handle returns a structured result on a temp graph', async () => {
   const root = tmp('mcp-context-graph');
   writeGraph(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_context_query');
+    const mod = await loadTool('hone_context_query');
     const res = await mod.handle({ op: 'nodes' });
     // Always a structured ToolResponse envelope — never an uncaught throw.
     assert.equal(typeof res, 'object');
@@ -115,7 +115,7 @@ test('52: handle rejects an unknown op with a structured error', async () => {
   const root = tmp('mcp-context-badop');
   writeGraph(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_context_query');
+    const mod = await loadTool('hone_context_query');
     const res = await mod.handle({ op: 'not-a-real-op' });
     assert.equal(res.success, false);
     assert.match(res.error.message, /op is required/i);
@@ -131,7 +131,7 @@ test('52: handle returns a graceful no-graph result when context-graph.json abse
   // Satisfy the project-root walk with .design/ present but no graph file.
   fs.mkdirSync(path.join(root, '.design'), { recursive: true });
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_context_query');
+    const mod = await loadTool('hone_context_query');
     const res = await mod.handle({ op: 'coverage' });
     assert.equal(res.success, true);
     assert.equal(res.data.graph_present, false);
@@ -151,7 +151,7 @@ test('52: tools/index TOOL_COUNT === 13', async () => {
   assert.equal(m.TOOL_COUNT, 13);
   assert.equal(m.TOOL_MODULES.length, 13);
   const names = m.TOOL_MODULES.map((t) => t.name);
-  assert.ok(names.includes('gdd_context_query'), 'gdd_context_query missing from registry');
+  assert.ok(names.includes('hone_context_query'), 'hone_context_query missing from registry');
 });
 
 // ---------------------------------------------------------------------------
@@ -166,7 +166,7 @@ test('52: context SKILL.md frontmatter is valid and documents the query ops', ()
   assert.ok(fm, 'frontmatter block missing');
   const block = fm[1];
 
-  assert.match(block, /^name:\s*gdd-context\s*$/m, 'name must be gdd-context');
+  assert.match(block, /^name:\s*hone-context\s*$/m, 'name must be hone-context');
   assert.match(block, /^description:\s*"/m, 'description must be a quoted string');
   assert.match(block, /^argument-hint:\s*"/m, 'argument-hint required');
   assert.match(block, /^tools:\s*Read,\s*Bash\s*$/m, 'tools must be "Read, Bash"');

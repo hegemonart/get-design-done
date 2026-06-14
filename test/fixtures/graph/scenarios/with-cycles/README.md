@@ -3,7 +3,7 @@
 5 nodes total: a 3-node cycle (A→B, B→A, B→C, C→A) plus one self-loop
 (A→A) plus 2 unconnected isolated nodes (`isolated-1`, `isolated-2`).
 
-## Expected bin/gdd-graph behavior
+## Expected bin/hone-graph behavior
 
 | Subcommand | Expected outcome |
 |---|---|

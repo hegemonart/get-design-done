@@ -2,7 +2,7 @@
 //
 // E2E test harness for the Phase-21 headless pipeline runner.
 //
-// Spawns `bin/gdd-sdk run` against a copy of the fixture project under
+// Spawns `bin/hone-sdk run` against a copy of the fixture project under
 // `test-fixture/headless-e2e/`, captures stdout/stderr + the resulting
 // `.design/` artifacts, and runs a fixed set of shape assertions:
 //
@@ -21,10 +21,10 @@
 //
 // The harness has TWO modes:
 //
-//   * 'dry-run' — spawns `gdd-sdk run --dry-run --fixture <src> --cwd <tmp>`
+//   * 'dry-run' — spawns `hone-sdk run --dry-run --fixture <src> --cwd <tmp>`
 //     which installs canned-session overrides. Never hits the Anthropic
 //     API. Runs on every PR.
-//   * 'live'    — spawns `gdd-sdk run --cwd <tmp>` with the real Agent
+//   * 'live'    — spawns `hone-sdk run --cwd <tmp>` with the real Agent
 //     SDK. Gated on `process.env.ANTHROPIC_API_KEY`; returns
 //     `status: 'skipped'` when the key is absent. Runs on main-branch
 //     push with secret.
@@ -67,7 +67,7 @@ export interface E2EResult {
   readonly artifacts: ArtifactReport;
   /** Ordered assertion-failure messages (empty on pass). */
   readonly assertion_failures: readonly string[];
-  /** gdd-sdk exit code; 0 on success. */
+  /** hone-sdk exit code; 0 on success. */
   readonly exit_code: number;
   /** Path to the temp directory where the fixture was copied + run. */
   readonly run_dir: string;
@@ -85,7 +85,7 @@ export interface RunHeadlessE2EOptions {
   readonly timeoutMs?: number;
   /** Override the default 5.0 USD budget cap for live mode. */
   readonly maxUsdCost?: number;
-  /** Override the default gdd-sdk bin path (`./bin/gdd-sdk`). */
+  /** Override the default hone-sdk bin path (`./bin/hone-sdk`). */
   readonly gddSdkBin?: string;
   /**
    * Optional environment overrides layered on top of process.env. Used
@@ -141,7 +141,7 @@ export async function runHeadlessE2E(opts: RunHeadlessE2EOptions): Promise<E2ERe
   }
 
   // Copy the fixture into a temp dir so the source stays pristine.
-  const runDir = mkdtempSync(joinPath(tmpdir(), 'gdd-e2e-'));
+  const runDir = mkdtempSync(joinPath(tmpdir(), 'hone-e2e-'));
   try {
     copyDirSync(srcFixture, runDir);
   } catch (err) {
@@ -150,11 +150,11 @@ export async function runHeadlessE2E(opts: RunHeadlessE2EOptions): Promise<E2ERe
     ]);
   }
 
-  // Resolve gdd-sdk binary.
+  // Resolve hone-sdk binary.
   const gddSdkBin =
     opts.gddSdkBin !== undefined
       ? resolvePath(opts.gddSdkBin)
-      : resolvePath(process.cwd(), 'bin', 'gdd-sdk');
+      : resolvePath(process.cwd(), 'bin', 'hone-sdk');
 
   // Point the subprocess's event-stream at the fixture copy's
   // .design/telemetry so the events.jsonl assertion sees the run's
@@ -195,7 +195,7 @@ export async function runHeadlessE2E(opts: RunHeadlessE2EOptions): Promise<E2ERe
           'info',
         ];
 
-  // Spawn gdd-sdk from the REPO root (so createRequire anchors resolve
+  // Spawn hone-sdk from the REPO root (so createRequire anchors resolve
   // correctly) but steer all state + event writes into runDir via
   // --cwd and GDD_EVENTS_PATH.
   const subprocessCwd = process.cwd();
@@ -219,7 +219,7 @@ export async function runHeadlessE2E(opts: RunHeadlessE2EOptions): Promise<E2ERe
 
   // 1. Exit code.
   if (exitCode !== 0) {
-    assertionFailures.push(`gdd-sdk exited with code ${exitCode} (expected 0)`);
+    assertionFailures.push(`hone-sdk exited with code ${exitCode} (expected 0)`);
   }
 
   // 2. Wall-clock.
@@ -381,7 +381,7 @@ interface SpawnOutcome {
 }
 
 /**
- * Spawn `gdd-sdk` with an externally-enforced wall-clock timeout.
+ * Spawn `hone-sdk` with an externally-enforced wall-clock timeout.
  * Node's child_process does not expose a native timeout on async calls
  * matching our needs — we roll our own via setTimeout + signal kill.
  */
@@ -395,7 +395,7 @@ function spawnWithTimeout(args: {
   return new Promise<SpawnOutcome>((resolve) => {
     // Compose the node invocation explicitly so we do not depend on a
     // `.cmd` shim being discoverable on Windows. The bin is the CJS
-    // trampoline (bin/gdd-sdk), which spawns TS — we skip that layer
+    // trampoline (bin/hone-sdk), which spawns TS — we skip that layer
     // by invoking the TS entry directly with the experimental flag.
     const tsEntry = resolvePath(dirname(args.bin), '..', 'sdk', 'cli', 'index.ts');
     const nodeArgs = ['--experimental-strip-types', tsEntry, ...args.argv];
@@ -472,7 +472,7 @@ function copyDirSync(src: string, dest: string): void {
 }
 
 /**
- * Extract the gdd-sdk pipeline-result JSON from stdout. The CLI emits
+ * Extract the hone-sdk pipeline-result JSON from stdout. The CLI emits
  * a single pretty-printed JSON object under `--json`; older output may
  * have been prefixed by node warnings. We locate the last `{` that
  * begins a top-level object and attempt to parse from there.

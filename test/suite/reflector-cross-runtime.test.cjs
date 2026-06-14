@@ -286,7 +286,7 @@ test('26-06: explicit thresholdPct option overrides the default', () => {
 test('26-06: zero-cost denominators are handled (no Infinity% proposals)', () => {
   // claude averaged $0 across the window, codex averaged $1. Without
   // the zero-guard this would emit `delta_pct: Infinity` which is
-  // useless to /gdd:apply-reflections. Helper must skip silently.
+  // useless to /hone:apply-reflections. Helper must skip silently.
   const events = [];
   for (let i = 1; i <= 5; i++) {
     const cycle = `cycle-${i}`;
@@ -374,7 +374,7 @@ test('26-06: design-reflector.md documents the cross-runtime cost-arbitrage rule
 
 test('26-06: design-reflector.md output proposal shape matches helper', () => {
   const body = fs.readFileSync(REFLECTOR_PATH, 'utf8');
-  // Structured proposal type tag (consumed by /gdd:apply-reflections).
+  // Structured proposal type tag (consumed by /hone:apply-reflections).
   assert.match(body, /cost_arbitrage/,
     'reflector body should declare the `cost_arbitrage` proposal type');
   // The helper module is discoverable so the executor agent knows how

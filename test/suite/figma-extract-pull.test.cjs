@@ -33,7 +33,7 @@ const FILE_KEY = 'IAHNrYoqIh56SCxgv3PjCS';
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function tmpDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-figma-pull-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-figma-pull-'));
 }
 
 function rm(dir) {

@@ -3,7 +3,7 @@
  * TST-28 — reflection-proposal
  *
  * Validates that agents/design-reflector.md output is always proposal-shaped
- * (never auto-applied) and /gdd:apply-reflections requires explicit
+ * (never auto-applied) and /hone:apply-reflections requires explicit
  * confirmation. Also checks the locked fixture at
  * test/fixtures/baselines/current/expected-reflection-proposals.json.
  */
@@ -56,7 +56,7 @@ test('reflection-proposal: agent declares proposal block structure (Why/Change/R
   assert.match(body, /\*\*Risk\*\*:/, 'agent body should declare "**Risk**:" in proposal shape');
 });
 
-test('reflection-proposal: /gdd:apply-reflections skill requires explicit confirmation', () => {
+test('reflection-proposal: /hone:apply-reflections skill requires explicit confirmation', () => {
   const body = fs.readFileSync(APPLY_SKILL, 'utf8');
   // Explicit-confirm gate: offer a (apply) AND s (skip) AND one of e (edit) / q (quit).
   assert.match(body, /\(a\)\s*apply/i, 'apply-reflections should offer (a) apply option');

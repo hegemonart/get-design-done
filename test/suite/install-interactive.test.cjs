@@ -2,7 +2,7 @@
 
 // Regression coverage for the interactive picker option-builder.
 //
-// Reported failure (npx @hegemonart/get-design-done@1.28.8 on macOS, picking
+// Reported failure (npx @hegemonart/hone@1.28.8 on macOS, picking
 // Kilo/Qwen):
 //
 //   TypeError: Cannot read properties of undefined (reading '0')

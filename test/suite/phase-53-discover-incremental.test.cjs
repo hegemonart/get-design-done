@@ -433,7 +433,7 @@ function runOptsWith(cwd, extra) {
 test('53-05: run() — no `incremental` option ⇒ batching undefined (backward-compatible)', async () => {
   const os = require('node:os');
   const fs = require('node:fs');
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-53-05-nobatch-'));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-53-05-nobatch-'));
   try {
     const { run } = await importRunner();
     const result = await run(runOptsWith(cwd, {}));
@@ -448,7 +448,7 @@ test('53-05: run() — no `incremental` option ⇒ batching undefined (backward-
 test('53-05: run() — incremental SKIP ⇒ batching.action SKIP, batchesToMap empty; mappers still run from spec roster', async () => {
   const os = require('node:os');
   const fs = require('node:fs');
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-53-05-skip-'));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-53-05-skip-'));
   try {
     const graph = {
       schema_version: '52.0',
@@ -478,7 +478,7 @@ test('53-05: run() — incremental SKIP ⇒ batching.action SKIP, batchesToMap e
 test('53-05: run() — incremental bootstrap (no prev) ⇒ batching.action FULL_UPDATE, all batch ids listed', async () => {
   const os = require('node:os');
   const fs = require('node:fs');
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-53-05-boot-'));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-53-05-boot-'));
   try {
     const graph = buildClustered(2, 6);
     const { run } = await importRunner();
@@ -504,7 +504,7 @@ test('53-05: run() — incremental bootstrap (no prev) ⇒ batching.action FULL_
 test('53-05: run() — incremental forceFull (--full) ⇒ batching.action FULL even when the classifier would SKIP', async () => {
   const os = require('node:os');
   const fs = require('node:fs');
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-53-05-full-'));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-53-05-full-'));
   try {
     const graph = buildClustered(2, 6);
     const boot = await planIncremental({ graph, prevFingerprints: {}, opts: {} });
@@ -527,7 +527,7 @@ test('53-05: run() — incremental forceFull (--full) ⇒ batching.action FULL e
 test('53-05: run() — empty spec roster + incremental still attaches batching (short-circuit path)', async () => {
   const os = require('node:os');
   const fs = require('node:fs');
-  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-53-05-empty-'));
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-53-05-empty-'));
   try {
     const graph = buildClustered(2, 5);
     const { run } = await importRunner();

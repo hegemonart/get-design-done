@@ -10,7 +10,7 @@ function tmpMd(content) {
   // Create a private, unpredictable directory (mkdtempSync → unique random suffix,
   // 0700 perms) and write inside it — defeats symlink/race attacks on a predictable
   // name in the world-writable system temp dir.
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-fm-test-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-fm-test-'));
   const f = path.join(dir, 'fixture.md');
   fs.writeFileSync(f, content, 'utf8');
   return { path: f, cleanup: () => { try { fs.rmSync(dir, { recursive: true, force: true }); } catch {} } };

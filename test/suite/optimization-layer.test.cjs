@@ -153,7 +153,7 @@ test('optimization-layer: aggregateByPhase excludes blocked rows from phase tota
   // scripts/aggregate-agent-metrics.js must not sum those rows into
   // phase-totals.json.totals — doing so permanently inflates cumulative phase
   // spend, making future cap checks stricter than intended on every repeat hit.
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-aggregator-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-aggregator-'));
   try {
     const telemetryDir = path.join(dir, '.design', 'telemetry');
     fs.mkdirSync(telemetryDir, { recursive: true });
@@ -222,7 +222,7 @@ test('optimization-layer: aggregateByPhase excludes blocked rows from phase tota
 test('optimization-layer: lazy-spawn gate — every design-stage agent declares required reading or equivalent', () => {
   const agentDir = path.join(REPO_ROOT, 'agents');
   // Lazy-spawn gate is specifically about wasteful design-stage agent
-  // spawns. Operational/housekeeping agents (gdd-* updaters, exporters,
+  // spawns. Operational/housekeeping agents (hone-* updaters, exporters,
   // verifiers that derive inputs from frontmatter `writes:` declarations,
   // etc.) live outside this gate's scope — they don't spawn from the
   // design pipeline and so the lazy-spawn savings don't apply.

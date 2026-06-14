@@ -24,7 +24,7 @@
 //   6. Aggregate usage: sum per-discussant usage + aggregator usage.
 //   7. Return DiscussRunnerResult.
 //
-// Consumers: `discuss` skill (Plan 21-08 / future) + `gdd-sdk discuss`
+// Consumers: `discuss` skill (Plan 21-08 / future) + `hone-sdk discuss`
 // CLI subcommand (Plan 21-09).
 
 import { OperationFailedError } from '../../../sdk/errors/index.ts';

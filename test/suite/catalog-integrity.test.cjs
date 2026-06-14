@@ -101,13 +101,13 @@ test('description sanity flags empty and out-of-contract lengths', () => {
 
 test('capability honesty flags a missing server.ts and a mis-stated tool count', () => {
   const findings = v.checkCapabilityHonesty({
-    declaredServers: ['gdd-mcp', 'phantom'],
-    serverExists: (name) => name === 'gdd-mcp',
+    declaredServers: ['hone-mcp', 'phantom'],
+    serverExists: (name) => name === 'hone-mcp',
     actualToolCount: 13,
     claimedToolCounts: [13, 99], // 99 is a lie
   });
   assert.ok(findings.some((f) => /phantom/.test(f.message)), 'missing server.ts should be flagged');
   assert.ok(findings.some((f) => /99/.test(f.message)), 'wrong tool count should be flagged');
   // The honest claim (13) and the present server must not produce a finding.
-  assert.ok(!findings.some((f) => /gdd-mcp.*no sdk/.test(f.message)));
+  assert.ok(!findings.some((f) => /hone-mcp.*no sdk/.test(f.message)));
 });

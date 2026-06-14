@@ -81,7 +81,7 @@ async function dispatch(peer, role, text, opts) {
   try {
     let threadId = explicitThreadId;
     if (threadId === null) {
-      const started = await client.threadStart({ service_name: 'gdd_peer_delegation' });
+      const started = await client.threadStart({ service_name: 'hone_peer_delegation' });
       threadId = started.threadId;
     }
     const prompt = ROLE_PREFIX[role] + text;

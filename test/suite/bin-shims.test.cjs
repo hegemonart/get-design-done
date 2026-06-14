@@ -2,9 +2,9 @@
 // test/suite/bin-shims.test.cjs
 // ---------------------------------------------------------------------------
 // Plan 31-5-05 (SDK-03 / SDK-04, D-08) — pins the two MCP-server bin
-// trampolines added alongside the gdd-mcp move into sdk/mcp/gdd-mcp/.
+// trampolines added alongside the hone-mcp move into sdk/mcp/hone-mcp/.
 //
-// Both bin/gdd-state-mcp and bin/gdd-mcp clone the proven bin/gdd-sdk
+// Both bin/hone-state-mcp and bin/hone-mcp clone the proven bin/hone-sdk
 // pattern: a CJS trampoline that re-launches the real TS server entry under
 // sdk/mcp/*/server.ts and forwards argv + exit code. The raw `.ts` bin entries
 // they replace could not run under npm's auto-generated Windows .cmd shim (no
@@ -19,10 +19,10 @@
 // branch), not unconditional.
 //
 // These tests assert:
-//   1. bin/gdd-state-mcp is a dual-mode trampoline targeting sdk/mcp/gdd-state/server.{js,ts}
-//   2. bin/gdd-mcp       is a dual-mode trampoline targeting sdk/mcp/gdd-mcp/server.{js,ts}
-//   3. package.json bin maps gdd-state-mcp + gdd-mcp to the bin/ trampolines (no raw .ts)
-//   4. the unchanged bins (gdd-sdk, gdd-graph, gdd-events, get-design-done) are intact
+//   1. bin/hone-state-mcp is a dual-mode trampoline targeting sdk/mcp/hone-state/server.{js,ts}
+//   2. bin/hone-mcp       is a dual-mode trampoline targeting sdk/mcp/hone-mcp/server.{js,ts}
+//   3. package.json bin maps hone-state-mcp + hone-mcp to the bin/ trampolines (no raw .ts)
+//   4. the unchanged bins (hone-sdk, hone-graph, hone-events, hone) are intact
 //
 // All tests carry the `31-5-05:` tag.
 
@@ -65,7 +65,7 @@ function assertTrampoline(binName, serverSegment) {
     /child_process/,
     'bin/' + binName + ' must use node:child_process spawn (trampoline shape)',
   );
-  // Forwards argv and re-raises signals like bin/gdd-sdk.
+  // Forwards argv and re-raises signals like bin/hone-sdk.
   assert.match(
     src,
     /process\.argv\.slice\(2\)/,
@@ -74,7 +74,7 @@ function assertTrampoline(binName, serverSegment) {
   assert.match(
     src,
     /process\.kill\(process\.pid, signal\)/,
-    'bin/' + binName + ' must re-raise the child signal (gdd-sdk pattern)',
+    'bin/' + binName + ' must re-raise the child signal (hone-sdk pattern)',
   );
 
   // DUAL-MODE: must probe the compiled sibling first (fs.existsSync) and only
@@ -130,25 +130,25 @@ function assertTrampoline(binName, serverSegment) {
 }
 
 describe('31-5-05: MCP bin trampolines', () => {
-  test('31-5-05: bin/gdd-state-mcp is a dual-mode trampoline targeting sdk/mcp/gdd-state/server.{js,ts}', () => {
-    assertTrampoline('gdd-state-mcp', 'gdd-state');
+  test('31-5-05: bin/hone-state-mcp is a dual-mode trampoline targeting sdk/mcp/hone-state/server.{js,ts}', () => {
+    assertTrampoline('hone-state-mcp', 'hone-state');
   });
 
-  test('31-5-05: bin/gdd-mcp is a dual-mode trampoline targeting sdk/mcp/gdd-mcp/server.{js,ts}', () => {
-    assertTrampoline('gdd-mcp', 'gdd-mcp');
+  test('31-5-05: bin/hone-mcp is a dual-mode trampoline targeting sdk/mcp/hone-mcp/server.{js,ts}', () => {
+    assertTrampoline('hone-mcp', 'hone-mcp');
   });
 
-  test('31-5-05: package.json bin maps gdd-state-mcp + gdd-mcp to the bin/ trampolines (no raw .ts)', () => {
+  test('31-5-05: package.json bin maps hone-state-mcp + hone-mcp to the bin/ trampolines (no raw .ts)', () => {
     const bin = JSON.parse(fs.readFileSync(PKG_PATH, 'utf8')).bin;
     assert.equal(
-      bin['gdd-state-mcp'],
-      './bin/gdd-state-mcp',
-      'bin.gdd-state-mcp must point at the ./bin/gdd-state-mcp trampoline',
+      bin['hone-state-mcp'],
+      './bin/hone-state-mcp',
+      'bin.hone-state-mcp must point at the ./bin/hone-state-mcp trampoline',
     );
     assert.equal(
-      bin['gdd-mcp'],
-      './bin/gdd-mcp',
-      'bin.gdd-mcp must point at the ./bin/gdd-mcp trampoline',
+      bin['hone-mcp'],
+      './bin/hone-mcp',
+      'bin.hone-mcp must point at the ./bin/hone-mcp trampoline',
     );
     // No bin value may be a raw .ts entry anymore (Windows-shim wart).
     for (const [name, value] of Object.entries(bin)) {
@@ -158,7 +158,7 @@ describe('31-5-05: MCP bin trampolines', () => {
       );
     }
     // All three SDK bins resolve to ./bin/ trampolines.
-    for (const sdkBin of ['gdd-sdk', 'gdd-state-mcp', 'gdd-mcp']) {
+    for (const sdkBin of ['hone-sdk', 'hone-state-mcp', 'hone-mcp']) {
       assert.match(
         bin[sdkBin],
         /^\.\/bin\//,
@@ -169,17 +169,17 @@ describe('31-5-05: MCP bin trampolines', () => {
 
   test('31-5-05: the unchanged bins are intact', () => {
     const bin = JSON.parse(fs.readFileSync(PKG_PATH, 'utf8')).bin;
-    assert.equal(bin['gdd-sdk'], './bin/gdd-sdk', 'gdd-sdk bin unchanged');
-    assert.equal(bin['gdd-graph'], './bin/gdd-graph', 'gdd-graph bin unchanged');
+    assert.equal(bin['hone-sdk'], './bin/hone-sdk', 'hone-sdk bin unchanged');
+    assert.equal(bin['hone-graph'], './bin/hone-graph', 'hone-graph bin unchanged');
     assert.equal(
-      bin['gdd-events'],
-      './scripts/cli/gdd-events.mjs',
-      'gdd-events bin unchanged',
+      bin['hone-events'],
+      './scripts/cli/hone-events.mjs',
+      'hone-events bin unchanged',
     );
     assert.equal(
-      bin['get-design-done'],
+      bin['hone'],
       './scripts/install.cjs',
-      'get-design-done bin unchanged',
+      'hone bin unchanged',
     );
   });
 });

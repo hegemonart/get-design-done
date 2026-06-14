@@ -135,7 +135,7 @@ test('lint-agentskills-spec: live ./skills tree D-13 regression guard', (t) => {
   }
   const { exit, stdout, stderr } = runLint(LIVE_SKILLS_DIR, '--json');
   // Phase 28.8 Plan 28-8-A1+ remediation: the 5 colon-namespaced skills
-  // (compare/darkmode/figma-write/graphify/style) were renamed to gdd-<slug>
+  // (compare/darkmode/figma-write/graphify/style) were renamed to hone-<slug>
   // form to comply with the agentskills.io slug regex `^[a-z0-9]+(-[a-z0-9]+)*$`.
   // The live skills/ tree must now lint clean — this is an unconditional D-13
   // regression guard. WARN rows (W2 description-length advisory) do not affect

@@ -1,6 +1,6 @@
 # GrowthBook — Connection Specification
 
-This file is the connection specification for GrowthBook within the get-design-done pipeline. It lives in `connections/` alongside other connection specs (see [`connections/slack.md`](slack.md) for the structural sibling — an API/env-based connection with a three-value probe and degrade-to-noop).
+This file is the connection specification for GrowthBook within the hone pipeline. It lives in `connections/` alongside other connection specs (see [`connections/slack.md`](slack.md) for the structural sibling — an API/env-based connection with a three-value probe and degrade-to-noop).
 
 ---
 

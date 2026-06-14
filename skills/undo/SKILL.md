@@ -1,12 +1,12 @@
 ---
-name: gdd-undo
+name: hone-undo
 description: "Safe design change revert. Uses git log to find design commits, checks dependencies, reverts safely."
 argument-hint: "[<commit SHA>]"
 tools: Read, Write, Bash, AskUserQuestion
 disable-model-invocation: true
 ---
 
-# /gdd:undo
+# /hone:undo
 
 Safe rollback for design-related commits. Uses git history plus file-overlap dependency checks before reverting.
 

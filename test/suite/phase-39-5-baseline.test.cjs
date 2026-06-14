@@ -1,7 +1,7 @@
 'use strict';
 // Phase 39.5 — GDD Self-Migration Tooling regression baseline. Freezes the v1.39.5 artifact: the
 // machine-readable DEPRECATIONS registry, the pure deprecation-registry + changelog-linter cores,
-// the /gdd:migrate skill, and the 6-manifest lockstep. Version-AGNOSTIC. Every test `39.5-03:`.
+// the /hone:migrate skill, and the 6-manifest lockstep. Version-AGNOSTIC. Every test `39.5-03:`.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -34,7 +34,7 @@ test('39.5-03: registry parses + classifies + the changelog linter passes the re
   assert.equal(classify(entries[0], '1.39.5'), 'removed', '31.5→sdk rows are removed by 1.39.5');
   const lint = lintChangelog(read('CHANGELOG.md'));
   assert.equal(lint.ok, true, `changelog gate must pass: ${JSON.stringify(lint.violations)}`);
-  assert.match(read('skills/migrate/SKILL.md'), /^name:\s*gdd-migrate/m, 'migrate skill name');
+  assert.match(read('skills/migrate/SKILL.md'), /^name:\s*hone-migrate/m, 'migrate skill name');
 });
 
 test('39.5-03: 6-manifest version lockstep', () => {

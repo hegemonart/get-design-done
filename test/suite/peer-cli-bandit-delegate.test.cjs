@@ -27,7 +27,7 @@ const {
 } = require('../../scripts/lib/bandit-router.cjs');
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-bandit-delegate-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-bandit-delegate-${prefix}-`));
 }
 
 test('27-07: DEFAULT_DELEGATES contains the 6 expected values', () => {

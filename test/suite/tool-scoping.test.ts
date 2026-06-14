@@ -99,7 +99,7 @@ test('STAGE_SCOPES: design has bashMutation=true; all others false', () => {
 // ==========================================================================
 
 test('isMcpTool: identifies mcp__-prefixed tool names', () => {
-  assert.equal(isMcpTool('mcp__gdd_state__get'), true);
+  assert.equal(isMcpTool('mcp__hone_state__get'), true);
   assert.equal(isMcpTool('mcp__figma__export'), true);
   assert.equal(isMcpTool('Read'), false);
   assert.equal(isMcpTool(''), false);
@@ -222,11 +222,11 @@ test('computeScope: explore with empty override [] → empty + MCP-only', () => 
 test('computeScope: additional MCP tool appended to allowed', () => {
   const s: Scope = computeScope({
     stage: 'verify',
-    additional: ['mcp__gdd_state__get'],
+    additional: ['mcp__hone_state__get'],
   });
-  assert.ok(s.allowed.includes('mcp__gdd_state__get'));
+  assert.ok(s.allowed.includes('mcp__hone_state__get'));
   // And it must NOT appear in denied (MCP never denied).
-  assert.ok(!s.denied.includes('mcp__gdd_state__get'));
+  assert.ok(!s.denied.includes('mcp__hone_state__get'));
 });
 
 test('computeScope: additional Write on verify → included (enforce denies, not compute)', () => {
@@ -262,7 +262,7 @@ test('computeScope: denied = NATIVE_TOOLS \\ native_allowed', () => {
 
 test('checkTool: MCP tool always allowed', () => {
   const s: Scope = computeScope({ stage: 'verify' });
-  assert.equal(checkTool(s, 'mcp__gdd_state__get'), null);
+  assert.equal(checkTool(s, 'mcp__hone_state__get'), null);
   assert.equal(checkTool(s, 'mcp__figma__export'), null);
 });
 
@@ -291,7 +291,7 @@ test('checkTool: unknown tool name → violation (treated as native miss)', () =
 
 test('checkTool: empty scope — only MCP passes', () => {
   const s: Scope = computeScope({ stage: 'custom', agentTools: [] });
-  assert.equal(checkTool(s, 'mcp__gdd_state__get'), null);
+  assert.equal(checkTool(s, 'mcp__hone_state__get'), null);
   assert.notEqual(checkTool(s, 'Read'), null);
 });
 
@@ -348,9 +348,9 @@ test('enforceScope: agent override permits Task on verify → passes', () => {
 test('enforceScope: MCP tools in additional → pass + appended', () => {
   const out = enforceScope({
     stage: 'verify',
-    additional: ['mcp__gdd_state__get', 'mcp__figma__export'],
+    additional: ['mcp__hone_state__get', 'mcp__figma__export'],
   });
-  assert.ok(out.includes('mcp__gdd_state__get'));
+  assert.ok(out.includes('mcp__hone_state__get'));
   assert.ok(out.includes('mcp__figma__export'));
 });
 
@@ -373,7 +373,7 @@ test('enforceScope: error is ValidationError subclass of GDDError, not raw Error
     assert.ok(err instanceof ValidationError);
     assert.ok(err instanceof GDDError);
     assert.equal((err as ValidationError).name, 'ValidationError');
-    // context is frozen per gdd-errors contract.
+    // context is frozen per hone-errors contract.
     assert.ok(Object.isFrozen((err as ValidationError).context));
   }
 });

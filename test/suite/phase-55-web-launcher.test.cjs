@@ -63,7 +63,7 @@ const SAMPLE_GRAPH = {
 
 /** Build a tmpdir project root with `.design/context-graph.json`. Returns the root path. */
 function makeFixture(withGraph) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-dash-web-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-dash-web-'));
   const designDir = path.join(root, '.design');
   fs.mkdirSync(designDir, { recursive: true });
   if (withGraph) {

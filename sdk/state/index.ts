@@ -1,4 +1,4 @@
-// sdk/state/index.ts — public API for the gdd-state module.
+// sdk/state/index.ts — public API for the hone-state module.
 //
 // This is the ONLY file consumers should import from. The module exposes
 // exactly five surface-level names:
@@ -11,8 +11,8 @@
 // Plan 20-02 wired the real transition gates in via `gateFor(from, to)`
 // imported from `./gates.ts`. Plan 20-04 migrated the error classes
 // (TransitionGateFailed, LockAcquisitionError, ParseError) to the
-// unified `gdd-errors` taxonomy — `types.ts` re-exports them verbatim
-// so consumers of `gdd-state` need no changes.
+// unified `hone-errors` taxonomy — `types.ts` re-exports them verbatim
+// so consumers of `hone-state` need no changes.
 //
 // Phase 57 (Plan 57-06 Round 2-D): dual-write to SQLite when migration
 // is active for this state file. The public API signatures are FROZEN
@@ -86,7 +86,7 @@ export { TransitionGateFailed, LockAcquisitionError, ParseError } from './types.
 
 /**
  * Walk up from `startDir` to find the package root (directory with
- * package.json named '@hegemonart/get-design-done').
+ * package.json named '@hegemonart/hone').
  * Falls back to the first directory that has any package.json, then null.
  */
 function _findPackageRoot(startDir: string): string | null {
@@ -99,7 +99,7 @@ function _findPackageRoot(startDir: string): string | null {
         // D1: createRequire-bound require (bare `require` is undefined in ESM).
         const pkg = _require(pkgPath) as { name?: string };
         if (firstWithPkg === null) firstWithPkg = dir;
-        if (pkg.name === '@hegemonart/get-design-done') return dir;
+        if (pkg.name === '@hegemonart/hone') return dir;
       } catch {
         if (firstWithPkg === null) firstWithPkg = dir;
       }

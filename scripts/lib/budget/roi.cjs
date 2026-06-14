@@ -1,7 +1,7 @@
 'use strict';
 // Phase 39.2 — roi.cjs — PURE, dep-free ROI join + table formatter.
 //
-// The /gdd:roi skill shells `git log` to count, per cycle, commits that SHIPPED (survived >= 14 days
+// The /hone:roi skill shells `git log` to count, per cycle, commits that SHIPPED (survived >= 14 days
 // in main — the ROADMAP "shipped" definition, catching revert-after-bug-discovery) vs commits that
 // were REVERTED, and reads per-cycle cost from .design/telemetry/costs.jsonl. It hands the joined rows
 // here. This module does ONLY the arithmetic + markdown formatting — no fs, no clock, no git. Pure.

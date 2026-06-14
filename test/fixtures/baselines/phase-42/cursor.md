@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Cursor model.
+Run /hone:audit and /hone:verify using your configured Cursor model.
 Settings live in .cursor/settings.json. For help, ask Cursor about the pipeline.
 
 

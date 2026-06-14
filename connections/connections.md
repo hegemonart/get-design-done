@@ -1,8 +1,8 @@
 # Connections — Index and Capability Matrix
 
-This directory contains connection specifications for external tools and MCPs that the get-design-done pipeline integrates with. Each connection has its own spec file. This file is the index.
+This directory contains connection specifications for external tools and MCPs that the hone pipeline integrates with. Each connection has its own spec file. This file is the index.
 
-**Getting started:** run `/gdd:connections` for the interactive onboarding wizard — it probes all 33 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/gdd:connections list` for a read-only status check or `/gdd:connections <name>` to jump to a single connection's setup.
+**Getting started:** run `/hone:connections` for the interactive onboarding wizard — it probes all 33 connections, recommends setup based on your project type, and walks you through installing each one (auto-run for reversible MCP adds, copy-command for everything else). You can also run `/hone:connections list` for a read-only status check or `/hone:connections <name>` to jump to a single connection's setup.
 
 ---
 
@@ -18,7 +18,7 @@ This directory contains connection specifications for external tools and MCPs th
 | Chromatic | Active | [`connections/chromatic.md`](connections/chromatic.md) | CLI: `npx chromatic`; env: `CHROMATIC_PROJECT_TOKEN` |
 | Graphify | Active | [`connections/graphify.md`](connections/graphify.md) | CLI: `graphify`; `gsd-tools graphify *` |
 | Pinterest | Active | [`connections/pinterest.md`](connections/pinterest.md) | `mcp__mcp-pinterest__*` tools (ToolSearch-only probe; headless scraping, no API key) |
-| Claude Design | Active | [`connections/claude-design.md`](connections/claude-design.md) | No MCP — bundle file probe; enables `/gdd:handoff` pipeline + bidirectional write-back via figma-writer |
+| Claude Design | Active | [`connections/claude-design.md`](connections/claude-design.md) | No MCP — bundle file probe; enables `/hone:handoff` pipeline + bidirectional write-back via figma-writer |
 | paper.design | Active | [`connections/paper-design.md`](connections/paper-design.md) | Uses `mcp__paper-design__*` tools; free tier: 100 calls/week |
 | pencil.dev | Active | [`connections/pencil-dev.md`](connections/pencil-dev.md) | File-based; `.pen` YAML specs; git-tracked; no MCP |
 | 21st.dev Magic MCP | Active | [`connections/21st-dev.md`](connections/21st-dev.md) | Uses `mcp__21st*` tools; `TWENTY_FIRST_API_KEY` required |
@@ -34,7 +34,7 @@ This directory contains connection specifications for external tools and MCPs th
 | Discord | Active | [`connections/discord.md`](connections/discord.md) | **Notify** (Team Surfaces) — `DISCORD_WEBHOOK_URL` channel webhook; parity with Slack; `GDD_DISABLE_DISCORD` kill-switch; degrade-to-noop |
 | Linear | Active | [`connections/linear.md`](connections/linear.md) | **Ticket-sync** (Team Surfaces) — `mcp__linear__*` (ToolSearch probe); bidirectional cycle↔issue; redact + `GDD_DISABLE_LINEAR` kill-switch; degrade-to-noop |
 | Jira | Active | [`connections/jira.md`](connections/jira.md) | **Ticket-sync** (Team Surfaces) — Atlassian MCP `mcp__atlassian__*` (ToolSearch probe); parity with Linear; `GDD_DISABLE_JIRA` kill-switch; degrade-to-noop |
-| Notion | Active | [`connections/notion.md`](connections/notion.md) | **Export** write-path (not a pipeline stage) — `mcp__notion__*` (ToolSearch probe); `/gdd:export --format notion`; redact + `GDD_DISABLE_NOTION` kill-switch; degrade-to-HTML |
+| Notion | Active | [`connections/notion.md`](connections/notion.md) | **Export** write-path (not a pipeline stage) — `mcp__notion__*` (ToolSearch probe); `/hone:export --format notion`; redact + `GDD_DISABLE_NOTION` kill-switch; degrade-to-HTML |
 | Lottie | Active | [`connections/lottie.md`](connections/lottie.md) | **Optional** motion verify (Lottie JSON); static floor = `validate-motion.cjs` (MO-* warnings + perf budget); player opt-in; WARN-never-block, degrade-to-static/code-only |
 | Rive | Active | [`connections/rive.md`](connections/rive.md) | **Optional** motion verify (Rive `.riv`); size + RIVE-header floor; deep state-machine graph via opt-in Rive runtime, else manual-review advisory; WARN-never-block |
 | Framer | Active | [`connections/framer.md`](connections/framer.md) | **AI-native** (canvas) — read frames + write proposals; MCP probe; degrade-to-code-only |
@@ -58,7 +58,7 @@ Each cell describes what the connection contributes at that pipeline stage, or `
 
 | Connection | brief | explore | plan | design | verify | canvas | generator | notify | ticket-sync |
 |-----------|-------|---------|------|--------|--------|--------|-----------|--------|------------|
-| gdd-state | STATE mutation (init position, probe_connections, add_decision) | STATE mutation (add_decision, add_must_have, transition gate) | STATE mutation (locked decisions, must_haves, transition gate) | STATE mutation (update_progress, resolve_blocker, transition gate) | STATE mutation (must_have pass/fail, add_blocker, set_status) | — | — | — | — |
+| hone-state | STATE mutation (init position, probe_connections, add_decision) | STATE mutation (add_decision, add_must_have, transition gate) | STATE mutation (locked decisions, must_haves, transition gate) | STATE mutation (update_progress, resolve_blocker, transition gate) | STATE mutation (must_have pass/fail, add_blocker, set_status) | — | — | — | — |
 | Figma | token augmentation via `get_variable_defs` (CONN-03) | decisions pre-populate via `get_variable_defs` (CONN-04) | — | write tokens/annotations/Code Connect via `use_figma` (FWR-01..04) | — | — | — | — | — |
 | Refero | — | reference search via `mcp__refero__search`; fallback → awesome-design-md (CONN-05) | — | — | — | — | — | — | — |
 | Preview | — | — | — | — | screenshots for `? VISUAL` checks (VIS-02) | — | — | — | — |
@@ -300,7 +300,7 @@ Step G1 — Config check (direct read, no CLI subcommand):
   → true  → proceed to Step G2
 
 Step G2 — Graph file check (native CLI):
-  Bash: node bin/gdd-graph status --format json
+  Bash: node bin/hone-graph status --format json
   → { configured: true, exists: true }  → graphify: available
   → { configured: true, exists: false } → graphify: unavailable  (graph not built yet)
   → { configured: false, exists: ... }  → graphify: not_configured  (mirrors G1)

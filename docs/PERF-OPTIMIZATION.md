@@ -47,7 +47,7 @@ This raises the bar to 30% (looser gate). Set lower for stricter enforcement.
 
 ## How to read perf-analyzer proposals
 
-**Spawn:** Reflector-tier (D-04) — fires via `/gdd:reflect` or `/gdd:audit`, NOT per cycle. Running per-cycle wastes tokens; analysis is cross-cycle by nature.
+**Spawn:** Reflector-tier (D-04) — fires via `/hone:reflect` or `/hone:audit`, NOT per cycle. Running per-cycle wastes tokens; analysis is cross-cycle by nature.
 
 **Output:** `.design/perf/<cycle-slug>.md` with 4 sections:
 
@@ -58,7 +58,7 @@ This raises the bar to 30% (looser gate). Set lower for stricter enforcement.
 
 Each `[REGRESSION]` proposal includes a hypothesis (e.g., "context-engine churn after Phase X added Y") and `next_action` (e.g., "investigate retrieval-contract preamble bloat").
 
-**Apply proposals:** Operator review via `/gdd:apply-reflections`. The reflector emits proposals; the operator decides which to act on.
+**Apply proposals:** Operator review via `/hone:apply-reflections`. The reflector emits proposals; the operator decides which to act on.
 
 ## Cache-warming tuning
 
@@ -105,7 +105,7 @@ Each `[REGRESSION]` proposal includes a hypothesis (e.g., "context-engine churn 
 - Fires at session boot.
 - Reads most-recent snapshot, computes diff (new decisions, new events, cycle change, time elapsed).
 - Stderr output: human-readable markdown summary.
-- JSON sidecar: `.design/snapshots/last-recap.json` for downstream tools (`/gdd:resume`, `/gdd:progress`).
+- JSON sidecar: `.design/snapshots/last-recap.json` for downstream tools (`/hone:resume`, `/hone:progress`).
 
 ## Harness fallback (Codex)
 

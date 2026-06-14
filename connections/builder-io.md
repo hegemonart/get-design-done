@@ -1,6 +1,6 @@
 # Builder.io — Connection Specification
 
-This file is the connection specification for Builder.io Visual Copilot within the get-design-done pipeline. Builder.io Visual Copilot is an AI-native **generator-category** tool — it converts designs (Figma frames, imported layouts) into framework code and generates UI components from descriptions. It integrates via the Builder MCP / Visual Copilot or via a direct API key. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for Builder.io Visual Copilot within the hone pipeline. Builder.io Visual Copilot is an AI-native **generator-category** tool — it converts designs (Figma frames, imported layouts) into framework code and generates UI components from descriptions. It integrates via the Builder MCP / Visual Copilot or via a direct API key. See `connections/connections.md` for the full connection index and capability matrix.
 
 **Scope this phase: PULL-ONLY.** Builder.io is used to *ingest patterns* and *generate* code into the pipeline. Write-back (publishing components or content models back to Builder.io spaces) is **deferred** — not wired this phase. See [21st.dev](21st-dev.md) for the sibling generator-category spec.
 

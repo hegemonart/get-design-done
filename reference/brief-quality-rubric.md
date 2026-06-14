@@ -7,7 +7,7 @@ while the cost of fixing it is one sentence, not a redesign.
 
 A brief is the contract every later stage checks against. A vague brief produces an unverifiable cycle,
 because verify has nothing concrete to test. The auditor reads the brief once and writes findings to
-`.design/BRIEF-AUDIT.md`; the brief skill then offers `/gdd:discuss brief` when any anti-pattern fires.
+`.design/BRIEF-AUDIT.md`; the brief skill then offers `/hone:discuss brief` when any anti-pattern fires.
 
 ---
 
@@ -95,4 +95,4 @@ The auditor reports a count of fired anti-patterns and lists each with its secti
 It does not compute a pass/fail gate and it does not block the brief to explore transition. Major findings
 (AP-1, AP-2, AP-3) carry more weight in the summary line than Minor findings (AP-4, AP-5), so the user
 knows which gaps most threaten a verifiable cycle. When any anti-pattern fires, the brief skill surfaces a
-one-line pointer offering `/gdd:discuss brief` to refine before moving on.
+one-line pointer offering `/hone:discuss brief` to refine before moving on.

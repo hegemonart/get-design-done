@@ -1,6 +1,6 @@
 # Magic Patterns — Connection Specification
 
-This file is the connection specification for Magic Patterns within the get-design-done pipeline. Magic Patterns is a component-generator tool — it generates DS-aware UI components from natural-language descriptions. It integrates via the Magic Patterns Claude connector (no manual setup when enabled) or via a direct API key. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for Magic Patterns within the hone pipeline. Magic Patterns is a component-generator tool — it generates DS-aware UI components from natural-language descriptions. It integrates via the Magic Patterns Claude connector (no manual setup when enabled) or via a direct API key. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

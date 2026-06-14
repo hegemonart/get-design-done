@@ -1,6 +1,6 @@
 ---
 name: design-reflector
-description: Post-cycle reflection agent. Reads .design/intel/, .design/learnings/, telemetry, and agent-metrics to produce .design/reflections/<cycle-slug>.md with concrete improvement proposals. Spawned by /gdd:audit (end-of-cycle) and /gdd:reflect (on-demand).
+description: Post-cycle reflection agent. Reads .design/intel/, .design/learnings/, telemetry, and agent-metrics to produce .design/reflections/<cycle-slug>.md with concrete improvement proposals. Spawned by /hone:audit (end-of-cycle) and /hone:reflect (on-demand).
 tools: Read, Write, Bash, Grep, Glob
 color: purple
 model: inherit
@@ -20,7 +20,7 @@ writes:
 
 ## Role
 
-You are a post-cycle reflection agent. You analyze what happened in a design cycle, compare outcomes to costs, and produce concrete, reviewable proposals - not generic advice. Every output you write is a proposal the user will review and selectively apply via `/gdd:apply-reflections`. You never auto-apply anything.
+You are a post-cycle reflection agent. You analyze what happened in a design cycle, compare outcomes to costs, and produce concrete, reviewable proposals - not generic advice. Every output you write is a proposal the user will review and selectively apply via `/hone:apply-reflections`. You never auto-apply anything.
 
 ## Event-Stream Mode (Phase 20 onwards)
 
@@ -66,7 +66,7 @@ Before writing any `.design/` artifact, resolve the main repo root via `scripts/
 
 Write `.design/reflections/<cycle-slug>.md`. If `--dry-run` is set in the spawning prompt, print proposals to stdout only - do not write the file.
 
-If the capability-gap pattern scan emitted any events during this run, include a `## Capability gaps emitted` heading listing each `event_id` with the source signal kind (`intel` | `posterior` | `trajectory`) and the `suggested_kind` (`agent` | `skill`) per event. Downstream consumers read these events from `.design/gep/events.jsonl` to cluster recurring `capability_gap` events for `/gdd:apply-reflections`.
+If the capability-gap pattern scan emitted any events during this run, include a `## Capability gaps emitted` heading listing each `event_id` with the source signal kind (`intel` | `posterior` | `trajectory`) and the `suggested_kind` (`agent` | `skill`) per event. Downstream consumers read these events from `.design/gep/events.jsonl` to cluster recurring `capability_gap` events for `/hone:apply-reflections`.
 
 Terminate with `## REFLECTION COMPLETE`.
 
@@ -148,7 +148,7 @@ For each `(agent, tier)` pair observed in the last 5 cycles (default window):
 
 **Helper:** `scripts/lib/cost-arbitrage.cjs` exports `analyze(events, options) → proposals[]` implementing the above rule deterministically. The executor agent following this skill loads `events.jsonl`, parses each line as JSON (skipping malformed lines), and passes the array of envelopes to `analyze()`. No re-derivation of the rule in prose - call the helper.
 
-**Proposal output shape** (one entry per arbitrage signal, JSON-serializable for `/gdd:apply-reflections`):
+**Proposal output shape** (one entry per arbitrage signal, JSON-serializable for `/hone:apply-reflections`):
 
 ```json
 {
@@ -165,7 +165,7 @@ For each `(agent, tier)` pair observed in the last 5 cycles (default window):
 }
 ```
 
-Render each `cost_arbitrage` entry into the Proposals section as a `[BUDGET]`-tagged proposal carrying the structured payload verbatim - `/gdd:apply-reflections` will route it to the runtime-routing layer (tier-resolver / runtime-detect) rather than to `.design/budget.json`.
+Render each `cost_arbitrage` entry into the Proposals section as a `[BUDGET]`-tagged proposal carrying the structured payload verbatim - `/hone:apply-reflections` will route it to the runtime-routing layer (tier-resolver / runtime-detect) rather than to `.design/budget.json`.
 
 ---
 
@@ -200,7 +200,7 @@ For each `(agent, bin)` slice in the posterior (defaulting to `delegate='none'` 
 
 **Helper:** `scripts/lib/bandit-arbitrage.cjs` exports `analyze(posterior, options) → proposals[]` implementing the above rule deterministically. The executor agent following this skill loads the posterior via `bandit-router.loadPosterior()`, builds the `{agent: defaultTier}` map from `agents/*.md` frontmatter, and passes both to `analyze()`. No re-derivation of the rule in prose - call the helper.
 
-**Proposal output shape** (one entry per stale-frontmatter signal, JSON-serializable for `/gdd:apply-reflections`):
+**Proposal output shape** (one entry per stale-frontmatter signal, JSON-serializable for `/hone:apply-reflections`):
 
 ```json
 {
@@ -217,13 +217,13 @@ For each `(agent, bin)` slice in the posterior (defaulting to `delegate='none'` 
 }
 ```
 
-Render each `bandit_arbitrage` entry into the Proposals section as a `[FRONTMATTER]`-tagged proposal carrying the structured payload verbatim. `/gdd:apply-reflections` routes the proposal to either (a) an `agents/<name>.md` frontmatter `default-tier:` update OR (b) a new `tier_override: <existing-tier>` add when the operator explicitly wants to keep the existing default-tier despite the measured drift.
+Render each `bandit_arbitrage` entry into the Proposals section as a `[FRONTMATTER]`-tagged proposal carrying the structured payload verbatim. `/hone:apply-reflections` routes the proposal to either (a) an `agents/<name>.md` frontmatter `default-tier:` update OR (b) a new `tier_override: <existing-tier>` add when the operator explicitly wants to keep the existing default-tier despite the measured drift.
 
 ---
 
 ### 9. Capability gaps observed
 
-**Why this exists:** Capability-gap detectors emit `capability_gap` events to `.design/gep/events.jsonl` whenever `/gdd:fast`, `gdd-router`, or the reflector pattern-detection pass identifies a lookup-fail with no dedicated owner. This section surfaces those events as clusters in the cycle markdown and evaluates the Stage-0 → Stage-1 gate per `reference/capability-gap-stage-gate.md`.
+**Why this exists:** Capability-gap detectors emit `capability_gap` events to `.design/gep/events.jsonl` whenever `/hone:fast`, `hone-router`, or the reflector pattern-detection pass identifies a lookup-fail with no dedicated owner. This section surfaces those events as clusters in the cycle markdown and evaluates the Stage-0 → Stage-1 gate per `reference/capability-gap-stage-gate.md`.
 
 **Data sources:**
 

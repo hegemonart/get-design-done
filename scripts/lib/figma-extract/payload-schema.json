@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://get-design-done/figma-extract/payload-schema.json",
+  "$id": "https://hone/figma-extract/payload-schema.json",
   "title": "GDD Sync plugin variables payload (Path C contract — D-04, D-13)",
   "description": "The JSON body the Figma plugin 'GDD Sync' (31-05) POSTs to the localhost receiver (31-06) at 127.0.0.1:5179/variables. Carries ALL local variables (D-13); filtering happens later in digest.cjs (31-02). The top-level `source` const is the marker digest.cjs keys on to route this file to Path C. This schema is the source of truth that figma-plugin/src/payload-schema.ts mirrors.",
   "type": "object",
@@ -8,7 +8,7 @@
   "additionalProperties": true,
   "properties": {
     "source": {
-      "const": "gdd-plugin",
+      "const": "hone-plugin",
       "description": "Path C marker. digest.cjs (31-02) routes a variables.json carrying this top-level field to the plugin path (NOT the Variables-API path)."
     },
     "fileKey": {

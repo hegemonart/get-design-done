@@ -1,5 +1,5 @@
 ---
-name: gdd-new-cycle
+name: hone-new-cycle
 description: "Start a new design cycle. Creates cycle scope in STATE.md, initializes .design/CYCLES.md entry. Each cycle has its own goal and tracks its own decisions/tasks/pipeline runs."
 argument-hint: "[<goal>]"
 tools: Read, Write, AskUserQuestion
@@ -27,7 +27,7 @@ The cycle is the hierarchical unit above individual pipeline runs: **Cycle > Pip
    ```
 
 6. Reset the `<decisions>` section in STATE.md for the new cycle. Preserve prior decisions by prepending a comment marker `<!-- prior cycle decisions archived in CYCLES.md -->`.
-7. Print: "Cycle cycle-N started. Run `@get-design-done brief` or `@get-design-done explore` to begin."
+7. Print: "Cycle cycle-N started. Run `{{command_prefix}}brief` or `{{command_prefix}}explore` to begin."
 
 ## Do Not
 

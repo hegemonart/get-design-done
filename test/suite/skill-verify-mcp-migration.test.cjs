@@ -5,12 +5,12 @@
  * Static-analysis migration checks for skills/verify/SKILL.md.
  *
  * After Plan 20-11 migration, every STATE.md mutation in skills/verify/SKILL.md
- * goes through `gdd-state` MCP tools. The full auditor / verifier /
+ * goes through `hone-state` MCP tools. The full auditor / verifier /
  * integration-checker / re-verify orchestration prose is preserved
  * byte-for-byte; only the STATE.md mutation surface changes. This test suite
  * is a structural guard against drift, not a runtime validator — the MCP
- * tools themselves are exercised by tests/mcp-gdd-state.test.ts (Plan 20-05)
- * and the update-in-place idiom is covered by tests/gdd-state-mutator.test.ts.
+ * tools themselves are exercised by tests/mcp-hone-state.test.ts (Plan 20-05)
+ * and the update-in-place idiom is covered by tests/hone-state-mutator.test.ts.
  */
 
 const { test } = require('node:test');
@@ -80,14 +80,14 @@ function countMatches(text, pattern) {
 // connection probes (preview, storybook, chromatic) that need to write
 // `<connections>` without direct STATE.md writes.
 const REQUIRED_MCP_TOOLS = [
-  'mcp__gdd_state__get',
-  'mcp__gdd_state__transition_stage',
-  'mcp__gdd_state__add_must_have',
-  'mcp__gdd_state__add_blocker',
-  'mcp__gdd_state__resolve_blocker',
-  'mcp__gdd_state__update_progress',
-  'mcp__gdd_state__set_status',
-  'mcp__gdd_state__checkpoint',
+  'mcp__hone_state__get',
+  'mcp__hone_state__transition_stage',
+  'mcp__hone_state__add_must_have',
+  'mcp__hone_state__add_blocker',
+  'mcp__hone_state__resolve_blocker',
+  'mcp__hone_state__update_progress',
+  'mcp__hone_state__set_status',
+  'mcp__hone_state__checkpoint',
 ];
 
 test('verify-migration: SKILL.md and before-snapshot both exist', () => {
@@ -114,7 +114,7 @@ test('verify-migration: exactly one transition_stage call at stage entry', () =>
   // A real CALL takes the form `...transition_stage` with `to: "..."`. The
   // frontmatter tools line references the tool name but does not invoke it,
   // and we explicitly exclude such mentions from the count.
-  const calls = body.match(/`mcp__gdd_state__transition_stage`\s+with\b/g) || [];
+  const calls = body.match(/`mcp__hone_state__transition_stage`\s+with\b/g) || [];
   assert.equal(
     calls.length,
     1,
@@ -123,7 +123,7 @@ test('verify-migration: exactly one transition_stage call at stage entry', () =>
   // And the one call must target the "verify" stage.
   assert.match(
     body,
-    /`mcp__gdd_state__transition_stage`\s+with\s+`to:\s+"verify"`/,
+    /`mcp__hone_state__transition_stage`\s+with\s+`to:\s+"verify"`/,
     'the single transition_stage call must set to: "verify"',
   );
 });
@@ -176,7 +176,7 @@ test('verify-migration: add_blocker and resolve_blocker are wired up', () => {
   const body = readSkill();
   assert.match(
     body,
-    /mcp__gdd_state__add_blocker/,
+    /mcp__hone_state__add_blocker/,
     'gap-response / save-and-exit paths must call add_blocker via MCP',
   );
   // resolve_blocker is in the tools list for the re-verify fix loop; the
@@ -184,7 +184,7 @@ test('verify-migration: add_blocker and resolve_blocker are wired up', () => {
   // that the tool name appears in the skill body.
   assert.match(
     body,
-    /mcp__gdd_state__resolve_blocker|resolve_blocker/,
+    /mcp__hone_state__resolve_blocker|resolve_blocker/,
     'resolve_blocker must be referenced (tools list or fix-loop prose)',
   );
 });
@@ -193,17 +193,17 @@ test('verify-migration: stage-exit calls update_progress + set_status + checkpoi
   const body = readSkill();
   assert.match(
     body,
-    /mcp__gdd_state__update_progress/,
+    /mcp__hone_state__update_progress/,
     'stage exit must call update_progress',
   );
   assert.match(
     body,
-    /mcp__gdd_state__set_status/,
+    /mcp__hone_state__set_status/,
     'stage exit must call set_status (pipeline_complete or verify_failed_requires_loop)',
   );
   assert.match(
     body,
-    /mcp__gdd_state__checkpoint/,
+    /mcp__hone_state__checkpoint/,
     'stage exit must call checkpoint to stamp last_checkpoint via MCP',
   );
 });
@@ -250,7 +250,7 @@ test('verify-migration: update_progress fires at every stage checkpoint (0/3, 1/
   const body = readSkill();
   // Stage-entry open + auditor-done + verifier-done + integration-check-done
   // = at least 4 distinct update_progress calls. The exit call adds a 5th.
-  const matches = body.match(/mcp__gdd_state__update_progress/g) || [];
+  const matches = body.match(/mcp__hone_state__update_progress/g) || [];
   assert.ok(
     matches.length >= 4,
     `expected ≥4 update_progress calls, got ${matches.length}`,
@@ -261,7 +261,7 @@ test('verify-migration: connections probes route through probe_connections (no d
   const body = readSkill();
   assert.match(
     body,
-    /mcp__gdd_state__probe_connections/,
+    /mcp__hone_state__probe_connections/,
     'connection probes must write via probe_connections MCP tool',
   );
   // Probe sections must NOT instruct a direct .design/STATE.md `<connections>` write.

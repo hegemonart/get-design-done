@@ -4,7 +4,7 @@
  *
  * Pure + dep-free (D-02): no markdown library, no `paged`/`puppeteer`/`pdfkit`. Produces a
  * SINGLE self-contained HTML string — inline <style>, base64-embedded images, ZERO external
- * references — for the /gdd:export html + pdf formats (pdf = the same HTML + Paged.js-compatible
+ * references — for the /hone:export html + pdf formats (pdf = the same HTML + Paged.js-compatible
  * @page print CSS the user renders, never a bundled PDF runtime). Deterministic: same input →
  * byte-identical output (hermetic tests, D-07).
  */
@@ -76,7 +76,7 @@ function mdToHtml(md, images) {
   return out.join('\n');
 }
 
-const SCREEN_CSS = `:root{--ink:#1a1a1a;--muted:#6b7280;--rule:#e5e7eb;--accent:#2563eb}*{box-sizing:border-box}body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#fff}main{max-width:820px;margin:0 auto;padding:48px 24px}h1{font-size:2rem;line-height:1.2;margin:0 0 .5rem}h2{font-size:1.4rem;margin:2rem 0 .5rem;padding-top:1rem;border-top:1px solid var(--rule)}h3{font-size:1.1rem;margin:1.5rem 0 .4rem}p{margin:.6rem 0}code{background:#f3f4f6;padding:.1em .35em;border-radius:4px;font-size:.9em}pre{background:#f8f9fb;border:1px solid var(--rule);border-radius:8px;padding:14px;overflow:auto}pre code{background:none;padding:0}a{color:var(--accent)}blockquote{margin:.8rem 0;padding:.4rem 1rem;border-left:3px solid var(--accent);color:var(--muted)}figure{margin:1rem 0}img{max-width:100%;height:auto;border:1px solid var(--rule);border-radius:8px}figcaption{font-size:.85rem;color:var(--muted);margin-top:.3rem}hr{border:none;border-top:1px solid var(--rule);margin:2rem 0}.gdd-meta{color:var(--muted);font-size:.9rem;margin-bottom:2rem}`;
+const SCREEN_CSS = `:root{--ink:#1a1a1a;--muted:#6b7280;--rule:#e5e7eb;--accent:#2563eb}*{box-sizing:border-box}body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#fff}main{max-width:820px;margin:0 auto;padding:48px 24px}h1{font-size:2rem;line-height:1.2;margin:0 0 .5rem}h2{font-size:1.4rem;margin:2rem 0 .5rem;padding-top:1rem;border-top:1px solid var(--rule)}h3{font-size:1.1rem;margin:1.5rem 0 .4rem}p{margin:.6rem 0}code{background:#f3f4f6;padding:.1em .35em;border-radius:4px;font-size:.9em}pre{background:#f8f9fb;border:1px solid var(--rule);border-radius:8px;padding:14px;overflow:auto}pre code{background:none;padding:0}a{color:var(--accent)}blockquote{margin:.8rem 0;padding:.4rem 1rem;border-left:3px solid var(--accent);color:var(--muted)}figure{margin:1rem 0}img{max-width:100%;height:auto;border:1px solid var(--rule);border-radius:8px}figcaption{font-size:.85rem;color:var(--muted);margin-top:.3rem}hr{border:none;border-top:1px solid var(--rule);margin:2rem 0}.hone-meta{color:var(--muted);font-size:.9rem;margin-bottom:2rem}`;
 const PRINT_CSS = `@page{size:A4;margin:18mm 16mm}@media print{h2{break-before:auto}figure,pre,blockquote{break-inside:avoid}main{max-width:none;padding:0}a{color:var(--ink);text-decoration:underline}}`;
 
 /**
@@ -89,7 +89,7 @@ function buildHtml(opts = {}) {
   const body = (opts.sections || [])
     .map((sec) => `<section>\n<h2>${esc(sec.heading)}</h2>\n${mdToHtml(sec.markdown || '', opts.images)}\n</section>`)
     .join('\n');
-  const subtitle = opts.subtitle ? `<p class="gdd-meta">${esc(opts.subtitle)}</p>` : '';
+  const subtitle = opts.subtitle ? `<p class="hone-meta">${esc(opts.subtitle)}</p>` : '';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>

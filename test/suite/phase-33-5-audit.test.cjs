@@ -3,7 +3,7 @@
 // Phase 33.5-02 — Static security audit + canonical outbound-network allowlist.
 //
 // Locks the data dependency 33.5-04's scan-outbound-network.cjs gate consumes:
-//   1. the human-readable audit report exists (reference/gdd-runtime-audit.md, D-05 path),
+//   1. the human-readable audit report exists (reference/hone-runtime-audit.md, D-05 path),
 //   2. the canonical allowlist parses as valid JSON with a non-empty entries array,
 //   3. every entry has a non-empty string `glob` AND a non-empty string `justification`,
 //   4. every `glob` resolves to >=1 real file on disk (the no-stale-globs guarantee — a stale
@@ -20,7 +20,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const REPORT_REL = 'reference/gdd-runtime-audit.md';
+const REPORT_REL = 'reference/hone-runtime-audit.md';
 const ALLOWLIST_REL = 'scripts/security/outbound-allowlist.json';
 
 // The COMPLETE active-egress set per CONTEXT D-06 (verified by the Wave-A real-tree sweep).
@@ -78,7 +78,7 @@ function resolveGlob(glob) {
 
 // ── 1. report present ───────────────────────────────────────────────────────────
 
-test('33.5-02: audit report exists (reference/gdd-runtime-audit.md, D-05 path)', () => {
+test('33.5-02: audit report exists (reference/hone-runtime-audit.md, D-05 path)', () => {
   assert.ok(fs.existsSync(abs(REPORT_REL)), `${REPORT_REL} must exist (D-05 tracked report)`);
   const body = fs.readFileSync(abs(REPORT_REL), 'utf8');
   assert.match(body, /outbound/i, 'report must enumerate outbound-network call sites');

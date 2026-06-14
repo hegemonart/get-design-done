@@ -1,6 +1,6 @@
 # OpenRouter — Connection Specification
 
-This file is the connection specification for OpenRouter within the get-design-done pipeline. OpenRouter is a **model aggregator** — one API key fronts dozens of upstream providers (Anthropic Claude, OpenAI GPT, Meta Llama, Google Gemini, DeepSeek, Qwen, Mistral, …). GDD treats it as a **tier-router**: the Phase-33.6 adapter (`scripts/lib/tier-resolver-openrouter.cjs`) maps GDD's `opus`/`sonnet`/`haiku` tiers onto a concrete OpenRouter catalog model id. It is **not** a canvas or visual-design tool — it does not read or write design surfaces. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for OpenRouter within the hone pipeline. OpenRouter is a **model aggregator** — one API key fronts dozens of upstream providers (Anthropic Claude, OpenAI GPT, Meta Llama, Google Gemini, DeepSeek, Qwen, Mistral, …). GDD treats it as a **tier-router**: the Phase-33.6 adapter (`scripts/lib/tier-resolver-openrouter.cjs`) maps GDD's `opus`/`sonnet`/`haiku` tiers onto a concrete OpenRouter catalog model id. It is **not** a canvas or visual-design tool — it does not read or write design surfaces. See `connections/connections.md` for the full connection index and capability matrix.
 
 OpenRouter is **opt-in alongside** native provider auth, never OpenRouter-only (D-08). When it is not configured, tier resolution falls back to the native provider via the existing `scripts/lib/tier-resolver.cjs` fallback chain — nothing breaks.
 
@@ -24,7 +24,7 @@ node -e "console.log(process.env.OPENROUTER_API_KEY ? 'available' : 'not_configu
 
 Key present → the catalog fetch (Phase 33.6-01) can run and the adapter resolves tiers from the dynamic catalog. Absent → `not_configured`; native auth stays primary and tier resolution falls back to the native provider.
 
-To inspect the resolved catalog + tier mappings on demand, run `/gdd:openrouter-status` (read-only — see `skills/openrouter-status/SKILL.md`).
+To inspect the resolved catalog + tier mappings on demand, run `/hone:openrouter-status` (read-only — see `skills/openrouter-status/SKILL.md`).
 
 ---
 

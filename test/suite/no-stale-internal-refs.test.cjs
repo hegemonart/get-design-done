@@ -37,28 +37,28 @@ const SHIM_MARKER = 'GDD-DEPRECATION-SHIM';
 // The OLD moved-SDK path tokens. A reference to any of these in the scanned
 // surface (outside a shim file) means an internal caller was not repointed.
 // These are the exact paths the SDK consolidation (31-5-04) vacated:
-//   - module dirs: cli, gdd-state, event-stream, gdd-errors
+//   - module dirs: cli, hone-state, event-stream, hone-errors
 //   - the 4 typed primitives (.cjs old paths)
-//   - both MCP servers: gdd-state, gdd-mcp
+//   - both MCP servers: hone-state, hone-mcp
 // Tokens drop the leading `scripts/` so the substring match catches BOTH the
 // absolute form (`scripts/lib/event-stream`) AND relative-import forms that
 // omit the prefix (`../lib/event-stream`, `../../lib/...`). Phase 31.5 hardening:
-// the original `scripts/lib/...` tokens missed `scripts/cli/gdd-events.mjs`'s
+// the original `scripts/lib/...` tokens missed `scripts/cli/hone-events.mjs`'s
 // `await import('../lib/event-stream/reader.ts')` deep-imports (relative, no
 // `scripts/` prefix), which broke 3 SDK CLI commands on a fresh checkout. The
 // correct post-move ref is `sdk/event-stream/...` (no `lib/`), so these tokens
 // never false-positive on the fixed refs.
 const FORBIDDEN_TOKENS = [
   'lib/cli/',
-  'lib/gdd-state',
+  'lib/hone-state',
   'lib/event-stream',
-  'lib/gdd-errors',
+  'lib/hone-errors',
   'lib/error-classifier.cjs',
   'lib/iteration-budget.cjs',
   'lib/jittered-backoff.cjs',
   'lib/lockfile.cjs',
-  'mcp-servers/gdd-state',
-  'mcp-servers/gdd-mcp',
+  'mcp-servers/hone-state',
+  'mcp-servers/hone-mcp',
 ];
 
 // The shipped user-facing surface scanned for stale internal refs.

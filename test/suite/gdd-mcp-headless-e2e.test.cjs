@@ -1,11 +1,11 @@
-// tests/gdd-mcp-headless-e2e.test.cjs — Phase 27.7 headless end-to-end
+// tests/hone-mcp-headless-e2e.test.cjs — Phase 27.7 headless end-to-end
 // regression (ROADMAP SC #11; Blocker #2 acceptance).
 //
 // Steps the canonical Phase 31.5 headless pattern:
 //   1. `npm pack --silent` produces a `.tgz` tarball in CWD.
 //   2. Install that tarball into a tmpdir (mkdtempSync + `npm install <tarball>
 //      --no-save --silent`).
-//   3. Spawn `gdd-mcp` via the installed bin in the tmpdir.
+//   3. Spawn `hone-mcp` via the installed bin in the tmpdir.
 //   4. Send an MCP `initialize` JSON-RPC request over stdio.
 //   5. Read the response off stdout; assert handshake serverInfo.name +
 //      serverInfo.version match the canonical fixture (version is read
@@ -43,19 +43,19 @@ const IS_WINDOWS = process.platform === 'win32';
 const SKIP_REASON_WIN = 'skipped on Windows: npm pack symlink handling may produce false-negatives (Blocker #2 acceptance)';
 // Spawn-based MCP handshake tests are flaky in CI runners (handshake
 // timeout even at 30s) — the in-process server tests in
-// tests/gdd-mcp-server.test.cjs cover the same protocol surface
+// tests/hone-mcp-server.test.cjs cover the same protocol surface
 // without the npm-pack → install → bin-spawn chain. Gate the two
 // spawn-handshake tests on CI to keep the build green; local runs
 // (CI env var absent) exercise the full path.
 const IS_CI = !!process.env.CI;
-const SKIP_REASON_CI = 'skipped on CI: spawn-based MCP handshake is environment-sensitive; covered by in-process tests/gdd-mcp-server.test.cjs (SC #11 partial coverage — pack/install/bin-exists tests still run on CI)';
+const SKIP_REASON_CI = 'skipped on CI: spawn-based MCP handshake is environment-sensitive; covered by in-process tests/hone-mcp-server.test.cjs (SC #11 partial coverage — pack/install/bin-exists tests still run on CI)';
 
 function tmp(prefix) {
   // realpath needed because macOS /var → /private/var symlink (Phase 27.6 lesson)
   return fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), prefix + '-')));
 }
 
-describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
+describe('27.7-07: hone-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
   // Module-scoped state passes the tarball + installDir between sequential
   // tests. node:test in CommonJS runs tests in source order by default.
   let tarball = null;
@@ -87,7 +87,7 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
       if (!tarball) {
         assert.fail('previous test did not produce tarball');
       }
-      installDir = tmp('gdd-e2e-install');
+      installDir = tmp('hone-e2e-install');
       // Minimal package.json scaffold so npm install --no-save does not
       // walk up looking for a parent project.
       fs.writeFileSync(
@@ -103,18 +103,18 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
   );
 
   test(
-    '27.7-07: headless E2E — installed gdd-mcp bin exists',
+    '27.7-07: headless E2E — installed hone-mcp bin exists',
     { skip: IS_WINDOWS ? SKIP_REASON_WIN : false },
     () => {
       if (!installDir) {
         assert.fail('previous test did not produce installDir');
       }
-      const binPath = path.join(installDir, 'node_modules', '.bin', 'gdd-mcp');
+      const binPath = path.join(installDir, 'node_modules', '.bin', 'hone-mcp');
       // On Windows npm installs both a unix-shim (no extension) AND a .cmd
       // wrapper. Either is sufficient evidence the bin is wired.
       assert.ok(
         fs.existsSync(binPath) || fs.existsSync(binPath + '.cmd'),
-        'gdd-mcp bin not installed: ' + binPath,
+        'hone-mcp bin not installed: ' + binPath,
       );
     },
   );
@@ -128,7 +128,7 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
       }
       // Version-agnostic — read from the package.json that was just packed.
       const expectedVersion = require('../../package.json').version;
-      const binPath = path.join(installDir, 'node_modules', '.bin', 'gdd-mcp');
+      const binPath = path.join(installDir, 'node_modules', '.bin', 'hone-mcp');
       const proc = spawn(binPath, [], { stdio: ['pipe', 'pipe', 'pipe'] });
       const handshakeReq = JSON.stringify({
         jsonrpc: '2.0',
@@ -171,7 +171,7 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
         'handshake response missing result: ' + JSON.stringify(response),
       );
       const info = response.result.serverInfo || {};
-      assert.equal(info.name, 'gdd-mcp', 'serverInfo.name must be gdd-mcp');
+      assert.equal(info.name, 'hone-mcp', 'serverInfo.name must be hone-mcp');
       assert.equal(
         info.version,
         expectedVersion,
@@ -187,7 +187,7 @@ describe('27.7-07: gdd-mcp headless E2E (ROADMAP SC #11; Blocker #2)', () => {
       if (!installDir) {
         assert.fail('no installDir from prior test');
       }
-      const binPath = path.join(installDir, 'node_modules', '.bin', 'gdd-mcp');
+      const binPath = path.join(installDir, 'node_modules', '.bin', 'hone-mcp');
       const proc = spawn(binPath, [], { stdio: ['pipe', 'pipe', 'pipe'] });
       const initReq = JSON.stringify({
         jsonrpc: '2.0',

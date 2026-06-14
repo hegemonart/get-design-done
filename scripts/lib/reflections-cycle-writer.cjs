@@ -3,7 +3,7 @@
  * reflections-cycle-writer.cjs — Plan 29-03.
  *
  * Thin shim invoked by the design-reflector agent (markdown) and by
- * /gdd:apply-reflections to surface capability-gap clusters in the
+ * /hone:apply-reflections to surface capability-gap clusters in the
  * cycle markdown. The shim reads `.design/gep/events.jsonl`, calls
  * `aggregateCapabilityGaps` + `renderGapsSection` + `evaluateStageGate`
  * from `reflector-capability-gap-aggregator.cjs`, and prints the
@@ -22,7 +22,7 @@
  *
  *   --chain=<p>     path to chain JSONL (default .design/gep/events.jsonl)
  *   --history=<p>   path to per-cycle history JSON written by prior
- *                   /gdd:reflect invocations. Optional — when absent,
+ *                   /hone:reflect invocations. Optional — when absent,
  *                   the gate evaluation is skipped and only the current
  *                   cycle's gaps section is emitted.
  *   --config=<p>    path to .design/config.json (default same)

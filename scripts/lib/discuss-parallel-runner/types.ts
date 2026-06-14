@@ -8,7 +8,7 @@
 // runs an aggregator pass that deduplicates, clusters by theme, and
 // surfaces a single ranked question list for the user.
 //
-// Consumers: the `discuss` skill (standalone leaf) and the `gdd-sdk
+// Consumers: the `discuss` skill (standalone leaf) and the `hone-sdk
 // discuss` CLI subcommand (Plan 21-09).
 //
 // Design invariants (see PLAN.md Context):

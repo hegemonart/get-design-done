@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://get-design-done.example/schemas/config.schema.json",
+  "$id": "https://hone.example/schemas/config.schema.json",
   "title": ".design/config.json",
   "description": "Shape of .design/config.json — model profile and parallelism settings per reference/config-schema.md.",
   "type": "object",
@@ -39,12 +39,12 @@
     },
     "update_dismissed": {
       "type": "string",
-      "description": "Latest plugin tag (e.g. \"v1.0.7.3\") whose update nudge the user has dismissed. Set by /gdd:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears."
+      "description": "Latest plugin tag (e.g. \"v1.0.7.3\") whose update nudge the user has dismissed. Set by /hone:check-update --dismiss and by hooks/update-check.sh on the --dismiss code path. When a newer tag ships, the nudge reappears."
     },
     "locale": {
       "type": "string",
       "enum": ["en", "ru", "uk", "de", "fr", "zh", "ja"],
-      "description": "Phase 40.5 CLI locale override for GDD's own --help, error messages, and skill prompt headers. Set via /gdd:locale <code>. Precedence: this key > env LANG/LC_ALL > en. Missing message keys fall back to English per scripts/lib/i18n/index.cjs (locale -> base -> en). en + ru are complete; uk/de/fr/zh/ja are placeholders that fall back to English."
+      "description": "Phase 40.5 CLI locale override for GDD's own --help, error messages, and skill prompt headers. Set via /hone:locale <code>. Precedence: this key > env LANG/LC_ALL > en. Missing message keys fall back to English per scripts/lib/i18n/index.cjs (locale -> base -> en). en + ru are complete; uk/de/fr/zh/ja are placeholders that fall back to English."
     },
     "gdd_cycle_mode": {
       "type": "string",
@@ -78,7 +78,7 @@
       "additionalProperties": true,
       "description": "Phase 40 team-collaboration settings.",
       "properties": {
-        "multi_writer_enabled": { "type": "boolean", "description": "When true, the gdd-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process)." },
+        "multi_writer_enabled": { "type": "boolean", "description": "When true, the hone-state advisory lock uses the team-mode policy (longer wait + backoff) via scripts/lib/collab/lock-policy.cjs. Default false (single-process)." },
         "lock_timeout_ms": { "type": "integer", "minimum": 0, "description": "Override the team-mode lock acquire maxWaitMs (default 30000)." },
         "sync_backend": { "type": "string", "enum": ["git", "s3", "git-lfs"], "description": "Cross-machine .design/ sync backend (scripts/lib/collab/sync-backend.cjs). Default git (existing push/pull). s3 / git-lfs are opt-in declarations; a live client is not bundled this phase." }
       }

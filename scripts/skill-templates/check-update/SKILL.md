@@ -1,5 +1,5 @@
 ---
-name: gdd-check-update
+name: hone-check-update
 description: "Manual plugin-update check. Shows cached state by default; --refresh bypasses the 24h TTL; --dismiss hides the nudge until a newer release ships; --prompt spawns design-update-checker for a richer summary."
 argument-hint: "[--refresh] [--dismiss] [--prompt]"
 tools: Read, Write, Bash, Task

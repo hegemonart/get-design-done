@@ -17,3 +17,8 @@
 ^https://www\.lightningdesignsystem\.com/.*
 ^https://www\.w3\.org/WAI/ARIA/apg/.*
 ^https://lawsofux\.com/.*
+# Phase 61 rebrand: the new repo URL 404s until the GitHub repo is renamed.
+# Remove this exclusion line after the repo rename.
+^https://github\.com/hegemonart/hone.*
+# Flaky external authority-feed link (Cloudflare connection-reset from CI runners).
+^https://adamwathan\.me/.*

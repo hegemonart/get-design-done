@@ -10,7 +10,7 @@ description: Bandit posterior + production-integration shim cheat sheet - signat
 
 **Phase 27.5 (v1.27.5).** Reference for the bandit production-integration surface. Authoring or modifying a caller of the bandit posterior? Debugging a routing decision at the code level? Start here.
 
-For ops-level guidance (when bandit fires, how to disable, posterior inspection), use the read-only diagnostic surfaces: `/gdd:bandit-status` (per-arm posterior snapshots) and `/gdd:bandit-reset` (confirm-then-reset). The `adaptive_mode` gate below covers enable/disable.
+For ops-level guidance (when bandit fires, how to disable, posterior inspection), use the read-only diagnostic surfaces: `/hone:bandit-status` (per-arm posterior snapshots) and `/hone:bandit-reset` (confirm-then-reset). The `adaptive_mode` gate below covers enable/disable.
 
 In-scope modules:
 
@@ -159,13 +159,13 @@ Phase 27.5 wires these consumers:
 - **`hooks/budget-enforcer.ts`** (Plan 27.5-02) - per Agent spawn, after `resolved_models` is computed, before SDK call. Calls `consultBandit({agent, bin, delegate, agentFrontmatter, adaptiveMode})`. Overrides `resolved_models[agent]` with the bandit tier via `tier-resolver.cjs`. Emits `bandit.tier_selected` event for observability.
 - **`scripts/lib/session-runner/index.ts`** (Plan 27.5-03) - terminal-emit path. Calls `recordOutcome({agent, bin, delegate, tier, status, costUsd})` after every `emit('session.completed', ...)` site (4 sites: rate-limited, peer-success, turn-cap-zero, terminal retry-exit). Posterior write is best-effort; missing optional fields silent.
 - **`agents/design-reflector.md` Section 8** (Plan 27.5-04) - bandit-arbitrage analysis. `scripts/lib/bandit-arbitrage.cjs` reads `.design/telemetry/posterior.json` and surfaces stale-frontmatter proposals. Mirrors Phase 26-06's `cost-arbitrage.cjs` shape.
-- **`skills/peers/SKILL.md` Step 5 + `skills/bandit-status/SKILL.md`** (Plan 27.5-05) - read-only diagnostic surfaces. `/gdd:peers` posterior delta column populated; `/gdd:bandit-status` renders per-`(agent, bin, delegate, tier)` snapshots.
+- **`skills/peers/SKILL.md` Step 5 + `skills/bandit-status/SKILL.md`** (Plan 27.5-05) - read-only diagnostic surfaces. `/hone:peers` posterior delta column populated; `/hone:bandit-status` renders per-`(agent, bin, delegate, tier)` snapshots.
 
 ---
 
 ## Cross-references
 
-- `/gdd:bandit-status` + `/gdd:bandit-reset` - read-only operator surfaces (when bandit fires, posterior inspection, reset). Disable/enable is the `adaptive_mode` gate in `.design/budget.json` (see above).
+- `/hone:bandit-status` + `/hone:bandit-reset` - read-only operator surfaces (when bandit fires, posterior inspection, reset). Disable/enable is the `adaptive_mode` gate in `.design/budget.json` (see above).
 - `reference/peer-protocols.md` - Phase 27 ACP/ASP cheat sheet (peer-CLI delegation transport).
 - `scripts/lib/bandit-router.cjs` - Phase 23.5 primitives surface.
 - `scripts/lib/bandit-router/integration.cjs` - Phase 27.5 production shim.

@@ -61,7 +61,7 @@ Write each to `.design/migration/<ds>-<from>-<to>/<RULE_ID>.{js,yml}` for the us
 
 ## Step 5 - Hand off to verify
 
-After the user applies codemods, `/gdd:verify` (`design-verifier`) checks the migration preserved the contract - visual-diff threshold, component API surface unchanged, tests pass. Note unresolved high-impact rules as gaps.
+After the user applies codemods, `/hone:verify` (`design-verifier`) checks the migration preserved the contract - visual-diff threshold, component API surface unchanged, tests pass. Note unresolved high-impact rules as gaps.
 
 ## Record
 

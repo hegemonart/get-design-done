@@ -20,7 +20,7 @@
  * Why a separate file from .design/telemetry/events.jsonl:
  *   * the chain is a CAUSAL overlay — rows have semantic meaning
  *   * the general event-stream is a high-volume firehose
- *   * /gdd:audit --retroactive walks the chain; it should not have to
+ *   * /hone:audit --retroactive walks the chain; it should not have to
  *     scan a 100k-line firehose for causal rows
  */
 

@@ -16,7 +16,7 @@
 //   - Empty configDir → TypeError.
 //   - ALLOWED_RUNTIMES.has('hermes') === false (D-10 guard).
 //   - ALLOWED_RUNTIMES.has('grok') === false (D-03 guard).
-//   - Every non-cline kinds[].prefix === 'gdd-' across all 14 runtimes.
+//   - Every non-cline kinds[].prefix === 'hone-' across all 14 runtimes.
 //   - Every non-cline kinds[].stage is a function (lazy require — not called
 //     in this Wave A test to keep parallel-safe with Wave B converters).
 //   - findInstallSourceRoot() resolves to a directory containing `skills/`.
@@ -67,7 +67,7 @@ const SKILLS_RUNTIMES = [
   'codebuddy',
 ];
 
-const TMP_CFG = path.join(os.tmpdir(), 'gdd-layout-test-cfg');
+const TMP_CFG = path.join(os.tmpdir(), 'hone-layout-test-cfg');
 
 // ── Tests ──────────────────────────────────────────────────────────────────
 
@@ -104,7 +104,7 @@ test('runtime-artifact-layout: claude global → 1 skills kind', () => {
   assert.equal(l.kinds.length, 1);
   assert.equal(l.kinds[0].kind, 'skills');
   assert.equal(l.kinds[0].destSubpath, 'skills');
-  assert.equal(l.kinds[0].prefix, 'gdd-');
+  assert.equal(l.kinds[0].prefix, 'hone-');
   assert.equal(typeof l.kinds[0].stage, 'function');
 });
 
@@ -124,9 +124,9 @@ test('runtime-artifact-layout: claude local → 2 kinds (commands + agents)', ()
   assert.ok(commands, 'commands kind missing');
   assert.ok(agents, 'agents kind missing');
   assert.equal(commands.destSubpath, 'commands/gdd');
-  assert.equal(commands.prefix, 'gdd-');
+  assert.equal(commands.prefix, 'hone-');
   assert.equal(agents.destSubpath, 'agents');
-  assert.equal(agents.prefix, 'gdd-');
+  assert.equal(agents.prefix, 'hone-');
 });
 
 test('runtime-artifact-layout: skills-shaped runtimes return 1 skills kind at skills/', () => {
@@ -135,7 +135,7 @@ test('runtime-artifact-layout: skills-shaped runtimes return 1 skills kind at sk
     assert.equal(l.kinds.length, 1, `${r} should have 1 kind`);
     assert.equal(l.kinds[0].kind, 'skills', `${r} kind != skills`);
     assert.equal(l.kinds[0].destSubpath, 'skills', `${r} destSubpath != skills`);
-    assert.equal(l.kinds[0].prefix, 'gdd-', `${r} prefix != gdd-`);
+    assert.equal(l.kinds[0].prefix, 'hone-', `${r} prefix != hone-`);
     assert.equal(
       typeof l.kinds[0].stage,
       'function',
@@ -149,7 +149,7 @@ test('runtime-artifact-layout: gemini → 1 commands kind at commands/gdd', () =
   assert.equal(l.kinds.length, 1);
   assert.equal(l.kinds[0].kind, 'commands');
   assert.equal(l.kinds[0].destSubpath, 'commands/gdd');
-  assert.equal(l.kinds[0].prefix, 'gdd-');
+  assert.equal(l.kinds[0].prefix, 'hone-');
 });
 
 test('runtime-artifact-layout: opencode + kilo → 1 commands kind at command/', () => {
@@ -158,7 +158,7 @@ test('runtime-artifact-layout: opencode + kilo → 1 commands kind at command/',
     assert.equal(l.kinds.length, 1, `${r} should have 1 kind`);
     assert.equal(l.kinds[0].kind, 'commands', `${r} kind != commands`);
     assert.equal(l.kinds[0].destSubpath, 'command', `${r} destSubpath != command`);
-    assert.equal(l.kinds[0].prefix, 'gdd-', `${r} prefix != gdd-`);
+    assert.equal(l.kinds[0].prefix, 'hone-', `${r} prefix != hone-`);
   }
 });
 
@@ -171,11 +171,11 @@ test('runtime-artifact-layout: cline → kinds=[] + specialCase=clinerules-embed
   }
 });
 
-test('runtime-artifact-layout: every kinds[].prefix === "gdd-" for all 14 runtimes', () => {
+test('runtime-artifact-layout: every kinds[].prefix === "hone-" for all 14 runtimes', () => {
   for (const r of ALL_RUNTIMES) {
     const l = resolveRuntimeArtifactLayout(r, TMP_CFG);
     for (const k of l.kinds) {
-      assert.equal(k.prefix, 'gdd-', `${r} kind ${k.kind} has wrong prefix: ${k.prefix}`);
+      assert.equal(k.prefix, 'hone-', `${r} kind ${k.kind} has wrong prefix: ${k.prefix}`);
     }
   }
 });

@@ -29,12 +29,12 @@ const {
 const FIXTURE_DIR = path.join(__dirname, 'fixtures', 'cursor-marketplace');
 
 const VALID_MANIFEST = Object.freeze({
-  name: 'get-design-done',
+  name: 'hone',
   description: 'fixture description for doctor tests',
   version: '1.28.8',
   author: { name: 'hegemonart' },
-  homepage: 'https://github.com/hegemonart/get-design-done',
-  repository: 'https://github.com/hegemonart/get-design-done',
+  homepage: 'https://github.com/hegemonart/hone',
+  repository: 'https://github.com/hegemonart/hone',
   license: 'MIT',
   keywords: ['design', 'ui', 'skill'],
 });
@@ -52,7 +52,7 @@ const VALID_MANIFEST = Object.freeze({
  * @returns {string}                       absolute path to tmpdir root.
  */
 function setupTmpProject(args) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-doctor-cursor-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-doctor-cursor-'));
   if (args && args.packageVersion) {
     fs.writeFileSync(
       path.join(root, 'package.json'),
@@ -158,7 +158,7 @@ test('cursor-marketplace-doctor: state-approved-published fixture → state=appr
     assert.equal(r.state, MARKETPLACE_STATES.APPROVED_PUBLISHED);
     assert.equal(
       r.marketplaceUrl,
-      'https://cursor.com/marketplace/hegemonart/get-design-done'
+      'https://cursor.com/marketplace/hegemonart/hone'
     );
     assert.equal(r.submittedAt, '2026-05-22T14:00:00Z');
     assert.equal(r.approvedAt, '2026-06-01T09:30:00Z');

@@ -15,7 +15,7 @@ the cross-skill output discipline.
 
 # Style Doc Procedure
 
-Detailed procedure for the `gdd-style` standalone command - companion to
+Detailed procedure for the `hone-style` standalone command - companion to
 `../skills/style/SKILL.md`. Read this file when executing the agent-spawn step (Step 4 in the
 skill) or when wiring the source-resolution fallback chain. The SKILL.md keeps the essential
 mode detection + decision tree; this file holds the deep methodology.
@@ -34,7 +34,7 @@ Elif .design/DESIGN.md exists:
   pipeline_complete = false
 
 Else:
-  Abort: "No .design/ artifacts found. Run /get-design-done scan first to initialize."
+  Abort: "No .design/ artifacts found. Run {{command_prefix}}scan first to initialize."
 ```
 
 The mode controls which files are supplied to the agent in `<required_reading>`.
@@ -128,7 +128,7 @@ Each generated `.design/DESIGN-STYLE-[ComponentName].md` SHOULD contain (in this
 **Example 1: Named component**
 
 ```
-/get-design-done style Button
+{{command_prefix}}style Button
 ```
 
 - Resolves component: `src/components/Button.tsx`
@@ -139,7 +139,7 @@ Each generated `.design/DESIGN-STYLE-[ComponentName].md` SHOULD contain (in this
 **Example 2: No argument (list mode)**
 
 ```
-/get-design-done style
+{{command_prefix}}style
 ```
 
 - Globs component files from `src/components/`

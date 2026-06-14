@@ -11,8 +11,8 @@
  *
  *   R1 (FAIL) — frontmatter contains a non-empty `name`.
  *   R2 (FAIL) — `name` matches /^[a-z0-9]+(-[a-z0-9]+)*$/ AND length ≤ 64.
- *   R3 (FAIL) — `name` matches the parent directory (allow bare slug OR `gdd-`-prefixed
- *               slug, because source-tree uses bare and install-tree uses prefixed per
+ *   R3 (FAIL) — `name` matches the parent directory (allow bare slug, `hone-`-prefixed,
+ *               OR legacy `gdd-`-prefixed slug; source-tree uses bare and install-tree uses prefixed per
  *               Phase 28.7 D-05).
  *   R4 (FAIL) — `description` is non-empty AND ≤ 1024 chars (spec hard cap).
  *   R5 (FAIL) — SKILL.md body line count ≤ 500 (spec readability guidance).
@@ -160,17 +160,19 @@ function lintSkill(skillDir, skillName) {
         detail: `name "${name}" fails slug regex /^[a-z0-9]+(-[a-z0-9]+)*$/ or exceeds ${NAME_MAX} chars`,
       });
     }
-    // R3 — name must match parent dir (bare or gdd-prefixed)
+    // R3 — name must match parent dir (bare, hone-prefixed, or legacy gdd-prefixed)
     if (
       name !== skillName &&
-      name !== `gdd-${skillName}` &&
-      skillName !== `gdd-${name}`
+      name !== `hone-${skillName}` &&
+      name !== `hone-${skillName}` &&
+      skillName !== `hone-${name}` &&
+      skillName !== `hone-${name}`
     ) {
       rows.push({
         status: 'FAIL',
         skill: skillName,
         rule: 'R3',
-        detail: `name "${name}" does not match parent dir "${skillName}" (allowed: bare slug or gdd-prefixed slug per Phase 28.7 D-05)`,
+        detail: `name "${name}" does not match parent dir "${skillName}" (allowed: bare slug, hone-prefixed slug, or legacy gdd-prefixed slug per Phase 28.7 D-05)`,
       });
     }
   }

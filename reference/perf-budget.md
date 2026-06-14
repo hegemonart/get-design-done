@@ -42,7 +42,7 @@ This conservative-then-tighten discipline matches Phase 23.5 `PRIOR_STRENGTH` ca
 | design-executor | 0.06 | 0.075 (+25%) | 0.50 | 15000 | Stage 4 |
 | design-context-checker | 0.02 | 0.025 (+25%) | 0.65 | 6000 | Gate; pre-stage validator |
 | design-reflector | 0.10 | 0.125 (+25%) | 0.35 | 22000 | XL reflector tier |
-| design-discussant | 0.05 | 0.0625 (+25%) | 0.45 | 11000 | Spawned by `/gdd:discuss` |
+| design-discussant | 0.05 | 0.0625 (+25%) | 0.45 | 11000 | Spawned by `/hone:discuss` |
 | perf-analyzer | 0.10 | 0.125 (+25%) | 0.30 | 22000 | XL reflector tier (this phase) |
 
 These values are **seed numbers**, re-calibrated after 1-2 real production cycles. The authoritative numbers live in `test-fixture/baselines/phase-27-6/perf-baseline.json` (created at Phase 27.6 closeout in Plan 27.6-06). The CI gate reads that file at runtime, not this table.
@@ -122,7 +122,7 @@ The synthetic baseline is **not a hack** - it's the documented v1 path per spec 
 
 ## Cross-references
 
-- `agents/perf-analyzer.md` - cross-cycle reflector that reads the same baseline. Surfaces top-3 cost regressions, hit-rate deltas, and p95 spikes as `[REGRESSION]` proposals per `/gdd:reflect`.
+- `agents/perf-analyzer.md` - cross-cycle reflector that reads the same baseline. Surfaces top-3 cost regressions, hit-rate deltas, and p95 spikes as `[REGRESSION]` proposals per `/hone:reflect`.
 - `scripts/lib/perf-analyzer/cost-regression.cjs` - **single source of truth** for the regression rule. The CI gate re-uses `detectCostRegressions` from this module; it does NOT re-implement the rule.
 - `scripts/lib/perf-analyzer/index.cjs` - telemetry loader (`loadCosts`, `loadTrajectories`). JSONL-tolerant; blank lines silently ignored, malformed lines counted in `skipped_count`.
 - `tests/perf-budget.test.cjs` - the CI gate itself. Always-green when no baseline + no data; fails on >25% regression vs baseline once both exist.

@@ -10,7 +10,7 @@ const { join } = require('node:path');
 const { probe, loadState, statePathFor } = require('../../scripts/lib/connection-probe/index.cjs');
 
 test('22-08: probe returns ok on first-try success', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cp-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cp-'));
   try {
     const state = join(dir, 'state.json');
     const out = await probe({
@@ -29,7 +29,7 @@ test('22-08: probe returns ok on first-try success', async () => {
 });
 
 test('22-08: probe retries on falsy and succeeds on attempt 3', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cp-retry-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cp-retry-'));
   try {
     const state = join(dir, 'state.json');
     let calls = 0;
@@ -52,7 +52,7 @@ test('22-08: probe retries on falsy and succeeds on attempt 3', async () => {
 });
 
 test('22-08: probe returns down when all retries fail (no fallback)', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cp-down-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cp-down-'));
   try {
     const state = join(dir, 'state.json');
     const out = await probe({
@@ -74,7 +74,7 @@ test('22-08: probe returns down when all retries fail (no fallback)', async () =
 });
 
 test('22-08: probe returns degraded with fallback when retries fail', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cp-deg-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cp-deg-'));
   try {
     const state = join(dir, 'state.json');
     let fallbackCalled = false;
@@ -100,7 +100,7 @@ test('22-08: probe returns degraded with fallback when retries fail', async () =
 });
 
 test('22-08: probe enforces timeout', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cp-timeout-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cp-timeout-'));
   try {
     const state = join(dir, 'state.json');
     const out = await probe({
@@ -118,7 +118,7 @@ test('22-08: probe enforces timeout', async () => {
 });
 
 test('22-08: probe persists state across calls', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cp-state-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cp-state-'));
   try {
     const state = join(dir, 'state.json');
     await probe({ name: 'a', cmd: async () => true, retries: 1, statePath: state });
@@ -140,7 +140,7 @@ test('22-08: probe persists state across calls', async () => {
 });
 
 test('22-08: probe emits connection.status_change on transition only', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cp-emit-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cp-emit-'));
   try {
     const state = join(dir, 'state.json');
     const events = [];

@@ -556,7 +556,7 @@ function formatTier2Section(status) {
   lines.push('  detail:   ' + cx.detail);
   if (cx.state === 'ready-to-install') {
     lines.push('  manifest: .codex-plugin/plugin.json (present, valid)');
-    lines.push('  install-cmd: codex plugin marketplace add hegemonart/get-design-done');
+    lines.push('  install-cmd: codex plugin marketplace add hegemonart/hone');
   } else if (cx.state === 'manifest-only-not-ready') {
     lines.push('  manifest: .codex-plugin/plugin.json (present, invalid)');
   }

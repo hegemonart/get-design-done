@@ -45,6 +45,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const {
+  MCP_SERVER_PRIMARY,
+  DISPLAY_NAME,
+  COMMAND_PREFIX_FLAT,
+} = require('../../pkg-identity.cjs');
+
 // Per research § Top-level fields: name, version, description are the only
 // strictly-required spec fields. All other manifest fields are optional.
 const MANIFEST_REQUIRED_FIELDS = Object.freeze(['name', 'version', 'description']);
@@ -146,7 +152,7 @@ function copyDirRecursive(src, dest) {
  *   license     ← packageJson.license
  *   keywords    ← curateKeywords(packageJson.keywords) → ≤10 entries
  *   skills      ← static "./skills/"
- *   mcpServers  ← inline { gdd-mcp: { command: "npx", args: [...] } }
+ *   mcpServers  ← inline { hone-mcp: { command: "npx", args: [...] } }
  *   interface   ← 9 sub-fields per Schema Mapping table:
  *                  displayName, shortDescription, longDescription,
  *                  developerName, category, capabilities, websiteURL,
@@ -273,12 +279,12 @@ function buildManifest(sources) {
   const skills = './skills/';
 
   // mcpServers — inline object form (D-14 minimalism: no separate .mcp.json
-  // artifact in this plan). The bin name `gdd-mcp` is verified against
-  // package.json#bin during integration.
+  // artifact in this plan). The bin name `hone-mcp` (from the identity seam) is
+  // verified against package.json#bin during integration.
   const mcpServers = {
-    'gdd-mcp': {
+    [MCP_SERVER_PRIMARY]: {
       command: 'npx',
-      args: ['-y', `--package=${packageJson.name}`, 'gdd-mcp'],
+      args: ['-y', `--package=${packageJson.name}`, MCP_SERVER_PRIMARY],
     },
   };
 
@@ -297,7 +303,7 @@ function buildManifest(sources) {
   const category = capitalize(categoryRaw);
 
   const interfaceObj = {
-    displayName: 'Get Design Done',
+    displayName: DISPLAY_NAME,
     shortDescription: truncate(description, 120),
     longDescription: (typeof readmeFirstPara === 'string' && readmeFirstPara.length > 0)
       ? readmeFirstPara
@@ -306,12 +312,13 @@ function buildManifest(sources) {
     category,
     capabilities: ['Read', 'Write'],
     websiteURL: homepage || '',
-    // Codex uses /gdd- prefix uniformly (not /gdd: like Claude Code).
-    // Both lines use the same prefix to avoid the documented inconsistency
-    // (audit P1 #4 — committed manifest had mixed /gdd: and $gdd-).
+    // Codex uses the flat command prefix uniformly (not the `/hone:` namespaced
+    // form Claude Code uses). Both lines use the same seam-sourced prefix to
+    // avoid the documented inconsistency (audit P1 #4 — committed manifest had
+    // mixed namespaced and flat forms).
     defaultPrompt: [
-      'Run /gdd-brief to start a design cycle.',
-      'Run /gdd-explore to audit a screen.',
+      `Run ${COMMAND_PREFIX_FLAT}brief to start a design cycle.`,
+      `Run ${COMMAND_PREFIX_FLAT}explore to audit a screen.`,
     ],
     brandColor: '#10A37F',
   };

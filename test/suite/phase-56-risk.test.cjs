@@ -196,7 +196,7 @@ test('56-01: computeRisk does not mutate its input', () => {
 
 test('56-01: pickMaxFileSensitivity picks the highest-weight matching entry', () => {
   // A file under hooks/ should resolve to the hook entry (x1.5) not docs/test.
-  const hook = pickMaxFileSensitivity(['hooks/gdd-foo.js'], FILE_SENSITIVITY);
+  const hook = pickMaxFileSensitivity(['hooks/hone-foo.js'], FILE_SENSITIVITY);
   assert.equal(hook.label, 'hook');
   // A plain doc resolves to the de-risking docs entry (<1 mult).
   const doc = pickMaxFileSensitivity(['docs/guide.md'], FILE_SENSITIVITY);
@@ -273,7 +273,7 @@ test('56-01: route — exported floors match the contract', () => {
 // ── Config-override (extend-only) changes the action ────────────────────────
 
 function scaffoldRiskConfig(riskCfg) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-risk56-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-risk56-'));
   fs.mkdirSync(path.join(dir, '.design'), { recursive: true });
   if (riskCfg !== undefined) {
     fs.writeFileSync(path.join(dir, '.design', 'config.json'), JSON.stringify(riskCfg), 'utf8');

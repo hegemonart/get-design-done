@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * get-design-done — update check (Phase 13.3) — Node port
+ * hone — update check (Phase 13.3) — Node port
  *
  * Original: hooks/update-check.sh
  * SessionStart hook. Silent-on-failure by policy (D-04): exits 0 on every error path.
@@ -127,7 +127,7 @@ function isCacheFresh(cachePath) {
 
 // ---- Fetch latest release. Returns Promise<string> with raw body, or '' on failure. ----
 function fetchLatest() {
-  const url = 'https://api.github.com/repos/hegemonart/get-design-done/releases/latest';
+  const url = 'https://api.github.com/repos/hegemonart/hone/releases/latest';
   return new Promise((resolve) => {
     let done = false;
     const finish = (val) => {
@@ -141,7 +141,7 @@ function fetchLatest() {
         {
           headers: {
             Accept: 'application/vnd.github+json',
-            'User-Agent': 'gdd-update-check',
+            'User-Agent': 'hone-update-check',
           },
           timeout: 3000,
         },
@@ -154,7 +154,7 @@ function fetchLatest() {
               {
                 headers: {
                   Accept: 'application/vnd.github+json',
-                  'User-Agent': 'gdd-update-check',
+                  'User-Agent': 'hone-update-check',
                 },
                 timeout: 3000,
               },
@@ -366,7 +366,7 @@ function buildBanner({ displayCurrent, latestTag, deltaKind, body }) {
   if (body && body.length > 0) {
     lines.push(body);
   }
-  lines.push(' Install: /gdd:update   Dismiss: /gdd:check-update --dismiss');
+  lines.push(' Install: /hone:update   Dismiss: /hone:check-update --dismiss');
   lines.push(bar);
   lines.push('');
   return lines.join('\n');

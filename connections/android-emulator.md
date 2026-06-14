@@ -1,6 +1,6 @@
 # Android Emulator — Connection Specification
 
-This file is the connection specification for the **Android emulator** within the get-design-done pipeline. Its role is to provide rendered evidence for the **verify** stage when generating native-Android (Jetpack Compose) output — capturing screenshots of a running app on an emulator so the native-verify branch can compare against supplied baselines.
+This file is the connection specification for the **Android emulator** within the hone pipeline. Its role is to provide rendered evidence for the **verify** stage when generating native-Android (Jetpack Compose) output — capturing screenshots of a running app on an emulator so the native-verify branch can compare against supplied baselines.
 
 It is the Android sibling of `connections/xcode-simulator.md` (iOS). Both mirror the `connections/preview.md` template (Setup / Tools / Probe / three-value status / Fallback). Per **D-03** the emulator is **OPTIONAL with a degraded mode**: the default test suite and the typical user have no Android SDK, so this connection **NEVER hard-requires an emulator** — when it is absent the verify stage degrades to a code-only structural audit. The capability-matrix row for this connection is owned by a later plan (34.1-06); this file is the standalone spec.
 
@@ -102,6 +102,6 @@ The verify stage re-probes at stage entry (emulator availability can change betw
 ## Caveats and Pitfalls
 
 1. **`screencap` returns a PNG — save by path.** Save captures to `.design/screenshots/<route>.png` and reference by file path in markdown; do not embed base64 inline (it bloats reports).
-2. **`.design/screenshots/` is gitignored.** The `.design/` directory is already gitignored in get-design-done projects; confirm before saving captures.
+2. **`.design/screenshots/` is gitignored.** The `.design/` directory is already gitignored in hone projects; confirm before saving captures.
 3. **The probe must never launch an emulator.** Use `adb devices` (and at most `emulator -list-avds`) for detection. Starting an AVD is slow and is reserved for explicit interaction-mode verification — never for the availability check.
 4. **`not_configured` is the normal default, not an error.** No Android SDK simply means code-only verification (D-03). Treat it as expected, not as a failure.

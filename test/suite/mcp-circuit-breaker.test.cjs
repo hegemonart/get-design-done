@@ -10,7 +10,7 @@ const { REPO_ROOT } = require('./helpers.ts');
 const HOOK = path.join(REPO_ROOT, 'hooks', 'gdd-mcp-circuit-breaker.js');
 
 function scaffold(config) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-cb-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-cb-'));
   fs.mkdirSync(path.join(dir, '.design'), { recursive: true });
   // STATE.md so append-blocker has a target
   fs.writeFileSync(path.join(dir, '.design', 'STATE.md'), '# STATE\n', 'utf8');

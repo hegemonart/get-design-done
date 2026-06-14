@@ -29,7 +29,7 @@ that side; if both changed differently, it's a conflict.
 A decision line carries an **optional** attribution suffix:
 
 ```
-D-07: Use OKLCH design tokens (locked) [author=alice co-author=gdd-3f9a]
+D-07: Use OKLCH design tokens (locked) [author=alice co-author=hone-3f9a]
 ```
 
 - `author` - the git user who made the decision.
@@ -52,10 +52,10 @@ proposed → reviewing → approved → locked
 
 - **`locked` is terminal and hard.** A locked decision cannot be amended. `canAmend(state)` is true
   only for `proposed`/`reviewing`.
-- **Unlock is explicit + audited.** `/gdd:unlock-decision <id> --approver <who>` moves `locked →
+- **Unlock is explicit + audited.** `/hone:unlock-decision <id> --approver <who>` moves `locked →
   reviewing` and appends an audit entry (`{ from:'locked', to:'reviewing', approver, reason }`). There
   is no silent unlock.
-- **`/gdd:review-decisions`** surfaces every queue entry by state (and `--pending` for the ones
+- **`/hone:review-decisions`** surfaces every queue entry by state (and `--pending` for the ones
   awaiting action).
 
 ## 4. Multi-writer lock policy
@@ -63,7 +63,7 @@ proposed → reviewing → approved → locked
 `scripts/lib/collab/lock-policy.cjs` derives the `acquire()` options from config. In single-process
 mode the Phase 20 defaults apply (`maxWaitMs: 5000`). When `collab.multi_writer_enabled: true`, a
 teammate's write may be queued, so the policy waits up to **30 s** with a **100 ms** backoff poll and a
-2-minute stale threshold. `collab.lock_timeout_ms` overrides the wait. The gdd-state MCP write path
+2-minute stale threshold. `collab.lock_timeout_ms` overrides the wait. The hone-state MCP write path
 passes these options to the existing advisory lock - coordinated multi-process writes, no new lock
 mechanism.
 

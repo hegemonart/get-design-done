@@ -24,7 +24,7 @@ const {
 } = require('../../scripts/lib/bandit-router.cjs');
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-bandit-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-bandit-${prefix}-`));
 }
 
 test('23.5-01: binForGlobCount partitions correctly', () => {

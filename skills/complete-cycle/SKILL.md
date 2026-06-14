@@ -1,11 +1,11 @@
 ---
-name: gdd-complete-cycle
+name: hone-complete-cycle
 description: "Cycle closeout command that marks CYCLES.md entry complete, archives pipeline artifacts to .design/archive/cycle-N/, generates EXPERIENCE.md, rebuilds the search index, and resets STATE.md. Use when a design cycle has shipped and you're ready to start the next one."
 argument-hint: "[<retrospective note>]"
 tools: Read, Write, Bash, AskUserQuestion
 ---
 
-# /gdd:complete-cycle
+# /hone:complete-cycle
 
 Closes the current cycle: marks CYCLES.md entry complete, archives pipeline artifacts, and clears STATE.md for the next cycle.
 
@@ -61,12 +61,12 @@ Closes the current cycle: marks CYCLES.md entry complete, archives pipeline arti
    ```
 
 7. **Clear STATE.md**: Set `cycle:` to empty string, reset `<decisions>` to a fresh empty section, reset `stage:` to `brief`.
-8. Print: "Cycle <N> archived. Run `/gdd:new-cycle` to start the next cycle."
+8. Print: "Cycle <N> archived. Run `/hone:new-cycle` to start the next cycle."
 
 ## Do Not
 
 - Do not delete source files in `src/` - only archive `.design/` artifacts.
-- Do not auto-start a new cycle - user invokes `/gdd:new-cycle` explicitly.
+- Do not auto-start a new cycle - user invokes `/hone:new-cycle` explicitly.
 
 ## Step 6 - Update notice (post-closeout surface)
 

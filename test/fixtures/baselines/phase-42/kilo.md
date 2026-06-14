@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Kilo model.
+Run /hone:audit and /hone:verify using your configured Kilo model.
 Settings live in .kilo/config.json. For help, ask Kilo Code about the pipeline.
 
 

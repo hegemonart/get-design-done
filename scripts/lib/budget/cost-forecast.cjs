@@ -1,7 +1,7 @@
 'use strict';
 // Phase 39.2 — cost-forecast.cjs — PURE, dep-free per-cycle cost forecasting core.
 //
-// The /gdd:budget skill and agents/cost-forecaster.md read .design/telemetry/costs.jsonl, group the
+// The /hone:budget skill and agents/cost-forecaster.md read .design/telemetry/costs.jsonl, group the
 // est_cost_usd by `cycle`, and hand the resulting per-cycle USD totals here. This module does ONLY
 // the projection math — it never touches the filesystem, the clock, or randomness, so it is trivially
 // unit-testable (the build-html.cjs / codemod-gen.cjs purity precedent).

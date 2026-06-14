@@ -10,7 +10,7 @@
  * Why this module exists: behavior tests only matter if a sustained failure
  * prompts a content fix. This closes that loop — a failing run is recorded; when
  * a scenario fails ≥3 of its last 10 runs (D-07 threshold), the reflector
- * proposes a skill-content edit for human review via /gdd:apply-reflections. The
+ * proposes a skill-content edit for human review via /hone:apply-reflections. The
  * proposal NEVER auto-edits a skill (Phase 11/29 propose-only SC; Phase 33
  * out-of-scope: "Auto-applying reflector-proposed skill edits — propose-only").
  *
@@ -285,7 +285,7 @@ function isSustainedFailure(scenario, opts) {
  *
  * This draft lands in the SAME incubator tree that
  * scripts/lib/apply-reflections/incubator-proposals.cjs surfaces in
- * /gdd:apply-reflections — so a maintainer reviews + accepts/rejects the proposed
+ * /hone:apply-reflections — so a maintainer reviews + accepts/rejects the proposed
  * skill edit there. It NEVER auto-edits a skill (Phase 11/29 propose-only SC;
  * Phase 33 out-of-scope).
  *
@@ -330,7 +330,7 @@ function maybeProposeReflection(scenario, opts) {
     `**Target skill:** ${targetSkill || 'TODO: <skill that failed under pressure>'}`,
     `**Signal:** sustained failure — ≥${SUSTAINED_THRESHOLD} of the last ${SUSTAINED_WINDOW} runs failed (D-07).`,
     '',
-    `Drafted ${now()}. **PROPOSE-ONLY** — review via \`/gdd:apply-reflections\`.`,
+    `Drafted ${now()}. **PROPOSE-ONLY** — review via \`/hone:apply-reflections\`.`,
     'This draft NEVER auto-edits a skill (Phase 11/29 propose-only SC; Phase 33 out-of-scope).',
     '',
     '## Rationalization signal',

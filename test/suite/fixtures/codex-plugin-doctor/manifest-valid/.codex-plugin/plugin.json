@@ -1,11 +1,11 @@
 {
-  "name": "get-design-done",
+  "name": "hone",
   "version": "1.28.8",
   "description": "Agent-orchestrated 5-stage design pipeline.",
   "skills": "./skills/",
   "author": {
     "name": "hegemonart"
   },
-  "homepage": "https://github.com/hegemonart/get-design-done",
+  "homepage": "https://github.com/hegemonart/hone",
   "license": "MIT"
 }

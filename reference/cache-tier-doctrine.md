@@ -18,7 +18,7 @@ This doctrine pins the bytes that have to stay stable.
 1. **Two files, no more.** L0 = `reference/meta-rules.md` (framework-invariant rules: required reading, writes protocol, deviation handling, completion markers, context-exhaustion + budget) + `reference/shared-preamble.md` (the aggregator that imports meta-rules and contributes the design-family pillar lists). Any third L0 file requires a doctrine update.
 2. **Byte-stable across cycles.** Section heading text, prose order, ordering of bulleted lists, even whitespace runs; all are essential. An edit that "just rewords a sentence" still invalidates cache for every agent for one session per agent.
 3. **CI gate enforces stability.** `scripts/check-cache-tiers.cjs` computes SHA-256 of each L0 file and compares to `test/fixtures/baselines/l0-hashes.json`. Drift fails the build. A real edit requires `--rebaseline` and a baseline-hash commit alongside the L0 edit.
-4. **Pre-warming exists for legitimate L0 edits.** Run `/gdd:warm-cache` after an L0 edit lands to pre-load the new prefix so the next real spawn is a hit rather than a miss.
+4. **Pre-warming exists for legitimate L0 edits.** Run `/hone:warm-cache` after an L0 edit lands to pre-load the new prefix so the next real spawn is a hit rather than a miss.
 
 ## What goes where
 

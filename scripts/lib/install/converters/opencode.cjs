@@ -7,12 +7,12 @@
  * source into the command-format output OpenCode expects under its
  * XDG `command/<name>.md` slash-command directory (see Phase 28.7
  * D-05 + `runtime-artifact-layout.cjs#opencode`, which stages this
- * converter via `commandsKind('command', 'gdd-', ...)`).
+ * converter via `commandsKind('command', 'hone-', ...)`).
  *
  * Translation rules:
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose pass through as `/gdd-<name>` —
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose pass through as `/hone-<name>` —
  *     OpenCode accepts the Claude-canonical slash shape via the
  *     `runtime-slash.cjs` map (rt: 'opencode' → `/gdd-`). Legacy
  *     colon and shell-variable forms are normalized to `/gdd-`.
@@ -55,7 +55,7 @@ const shared = require('./shared.cjs');
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'opencode');
   out = shared.ensureAdapterHeader(out, 'OpenCode');
   return fm + out;

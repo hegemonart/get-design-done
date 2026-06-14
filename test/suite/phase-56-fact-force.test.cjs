@@ -61,7 +61,7 @@ function graphFixture() {
 }
 
 function scaffold({ withGraph = true } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-ff-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-ff-'));
   const designDir = path.join(dir, '.design');
   fs.mkdirSync(path.join(designDir, 'locks'), { recursive: true });
   if (withGraph) {
@@ -96,7 +96,7 @@ test('56-03: consumersOfFile maps Button.tsx -> component:Button and lists its c
 });
 
 test('56-03: consumersOfFile SOFTENS (available:false) when the graph is absent', () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-ff-nograph-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-ff-nograph-'));
   try {
     const res = consumers.consumersOfFile('src/components/Button.tsx', { root: tmp });
     assert.equal(res.available, false);
@@ -105,7 +105,7 @@ test('56-03: consumersOfFile SOFTENS (available:false) when the graph is absent'
 });
 
 test('56-03: consumersOfFile never throws on a malformed graph', () => {
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-ff-bad-'));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-ff-bad-'));
   try {
     fs.mkdirSync(path.join(tmp, '.design'), { recursive: true });
     fs.writeFileSync(path.join(tmp, '.design', 'context-graph.json'), '{ not valid json', 'utf8');
@@ -161,8 +161,8 @@ test('56-03: graph ABSENT softens the importer prereq -> continue:true (no hard 
   } finally { cleanup(); }
 });
 
-// ── gate: checked[path] set (via /gdd:override) -> continue:true ─────────────
-test('56-03: checked[path] set by /gdd:override unblocks the first Write', () => {
+// ── gate: checked[path] set (via /hone:override) -> continue:true ─────────────
+test('56-03: checked[path] set by /hone:override unblocks the first Write', () => {
   const { dir, cleanup } = scaffold();
   try {
     writeState(dir, SID, {
@@ -207,7 +207,7 @@ test('56-03: the gate is session-scoped — a different session_id re-arms it', 
 });
 
 // ── gate: HARD block when computeRisk == block ───────────────────────────────
-test('56-03: prereqs unmet + risk=block -> HARD block citing /gdd:override only', () => {
+test('56-03: prereqs unmet + risk=block -> HARD block citing /hone:override only', () => {
   const { dir, cleanup } = scaffold();
   try {
     // theme.css.ts maps to token:theme (consumed by Button — UNREAD, so the
@@ -222,7 +222,7 @@ test('56-03: prereqs unmet + risk=block -> HARD block citing /gdd:override only'
     };
     const { parsed } = runHook(FACT_HOOK, payload, dir);
     assert.equal(parsed.continue, false);
-    // HARD tier names /gdd:override as the ONLY escape.
+    // HARD tier names /hone:override as the ONLY escape.
     assert.match(parsed.stopReason, /HARD/);
     assert.match(parsed.stopReason, /override/i);
     assert.match(parsed.stopReason, /only escape/i);
@@ -230,7 +230,7 @@ test('56-03: prereqs unmet + risk=block -> HARD block citing /gdd:override only'
 });
 
 // ── gate: prereqs unmet but risk NOT block -> SOFT block (not hard) ──────────
-test('56-03: prereqs unmet + risk!=block -> SOFT block (offers Read or /gdd:override)', () => {
+test('56-03: prereqs unmet + risk!=block -> SOFT block (offers Read or /hone:override)', () => {
   const { dir, cleanup } = scaffold();
   try {
     // Small Button.tsx edit: importers unread (soft-blockable) but risk is only

@@ -29,7 +29,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -112,7 +112,7 @@ test('57-F: _assertReadonly does NOT throw for SELECT (always-on)', () => {
 });
 
 test('57-F: demigrate no-op message when sqlite absent (always-on)', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-'));
   try {
     // Point at a nonexistent dbPath.
     const fakePath = path.join(tmpDir, '.design', 'state.sqlite');
@@ -145,7 +145,7 @@ test('57-F: query degrades gracefully when BACKEND is markdown (always-on floor)
 // ---------------------------------------------------------------------------
 
 test('57-F: decisionMentions grep path returns {found,where} shape (always-on)', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-ff-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-ff-'));
   try {
     const designDir = path.join(tmpDir, '.design');
     fs.mkdirSync(designDir, { recursive: true });
@@ -171,7 +171,7 @@ test('57-F: decisionMentions grep path returns {found,where} shape (always-on)',
 });
 
 test('57-F: decisionMentions grep path returns found:false when no mention (always-on)', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-ff2-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-ff2-'));
   try {
     const designDir = path.join(tmpDir, '.design');
     fs.mkdirSync(designDir, { recursive: true });
@@ -193,7 +193,7 @@ test('57-F: decisionMentions grep path returns found:false when no mention (alwa
 // ---------------------------------------------------------------------------
 
 test('57-F: rotateBak shifts backups and caps at 10 (always-on)', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-bak-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-bak-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     // Create a dummy 'sqlite' file.
@@ -224,7 +224,7 @@ test('57-F: rotateBak shifts backups and caps at 10 (always-on)', () => {
 });
 
 test('57-F: rotateBak on empty dir (no existing backups) is a no-op (always-on)', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-bak2-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-bak2-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     // No .bak.N files present; should not throw.
@@ -241,7 +241,7 @@ test('57-F: rotateBak on empty dir (no existing backups) is a no-op (always-on)'
 test('57-F: query SELECT works when migration-active (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-qs-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-qs-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     // Create and populate a test database.
@@ -262,7 +262,7 @@ test('57-F: query SELECT works when migration-active (SQLite-specific)', () => {
 test('57-F: query rejects INSERT at engine level (SQLITE_READONLY) (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-ro-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-ro-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     const db = openStateDb(dbPath);
@@ -282,7 +282,7 @@ test('57-F: query rejects INSERT at engine level (SQLITE_READONLY) (SQLite-speci
 test('57-F: query rejects DROP at denylist (before engine) (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-drop-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-drop-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     const db = openStateDb(dbPath);
@@ -301,7 +301,7 @@ test('57-F: query rejects DROP at denylist (before engine) (SQLite-specific)', (
 test('57-F: query rejects UPDATE at denylist (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-upd-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-upd-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     const db = openStateDb(dbPath);
@@ -320,7 +320,7 @@ test('57-F: query rejects UPDATE at denylist (SQLite-specific)', () => {
 test('57-F: query returns degraded:true when sqlite file does not exist (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-nofile-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-nofile-'));
   try {
     const fakePath = path.join(tmpDir, 'nonexistent.sqlite');
     const result = query('SELECT 1', { dbPath: fakePath });
@@ -334,7 +334,7 @@ test('57-F: query returns degraded:true when sqlite file does not exist (SQLite-
 test('57-F: demigrate removes sqlite and reports demigrated:true (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-demi-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-demi-'));
   try {
     const designDir = path.join(tmpDir, '.design');
     fs.mkdirSync(designDir, { recursive: true });
@@ -357,7 +357,7 @@ test('57-F: demigrate removes sqlite and reports demigrated:true (SQLite-specifi
 test('57-F: demigrate idempotent - second call returns no-op message (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-demi2-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-demi2-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     // First call with nonexistent path.
@@ -375,7 +375,7 @@ test('57-F: demigrate idempotent - second call returns no-op message (SQLite-spe
 test('57-F: backupCycle creates .bak.0 when sqlite exists (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-bkp-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-bkp-'));
   try {
     const dbPath = path.join(tmpDir, 'state.sqlite');
     const db = openStateDb(dbPath);
@@ -406,7 +406,7 @@ test('57-F: recover returns degraded when BACKEND is markdown (SQLite-specific g
 test('57-F: decisionMentions FTS5 path returns {found,where} shape (SQLite-specific)', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-fts-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-fts-'));
   const designDir = path.join(tmpDir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
 
@@ -455,7 +455,7 @@ test('57-F: decisionMentions FTS5 path falls back to grep when store throws (SQL
 
   // Even if the FTS5 path were to fail, the grep fallback must work.
   // We test the grep fallback by ensuring decisionMentions still works with STATE.md.
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57f-ffgr-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57f-ffgr-'));
   try {
     const designDir = path.join(tmpDir, '.design');
     fs.mkdirSync(designDir, { recursive: true });

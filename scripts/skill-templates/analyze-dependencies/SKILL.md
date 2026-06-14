@@ -1,5 +1,5 @@
 ---
-name: gdd-analyze-dependencies
+name: hone-analyze-dependencies
 description: "Queries the intel store to surface token fan-out, component call-graphs, decision traceability, and circular dependency detection. Requires .design/intel/ to exist (run build-intel.cjs first)."
 tools: Bash, Read, Glob, Grep
 ---

@@ -14,7 +14,7 @@ scoping, synthesizer wiring, research-synthesis persistence, exploration artifac
 
 # Plan Procedure
 
-Detailed procedure for the get-design-done `plan` Stage 3 orchestrator. Companion to
+Detailed procedure for the hone `plan` Stage 3 orchestrator. Companion to
 `../skills/plan/SKILL.md`. Read this file when executing a specific plan step; the
 SKILL.md keeps the essential workflow + decision tree, this file holds the deep
 agent prompts and pre-plan research wiring.
@@ -23,9 +23,9 @@ agent prompts and pre-plan research wiring.
 
 ## Stage entry
 
-1. `mcp__gdd_state__transition_stage` with `to: "plan"`.
+1. `mcp__hone_state__transition_stage` with `to: "plan"`.
    - Gate failure surfaces `error.context.blockers` to the user; do not advance.
-2. `mcp__gdd_state__get` -> snapshot `state`. Use this snapshot for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>` in the current stage; do not re-read STATE.md directly.
+2. `mcp__hone_state__get` -> snapshot `state`. Use this snapshot for `<position>`, `<connections>`, `<must_haves>`, `<blockers>`, `<decisions>` in the current stage; do not re-read STATE.md directly.
 
 Abort with a clear error only if the user is trying to plan without DESIGN-CONTEXT.md - that is the true prerequisite, not STATE.md.
 
@@ -44,7 +44,7 @@ Parse $ARGUMENTS:
 <!-- Parallelism decision is currently carried as the status string of an update_progress call. A dedicated tool may be added in a follow-on plan; until then, the status string is the canonical carrier. -->
 
 After the parallelism decision is made:
-- Call `mcp__gdd_state__update_progress` with `task_progress: "<current>/<total>"` and `status: "plan_parallelism_decided: batch_size=<N>, reason=<short-reason>"`.
+- Call `mcp__hone_state__update_progress` with `task_progress: "<current>/<total>"` and `status: "plan_parallelism_decided: batch_size=<N>, reason=<short-reason>"`.
 
 ## Probe Chromatic connection
 
@@ -62,7 +62,7 @@ Step C2 - Token check:
 
 Also check: if storybook: not_configured -> chromatic effectively unavailable (emit note, do not run).
 
-Write chromatic status to STATE.md `<connections>` via `mcp__gdd_state__probe_connections` - pass the single-entry probe result (`[{ name: "chromatic", status: "<verdict>" }]`). Do not edit `<connections>` directly.
+Write chromatic status to STATE.md `<connections>` via `mcp__hone_state__probe_connections` - pass the single-entry probe result (`[{ name: "chromatic", status: "<verdict>" }]`). Do not edit `<connections>` directly.
 
 ## Chromatic Change-Risk Scoping (when chromatic: available)
 
@@ -98,7 +98,7 @@ Emit `## RESEARCH COMPLETE` when done.
 """)
 ```
 
-Wait for `## RESEARCH COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
+Wait for `## RESEARCH COMPLETE`. Call `mcp__hone_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
 
 ## Step 1.5 - Pattern Mapping (mandatory, brownfield protection)
 
@@ -120,7 +120,7 @@ Emit `## MAPPING COMPLETE` when done.
 """)
 ```
 
-Wait for `## MAPPING COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
+Wait for `## MAPPING COMPLETE`. Call `mcp__hone_state__update_progress` with `task_progress: "1/3"` and a short `status` summary.
 
 ## Step 1.6 - Assumptions Analysis (optional, same flag as research)
 
@@ -166,10 +166,10 @@ Wait for `## SYNTHESIS COMPLETE`. Write to `.design/DESIGN-PREPLAN-BRIEF.md` (ov
 When the synthesizer (design-phase-researcher / design-pattern-mapper / design-assumptions-analyzer) produces D-XX decisions and M-XX must-haves, persist each one through MCP instead of editing STATE.md directly.
 
 For each D-XX decision the synthesizer produces:
-- Call `mcp__gdd_state__add_decision` with `{ id: "D-XX", text: "...", status: "locked"|"tentative" }`.
+- Call `mcp__hone_state__add_decision` with `{ id: "D-XX", text: "...", status: "locked"|"tentative" }`.
 
 For each M-XX must-have the synthesizer produces:
-- Call `mcp__gdd_state__add_must_have` with `{ id: "M-XX", text: "...", status: "pending" }`.
+- Call `mcp__hone_state__add_must_have` with `{ id: "M-XX", text: "...", status: "pending" }`.
 
 Issue these sequentially. Each call is event-emitting and lockfile-safe. Parallel issuance would serialize on the STATE.md lockfile with no throughput gain.
 
@@ -206,7 +206,7 @@ Emit `## PLANNING COMPLETE` when done.
 """)
 ```
 
-Wait for `## PLANNING COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "2/3"` and a short `status` summary.
+Wait for `## PLANNING COMPLETE`. Call `mcp__hone_state__update_progress` with `task_progress: "2/3"` and a short `status` summary.
 
 ## Step 3 - Check
 
@@ -232,7 +232,7 @@ Emit `## PLAN CHECK COMPLETE` when done.
 """)
 ```
 
-Wait for `## PLAN CHECK COMPLETE`. Call `mcp__gdd_state__update_progress` with `task_progress: "3/3"` and a short `status` summary.
+Wait for `## PLAN CHECK COMPLETE`. Call `mcp__hone_state__update_progress` with `task_progress: "3/3"` and a short `status` summary.
 
 If `## PLAN CHECK RESULT: ISSUES FOUND` and any BLOCKER issues:
 - Present issues to user and offer: (a) revise plan now - re-spawn design-planner with issue list, (b) accept and proceed, (c) abort.
@@ -240,17 +240,17 @@ If `## PLAN CHECK RESULT: ISSUES FOUND` and any BLOCKER issues:
 
 ## Stage exit
 
-1. Call `mcp__gdd_state__set_status` with `status: "plan_complete"`.
-2. Call `mcp__gdd_state__checkpoint` to stamp `last_checkpoint` and finalize the plan stage.
+1. Call `mcp__hone_state__set_status` with `status: "plan_complete"`.
+2. Call `mcp__hone_state__checkpoint` to stamp `last_checkpoint` and finalize the plan stage.
 
-The next stage (design) calls `mcp__gdd_state__transition_stage` on entry - this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline established by brief->explore and explore->plan.
+The next stage (design) calls `mcp__hone_state__transition_stage` on entry - this skill does NOT issue the transition itself, preserving the stage-owned-transition discipline established by brief->explore and explore->plan.
 
 ## After Completion
 
 Print user-facing summary:
 - Plan tasks: N waves, M total tasks
 - Files: .design/DESIGN-PLAN.md (and .design/DESIGN-RESEARCH.md if research ran)
-- Next: `/get-design-done:design` to execute the plan
+- Next: `{{command_prefix}}design` to execute the plan
 
 ---
 

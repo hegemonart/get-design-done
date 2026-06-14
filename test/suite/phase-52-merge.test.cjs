@@ -168,7 +168,7 @@ test('merge: empty input yields an empty, well-formed graph', async () => {
 });
 
 test('round-trip: extract real fixtures -> merge -> graph validates (or matches shape)', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52-roundtrip-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52-roundtrip-'));
   try {
     const src = path.join(dir, 'src');
     fs.mkdirSync(src, { recursive: true });
@@ -237,7 +237,7 @@ test('round-trip: extract real fixtures -> merge -> graph validates (or matches 
 });
 
 test('main(): atomic-writes the merged graph to --out', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52-main-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52-main-'));
   try {
     const fdir = path.join(dir, 'frags');
     fs.mkdirSync(fdir, { recursive: true });

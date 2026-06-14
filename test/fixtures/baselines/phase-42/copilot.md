@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Copilot model.
+Run /hone:audit and /hone:verify using your configured Copilot model.
 Settings live in .copilot/config.json. For help, ask Copilot about the pipeline.
 
 

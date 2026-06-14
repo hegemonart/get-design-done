@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "hone_context_query",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op"],
+      "properties": {
+        "op": {
+          "type": "string",
+          "enum": [
+            "nodes",
+            "edges",
+            "path",
+            "consumers-of",
+            "unreachable",
+            "cycles",
+            "coverage"
+          ],
+          "description": "Which read-only query to run over the DesignContext graph."
+        },
+        "type": {
+          "type": "string",
+          "description": "Node type (op=nodes) or edge type (op=edges) filter."
+        },
+        "tag": {
+          "type": "string",
+          "description": "Tag filter for op=nodes."
+        },
+        "from": {
+          "type": "string",
+          "description": "Source node id for op=path."
+        },
+        "to": {
+          "type": "string",
+          "description": "Target node id for op=path."
+        },
+        "id": {
+          "type": "string",
+          "description": "Node id for op=consumers-of."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "required": ["op", "graph_present", "result"],
+      "properties": {
+        "op": { "type": "string" },
+        "graph_present": { "type": "boolean" },
+        "path": { "type": "string" },
+        "result": {
+          "type": ["array", "object", "null"],
+          "description": "Query result; array for nodes/edges/consumers-of/unreachable/cycles, object for path/coverage, null when the graph is absent."
+        }
+      }
+    }
+  }
+}

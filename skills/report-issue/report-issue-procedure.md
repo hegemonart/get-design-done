@@ -1,4 +1,4 @@
-# `/gdd:report-issue` - Full Procedure
+# `/hone:report-issue` - Full Procedure
 
 Long-form companion to [SKILL.md](./SKILL.md). Phase 28.5 keeps SKILL.md ≤100 lines; step-by-step + rationale live here.
 
@@ -61,7 +61,7 @@ The single submission gate for the new-issue path. Three preconditions must hold
 2. No env var matches `/REPORT|ISSUE|AUTO_REPORT/i` with a truthy value (`rejectBypassEnv` throws otherwise, naming the offender).
 3. The draft file exists and is readable.
 
-The function prints a summary (destination, draft path, title, first 10 body lines), asks `Submit this issue to hegemonart/get-design-done? [y/N]` via `readline`, treats anything other than `y`/`yes` (case-insensitive, trimmed) as decline, and **re-reads the draft from disk** so user edits in Step 5 are picked up.
+The function prints a summary (destination, draft path, title, first 10 body lines), asks `Submit this issue to hegemonart/hone? [y/N]` via `readline`, treats anything other than `y`/`yes` (case-insensitive, trimmed) as decline, and **re-reads the draft from disk** so user edits in Step 5 are picked up.
 
 (The `+1` / `me-too` paths from Step 4 do NOT pass through this consent prompt - selecting either action in the dedup UI IS the explicit consent for that minimal interaction. The new-issue path always passes through this prompt.)
 
@@ -70,7 +70,7 @@ The function prints a summary (destination, draft path, title, first 10 body lin
 `submitViaGh({title, body})` spawns:
 
 ```bash
-gh issue create --repo hegemonart/get-design-done --title <title> --body-file <tmp/body.md>
+gh issue create --repo hegemonart/hone --title <title> --body-file <tmp/body.md>
 ```
 
 Body is written to a tmp file to avoid arg-length and shell-escaping. URL parsed from stdout. No HTTPS, no fetch, no third-party packages - only the user's `gh` CLI with their credentials.
@@ -91,7 +91,7 @@ Body is written to a tmp file to avoid arg-length and shell-escaping. URL parsed
 | Runtime TTY | `promptConsent` throws on `!stdin.isTTY` | C5 |
 | Runtime consent | Only `y`/`yes` accepted | C1..C3, U3 |
 | Runtime re-read | `promptConsent` re-reads draft before returning final body | E1, E2 |
-| Runtime destination | `submitViaGh` always passes `--repo hegemonart/get-design-done` | H1 |
+| Runtime destination | `submitViaGh` always passes `--repo hegemonart/hone` | H1 |
 | Dedup destination | `dedup.cjs` accepts `destination` only as a parameter - no env/config lookup (D-02) | `issue-reporter-dedup.test.cjs` test 11 |
 | Dedup body shape | `buildMeTooBody` returns EXACTLY 3 lines (`Last error:` / `Runtime:` / `Plugin version:`) - no stack/path/env/cmd (D-06) | tests 5 + 6 (verbatim + negative-presence) |
 | Dedup network | `dedup.cjs` imports only `child_process`; no outbound URL literals, no global fetch primitive, no third-party HTTP client libraries (D-05) | 30-07 static-grep gate |

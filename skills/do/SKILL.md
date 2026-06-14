@@ -1,30 +1,30 @@
 ---
-name: gdd-do
+name: hone-do
 description: "Natural-language design task router. Parses your intent, maps to the right gdd command(s), confirms before executing. Activates for requests involving a natural-language design request, routing intent to the right command, or not knowing which skill to use."
 argument-hint: "<natural language description>"
 tools: Read, Write, AskUserQuestion
 ---
 
-# /gdd:do
+# /hone:do
 
-Takes a free-form description, maps it to a `/gdd:*` command, confirms with the user, then routes.
+Takes a free-form description, maps it to a `/hone:*` command, confirms with the user, then routes.
 
 ## Intent parsing table
 
 | Intent signals | Maps to |
 |---|---|
-| "explore", "scan", "what design patterns", "what components" | `/gdd:explore` |
-| "discuss", "decide", "what should we use for", "help me decide" | `/gdd:discuss` |
-| "plan", "create tasks", "what tasks do we need" | `@get-design-done plan` |
-| "design", "implement", "build", "execute" | `@get-design-done design` |
-| "verify", "check", "audit", "review" | `/gdd:audit` |
-| "sketch", "explore directions", "try designs", "variant" | `/gdd:sketch` |
-| "spike", "experiment", "feasibility", "test if" | `/gdd:spike` |
-| "fix [specific thing]" | `/gdd:fast` |
-| "pause", "stop", "save my place" | `/gdd:pause` |
-| "resume", "pick back up", "continue where I left off" | `/gdd:resume` |
-| "ship", "PR", "submit", "merge" | `/gdd:ship` |
-| "undo", "revert", "roll back" | `/gdd:undo` |
+| "explore", "scan", "what design patterns", "what components" | `/hone:explore` |
+| "discuss", "decide", "what should we use for", "help me decide" | `/hone:discuss` |
+| "plan", "create tasks", "what tasks do we need" | `/hone:plan` |
+| "design", "implement", "build", "execute" | `/hone:design` |
+| "verify", "check", "audit", "review" | `/hone:audit` |
+| "sketch", "explore directions", "try designs", "variant" | `/hone:sketch` |
+| "spike", "experiment", "feasibility", "test if" | `/hone:spike` |
+| "fix [specific thing]" | `/hone:fast` |
+| "pause", "stop", "save my place" | `/hone:pause` |
+| "resume", "pick back up", "continue where I left off" | `/hone:resume` |
+| "ship", "PR", "submit", "merge" | `/hone:ship` |
+| "undo", "revert", "roll back" | `/hone:undo` |
 
 ## Steps
 
@@ -32,7 +32,7 @@ Takes a free-form description, maps it to a `/gdd:*` command, confirms with the 
 2. If two intents tie, ask (AskUserQuestion): "Did you mean <option A> or <option B>?"
 3. Print the routing decision in this exact shape:
    ```
-   I'll run `/gdd:<command>` — "<one-line rationale>". Confirm? (yes/no)
+   I'll run `/hone:<command>` — "<one-line rationale>". Confirm? (yes/no)
    ```
 4. On confirmation: invoke the target skill with any parameters extracted from the input (e.g., topic for `discuss`, symptom for `debug`).
 5. On rejection: ask "What did you mean instead?" and retry once, then abort gracefully.

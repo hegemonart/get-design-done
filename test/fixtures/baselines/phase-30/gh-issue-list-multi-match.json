@@ -2,16 +2,16 @@
   {
     "number": 142,
     "title": "Fast-lookup crash on Figma token sync (recurring)",
-    "url": "https://github.com/hegemonart/get-design-done/issues/142"
+    "url": "https://github.com/hegemonart/hone/issues/142"
   },
   {
     "number": 156,
     "title": "Same crash, different stack — Linux only",
-    "url": "https://github.com/hegemonart/get-design-done/issues/156"
+    "url": "https://github.com/hegemonart/hone/issues/156"
   },
   {
     "number": 178,
     "title": "Maybe related — Windows + .cmd shim variant",
-    "url": "https://github.com/hegemonart/get-design-done/issues/178"
+    "url": "https://github.com/hegemonart/hone/issues/178"
   }
 ]

@@ -7,7 +7,7 @@
 // fresh `npm install`, the SDK entry points live under node_modules; Node
 // refuses `--experimental-strip-types` on `.ts` files there
 // (ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING). The dual-mode bin
-// trampolines (bin/gdd-{sdk,state-mcp,mcp}) prefer the compiled `.js` when it
+// trampolines (bin/hone-{sdk,state-mcp,mcp}) prefer the compiled `.js` when it
 // exists (installed path) and fall back to the raw `.ts` + strip-types flag
 // (in-repo dev). This script produces that `.js`.
 //
@@ -43,12 +43,12 @@ const TARGETS = [
     outfile: 'sdk/cli/index.js',
   },
   {
-    entry: 'sdk/mcp/gdd-state/server.ts',
-    outfile: 'sdk/mcp/gdd-state/server.js',
+    entry: 'sdk/mcp/hone-state/server.ts',
+    outfile: 'sdk/mcp/hone-state/server.js',
   },
   {
-    entry: 'sdk/mcp/gdd-mcp/server.ts',
-    outfile: 'sdk/mcp/gdd-mcp/server.js',
+    entry: 'sdk/mcp/hone-mcp/server.ts',
+    outfile: 'sdk/mcp/hone-mcp/server.js',
   },
 ];
 

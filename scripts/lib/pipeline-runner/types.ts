@@ -23,7 +23,7 @@
 
 /**
  * The 5 stages of the design pipeline. Mirrors `.design/STATE.md`'s
- * stage field (Plan 20-01's gdd-state contract).
+ * stage field (Plan 20-01's hone-state contract).
  */
 export type Stage = 'brief' | 'explore' | 'plan' | 'design' | 'verify';
 

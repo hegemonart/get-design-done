@@ -39,7 +39,7 @@ Read once at start from `.design/config.json` (all optional; defaults in parens)
 Stop at the first tier that produces ≥ 1 command:
 
 1. **Authoritative config.** If `.design/config.json` has `quality_gate.commands` non-empty, use verbatim.
-2. **Auto-detect from `package.json#scripts`** - match against allowlist: `lint`, `typecheck`, `tsc` (only if `typecheck` absent), `test`, `chromatic`, `test:visual`, `lint:design` (Phase 41 - the `gdd-detect` deterministic anti-pattern gate), and the accessibility scripts `axe`, `pa11y`, `lighthouse`, `eslint-plugin-jsx-a11y` (or a script named `jsx-a11y`) which classify into the `a11y` bucket. Exclude by name: `test:e2e`, `test:integration` (if separate `test`), anything starting `dev:`, `build:`, `start:`. Run via `npm run <name>` unless `quality_gate.package_manager` overrides.
+2. **Auto-detect from `package.json#scripts`** - match against allowlist: `lint`, `typecheck`, `tsc` (only if `typecheck` absent), `test`, `chromatic`, `test:visual`, `lint:design` (Phase 41 - the `hone-detect` deterministic anti-pattern gate), and the accessibility scripts `axe`, `pa11y`, `lighthouse`, `eslint-plugin-jsx-a11y` (or a script named `jsx-a11y`) which classify into the `a11y` bucket. Exclude by name: `test:e2e`, `test:integration` (if separate `test`), anything starting `dev:`, `build:`, `start:`. Run via `npm run <name>` unless `quality_gate.package_manager` overrides.
 3. **Skip with notice.** Emit `quality_gate_skipped` (Step 6) and write a `<run/>` with `status="skipped"`. Verify treats skipped as non-blocking.
 
 ## Step 2 - Parallel run
@@ -58,7 +58,7 @@ Else: increment `iteration`, emit `quality_gate_iteration`, spawn `design-fixer`
 
 ## Step 5 - STATE write
 
-Mutate `state.quality_gate.run` to `{started_at, completed_at, status, iteration, commands_run, extra_attrs:{}}`. Persist via `mcp__gdd_state__set_quality_gate` or `apply()` mutator from `sdk/state/mutator.ts` - identical on-disk shape.
+Mutate `state.quality_gate.run` to `{started_at, completed_at, status, iteration, commands_run, extra_attrs:{}}`. Persist via `mcp__hone_state__set_quality_gate` or `apply()` mutator from `sdk/state/mutator.ts` - identical on-disk shape.
 
 ## Step 6 - Event emission (D-09)
 

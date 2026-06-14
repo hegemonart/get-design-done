@@ -1,12 +1,12 @@
 ---
-name: gdd-connections
-description: "Interactive onboarding wizard for the 33 external integrations the pipeline supports - probes all (`figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`, `pinterest`, `claude-design`, `paper-design`, `pencil-dev`, `21st-dev`, `magic-patterns`, `lazyweb`, `mobbin`, `slack`, `discord`, `linear`, `jira`, `notion`, `lottie`, `rive`, `framer`, `penpot`, `webflow`, `v0-dev`, `plasmic`, `builder-io`, `launchdarkly`, `statsig`, `growthbook`, `usertesting`, `maze`, `hotjar`), recommends based on project type, walks the user through setup (auto-run MCP install or copy-command fallback), writes results to `STATE.md <connections>`. Use after `/gdd:new-project` or whenever the user wants to add, inspect, or skip a connection. Re-runnable anytime. Activates for requests involving setting up external integrations, probing Figma or preview or storybook, or onboarding tools."
+name: hone-connections
+description: "Interactive onboarding wizard for the 33 external integrations the pipeline supports - probes all (`figma`, `refero`, `preview`, `storybook`, `chromatic`, `graphify`, `pinterest`, `claude-design`, `paper-design`, `pencil-dev`, `21st-dev`, `magic-patterns`, `lazyweb`, `mobbin`, `slack`, `discord`, `linear`, `jira`, `notion`, `lottie`, `rive`, `framer`, `penpot`, `webflow`, `v0-dev`, `plasmic`, `builder-io`, `launchdarkly`, `statsig`, `growthbook`, `usertesting`, `maze`, `hotjar`), recommends based on project type, walks the user through setup (auto-run MCP install or copy-command fallback), writes results to `STATE.md <connections>`. Use after `/hone:new-project` or whenever the user wants to add, inspect, or skip a connection. Re-runnable anytime. Activates for requests involving setting up external integrations, probing Figma or preview or storybook, or onboarding tools."
 argument-hint: "[list | <connection-name> | --auto]"
 user-invocable: true
 tools: Read, Write, Bash, Glob, Grep, AskUserQuestion, ToolSearch
 ---
 
-# /gdd:connections
+# /hone:connections
 
 Interactive onboarding for the 33 external integrations the pipeline supports. Replaces "probe silently at scan entry and hope the user noticed" with an explicit "here is what can plug in, here is how."
 
@@ -20,10 +20,10 @@ For the 33 probe scripts (MCP + HTTP + CLI + file probes), bucket categorization
 
 | Command | Behavior |
 |---|---|
-| `/gdd:connections` | Interactive wizard (default). Probes all, shows summary, asks what to configure. |
-| `/gdd:connections list` | Read-only table. Probes all, writes STATE.md, no prompts, exits. |
-| `/gdd:connections <name>` | Jump straight to setup for one connection (e.g. `/gdd:connections figma`). |
-| `/gdd:connections --auto` | CI mode. Probes, writes STATE.md, no prompts, no install attempts. |
+| `/hone:connections` | Interactive wizard (default). Probes all, shows summary, asks what to configure. |
+| `/hone:connections list` | Read-only table. Probes all, writes STATE.md, no prompts, exits. |
+| `/hone:connections <name>` | Jump straight to setup for one connection (e.g. `/hone:connections figma`). |
+| `/hone:connections --auto` | CI mode. Probes, writes STATE.md, no prompts, no install attempts. |
 
 ---
 

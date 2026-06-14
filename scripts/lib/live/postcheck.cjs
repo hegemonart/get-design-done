@@ -2,8 +2,8 @@
 /**
  * scripts/lib/live/postcheck.cjs — Phase 47 (Live Mode) variant post-check.
  *
- * After /gdd:live generates a design variant, we run that variant's source through the
- * in-repo gdd-detect engine (Phase 41) and surface its anti-pattern findings on the
+ * After /hone:live generates a design variant, we run that variant's source through the
+ * in-repo hone-detect engine (Phase 41) and surface its anti-pattern findings on the
  * variant card. Per the Live Mode spec, an `error`-severity finding is FLAGGED but NOT
  * auto-rejected — the human still chooses; the detector is advisory at dev-time. So
  * `autoReject` is ALWAYS false; we only surface counts + a compact card summary.
@@ -58,7 +58,7 @@ function normalizeUnits(input) {
 }
 
 /**
- * Post-check a generated variant against the gdd-detect anti-pattern rule set.
+ * Post-check a generated variant against the hone-detect anti-pattern rule set.
  *
  * Prefers an in-memory scan of the supplied variant source via the detect engine's
  * `scanContent`. When NO inline content is supplied but a `projectRoot` is given,

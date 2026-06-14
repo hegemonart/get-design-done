@@ -31,7 +31,7 @@ describe('27.7-04: install --register-mcp', () => {
     const spawnFn = mockSpawnFn({
       'claude --version': { status: 0, stdout: '0.5.0', stderr: '' },
       'claude mcp list': { status: 0, stdout: 'other-mcp\n', stderr: '' },
-      'claude mcp add gdd-mcp -s user -- gdd-mcp': {
+      'claude mcp add hone-mcp -s user -- hone-mcp': {
         status: 0,
         stdout: 'added',
         stderr: '',
@@ -41,7 +41,7 @@ describe('27.7-04: install --register-mcp', () => {
     assert.equal(result.detected, true);
     assert.equal(result.applied, true);
     assert.equal(result.idempotent_skip, false);
-    assert.match(result.command, /claude mcp add gdd-mcp/);
+    assert.match(result.command, /claude mcp add hone-mcp/);
   });
 
   test('27.7-04: registerMcp codex detected → register command applied', () => {
@@ -49,7 +49,7 @@ describe('27.7-04: install --register-mcp', () => {
     const spawnFn = mockSpawnFn({
       'codex --version': { status: 0, stdout: '0.1.0', stderr: '' },
       'codex mcp list': { status: 0, stdout: '', stderr: '' },
-      'codex mcp add gdd-mcp -- gdd-mcp': {
+      'codex mcp add hone-mcp -- hone-mcp': {
         status: 0,
         stdout: 'added',
         stderr: '',
@@ -58,7 +58,7 @@ describe('27.7-04: install --register-mcp', () => {
     const result = registerMcp({ harness: 'codex', spawnFn });
     assert.equal(result.detected, true);
     assert.equal(result.applied, true);
-    assert.match(result.command, /codex mcp add gdd-mcp/);
+    assert.match(result.command, /codex mcp add hone-mcp/);
   });
 
   test('27.7-04: registerMcp claude absent → detected:false with notice', () => {
@@ -69,11 +69,11 @@ describe('27.7-04: install --register-mcp', () => {
     assert.match(result.notice, /claude CLI not on PATH/);
   });
 
-  test('27.7-04: idempotent re-run — applied:false when gdd-mcp already in claude mcp list', () => {
+  test('27.7-04: idempotent re-run — applied:false when hone-mcp already in claude mcp list', () => {
     const { registerMcp } = require('../../scripts/lib/install/mcp-register.cjs');
     const spawnFn = mockSpawnFn({
       'claude --version': { status: 0, stdout: '0.5.0', stderr: '' },
-      'claude mcp list': { status: 0, stdout: 'gdd-mcp\nother-mcp\n', stderr: '' },
+      'claude mcp list': { status: 0, stdout: 'hone-mcp\nother-mcp\n', stderr: '' },
     });
     const result = registerMcp({ harness: 'claude', spawnFn });
     assert.equal(result.detected, true);
@@ -92,8 +92,8 @@ describe('27.7-04: install --register-mcp', () => {
     const spawnFn = mockSpawnFn({
       'claude --version': { status: 0, stdout: '', stderr: '' },
       'codex --version': { status: 0, stdout: '', stderr: '' },
-      'claude mcp list': { status: 0, stdout: 'gdd-mcp\n', stderr: '' },
-      'codex mcp list': { status: 0, stdout: 'gdd-mcp\n', stderr: '' },
+      'claude mcp list': { status: 0, stdout: 'hone-mcp\n', stderr: '' },
+      'codex mcp list': { status: 0, stdout: 'hone-mcp\n', stderr: '' },
     });
     const result = detectMcpRegistration({ spawnFn });
     assert.equal(result.harnesses.length, 2);
@@ -123,7 +123,7 @@ describe('27.7-04: install --register-mcp', () => {
     assert.equal(result.dry_run, true);
     assert.equal(result.applied, false);
     assert.equal(addInvoked, false, 'add command must NOT be spawned in dry-run');
-    assert.match(result.command, /claude mcp add gdd-mcp -s user -- gdd-mcp/);
+    assert.match(result.command, /claude mcp add hone-mcp -s user -- hone-mcp/);
   });
 
   test('27.7-04: registerMcp throws on unknown harness', () => {
@@ -138,6 +138,6 @@ describe('27.7-04: install --register-mcp', () => {
     const { buildHarnessCommand } = require('../../scripts/lib/install/mcp-register.cjs');
     const cmd = buildHarnessCommand('claude', 'register');
     assert.equal(cmd.binary, 'claude');
-    assert.deepEqual(cmd.args, ['mcp', 'add', 'gdd-mcp', '-s', 'user', '--', 'gdd-mcp']);
+    assert.deepEqual(cmd.args, ['mcp', 'add', 'hone-mcp', '-s', 'user', '--', 'hone-mcp']);
   });
 });

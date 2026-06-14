@@ -9,7 +9,7 @@ import { readEvents, aggregate } from '../../sdk/event-stream/reader.ts';
 import type { BaseEvent } from '../../sdk/event-stream/types.ts';
 
 function makeFile(events: BaseEvent[]): string {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-reader-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-reader-'));
   const path = join(dir, 'events.jsonl');
   writeFileSync(path, events.map((e) => JSON.stringify(e)).join('\n') + '\n');
   return path;
@@ -91,7 +91,7 @@ test('22-05: readEvents since/until bounds (inclusive)', async () => {
 });
 
 test('22-05: readEvents skips invalid JSON lines silently', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-reader-bad-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-reader-bad-'));
   const path = join(dir, 'events.jsonl');
   writeFileSync(
     path,

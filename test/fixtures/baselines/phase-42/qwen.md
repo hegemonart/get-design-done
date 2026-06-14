@@ -5,7 +5,7 @@ description: Synthetic skill exercising every placeholder + a harness-only block
 
 # Phase 42 Fixture Skill
 
-Run /gdd:audit and /gdd:verify using your configured Qwen model.
+Run /hone:audit and /hone:verify using your configured Qwen model.
 Settings live in .qwen/settings.json. For help, ask Qwen Code about the pipeline.
 
 

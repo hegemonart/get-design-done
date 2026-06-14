@@ -1,11 +1,11 @@
 ---
-name: gdd-router
+name: hone-router
 description: "Routes a /gdd command to fast|quick|full path + S|M|L|XL complexity_class and returns {path, complexity_class, model_tier_overrides, resolved_models, estimated_cost_usd, cache_hits}. A SKILL.md prompt the model executes to emit a routing-decision JSON from rule tables (no separate agent spawn). Optional/advisory - invoked only by the skills that opt into routing; the budget-enforcer hook tolerates its absence. Read by hooks/budget-enforcer.ts."
 argument-hint: "<intent-string> [<target-artifacts-csv>]"
 tools: Read, Bash, Grep
 ---
 
-# gdd-router
+# hone-router
 
 ## Role
 
@@ -53,7 +53,7 @@ Existing consumers reading any subset of the older fields keep working unchanged
 
 ## Path Selection Heuristic
 
-The router emits `path` (3-tier: `fast|quick|full`, legacy enum, stable for back-compat) AND `complexity_class` (4-tier: `S|M|L|XL`, Phase 25 / D-04 additive). Full mapping table, bucket-assignment signal list, `--dry-run` downgrade rule, and the S-class short-circuit semantics live in `./router-rules.md#path-selection-heuristic`. The S-class short-circuit is essential: when `complexity_class` would be `S`, the router does not run; the deterministic skip list lives in the `/gdd:*` SKILL.md entry, and the budget-enforcer hook treats "no payload + matching command name" as the S signal.
+The router emits `path` (3-tier: `fast|quick|full`, legacy enum, stable for back-compat) AND `complexity_class` (4-tier: `S|M|L|XL`, Phase 25 / D-04 additive). Full mapping table, bucket-assignment signal list, `--dry-run` downgrade rule, and the S-class short-circuit semantics live in `./router-rules.md#path-selection-heuristic`. The S-class short-circuit is essential: when `complexity_class` would be `S`, the router does not run; the deterministic skip list lives in the `/hone:*` SKILL.md entry, and the budget-enforcer hook treats "no payload + matching command name" as the S signal.
 
 ## Cost Estimation Algorithm
 
@@ -69,7 +69,7 @@ Delegate to `skills/cache-manager/SKILL.md` (Plan 10.1-02). The router lists can
 
 ## Integration Point
 
-The router is **optional and advisory**, not a universal first step. Only the handful of skills that explicitly opt into routing reference it (today: the root pipeline `SKILL.md` / `/gdd:handoff`, and `/gdd:style` documents that it deliberately does *not* invoke the router because it is a leaf invocation). The pipeline stage skills (explore / plan / design / verify) do **not** spawn the router. When a skill does invoke it, the flow is: invoke the router via `Task` or inline invocation; receive the JSON blob; pass it to downstream agents as context so the budget-enforcer hook has the router decision available in tool_input metadata when the first Agent spawn fires.
+The router is **optional and advisory**, not a universal first step. Only the handful of skills that explicitly opt into routing reference it (today: the root pipeline `SKILL.md` / `/hone:handoff`, and `/hone:style` documents that it deliberately does *not* invoke the router because it is a leaf invocation). The pipeline stage skills (explore / plan / design / verify) do **not** spawn the router. When a skill does invoke it, the flow is: invoke the router via `Task` or inline invocation; receive the JSON blob; pass it to downstream agents as context so the budget-enforcer hook has the router decision available in tool_input metadata when the first Agent spawn fires.
 
 When no skill supplies a router decision, the budget-enforcer hook reads `tool_input.context.router_decision` as absent and falls back to its legacy back-compat path - the router's absence is tolerated by design, never an error.
 

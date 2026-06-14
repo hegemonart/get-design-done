@@ -1,5 +1,5 @@
 'use strict';
-// Phase 40 — lock-policy.cjs — PURE, dep-free advisory-lock policy for gdd-state multi-writer mode (SC#6).
+// Phase 40 — lock-policy.cjs — PURE, dep-free advisory-lock policy for hone-state multi-writer mode (SC#6).
 //
 // Phase 20's sdk/state/lockfile.ts already implements PID+timestamp advisory locks with retry
 // (staleMs / maxWaitMs / pollMs). "Multi-writer mode" is a POLICY layered on top: when a project

@@ -2,7 +2,7 @@
 
 > For engineering primitives (CSS logical properties, Intl.\* family, bidi isolation, ICU MessageFormat, text-expansion budgets, multi-script font stacks, Unicode hygiene), see [`./i18n.md`](./i18n.md). This file owns cultural context (greeting forms, color symbolism, CJK family-name conventions, imagery norms).
 
-Designing for a global audience is not a matter of translating strings and calling the work done. Layout direction, typographic rendering, number formatting, color semantics, and imagery all carry culturally specific expectations that, when violated, signal to users that the product was not made for them. This reference consolidates the key technical and cultural considerations that the get-design-done framework requires designers and engineers to understand before shipping to any non-English or non-Western market.
+Designing for a global audience is not a matter of translating strings and calling the work done. Layout direction, typographic rendering, number formatting, color semantics, and imagery all carry culturally specific expectations that, when violated, signal to users that the product was not made for them. This reference consolidates the key technical and cultural considerations that the hone framework requires designers and engineers to understand before shipping to any non-English or non-Western market.
 
 ---
 
@@ -352,4 +352,4 @@ Skin tone, body size, age, and hair type should all be varied across the illustr
 
 ---
 
-*This reference governs international layout, typography, formatting, and imagery decisions within the get-design-done framework. Deviations require explicit justification in `.design/DESIGN-CONTEXT.md` as a C-XX constraint.*
+*This reference governs international layout, typography, formatting, and imagery decisions within the hone framework. Deviations require explicit justification in `.design/DESIGN-CONTEXT.md` as a C-XX constraint.*

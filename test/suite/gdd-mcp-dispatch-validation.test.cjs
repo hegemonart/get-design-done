@@ -1,11 +1,11 @@
 'use strict';
-// test/suite/gdd-mcp-dispatch-validation.test.cjs
+// test/suite/hone-mcp-dispatch-validation.test.cjs
 // ---------------------------------------------------------------------------
-// Plan 60-1-01 / HARDEN-01 (Task 2) — the gdd-mcp tools/call dispatcher must
+// Plan 60-1-01 / HARDEN-01 (Task 2) — the hone-mcp tools/call dispatcher must
 // validate every tool's arguments against its advertised input JSON Schema
 // (ajv) BEFORE invoking the handler.
 //
-// Key proof (W1 finding): gdd_intel_get's REAL input schema
+// Key proof (W1 finding): hone_intel_get's REAL input schema
 // (additionalProperties:false, required:["slice_id"], string slice_id) must be
 // the one compiled — NOT the permissive `{type:'object'}` fallback that
 // loadTools() emits for malformed wrappers. The fallback would ACCEPT
@@ -28,7 +28,7 @@ const os = require('node:os');
 const path = require('node:path');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const SERVER_PATH = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'server.ts');
+const SERVER_PATH = path.join(REPO_ROOT, 'sdk', 'mcp', 'hone-mcp', 'server.ts');
 
 async function loadServer() {
   const url = new URL('file://' + SERVER_PATH.replace(/\\/g, '/'));
@@ -80,22 +80,22 @@ function withProjectRoot(prefix, sliceId, sliceBody) {
   };
 }
 
-test('HARDEN-01 dispatch: gdd_intel_get with {} (missing required slice_id) returns isError pre-handler', async () => {
+test('HARDEN-01 dispatch: hone_intel_get with {} (missing required slice_id) returns isError pre-handler', async () => {
   const mod = await loadServer();
   const callSchema = await loadCallSchema();
   const server = mod.buildServer();
-  const result = await callTool(server, callSchema, 'gdd_intel_get', {});
+  const result = await callTool(server, callSchema, 'hone_intel_get', {});
   assert.equal(result.isError, true);
   const body = parseStructured(result);
   assert.equal(body.success, false);
   assert.ok(body.error, 'structured error present');
 });
 
-test('HARDEN-01 dispatch: gdd_intel_get with {slice_id:123} (wrong type) returns isError', async () => {
+test('HARDEN-01 dispatch: hone_intel_get with {slice_id:123} (wrong type) returns isError', async () => {
   const mod = await loadServer();
   const callSchema = await loadCallSchema();
   const server = mod.buildServer();
-  const result = await callTool(server, callSchema, 'gdd_intel_get', { slice_id: 123 });
+  const result = await callTool(server, callSchema, 'hone_intel_get', { slice_id: 123 });
   assert.equal(result.isError, true);
 });
 
@@ -112,14 +112,14 @@ test('HARDEN-01 dispatch: additionalProperties:false rejects an extra prop on an
     const server = mod.buildServer();
     // Sanity: the clean valid call MUST succeed (proves the slice is readable
     // and the handler path works in this cwd).
-    const clean = await callTool(server, callSchema, 'gdd_intel_get', { slice_id: 'tokens' });
+    const clean = await callTool(server, callSchema, 'hone_intel_get', { slice_id: 'tokens' });
     const cleanBody = parseStructured(clean);
     assert.ok(!clean.isError, 'clean valid call reaches handler and succeeds');
     assert.equal(cleanBody.success, true);
     // Now the same call WITH an unknown extra property. Without validation the
     // handler ignores `evil` and SUCCEEDS reading tokens.json. With the real
     // schema (additionalProperties:false) the dispatcher REJECTS it.
-    const dirty = await callTool(server, callSchema, 'gdd_intel_get', { slice_id: 'tokens', evil: 1 });
+    const dirty = await callTool(server, callSchema, 'hone_intel_get', { slice_id: 'tokens', evil: 1 });
     assert.equal(dirty.isError, true, 'unknown property rejected by additionalProperties:false');
     const dirtyBody = parseStructured(dirty);
     assert.equal(dirtyBody.success, false);
@@ -140,9 +140,9 @@ test('HARDEN-01 dispatch: REAL schema compiled — additionalProperties rejectio
     // real compiled schema rejects each. At least one (the additionalProperties
     // case on a valid slice) the fallback would have PASSED → distinguishes
     // "real schema" from "handler happened to error."
-    const addl = await callTool(server, callSchema, 'gdd_intel_get', { slice_id: 'tokens', evil: 1 });
-    const missing = await callTool(server, callSchema, 'gdd_intel_get', {});
-    const wrongType = await callTool(server, callSchema, 'gdd_intel_get', { slice_id: 123 });
+    const addl = await callTool(server, callSchema, 'hone_intel_get', { slice_id: 'tokens', evil: 1 });
+    const missing = await callTool(server, callSchema, 'hone_intel_get', {});
+    const wrongType = await callTool(server, callSchema, 'hone_intel_get', { slice_id: 123 });
     assert.equal(addl.isError, true, 'fallback would ACCEPT {slice_id:tokens,evil:1} — real schema rejects');
     assert.equal(missing.isError, true);
     assert.equal(wrongType.isError, true);
@@ -157,7 +157,7 @@ test('HARDEN-01 dispatch: a ../-shaped slice_id passes schema but surfaces an er
     const mod = await loadServer();
     const callSchema = await loadCallSchema();
     const server = mod.buildServer();
-    const result = await callTool(server, callSchema, 'gdd_intel_get', { slice_id: '../etc/passwd' });
+    const result = await callTool(server, callSchema, 'hone_intel_get', { slice_id: '../etc/passwd' });
     assert.equal(result.isError, true, 'traversal slice_id surfaces an error');
     const body = parseStructured(result);
     assert.equal(body.success, false);
@@ -173,7 +173,7 @@ test('HARDEN-01 dispatch: a well-formed call still reaches the handler and succe
     const mod = await loadServer();
     const callSchema = await loadCallSchema();
     const server = mod.buildServer();
-    const result = await callTool(server, callSchema, 'gdd_intel_get', { slice_id: 'tokens' });
+    const result = await callTool(server, callSchema, 'hone_intel_get', { slice_id: 'tokens' });
     const body = parseStructured(result);
     assert.ok(!result.isError, 'valid call is not an error');
     assert.equal(body.success, true);
@@ -190,7 +190,7 @@ test('HARDEN-01 dispatch: every registered tool dispatches through validation wi
     const callSchema = await loadCallSchema();
     const server = mod.buildServer();
     const toolsMod = await import(
-      new URL('file://' + path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'tools', 'index.ts').replace(/\\/g, '/')).href
+      new URL('file://' + path.join(REPO_ROOT, 'sdk', 'mcp', 'hone-mcp', 'tools', 'index.ts').replace(/\\/g, '/')).href
     );
     assert.equal(toolsMod.TOOL_MODULES.length, 13, '13 tools registered');
     for (const m of toolsMod.TOOL_MODULES) {

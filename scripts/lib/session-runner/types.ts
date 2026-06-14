@@ -13,7 +13,7 @@
 //   * `TurnCap.maxTurns` counts assistant turns (response cycles). A
 //     tool_use + tool_result pair is part of the SAME turn.
 //   * `stage` drives event payloads + transcript filenames. The union
-//     mirrors `Stage` from `gdd-state/types.ts` plus `init` + `custom`.
+//     mirrors `Stage` from `hone-state/types.ts` plus `init` + `custom`.
 //   * `queryOverride` / `sanitizeOverride` exist solely for tests; the
 //     default behavior imports the real SDK + the real sanitizer.
 

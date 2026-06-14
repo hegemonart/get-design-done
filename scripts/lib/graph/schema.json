@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://get-design-done.example/schemas/graph.schema.json",
+  "$id": "https://hone.example/schemas/graph.schema.json",
   "title": ".design/graph/graph.json",
-  "description": "Native gdd-graph store. Schema version 1.0 — frozen at Phase 30.6 per D-03.",
+  "description": "Native hone-graph store. Schema version 1.0 — frozen at Phase 30.6 per D-03.",
   "type": "object",
   "required": ["schemaVersion", "metadata", "nodes", "edges"],
   "additionalProperties": false,
@@ -21,7 +21,7 @@
         "intelSource": { "type": "string", "description": "Path to source intel file, e.g. .design/intel/graph.json" },
         "nodeCount": { "type": "integer", "minimum": 0 },
         "edgeCount": { "type": "integer", "minimum": 0 },
-        "builderVersion": { "type": "string", "description": "gdd-graph version that wrote this file" }
+        "builderVersion": { "type": "string", "description": "hone-graph version that wrote this file" }
       }
     },
     "nodes": {

@@ -131,7 +131,7 @@ test('33-06: pressure-scenario schema + the 8 scenarios + 8 RED baselines are pr
 
 test('33-06: description-format A/B scenario + evidence doc are present (D-08)', () => {
   assert.ok(
-    exists('test/suite/skill-behavior/scenarios/using-gdd-ab.json'),
+    exists('test/suite/skill-behavior/scenarios/using-hone-ab.json'),
     'the description-format A/B scenario manifest must exist',
   );
   assert.ok(

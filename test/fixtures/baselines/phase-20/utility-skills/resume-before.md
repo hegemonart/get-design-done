@@ -1,5 +1,5 @@
 ---
-name: gdd-resume
+name: hone-resume
 description: "Restore session context from a numbered checkpoint. Lists available checkpoints when no argument given."
 argument-hint: "[<N>]"
 tools: Read, Write, Bash, Glob, AskUserQuestion
@@ -8,9 +8,9 @@ tools: Read, Write, Bash, Glob, AskUserQuestion
 @reference/retrieval-contract.md
 @reference/cycle-handoff-preamble.md
 
-# /gdd:resume
+# /hone:resume
 
-Inverse of `/gdd:pause`. Reads a checkpoint file, prints a clear "you were here" summary, and routes to the next command.
+Inverse of `/hone:pause`. Reads a checkpoint file, prints a clear "you were here" summary, and routes to the next command.
 
 ## Steps
 
@@ -43,11 +43,11 @@ Inverse of `/gdd:pause`. Reads a checkpoint file, prints a clear "you were here"
    "Source has changed since checkpoint NN — consider re-running explore or verify."
 
 6. **Route recommendation** based on checkpoint `Stage:` field:
-   - `brief` → "Run `/gdd:brief`"
-   - `explore` → "Run `/gdd:explore`"
-   - `plan` → "Run `/gdd:plan`"
-   - `design` → "Run `/gdd:design` to continue"
-   - `verify` → "Run `/gdd:verify`"
+   - `brief` → "Run `/hone:brief`"
+   - `explore` → "Run `/hone:explore`"
+   - `plan` → "Run `/hone:plan`"
+   - `design` → "Run `/hone:design` to continue"
+   - `verify` → "Run `/hone:verify`"
 
 ## Do Not
 

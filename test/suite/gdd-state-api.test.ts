@@ -1,4 +1,4 @@
-// tests/gdd-state-api.test.ts — public-API integration tests.
+// tests/hone-state-api.test.ts — public-API integration tests.
 //
 // Covers read(), mutate(), transition() — the entry points consumers see.
 // Complements the parser / mutator / lockfile unit tests by exercising
@@ -31,7 +31,7 @@ function scaffoldStateFile(): {
   path: string;
   cleanup: () => void;
 } {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-state-api-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-state-api-'));
   const path = join(dir, 'STATE.md');
   writeFileSync(path, readFileSync(join(FIXTURES, 'mid-pipeline.md'), 'utf8'));
   return {

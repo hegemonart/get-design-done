@@ -9,7 +9,7 @@
 // hermetic (D-07) and there is NO new runtime dependency — no axios/node-fetch/
 // undici (D-10). The fetch( egress is allowlisted via scripts/lib/openrouter/**
 // in scripts/security/outbound-allowlist.json (D-06), with a matching egress
-// entry in reference/gdd-threat-model.md.
+// entry in reference/hone-threat-model.md.
 //
 // Decisions honored:
 //   D-02  Catalog TTL = 24h default (overridable via ttlHours; the caller wires

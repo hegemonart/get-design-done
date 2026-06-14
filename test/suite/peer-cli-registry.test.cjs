@@ -32,7 +32,7 @@ const { makeMockAdapter } = require('./fixtures/peer-cli/mock-adapter.cjs');
  * filesystem hygiene (we use os.tmpdir so leftover dirs are harmless).
  */
 function tmpRepoWithConfig(configValue) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-peer-registry-test-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-peer-registry-test-'));
   const designDir = path.join(dir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
   if (configValue !== undefined) {
@@ -96,7 +96,7 @@ test('describeCapabilities returns mutable JSON-shaped snapshot', () => {
 // ── readEnabledPeers (D-11 opt-in gating) ──────────────────────────────────
 
 test('readEnabledPeers returns [] when .design/config.json is missing', () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-peer-registry-test-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-peer-registry-test-'));
   // no config.json written
   assert.deepEqual(registry.readEnabledPeers(dir), []);
 });

@@ -27,7 +27,7 @@ receiver and nothing else.
 ## Development
 
 This is a standalone TypeScript package (decision D-05). It is **not** part of the root
-`get-design-done` package.
+`hone` package.
 
 ### Build
 

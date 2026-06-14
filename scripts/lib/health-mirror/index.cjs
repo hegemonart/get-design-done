@@ -3,7 +3,7 @@
 //
 // Pure read-only mirror of skills/health/SKILL.md's check surface.
 // NO subprocess spawn — just inspects 4 well-known files/dirs and
-// reports status. Used by the gdd_health MCP tool.
+// reports status. Used by the hone_health MCP tool.
 //
 // Surface:
 //   async getHealthChecks(rootDir) → { checks: HealthCheck[] }
@@ -18,7 +18,7 @@
 //   7. skill_discipline     — using-gdd bootstrap + SessionStart inject (Plan 32-07)
 //   8. harness_freshness    — per-harness last_verified age (Phase 44)
 //   9. stack_addendums      — Phase 54 coverage: N/M detected stacks have addendums
-//  10. dashboard_reachable  — Phase 55: bin/gdd-dashboard on disk + data plane loads
+//  10. dashboard_reachable  — Phase 55: bin/hone-dashboard on disk + data plane loads
 //
 // Check 5 was added in Plan 30-06 — surfaces the report-issue kill-switch
 // (env or config disable) so users can verify why the command is
@@ -29,7 +29,7 @@
 // When both env and config trigger, env wins (matches D-08 display contract).
 //
 // Check 6 was added in Plan 31-09 — surfaces figma-extract readiness so a user
-// running /gdd:health immediately knows whether figma-extract is usable. The
+// running /hone:health immediately knows whether figma-extract is usable. The
 // detail line is one of three exact strings:
 //   - "figma extract: ready (token set)"
 //   - "figma extract: token missing"
@@ -51,16 +51,16 @@
 // file + JSON inspection only) — NEVER throws, NEVER networks.
 //
 // Check 10 was added in Phase 55 — surfaces whether the GDD dashboard is
-// reachable so a user running /gdd:health knows the `gdd dashboard` entrypoint
+// reachable so a user running /hone:health knows the `gdd dashboard` entrypoint
 // is wired. GRACEFUL-ABSENT by design (D-8 risk surfacing precedent): the
 // dashboard is an opt-in, read-only surface that also works via file-scrape, so
 // a missing bin or absent data plane is a 'warn' (actionable note), NEVER a
-// hard 'fail'. The status is 'ok' when BOTH the bin/gdd-dashboard trampoline
+// hard 'fail'. The status is 'ok' when BOTH the bin/hone-dashboard trampoline
 // resolves on disk (located via a package-root walk-up — the Phase 53/54 lesson,
 // NEVER a fixed __dirname jump) AND the dashboard data plane module
 // (sdk/dashboard/data/source.cjs) loads + exposes loadDashboardModel. The detail
 // line is one of:
-//   - "dashboard: bin/gdd-dashboard present; data plane ok"
+//   - "dashboard: bin/hone-dashboard present; data plane ok"
 //   - "dashboard: bin missing"                 (trampoline not on disk)
 //   - "dashboard: data plane unavailable"      (bin present, source.cjs absent)
 //   - "dashboard: bin missing; data plane unavailable"
@@ -328,7 +328,7 @@ async function getHealthChecks(rootDir) {
   }
 
   // 10. dashboard_reachable — Phase 55. GRACEFUL-ABSENT: reports whether the
-  // GDD dashboard entrypoint is wired (bin/gdd-dashboard on disk) AND its data
+  // GDD dashboard entrypoint is wired (bin/hone-dashboard on disk) AND its data
   // plane module loads. NEVER 'fail' — a missing bin is a 'warn' note because
   // the dashboard is opt-in and also works via file-scrape. PURE read-only
   // (fs.statSync + a wrapped require); NEVER throws, NEVER networks.
@@ -341,7 +341,7 @@ async function getHealthChecks(rootDir) {
       const dataPlaneOk = dashboardDataPlaneLoads(gddRoot);
       if (binPresent && dataPlaneOk) {
         status = 'ok';
-        detail = 'dashboard: bin/gdd-dashboard present; data plane ok';
+        detail = 'dashboard: bin/hone-dashboard present; data plane ok';
       } else {
         status = 'warn';
         if (!binPresent && !dataPlaneOk) {
@@ -453,13 +453,15 @@ function figmaVariablesBlockedLocally(rootDir) {
 }
 
 /**
- * Walk UP from `startDir` to the GDD package root (the first ancestor whose
- * package.json `name` is the GDD package). This mirrors the Phase 53/54 lesson
+ * Walk UP from `startDir` to the Hone package root (the first ancestor whose
+ * package.json `name` is the Hone package). This mirrors the Phase 53/54 lesson
  * (sdk/dashboard/data/_pkg-root.cjs): NEVER resolve a cross-tree sibling via a
  * fixed __dirname-relative jump. The shipped package name is scoped
- * ("@hegemonart/get-design-done"); dev/self-host/fixture roots may use the bare
- * "get-design-done" — both match. Bounded climb; defensive. Returns null if no
- * GDD root marker is found.
+ * ("@hegemonart/hone"); dev/self-host/fixture roots may use the bare "hone" —
+ * both match. During the Phase 61 rebrand migration window we ALSO accept the
+ * legacy "@hegemonart/get-design-done" / bare "get-design-done" (REBRAND-02,
+ * threat T-61-02 dual-read) so the dashboard self-detects under either package
+ * name in-place. Bounded climb; defensive. Returns null if no root marker found.
  *
  * @param {string} startDir
  * @returns {string|null} absolute package-root dir, or null
@@ -471,7 +473,13 @@ function findGddPackageRoot(startDir) {
       try {
         const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
         if (pkg && typeof pkg.name === 'string') {
-          if (pkg.name === 'get-design-done' || /\/get-design-done$/.test(pkg.name)) {
+          if (
+            pkg.name === 'hone' ||
+            /\/hone$/.test(pkg.name) ||
+            // legacy (Phase 61 migration window): accept the prior name in-place
+            pkg.name === 'get-design-done' ||
+            /\/hone$/.test(pkg.name)
+          ) {
             return dir;
           }
         }
@@ -510,18 +518,18 @@ function resolveDashboardRoot(rootDir) {
 }
 
 /**
- * Does the bin/gdd-dashboard trampoline resolve on disk under the authoritative
+ * Does the bin/hone-dashboard trampoline resolve on disk under the authoritative
  * GDD root? (Phase 55, check 10.) `fs.statSync` follows symlinks, so an npm
  * bin-linked trampoline (a symlink resolving to a file) counts as present. PURE
  * read-only; NEVER throws.
  *
  * @param {string} gddRoot authoritative GDD root (or null)
- * @returns {boolean} true iff bin/gdd-dashboard is present on disk
+ * @returns {boolean} true iff bin/hone-dashboard is present on disk
  */
 function dashboardBinResolves(gddRoot) {
   if (!gddRoot) return false;
   try {
-    return fs.statSync(path.join(gddRoot, 'bin', 'gdd-dashboard')).isFile();
+    return fs.statSync(path.join(gddRoot, 'bin', 'hone-dashboard')).isFile();
   } catch {
     return false;
   }

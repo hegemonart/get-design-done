@@ -1,10 +1,10 @@
 ---
-name: gdd-health
+name: hone-health
 description: "Reports .design/ artifact health — staleness, missing files, token drift, broken state transitions."
 tools: Read, Bash, Glob, Grep
 ---
 
-# /gdd:health
+# /hone:health
 
 **Role:** Report the health of the `.design/` directory. Print a score and list the checks that failed.
 

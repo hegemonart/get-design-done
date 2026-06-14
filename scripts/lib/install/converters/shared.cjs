@@ -1,5 +1,11 @@
 'use strict';
 
+// Phase 61 rebrand: consume the brand seam so the installed skill name carries
+// the canonical `hone-` prefix instead of the hardcoded legacy `gdd-`. The
+// converters pass `SKILL_PREFIX` through to buildFrontmatter (replacing the
+// historical `'hone-'` literal).
+const { SKILL_PREFIX } = require('../../pkg-identity.cjs');
+
 /**
  * scripts/lib/install/converters/shared.cjs — Phase 28.7 (Plan 28.7-04).
  *
@@ -20,7 +26,7 @@
  *   - extractFrontmatterAndBody(content)
  *       → { frontmatter: string|null, body: string }
  *   - rewriteSlashRefs(body, targetRuntime) → string
- *       Rewrites in-prose `/gdd-name`, `gdd-name`, `/gdd:name`, `$gdd-name`
+ *       Rewrites in-prose `/hone-name`, `hone-name`, `/hone:name`, `$hone-name`
  *       references to the runtime-canonical form via
  *       `../runtime-slash.cjs#formatGddSlash`. Only operates on prose;
  *       fenced code blocks are passed through untouched.
@@ -83,9 +89,9 @@
  *
  * Note: `Task` is intentionally absent. Per Phase 21 codex-tools.md
  * "Known gaps", Codex does not expose nested-session as a tool call;
- * skills that rely on Task call the gdd-sdk CLI via `shell(...)`. The
+ * skills that rely on Task call the hone-sdk CLI via `shell(...)`. The
  * codex converter leaves `Task(...)` references untouched so prose
- * fallback prose ("on Codex this becomes shell('npx gdd-sdk ...')") is
+ * fallback prose ("on Codex this becomes shell('npx hone-sdk ...')") is
  * still readable.
  *
  * Frozen to prevent accidental mutation by downstream converters.
@@ -157,17 +163,17 @@ function splitByCodeFence(body) {
 // ---------------------------------------------------------------------------
 
 /**
- * Rewrite every in-prose `/gdd-name`, `gdd-name`, `/gdd:name`, `gdd:name`,
- * `$gdd-name`, `$gdd:name` reference to the canonical slash form for
+ * Rewrite every in-prose `/hone-name`, `hone-name`, `/hone:name`, `gdd:name`,
+ * `$hone-name`, `$gdd:name` reference to the canonical slash form for
  * `targetRuntime` (via `runtime-slash.cjs#formatGddSlash`).
  *
  * Operates on prose only — fenced code blocks pass through unchanged.
- * (For codex, that means tool calls like `Bash(command="/gdd-x")` keep
+ * (For codex, that means tool calls like `Bash(command="/hone-x")` keep
  * the slash form in shell strings — those are runtime-evaluated by the
  * codex shell, not the Codex tool surface, so they must remain unchanged.)
  *
  * Inline code spans (`` `...` ``) are also passed through — they're prose
- * to the markdown renderer but Claude's literal-form quoting (`` `/gdd-x` ``)
+ * to the markdown renderer but Claude's literal-form quoting (`` `/hone-x` ``)
  * appears in user-facing text and should usually be rewritten too. We
  * therefore DO rewrite inside inline code spans (the regex doesn't
  * special-case them). This matches gsd-build's behavior — converters
@@ -178,7 +184,7 @@ function splitByCodeFence(body) {
  * convention — lowercase + dashes + digits).
  *
  * Defensive: if `targetRuntime` is omitted, defaults to `'claude'` (i.e.
- * `/gdd-<name>` shape).
+ * `/hone-<name>` shape).
  *
  * @param {string} body
  * @param {string} [targetRuntime]
@@ -190,11 +196,12 @@ function rewriteSlashRefs(body, targetRuntime) {
   const rt = targetRuntime || 'claude';
 
   const segments = splitByCodeFence(body);
-  // Pattern: optional `/` or `$` prefix, `gdd-` or `gdd:`, then the
+  // Pattern: optional `/` or `$` prefix, the canonical `hone-`/`hone:` brand
+  // (or the legacy `gdd-`/`gdd:` alias, still accepted on input), then the
   // skill-name token. Skill names are lowercase + dashes + digits per
-  // GDD convention; the regex is case-insensitive on the `gdd` letters
-  // to accept malformed inputs.
-  const slashRe = /[/$]?gdd[-:][a-z][a-z0-9-]*/gi;
+  // convention; the regex is case-insensitive on the brand letters to accept
+  // malformed inputs. formatGddSlash re-emits the canonical `hone` form.
+  const slashRe = /[/$]?(?:hone|gdd)[-:][a-z][a-z0-9-]*/gi;
 
   for (let i = 0; i < segments.length; i++) {
     // Even indices are prose; odd are fenced code blocks (passthrough).
@@ -312,8 +319,8 @@ function ensureAdapterHeader(body, runtimeDisplay) {
  *   - If `originalFrontmatter` is `null` or empty, emit a minimal block
  *     containing only `name: <runtimePrefix><skillName>`.
  *   - If `originalFrontmatter` is non-empty, rewrite its `name:` field
- *     to `<runtimePrefix><skillName>` (stripping any prior `gdd-` or
- *     `gsd-` prefix on the existing name to avoid `gdd-gdd-`-style
+ *     to `<runtimePrefix><skillName>` (stripping any prior `hone-` or
+ *     `gsd-` prefix on the existing name to avoid `hone-hone-`-style
  *     duplication). All other fields round-trip verbatim — we do NOT
  *     parse YAML; we operate on the raw text with a line-by-line scan.
  *   - If the original has no `name:` field, prepend one.
@@ -324,14 +331,19 @@ function ensureAdapterHeader(body, runtimeDisplay) {
  * @param {string|null} originalFrontmatter
  * @param {string} skillName  the bare skill name (e.g. `'sample'`,
  *   `'explore'`) WITHOUT runtime prefix.
- * @param {string} runtimePrefix  e.g. `'gdd-'`.
+ * @param {string} runtimePrefix  e.g. `'hone-'`.
  * @returns {string}
  */
 function buildFrontmatter(originalFrontmatter, skillName, runtimePrefix) {
-  const prefix = String(runtimePrefix || '');
-  // Normalize input name: strip any prior gdd-/gsd- prefix (case-insensitive)
-  // so we never emit gdd-gdd-foo.
-  const bareName = String(skillName || '').replace(/^(gdd-|gsd-)/i, '');
+  // Phase 61 rebrand: callers historically pass the legacy `'gdd-'` literal
+  // (and the D-05 frozen file-drop converters MUST stay byte-identical, so we
+  // cannot edit their call sites). Normalize any legacy brand prefix to the
+  // canonical seam value here so the emitted `name:` carries `hone-`.
+  let prefix = String(runtimePrefix || '');
+  if (/^(hone-|gsd-)$/i.test(prefix)) prefix = SKILL_PREFIX;
+  // Normalize input name: strip any prior hone-/hone-/gsd- prefix
+  // (case-insensitive) so we never emit hone-hone-foo (or legacy gdd-gdd-foo).
+  const bareName = String(skillName || '').replace(/^(hone-|gdd-|gsd-)/i, '');
   const finalName = prefix + bareName;
 
   if (!originalFrontmatter || originalFrontmatter.trim() === '') {
@@ -348,7 +360,7 @@ function buildFrontmatter(originalFrontmatter, skillName, runtimePrefix) {
       nameSeen = true;
       // Replace the value with `finalName`. Preserve surrounding quotes
       // if the original value had them (very common in SKILL.md sources
-      // — `name: "gdd-help"`).
+      // — `name: "hone-help"`).
       const quoted = m[2].match(/^["'](.*)["']\s*$/);
       const replacement = quoted ? '"' + finalName + '"' : finalName;
       lines[i] = m[1] + replacement;
@@ -374,4 +386,5 @@ module.exports = {
   ensureAdapterHeader,
   buildFrontmatter,
   CODEX_TOOL_MAP,
+  SKILL_PREFIX,
 };

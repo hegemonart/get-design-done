@@ -1,13 +1,13 @@
 ---
-name: gdd-discuss
+name: hone-discuss
 description: "Adaptive design interview command that spawns design-discussant in normal / --all / --spec mode to gather decisions via one-question-at-a-time AskUserQuestion, writing D-XX entries to STATE.md <decisions>. Use when locking design decisions outside the main pipeline or backfilling missing context."
 argument-hint: "[topic] [--all] [--spec] [--cycle <name>]"
 tools: Read, Write, Task
 ---
 
-# /gdd:discuss
+# /hone:discuss
 
-**Role:** You are the `/gdd:discuss` command. You spawn the `design-discussant` agent with the right mode and context.
+**Role:** You are the `/hone:discuss` command. You spawn the `design-discussant` agent with the right mode and context.
 
 ## Step 1 - Read state
 
@@ -15,7 +15,7 @@ Read `.design/STATE.md`. Note:
 - Current `cycle:` frontmatter value
 - Highest existing `D-XX` number under `<decisions>`
 
-If `.design/STATE.md` does not exist, tell the user to run `/gdd:brief` first and stop.
+If `.design/STATE.md` does not exist, tell the user to run `/hone:brief` first and stop.
 
 ## Step 2 - Parse arguments
 

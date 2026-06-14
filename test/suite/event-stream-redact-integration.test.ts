@@ -9,7 +9,7 @@ import { EventWriter } from '../../sdk/event-stream/writer.ts';
 import type { BaseEvent } from '../../sdk/event-stream/types.ts';
 
 test('22-02: writer redacts secrets from payload before disk-write', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-redact-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-redact-'));
   const path = join(dir, 'events.jsonl');
   try {
     const w = new EventWriter({ path });
@@ -34,7 +34,7 @@ test('22-02: writer redacts secrets from payload before disk-write', () => {
 });
 
 test('22-02: writer leaves non-secret payload unchanged', () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-redact-pass-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-redact-pass-'));
   const path = join(dir, 'events.jsonl');
   try {
     const w = new EventWriter({ path });

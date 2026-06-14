@@ -1,13 +1,13 @@
 {
-  "name": "get-design-done",
+  "name": "hone",
   "description": "A design-quality pipeline for AI coding agents: brief, explore, plan, design, and verify UI work against your design system.",
-  "version": "1.60.2",
+  "version": "2.0.0",
   "author": {
     "name": "hegemonart"
   },
-  "homepage": "https://github.com/hegemonart/get-design-done",
-  "repository": "https://github.com/hegemonart/get-design-done",
-  "license": "MIT",
+  "homepage": "https://github.com/hegemonart/hone",
+  "repository": "https://github.com/hegemonart/hone",
+  "license": "Apache-2.0",
   "keywords": [
     "design",
     "ui",

@@ -72,11 +72,12 @@ test('phase-23.5 baseline: package.json version is ≥1.23.5', () => {
   const pkg = JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8'));
   // Decimal patches: 1.23.5 ships as a 3-segment off-cadence version.
   // Assert minor ≥23 + patch ≥5 when minor === 23.
-  const m = pkg.version.match(/^1\.(\d+)\.(\d+)$/);
+  // Phase 61 (v2.0.0): major bumped past the 1.x arc. Accept any version ≥1.23.5.
+  const m = pkg.version.match(/^(\d+)\.(\d+)\.(\d+)$/);
   assert.ok(m, `unexpected version shape: ${pkg.version}`);
-  const [minor, patch] = [Number(m[1]), Number(m[2])];
+  const [maj, minor, patch] = [Number(m[1]), Number(m[2]), Number(m[3])];
   assert.ok(
-    minor > 23 || (minor === 23 && patch >= 5),
+    maj > 1 || minor > 23 || (minor === 23 && patch >= 5),
     `expected ≥1.23.5, got ${pkg.version}`,
   );
 });

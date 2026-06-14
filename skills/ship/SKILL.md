@@ -1,19 +1,19 @@
 ---
-name: gdd-ship
+name: hone-ship
 description: "Post-verify PR flow - creates a clean PR branch, invokes code review check, and prepares the PR for merge. Activates for requests involving finishing a cycle, packaging design output, or moving work to a pull request."
 argument-hint: "[--title <PR title>] [--draft]"
 tools: Read, Write, Bash, AskUserQuestion, Task
 disable-model-invocation: true
 ---
 
-# /gdd:ship
+# /hone:ship
 
-Closes the verify → merge gap: runs `/gdd:pr-branch` for a clean branch, assembles a PR body from design artifacts, and creates the PR via `gh`.
+Closes the verify → merge gap: runs `/hone:pr-branch` for a clean branch, assembles a PR body from design artifacts, and creates the PR via `gh`.
 
 ## Steps
 
 1. **Pre-flight verify check**: Check that `.design/DESIGN-VERIFICATION.md` exists and shows a pass. If missing or failing, ask: "Verify has not completed / failed. Ship anyway? (yes/no)"
-2. **Clean branch**: Invoke `/gdd:pr-branch` to produce a branch with only `src/` commits (no `.design/` or `.planning/` noise). Use the resulting branch for the PR.
+2. **Clean branch**: Invoke `/hone:pr-branch` to produce a branch with only `src/` commits (no `.design/` or `.planning/` noise). Use the resulting branch for the PR.
 3. **PR title**: Use `--title` argument if given, otherwise ask (AskUserQuestion): "PR title?"
 4. **PR body**: Auto-generate from:
    - Goals section of `.design/DESIGN-PLAN.md`
@@ -26,7 +26,7 @@ Closes the verify → merge gap: runs `/gdd:pr-branch` for a clean branch, assem
 ## Do Not
 
 - Do not push to `main`/`master` directly.
-- Do not include `.design/` or `.planning/` files in the PR branch - that is `/gdd:pr-branch`'s job.
+- Do not include `.design/` or `.planning/` files in the PR branch - that is `/hone:pr-branch`'s job.
 - Do not skip the verify pre-flight silently - always surface a failure and ask.
 
 ## Step 6.5 - PR inline review surface (pr-commenter)

@@ -16,4 +16,4 @@ The `use_figma` MCP runs every script inside the Figma plugin sandbox with a **~
 
 For **authoring new content** - creating pages, populating with library components, building documentation layouts from scratch - prefer `figma:figma-generate-design` from the Figma plugin. It runs outside the sandbox and has no per-call timeout.
 
-`use_figma` (and `/gdd:figma-write`) remain the right tools for **decision-writing**: attaching annotations, binding local-style tokens, registering Code Connect mappings, writing back implementation-status. Small, bounded, read-then-write operations where the four pitfalls don't apply.
+`use_figma` (and `/hone:figma-write`) remain the right tools for **decision-writing**: attaching annotations, binding local-style tokens, registering Code Connect mappings, writing back implementation-status. Small, bounded, read-then-write operations where the four pitfalls don't apply.

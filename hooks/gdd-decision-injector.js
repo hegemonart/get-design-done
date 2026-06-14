@@ -516,7 +516,7 @@ function buildRecallBlock(matches, basename, backendLabel) {
   }
   // backendLabel passed in from main()
   if (uniq.length > TOP_N) {
-    lines.push(`> … (${uniq.length - TOP_N} more matches; use \`/gdd:recall <term>\` to expand. Backend: ${backendLabel}.)`);
+    lines.push(`> … (${uniq.length - TOP_N} more matches; use \`/hone:recall <term>\` to expand. Backend: ${backendLabel}.)`);
   } else {
     lines.push(`> (${uniq.length} match${uniq.length === 1 ? '' : 'es'} surfaced. Backend: ${backendLabel}.)`);
   }

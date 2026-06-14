@@ -1,10 +1,10 @@
 # Security Policy
 
-get-design-done (GDD) is a development workflow toolkit with a runtime that runs
+hone (GDD) is a development workflow toolkit with a runtime that runs
 local hooks, spawns peer CLIs, exposes MCP servers, and can emit an event stream
 over a WebSocket transport. A STRIDE threat model of that runtime lives at
-[`reference/gdd-threat-model.md`](reference/gdd-threat-model.md); the static audit
-that backs it is at [`reference/gdd-runtime-audit.md`](reference/gdd-runtime-audit.md).
+[`reference/hone-threat-model.md`](reference/hone-threat-model.md); the static audit
+that backs it is at [`reference/hone-runtime-audit.md`](reference/hone-runtime-audit.md).
 
 ## Supported versions
 
@@ -47,7 +47,7 @@ fix before any public write-up.
 
 The hardened runtime surfaces this policy covers (see the threat model for detail):
 
-- The MCP servers under `sdk/mcp/` (notably the `gdd-state` mutating tools).
+- The MCP servers under `sdk/mcp/` (notably the `hone-state` mutating tools).
 - The peer-CLI broker (`scripts/lib/peer-cli/`) that spawns third-party CLIs.
 - The WebSocket event-stream transport (`scripts/lib/transports/ws.cjs`).
 - The session hooks under `hooks/`.
@@ -67,8 +67,8 @@ value with no sandboxing or boundary enforcement beyond what is noted below:
 
 | Variable           | Honored by                              | Effect |
 | ------------------ | --------------------------------------- | ------ |
-| `GDD_PROJECT_ROOT` | `gdd-mcp` (`tools/shared.ts`)           | Short-circuits project-root discovery; the path is resolved and returned as-is, bypassing the upward marker walk (and its `.git` repo-boundary guard). |
-| `GDD_STATE_PATH`   | `gdd-mcp` and `gdd-state` (`tools/shared.ts`) | Pins the `STATE.md` location directly. An **absolute** value is accepted as-is; a **relative** value is rejected by `gdd-state` if it uses `..` to escape the project root (`VALIDATION_STATE_PATH_ESCAPE`). |
+| `GDD_PROJECT_ROOT` | `hone-mcp` (`tools/shared.ts`)           | Short-circuits project-root discovery; the path is resolved and returned as-is, bypassing the upward marker walk (and its `.git` repo-boundary guard). |
+| `GDD_STATE_PATH`   | `hone-mcp` and `hone-state` (`tools/shared.ts`) | Pins the `STATE.md` location directly. An **absolute** value is accepted as-is; a **relative** value is rejected by `hone-state` if it uses `..` to escape the project root (`VALIDATION_STATE_PATH_ESCAPE`). |
 
 **Operational guidance:** set these only from trusted local configuration (your shell
 profile, a project-local `.env` you control, or your MCP client config). Do **not** let
@@ -78,7 +78,7 @@ redirect GDD's reads and writes to an arbitrary location on the local machine. T
 acceptable within the local trust model and is documented here so the behavior is
 explicit rather than surprising.
 
-Note: independent of these overrides, the `gdd-mcp` project-root walk now stops at the
+Note: independent of these overrides, the `hone-mcp` project-root walk now stops at the
 first `.git` repository boundary, so a server launched in a nested unrelated checkout no
 longer silently resolves to a *parent* repository's `.design/`/`.planning/`.
 

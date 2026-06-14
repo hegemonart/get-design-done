@@ -25,7 +25,7 @@ function findRepoRoot() {
   for (let i = 0; i < 10; i++) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch { /* keep walking */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -179,7 +179,7 @@ test('57-A: markdown floor - render returns null without throwing', () => {
 test('57-A: SQLite dispatch - appendDecision stores to SQLite', async () => {
   if (!Database || BACKEND !== 'sqlite') return; // SQLite not available or forced markdown
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-store-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-store-'));
   const dbPath = path.join(tmpDir, 'state.sqlite');
   const designDir = path.join(tmpDir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
@@ -223,7 +223,7 @@ test('57-A: SQLite dispatch - appendDecision stores to SQLite', async () => {
 test('57-A: SQLite dispatch - getDecisions returns rows from SQLite', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-store-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-store-'));
   const dbPath = path.join(tmpDir, 'state.sqlite');
   const designDir = path.join(tmpDir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
@@ -257,7 +257,7 @@ test('57-A: SQLite dispatch - getDecisions returns rows from SQLite', () => {
 test('57-A: SQLite dispatch - appendBlocker stores to SQLite', async () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-store-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-store-'));
   const dbPath = path.join(tmpDir, 'state.sqlite');
   const designDir = path.join(tmpDir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
@@ -297,7 +297,7 @@ test('57-A: SQLite dispatch - appendBlocker stores to SQLite', async () => {
 test('57-A: SQLite dispatch - setPosition and getPosition round-trip', async () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-store-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-store-'));
   const dbPath = path.join(tmpDir, 'state.sqlite');
   const designDir = path.join(tmpDir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
@@ -335,7 +335,7 @@ test('57-A: txn rollback on forced render throw leaves SQLite unchanged', () => 
   // render step throws. We do this by monkey-patching require to return
   // a broken render module for the duration of this test.
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-txn-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-txn-'));
   const dbPath = path.join(tmpDir, 'state.sqlite');
   const designDir = path.join(tmpDir, '.design');
   fs.mkdirSync(designDir, { recursive: true });
@@ -438,7 +438,7 @@ test('57-A: txn rollback on forced render throw leaves SQLite unchanged', () => 
 test('57-A: queryDecisions returns [] for empty database', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-store-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-store-'));
   const dbPath = path.join(tmpDir, 'state.sqlite');
   fs.mkdirSync(path.join(tmpDir, '.design'), { recursive: true });
 
@@ -456,7 +456,7 @@ test('57-A: queryDecisions returns [] for empty database', () => {
 test('57-A: queryDecisions returns [] for empty string query', () => {
   if (!Database || BACKEND !== 'sqlite') return;
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-57-store-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-57-store-'));
   const dbPath = path.join(tmpDir, 'state.sqlite');
   fs.mkdirSync(path.join(tmpDir, '.design'), { recursive: true });
 

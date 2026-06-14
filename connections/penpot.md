@@ -1,6 +1,6 @@
 # Penpot — Connection Specification
 
-This file is the connection specification for **Penpot** within the get-design-done pipeline. Penpot is an open-source, self-hostable design and prototyping platform — an AI-native (Wave 2) alternative to Figma. It is a **canvas-category** tool: GDD reads boards and components, exports tokens, and writes design proposals back. See `connections/connections.md` for the full connection index and capability matrix, and `connections/figma.md` for the sibling canvas-category connection.
+This file is the connection specification for **Penpot** within the hone pipeline. Penpot is an open-source, self-hostable design and prototyping platform — an AI-native (Wave 2) alternative to Figma. It is a **canvas-category** tool: GDD reads boards and components, exports tokens, and writes design proposals back. See `connections/connections.md` for the full connection index and capability matrix, and `connections/figma.md` for the sibling canvas-category connection.
 
 GDD connects to **your** Penpot instance. It does **not** install, bundle, or host Penpot — there is no bundled dependency. You bring a running Penpot (self-hosted or cloud) plus an access token.
 

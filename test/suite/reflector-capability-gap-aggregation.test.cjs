@@ -6,7 +6,7 @@
 //   - renderGapsSection(clusters) — markdown emitter, empty list → ''.
 //   - evaluateStageGate(history, config) — D-01/D-03 Stage-0 → Stage-1
 //     gate evaluator. Closed-form Beta-stddev, no auto-flip.
-//   - gdd-events CLI `--type <typename>` flag (desugars to grep type=<n>).
+//   - hone-events CLI `--type <typename>` flag (desugars to grep type=<n>).
 //
 // D-11: synthetic inline fixtures only — no live `.design/gep/events.jsonl`
 // reads or writes. Each CLI test seeds its own tmpdir JSONL file.
@@ -26,7 +26,7 @@ const {
   evaluateStageGate,
 } = require('../../scripts/lib/reflector-capability-gap-aggregator.cjs');
 
-const CLI = join(__dirname, '../..', 'scripts', 'cli', 'gdd-events.mjs');
+const CLI = join(__dirname, '../..', 'scripts', 'cli', 'hone-events.mjs');
 
 // Node 24 on Windows crashes the child process (STATUS_STACK_BUFFER_OVERRUN
 // 0xC0000409) when it imports our .mjs CLI which dynamic-imports type-stripped
@@ -314,10 +314,10 @@ test('29-03 T4b: evaluateStageGate handles fewer-than-M cycles (cycles_observed 
 });
 
 // ---------------------------------------------------------------------------
-// Test 5 — CLI: spawn `gdd-events --type capability_gap --path=<fixture>`
+// Test 5 — CLI: spawn `hone-events --type capability_gap --path=<fixture>`
 // against a synthetic JSONL and assert stdout contains only capability_gap.
 
-test('29-03 T5: gdd-events --type capability_gap filters to matching events only', { skip: SKIP_PLATFORM }, () => {
+test('29-03 T5: hone-events --type capability_gap filters to matching events only', { skip: SKIP_PLATFORM }, () => {
   const dir = mkTmpdir();
   try {
     const fixturePath = join(dir, 'events.jsonl');
@@ -342,7 +342,7 @@ test('29-03 T5: gdd-events --type capability_gap filters to matching events only
   }
 });
 
-test('29-03 T5b: gdd-events --type=<typename> equals-form is supported', { skip: SKIP_PLATFORM }, () => {
+test('29-03 T5b: hone-events --type=<typename> equals-form is supported', { skip: SKIP_PLATFORM }, () => {
   const dir = mkTmpdir();
   try {
     const fixturePath = join(dir, 'events.jsonl');

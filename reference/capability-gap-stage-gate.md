@@ -13,7 +13,7 @@
 Phase 29 ships in two stages:
 
 - **Stage 0** (Wave A, v1.29.0) emits `capability_gap` events from
-  `/gdd:fast` no-skill-match (Plan 29-01), `gdd-router` unmatched-intent
+  `/hone:fast` no-skill-match (Plan 29-01), `hone-router` unmatched-intent
   (Plan 29-01), and the reflector pattern-detection pass (Plan 29-02).
 - **Stage 1** (Wave B) layers incubator authoring of agents and skills on
   top of the Stage-0 signal (Plans 29-04 / 29-05 / 29-06).
@@ -22,7 +22,7 @@ The transition Stage 0 → Stage 1 is **gated on data**, not on a calendar
 date or a release. The reflector aggregates events into per-cycle
 clusters (`scripts/lib/reflector-capability-gap-aggregator.cjs`) and
 evaluates a deterministic stability function against the project's
-cycle history. When the gate is crossed, `/gdd:apply-reflections`
+cycle history. When the gate is crossed, `/hone:apply-reflections`
 emits a **one-time user-facing prompt** in the cycle markdown - never
 an auto-stage-flip. The user opting in is a separate explicit action,
 out of scope for this gate spec.
@@ -109,7 +109,7 @@ gates stage transition.
 
 ## 4. Evaluation cadence
 
-Gate evaluation runs every time `/gdd:apply-reflections` is invoked.
+Gate evaluation runs every time `/hone:apply-reflections` is invoked.
 Inputs:
 
 1. The reflector pass collects all cycle markdown files in
@@ -136,7 +136,7 @@ explicit opt-in action, never by the reflector.
 
 ## 5. Gate-crossed prompt
 
-When the gate crosses for the first time, `/gdd:apply-reflections`
+When the gate crosses for the first time, `/hone:apply-reflections`
 appends the following verbatim block to the cycle markdown:
 
 > ```markdown
@@ -176,7 +176,7 @@ appends the following verbatim block to the cycle markdown:
 
 The wiring side of this - actually writing the `user_prompted_at`
 timestamp and routing the opt-in confirmation - is deferred to
-**Plan 29-05** (`/gdd:apply-reflections` extension). This document
+**Plan 29-05** (`/hone:apply-reflections` extension). This document
 specifies the prompt text and behavior; 29-05 implements the
 state-machine that consumes it.
 
@@ -223,7 +223,7 @@ Operators can manually reset the gate by editing `.design/config.json`:
 
 Reset is **explicit** and **idempotent**. The reflector never writes
 to these fields on its own - the only writers are (a) the
-`/gdd:apply-reflections` opt-in path (Plan 29-05) and (b) the human
+`/hone:apply-reflections` opt-in path (Plan 29-05) and (b) the human
 operator editing the file by hand.
 
 ---

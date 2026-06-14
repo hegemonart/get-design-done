@@ -1,5 +1,5 @@
 ---
-name: gdd-sketch-wrap-up
+name: hone-sketch-wrap-up
 description: "Walk through sketches, pick winner + rationale, group by design area, write project skills to ./.claude/skills/design-<area>-conventions.md."
 argument-hint: "[slug]"
 tools: Read, Write, Glob, AskUserQuestion
@@ -14,7 +14,7 @@ tools: Read, Write, Glob, AskUserQuestion
 - Glob `.design/sketches/*/`.
 - If `[slug]` provided → use it directly.
 - If multiple pending (no `WINNER.md`) → AskUserQuestion: "Which sketch are you wrapping up?"
-- If none → print `No open sketches. Run /gdd:sketch first.` and exit.
+- If none → print `No open sketches. Run /hone:sketch first.` and exit.
 
 ## Step 2 - Walk variants
 
@@ -42,7 +42,7 @@ Append to `./.claude/skills/design-<area>-conventions.md` (create if missing):
 ```markdown
 # Design <Area> Conventions (Project-Local)
 
-Auto-loaded in gdd sessions. Captures decisions codified from `/gdd:sketch-wrap-up`.
+Auto-loaded in gdd sessions. Captures decisions codified from `/hone:sketch-wrap-up`.
 
 ## Decision from sketch: <slug> (YYYY-MM-DD)
 **Winner**: variant-N (<direction label>)
@@ -61,7 +61,7 @@ Two coupled writes - both must succeed so the sketch resolution surfaces in both
 - **Write 1 (`<decisions>`):** `D-XX: sketch/<slug> — winner: variant-N — <rationale> (locked)\n  Source: .design/sketches/<slug>/WINNER.md`
 - **Write 2 (`<prototyping>`):** `<sketch slug="<slug>" cycle="<cycle>" decision="D-XX" status="resolved"/>`. `<cycle>` from STATE.md frontmatter; empty string valid for single-cycle Wave A projects. If `<prototyping>` block does not exist, materialize between `<must_haves>` and `<connections>` per STATE template; append the `<sketch …/>` as first child.
 
-Prefer MCP `gdd_state` typed mutators (byte-identical output): `mcp__gdd_state__add_decision({id, text, status})` + `mcp__gdd_state__add_prototyping({type:"sketch", slug, cycle, decision, status})`. Without MCP, edit `.design/STATE.md` directly via Read + Write.
+Prefer MCP `hone_state` typed mutators (byte-identical output): `mcp__hone_state__add_decision({id, text, status})` + `mcp__hone_state__add_prototyping({type:"sketch", slug, cycle, decision, status})`. Without MCP, edit `.design/STATE.md` directly via Read + Write.
 
 ## Step 8 - Update sketches SUMMARY.md
 

@@ -1,6 +1,6 @@
 // sdk/cli/commands/init.ts — Plan 21-09 Task 6 (SDK-21).
 //
-// `gdd-sdk init` — bootstrap a new project's `.design/` directory by
+// `hone-sdk init` — bootstrap a new project's `.design/` directory by
 // delegating to `init-runner.run()` (Plan 21-08).
 //
 // Exit-code mapping (InitRunnerResult.status → code):
@@ -36,7 +36,7 @@ const INIT_FLAGS: readonly FlagSpec[] = [
   { name: 'state-template', type: 'string' },
 ];
 
-const USAGE = `gdd-sdk init [flags]
+const USAGE = `hone-sdk init [flags]
 
 Bootstrap a new project's .design/ directory.
 
@@ -88,7 +88,7 @@ export async function initCommand(
   try {
     flags = coerceFlags(args, INIT_FLAGS);
   } catch (err) {
-    stderr.write(`gdd-sdk init: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk init: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -141,7 +141,7 @@ export async function initCommand(
     } catch {
       // swallow
     }
-    stderr.write(`gdd-sdk init: unexpected error: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk init: unexpected error: ${errMessage(err)}\n`);
     return 3;
   }
 

@@ -49,12 +49,12 @@ test('phase-25 baseline: agents/prototype-gate.md exists', () => {
   assert.ok(fs.existsSync(target), 'Plan 25-01 must ship agents/prototype-gate.md');
 });
 
-test('phase-25 baseline: <prototyping> block round-trip is covered by gdd-state-prototyping.test.ts', () => {
+test('phase-25 baseline: <prototyping> block round-trip is covered by hone-state-prototyping.test.ts', () => {
   // The deeper round-trip / extra_attrs coverage lives in this sister test
   // file — assert it is present so phase-25 has a reachable byte-loss
   // regression guard from the baseline.
-  const target = path.join(REPO_ROOT, 'test', 'suite', 'gdd-state-prototyping.test.ts');
-  assert.ok(fs.existsSync(target), 'test/suite/gdd-state-prototyping.test.ts must exist (Plan 25-01 acceptance)');
+  const target = path.join(REPO_ROOT, 'test', 'suite', 'hone-state-prototyping.test.ts');
+  assert.ok(fs.existsSync(target), 'test/suite/hone-state-prototyping.test.ts must exist (Plan 25-01 acceptance)');
 });
 
 test('phase-25 baseline: sketch-wrap-up writes both D-XX and <sketch …/>', () => {

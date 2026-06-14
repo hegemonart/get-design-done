@@ -96,6 +96,9 @@ jobs:
       - name: Detect stale references
         run: node scripts/detect-stale-refs.cjs
 
+      - name: "No stale brand residue (repo-wide gdd -> hone gate)"
+        run: npm run validate:no-stale-brand
+
       - name: Validate skill-authoring contract
         # Phase 28.5-11 / D-11: validate-skill-length is the load-bearing
         # test contract. Exit 2 = blockers (fail build); exit 1 = warnings

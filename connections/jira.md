@@ -1,6 +1,6 @@
 # Jira — Connection Specification
 
-This file is the connection specification for Jira within the get-design-done pipeline — the parity of `connections/linear.md`. See `connections/connections.md` for the index + capability matrix (the jira row is added at the 35.3 closeout).
+This file is the connection specification for Jira within the hone pipeline — the parity of `connections/linear.md`. See `connections/connections.md` for the index + capability matrix (the jira row is added at the 35.3 closeout).
 
 ---
 
@@ -31,7 +31,7 @@ Expect Atlassian/Jira issue/comment tools (`mcp__atlassian__*`). If empty → `j
 ## What GDD does (bidirectional, via `agents/ticket-sync-agent.md`)
 
 - **READ (decision-injector):** on `.design/**.md` open, the linked Jira issue's recent comments are surfaced as cycle context.
-- **WRITE (cycle completion):** on `/gdd:complete-cycle`, the agent transitions the linked issue (e.g., In Review → Done) and posts a **redacted** summary. The link map lives in STATE `<ticket_links>` (`jira:PROJ-45`).
+- **WRITE (cycle completion):** on `/hone:complete-cycle`, the agent transitions the linked issue (e.g., In Review → Done) and posts a **redacted** summary. The link map lives in STATE `<ticket_links>` (`jira:PROJ-45`).
 
 See `reference/ticket-sync.md` for the `<ticket_links>` schema + the read/write contract.
 

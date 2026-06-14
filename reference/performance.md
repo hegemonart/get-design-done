@@ -1,6 +1,6 @@
 # Performance - Reference Guide
 
-Performance is a design constraint, not an engineering afterthought. Every millisecond of delay in LCP is a measurable reduction in conversion rate; every layout shift during page load erodes user trust. This reference establishes authoritative performance budgets, measurement targets, and implementation rules for all project types handled by the get-design-done framework.
+Performance is a design constraint, not an engineering afterthought. Every millisecond of delay in LCP is a measurable reduction in conversion rate; every layout shift during page load erodes user trust. This reference establishes authoritative performance budgets, measurement targets, and implementation rules for all project types handled by the hone framework.
 
 ---
 

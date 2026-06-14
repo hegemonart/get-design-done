@@ -315,7 +315,7 @@ for (const spec of SPEC) {
           assert.deepEqual(call.spawnOpts.env, { K: 'V' });
           // threadStart called once with the gdd service_name marker.
           assert.equal(call.threadStartCalls.length, 1);
-          assert.equal(call.threadStartCalls[0].service_name, 'gdd_peer_delegation');
+          assert.equal(call.threadStartCalls[0].service_name, 'hone_peer_delegation');
           // turn called once with the prefixed prompt.
           assert.equal(call.turnCalls.length, 1);
           assert.equal(call.turnCalls[0].threadId, 'thr_mock_1');

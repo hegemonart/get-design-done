@@ -3,12 +3,12 @@
 // tests/runtime-slash.test.cjs — Phase 28.7 (Plan 28.7-03).
 //
 // Coverage for scripts/lib/install/runtime-slash.cjs:
-//   - claude / 13 default runtimes emit `/gdd-<name>`.
-//   - codex emits `$gdd-<name>` (shell-variable form, token lowercased).
-//   - Idempotency: `/gdd-x`, `gdd-x`, `/gdd:x`, `gdd:x`, `$gdd-x`, `$gdd:x`
+//   - claude / 13 default runtimes emit `/hone-<name>`.
+//   - codex emits `$hone-<name>` (shell-variable form, token lowercased).
+//   - Idempotency: `/hone-x`, `hone-x`, `/hone:x`, `gdd:x`, `$hone-x`, `$gdd:x`
 //     all normalize to canonical form for the target runtime.
 //   - Argument tails (including Windows paths) round-trip untouched.
-//   - Empty / whitespace-only / degenerate (`gdd-`) inputs → empty string.
+//   - Empty / whitespace-only / degenerate (`hone-`) inputs → empty string.
 //   - Non-string inputs pass through unchanged (type-guard).
 //   - resolveRuntime precedence: GDD_RUNTIME > .planning/config.json > default 'claude'.
 //   - Malformed JSON in config.json does NOT throw — falls back to 'claude'.
@@ -49,7 +49,7 @@ function snapshotGddRuntime() {
  * `body` can be any string (JSON or malformed). Returns the absolute dir path.
  */
 function tmpProjectWithConfigBody(body) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-slash-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-slash-'));
   fs.mkdirSync(path.join(dir, '.planning'));
   fs.writeFileSync(path.join(dir, '.planning', 'config.json'), body);
   return dir;
@@ -65,48 +65,48 @@ function tmpProjectWithRuntime(rt) {
 
 // ── formatGddSlash — runtime emission ──────────────────────────────────────
 
-test('runtime-slash: claude emits /gdd-<name>', () => {
-  assert.equal(formatGddSlash('explore', 'claude'), '/gdd-explore');
+test('runtime-slash: claude emits /hone-<name>', () => {
+  assert.equal(formatGddSlash('explore', 'claude'), '/hone-explore');
 });
 
-test('runtime-slash: codex emits $gdd-<name> with lowercased token', () => {
-  assert.equal(formatGddSlash('explore', 'codex'), '$gdd-explore');
-  assert.equal(formatGddSlash('Explore', 'codex'), '$gdd-explore');
+test('runtime-slash: codex emits $hone-<name> with lowercased token', () => {
+  assert.equal(formatGddSlash('explore', 'codex'), '$hone-explore');
+  assert.equal(formatGddSlash('Explore', 'codex'), '$hone-explore');
 });
 
-test('runtime-slash: 5-runtime sample all emit /gdd-<name> (cursor, windsurf, kilo, opencode, antigravity)', () => {
+test('runtime-slash: 5-runtime sample all emit /hone-<name> (cursor, windsurf, kilo, opencode, antigravity)', () => {
   for (const rt of ['cursor', 'windsurf', 'kilo', 'opencode', 'antigravity']) {
     assert.equal(
       formatGddSlash('debug', rt),
-      '/gdd-debug',
-      `${rt} should emit /gdd-debug`
+      '/hone-debug',
+      `${rt} should emit /hone-debug`
     );
   }
 });
 
 test('runtime-slash: unknown / falsy runtime defaults to claude shape', () => {
-  assert.equal(formatGddSlash('explore', 'hermes'), '/gdd-explore');
-  assert.equal(formatGddSlash('explore', undefined), '/gdd-explore');
-  assert.equal(formatGddSlash('explore', ''), '/gdd-explore');
+  assert.equal(formatGddSlash('explore', 'hermes'), '/hone-explore');
+  assert.equal(formatGddSlash('explore', undefined), '/hone-explore');
+  assert.equal(formatGddSlash('explore', ''), '/hone-explore');
 });
 
 // ── formatGddSlash — idempotency ───────────────────────────────────────────
 
-test('runtime-slash: /gdd-debug stays /gdd-debug under claude (idempotent)', () => {
-  assert.equal(formatGddSlash('/gdd-debug', 'claude'), '/gdd-debug');
+test('runtime-slash: /hone-debug stays /hone-debug under claude (idempotent)', () => {
+  assert.equal(formatGddSlash('/hone-debug', 'claude'), '/hone-debug');
 });
 
-test('runtime-slash: $gdd-debug normalizes to /gdd-debug under claude', () => {
-  assert.equal(formatGddSlash('$gdd-debug', 'claude'), '/gdd-debug');
+test('runtime-slash: $hone-debug normalizes to /hone-debug under claude', () => {
+  assert.equal(formatGddSlash('$hone-debug', 'claude'), '/hone-debug');
 });
 
-test('runtime-slash: $gdd-debug stays $gdd-debug under codex (idempotent)', () => {
-  assert.equal(formatGddSlash('$gdd-debug', 'codex'), '$gdd-debug');
+test('runtime-slash: $hone-debug stays $hone-debug under codex (idempotent)', () => {
+  assert.equal(formatGddSlash('$hone-debug', 'codex'), '$hone-debug');
 });
 
-test('runtime-slash: legacy /gdd:foo input normalizes to /gdd-foo under claude', () => {
-  assert.equal(formatGddSlash('/gdd:foo', 'claude'), '/gdd-foo');
-  assert.equal(formatGddSlash('gdd:foo', 'claude'), '/gdd-foo');
+test('runtime-slash: legacy /hone:foo input normalizes to /hone-foo under claude', () => {
+  assert.equal(formatGddSlash('/hone:foo', 'claude'), '/hone-foo');
+  assert.equal(formatGddSlash('gdd:foo', 'claude'), '/hone-foo');
 });
 
 // ── formatGddSlash — argument tail preservation ────────────────────────────
@@ -114,7 +114,7 @@ test('runtime-slash: legacy /gdd:foo input normalizes to /gdd-foo under claude',
 test('runtime-slash: argument tail preserved under claude', () => {
   assert.equal(
     formatGddSlash('do --phase 1', 'claude'),
-    '/gdd-do --phase 1'
+    '/hone-do --phase 1'
   );
 });
 
@@ -123,14 +123,14 @@ test('runtime-slash: Windows path in argument tail preserved verbatim under code
   // lowercased on codex. Phase 28.6 macOS-symlink / Windows-path lesson.
   const input = 'open C:\\Users\\Me\\file.txt';
   const got = formatGddSlash(input, 'codex');
-  assert.equal(got, '$gdd-open C:\\Users\\Me\\file.txt');
+  assert.equal(got, '$hone-open C:\\Users\\Me\\file.txt');
 });
 
 test('runtime-slash: tab-separated argument tail preserved', () => {
   // The split regex matches \s (any whitespace), so tab tails round-trip too.
   assert.equal(
     formatGddSlash('do\targ', 'claude'),
-    '/gdd-do\targ'
+    '/hone-do\targ'
   );
 });
 
@@ -146,11 +146,11 @@ test('runtime-slash: whitespace-only input returns empty string', () => {
   assert.equal(formatGddSlash('\t\t', 'codex'), '');
 });
 
-test('runtime-slash: bare prefix gdd- with no token returns empty string', () => {
-  // Never re-emit `/gdd-` or `$gdd-` with nothing after.
-  assert.equal(formatGddSlash('gdd-', 'claude'), '');
-  assert.equal(formatGddSlash('/gdd-', 'claude'), '');
-  assert.equal(formatGddSlash('$gdd-', 'codex'), '');
+test('runtime-slash: bare prefix hone- with no token returns empty string', () => {
+  // Never re-emit `/hone-` or `$hone-` with nothing after.
+  assert.equal(formatGddSlash('hone-', 'claude'), '');
+  assert.equal(formatGddSlash('/hone-', 'claude'), '');
+  assert.equal(formatGddSlash('$hone-', 'codex'), '');
 });
 
 test('runtime-slash: non-string input passes through unchanged (type-guard)', () => {
@@ -220,7 +220,7 @@ test('runtime-slash: resolveRuntime defaults to claude when config missing runti
 
 test('runtime-slash: resolveRuntime defaults to claude when projectDir has no .planning/', (t) => {
   const restore = snapshotGddRuntime();
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-slash-noplanning-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-slash-noplanning-'));
   t.after(() => {
     fs.rmSync(dir, { recursive: true, force: true });
     restore();
@@ -237,16 +237,16 @@ test('runtime-slash: formatGddSlashFor delegates via resolveRuntime + formatGddS
     fs.rmSync(dir, { recursive: true, force: true });
     restore();
   });
-  // resolveRuntime(dir) → 'codex', formatGddSlash('explore','codex') → $gdd-explore
-  assert.equal(formatGddSlashFor(dir, 'explore'), '$gdd-explore');
+  // resolveRuntime(dir) → 'codex', formatGddSlash('explore','codex') → $hone-explore
+  assert.equal(formatGddSlashFor(dir, 'explore'), '$hone-explore');
   // Same dir, different command — verifies it's not a cache hit on first arg.
-  assert.equal(formatGddSlashFor(dir, 'debug'), '$gdd-debug');
+  assert.equal(formatGddSlashFor(dir, 'debug'), '$hone-debug');
 });
 
 test('runtime-slash: formatGddSlashFor with no projectDir uses claude default', () => {
   const restore = snapshotGddRuntime();
   try {
-    assert.equal(formatGddSlashFor(undefined, 'explore'), '/gdd-explore');
+    assert.equal(formatGddSlashFor(undefined, 'explore'), '/hone-explore');
   } finally {
     restore();
   }

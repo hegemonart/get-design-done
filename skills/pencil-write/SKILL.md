@@ -1,19 +1,19 @@
 ---
-name: gdd-pencil-write
+name: hone-pencil-write
 description: "Update local `.pen` source files with design decisions from `.design/DESIGN-CONTEXT.md` by dispatching the `design-pencil-writer` agent in one of two modes (annotate / roundtrip). Use when the user has completed a design pipeline cycle and wants the decisions reflected in their `.pen` files. Operates proposal->confirm with `--dry-run`."
 argument-hint: "<annotate|roundtrip> [--dry-run]"
 user-invocable: true
 tools: Read, Write, Bash, Grep, Glob
 ---
 
-# gdd-pencil-write
+# hone-pencil-write
 
 Dispatches the `design-pencil-writer` agent to write design decisions back to `.pen` spec files. Unlike Figma/paper.design, pencil.dev keeps `.pen` YAML specs as the project's git-tracked source of truth; no MCP is required and every write is committed atomically. The probe pattern (file-based, no ToolSearch) and integration contract are documented at `../../connections/pencil-dev.md`.
 
 ## Usage
 
 ```
-/get-design-done pencil-write <mode> [--dry-run]
+/hone:pencil-write <mode> [--dry-run]
 ```
 
 Modes:

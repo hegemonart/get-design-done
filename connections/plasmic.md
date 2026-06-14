@@ -1,6 +1,6 @@
 # Plasmic — Connection Specification
 
-This file is the connection specification for Plasmic within the get-design-done pipeline. Plasmic is a **dual-category** tool: it is both a **visual canvas** (a hosted design/builder surface whose pages and components can be read as a design source, like Figma) **and** a **code generator** (it emits real component code via its codegen loader/API). Because of this, Plasmic earns entries in **both** the `canvas` column **and** the `generator` column of the capability matrix. It integrates via the Plasmic MCP (preferred) or via a project token + loader/codegen API. See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for Plasmic within the hone pipeline. Plasmic is a **dual-category** tool: it is both a **visual canvas** (a hosted design/builder surface whose pages and components can be read as a design source, like Figma) **and** a **code generator** (it emits real component code via its codegen loader/API). Because of this, Plasmic earns entries in **both** the `canvas` column **and** the `generator` column of the capability matrix. It integrates via the Plasmic MCP (preferred) or via a project token + loader/codegen API. See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

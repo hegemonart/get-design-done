@@ -12,7 +12,7 @@
  *      "[brief|explore|plan|...]" string that drives shell completion.
  *   2. Root SKILL.md "## Command Reference" markdown table — the human-facing
  *      catalogue (first column cleaned of trailing arg syntax).
- *   3. Root SKILL.md "## Jump Mode" `/gdd:foo  →  Skill("get-design-done:bar")`
+ *   3. Root SKILL.md "## Jump Mode" `/hone:foo  →  Skill("hone:bar")`
  *      lines — the routing map.
  *
  *   4. skills/ filesystem directories — the ground truth set.
@@ -24,7 +24,7 @@
  *
  * Exception list — skills that are intentionally NOT user-invocable and
  * therefore never reach a documented surface:
- *   - connections     (gdd-connections internal wizard skill name)
+ *   - connections     (hone-connections internal wizard skill name)
  *   - router          (deterministic internal routing skill, no model call)
  *   - synthesize      (internal Haiku synthesizer, `user-invocable: false`)
  *   - using-gdd       (bootstrap discipline, `disable-model-invocation: true`)
@@ -45,7 +45,7 @@ const { REPO_ROOT } = require('./helpers.ts');
 // Each entry MUST come with a reason so deletions/additions remain auditable.
 // ---------------------------------------------------------------------------
 const EXCEPTIONS = new Map([
-  ['connections', 'internal onboarding wizard (gdd-connections)'],
+  ['connections', 'internal onboarding wizard (hone-connections)'],
   ['router', 'internal deterministic router, no user surface'],
   ['synthesize', 'internal Haiku synthesizer (user-invocable: false)'],
   ['using-gdd', 'bootstrap discipline (disable-model-invocation: true)'],
@@ -112,12 +112,12 @@ function parseCommandTableTokens(content) {
 }
 
 /**
- * Parse the "## Jump Mode" section's `/gdd:<cmd>  →  Skill("get-design-done:<target>")`
+ * Parse the "## Jump Mode" section's `/hone:<cmd>  →  Skill("hone:<target>")`
  * lines. Returns two sets:
- *   - cmdTokens: the user-typed command names after `/gdd:`
- *   - skillTokens: the Skill() target names with the `get-design-done:` prefix
- *     stripped (and with both bare and `gdd-`-stripped forms included so a
- *     disk dir `foo` matches a target `gdd-foo`).
+ *   - cmdTokens: the user-typed command names after `/hone:`
+ *   - skillTokens: the Skill() target names with the `hone:` prefix
+ *     stripped (and with both bare and `hone-`-stripped forms included so a
+ *     disk dir `foo` matches a target `hone-foo`).
  */
 function parseJumpModeTokens(content) {
   const startIdx = content.indexOf('## Jump Mode');
@@ -128,15 +128,15 @@ function parseJumpModeTokens(content) {
   const cmdTokens = new Set();
   const skillTokens = new Set();
   // Lines look like:
-  //   /gdd:brief     → Skill("get-design-done:gdd-brief")
-  //   /gdd:scan      → Skill("get-design-done:gdd-explore")   # deprecated alias → explore
-  const lineRegex = /\/gdd:([\w-]+)\s*→\s*Skill\("([^"]+)"/g;
+  //   /hone:brief     → Skill("hone:hone-brief")
+  //   /hone:scan      → Skill("hone:hone-explore")   # deprecated alias → explore
+  const lineRegex = /\/hone:([\w-]+)\s*→\s*Skill\("([^"]+)"/g;
   let m;
   while ((m = lineRegex.exec(slice)) !== null) {
     cmdTokens.add(m[1]);
-    const target = m[2].replace(/^get-design-done:/, '');
+    const target = m[2].replace(/^hone:/, '');
     skillTokens.add(target);
-    if (target.startsWith('gdd-')) skillTokens.add(target.slice(4));
+    if (target.startsWith('hone-')) skillTokens.add(target.slice(5));
   }
   assert.ok(cmdTokens.size > 0, 'Jump Mode section parsed zero entries');
   return { cmdTokens, skillTokens };
@@ -173,7 +173,7 @@ test('skill-surface-sync: every skills/ dir appears in at least one root SKILL.m
     const inJump =
       jumpCmdTokens.has(dir) ||
       jumpSkillTokens.has(dir) ||
-      jumpSkillTokens.has(`gdd-${dir}`);
+      jumpSkillTokens.has(`hone-${dir}`);
     if (!inFm && !inTable && !inJump) {
       orphans.push(dir);
     }
@@ -215,13 +215,13 @@ test('skill-surface-sync: Jump Mode targets do not reference deleted skills', ()
   for (const target of skillTokens) {
     // Skip the de-prefixed bare-name forms we synthesized — they're not the
     // verbatim Skill() target. Only test full targets (those that did NOT
-    // come from a `gdd-` strip), which means: a target is verbatim iff there
-    // is no `gdd-${target}` also in the set.
-    // Simpler heuristic: check both `target` and `gdd-target` against dirs —
+    // come from a `hone-` strip), which means: a target is verbatim iff there
+    // is no `hone-${target}` also in the set.
+    // Simpler heuristic: check both `target` and `hone-target` against dirs —
     // at least one form must exist on disk. (skills/ dir names do not carry
-    // the `gdd-` prefix today; the prefix lives only inside the SKILL.md
+    // the `hone-` prefix today; the prefix lives only inside the SKILL.md
     // `name:` field.)
-    const bare = target.startsWith('gdd-') ? target.slice(4) : target;
+    const bare = target.startsWith('hone-') ? target.slice(5) : target;
     if (!dirs.has(bare) && !dirs.has(target)) {
       dangling.push(target);
     }

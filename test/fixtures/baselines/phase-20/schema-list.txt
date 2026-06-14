@@ -8,8 +8,8 @@ intel.schema.json
 iteration-budget.schema.json
 marketplace.schema.json
 mcp-budget.schema.json
-mcp-gdd-state-tools.schema.json
-mcp-gdd-tools.schema.json
+mcp-hone-state-tools.schema.json
+mcp-hone-tools.schema.json
 plugin.schema.json
 protected-paths.schema.json
 rate-limits.schema.json

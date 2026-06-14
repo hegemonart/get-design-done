@@ -1,4 +1,4 @@
-// tests/gdd-state-parser.test.ts — parser coverage.
+// tests/hone-state-parser.test.ts — parser coverage.
 //
 // Plan 20-01 acceptance: parsing a fresh .design/STATE.md round-trips
 // byte-identical through parse → serialize → parse for both the

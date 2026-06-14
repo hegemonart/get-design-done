@@ -1,12 +1,12 @@
 ---
-name: gdd-cache-manager
+name: hone-cache-manager
 description: "Maintains .design/cache-manifest.json for Layer B explicit cache per D-08. Computes deterministic SHA-256 input-hash from (agent-path + sorted-input-file-paths + input-content-hashes). On spawn: lookup key → return cached blob if within TTL, else miss. On completion: write result + TTL. Consulted by hooks/budget-enforcer.ts before every Agent spawn."
 user-invocable: false
 tools: Read, Bash, Write
 disable-model-invocation: true
 ---
 
-# gdd-cache-manager
+# hone-cache-manager
 
 ## Role
 

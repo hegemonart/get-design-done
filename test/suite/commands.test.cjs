@@ -7,8 +7,8 @@ const { REPO_ROOT } = require('./helpers.ts');
 
 function extractGddCommands(readmeContent) {
   const commands = new Set();
-  // Match /gdd:word patterns
-  const re = /\/gdd:([a-z][a-z0-9-]*)/g;
+  // Match /hone:word patterns
+  const re = /\/hone:([a-z][a-z0-9-]*)/g;
   let m;
   while ((m = re.exec(readmeContent)) !== null) {
     commands.add(m[1]);
@@ -23,7 +23,7 @@ test('commands: README.md can be read', () => {
   assert.ok(fs.existsSync(readmePath), 'README.md must exist at repo root');
 });
 
-test('commands: every /gdd: command in README has a skills/ directory with SKILL.md', () => {
+test('commands: every /hone: command in README has a skills/ directory with SKILL.md', () => {
   const readmeContent = fs.readFileSync(readmePath, 'utf8');
   const commands = extractGddCommands(readmeContent);
 
@@ -38,11 +38,11 @@ test('commands: every /gdd: command in README has a skills/ directory with SKILL
     const skillMd = path.join(skillDir, 'SKILL.md');
     assert.ok(
       fs.existsSync(skillDir),
-      `Command /gdd:${cmd} is in README but skills/${cmd}/ directory does not exist`
+      `Command /hone:${cmd} is in README but skills/${cmd}/ directory does not exist`
     );
     assert.ok(
       fs.existsSync(skillMd),
-      `Command /gdd:${cmd} has skills/${cmd}/ but skills/${cmd}/SKILL.md is missing`
+      `Command /hone:${cmd} has skills/${cmd}/ but skills/${cmd}/SKILL.md is missing`
     );
   }
 });

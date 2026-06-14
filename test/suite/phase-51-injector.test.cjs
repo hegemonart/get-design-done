@@ -49,7 +49,7 @@ const cleanup = require('../../scripts/gsd-cleanup-incubator.cjs');
 // recall sources (LEARNINGS/STATE) so the existing blocks fire too.
 
 function scaffold({ openFile = '.design/color-tokens.md', fileSize = 2000 } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p51-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p51-'));
 
   const target = path.join(dir, openFile);
   fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -221,7 +221,7 @@ test('51-injector: events.schema.json seeds the 3 instinct_* types', () => {
 // (e) Cleanup decay path archives a sub-0.2 unit; absent-store decay is non-fatal.
 
 test('51-injector: cleanup decay archives a sub-0.2 unit + removes it from live store', { skip: store ? false : 'instinct-store.cjs not installed' }, () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p51-decay-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p51-decay-'));
   try {
     // Seed a low-confidence unit, last surfaced 30 days ago → decay() multiplies
     // 0.21 * 0.9 = 0.189 < 0.2 → archived. now = today (far past last_seen).
@@ -267,7 +267,7 @@ test('51-injector: cleanup decay archives a sub-0.2 unit + removes it from live 
 test('51-injector: decayInstincts is non-fatal when the store data dir is absent', () => {
   // A bare temp dir with no instincts: decay either runs and reports 0 archived,
   // or (no store installed) returns ran:false. Neither path throws.
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p51-empty-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p51-empty-'));
   try {
     // Inject a clock so that, when the store IS present, decay actually runs the
     // empty-store path (rather than no-opping on a missing-now throw).

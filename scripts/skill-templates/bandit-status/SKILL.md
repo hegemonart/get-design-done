@@ -1,11 +1,11 @@
 ---
-name: gdd-bandit-status
+name: hone-bandit-status
 description: "Surface read-only per-(agent, bin, delegate) bandit posterior snapshot - alpha/beta/mean/stddev/count/last-used per arm. Phase 27.5 (v1.27.5) diagnostic. Use when investigating 'why did the bandit pick tier X for agent Y?' or when verifying posterior convergence after enabling adaptive_mode: full."
 argument-hint: ""
 tools: Read, Bash
 ---
 
-# gdd-bandit-status
+# hone-bandit-status
 
 ## Role
 
@@ -88,7 +88,7 @@ After the table, surface a per-`(agent, bin)` best-arm summary: for each unique 
 
 ### 4. Record
 
-Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-status","ts":"<ISO>","arms_seen":<count>,"posterior_present":<bool>}`. Skill writes ONLY to skill-records.jsonl (telemetry); never touches the posterior.
+Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"hone-bandit-status","ts":"<ISO>","arms_seen":<count>,"posterior_present":<bool>}`. Skill writes ONLY to skill-records.jsonl (telemetry); never touches the posterior.
 
 ## Cross-references
 

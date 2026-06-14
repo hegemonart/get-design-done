@@ -13,7 +13,7 @@ const path = require('node:path');
 const { spawn } = require('node:child_process');
 
 function tmpCwd() {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-iter-budget-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-iter-budget-'));
   const prev = process.cwd();
   process.chdir(dir);
   return {

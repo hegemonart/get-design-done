@@ -61,7 +61,7 @@ function makeValidator() {
 
 /** Fresh temp project root; caller is responsible for nothing — teardown handles it. */
 function mkTmpProject() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-live-session-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-live-session-'));
 }
 
 /** Recursively remove a temp dir, ignoring errors. */

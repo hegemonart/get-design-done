@@ -1,6 +1,6 @@
 ---
 name: design-authority-watcher
-description: Fetches a curated whitelist of design-authority feeds, diffs against .design/authority-snapshot.json, classifies new entries into five buckets, emits .design/authority-report.md. Spawned by /gdd:watch-authorities.
+description: Fetches a curated whitelist of design-authority feeds, diffs against .design/authority-snapshot.json, classifies new entries into five buckets, emits .design/authority-report.md. Spawned by /hone:watch-authorities.
 tools: Read, Write, WebFetch, Grep, Glob
 color: blue
 model: inherit
@@ -34,7 +34,7 @@ The orchestrating skill supplies a `<required_reading>` block in the prompt. Rea
 
 ## Flags
 
-Flags are supplied by the orchestrating skill in the prompt (the skill parses `/gdd:watch-authorities` user arguments):
+Flags are supplied by the orchestrating skill in the prompt (the skill parses `/hone:watch-authorities` user arguments):
 
 - `--refresh` → re-seed snapshot from current feed state without surfacing anything (recovery mode; behaves identically to first run).
 - `--since <ISO8601 date>` → surface entries whose `published` date is newer than the given boundary regardless of snapshot state (first-run escape hatch + backlog surfacing).
@@ -242,7 +242,7 @@ Event payload shape - validates against `reference/schemas/events.schema.json` d
 
 **One event per matched entry.** Do NOT emit duplicates within a single run; if `event_id` is already present in the stream from a prior run, the writer's dedup logic handles it.
 
-**No catalogue writes.** This step ONLY emits events. The reflector consumes them into `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md` drafts; the user reviews via `/gdd:apply-reflections` and accepts/rejects. Authority-watcher NEVER writes to `reference/known-failure-modes.md` directly.
+**No catalogue writes.** This step ONLY emits events. The reflector consumes them into `.design/reflections/incubator/kfm-<slug>/CATALOGUE-ENTRY.md` drafts; the user reviews via `/hone:apply-reflections` and accepts/rejects. Authority-watcher NEVER writes to `reference/known-failure-modes.md` directly.
 
 Programmatic helper available at `scripts/lib/authority-watcher/index.cjs` - `classifyArticles(articles) → events`. Callers in test harnesses use the helper directly; the agent emits events through `Write` against the events stream (no shell).
 

@@ -1,8 +1,8 @@
-# /gdd:start - Locked 5-Question Interview
+# /hone:start - Locked 5-Question Interview
 
 **Purpose:** collect the minimum signal needed to steer the findings engine without slowing first-run completion past 30 seconds of interview wall-clock. Autodetectable dimensions collapse to a one-key confirmation; genuinely non-derivable dimensions are asked explicitly.
 
-**Hard constraint:** v1.14.7 ships this fixed question set. Do not branch, re-order, or insert new questions without an explicit `/gdd:discuss` override captured in a future DISCUSSION.md.
+**Hard constraint:** v1.14.7 ships this fixed question set. Do not branch, re-order, or insert new questions without an explicit `/hone:discuss` override captured in a future DISCUSSION.md.
 
 ---
 
@@ -16,7 +16,7 @@
 
 **Validation:** max 120 chars; trim leading/trailing whitespace. No charset restrictions - the hint is free text.
 
-**Failure posture:** if the user aborts at Q1, abort the whole skill with a one-line pointer to `/gdd:scan`.
+**Failure posture:** if the user aborts at Q1, abort the whole skill with a one-line pointer to `/hone:scan`.
 
 ---
 
@@ -72,7 +72,7 @@
 
 **Validation:** enum; any other → `skip`.
 
-**Effect:** result steers the `Visual Proof Readiness` section only - never gates the happy path or the findings engine. The writer uses this to decide whether to surface `/gdd:connections figma` or `.canvas` guidance.
+**Effect:** result steers the `Visual Proof Readiness` section only - never gates the happy path or the findings engine. The writer uses this to decide whether to surface `/hone:connections figma` or `.canvas` guidance.
 
 ---
 

@@ -30,8 +30,8 @@
  *      {task_progress}}` to events.jsonl.
  *   7. Build additionalContext nudge:
  *        - task_progress matches `N/N` (stage complete) → "Stage <stage>
- *          complete — run /gdd:next or /gdd:reflect"
- *        - else → "Stage <stage> paused mid-task — resume with /gdd:resume"
+ *          complete — run /hone:next or /hone:reflect"
+ *        - else → "Stage <stage> paused mid-task — resume with /hone:resume"
  *
  * Out of scope (per Plan 25-04):
  *   - Wiring this hook into hooks.json (Plan 25-08).
@@ -133,8 +133,8 @@ function buildNudge(stage, taskProgress) {
   const m = taskProgress.match(/^(\d+)\s*\/\s*(\d+)$/);
   const stageComplete = !!(m && m[1] === m[2] && Number(m[2]) > 0);
   return stageComplete
-    ? `Stage ${stage} complete — run /gdd:next or /gdd:reflect`
-    : `Stage ${stage} paused mid-task — resume with /gdd:resume`;
+    ? `Stage ${stage} complete — run /hone:next or /hone:reflect`
+    : `Stage ${stage} paused mid-task — resume with /hone:resume`;
 }
 
 /**

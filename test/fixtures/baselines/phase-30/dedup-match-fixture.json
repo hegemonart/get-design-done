@@ -5,7 +5,7 @@
     {
       "number": 142,
       "title": "Fast-lookup crash on Figma token sync (recurring)",
-      "url": "https://github.com/hegemonart/get-design-done/issues/142"
+      "url": "https://github.com/hegemonart/hone/issues/142"
     }
   ],
   "query": "fingerprint:sha8-of-error",
@@ -13,6 +13,6 @@
     "matched": true,
     "issueNumber": 142,
     "title": "Fast-lookup crash on Figma token sync (recurring)",
-    "url": "https://github.com/hegemonart/get-design-done/issues/142"
+    "url": "https://github.com/hegemonart/hone/issues/142"
   }
 }

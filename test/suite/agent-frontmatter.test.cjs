@@ -12,7 +12,7 @@ const REQUIRED_FIELDS = ['name', 'description', 'tools', 'color'];
 
 // Widened from `f.startsWith('design-')` — the original filter left 31 agents
 // uncovered (a11y-mapper, motion-mapper, token-mapper, visual-hierarchy-mapper,
-// component-taxonomy-mapper, all gdd-* agents, quality-gate-runner,
+// component-taxonomy-mapper, all hone-* agents, quality-gate-runner,
 // prototype-gate, both component-benchmark-* agents, all the *-executor
 // agents, etc.). All agent files in agents/ share the same frontmatter
 // contract; the prefix was an accident of when the test was authored.

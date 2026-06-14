@@ -4,9 +4,9 @@
  * skill-mcp-adoption (Phase 27.7-05)
  *
  * Static-analysis regression test for Plan 27.7-05: verifies that the
- * three utility skills (`/gdd:progress`, `/gdd:resume`, `/gdd:next`)
+ * three utility skills (`/hone:progress`, `/hone:resume`, `/hone:next`)
  * have adopted the `## MCP path (preferred)` + `## File-read path
- * (fallback)` fork pattern that lets harnesses with the `gdd-mcp`
+ * (fallback)` fork pattern that lets harnesses with the `hone-mcp`
  * server (Phase 27.7+) prime cycle context in 1–3 MCP calls instead
  * of 5–10 file reads.
  *
@@ -19,7 +19,7 @@
  *   - `## MCP path (preferred)` header present
  *   - `## File-read path (fallback)` header present
  *   - MCP block appears BEFORE the file-read block
- *   - MCP block references at least one `mcp__gdd_<tool>` token
+ *   - MCP block references at least one `mcp__hone_<tool>` token
  *
  * See plan 27.7-05 `must_haves.truths` and `<verify>` block for
  * the canonical contract this test enforces.
@@ -59,13 +59,13 @@ function assertSkillCompliance(name) {
       `(got mcp=${mcpIdx}, file=${fileIdx})`,
   );
   // Extract the MCP block (between the two headers) and assert it
-  // references at least one `mcp__gdd_<tool>` token. This guards
+  // references at least one `mcp__hone_<tool>` token. This guards
   // against the headers being added without any actual tool wiring.
   const mcpBlock = s.substring(mcpIdx, fileIdx);
   assert.match(
     mcpBlock,
-    /mcp__gdd_\w+/,
-    `${name}: MCP block must reference at least one mcp__gdd_ tool`,
+    /mcp__hone_\w+/,
+    `${name}: MCP block must reference at least one mcp__hone_ tool`,
   );
 }
 
@@ -82,16 +82,16 @@ describe('27.7-05: skill MCP adoption', () => {
     assertSkillCompliance('next');
   });
 
-  test('27.7-05: each MCP block references >= 1 mcp__gdd_ tool (explicit count check)', () => {
+  test('27.7-05: each MCP block references >= 1 mcp__hone_ tool (explicit count check)', () => {
     for (const name of ['progress', 'resume', 'next']) {
       const s = loadSkill(name);
       const mcpIdx = s.indexOf('## MCP path (preferred)');
       const fileIdx = s.indexOf('## File-read path (fallback)');
       const mcpBlock = s.substring(mcpIdx, fileIdx);
-      const matches = mcpBlock.match(/mcp__gdd_\w+/g) || [];
+      const matches = mcpBlock.match(/mcp__hone_\w+/g) || [];
       assert.ok(
         matches.length >= 1,
-        `${name}: MCP block must reference at least one mcp__gdd_ tool, found ${matches.length}`,
+        `${name}: MCP block must reference at least one mcp__hone_ tool, found ${matches.length}`,
       );
     }
   });

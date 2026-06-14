@@ -13,7 +13,7 @@
 //      vulnerability", and publishes NO email-shaped PII (D-02).
 //   5. hardening-surface.json matches reality: redact PATTERNS.length === 11,
 //      ws.cjs contains the 127.0.0.1 default-host literal, the named modules /
-//      docs / allowlist exist, the gdd-state schemas dir has 11 *.schema.json.
+//      docs / allowlist exist, the hone-state schemas dir has 11 *.schema.json.
 //
 // Hermetic — file reads + require only (no network, no live peer/server). Runs
 // in the default `npm test` suite (D-10). All tests carry the `33.5-06:` tag.
@@ -151,15 +151,15 @@ test('33.5-06: hardening-surface.json matches the live hardened surface (SC#8)',
     assert.ok(exists(rel), `hardening-surface references ${rel} but it does not exist`);
   }
 
-  // gdd-state schemas dir has exactly 11 *.schema.json (D-08).
-  const schemaDir = path.join(REPO_ROOT, h.gdd_state_schema_dir);
+  // hone-state schemas dir has exactly 11 *.schema.json (D-08).
+  const schemaDir = path.join(REPO_ROOT, h.hone_state_schema_dir);
   const schemas = fs.readdirSync(schemaDir).filter((f) => f.endsWith('.schema.json'));
   assert.equal(
     schemas.length,
-    h.gdd_state_schema_count,
-    `gdd-state schemas dir has ${schemas.length} *.schema.json; expected ${h.gdd_state_schema_count}`,
+    h.hone_state_schema_count,
+    `hone-state schemas dir has ${schemas.length} *.schema.json; expected ${h.hone_state_schema_count}`,
   );
-  assert.equal(h.gdd_state_schema_count, 11, 'gdd_state_schema_count must be 11 (D-08)');
+  assert.equal(h.hone_state_schema_count, 11, 'hone_state_schema_count must be 11 (D-08)');
 });
 
 // ── stride-checklist snapshot present + well-formed ─────────────────────────────
@@ -168,7 +168,7 @@ test('33.5-06: stride-checklist.json mirrors the 5 components + residual->plan m
   const sc = JSON.parse(readBaseline('stride-checklist.json'));
   assert.deepEqual(
     sc.components,
-    ['hooks', 'mcp-gdd-state', 'peer-cli', 'websocket', 'issue-reporter'],
+    ['hooks', 'mcp-hone-state', 'peer-cli', 'websocket', 'issue-reporter'],
     'stride-checklist must snapshot the 5 in-scope components',
   );
   assert.ok(Array.isArray(sc.residuals) && sc.residuals.length >= 6, 'stride-checklist must list the residual->plan rows');

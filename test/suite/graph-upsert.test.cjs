@@ -23,7 +23,7 @@ const { join, resolve } = require('node:path');
 const REPO_ROOT = resolve(__dirname, '../..');
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-graph-upsert-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-graph-upsert-${prefix}-`));
 }
 
 async function buildLib() {

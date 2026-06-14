@@ -2,7 +2,7 @@
 
 **Phase 33.6 (v1.33.6).** This file is a **catalog-derived snapshot** of OpenRouter per-model prices - it is **generated from** `.design/cache/openrouter-models.json` (the dynamic catalog fetched by `scripts/lib/openrouter/catalog-fetcher.cjs`), **not** a hand-maintained authority. The **live source of truth is the dynamic catalog**; this table is a derived, illustrative view that can go stale between catalog fetches.
 
-Unlike the per-runtime tables under `reference/prices/` (Phase 26 D-08, hand-curated authority with provenance), OpenRouter's prices live in the upstream `/models` response and are refreshed on the 24h TTL. To inspect the current resolved prices, run `/gdd:openrouter-status` or read the cache directly. For the tier→model resolution heuristic see `reference/openrouter-tier-mapping.md`.
+Unlike the per-runtime tables under `reference/prices/` (Phase 26 D-08, hand-curated authority with provenance), OpenRouter's prices live in the upstream `/models` response and are refreshed on the 24h TTL. To inspect the current resolved prices, run `/hone:openrouter-status` or read the cache directly. For the tier→model resolution heuristic see `reference/openrouter-tier-mapping.md`.
 
 OpenRouter quotes prices **per token** (USD), for `prompt` (input) and `completion` (output) separately.
 

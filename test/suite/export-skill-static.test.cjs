@@ -1,5 +1,5 @@
 'use strict';
-// Phase 35.5 — /gdd:export skill static contract. Structural assertions on
+// Phase 35.5 — /hone:export skill static contract. Structural assertions on
 // skills/export/SKILL.md (NO live render, NO Notion call — D-07): the skill routes the
 // three formats (html|pdf|notion), reads the design source set, redacts always +
 // pseudonymizes on opt-in, hands HTML to pr-commenter on --pr, and forbids a PDF/markdown
@@ -15,7 +15,7 @@ const SKILL = fs.readFileSync(path.join(REPO_ROOT, 'skills', 'export', 'SKILL.md
 const fm = SKILL.split('---')[1] || '';
 
 test('35.5-02: export SKILL frontmatter — name, user-invocable, tools', () => {
-  assert.match(fm, /name:\s*gdd-export/, 'name: gdd-export');
+  assert.match(fm, /name:\s*hone-export/, 'name: hone-export');
   assert.match(fm, /user-invocable:\s*true/, 'user-invocable');
   for (const tool of ['Read', 'Write', 'Bash', 'Glob', 'ToolSearch', 'Task']) {
     assert.match(fm, new RegExp(`\\b${tool}\\b`), `tools includes ${tool}`);

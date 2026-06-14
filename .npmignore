@@ -7,12 +7,12 @@
 #
 # RULE: this file MUST NOT contradict "files". In particular it must NEVER exclude the
 # runtime subtrees that the package needs at runtime — those MUST ship (D-09/D-14/D-15):
-#   scripts/lib/         (gdd-graph -> scripts/lib/graph/, figma-extract SKILL ->
+#   scripts/lib/         (hone-graph -> scripts/lib/graph/, figma-extract SKILL ->
 #                         node scripts/lib/figma-extract/*.cjs, health-mirror,
 #                         issue-reporter, recipe-loader, deprecation-shim primitives)
-#   scripts/mcp-servers/ (gdd-state + gdd-mcp deprecation shims, grace window -> v1.33.0)
-#   scripts/cli/         (gdd-events bin: scripts/cli/gdd-events.mjs)
-#   scripts/install.cjs  (get-design-done install bin / npm postinstall entry)
+#   scripts/mcp-servers/ (hone-state + hone-mcp deprecation shims, grace window -> v1.33.0)
+#   scripts/cli/         (hone-events bin: scripts/cli/hone-events.mjs)
+#   scripts/install.cjs  (hone install bin / npm postinstall entry)
 #   sdk/ recipes/ docs/i18n/ bin/  (all required at runtime / by the plugin)
 
 # --- maintainer-only files that sit DIRECTLY under scripts/ (never reach node_modules) ---

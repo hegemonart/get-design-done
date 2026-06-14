@@ -17,7 +17,7 @@
 // Dependency-cycle note: Plan 20-14's rate-guard + iteration-budget
 // consume this module, and both are required to stay dependency-light so
 // that hooks/budget-enforcer.ts can import them without dragging the
-// gdd-state MCP graph along. Hence this standalone .cjs port instead of
+// hone-state MCP graph along. Hence this standalone .cjs port instead of
 // calling the .ts version.
 
 'use strict';

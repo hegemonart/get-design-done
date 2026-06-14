@@ -3,12 +3,12 @@ name: design
 description: "Stage 4 of 5 orchestrator that reads DESIGN-PLAN.md, partitions tasks by wave + parallel-safe flag, and spawns design-executor agents with the appropriate isolation (worktree for parallel batches, in-place for sequential tail). Use when DESIGN-PLAN.md is approved and ready for implementation. Activates for requests involving implementing UI, building components, or turning a plan into working interface code."
 argument-hint: "[--auto] [--parallel] [--variants N]"
 user-invocable: true
-tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__gdd_state__get, mcp__gdd_state__transition_stage, mcp__gdd_state__update_progress, mcp__gdd_state__set_status, mcp__gdd_state__add_blocker, mcp__gdd_state__resolve_blocker, mcp__gdd_state__checkpoint
+tools: Read, Write, Bash, Grep, Glob, Task, AskUserQuestion, mcp__hone_state__get, mcp__hone_state__transition_stage, mcp__hone_state__update_progress, mcp__hone_state__set_status, mcp__hone_state__add_blocker, mcp__hone_state__resolve_blocker, mcp__hone_state__checkpoint
 ---
 
 # Get Design Done - Design
 
-**Stage 4 of 5** in the get-design-done pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
+**Stage 4 of 5** in the hone pipeline. Thin orchestrator. All design execution intelligence lives in `agents/design-executor.md`.
 
 Full procedure detail: `./design-procedure.md`.
 
@@ -16,9 +16,9 @@ Full procedure detail: `./design-procedure.md`.
 
 ## Stage entry
 
-1. `mcp__gdd_state__transition_stage` with `to: "design"`. Gate failure surfaces `error.context.blockers`; do not advance. Resume case: prior stage `design` + `status: in_progress` -> skip tasks where `.design/tasks/task-NN.md` already exists.
-2. `mcp__gdd_state__get` -> snapshot `state`; read `state.position.wave` for execution plan.
-3. Abort only if `.design/DESIGN-PLAN.md` is missing: "No plan found. Run `/get-design-done:plan` first."
+1. `mcp__hone_state__transition_stage` with `to: "design"`. Gate failure surfaces `error.context.blockers`; do not advance. Resume case: prior stage `design` + `status: in_progress` -> skip tasks where `.design/tasks/task-NN.md` already exists.
+2. `mcp__hone_state__get` -> snapshot `state`; read `state.position.wave` for execution plan.
+3. Abort only if `.design/DESIGN-PLAN.md` is missing: "No plan found. Run `/hone:plan` first."
 
 Detail: `./design-procedure.md` §Stage entry.
 
@@ -29,7 +29,7 @@ Detail: `./design-procedure.md` §Stage entry.
 - `--auto` -> `auto_mode=true` (no mid-stage prompts; architectural deviations stop the individual task but continue the rest).
 - `--parallel` -> `parallel_mode=true` (use worktree isolation for `Parallel: true` tasks).
 - `--variants N` -> `variants_mode` (default N=2): for tasks that build a user-facing surface, the executor emits **N competing, hypothesis-tagged variants** (`<variant id component pattern hypothesis>`) instead of one. Before generating, consult the `design_arms` posterior (`scripts/lib/ds-arms/design-arms-store.cjs`) to bias toward patterns that have won prior A/B / user-research outcomes - **advisory, never directive** (the user's explicit choice always wins). The tagged variants flow to A/B (LaunchDarkly/Statsig/GrowthBook) for outcome ingestion. Full schema + the outcome loop: `../../reference/design-variants.md`.
-- **Directionally-open check** (skipped if `auto_mode`): scan DESIGN-PLAN.md for tasks whose criteria read "explore N directions" / "pick a visual approach" and suggest `/gdd:sketch` first.
+- **Directionally-open check** (skipped if `auto_mode`): scan DESIGN-PLAN.md for tasks whose criteria read "explore N directions" / "pick a visual approach" and suggest `/hone:sketch` first.
 - **Project-local conventions**: include any `./.claude/skills/design-*-conventions.md` and `~/.claude/gdd/global-skills/*.md` in every executor's `<required_reading>` - global conventions inform but do not override project-local D-XX decisions.
 - **`.stories.tsx` stub**: after each new component file is created by the executor, emit a CSF stub alongside if `.storybook/` exists or `"storybook"` is in `package.json`, even with the dev server offline. Detail: `./design-procedure.md` §.stories.tsx Stub.
 
@@ -45,8 +45,8 @@ Read `.design/DESIGN-PLAN.md`. Partition tasks by `## Wave N` heading. Within ea
 
 For each wave in order:
 
-1. **Parallelism decision (per wave)**: read `.design/config.json` `parallelism`, collect candidates, check `Touches:` / `writes:` / `parallel-safe` / `typical-duration-seconds`, apply `reference/parallelism-rules.md` hard->soft. Overlapping `Touches:` split into sequential sub-waves. Record verdict via `mcp__gdd_state__update_progress` with `status: "design_wave_<N>_parallelism: <parallel|serial>, reason=<short-reason>"`.
-2. **Executor STATE.md protocol** (inlined verbatim into every `design-executor` prompt): executors update STATE.md ONLY via `gdd-state` MCP tools - `update_progress`, `add_blocker`, `resolve_blocker`. NEVER `Read`+`Write` `.design/STATE.md` directly. The MCP tools enforce the lockfile (Plan 20-01) and emit mutation events (Plan 20-06) so concurrent executors serialize safely.
+1. **Parallelism decision (per wave)**: read `.design/config.json` `parallelism`, collect candidates, check `Touches:` / `writes:` / `parallel-safe` / `typical-duration-seconds`, apply `reference/parallelism-rules.md` hard->soft. Overlapping `Touches:` split into sequential sub-waves. Record verdict via `mcp__hone_state__update_progress` with `status: "design_wave_<N>_parallelism: <parallel|serial>, reason=<short-reason>"`.
+2. **Executor STATE.md protocol** (inlined verbatim into every `design-executor` prompt): executors update STATE.md ONLY via `hone-state` MCP tools - `update_progress`, `add_blocker`, `resolve_blocker`. NEVER `Read`+`Write` `.design/STATE.md` directly. The MCP tools enforce the lockfile (Plan 20-01) and emit mutation events (Plan 20-06) so concurrent executors serialize safely.
 3. **Parallel batch** (when `parallel_mode=true` AND any `Parallel: true` tasks in wave): announce the partition, spawn all `Parallel: true` tasks via concurrent `Task("design-executor", ..., isolation: "worktree")` calls in ONE response, wait for all `## EXECUTION COMPLETE` markers, merge worktrees (non-overlapping `Touches:` guarantees no conflicts; surface any conflict to the user before continuing), then `update_progress` + `checkpoint`.
 4. **Sequential tail** (`Parallel: false` or `parallel_mode=false`): spawn one `design-executor` at a time (no worktree isolation), waiting for each `## EXECUTION COMPLETE` and emitting `update_progress` per task; `checkpoint` after the final task of the wave.
 
@@ -60,18 +60,18 @@ After each wave, unless `auto_mode=true`, prompt: "Ready for Wave [N+1]? (yes / 
 
 ## Step 4 - Handle Deviations
 
-Check task-NN.md files for `status: deviation`. If found: `mcp__gdd_state__get` -> read `state.blockers`, present affected task IDs + blocker descriptions, offer (a) stop, (b) continue. `auto_mode`: continue, log. When a blocker is later fixed by a follow-up task: `mcp__gdd_state__resolve_blocker`.
+Check task-NN.md files for `status: deviation`. If found: `mcp__hone_state__get` -> read `state.blockers`, present affected task IDs + blocker descriptions, offer (a) stop, (b) continue. `auto_mode`: continue, log. When a blocker is later fixed by a follow-up task: `mcp__hone_state__resolve_blocker`.
 
 ---
 
 ## State Update (exit)
 
-1. `mcp__gdd_state__set_status` -> `"design_complete"` - marks the stage complete WITHOUT transitioning (verify owns its own `transition_stage` on entry).
-2. `mcp__gdd_state__checkpoint` - stamps `last_checkpoint`, appends `design_completed_at` to `<timestamps>`.
+1. `mcp__hone_state__set_status` -> `"design_complete"` - marks the stage complete WITHOUT transitioning (verify owns its own `transition_stage` on entry).
+2. `mcp__hone_state__checkpoint` - stamps `last_checkpoint`, appends `design_completed_at` to `<timestamps>`.
 
 ## After Completion
 
-Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/get-design-done:verify`). Template: `./design-procedure.md` §After Completion.
+Print the `=== Design stage complete ===` summary (tasks complete/total, deviations, commits since stage start, next step `/hone:verify`). Template: `./design-procedure.md` §After Completion.
 
 ---
 
@@ -99,7 +99,7 @@ Sequential (the agent is `parallel-safe: never`). Wait for the agent's `## desig
 The dispatch fires AFTER `design-executor` completes the hand-coded plan tasks. The agent's output (component file path + tokens used + provenance) is appended to `.design/DESIGN-SUMMARY.md` as a single `## Generated Components` section so verify can audit it.
 
 <HARD-GATE>
-Do NOT transition to verify (or invoke `/gdd:verify`) until `.design/DESIGN-SUMMARY.md` is committed. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+Do NOT transition to verify (or invoke `/hone:verify`) until `.design/DESIGN-SUMMARY.md` is committed. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>
 
 ## Rationalizations - Thought to Reality

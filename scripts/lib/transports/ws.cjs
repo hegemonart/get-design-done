@@ -31,7 +31,7 @@ const { probeOptional } = require('../probe-optional.cjs');
 
 const ws = probeOptional('ws');
 if (!ws) {
-  // Importer (gdd-events.mjs) handles this throw and renders the hint.
+  // Importer (hone-events.mjs) handles this throw and renders the hint.
   throw new Error(
     "ws module not installed (optional dep). Install via: npm i -D ws",
   );

@@ -1,7 +1,7 @@
 'use strict';
 // Phase 47 (Live Mode) — browser-side runtime contract.
 // RUNTIME_JS is the IIFE the skill injects via preview_eval: it must be a non-empty
-// string carrying the data-gdd-variant marker and a pick (click) handler. buildSelector
+// string carrying the data-hone-variant marker and a pick (click) handler. buildSelector
 // is a pure selector strategy preferring id over class; pickReportShape documents the
 // live_pick payload fields the skill reads back.
 const { test } = require('node:test');
@@ -16,9 +16,9 @@ test('47-runtime: RUNTIME_JS is a non-empty string', () => {
   assert.ok(RUNTIME_JS.length > 0, 'RUNTIME_JS must be non-empty');
 });
 
-test('47-runtime: RUNTIME_JS carries the data-gdd-variant marker', () => {
-  assert.equal(DATA_ATTR, 'data-gdd-variant');
-  assert.ok(RUNTIME_JS.includes('data-gdd-variant'), 'RUNTIME_JS must reference the data-gdd-variant attribute');
+test('47-runtime: RUNTIME_JS carries the data-hone-variant marker', () => {
+  assert.equal(DATA_ATTR, 'data-hone-variant');
+  assert.ok(RUNTIME_JS.includes('data-hone-variant'), 'RUNTIME_JS must reference the data-hone-variant attribute');
 });
 
 test('47-runtime: RUNTIME_JS installs a click-based pick handler', () => {

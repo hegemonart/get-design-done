@@ -1,6 +1,6 @@
 # GDD Plugin — Codex Runtime Instructions
 
-You are running inside Codex CLI with the @hegemonart/get-design-done plugin
+You are running inside Codex CLI with the @hegemonart/hone plugin
 active.
 
 ## Skill discipline
@@ -20,17 +20,17 @@ skill.
 | Thought | Reality |
 | --- | --- |
 | This is just a simple design question. | Questions are tasks. Check for a skill. |
-| I'll just tweak the CSS directly. | Token changes go through the pipeline — check /gdd:design. |
+| I'll just tweak the CSS directly. | Token changes go through the pipeline — check /hone:design. |
 | I already know the codebase, skip explore. | Explore probes connections you haven't re-checked this cycle. |
-| This change is too small to plan. | Plan-skipped tasks blow scope per cycle telemetry. Run /gdd:plan. |
-| I can write the brief later. | No brief means no shared problem statement — /gdd:brief comes first. |
-| The user clearly wants X, I'll skip discuss. | Ambiguity hides here. /gdd:discuss surfaces the real constraint. |
-| I'll verify by eyeballing it. | Verification is a stage with criteria — run /gdd:verify, don't guess. |
-| It's obviously a dark-mode tweak. | Color-scheme work has its own skill — check /gdd:darkmode. |
-| Let me just compare these two designs quickly. | Comparison is an audit task — /gdd:compare has the rubric. |
+| This change is too small to plan. | Plan-skipped tasks blow scope per cycle telemetry. Run /hone:plan. |
+| I can write the brief later. | No brief means no shared problem statement — /hone:brief comes first. |
+| The user clearly wants X, I'll skip discuss. | Ambiguity hides here. /hone:discuss surfaces the real constraint. |
+| I'll verify by eyeballing it. | Verification is a stage with criteria — run /hone:verify, don't guess. |
+| It's obviously a dark-mode tweak. | Color-scheme work has its own skill — check /hone:darkmode. |
+| Let me just compare these two designs quickly. | Comparison is an audit task — /hone:compare has the rubric. |
 | This is a one-off, no skill needed. | "One-off" is the most common rationalization in the telemetry. Check anyway. |
-| I'll refactor the style tokens by hand. | /gdd:style owns token edits so the pipeline stays consistent. |
-| The audit can wait until after I ship. | An un-audited cycle is an unverified cycle — /gdd:audit before close. |
+| I'll refactor the style tokens by hand. | /hone:style owns token edits so the pipeline stays consistent. |
+| The audit can wait until after I ship. | An un-audited cycle is an unverified cycle — /hone:audit before close. |
 
 Before invoking any GDD skill, consult these two references:
 
@@ -42,19 +42,19 @@ Before invoking any GDD skill, consult these two references:
 Run a single stage headlessly:
 
 ```bash
-npx gdd-sdk stage <name>
+npx hone-sdk stage <name>
 ```
 
 Run full pipeline:
 
 ```bash
-npx gdd-sdk run
+npx hone-sdk run
 ```
 
 ## STATE.md mutations
 
-Every mutation to `.design/STATE.md` MUST go through the `gdd-state` MCP server.
-The 11 tools are prefixed `mcp__gdd_state__*`. Never edit STATE.md by hand.
+Every mutation to `.design/STATE.md` MUST go through the `hone-state` MCP server.
+The 11 tools are prefixed `mcp__hone_state__*`. Never edit STATE.md by hand.
 
 ## Tool translation
 
@@ -67,14 +67,14 @@ GDD skills occasionally need the `Task` tool for parallel spawning. Codex
 does not expose Task as a tool call; instead invoke the CLI directly:
 
 ```bash
-npx gdd-sdk stage explore --parallel
-npx gdd-sdk stage discuss --parallel
+npx hone-sdk stage explore --parallel
+npx hone-sdk stage discuss --parallel
 ```
 
 ## Scope discipline
 
 Each stage has a pre-declared tool scope (see `scripts/lib/tool-scoping/stage-scopes.ts`).
-Do NOT call tools outside the scope. In particular, `/gdd:verify` is read-only
+Do NOT call tools outside the scope. In particular, `/hone:verify` is read-only
 — never call `apply_patch` or `write_file` during verify.
 
 ## Budget awareness

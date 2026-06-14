@@ -57,7 +57,7 @@ test('38-04: weight scales the update; source is recorded', () => {
 });
 
 test('38-04: persists atomically + round-trips from disk', () => {
-  const tmp = path.join(os.tmpdir(), `gdd-design-arms-${process.pid}.json`);
+  const tmp = path.join(os.tmpdir(), `hone-design-arms-${process.pid}.json`);
   try {
     const k = S.variantKey('input', 'floating-label');
     S.observe('input', k, { won: true }, { armsPath: tmp });

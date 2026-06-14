@@ -31,11 +31,11 @@ export interface LintResult {
 
 /** Inputs to {@link lintMcpToolsDir}. Only `dir` is required. */
 export interface LintOptions {
-  /** Directory to scan. Tool files match `gdd_*.ts`. */
+  /** Directory to scan. Tool files match `hone_*.ts`. */
   dir: string;
   /** Max non-blank-non-comment LOC per tool file. Defaults to 30. */
   maxLoc?: number;
-  /** Max number of `gdd_*.ts` tool files. Defaults to 12. */
+  /** Max number of `hone_*.ts` tool files. Defaults to 12. */
   toolCap?: number;
   /**
    * Filenames in `dir` exempt from forbid-fs-path + max-loc rules.

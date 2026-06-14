@@ -1,4 +1,4 @@
-// tests/gdd-errors.test.ts — GDD error taxonomy + classification tests.
+// tests/hone-errors.test.ts — GDD error taxonomy + classification tests.
 //
 // Plan 20-04 acceptance:
 //   * Three base classes with distinct `kind` discriminants.

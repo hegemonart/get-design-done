@@ -111,10 +111,10 @@ test('31-5-08: must-ship runtime subtrees are present (D-09/D-14/D-15)', () => {
   const hasPrefix = (prefix) => actual.some((p) => p.startsWith(prefix));
   const hasExact = (p) => actual.includes(p);
 
-  // D-14: gdd-graph runtime.
+  // D-14: hone-graph runtime.
   assert.ok(
     hasPrefix('scripts/lib/graph/'),
-    '31-5-08: tarball must include scripts/lib/graph/** (gdd-graph runtime, D-14)',
+    '31-5-08: tarball must include scripts/lib/graph/** (hone-graph runtime, D-14)',
   );
   // D-15: figma-extract SKILL runtime.
   assert.ok(
@@ -144,8 +144,8 @@ test('31-5-08: must-ship runtime subtrees are present (D-09/D-14/D-15)', () => {
   // before pack; this asserts they actually land in the tarball.
   for (const compiledEntry of [
     'sdk/cli/index.js',
-    'sdk/mcp/gdd-state/server.js',
-    'sdk/mcp/gdd-mcp/server.js',
+    'sdk/mcp/hone-state/server.js',
+    'sdk/mcp/hone-mcp/server.js',
   ]) {
     assert.ok(
       hasExact(compiledEntry),

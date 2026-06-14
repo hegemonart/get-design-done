@@ -1,13 +1,13 @@
 ---
-name: gdd-brief
-description: "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before /gdd:explore. Activates for requests involving capturing a problem statement, defining audience and constraints, or starting a new design brief."
+name: hone-brief
+description: "Stage 1 of 5 design intake that captures problem statement, audience, constraints, success metrics, and scope into .design/BRIEF.md, and bootstraps .design/STATE.md if missing. Use when starting a new design cycle and before /hone:explore. Activates for requests involving capturing a problem statement, defining audience and constraints, or starting a new design brief."
 argument-hint: "[--re-brief to redo intake on existing project]"
-tools: Read, Write, AskUserQuestion, mcp__gdd_state__frontmatter_update, mcp__gdd_state__set_status, mcp__gdd_state__update_progress, mcp__gdd_state__get
+tools: Read, Write, AskUserQuestion, mcp__hone_state__frontmatter_update, mcp__hone_state__set_status, mcp__hone_state__update_progress, mcp__hone_state__get
 ---
 
 # Get Design Done - Brief
 
-**Role:** You are the Brief stage. Stage 1 of 5 in the get-design-done pipeline.
+**Role:** You are the Brief stage. Stage 1 of 5 in the hone pipeline.
 
 **Purpose:** Capture the design problem before any scanning or exploration. Produces `.design/BRIEF.md`.
 
@@ -62,7 +62,7 @@ Write the brief with these sections, preserving any pre-existing answers:
 </prior-research>
 ```
 
-Leave the `<prior-research>` block empty on a greenfield brief - it is filled by `/gdd:research-sync` (the `user-research-synthesizer`) when a research source is connected, and re-checked at verify. See `reference/design-variants.md` for the outcome loop.
+Leave the `<prior-research>` block empty on a greenfield brief - it is filled by `/hone:research-sync` (the `user-research-synthesizer`) when a research source is connected, and re-checked at verify. See `reference/design-variants.md` for the outcome loop.
 
 ## Step 4 - Bootstrap STATE.md (if missing)
 
@@ -74,11 +74,11 @@ If `.design/STATE.md` does not exist, copy the template block from `reference/ST
 
 With `.design/STATE.md` seeded from the template:
 
-1. Stamp timestamps + cycle id: call `mcp__gdd_state__frontmatter_update` with `patch: { started_at: <ISO>, last_checkpoint: <ISO>, cycle: <cycle-id> }`.
-2. Mark brief progress: call `mcp__gdd_state__update_progress` with `task_progress: "5/5"`, `status: "brief_complete"`.
-3. Set handoff status: call `mcp__gdd_state__set_status` with `status: "brief_complete"`.
+1. Stamp timestamps + cycle id: call `mcp__hone_state__frontmatter_update` with `patch: { started_at: <ISO>, last_checkpoint: <ISO>, cycle: <cycle-id> }`.
+2. Mark brief progress: call `mcp__hone_state__update_progress` with `task_progress: "5/5"`, `status: "brief_complete"`.
+3. Set handoff status: call `mcp__hone_state__set_status` with `status: "brief_complete"`.
 
-Do NOT call `mcp__gdd_state__transition_stage` from brief - explore calls it on entry, keeping the transition atomic with the stage that owns the new state.
+Do NOT call `mcp__hone_state__transition_stage` from brief - explore calls it on entry, keeping the transition atomic with the stage that owns the new state.
 
 ## Step 6 - Inline glossary (CONTEXT.md) + ADR pointer
 
@@ -96,7 +96,7 @@ surprising-without-context AND real-tradeoff). Routine choices stay in STATE.md.
 ```
 ━━━ Brief complete ━━━
 Saved: .design/BRIEF.md
-Next: @get-design-done explore
+Next: /hone:explore
 ━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -119,14 +119,14 @@ explore transition.
 If the auditor reports one or more fired anti-patterns, surface a single-line pointer to the user:
 
 ```
-Brief audit flagged N issue(s) - run /gdd:discuss brief to refine, or proceed to explore.
+Brief audit flagged N issue(s) - run /hone:discuss brief to refine, or proceed to explore.
 ```
 
 The user decides. Proceeding to explore with a flagged brief is allowed; the pointer is a nudge, not a gate.
 If the auditor reports no fired anti-patterns, or you skip the audit, continue to the gate unchanged.
 
 <HARD-GATE>
-Do NOT transition to explore (or invoke `/gdd:explore`) until the brief artifact (default `.design/BRIEF.md`) is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
+Do NOT transition to explore (or invoke `/hone:explore`) until the brief artifact (default `.design/BRIEF.md`) is committed AND the user has approved it. If this project uses a custom `.design` location, read the artifact path from `.design/STATE.md` rather than assuming the default.
 </HARD-GATE>
 
 ## Rationalizations - Thought to Reality

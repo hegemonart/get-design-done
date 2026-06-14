@@ -1,12 +1,12 @@
 // tests/race-condition-state-mutation.test.ts
 // ---------------------------------------------------------------------------
-// Plan 20-15, SDK-12 — end-to-end concurrency validation of the gdd-state
+// Plan 20-15, SDK-12 — end-to-end concurrency validation of the hone-state
 // lockfile-backed mutate() API.
 //
 // Design:
 //   * Scaffold a fresh STATE.md seeded from `tests/fixtures/state/mid-pipeline.md`
 //     with a known `task_progress = 0/N` and empty `<blockers>`.
-//   * Spawn 4 `child_process.fork()` workers. Each worker imports the gdd-state
+//   * Spawn 4 `child_process.fork()` workers. Each worker imports the hone-state
 //     module and runs 500 randomized mutate() ops (update_progress, add_blocker,
 //     resolve_blocker) against the SAME STATE.md path.
 //   * Each worker reports its own op counts via IPC.
@@ -171,7 +171,7 @@ test('race-condition: 4 concurrent workers × 500 ops each, zero corruption', as
   // 60s budget via a Promise.race below and a per-worker 55s hang-guard.
   const startedAt = Date.now();
 
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-race-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-race-'));
   const statePath = join(dir, 'STATE.md');
 
   try {

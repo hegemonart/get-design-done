@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-// Component-directory detection helper for /gdd:start (Phase 14.7-02).
+// Component-directory detection helper for /hone:start (Phase 14.7-02).
 // Deterministic, read-only, pure Node — no LLM, no subprocess, no interactive prompts.
 //
 // Contract:

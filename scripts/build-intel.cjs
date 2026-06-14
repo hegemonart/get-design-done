@@ -185,9 +185,9 @@ function buildExportsSlice(allFiles) {
 
     const kind = classifyFile(rel);
     const entry = { file: rel, kind, name: fm.name };
-    // Skills have a command derived from name (gdd-foo → /gdd:foo)
-    if (kind === 'skill' && fm.name.startsWith('gdd-')) {
-      entry.command = '/gdd:' + fm.name.replace(/^gdd-/, '');
+    // Skills have a command derived from name (hone-foo → /hone:foo)
+    if (kind === 'skill' && fm.name.startsWith('hone-')) {
+      entry.command = '/hone:' + fm.name.replace(/^hone-/, '');
     }
     exports.push(entry);
   }

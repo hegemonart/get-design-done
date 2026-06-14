@@ -1,4 +1,4 @@
-// Markdownlint rule set for get-design-done.
+// Markdownlint rule set for hone.
 // Start permissive per D-02/D-04 ("start permissive, tighten later").
 // Each override is justified in a trailing comment.
 {

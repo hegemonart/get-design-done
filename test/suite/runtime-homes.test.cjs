@@ -133,15 +133,15 @@ test('runtime-homes: env-var override wins over default (claude, codex, cursor)'
   const snap = snapshotEnv();
   scrubEnv();
   try {
-    const overridePath = path.join(os.tmpdir(), 'gdd-test-claude-home');
+    const overridePath = path.join(os.tmpdir(), 'hone-test-claude-home');
     process.env.CLAUDE_CONFIG_DIR = overridePath;
     assert.equal(getGlobalConfigDir('claude'), overridePath);
 
-    const codexOverride = path.join(os.tmpdir(), 'gdd-test-codex-home');
+    const codexOverride = path.join(os.tmpdir(), 'hone-test-codex-home');
     process.env.CODEX_HOME = codexOverride;
     assert.equal(getGlobalConfigDir('codex'), codexOverride);
 
-    const cursorOverride = path.join(os.tmpdir(), 'gdd-test-cursor-home');
+    const cursorOverride = path.join(os.tmpdir(), 'hone-test-cursor-home');
     process.env.CURSOR_CONFIG_DIR = cursorOverride;
     assert.equal(getGlobalConfigDir('cursor'), cursorOverride);
   } finally {
@@ -172,7 +172,7 @@ test('runtime-homes: XDG_CONFIG_HOME honored for opencode + kilo when their own 
   const snap = snapshotEnv();
   scrubEnv();
   try {
-    const xdg = path.join(os.tmpdir(), 'gdd-xdg-home');
+    const xdg = path.join(os.tmpdir(), 'hone-xdg-home');
     process.env.XDG_CONFIG_HOME = xdg;
     assert.equal(getGlobalConfigDir('opencode'), path.join(xdg, 'opencode'));
     assert.equal(getGlobalConfigDir('kilo'), path.join(xdg, 'kilo'));
@@ -186,8 +186,8 @@ test('runtime-homes: own env var beats XDG_CONFIG_HOME for opencode + kilo', () 
   scrubEnv();
   try {
     process.env.XDG_CONFIG_HOME = path.join(os.tmpdir(), 'should-not-win');
-    const ocOverride = path.join(os.tmpdir(), 'gdd-test-oc');
-    const kiloOverride = path.join(os.tmpdir(), 'gdd-test-kilo');
+    const ocOverride = path.join(os.tmpdir(), 'hone-test-oc');
+    const kiloOverride = path.join(os.tmpdir(), 'hone-test-kilo');
     process.env.OPENCODE_CONFIG_DIR = ocOverride;
     process.env.KILO_CONFIG_DIR = kiloOverride;
     assert.equal(getGlobalConfigDir('opencode'), ocOverride);
@@ -225,7 +225,7 @@ test('runtime-homes: windsurf default nests under ~/.codeium/windsurf', () => {
 
 test('runtime-homes: getGlobalSkillsBase(cline) returns null (D-09 rules-based)', () => {
   assert.equal(getGlobalSkillsBase('cline'), null);
-  assert.equal(getGlobalSkillDir('cline', 'gdd-foo'), null);
+  assert.equal(getGlobalSkillDir('cline', 'hone-foo'), null);
 });
 
 test('runtime-homes: getGlobalSkillsBase(claude) returns <home>/.claude/skills', () => {
@@ -237,8 +237,8 @@ test('runtime-homes: getGlobalSkillsBase(claude) returns <home>/.claude/skills',
       path.join(os.homedir(), '.claude', 'skills')
     );
     assert.equal(
-      getGlobalSkillDir('claude', 'gdd-executor'),
-      path.join(os.homedir(), '.claude', 'skills', 'gdd-executor')
+      getGlobalSkillDir('claude', 'hone-executor'),
+      path.join(os.homedir(), '.claude', 'skills', 'hone-executor')
     );
   } finally {
     restoreEnv(snap);
@@ -256,11 +256,11 @@ test('runtime-homes: getGlobalSkillDisplayPath replaces home prefix with ~', () 
   const snap = snapshotEnv();
   scrubEnv();
   try {
-    const display = getGlobalSkillDisplayPath('claude', 'gdd-foo');
+    const display = getGlobalSkillDisplayPath('claude', 'hone-foo');
     assert.ok(display.startsWith('~'), `expected leading ~, got: ${display}`);
-    assert.ok(display.includes('gdd-foo'), `expected skill name in path: ${display}`);
+    assert.ok(display.includes('hone-foo'), `expected skill name in path: ${display}`);
     // cline → no skills dir → friendly message
-    const clineMsg = getGlobalSkillDisplayPath('cline', 'gdd-foo');
+    const clineMsg = getGlobalSkillDisplayPath('cline', 'hone-foo');
     assert.ok(/cline.*does not use a skills directory/i.test(clineMsg), clineMsg);
   } finally {
     restoreEnv(snap);

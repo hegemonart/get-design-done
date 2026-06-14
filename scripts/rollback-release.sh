@@ -13,7 +13,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 TAG="v${VERSION}"
-REPO="${GITHUB_REPOSITORY:-hegemonart/get-design-done}"
+REPO="${GITHUB_REPOSITORY:-hegemonart/hone}"
 
 if ! command -v gh >/dev/null 2>&1; then
   echo "ERROR: gh CLI not found."

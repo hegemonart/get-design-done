@@ -1,6 +1,6 @@
 ---
-name: gdd-new-project
-description: "Initialize a new get-design-done project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage."
+name: hone-new-project
+description: "Initialize a new hone project. Gathers project context, creates PROJECT.md and STATE.md, initializes first cycle. Run once per project before any pipeline stage."
 argument-hint: "[--name <project-name>]"
 tools: Read, Write, AskUserQuestion, Bash, Glob
 ---

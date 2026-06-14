@@ -659,7 +659,7 @@
     "typical-duration-seconds",
     "writes"
   ],
-  "gdd-graph-refresh.md": [
+  "hone-graph-refresh.md": [
     "color",
     "default-tier",
     "description",
@@ -671,7 +671,7 @@
     "typical-duration-seconds",
     "writes"
   ],
-  "gdd-intel-updater.md": [
+  "hone-intel-updater.md": [
     "color",
     "default-tier",
     "description",
@@ -683,7 +683,7 @@
     "typical-duration-seconds",
     "writes"
   ],
-  "gdd-learnings-extractor.md": [
+  "hone-learnings-extractor.md": [
     "color",
     "default-tier",
     "description",

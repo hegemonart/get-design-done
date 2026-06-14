@@ -9,7 +9,7 @@ The intel store is a set of flat JSON files (slices) that index the design surfa
 Each slice is an independent file. Agents read slices they need; the updater rewrites only changed slices.
 
 Slices are rebuilt by `scripts/build-intel.cjs` (full initial build) and refreshed on-demand
-by the `gdd-intel-updater` agent (incremental updates when run by the user or a skill that
+by the `hone-intel-updater` agent (incremental updates when run by the user or a skill that
 spawns it). The store is **not auto-current**: it reflects the last invocation of build-intel
 or the updater. Skills that depend on fresh intel should invoke the updater first or treat
 slice timestamps as best-effort.
@@ -51,8 +51,8 @@ Named exports from each file (frontmatter `name:` fields, command names, agent n
     {
       "file": "skills/scan/SKILL.md",
       "kind": "skill",
-      "name": "gdd-scan",
-      "command": "/gdd:scan"
+      "name": "hone-scan",
+      "command": "/hone:scan"
     },
     {
       "file": "agents/design-verifier.md",
@@ -235,7 +235,7 @@ Cross-reference graph: nodes are files, edges are dependency relationships from 
 {
   "generated": "<ISO-8601>",
   "nodes": [
-    { "id": "skills/verify/SKILL.md", "type": "skill", "name": "gdd-verify" }
+    { "id": "skills/verify/SKILL.md", "type": "skill", "name": "hone-verify" }
   ],
   "edges": [
     {
@@ -251,7 +251,7 @@ Cross-reference graph: nodes are files, edges are dependency relationships from 
 
 ### agent-tiers.json
 
-Runtime-neutral tier index per agent; populated by `gdd-intel-updater` so downstream
+Runtime-neutral tier index per agent; populated by `hone-intel-updater` so downstream
 tooling reads tier information without re-parsing every agent's markdown frontmatter.
 Both the model-tier (`opus|sonnet|haiku`) and the equivalent runtime-neutral
 reasoning class (`high|medium|low`) are emitted side-by-side using the locked

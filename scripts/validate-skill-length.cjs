@@ -62,11 +62,11 @@ const DISABLE_INVOCATION_WHITELIST = new Set([
   // injected via additionalContext — not a model-invoked skill. Additive only.
   'using-gdd',
   // Phase 33.6 (D-09): openrouter-status is a read-only OpenRouter catalog +
-  // tier-mapping diagnostic (/gdd:openrouter-status), user-invoked only — never
+  // tier-mapping diagnostic (/hone:openrouter-status), user-invoked only — never
   // auto-spawned by the model. Mirrors the cache-manager no-spawn discipline.
   'openrouter-status',
   // Phase 59.1 (A5): bandit-reset is a destructive maintenance skill
-  // (/gdd:bandit-reset) that clears the bandit posterior — user-invoked only,
+  // (/hone:bandit-reset) that clears the bandit posterior — user-invoked only,
   // never model-auto-spawned. Mirrors the bandit-status no-spawn discipline.
   'bandit-reset',
 ]);

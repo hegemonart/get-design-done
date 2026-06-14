@@ -33,7 +33,7 @@ const calibration = require('../../scripts/lib/risk/calibration.cjs');
 const CAL_REL = calibration.DEFAULT_CALIBRATION_PATH; // '.design/telemetry/calibration.json'
 
 function tmp(prefix) {
-  return fs.mkdtempSync(path.join(os.tmpdir(), `gdd-h2-calib-${prefix}-`));
+  return fs.mkdtempSync(path.join(os.tmpdir(), `hone-h2-calib-${prefix}-`));
 }
 
 function loadCalibrationAt(baseDir) {

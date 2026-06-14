@@ -1,4 +1,4 @@
-// scripts/lib/init-runner/index.ts — public entry for the `gdd-sdk init`
+// scripts/lib/init-runner/index.ts — public entry for the `hone-sdk init`
 // runner (Plan 21-08, SDK-20).
 //
 // Public surface:

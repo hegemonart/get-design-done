@@ -1,18 +1,18 @@
 ---
-name: gdd-context
+name: hone-context
 description: "Queries the typed DesignContext graph at .design/context-graph.json - the design-semantic map of tokens, components, variants, states, motion, a11y patterns, screens, layers, and design patterns plus the edges between them. Lists and filters nodes and edges, traces a path between two nodes, finds the consumers of a node, and reports unreachable nodes, dependency cycles, and coverage. Use when the user wants to inspect the design graph, find what depends on a token or component, trace how one node reaches another, or check graph health. Activates for requests involving the design context graph, design dependencies, token consumers, component composition, unreachable design nodes, design cycles, or design coverage."
 argument-hint: "[nodes --type X | edges --type Z | path <a> <b> | consumers-of <id> | unreachable | cycles | coverage]"
 tools: Read, Bash
 user-invocable: true
 ---
 
-# /gdd:context
+# /hone:context
 
 **Role:** Read-only front end for the typed DesignContext graph. The graph is a design-semantic map: nodes are tokens, components, variants, states, motion fragments, a11y patterns, screens, layers, and design patterns; edges connect them (uses-token, composes, extends, transitions-to, depends-on, mirrors, conflicts-with, referenced-by, tested-by, documented-by, consumes-context, provides-context). This skill queries that graph. It never writes to it. The graph is authored by the mapper agents plus the design-research-synthesizer; this skill only reads.
 
 The query engine ships at `scripts/lib/design-context-query.cjs` (authored elsewhere; this skill only calls it). It is pure and dep-free, exposing `load`, `nodes`, `edges`, `path`, `consumersOf`, `unreachable`, `cycles`, and `coverage`. The merged graph lives at `.design/context-graph.json` with the shape `{ schema_version, generated_at, nodes[], edges[] }`.
 
-If `.design/context-graph.json` is absent, print: `No DesignContext graph yet. Run the design research pipeline (mappers plus /gdd:synthesize) to generate .design/context-graph.json.` Then STOP. Do not invent a graph.
+If `.design/context-graph.json` is absent, print: `No DesignContext graph yet. Run the design research pipeline (mappers plus /hone:synthesize) to generate .design/context-graph.json.` Then STOP. Do not invent a graph.
 
 The engine exposes a module API rather than a CLI, so drive it from a short `node -e` script, the same way other skills call a `scripts/lib` helper:
 
@@ -26,13 +26,13 @@ node -e "const q=require('${CLAUDE_PLUGIN_ROOT}/scripts/lib/design-context-query
 
 | Command | Behavior |
 |---|---|
-| `/gdd:context nodes` | List graph nodes, optionally filtered by `--type` and `--tag` (default mode). |
-| `/gdd:context edges` | List graph edges, optionally filtered by `--type`. |
-| `/gdd:context path <a> <b>` | Trace a path from node `<a>` to node `<b>`. |
-| `/gdd:context consumers-of <id>` | List the nodes that consume node `<id>`. |
-| `/gdd:context unreachable` | List nodes no edge reaches. |
-| `/gdd:context cycles` | List dependency cycles in the graph. |
-| `/gdd:context coverage` | Report graph coverage (typed and tagged ratios). |
+| `/hone:context nodes` | List graph nodes, optionally filtered by `--type` and `--tag` (default mode). |
+| `/hone:context edges` | List graph edges, optionally filtered by `--type`. |
+| `/hone:context path <a> <b>` | Trace a path from node `<a>` to node `<b>`. |
+| `/hone:context consumers-of <id>` | List the nodes that consume node `<id>`. |
+| `/hone:context unreachable` | List nodes no edge reaches. |
+| `/hone:context cycles` | List dependency cycles in the graph. |
+| `/hone:context coverage` | Report graph coverage (typed and tagged ratios). |
 
 Output discipline: emit JSON when a tool or another skill is the caller; render a compact table when a person is at the terminal.
 
@@ -90,7 +90,7 @@ node -e "const q=require('${CLAUDE_PLUGIN_ROOT}/scripts/lib/design-context-query
   console.log(JSON.stringify(q.consumersOf(g, process.env.ID)));"
 ```
 
-Render the consumer ids one per row. If the id is unknown, print `No node <id> in the graph.` and suggest `/gdd:context nodes`.
+Render the consumer ids one per row. If the id is unknown, print `No node <id> in the graph.` and suggest `/hone:context nodes`.
 
 ## unreachable
 

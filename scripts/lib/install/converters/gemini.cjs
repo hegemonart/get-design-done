@@ -7,12 +7,12 @@
  * source into the command-format output Gemini expects under
  * `<config>/commands/gdd/<name>.md` (see Phase 28.7 D-05 +
  * `runtime-artifact-layout.cjs#gemini`, which stages this converter via
- * `commandsKind('commands/gdd', 'gdd-', ...)`).
+ * `commandsKind('commands/gdd', 'hone-', ...)`).
  *
  * Translation rules:
  *
- *   - Frontmatter `name:` normalized to `gdd-<skill>` (no double-prefix).
- *   - Slash references in prose pass through as `/gdd-<name>` — Gemini
+ *   - Frontmatter `name:` normalized to `hone-<skill>` (no double-prefix).
+ *   - Slash references in prose pass through as `/hone-<name>` — Gemini
  *     accepts the Claude-canonical slash shape via `runtime-slash.cjs`
  *     (rt: 'gemini' → `/gdd-`). Legacy colon and shell-variable forms
  *     are normalized to `/gdd-`.
@@ -106,7 +106,7 @@ const GEMINI_TOOL_MAP = Object.freeze({
  */
 function convert(content, skillName, opts) {
   const { frontmatter, body } = shared.extractFrontmatterAndBody(content);
-  const fm = shared.buildFrontmatter(frontmatter, skillName, 'gdd-');
+  const fm = shared.buildFrontmatter(frontmatter, skillName, 'hone-');
   let out = shared.rewriteSlashRefs(body, 'gemini');
   out = shared.rewriteCodeFenceTools(out, GEMINI_TOOL_MAP);
   out = shared.ensureAdapterHeader(out, 'Gemini');

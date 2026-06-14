@@ -1,12 +1,12 @@
 ---
-name: gdd-bandit-reset
+name: hone-bandit-reset
 description: "Confirm-then-reset the per-(agent, bin, delegate) bandit posterior - backs up .design/telemetry/posterior.json to posterior.json.bak, then clears it to a fresh empty envelope. Mutation companion to read-only bandit-status. Use when the posterior is corrupted/unparseable, after a major agent/skill roster change invalidates accumulated arms, or when you deliberately want to rebootstrap adaptive routing from informed priors."
 argument-hint: "[--yes to skip the confirmation prompt]"
 tools: Read, Write, Bash, AskUserQuestion
 disable-model-invocation: true
 ---
 
-# gdd-bandit-reset
+# hone-bandit-reset
 
 ## Role
 
@@ -84,7 +84,7 @@ Verify the cleared state with `{{command_prefix}}bandit-status`. See `reference/
 
 ### 5. Record
 
-Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-reset","ts":"<ISO>","reset":<bool>,"arms_cleared":<count>,"backup_written":<bool>}`. The skill mutates ONLY the posterior (+ its `.bak`) and appends to skill-records.jsonl (telemetry); it touches no other state.
+Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"hone-bandit-reset","ts":"<ISO>","reset":<bool>,"arms_cleared":<count>,"backup_written":<bool>}`. The skill mutates ONLY the posterior (+ its `.bak`) and appends to skill-records.jsonl (telemetry); it touches no other state.
 
 ## Cross-references
 

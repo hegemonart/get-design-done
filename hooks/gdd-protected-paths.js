@@ -16,7 +16,7 @@ const path = require('path');
 
 /**
  * Walk up from startDir to find the package root by looking for a
- * package.json with name '@hegemonart/get-design-done'. Returns null
+ * package.json with name '@hegemonart/hone'. Returns null
  * when the root cannot be found (e.g. in unusual installed layouts).
  * Mirrors the pattern used by gdd-fact-force.js / gdd-risk-gate.js
  * (Phase 56+) to be robust against esbuild/installed layouts that
@@ -27,7 +27,7 @@ function findPackageRoot(startDir) {
   for (let i = 0; i < 12; i++) {
     try {
       const pkg = require(path.join(dir, 'package.json'));
-      if (pkg && pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg && pkg.name === '@hegemonart/hone') return dir;
     } catch { /* not this level */ }
     const parent = path.dirname(dir);
     if (parent === dir) break;
@@ -328,7 +328,7 @@ async function main() {
       } catch { /* swallow */ }
       process.stdout.write(JSON.stringify({
         continue: false,
-        stopReason: `gdd-protected-paths: '${rel}' is a protected path (matched '${r.pattern}'). To override, lift the path from the default glob list or explicitly edit via an approved workflow (e.g., /gdd:update, plan execution).`,
+        stopReason: `gdd-protected-paths: '${rel}' is a protected path (matched '${r.pattern}'). To override, lift the path from the default glob list or explicitly edit via an approved workflow (e.g., /hone:update, plan execution).`,
       }));
       return;
     }

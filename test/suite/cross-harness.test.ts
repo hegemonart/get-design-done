@@ -318,7 +318,7 @@ test('smoke: GDD_HARNESS=codex → currentHarness === "codex"', () => {
   }
 });
 
-test('smoke: GDD_HARNESS=gemini + fixture .design/STATE.md parses via gdd-state reader', () => {
+test('smoke: GDD_HARNESS=gemini + fixture .design/STATE.md parses via hone-state reader', () => {
   const fixtureDir = join(
     REPO_ROOT,
     'test', 'suite',
@@ -329,16 +329,16 @@ test('smoke: GDD_HARNESS=gemini + fixture .design/STATE.md parses via gdd-state 
   const stateMd = join(fixtureDir, '.design', 'STATE.md');
   assert.ok(existsSync(stateMd), `expected fixture ${stateMd} to exist`);
 
-  // The plan mandates "executing gdd-sdk query stage via subprocess returns
+  // The plan mandates "executing hone-sdk query stage via subprocess returns
   // the expected stage". 21-09 is a parallel plan authoring the CLI binary;
-  // if bin/gdd-sdk exists we spawn it, otherwise we exercise the harness
+  // if bin/hone-sdk exists we spawn it, otherwise we exercise the harness
   // module + state reader directly in-process (same guarantee: the env
   // override routes through detectHarness and the fixture STATE.md parses
   // cleanly).
   //
   // Either path validates the contract that Gemini-env callers can read
   // STATE.md without the harness module short-circuiting on detection.
-  const binPath = join(REPO_ROOT, 'bin', 'gdd-sdk');
+  const binPath = join(REPO_ROOT, 'bin', 'hone-sdk');
   const binExists = existsSync(binPath);
 
   resetHarnessCache();
@@ -348,7 +348,7 @@ test('smoke: GDD_HARNESS=gemini + fixture .design/STATE.md parses via gdd-state 
     assert.equal(currentHarness(), 'gemini', 'env-override routed through currentHarness()');
 
     if (binExists) {
-      // Subprocess path — wired to bin/gdd-sdk from Plan 21-09.
+      // Subprocess path — wired to bin/hone-sdk from Plan 21-09.
       const result = spawnSync(
         process.execPath,
         ['--experimental-strip-types', binPath, 'query', 'stage'],
@@ -359,7 +359,7 @@ test('smoke: GDD_HARNESS=gemini + fixture .design/STATE.md parses via gdd-state 
           timeout: 10_000,
         },
       );
-      assert.equal(result.status, 0, `gdd-sdk exited nonzero: ${result.stderr}`);
+      assert.equal(result.status, 0, `hone-sdk exited nonzero: ${result.stderr}`);
       const out = (result.stdout || '').trim();
       assert.ok(
         out === 'scan' || out === '"scan"',

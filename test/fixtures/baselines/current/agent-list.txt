@@ -46,9 +46,9 @@ ds-migration-planner.md
 email-executor.md
 experiment-result-ingester.md
 flutter-executor.md
-gdd-graph-refresh.md
-gdd-intel-updater.md
-gdd-learnings-extractor.md
+hone-graph-refresh.md
+hone-intel-updater.md
+hone-learnings-extractor.md
 motion-mapper.md
 motion-verifier.md
 pdf-executor.md

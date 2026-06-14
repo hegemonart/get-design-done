@@ -1,5 +1,5 @@
 ---
-name: gdd-extract-learnings
+name: hone-extract-learnings
 description: "Extracts project-specific design patterns and decisions from .design/ artifacts and writes them to .design/learnings/. Optionally proposes updates to reference/ files for user review."
 tools: Bash, Read, Write, Glob, Grep
 ---
@@ -26,9 +26,9 @@ ls .design/*.md 2>/dev/null
 
 Read (if present): DESIGN-CONTEXT.md, DESIGN-VERIFICATION.md, DESIGN-DEBT.md, DESIGN-SUMMARY.md, CYCLES.md
 
-### Step 2 - Invoke gdd-learnings-extractor agent
+### Step 2 - Invoke hone-learnings-extractor agent
 
-Delegate extraction to the `gdd-learnings-extractor` agent, passing it the list of available files. The agent extracts structured learning entries.
+Delegate extraction to the `hone-learnings-extractor` agent, passing it the list of available files. The agent extracts structured learning entries.
 
 ### Step 3 - Write learnings artifact
 

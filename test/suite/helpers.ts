@@ -20,7 +20,7 @@ import { tmpdir } from 'node:os';
 import type { ConfigSchema } from '../../reference/schemas/generated.js';
 
 /**
- * Root of the get-design-done plugin repo.
+ * Root of the hone plugin repo.
  *
  * Resolution strategy: walk up from the current working directory until we
  * find a `package.json` whose `name` matches this package. This works in
@@ -37,7 +37,7 @@ function findRepoRoot(): string {
     try {
       const pkgPath: string = join(dir, 'package.json');
       const pkg: { name?: string } = JSON.parse(readFileSync(pkgPath, 'utf8')) as { name?: string };
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch {
       // not this level
     }
@@ -79,7 +79,7 @@ export interface ScaffoldHandle {
  * `cleanup()` deletes it recursively.
  */
 export function scaffoldDesignDir(overrides: ScaffoldOverrides = {}): ScaffoldHandle {
-  const dir: string = mkdtempSync(join(tmpdir(), 'gdd-test-'));
+  const dir: string = mkdtempSync(join(tmpdir(), 'hone-test-'));
   const designDir: string = join(dir, '.design');
   mkdirSync(designDir, { recursive: true });
 

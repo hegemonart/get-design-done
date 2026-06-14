@@ -74,7 +74,7 @@ function runValidator(targetPath) {
  * Returns `{ path, cleanup }`.
  */
 function makeAgentFixture({ name = 'test-agent', tier, reasoningClass }) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-fm-rc-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-fm-rc-'));
   const file = path.join(tmpDir, `${name}.md`);
   const lines = [
     '---',

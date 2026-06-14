@@ -1,10 +1,10 @@
 ---
-name: gdd-analyze-dependencies
+name: hone-analyze-dependencies
 description: "Queries the intel store to surface token fan-out, component call-graphs, decision traceability, and circular dependency detection. Requires .design/intel/ to exist (run build-intel.cjs first)."
 tools: Bash, Read, Glob, Grep
 ---
 
-# /gdd:analyze-dependencies
+# /hone:analyze-dependencies
 
 **Role:** Surface dependency relationships, token usage spread, component graphs, and decision traceability using `.design/intel/`. All queries are O(1) reads against pre-built JSON slices - no file greps. See `./reference/heuristics.md` for the underlying dependency-analysis heuristics (fan-out thresholds, orphan-token criteria, cycle-detection bias).
 
@@ -21,16 +21,16 @@ If missing, print:
 ```
 Intel store not found. Build it first:
   node scripts/build-intel.cjs --force
-Then re-run /gdd:analyze-dependencies.
+Then re-run /hone:analyze-dependencies.
 ```
 
 ## Usage modes
 
-- `/gdd:analyze-dependencies` - run all four analyses and print a combined report
-- `/gdd:analyze-dependencies tokens` - token fan-out only
-- `/gdd:analyze-dependencies components` - component call-graph only
-- `/gdd:analyze-dependencies decisions` - decision traceability only
-- `/gdd:analyze-dependencies circular` - circular dependency detection only
+- `/hone:analyze-dependencies` - run all four analyses and print a combined report
+- `/hone:analyze-dependencies tokens` - token fan-out only
+- `/hone:analyze-dependencies components` - component call-graph only
+- `/hone:analyze-dependencies decisions` - decision traceability only
+- `/hone:analyze-dependencies circular` - circular dependency detection only
 
 ## Analysis 1 - Token fan-out
 

@@ -1,12 +1,12 @@
 ---
-name: gdd-note
+name: hone-note
 description: "Zero-friction idea capture during any stage. Appends to .design/NOTES.md. Subcommands: add, list, promote."
 argument-hint: "<add|list|promote> [text|line-number]"
 tools: Read, Write
 disable-model-invocation: true
 ---
 
-# /gdd:note
+# /hone:note
 
 **Role:** Ephemeral design notes. Zero ceremony - no priority, no due date. Backing store: `.design/NOTES.md`.
 
@@ -35,7 +35,7 @@ If text omitted, append a blank timestamped entry for the user to fill later:
 Read `.design/NOTES.md`. Print each note line with its line number for use with `promote`.
 
 ### promote [line-number]
-Read the note at that line. Delegate to `/gdd:todo add` by writing a new P2 entry into `.design/TODO.md` directly (format: `- [ ] [YYYY-MM-DD] <text>` under `## P2 — Normal`). Rewrite the original note line in NOTES.md with `[promoted → todo]` prefix before the text:
+Read the note at that line. Delegate to `/hone:todo add` by writing a new P2 entry into `.design/TODO.md` directly (format: `- [ ] [YYYY-MM-DD] <text>` under `## P2 — Normal`). Rewrite the original note line in NOTES.md with `[promoted → todo]` prefix before the text:
 ```
 - [2026-04-18 05:10] [promoted → todo] <original text>
 ```

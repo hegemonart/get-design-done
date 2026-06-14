@@ -18,7 +18,7 @@ test('37.2-02: bootstrap-ds skill — frontmatter, <=100 lines, brand-input, rou
   const lines = SKILL.split('\n').length;
   assert.ok(lines <= 100, `skill is ${lines} lines (<= 100 Phase-28.5 contract)`);
   const fm = SKILL.split('---')[1] || '';
-  assert.match(fm, /name:\s*gdd-bootstrap-ds/, 'name');
+  assert.match(fm, /name:\s*hone-bootstrap-ds/, 'name');
   assert.match(fm, /user-invocable:\s*true/, 'user-invocable');
   assert.match(fm, /\bTask\b/, 'tools includes Task (delegates to ds-generator)');
   assert.match(SKILL, /--primary/, 'brand-input: primary');

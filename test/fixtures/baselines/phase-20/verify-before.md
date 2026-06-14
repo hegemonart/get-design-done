@@ -7,7 +7,7 @@ user-invocable: true
 
 # Get Design Done — Verify
 
-**Stage 5 of 5** in the get-design-done pipeline. Thin orchestrator. Verification intelligence lives in three agents: design-auditor, design-verifier, and design-integration-checker.
+**Stage 5 of 5** in the hone pipeline. Thin orchestrator. Verification intelligence lives in three agents: design-auditor, design-verifier, and design-integration-checker.
 
 ---
 
@@ -103,10 +103,10 @@ If chromatic: unavailable or not_configured: skip; note in DESIGN-VERIFICATION.m
 ---
 
 **DESIGN-PLAN.md prerequisite check:**
-- **Normal mode:** Check that `.design/DESIGN-PLAN.md` exists. If missing, block with: "Verify requires DESIGN-PLAN.md. Run `/gdd:plan` first, or use `--post-handoff` if starting from a Claude Design handoff bundle."
+- **Normal mode:** Check that `.design/DESIGN-PLAN.md` exists. If missing, block with: "Verify requires DESIGN-PLAN.md. Run `/hone:plan` first, or use `--post-handoff` if starting from a Claude Design handoff bundle."
 - **Post-handoff mode** (`post_handoff=true` OR STATE.md `status: handoff-sourced`): Skip the DESIGN-PLAN.md check entirely — handoff workflows have no DESIGN-PLAN.md.
 
-Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /get-design-done:discover first."
+Abort only if no `.design/` directory exists (user has not run prior stages). Output: "No .design/ directory found. Run /hone:discover first."
 
 ---
 
@@ -311,7 +311,7 @@ Merge verifier gaps (G-NN entries) and integration-checker gaps (Orphaned/Missin
   ```
   Verification failed — N gaps found (X blockers, Y majors, Z minors, W cosmetics).
   Report: .design/DESIGN-VERIFICATION.md
-  Fix gaps and re-run: /get-design-done:verify
+  Fix gaps and re-run: /hone:verify
   ```
 - If `auto_mode=false`: present gap summary and menu (go to Step 3).
 
@@ -345,7 +345,7 @@ Choose:
 - Write STATE.md.
 - Exit:
   ```
-  Gaps saved. Resume with: /get-design-done:verify
+  Gaps saved. Resume with: /hone:verify
   Report: .design/DESIGN-VERIFICATION.md
   ```
 
@@ -445,8 +445,8 @@ Reports:
   Qualitative audit: .design/DESIGN-AUDIT.md
   Full verification: .design/DESIGN-VERIFICATION.md
 
-Next: [if pass] pipeline complete — run /get-design-done:discover for next session
-      [if fail] fix gaps and re-run /get-design-done:verify
+Next: [if pass] pipeline complete — run /hone:discover for next session
+      [if fail] fix gaps and re-run /hone:verify
 ━━━━━━━━━━━━━━━━━━━━━
 ```
 

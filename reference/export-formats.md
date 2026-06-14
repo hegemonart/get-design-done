@@ -1,6 +1,6 @@
-# Export Formats - the `/gdd:export` contract
+# Export Formats - the `/hone:export` contract
 
-How `/gdd:export <cycle> --format html|pdf|notion [--pseudonymize] [--pr]` turns a completed cycle's in-repo design output into a stakeholder-shareable artifact. Dep-free: the HTML/PDF assembler is pure (`scripts/lib/export/build-html.cjs`); Notion is MCP-based; no `paged`/`puppeteer`/`pdfkit`/markdown-lib runtime.
+How `/hone:export <cycle> --format html|pdf|notion [--pseudonymize] [--pr]` turns a completed cycle's in-repo design output into a stakeholder-shareable artifact. Dep-free: the HTML/PDF assembler is pure (`scripts/lib/export/build-html.cjs`); Notion is MCP-based; no `paged`/`puppeteer`/`pdfkit`/markdown-lib runtime.
 
 ---
 

@@ -15,7 +15,7 @@
 //
 // Plan 20-01 introduced LockAcquisitionError and TransitionGateFailed as
 // local Error subclasses; this module re-exports taxonomy-compliant
-// versions so the existing `gdd-state` surface (tests + consumers) keeps
+// versions so the existing `hone-state` surface (tests + consumers) keeps
 // working unchanged. Plan 20-05 wires `toToolError` into MCP tool
 // handlers; Plan 20-06 emits error events to the telemetry stream.
 
@@ -130,7 +130,7 @@ export class OperationFailedError extends GDDError {
 // -----------------------------------------------------------------------
 // Plan 20-01 compatibility re-exports.
 //
-// These keep the `gdd-state` module's public surface stable post-refactor:
+// These keep the `hone-state` module's public surface stable post-refactor:
 // - LockAcquisitionError — lockfile contention (plan 20-01 lockfile.ts)
 // - TransitionGateFailed — transition gate veto (plan 20-01 transition())
 // Both are StateConflictError subclasses (retryable / contention-class

@@ -1,6 +1,6 @@
 # Maze — Connection Specification
 
-This file is the connection specification for Maze within the get-design-done pipeline. It lives in `connections/` alongside other connection specs (the structural template is [`connections/slack.md`](slack.md)). See `connections/connections.md` for the full connection index and capability matrix (the maze row is added at the Phase 38 wiring closeout).
+This file is the connection specification for Maze within the hone pipeline. It lives in `connections/` alongside other connection specs (the structural template is [`connections/slack.md`](slack.md)). See `connections/connections.md` for the full connection index and capability matrix (the maze row is added at the Phase 38 wiring closeout).
 
 ---
 

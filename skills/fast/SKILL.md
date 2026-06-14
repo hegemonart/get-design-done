@@ -1,12 +1,12 @@
 ---
-name: gdd-fast
+name: hone-fast
 description: "Trivial inline design task. No subagents, no planning documents, no pipeline stages. Just do the thing described. Activates for requests involving a single quick design fix, a one-shot change, or a fast targeted edit."
 argument-hint: "<task description>"
 tools: Read, Write, Edit, Bash, Grep, Glob
 disable-model-invocation: true
 ---
 
-# /gdd:fast
+# /hone:fast
 
 The leanest possible execution path. No subagents, no STATE.md update, no DESIGN-*.md artifacts. Read the target file, apply the change inline, commit.
 
@@ -22,7 +22,7 @@ The leanest possible execution path. No subagents, no STATE.md update, no DESIGN
 - Multi-component changes.
 - Anything touching tokens used across the app.
 - Anything requiring a design decision (taste, tradeoff, scope).
-- Use `/gdd:quick` or the full pipeline instead.
+- Use `/hone:quick` or the full pipeline instead.
 
 ## Steps
 
@@ -40,12 +40,12 @@ The leanest possible execution path. No subagents, no STATE.md update, no DESIGN
 - No `.design/` writes.
 - No STATE.md mutation.
 - No pipeline stage invocation.
-- Do not proceed if the change turns out to be non-trivial - bail out and recommend `/gdd:quick` or the full pipeline.
+- Do not proceed if the change turns out to be non-trivial - bail out and recommend `/hone:quick` or the full pipeline.
 - Do not skip the `capability_gap` emit on bail-out - Stage-0 telemetry depends on it (Phase 29 D-01).
 
 ## Emitting capability_gap on no-skill-match
 
-If step 2 cannot locate any candidate files for the task description (or all candidates are filtered out as off-topic), or if the change in step 4 turns out to be non-trivial in a way that has no obvious resolution without a dedicated skill/agent, emit ONE `capability_gap` event before returning control to the user. This feeds Phase 29 Stage-0 telemetry - the reflector pattern-detection pass (Plan 29-02) and aggregation (Plan 29-03) read these events from the chain file (`.design/gep/events.jsonl`) to surface recurring capability gaps in `/gdd:apply-reflections`.
+If step 2 cannot locate any candidate files for the task description (or all candidates are filtered out as off-topic), or if the change in step 4 turns out to be non-trivial in a way that has no obvious resolution without a dedicated skill/agent, emit ONE `capability_gap` event before returning control to the user. This feeds Phase 29 Stage-0 telemetry - the reflector pattern-detection pass (Plan 29-02) and aggregation (Plan 29-03) read these events from the chain file (`.design/gep/events.jsonl`) to surface recurring capability gaps in `/hone:apply-reflections`.
 
 Synchronous emitter call (via Bash):
 
@@ -75,7 +75,7 @@ appendChainEvent({
 ```
 
 Notes:
-- `evidence_refs` is empty `[]` for fast (no trajectory in `/gdd:fast` - that path is too lean by design).
+- `evidence_refs` is empty `[]` for fast (no trajectory in `/hone:fast` - that path is too lean by design).
 - `parent_event_id` is null (root event for the fast bail-out).
 - `suggested_kind` is `"skill"` because fast bail-outs are usually narrow primitives, not multi-step workflows. Plan 29-03's aggregator may upgrade to `"agent"` if a `context_hash` cluster shows multi-step usage.
 - The emitter MUST NOT block - `appendChainEvent` already swallows IO errors via its existing try/catch (see `scripts/lib/event-chain.cjs:97-105`).

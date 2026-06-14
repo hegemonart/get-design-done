@@ -1,6 +1,6 @@
 # Statsig — Connection Specification
 
-This file is the connection specification for Statsig within the get-design-done pipeline. It lives in `connections/` alongside other connection specs (see [`connections/slack.md`](slack.md) for the structural sibling — an API/env-based connection with a three-value probe and degrade-to-noop, and [`connections/launchdarkly.md`](launchdarkly.md) for the experiment-source sibling this file mirrors).
+This file is the connection specification for Statsig within the hone pipeline. It lives in `connections/` alongside other connection specs (see [`connections/slack.md`](slack.md) for the structural sibling — an API/env-based connection with a three-value probe and degrade-to-noop, and [`connections/launchdarkly.md`](launchdarkly.md) for the experiment-source sibling this file mirrors).
 
 ---
 

@@ -1,4 +1,4 @@
-// tests/gdd-state-quality-gate.test.ts — <quality_gate> block round-trip.
+// tests/hone-state-quality-gate.test.ts — <quality_gate> block round-trip.
 //
 // Phase 25 Plan 25-03 acceptance:
 //   * Parsing a STATE.md that carries a populated <quality_gate> block
@@ -15,9 +15,9 @@
 //   * Status transitions across the four-status enum (`pass | fail |
 //     timeout | skipped`) round-trip without surprises.
 //
-// Mirrors `tests/gdd-state-prototyping.test.ts` — the sister test landed
+// Mirrors `tests/hone-state-prototyping.test.ts` — the sister test landed
 // alongside the <prototyping> block in Plan 25-01. Pattern parity is
-// intentional; the gdd-state surface treats both blocks the same way.
+// intentional; the hone-state surface treats both blocks the same way.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

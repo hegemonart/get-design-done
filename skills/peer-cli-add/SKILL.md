@@ -70,7 +70,7 @@ Verification:
 ✓ frontmatter validator: 0 violations
 
 Next steps:
-- /gdd:peers to confirm the new peer appears in the matrix.
+- /hone:peers to confirm the new peer appears in the matrix.
 - skills/peer-cli-customize/SKILL.md to wire delegate_to: <new-peer-id>-<role> on agents.
 - Phase 23.5 bandit needs ~5 cycles of data before a posterior recommendation surfaces.
 ```

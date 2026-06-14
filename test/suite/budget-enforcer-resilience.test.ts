@@ -27,7 +27,7 @@ function findRepoRoot(): string {
     try {
       const pkgPath: string = join(dir, 'package.json');
       const pkg: { name?: string } = JSON.parse(readFileSync(pkgPath, 'utf8')) as { name?: string };
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch {
       // not this level
     }
@@ -102,7 +102,7 @@ function writeRateLimitState(dir: string, resetAtIso: string): string {
 }
 
 test('budget-enforcer: rate-guard short-circuit emits rate-limited decision + block message', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-rate-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-rate-');
   try {
     // Signal that anthropic is rate-limited until 5s from now.
     const resetAt = new Date(Date.now() + 5_000).toISOString();
@@ -149,7 +149,7 @@ test('budget-enforcer: rate-guard short-circuit emits rate-limited decision + bl
 });
 
 test('budget-enforcer: rate-guard with expired resetAt does NOT block (stale state → proceed)', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-rate-stale-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-rate-stale-');
   try {
     // Reset was an hour ago — rate-guard.remaining() must treat this as null.
     const resetAt = new Date(Date.now() - 60 * 60 * 1000).toISOString();
@@ -175,7 +175,7 @@ test('budget-enforcer: rate-guard with expired resetAt does NOT block (stale sta
 });
 
 test('budget-enforcer: missing rate-guard state → pass through (no false positives)', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-no-rate-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-no-rate-');
   try {
     mkdirSync(join(dir, '.design'), { recursive: true });
     writeFileSync(join(dir, '.design', 'STATE.md'), '---\ncycle: c1\nphase: p1\n---\n');
@@ -194,7 +194,7 @@ test('budget-enforcer: missing rate-guard state → pass through (no false posit
 });
 
 test('budget-enforcer: rate-guard with remaining > 0 does NOT block', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-rate-ok-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-rate-ok-');
   try {
     const p = join(dir, '.design', 'rate-limits', 'anthropic.json');
     mkdirSync(join(dir, '.design', 'rate-limits'), { recursive: true });
@@ -221,7 +221,7 @@ test('budget-enforcer: rate-guard with remaining > 0 does NOT block', () => {
 });
 
 test('budget-enforcer: cache-hit short-circuit triggers iteration-budget refund call', () => {
-  const { dir, cleanup } = makeTempCwd('gdd-hook-cache-refund-');
+  const { dir, cleanup } = makeTempCwd('hone-hook-cache-refund-');
   try {
     // Seed a cached answer for agent+inputHash so Branch B fires.
     const manifest = {

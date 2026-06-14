@@ -17,13 +17,13 @@ It stays in git because the Claude Code marketplace install path git-clones the 
 briefly gitignored it and broke that path; v1.58.1 restored it as a committed, drift-gated
 build output.
 
-End users installing `@hegemonart/get-design-done` from the npm registry receive a tarball
+End users installing `@hegemonart/hone` from the npm registry receive a tarball
 with `skills/` already built; no build step runs on their machine.
 
 ## Why two directories, not one
 
-Claude Code reads `./skills/<slug>/SKILL.md` raw. If we kept `/gdd:` placeholders
-in the file Claude reads, the literal text `/gdd:` would show up in the prompt.
+Claude Code reads `./skills/<slug>/SKILL.md` raw. If we kept `/hone:` placeholders
+in the file Claude reads, the literal text `/hone:` would show up in the prompt.
 So the editable templates need to live separately from the rendered output.
 
 The previous layout (Phase 42) put templates under `source/skills/` AND committed the
@@ -62,7 +62,7 @@ only to seed the manifest from current sources when reconciling drift.
 
 Four substitution slots are supported by `scripts/lib/build/factory.cjs`:
 
-- `/gdd:` - slash-command prefix (`/gdd:` for Claude, `/gdd-` for Codex, etc.)
+- `/hone:` - slash-command prefix (`/hone:` for Claude, `/hone-` for Codex, etc.)
 - `your configured Claude model` - human-readable model phrase ("your configured Claude model", etc.)
 - `.claude/settings.json` - per-harness config path (`.claude/settings.json`, `.codex/config.toml`, ...)
 - `ask Claude Code` - "ask Claude Code", "ask Codex", etc.

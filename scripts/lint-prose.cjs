@@ -98,6 +98,10 @@ function maskNonProse(text) {
     .split('\n')
     .map((line) => line.replace(/(`+)[^`\n]*?\1/g, (m) => blank(m)))
     .join('\n');
+  // markdown link/image destinations `](...)` — the URL is syntax, not prose. shields.io badge URLs
+  // legitimately carry `--` (escaped to render a single `-`, e.g. `license-Apache--2.0`), which is not a
+  // prose double-hyphen. Mask only the destination inside the parens, preserving positions.
+  out = out.replace(/\]\(([^)\n]*)\)/g, (m, dest) => '](' + ' '.repeat(dest.length) + ')');
   return out;
 }
 

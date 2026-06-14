@@ -2,7 +2,7 @@
 /**
  * scripts/lib/live/session-store.cjs — Phase 47 (Live Mode) session persistence.
  *
- * The substrate behind `/gdd:live`: the user picks a DOM element on a dev
+ * The substrate behind `/hone:live`: the user picks a DOM element on a dev
  * server, the agent generates N design variants, the user accepts/discards, and
  * the session survives a crash / `--resume`. This module owns the per-session
  * record on disk at:

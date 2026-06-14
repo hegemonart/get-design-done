@@ -44,13 +44,13 @@ Every agent file begins with a YAML frontmatter block. All fields except `model`
 | `color` | enum | `yellow`, `green`, `blue`, `red` | Terminal display color for the agent's output |
 | `model` | enum (optional) | `inherit`, `sonnet`, `haiku` | Omit to use the project's configured profile default. Use `inherit` to bypass the profile and use the highest available model (quality-tier work) |
 | `default-tier` | enum | `haiku`, `sonnet`, `opus` | The model tier the router + budget-enforcer hook select when `.design/budget.json.tier_overrides` has no entry for this agent. Paired with `reference/model-tiers.md` - the per-agent map in that file is the source of truth; this field is the per-agent replica the hook reads. Required on all agents. |
-| `tier-rationale` | string | free-form, one line, quoted | One-sentence justification for the `default-tier` choice. Surfaces in `/gdd:optimize` output when the advisor suggests a tier move. Required on all agents. |
+| `tier-rationale` | string | free-form, one line, quoted | One-sentence justification for the `default-tier` choice. Surfaces in `/hone:optimize` output when the advisor suggests a tier move. Required on all agents. |
 | `parallel-safe` | enum | `always`, `never`, `conditional-on-touches`, `auto` | Whether stages may dispatch this agent in parallel with siblings. `conditional-on-touches` means safe only when `Touches:` do not overlap |
 | `typical-duration-seconds` | int | e.g. `30`, `60`, `120` | Expected wall-clock duration. Used by parallelism planner to decide whether savings clear `min_estimated_savings_seconds`. **Extensible** - the `design-reflector` may propose `measured-duration-seconds` from telemetry without replacing this field. |
 | `reads-only` | bool | `true`/`false` | True when the agent never writes any file |
 | `writes` | list | e.g. `[".design/DESIGN-PLAN.md"]` | Files / globs the agent may write. `[]` for read-only agents |
 
-> **Frontmatter is extensible.** New fields can be added without removing existing ones. The `design-reflector` agent may propose updates to `typical-duration-seconds` and `default-tier` based on measured telemetry - those proposals go through `/gdd:apply-reflections`, never auto-applied.
+> **Frontmatter is extensible.** New fields can be added without removing existing ones. The `design-reflector` agent may propose updates to `typical-duration-seconds` and `default-tier` based on measured telemetry - those proposals go through `/hone:apply-reflections`, never auto-applied.
 
 Example frontmatter block:
 
@@ -69,7 +69,7 @@ color: blue
 
 **Introduced in v1.26.0.** Agents may carry an optional `reasoning-class: high|medium|low` field as a runtime-neutral alias for `default-tier`. The alias exists because `default-tier`'s enum (`opus|sonnet|haiku`) hard-codes Anthropic model names, while the multi-runtime installer ships agents to 14 runtimes whose authors do not all use those names. `reasoning-class` describes the *reasoning density* the agent needs without naming a vendor's model lineup.
 
-**This field is additive, not a replacement.** `default-tier: opus|sonnet|haiku` remains the authoritative, required field for v1.26 and is the source of truth that `hooks/budget-enforcer.ts`, `skills/router/SKILL.md`, and `agents/gdd-intel-updater.md` read. Both fields may coexist on the same agent during the transition window. The long-term winner - which field is canonical and which is deprecated - is data-gated by future measurement of adoption rates; no deprecation lands in v1.26.
+**This field is additive, not a replacement.** `default-tier: opus|sonnet|haiku` remains the authoritative, required field for v1.26 and is the source of truth that `hooks/budget-enforcer.ts`, `skills/router/SKILL.md`, and `agents/hone-intel-updater.md` read. Both fields may coexist on the same agent during the transition window. The long-term winner - which field is canonical and which is deprecated - is data-gated by future measurement of adoption rates; no deprecation lands in v1.26.
 
 ### Frontmatter shape
 
@@ -104,17 +104,17 @@ When both are present, the values MUST be equivalent per the table above. Mismat
 
 ### How runtime-aware tooling reads either field
 
-Downstream consumers (`skills/router/SKILL.md`, `hooks/budget-enforcer.ts`, `scripts/lib/budget-enforcer.cjs`, `agents/gdd-intel-updater.md`) accept either field individually and map between them via the equivalence table:
+Downstream consumers (`skills/router/SKILL.md`, `hooks/budget-enforcer.ts`, `scripts/lib/budget-enforcer.cjs`, `agents/hone-intel-updater.md`) accept either field individually and map between them via the equivalence table:
 
 - **`default-tier` only** - consumers read `default-tier` directly. This is the v1.26 baseline state for all 26 shipped agents.
 - **`reasoning-class` only** - consumers map `high → opus`, `medium → sonnet`, `low → haiku` and feed the resulting tier into `tier-resolver.cjs` for runtime-correct model resolution. Consumers that have not yet been updated to read `reasoning-class` natively still see a valid `default-tier` semantically (via the alias), so no consumer breaks when an agent author chooses the runtime-neutral name.
-- **Both present** - consumers prefer `default-tier` for now (v1.26 canonical), with `reasoning-class` carried through to telemetry (`gdd-intel-updater` writes both fields to `.design/intel/agent-tiers.json`) so adoption can be measured for the future deprecation gate.
+- **Both present** - consumers prefer `default-tier` for now (v1.26 canonical), with `reasoning-class` carried through to telemetry (`hone-intel-updater` writes both fields to `.design/intel/agent-tiers.json`) so adoption can be measured for the future deprecation gate.
 
 ### Rollout policy for v1.26
 
 - The 26 existing agents continue to carry `default-tier` only - **no per-agent retrofit lands in v1.26**. New agents MAY carry `reasoning-class` instead of, or alongside, `default-tier`.
 - Validators, intel-updater, router, and budget-enforcer accept either field starting in v1.26.
-- Adoption is measured by `gdd-intel-updater` over `agents/*.md` changes; if alias adoption stays below 50% at the deprecation review, `default-tier` remains canonical and the alias is deprecated. If alias wins majority share, the reverse. **No deprecation in v1.26.**
+- Adoption is measured by `hone-intel-updater` over `agents/*.md` changes; if alias adoption stays below 50% at the deprecation review, `default-tier` remains canonical and the alias is deprecated. If alias wins majority share, the reverse. **No deprecation in v1.26.**
 
 ### Cross-references
 
@@ -278,7 +278,7 @@ Constraints: do not modify any file other than .design/example-output.md.
 
 ## Mandatory Record Step
 
-Every agent **must** end its run by appending one JSONL line to `.design/intel/insights.jsonl`. This feeds `/gdd:reflect`, `/gdd:extract-learnings`, and the decision-injector relevance counter.
+Every agent **must** end its run by appending one JSONL line to `.design/intel/insights.jsonl`. This feeds `/hone:reflect`, `/hone:extract-learnings`, and the decision-injector relevance counter.
 
 ### Format
 
@@ -345,7 +345,7 @@ Global ceiling: **no single agent file exceeds 600 lines** under any circumstanc
 
 ## Cache-Aligned Ordering Convention
 
-Every agent body under `agents/*.md` is structured in this exact order so that Anthropic's 5-minute prompt cache (and the plugin's `/gdd:warm-cache` pre-warmer) can key on the longest possible identical prefix across spawns. The rule:
+Every agent body under `agents/*.md` is structured in this exact order so that Anthropic's 5-minute prompt cache (and the plugin's `/hone:warm-cache` pre-warmer) can key on the longest possible identical prefix across spawns. The rule:
 
 1. **Shared-preamble import** - the first non-blank line of the body MUST be `@reference/shared-preamble.md`. This pulls the framework identity, required-reading discipline, writes protocol, deviation handling, and hook awareness into the prompt. Identical bytes across all 26 agents → one cache entry warms them all.
 2. **Agent-specific role + tools contract + output format** - unique to the agent but stable across every invocation of that same agent. Cache hits on the per-agent tail after the first call of the session.

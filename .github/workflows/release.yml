@@ -176,7 +176,7 @@ jobs:
           exit 1
 
   npm-publish:
-    name: "npm publish (@hegemonart/get-design-done)"
+    name: "npm publish (@hegemonart/hone)"
     needs: [detect-version, release-smoke-test]
     if: needs.detect-version.outputs.changed == 'true'
     runs-on: ubuntu-latest
@@ -227,7 +227,7 @@ jobs:
 
       - name: Publish to npm (with provenance)
         # Auth: npm Trusted Publishing via OIDC, configured at
-        # https://www.npmjs.com/package/@hegemonart/get-design-done/access (2026-05-20).
+        # https://www.npmjs.com/package/@hegemonart/hone/access (2026-05-20).
         # The `id-token: write` permission at the workflow level (line 23) is what
         # signs the OIDC token; no long-lived NPM_TOKEN secret is required.
         # Requires npm >= 11.5.1 on the runner — see prior upgrade step.

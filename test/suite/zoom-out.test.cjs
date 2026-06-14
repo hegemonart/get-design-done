@@ -2,7 +2,7 @@
 /**
  * zoom-out skill tests (Phase 28.5-10)
  *
- * Validates the /gdd:zoom-out micro-skill (MIT port from mattpocock/skills):
+ * Validates the /hone:zoom-out micro-skill (MIT port from mattpocock/skills):
  *   - skill file exists at skills/zoom-out/SKILL.md
  *   - frontmatter has required fields (name, description)
  *   - disable-model-invocation: true (D-09 whitelist member; user-invoked-only)

@@ -2,7 +2,7 @@
 
 Intel slice with zero nodes and zero edges. Smallest possible valid input.
 
-## Expected bin/gdd-graph behavior
+## Expected bin/hone-graph behavior
 
 | Subcommand | Expected outcome |
 |---|---|

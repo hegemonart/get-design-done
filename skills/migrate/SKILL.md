@@ -1,12 +1,12 @@
 ---
-name: gdd-migrate
-description: "Migrates a project off GDD's own deprecated paths after an upgrade. Reads the machine-readable registry in reference/DEPRECATIONS.md (via scripts/lib/deprecation-registry.cjs), scans the project's .design/config.json + any local skill/agent references for paths that are now deprecated or removed at the installed version, and PREVIEWS a diff before changing anything. Interactive by default (confirm per change); --yes auto-applies; --dry-run previews only. Read-first, never silent. Use after /gdd:update flags a breaking change."
+name: hone-migrate
+description: "Migrates a project off GDD's own deprecated paths after an upgrade. Reads the machine-readable registry in reference/DEPRECATIONS.md (via scripts/lib/deprecation-registry.cjs), scans the project's .design/config.json + any local skill/agent references for paths that are now deprecated or removed at the installed version, and PREVIEWS a diff before changing anything. Interactive by default (confirm per change); --yes auto-applies; --dry-run previews only. Read-first, never silent. Use after /hone:update flags a breaking change."
 argument-hint: "[--yes] [--dry-run]"
 user-invocable: true
 tools: Read, Write, Bash, Grep, Glob
 ---
 
-# /gdd:migrate
+# /hone:migrate
 
 Closes the GDD-on-GDD gap: when GDD moves or removes its own paths (e.g. the Phase 31.5
 `scripts/lib/**` → `sdk/**` reorg), a project that referenced the old paths needs updating. This skill
@@ -17,9 +17,9 @@ consults the deprecation registry, finds the stale references **in this project*
 
 | Command | Behavior |
 |---|---|
-| `/gdd:migrate` | Scan + preview every applicable migration, then confirm each before applying. |
-| `/gdd:migrate --dry-run` | Preview only - print the diff, change nothing. |
-| `/gdd:migrate --yes` | Apply every applicable migration without the per-change prompt (still prints what changed). |
+| `/hone:migrate` | Scan + preview every applicable migration, then confirm each before applying. |
+| `/hone:migrate --dry-run` | Preview only - print the diff, change nothing. |
+| `/hone:migrate --yes` | Apply every applicable migration without the per-change prompt (still prints what changed). |
 
 ## Steps
 

@@ -14,7 +14,7 @@ auto-run eligibility matrix, value-prop one-liners, and STATE.md / config.json w
 
 # Connections Onboarding Procedure
 
-Detailed procedure for the `/gdd:connections` interactive wizard - companion to
+Detailed procedure for the `/hone:connections` interactive wizard - companion to
 `../skills/connections/SKILL.md`. Read this file when executing a specific probe, deciding
 auto-run vs manual, writing config.json, or merging STATE.md `<connections>`. The SKILL.md
 keeps the essential top-level flow + AskUserQuestion routing; this file holds the deep
@@ -159,7 +159,7 @@ Bash: command -v chromatic >/dev/null 2>&1 || npx --yes chromatic --version 2>/d
 ```
 Bash: node -e "try{const c=JSON.parse(require('fs').readFileSync('.design/config.json','utf8'));process.stdout.write(String(c.graphify?.enabled===true))}catch{process.stdout.write('false')}"
   → false → graphify: not_configured
-  → true  → Bash: node bin/gdd-graph status --format json
+  → true  → Bash: node bin/hone-graph status --format json
                    → { configured: true, exists: false } → graphify: unavailable
                    → { configured: true, exists: true }  → graphify: available
 ```
@@ -341,7 +341,7 @@ Optional (<N>)
   ...
 
 Skipped by you (<N>)
-  · <name>             (re-enable: /gdd:connections <name>)
+  · <name>             (re-enable: /hone:connections <name>)
 ─────────────────────────────────────────
 ```
 
@@ -367,7 +367,7 @@ One-line value props (use verbatim):
 | discord | notify - route pipeline events to a Discord channel (redacted) |
 | linear | ticket-sync - link a cycle to a Linear issue; read comments + transition on completion |
 | jira | ticket-sync - parity with Linear via the Atlassian MCP |
-| notion | export - `/gdd:export --format notion` writes a stakeholder page (degrade-to-HTML) |
+| notion | export - `/hone:export --format notion` writes a stakeholder page (degrade-to-HTML) |
 | lottie | verify - Lottie JSON motion check (frame-rate / duration / bloat / perf-budget), WARN-never-block |
 | rive | verify - Rive `.riv` motion check (size + state-machine reachability via the opt-in runtime), WARN-never-block |
 | framer | design - read Framer frames + write proposals (canvas, Wave 2) |
@@ -389,7 +389,7 @@ One-line value props (use verbatim):
 
 ### Mode: `list` or `--auto`
 
-After printing the summary, write STATE.md, append one-line hint: `Run /gdd:connections to configure.` Emit `## CONNECTIONS COMPLETE`. Exit.
+After printing the summary, write STATE.md, append one-line hint: `Run /hone:connections to configure.` Emit `## CONNECTIONS COMPLETE`. Exit.
 
 ### Mode: `<connection-name>`
 
@@ -494,11 +494,11 @@ For non-auto-run connections, hide the "Run install command now" option entirely
 
 Bash the install command. On success: print stdout, print `"Installed. Session restart required before <name> is usable."`, append `<name>` to `.design/config.json > connections_onboarding.pending_verification[]`.
 
-On failure: print stderr, print `"Install failed. Copy the command and run it manually, then rerun /gdd:connections <name> to verify."` Do not record pending_verification.
+On failure: print stderr, print `"Install failed. Copy the command and run it manually, then rerun /hone:connections <name> to verify."` Do not record pending_verification.
 
 ### 5.4b - Manual path
 
-Print the install command inside a fenced code block for easy copy. Print: `"After installing, restart the session and run /gdd:connections <name> to verify."` Append `<name>` to `connections_onboarding.pending_verification[]`.
+Print the install command inside a fenced code block for easy copy. Print: `"After installing, restart the session and run /hone:connections <name> to verify."` Append `<name>` to `connections_onboarding.pending_verification[]`.
 
 ### 5.4c - Skip for now
 
@@ -534,9 +534,9 @@ Skipped permanently: <list>
 ─────────────────────
 ```
 
-If any pending remain, print: `"After restarting the session, run /gdd:connections to verify remaining."`
+If any pending remain, print: `"After restarting the session, run /hone:connections to verify remaining."`
 
-If no pending remain and at least one install happened, print: `"Run /gdd:scan to start your first cycle, or /gdd:brief to capture a design problem."`
+If no pending remain and at least one install happened, print: `"Run /hone:scan to start your first cycle, or /hone:brief to capture a design problem."`
 
 ---
 
@@ -555,7 +555,7 @@ If `.design/config.json > connections_onboarding.pending_verification[]` is non-
 
 ### `.design/config.json > connections.skip[]`
 
-Pattern: read whole file, merge one field, write back (matches `/gdd:settings` pattern).
+Pattern: read whole file, merge one field, write back (matches `/hone:settings` pattern).
 
 ```json
 {
@@ -600,7 +600,7 @@ Key normalization:
 - Never write to `~/.bashrc`, `~/.zshrc`, or shell RC files. Env-var setup is always manual.
 - Never run `claude mcp add` without explicit `"Run install command now"` confirmation.
 - Never auto-restart the Claude Code session. Print the instruction and let the user act.
-- Never re-prompt for names in `connections.skip[]`. If the user wants to re-enable, they invoke `/gdd:connections <name>` explicitly.
+- Never re-prompt for names in `connections.skip[]`. If the user wants to re-enable, they invoke `/hone:connections <name>` explicitly.
 - Never overwrite existing `<connections>` entries that this skill did not probe. Merge only.
 
 ---

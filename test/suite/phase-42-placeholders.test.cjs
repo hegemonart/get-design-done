@@ -47,11 +47,11 @@ test('42-ph-03: catalogue documents all four canonical placeholders + escape + h
   assert.ok(doc.includes('harness-only'), 'harness-only block must be documented');
 });
 
-test('42-ph-04: no stray /gdd: survived the migration in scripts/skill-templates (all templatized)', () => {
+test('42-ph-04: no stray /hone: survived the migration in scripts/skill-templates (all templatized)', () => {
   const stray = walkMd(SRC)
     // scripts/skill-templates/README.md documents placeholder grammar — it intentionally cites the
-    // resolved Claude rendering ("/gdd:") as an example. Not a template itself.
+    // resolved Claude rendering ("/hone:") as an example. Not a template itself.
     .filter((f) => !f.endsWith('skill-templates' + require('node:path').sep + 'README.md'))
-    .filter((f) => fs.readFileSync(f, 'utf8').includes('/gdd:'));
-  assert.deepEqual(stray, [], 'every /gdd: must have become {{command_prefix}}');
+    .filter((f) => fs.readFileSync(f, 'utf8').includes('/hone:'));
+  assert.deepEqual(stray, [], 'every /hone: must have become {{command_prefix}}');
 });

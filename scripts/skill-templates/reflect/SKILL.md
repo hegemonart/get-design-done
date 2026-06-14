@@ -1,5 +1,5 @@
 ---
-name: gdd-reflect
+name: hone-reflect
 description: "Run design-reflector on demand - produces .design/reflections/<cycle-slug>.md with improvement proposals. Review proposals with {{command_prefix}}apply-reflections."
 argument-hint: "[--dry-run] [--cycle <slug>]"
 tools: Read, Write, Task

@@ -1,5 +1,5 @@
 ---
-name: gdd-quick
+name: hone-quick
 description: "Run the pipeline with optional agents skipped for speed. Skips: phase-researcher, design-assumptions-analyzer, design-integration-checker. Keeps: planner, executor, verifier, auditor. Activates for requests involving a lightweight design pass, a fast iteration, or a quick low-ceremony change."
 argument-hint: "[--skip <agent-name>] [stage]"
 tools: Read, Task

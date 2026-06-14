@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/mcp-budget.schema.json",
+  "$id": "https://github.com/hegemonart/hone/reference/schemas/mcp-budget.schema.json",
   "title": "MCP Budget",
   "description": "Thresholds for the MCP circuit-breaker hook. Applies to use_figma / use_paper / use_pencil and any tracked_tools entry the user extends.",
   "type": "object",

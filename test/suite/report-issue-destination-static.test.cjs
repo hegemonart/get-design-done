@@ -4,7 +4,7 @@
  *
  * Locks D-02: hardcoded destination repo, statically + at runtime immutable.
  *
- * - destination.cjs exports DESTINATION_REPO === 'hegemonart/get-design-done'.
+ * - destination.cjs exports DESTINATION_REPO === 'hegemonart/hone'.
  * - The module export is frozen; reassignment throws in strict mode.
  * - destination.cjs is the ONLY file under scripts/lib/issue-reporter/ that
  *   contains the literal repo string — every other module imports it.
@@ -48,11 +48,11 @@ function walk(root, predicate) {
   return out;
 }
 
-test('30-04 D-02.S1: destination.cjs exports DESTINATION_REPO === hegemonart/get-design-done', () => {
+test('30-04 D-02.S1: destination.cjs exports DESTINATION_REPO === hegemonart/hone', () => {
   // Always re-require to avoid contamination from other tests.
   delete require.cache[require.resolve(DESTINATION_FILE)];
   const mod = require(DESTINATION_FILE);
-  assert.equal(mod.DESTINATION_REPO, 'hegemonart/get-design-done');
+  assert.equal(mod.DESTINATION_REPO, 'hegemonart/hone');
 });
 
 test('30-04 D-02.S2: destination.cjs exports are frozen (Object.isFrozen)', () => {
@@ -77,8 +77,8 @@ test('30-04 D-02.S4: destination.cjs is the only file under issue-reporter/ that
   const culprits = [];
   for (const f of allFiles) {
     const content = fs.readFileSync(f, 'utf8');
-    if (content.includes("'hegemonart/get-design-done'") ||
-        content.includes('"hegemonart/get-design-done"')) {
+    if (content.includes("'hegemonart/hone'") ||
+        content.includes('"hegemonart/hone"')) {
       if (path.resolve(f) !== path.resolve(DESTINATION_FILE)) {
         culprits.push(path.relative(REPO_ROOT, f));
       }
@@ -87,7 +87,7 @@ test('30-04 D-02.S4: destination.cjs is the only file under issue-reporter/ that
   assert.deepEqual(
     culprits,
     [],
-    `destination.cjs must be the sole carrier of 'hegemonart/get-design-done'. Offenders: ${culprits.join(', ')}`
+    `destination.cjs must be the sole carrier of 'hegemonart/hone'. Offenders: ${culprits.join(', ')}`
   );
 });
 
@@ -96,7 +96,7 @@ test('30-04 D-02.S5: no other gh-repo-shaped string appears under issue-reporter
   // restricted to plausible repo chars. Ignore the destination itself and a
   // few unrelated cases (paths, URLs already filtered by extension list).
   const REPO_RE = /['"]([a-z0-9_.-]+\/[a-z0-9_.-]+)['"]/gi;
-  const ALLOWED = new Set(['hegemonart/get-design-done']);
+  const ALLOWED = new Set(['hegemonart/hone']);
 
   const allFiles = walk(ISSUE_REPORTER_DIR, (f) =>
     /\.(cjs|mjs|js|ts)$/.test(f)
@@ -129,6 +129,6 @@ test('30-04 D-02.S5: no other gh-repo-shaped string appears under issue-reporter
   assert.deepEqual(
     findings,
     [],
-    `Found gh-repo-shaped strings other than hegemonart/get-design-done: ${findings.join(' | ')}`
+    `Found gh-repo-shaped strings other than hegemonart/hone: ${findings.join(' | ')}`
   );
 });

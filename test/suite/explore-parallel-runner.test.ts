@@ -58,7 +58,7 @@ let ORIGINAL_CWD: string = process.cwd();
 const FIXTURES_ROOT: string = resolve('test/suite/fixtures/explore-parallel-runner');
 
 beforeEach(() => {
-  SANDBOX_ROOT = mkdtempSync(join(tmpdir(), 'gdd-explore-runner-'));
+  SANDBOX_ROOT = mkdtempSync(join(tmpdir(), 'hone-explore-runner-'));
   mkdirSync(join(SANDBOX_ROOT, '.design', 'map'), { recursive: true });
   mkdirSync(join(SANDBOX_ROOT, 'agents'), { recursive: true });
   ORIGINAL_CWD = process.cwd();

@@ -1,6 +1,6 @@
 {
   "name": "GDD Sync",
-  "id": "gdd-sync-figma-variables-export",
+  "id": "hone-sync-figma-variables-export",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",

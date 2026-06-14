@@ -163,8 +163,8 @@ test('52-int: render() is non-fatal on empty / undefined graphs', async () => {
 
 test('52-int: main() is non-fatal (returns 0) when the graph file is absent', async () => {
   const { main } = await importMap();
-  const absent = path.join(os.tmpdir(), `gdd-no-graph-${process.pid}-${Date.now()}.json`);
-  const outPath = path.join(os.tmpdir(), `gdd-map-${process.pid}-${Date.now()}.md`);
+  const absent = path.join(os.tmpdir(), `hone-no-graph-${process.pid}-${Date.now()}.json`);
+  const outPath = path.join(os.tmpdir(), `hone-map-${process.pid}-${Date.now()}.md`);
   assert.ok(!fs.existsSync(absent), 'precondition: graph path does not exist');
   const code = main([absent, outPath]);
   assert.equal(code, 0, 'main() returns 0 (advisory, non-fatal) on an absent graph');
@@ -173,7 +173,7 @@ test('52-int: main() is non-fatal (returns 0) when the graph file is absent', as
 
 test('52-int: main() writes the map for a real graph under tmpdir', async () => {
   const { main } = await importMap();
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-int-map-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-int-map-'));
   try {
     const graphPath = path.join(dir, 'context-graph.json');
     const outPath = path.join(dir, 'INTEGRATION-MAP.md');
@@ -222,8 +222,8 @@ test('52-int: debt-crawler retains the unchanged DEBT-CATALOG contract', () => {
   // Priority scoring (Step 3) is intact.
   assert.match(text, /priority = visible-delta × effort × prevalence/, 'keeps the priority formula');
   assert.match(text, /visible-delta/, 'keeps the visible-delta factor');
-  // The /gdd:fast remediation suggestion convention survives.
-  assert.match(text, /\/gdd:fast/, 'keeps the /gdd:fast remediation suggestion');
+  // The /hone:fast remediation suggestion convention survives.
+  assert.match(text, /\/hone:fast/, 'keeps the /hone:fast remediation suggestion');
   // Terminator.
   assert.match(text, /## CRAWL COMPLETE/, 'keeps the CRAWL COMPLETE terminator');
 });
@@ -260,7 +260,7 @@ test('52-int: migrate-context SKILL.md exists', () => {
 
 test('52-int: migrate-context frontmatter is valid v3 form with required fields', () => {
   const fm = frontmatter(read(MIGRATE_SKILL));
-  assert.match(fm, /^name: gdd-migrate-context$/m, 'name: gdd-migrate-context');
+  assert.match(fm, /^name: hone-migrate-context$/m, 'name: hone-migrate-context');
   assert.match(fm, /^description: ".{20,1024}"$/m, 'quoted 20..1024 description');
   assert.match(fm, /Use when /i, 'v3 "Use when" trigger sentence');
   assert.match(fm, /Activates for requests involving/i, 'v3 "Activates for" sentence');

@@ -66,7 +66,7 @@ Run `npm run validate:frontmatter`. Confirm the modified agent passes. If valida
 frontmatter validator: 0 violations (40 files checked)
 Next time these agents are spawned, session-runner dispatches through the new peer.
 
-Verify: /gdd:peers (shows updated allowlist + capability matrix).
+Verify: /hone:peers (shows updated allowlist + capability matrix).
 ```
 
 ## Edge cases

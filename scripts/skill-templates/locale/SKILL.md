@@ -1,5 +1,5 @@
 ---
-name: gdd-locale
+name: hone-locale
 description: "Inspects or sets the GDD CLI locale for this project. With no argument, reports the resolved locale (config.locale > env LANG > en), the fallback chain, and per-locale coverage (which message tables are complete vs placeholder). With a <code> (en/ru/uk/de/fr/zh/ja), sets .design/config.json#locale after previewing the change. Localizes --help, common error messages, and skill prompt headers via scripts/lib/i18n/; missing keys fall back to English, so a partial locale never breaks the CLI. Use to switch GDD's own output language."
 argument-hint: "[<code>]"
 user-invocable: true

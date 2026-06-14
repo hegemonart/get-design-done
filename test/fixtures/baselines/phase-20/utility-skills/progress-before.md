@@ -1,5 +1,5 @@
 ---
-name: gdd-progress
+name: hone-progress
 description: "Shows current pipeline position and routes to next action. --forensic runs 6-check integrity audit."
 argument-hint: "[--forensic]"
 tools: Read, Bash, Grep, Glob
@@ -7,7 +7,7 @@ tools: Read, Bash, Grep, Glob
 
 @reference/retrieval-contract.md
 
-# /gdd:progress
+# /hone:progress
 
 **Role:** Show current position in the pipeline and recommend the next action. With `--forensic`, run a 6-check integrity audit.
 
@@ -18,7 +18,7 @@ Read `.design/STATE.md`. Extract:
 - `<position>` `task_progress`, `status`
 - D-XX count, open todos from `.design/TODO.md` (count unchecked `- [ ]`)
 
-If STATE.md does not exist, print: "No pipeline state. Run `/gdd:brief` first." and stop.
+If STATE.md does not exist, print: "No pipeline state. Run `/hone:brief` first." and stop.
 
 ## Step 2 — Default output
 
@@ -27,18 +27,18 @@ If STATE.md does not exist, print: "No pipeline state. Run `/gdd:brief` first." 
 Stage: <stage>   Cycle: <cycle or "default">   Wave: <wave>
 Last checkpoint: <timestamp>
 Decisions: <N>   Open todos: <N>
-Next: /gdd:<next-stage>
+Next: /hone:<next-stage>
 ━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-Recommend next stage via the same logic as `/gdd:next` (route by which artifacts exist).
+Recommend next stage via the same logic as `/hone:next` (route by which artifacts exist).
 
 ### First-run connection nudge
 
 After the pipeline state block, check STATE.md `<connections>`. If every entry is `not_configured` AND `.design/config.json > connections_onboarding` is absent (user has never run the wizard), append once:
 
 ```
-Tip: run /gdd:connections to see what integrations can plug in (Figma, Storybook, Chromatic, etc.).
+Tip: run /hone:connections to see what integrations can plug in (Figma, Storybook, Chromatic, etc.).
 ```
 
 Suppress the nudge on subsequent invocations in the same session (track via a transient marker file `.design/.connections-nudge-shown` written at first emit, deleted on next session start by no mechanism — so effectively once per session).
@@ -77,6 +77,6 @@ After printing the pipeline state, emit the plugin-update banner if one is prese
 [ -f .design/update-available.md ] && cat .design/update-available.md
 ```
 
-No-op when: no new release exists, state-machine guard is active (stage in plan|design|verify), or the latest tag has been dismissed via `/gdd:check-update --dismiss`.
+No-op when: no new release exists, state-machine guard is active (stage in plan|design|verify), or the latest tag has been dismissed via `/hone:check-update --dismiss`.
 
 ## PROGRESS COMPLETE

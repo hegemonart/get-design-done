@@ -105,7 +105,7 @@ Verify via the `peer-cli-add` skill's verification ladder (Step 1) before adding
 
 Client → server, declared during initial communication:
 
-- `service_name = "gdd_peer_delegation"` (the canonical service identifier gdd uses)
+- `service_name = "hone_peer_delegation"` (the canonical service identifier gdd uses)
 - `experimentalRawEvents = false` (we don't want raw model-token events; just structured turn output)
 
 These fields appear in both `threadStart` params and (where relevant) in handshake metadata.
@@ -124,7 +124,7 @@ Client → server:
   "jsonrpc": "2.0",
   "method": "threadStart",
   "params": {
-    "service_name": "gdd_peer_delegation",
+    "service_name": "hone_peer_delegation",
     "experimentalRawEvents": false
   }
 }

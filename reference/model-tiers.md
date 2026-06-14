@@ -2,7 +2,7 @@
 
 **Purpose:** Source of truth for the `default-tier: haiku|sonnet|opus` frontmatter field carried by every agent at `agents/*.md`. Tiers are one of three Anthropic model classes - priced in `reference/model-prices.md`.
 
-Phase 10.1 (OPT-06) locked the initial per-agent tier assignment. Phase 11's `design-reflector` (`agents/design-reflector.md`) proposes refinements from measured `.design/agent-metrics.json` data; no auto-apply - proposals flow through `/gdd:apply-reflections` and `/gdd:optimize`.
+Phase 10.1 (OPT-06) locked the initial per-agent tier assignment. Phase 11's `design-reflector` (`agents/design-reflector.md`) proposes refinements from measured `.design/agent-metrics.json` data; no auto-apply - proposals flow through `/hone:apply-reflections` and `/hone:optimize`.
 
 ---
 
@@ -13,8 +13,8 @@ Phase 10.1 (OPT-06) locked the initial per-agent tier assignment. Phase 11's `de
 Pick `haiku` when the agent is:
 - Applying a fixed scoring rubric (`design-verifier` runs five deterministic passes with numeric category scores).
 - Producing a boolean + rationale answer (`design-plan-checker`, `design-context-checker`, `design-integration-checker` all return "gaps found" + structured list).
-- Performing a read-only state sync (`gdd-graph-refresh` mirrors graph state - no reasoning density beyond schema matching).
-- Running at high frequency where cost compounds (checkers run on every `/gdd:verify` pass - cost multiplies with iterations).
+- Performing a read-only state sync (`hone-graph-refresh` mirrors graph state - no reasoning density beyond schema matching).
+- Running at high frequency where cost compounds (checkers run on every `/hone:verify` pass - cost multiplies with iterations).
 
 Haiku's ~20x price advantage over Opus per 1M tokens (see `reference/model-prices.md`) makes it correct for deterministic-rubric work where the marginal quality gain of larger models is negligible.
 
@@ -25,7 +25,7 @@ Pick `sonnet` when the agent is:
 - Synthesizing prose from structured input (`design-doc-writer`, `design-research-synthesizer`, `design-context-builder`).
 - Executing a concrete plan under supervision (`design-executor`, `design-fixer`, `design-figma-writer`).
 - Conducting targeted research under a time budget (`design-phase-researcher` - 2-minute web-search budget).
-- Updating / extracting / maintaining project state (`gdd-intel-updater`, `gdd-learnings-extractor`, `design-auditor`).
+- Updating / extracting / maintaining project state (`hone-intel-updater`, `hone-learnings-extractor`, `design-auditor`).
 
 Sonnet balances reasoning density against cost. This is the default - if you're uncertain about an agent's role, it's probably sonnet.
 
@@ -49,7 +49,7 @@ Opus cost (~5x Sonnet, ~25x Haiku) is justified only when a single wrong decisio
 | design-plan-checker | Checker | haiku | Checks the plan against a fixed schema - boolean + gap-list output. |
 | design-context-checker | Checker | haiku | Checks context completeness against a schema - boolean + gap-list output. |
 | design-integration-checker | Checker | haiku | Checks cross-artifact references - deterministic link-integrity work. |
-| gdd-graph-refresh | Refresh agent | haiku | Rebuilds graph at .design/graph/graph.json from intel slices - no reasoning density required. |
+| hone-graph-refresh | Refresh agent | haiku | Rebuilds graph at .design/graph/graph.json from intel slices - no reasoning density required. |
 | a11y-mapper | Mapper | sonnet | Open-ended a11y pattern recognition across many files; Sonnet's breadth matters. |
 | component-taxonomy-mapper | Mapper | sonnet | Classifies components by role - requires nuance Haiku lacks, not enough to warrant Opus. |
 | design-auditor | Worker | sonnet | Emits structured findings from code inspection; Sonnet balances depth with cost. |
@@ -61,8 +61,8 @@ Opus cost (~5x Sonnet, ~25x Haiku) is justified only when a single wrong decisio
 | design-pattern-mapper | Mapper | sonnet | Catalogs design patterns present in codebase. |
 | design-phase-researcher | Researcher | sonnet | Time-budgeted research on project-type conventions. |
 | design-research-synthesizer | Synthesizer | sonnet | Collapses multiple research outputs into one; synthesis is Sonnet territory. |
-| gdd-intel-updater | Updater | sonnet | Refreshes .planning/intel/ files from current codebase. |
-| gdd-learnings-extractor | Extractor | sonnet | Pulls decisions + lessons + patterns from phase artifacts. |
+| hone-intel-updater | Updater | sonnet | Refreshes .planning/intel/ files from current codebase. |
+| hone-learnings-extractor | Extractor | sonnet | Pulls decisions + lessons + patterns from phase artifacts. |
 | motion-mapper | Mapper | sonnet | Inventories motion patterns - open-ended visual reasoning. |
 | token-mapper | Mapper | sonnet | Extracts design tokens from source - pattern recognition across files. |
 | visual-hierarchy-mapper | Mapper | sonnet | Maps visual hierarchy signals - breadth across many files. |
@@ -95,7 +95,7 @@ Plus two modifiers that can override the above at spawn time:
 
 The plugin ships with the Per-Agent Tier Map above as a well-reasoned baseline. **Do not hand-edit agent frontmatter `default-tier` fields without evidence.** Two legitimate paths to change a tier assignment:
 
-1. **Phase 11 reflector proposal.** `agents/design-reflector.md` reads `.design/agent-metrics.json` and surfaces cases where measured `gap_rate` or `deviation_rate` suggests a tier is too low (verifier missed gaps a Sonnet would catch) or too high (planner over-reasoned simple plans a Sonnet would handle). Proposals flow through `/gdd:apply-reflections` - user-reviewed, never auto-applied.
+1. **Phase 11 reflector proposal.** `agents/design-reflector.md` reads `.design/agent-metrics.json` and surfaces cases where measured `gap_rate` or `deviation_rate` suggests a tier is too low (verifier missed gaps a Sonnet would catch) or too high (planner over-reasoned simple plans a Sonnet would handle). Proposals flow through `/hone:apply-reflections` - user-reviewed, never auto-applied.
 2. **Budget constraint.** Project-level override via `.design/budget.json.tier_overrides` - does not require touching the frontmatter.
 
 Signals that a tier move might be warranted (Phase 11 reflector's heuristics):

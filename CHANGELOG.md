@@ -1,6 +1,43 @@
 # Changelog
 
-All notable changes to get-design-done are documented here. Versions follow [semantic versioning](https://semver.org/).
+All notable changes to Hone (formerly get-design-done) are documented here. Versions follow [semantic versioning](https://semver.org/).
+
+---
+
+## [2.0.0] - 2026-06-14
+
+**Hone.** The project is rebranded from **get-design-done** to **Hone** - the same design-quality pipeline, a cleaner name and command surface, relicensed under Apache-2.0. "Hone every design to shipped." This is a major, breaking release; a deprecated `gdd` alias eases the transition.
+
+### Changed (breaking)
+
+- **npm package:** `@hegemonart/get-design-done` → **`@hegemonart/hone`**. (The old package is deprecated with a pointer to the new one.)
+- **Command prefix:** `/gdd:*` → **`/hone:*`** across all 14 runtimes. The legacy `gdd` prefix is still accepted as a **deprecated alias** (with a one-time deprecation notice) for one or two releases, then removed.
+- **CLI bins:** `gdd-mcp`/`gdd-detect`/`gdd-graph`/`gdd-dashboard`/`gdd-sdk`/`gdd-state-mcp`/`gdd-events` → **`hone-*`**; the installer bin `get-design-done` → **`hone`**.
+- **MCP servers:** `gdd-mcp`/`gdd-state` → **`hone-mcp`/`hone-state`**; the read-tool names `gdd_*` → **`hone_*`**. *(If you pinned `mcpServers.gdd-mcp` in `.design/config.json`, update the key.)*
+- **Skill command names:** `gdd-<skill>` → **`hone-<skill>`**.
+- **License:** **MIT → Apache-2.0.** Historical third-party attributions are preserved in `NOTICE`.
+
+### Added
+
+- **`pkg-identity.cjs`** - a single identity seam (npm name, plugin name, repo, command prefix, bin/mcp prefixes) so the brand is one source of truth, not hundreds of literals.
+- **`validate:no-stale-brand`** CI gate - fails the build on any residual `get-design-done`/`/gdd:`/`gdd-` brand token outside an explicit allowlist, so the rebrand can't silently regress.
+
+### Deferred (intentionally still `gdd`-named; a v2.0.x follow-up)
+
+To keep this release bounded and green, four **internal-plumbing** surfaces keep their `gdd` names and continue to work unchanged: the `GDD_*` environment variables, the `gdd_cycle_mode` config field, the `hooks/gdd-*.js` hook filenames, and the `connections/gdd-state.md` doc filename. None are user-facing brand; all are scheduled for a follow-up rename with backward-compatible aliases.
+
+### Migration
+
+- **Install:** `npm i @hegemonart/hone` (or re-run the installer; it now writes `hone` artifacts). `npm deprecate @hegemonart/get-design-done` points the old package here.
+- **Commands:** use `/hone:brief` etc.; `/gdd:brief` still works with a deprecation warning.
+- **MCP config:** rename any pinned `gdd-mcp`/`gdd-state` server keys to `hone-mcp`/`hone-state`.
+- **Env vars:** unchanged (`GDD_*` still read).
+
+### Breaking changes
+
+The rebrand itself - see "Changed (breaking)" above. No behavioral/pipeline changes; the 5-stage design pipeline, agents, skills, hooks, and MCP tools are functionally identical, only renamed.
+
+5,143/5,143 tests pass.
 
 ---
 

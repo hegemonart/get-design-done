@@ -24,7 +24,7 @@ const banditRouter = require('../../scripts/lib/bandit-router.cjs');
 const POSTERIOR_REL = '.design/telemetry/posterior.json';
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-integration-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-integration-${prefix}-`));
 }
 
 function loadPosteriorAt(baseDir) {

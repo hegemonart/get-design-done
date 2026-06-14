@@ -151,7 +151,7 @@ test('an out-of-range weight is a hard error', () => {
 // ---- CLI exit-code mapping (0 clean / 1 warnings / 2 errors) ----
 
 function writeTmpGraph(graph) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-p52-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-p52-'));
   const file = path.join(dir, 'context-graph.json');
   fs.writeFileSync(file, JSON.stringify(graph), 'utf8');
   return { dir, file };
@@ -202,7 +202,7 @@ test('CLI exits 2 on errors', () => {
 });
 
 test('CLI exits 2 on a missing or unparseable file', () => {
-  const missing = validator.main([path.join(os.tmpdir(), 'gdd-p52-does-not-exist.json'), '--json'], {
+  const missing = validator.main([path.join(os.tmpdir(), 'hone-p52-does-not-exist.json'), '--json'], {
     stdout: { write() {} },
     stderr: { write() {} },
   });

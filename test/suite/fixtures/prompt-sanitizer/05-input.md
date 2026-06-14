@@ -1,1 +1,1 @@
-Next: /gdd:plan --phase=20
+Next: /hone:plan --phase=20

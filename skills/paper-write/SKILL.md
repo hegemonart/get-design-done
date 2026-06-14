@@ -1,19 +1,19 @@
 ---
-name: gdd-paper-write
+name: hone-paper-write
 description: "Push design decisions from `.design/DESIGN-CONTEXT.md` into the active paper.design canvas by dispatching the `design-paper-writer` agent in one of three modes (annotate / tokenize / roundtrip). Use when the user has completed a design pipeline cycle and wants the decisions reflected in their paper.design canvas. Operates proposal->confirm with `--dry-run`."
 argument-hint: "<annotate|tokenize|roundtrip> [--dry-run]"
 user-invocable: true
 tools: Read, Write, Bash, Grep, Glob
 ---
 
-# gdd-paper-write
+# hone-paper-write
 
 Dispatches the `design-paper-writer` agent to write design decisions back to the active paper.design canvas. The shared probe pattern (ToolSearch → live call → STATE.md write) and connection handshake are documented at `../../reference/shared-preamble.md#connection-handshake-summary` and `../../connections/paper-design.md`.
 
 ## Usage
 
 ```
-/get-design-done paper-write <mode> [--dry-run]
+/hone:paper-write <mode> [--dry-run]
 ```
 
 Modes:

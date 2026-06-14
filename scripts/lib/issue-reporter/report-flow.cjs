@@ -26,7 +26,7 @@
  *       non-TTY) throw.
  *
  *   submit via gh CLI (D-05)
- *     → gh issue create --repo hegemonart/get-design-done ...
+ *     → gh issue create --repo hegemonart/hone ...
  *
  * No env var reads. No HTTPS. No background timers. Single entry point.
  */
@@ -108,7 +108,7 @@ async function runReportFlow(args) {
   const runFallbackFn = options.runFallbackFn || runFallback;
 
   // STEP 0 — Kill-switch gate (D-08). Either env or config disable makes
-  // /gdd:report-issue unavailable. Checked BEFORE any other logic so no
+  // /hone:report-issue unavailable. Checked BEFORE any other logic so no
   // draft is written, no triage runs, no payload is assembled.
   // Precedence (when both surfaces trigger): env wins for display.
   if (isDisabledFn({ cwd: options.rootDir, env: options.env })) {
@@ -120,7 +120,7 @@ async function runReportFlow(args) {
       submitted: false,
       reason: 'disabled',
       surface: reason, // 'env' | 'config'
-      message: `/gdd:report-issue is disabled by ${reasonMsg}. Run \`/gdd:health\` to see the active disable surface.`,
+      message: `/hone:report-issue is disabled by ${reasonMsg}. Run \`/hone:health\` to see the active disable surface.`,
     };
   }
 

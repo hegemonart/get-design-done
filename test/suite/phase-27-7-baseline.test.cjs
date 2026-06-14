@@ -11,12 +11,12 @@
 // OPTIONAL in the plan and ship as full tests here.
 //
 // Required reading discipline: this test reads tools/index.ts dynamically
-// via `import('../../sdk/mcp/gdd-mcp/tools/index.ts')` to verify
-// TOOL_COUNT === 13 (raised 12 -> 13 in Phase 52 for gdd_context_query)
+// via `import('../../sdk/mcp/hone-mcp/tools/index.ts')` to verify
+// TOOL_COUNT === 13 (raised 12 -> 13 in Phase 52 for hone_context_query)
 // and that all 13 tool names match the baseline. The
 // TS import requires Node 22+ with --experimental-strip-types.
-// (gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan
-//  31-5-05, D-08; bin repointed to the ./bin/gdd-mcp trampoline.)
+// (hone-mcp moved scripts/mcp-servers/hone-mcp/ -> sdk/mcp/hone-mcp/ in Plan
+//  31-5-05, D-08; bin repointed to the ./bin/hone-mcp trampoline.)
 
 'use strict';
 
@@ -61,7 +61,7 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     assert.equal(reg.count, 13, 'tool-registry.count must be 13 (raised 12 -> 13 in Phase 52)');
     assert.equal(reg.write_tools.length, 0, 'write_tools must be empty (D-04)');
     // Dynamic import of TS tool registry — verifies baseline matches reality.
-    const mod = await import('../../sdk/mcp/gdd-mcp/tools/index.ts');
+    const mod = await import('../../sdk/mcp/hone-mcp/tools/index.ts');
     assert.equal(mod.TOOL_COUNT, 13, 'TOOL_COUNT must be 13 (D-03, raised 12 -> 13 in Phase 52)');
     const actualNames = mod.TOOL_MODULES.map((t) => t.name).sort();
     const baselineNames = [...reg.tools].sort();
@@ -73,18 +73,18 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     }
   });
 
-  test('27.7-07: bin-list baselines (phase-20 + current) include gdd-mcp', () => {
+  test('27.7-07: bin-list baselines (phase-20 + current) include hone-mcp', () => {
     for (const rel of [
       'test/fixtures/baselines/phase-20/bin-list.txt',
       'test/fixtures/baselines/current/bin-list.txt',
     ]) {
       const p = path.join(REPO_ROOT, rel);
       const lines = fs.readFileSync(p, 'utf8').split(/\r?\n/).filter(Boolean);
-      assert.ok(lines.includes('gdd-mcp'), rel + ' missing gdd-mcp');
+      assert.ok(lines.includes('hone-mcp'), rel + ' missing hone-mcp');
     }
   });
 
-  test('27.7-07: schema-list baselines (phase-20 + current) include mcp-gdd-tools.schema.json', () => {
+  test('27.7-07: schema-list baselines (phase-20 + current) include mcp-hone-tools.schema.json', () => {
     for (const rel of [
       'test/fixtures/baselines/phase-20/schema-list.txt',
       'test/fixtures/baselines/current/schema-list.txt',
@@ -92,8 +92,8 @@ describe('27.7-07: Phase 27.7 baselines', () => {
       const p = path.join(REPO_ROOT, rel);
       assert.match(
         fs.readFileSync(p, 'utf8'),
-        /mcp-gdd-tools\.schema\.json/,
-        rel + ' missing mcp-gdd-tools.schema.json',
+        /mcp-hone-tools\.schema\.json/,
+        rel + ' missing mcp-hone-tools.schema.json',
       );
     }
   });
@@ -102,7 +102,7 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     // Explicit /index.cjs because this lib has no package.json#main and
     // Node's default resolution looks for index.js (not index.cjs).
     const { lintMcpToolsDir } = require('../../scripts/lib/mcp-tools-lint/index.cjs');
-    const result = lintMcpToolsDir({ dir: 'sdk/mcp/gdd-mcp/tools/' });
+    const result = lintMcpToolsDir({ dir: 'sdk/mcp/hone-mcp/tools/' });
     if (result.violations && result.violations.length > 0) {
       // Diagnostic: dump violations before failing.
       // eslint-disable-next-line no-console
@@ -111,12 +111,12 @@ describe('27.7-07: Phase 27.7 baselines', () => {
     assert.equal(result.violations.length, 0, 'production tools must lint clean');
   });
 
-  test('27.7-07: package.json bin.gdd-mcp points to the ./bin/gdd-mcp trampoline (Plan 31-5-05, D-08)', () => {
+  test('27.7-07: package.json bin.hone-mcp points to the ./bin/hone-mcp trampoline (Plan 31-5-05, D-08)', () => {
     const bin = JSON.parse(fs.readFileSync(PKG_PATH, 'utf8')).bin;
     assert.equal(
-      bin['gdd-mcp'],
-      './bin/gdd-mcp',
-      'bin.gdd-mcp must point at the ./bin/gdd-mcp trampoline (was ./scripts/mcp-servers/gdd-mcp/server.ts; gdd-mcp moved to sdk/mcp/gdd-mcp/ in Plan 31-5-05)',
+      bin['hone-mcp'],
+      './bin/hone-mcp',
+      'bin.hone-mcp must point at the ./bin/hone-mcp trampoline (was ./scripts/mcp-servers/hone-mcp/server.ts; hone-mcp moved to sdk/mcp/hone-mcp/ in Plan 31-5-05)',
     );
   });
 

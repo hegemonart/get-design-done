@@ -32,7 +32,7 @@ function findRepoRoot(): string {
     try {
       const pkgPath: string = join(dir, 'package.json');
       const pkg: { name?: string } = JSON.parse(readFileSync(pkgPath, 'utf8')) as { name?: string };
-      if (pkg.name === '@hegemonart/get-design-done') return dir;
+      if (pkg.name === '@hegemonart/hone') return dir;
     } catch {
       // not this level
     }
@@ -189,7 +189,7 @@ test('runtime-models schema: Ajv accepts a row with status and a row without it;
 // ── (2) the hook degrades hard enforcement for unverified runtimes ───────────
 
 test('budget-enforcer: an unverified/byok runtime over the per-task cap does NOT hard-block', () => {
-  const { dir, cleanup } = scaffold('gdd-prov-byok-', 0.01);
+  const { dir, cleanup } = scaffold('hone-prov-byok-', 0.01);
   try {
     // estCost 5.00 >> per_task_cap 0.01 → would hard-block a verified runtime.
     // `cline` is a byok runtime (status: byok), so the guard degrades the
@@ -210,7 +210,7 @@ test('budget-enforcer: an unverified/byok runtime over the per-task cap does NOT
 });
 
 test('budget-enforcer: a verified runtime over the per-task cap STILL hard-blocks (control)', () => {
-  const { dir, cleanup } = scaffold('gdd-prov-verified-', 0.01);
+  const { dir, cleanup } = scaffold('hone-prov-verified-', 0.01);
   try {
     // Same over-cap scenario, but `claude` is verified → full hard enforcement.
     const r = runHook(agentStdin('claude', 5.0), dir);
@@ -225,7 +225,7 @@ test('budget-enforcer: a verified runtime over the per-task cap STILL hard-block
 });
 
 test('budget-enforcer: an unverified runtime UNDER the per-task cap proceeds normally (no false advisory)', () => {
-  const { dir, cleanup } = scaffold('gdd-prov-under-', 100);
+  const { dir, cleanup } = scaffold('hone-prov-under-', 100);
   try {
     // estCost 0.01 well under cap 100 → no cap pressure at all. The guard must
     // not invent a block, and there is nothing to degrade.

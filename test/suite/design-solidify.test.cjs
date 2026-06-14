@@ -23,7 +23,7 @@ async function loadSolidify() {
 }
 
 function seedRepo() {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-solidify-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-solidify-'));
   const init = spawnSync('git', ['init', '-b', 'main'], { cwd: dir, encoding: 'utf8' });
   if (init.status !== 0) throw new Error(`git init failed: ${init.stderr}`);
   spawnSync('git', ['config', 'user.email', 't@t.t'], { cwd: dir });
@@ -116,7 +116,7 @@ test('23-02: rollback=none does not invoke git on failure', async () => {
 });
 
 test('23-02: cwd without .git → rolledBackVia=skipped, no throw', async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-solidify-nogit-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-solidify-nogit-'));
   try {
     const solidify = await loadSolidify();
     const chainPath = join(dir, 'chain.jsonl');

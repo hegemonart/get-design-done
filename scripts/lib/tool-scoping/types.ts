@@ -38,7 +38,7 @@ export interface Scope {
   readonly denied: readonly string[];
   /**
    * Whether bash mutations are permitted (stage-level flag, advisory —
-   * hard gating is future work in Phase 22's `gdd-router`).
+   * hard gating is future work in Phase 22's `hone-router`).
    */
   readonly bashMutation: boolean;
 }
@@ -52,7 +52,7 @@ export interface Scope {
  *   string[] (non-empty)→ overrides stage defaults entirely
  *
  * `additional` is unioned with the scope (caller-supplied, e.g.,
- * `mcp__gdd_state__*` tool names the session needs access to).
+ * `mcp__hone_state__*` tool names the session needs access to).
  */
 export interface ScopeInput {
   readonly stage: Stage;
@@ -64,7 +64,7 @@ export interface ScopeInput {
 
 /**
  * Structured denial record returned by `checkTool`. `enforceScope`
- * lifts these into `ValidationError` instances (from gdd-errors).
+ * lifts these into `ValidationError` instances (from hone-errors).
  *
  * `tool` is absent when the violation is not tool-specific
  * (e.g., `INVALID_STAGE`, `EMPTY_SCOPE`).

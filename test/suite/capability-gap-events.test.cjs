@@ -214,7 +214,7 @@ test('29-01: regression — state.mutation events still validate (additive exten
     type: 'state.mutation',
     timestamp: new Date().toISOString(),
     sessionId: 'regression-test',
-    payload: { tool: 'gdd_state__update_progress', diff: { foo: 1 } },
+    payload: { tool: 'hone_state__update_progress', diff: { foo: 1 } },
   };
   const ok = validator(ev);
   if (!ok) console.error('errs:', JSON.stringify(validator.errors, null, 2));

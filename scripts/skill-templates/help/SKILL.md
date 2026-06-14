@@ -1,6 +1,6 @@
 ---
-name: gdd-help
-description: "Lists all available get-design-done commands with one-line descriptions"
+name: hone-help
+description: "Lists all available hone commands with one-line descriptions"
 tools: Read
 disable-model-invocation: true
 ---

@@ -2,7 +2,7 @@
 /**
  * connections-skill
  *
- * Validates the /gdd:connections onboarding skill:
+ * Validates the /hone:connections onboarding skill:
  *   - skill file exists at skills/connections/SKILL.md
  *   - frontmatter declares the required tools
  *   - handles all 33 known connections by name (per connections/connections.md)

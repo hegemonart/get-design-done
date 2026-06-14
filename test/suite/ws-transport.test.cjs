@@ -18,7 +18,7 @@ if (wsLib) {
 
 test('22-07: ws.cjs throws clear error when ws module absent', { skip: !!wsLib }, () => {
   // Cannot exercise the throw branch when `ws` IS installed in the test env.
-  // The error message is asserted by the gdd-events serve subcommand path
+  // The error message is asserted by the hone-events serve subcommand path
   // which catches the throw at require time. See tests/cli-events.test.cjs.
 });
 
@@ -71,7 +71,7 @@ test('22-07: rejects connection with wrong token (HTTP 401)', { skip: !wsLib }, 
 });
 
 test('22-07: connects with right token + receives replayed tail file', { skip: !wsLib }, async () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-ws-tail-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-ws-tail-'));
   try {
     const tailPath = join(dir, 'events.jsonl');
     const events = [
@@ -156,7 +156,7 @@ test('22-07: live subscribe path delivers events after connect', { skip: !wsLib 
 });
 
 test('22-07: readEventsSync skips invalid lines', { skip: !wsLib }, () => {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-ws-rs-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-ws-rs-'));
   try {
     const path = join(dir, 'e.jsonl');
     writeFileSync(

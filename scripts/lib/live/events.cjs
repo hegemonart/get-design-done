@@ -2,7 +2,7 @@
 /**
  * scripts/lib/live/events.cjs — Phase 47 (Live Mode) telemetry emitter.
  *
- * /gdd:live emits six event types across a session — start, pick, generate, accept,
+ * /hone:live emits six event types across a session — start, pick, generate, accept,
  * discard, end. This module is the single typed entry point: it validates the `type`
  * against the closed LIVE_EVENT_TYPES allow-list (an unknown live type is a programmer
  * error and is rejected) and appends the event via the in-repo event-chain emitter

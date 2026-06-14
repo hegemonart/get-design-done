@@ -8,7 +8,7 @@
 //   1. Resolve the stage order from config (stages / resumeFrom /
 //      stopAfter / skipStages).
 //   2. For each stage in order:
-//        a. Ask the gdd-state transition gate whether we may advance.
+//        a. Ask the hone-state transition gate whether we may advance.
 //           On veto, halt with `halted-gate-veto` and surface blockers.
 //        b. Emit `stage.entered`.
 //        c. Invoke the stage via `invokeStage` (retry-once inside).
@@ -89,12 +89,12 @@ export interface TransitionResult {
 /**
  * Test + integration overrides for `run()`. Omitted fields fall back
  * to the real implementations (session-runner, context-engine,
- * tool-scoping, gdd-state transition).
+ * tool-scoping, hone-state transition).
  */
 export interface RunOverrides extends InvokeStageOverrides {
   /**
-   * Override the gdd-state transition gate. Defaults to a shim that
-   * invokes `gdd-state.transition(path, to)`. In test mode, returns
+   * Override the hone-state transition gate. Defaults to a shim that
+   * invokes `hone-state.transition(path, to)`. In test mode, returns
    * `{ ok: true }` or `{ ok: false, blockers }`.
    */
   readonly transitionStageOverride?: (to: Stage) => Promise<TransitionResult>;
@@ -106,7 +106,7 @@ export interface RunOverrides extends InvokeStageOverrides {
 }
 
 /**
- * Default transition-stage shim. Calls `gdd-state.transition(path, to)`
+ * Default transition-stage shim. Calls `hone-state.transition(path, to)`
  * against the working directory's `.design/STATE.md`. Maps
  * `TransitionGateFailed` to `{ok: false, blockers}`; propagates other
  * errors as `{ok: false, blockers: [message]}` so the pipeline never
@@ -204,7 +204,7 @@ function emitPipelineEvent(
   const ev: BaseEvent = {
     type,
     timestamp: new Date().toISOString(),
-    sessionId: `gdd-pipeline-${process.pid}`,
+    sessionId: `hone-pipeline-${process.pid}`,
     payload,
   };
   if (stage !== undefined) ev.stage = stage;

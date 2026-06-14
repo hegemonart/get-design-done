@@ -1,15 +1,15 @@
 ---
-name: gdd-bandit-status
+name: hone-bandit-status
 description: "Surface read-only per-(agent, bin, delegate) bandit posterior snapshot - alpha/beta/mean/stddev/count/last-used per arm. Phase 27.5 (v1.27.5) diagnostic. Use when investigating 'why did the bandit pick tier X for agent Y?' or when verifying posterior convergence after enabling adaptive_mode: full."
 argument-hint: ""
 tools: Read, Bash
 ---
 
-# gdd-bandit-status
+# hone-bandit-status
 
 ## Role
 
-You are a deterministic, read-only diagnostic skill. You do not spawn agents and do not modify the posterior. You read `.design/telemetry/posterior.json` (path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), aggregate per-`(agent, bin, delegate, tier)` arm state, and emit a single Markdown table. Read-only per Phase 27.5 D-11 - to reset, use `/gdd:bandit-reset` (Phase 23.5). See `./reference/bandit-integration.md` for setup, interpretation, and convergence guidance.
+You are a deterministic, read-only diagnostic skill. You do not spawn agents and do not modify the posterior. You read `.design/telemetry/posterior.json` (path declared by `scripts/lib/bandit-router.cjs`'s `DEFAULT_POSTERIOR_PATH`), aggregate per-`(agent, bin, delegate, tier)` arm state, and emit a single Markdown table. Read-only per Phase 27.5 D-11 - to reset, use `/hone:bandit-reset` (Phase 23.5). See `./reference/bandit-integration.md` for setup, interpretation, and convergence guidance.
 
 ## Invocation Contract
 
@@ -32,7 +32,7 @@ No posterior data found at `.design/telemetry/posterior.json`.
 Possible reasons:
 - `adaptive_mode` is `static` or `hedge` (bandit silent — see `.design/budget.json`).
 - No spawns have fired since Phase 27.5 wiring landed.
-- Posterior was cleared via `/gdd:bandit-reset`.
+- Posterior was cleared via `/hone:bandit-reset`.
 - You are running in interactive Claude Code: the posterior is updated (learns) only on the SDK / headless `session-runner` path. In interactive `adaptive_mode: full` the bandit samples from configured priors but does not learn from in-session outcomes.
 
 See `reference/bandit-integration.md` ("Where adaptive routing actually learns") for setup guidance.
@@ -40,7 +40,7 @@ See `reference/bandit-integration.md` ("Where adaptive routing actually learns")
 
 > Note: the posterior only moves (learns) on the SDK / headless `session-runner` path. In interactive Claude Code with `adaptive_mode: full`, the bandit samples from the configured priors but does not currently update them in-session. See `reference/bandit-integration.md`.
 
-Skip to Section 4 (Record). Parse failure (truncated/corrupted) → emit `Posterior file exists but is unparseable. Run /gdd:bandit-reset to start fresh, or restore from a backup.`
+Skip to Section 4 (Record). Parse failure (truncated/corrupted) → emit `Posterior file exists but is unparseable. Run /hone:bandit-reset to start fresh, or restore from a backup.`
 
 ### 2. Parse the posterior
 
@@ -67,7 +67,7 @@ Emit:
 ```
 ## Bandit Posterior Snapshot
 
-Per-(agent, bin, delegate, tier) posterior state. Read-only — to reset use `/gdd:bandit-reset` (Phase 23.5).
+Per-(agent, bin, delegate, tier) posterior state. Read-only — to reset use `/hone:bandit-reset` (Phase 23.5).
 
 Posterior file: `.design/telemetry/posterior.json` (last updated: <generated_at>)
 Total arms: <count>
@@ -79,7 +79,7 @@ Total arms: <count>
 > Mean = alpha / (alpha + beta). Stddev = sqrt(alpha*beta / ((alpha+beta)^2 * (alpha+beta+1))).
 > Delegate '-' = Phase 23.5 legacy slice (equivalent to 'none').
 > See `reference/bandit-integration.md` for interpretation.
-> Read-only — use `/gdd:bandit-reset` to clear posterior state.
+> Read-only — use `/hone:bandit-reset` to clear posterior state.
 ```
 
 Precision: alpha/beta 2 decimals; mean/stddev 3 decimals; count integer; `last_used` truncated to minute (`YYYY-MM-DDTHH:MM`); null `last_used` renders `-`.
@@ -88,10 +88,10 @@ After the table, surface a per-`(agent, bin)` best-arm summary: for each unique 
 
 ### 4. Record
 
-Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"gdd-bandit-status","ts":"<ISO>","arms_seen":<count>,"posterior_present":<bool>}`. Skill writes ONLY to skill-records.jsonl (telemetry); never touches the posterior.
+Append one JSONL line to `.design/skill-records.jsonl`: `{"skill":"hone-bandit-status","ts":"<ISO>","arms_seen":<count>,"posterior_present":<bool>}`. Skill writes ONLY to skill-records.jsonl (telemetry); never touches the posterior.
 
 ## Cross-references
 
 - `./reference/bandit-integration.md` - operator guide; interpretation patterns.
 - `scripts/lib/bandit-router.cjs` (Phase 23.5) - posterior shape, `DEFAULT_POSTERIOR_PATH`, `loadPosterior()`.
-- `scripts/lib/bandit-router/integration.cjs` (27.5-01), `hooks/budget-enforcer.ts` (27.5-02), `scripts/lib/session-runner/index.ts` (27.5-03), `scripts/lib/bandit-arbitrage.cjs` (27.5-04), `/gdd:bandit-reset` (Phase 23.5) - only surface that mutates the posterior.
+- `scripts/lib/bandit-router/integration.cjs` (27.5-01), `hooks/budget-enforcer.ts` (27.5-02), `scripts/lib/session-runner/index.ts` (27.5-03), `scripts/lib/bandit-arbitrage.cjs` (27.5-04), `/hone:bandit-reset` (Phase 23.5) - only surface that mutates the posterior.

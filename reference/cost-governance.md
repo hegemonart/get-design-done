@@ -15,7 +15,7 @@ only ever *blocks* a spawn - it never spends, edits config, or mutates telemetry
 - **`.design/telemetry/events.jsonl`** - the event stream; this phase appends three new `type`s
   (below).
 - **Cycle identity** - `.design/STATE.md` frontmatter `cycle:`. There is no `CYCLES.md`; per-cycle
-  commit counts are computed on demand from `git log` (the `/gdd:stats` precedent).
+  commit counts are computed on demand from `git log` (the `/hone:stats` precedent).
 
 ## Forecast model (`scripts/lib/budget/cost-forecast.cjs`, pure)
 
@@ -31,10 +31,10 @@ Group `costs.jsonl` by `cycle` → an array of per-cycle USD totals. From the **
 `k = 1` by default. The projection over the next `N` cycles is linear: `projectedTotal = rate · N`.
 `cyclesToCap(currentSpend, cap, rate)` returns the integer number of cycles until `currentSpend`
 reaches `cap` at that rate - `Infinity` when `rate ≤ 0`, `0` when already at/over the cap. This powers
-the `/gdd:budget` warning **"at the current rate you'll hit cap $X in Y cycles."**
+the `/hone:budget` warning **"at the current rate you'll hit cap $X in Y cycles."**
 
 The math is a pure, dep-free, deterministic core (no fs, no clock, no randomness) - `agents/cost-forecaster.md`
-and `/gdd:budget` read the telemetry and hand the grouped totals in. `--scenario best|typical|worst`
+and `/hone:budget` read the telemetry and hand the grouped totals in. `--scenario best|typical|worst`
 selects the rate.
 
 ## Project cap (`scripts/lib/budget/project-cap.cjs` + `hooks/budget-enforcer.ts`)
@@ -63,11 +63,11 @@ breach prints/records but still allows the spawn (advisory). Running project spe
 `est_cost_usd` across all `costs.jsonl` rows (a `project-totals.json` fast-path mirrors the Phase 10.1
 `phase-totals.json` optimization).
 
-## ROI dashboard (`scripts/lib/budget/roi.cjs`, pure + `/gdd:roi`)
+## ROI dashboard (`scripts/lib/budget/roi.cjs`, pure + `/hone:roi`)
 
 Joins per-cycle cost with what actually shipped. **"Shipped"** = a commit that **survived ≥ 14 days**
 in `main` (the ROADMAP default - a longer window catches revert-after-bug-discovery); a commit
-reverted inside that window counts as `reverted`. `/gdd:roi` shells `git log` per cycle for the
+reverted inside that window counts as `reverted`. `/hone:roi` shells `git log` per cycle for the
 shipped/reverted counts and reads per-cycle cost from `costs.jsonl`; `roi.cjs` computes:
 
 - `costPerShipped = costUsd / max(shipped, 1)` - USD per commit that stuck.
@@ -82,7 +82,7 @@ Three new free-form `type`s on `.design/telemetry/events.jsonl`:
 
 | Type | Emitted by | Payload (PII-free) |
 |---|---|---|
-| `budget_forecast` | `cost-forecaster` / `/gdd:budget` | `{ scenario, perCycle, projectedTotal, cyclesToCap }` |
+| `budget_forecast` | `cost-forecaster` / `/hone:budget` | `{ scenario, perCycle, projectedTotal, cyclesToCap }` |
 | `project_cap_warning` | budget-enforcer hook | `{ pct, spend, cap, level }` at `warn-50` / `warn-80` |
 | `project_cap_halt` | budget-enforcer hook | `{ pct, spend, cap, enforcementMode }` at `halt` |
 

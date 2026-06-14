@@ -8,7 +8,7 @@
  * `scripts/install.cjs --doctor`.
  *
  * Phase 28.8 D-03: Codex install-by-URL works today — `codex plugin
- * marketplace add hegemonart/get-design-done` is a single command per
+ * marketplace add hegemonart/hone` is a single command per
  * developers.openai.com/codex/plugins/build. This reporter inspects the
  * local repo for the artifacts that the Codex CLI consumes during that
  * single step:
@@ -51,8 +51,9 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 
-const MARKETPLACE_NAME = 'get-design-done';
-const PLUGIN_NAME = 'get-design-done';
+// Identity SoT (Phase 61 rebrand, REBRAND-02): marketplace/plugin name from the
+// frozen seam (scripts/lib/pkg-identity.cjs), not a hardcoded 'hone'.
+const { MARKETPLACE_NAME, PLUGIN_NAME } = require('../pkg-identity.cjs');
 const MANIFEST_REL_PATH = '.codex-plugin/plugin.json';
 const CATALOG_REL_PATH = '.claude-plugin/marketplace.json';
 
@@ -147,9 +148,9 @@ function readJsonFileSafe(filePath) {
  * installed machine) is the only place this path is actually checked.
  *
  * @param {string} marketplaceName  Catalog `.name` field (default
- *                                  'get-design-done' for GDD).
+ *                                  'hone' for Hone).
  * @param {string} pluginName       Manifest `.name` field (same as
- *                                  marketplaceName for GDD).
+ *                                  marketplaceName for Hone).
  * @param {string|null|undefined} version  Manifest `.version` field, or
  *                                          null/undefined to render the
  *                                          `<version-from-package.json>`
@@ -319,7 +320,7 @@ function checkCodexPlugin(projectRoot) {
  *   Codex Plugin status
  *     manifest .codex-plugin/plugin.json: present (version 1.28.8) — schema valid
  *     catalog .claude-plugin/marketplace.json: present — referenced by codex-plugin per D-14 (legacy-compatible catalog reuse)
- *     install path (computed, not verified): ~/.codex/plugins/cache/get-design-done/get-design-done/1.28.8/
+ *     install path (computed, not verified): ~/.codex/plugins/cache/hone/hone/1.28.8/
  *     verdict: ready-to-install
  *
  * @param {ReturnType<checkCodexPlugin>} result

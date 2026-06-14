@@ -1,8 +1,8 @@
 'use strict';
-// tests/gdd-mcp-tools.test.cjs
+// tests/hone-mcp-tools.test.cjs
 // ---------------------------------------------------------------------------
 // Plan 27.7-02 — MCP tool test suite. Originally 12 tools; Phase 52 raised the
-// cap 12 -> 13 (gdd_context_query, D5) — the count assertions below track 13.
+// cap 12 -> 13 (hone_context_query, D5) — the count assertions below track 13.
 //
 // Test names are all prefixed `27.7-02:` for the tag count check.
 // Includes: 24 base tests (2 per tool = input contract + output shape),
@@ -20,24 +20,24 @@ const path = require('node:path');
 const os = require('node:os');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-// gdd-mcp moved scripts/mcp-servers/gdd-mcp/ -> sdk/mcp/gdd-mcp/ in Plan 31-5-05 (D-08).
-const TOOLS_DIR = path.join(REPO_ROOT, 'sdk', 'mcp', 'gdd-mcp', 'tools');
-const SCHEMA_PATH = path.join(REPO_ROOT, 'reference', 'schemas', 'mcp-gdd-tools.schema.json');
+// hone-mcp moved scripts/mcp-servers/hone-mcp/ -> sdk/mcp/hone-mcp/ in Plan 31-5-05 (D-08).
+const TOOLS_DIR = path.join(REPO_ROOT, 'sdk', 'mcp', 'hone-mcp', 'tools');
+const SCHEMA_PATH = path.join(REPO_ROOT, 'reference', 'schemas', 'mcp-hone-tools.schema.json');
 
 const TOOL_NAMES = [
-  'gdd_status',
-  'gdd_context_query',
-  'gdd_phase_current',
-  'gdd_phases_list',
-  'gdd_plans_list',
-  'gdd_decisions_list',
-  'gdd_intel_get',
-  'gdd_telemetry_query',
-  'gdd_cycle_recap',
-  'gdd_reflections_latest',
-  'gdd_learnings_digest',
-  'gdd_events_tail',
-  'gdd_health',
+  'hone_status',
+  'hone_context_query',
+  'hone_phase_current',
+  'hone_phases_list',
+  'hone_plans_list',
+  'hone_decisions_list',
+  'hone_intel_get',
+  'hone_telemetry_query',
+  'hone_cycle_recap',
+  'hone_reflections_latest',
+  'hone_learnings_digest',
+  'hone_events_tail',
+  'hone_health',
 ];
 
 /** Canonicalized tmpdir — macOS symlink discipline. */
@@ -174,7 +174,7 @@ async function withProjectRoot(root, fn) {
 // lives in the next test which asserts m.TOOL_COUNT === 12 explicitly.)
 
 test('27.7-02: tools/index exports TOOL_COUNT === 13', async () => {
-  // Phase 52 raised the cap 12 -> 13 (gdd_context_query, D5).
+  // Phase 52 raised the cap 12 -> 13 (hone_context_query, D5).
   const file = path.join(TOOLS_DIR, 'index.ts');
   const url = new URL('file://' + file.replace(/\\/g, '/'));
   const m = await import(url.href);
@@ -194,7 +194,7 @@ test('27.7-02: no write-tool names', async () => {
 });
 
 test('27.7-02: schema-file has exactly 13 entries', () => {
-  // Phase 52 raised the combined-manifest tool count 12 -> 13 (gdd_context_query).
+  // Phase 52 raised the combined-manifest tool count 12 -> 13 (hone_context_query).
   const s = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
   const tools = s.properties.tools.properties;
   assert.equal(Object.keys(tools).length, 13);
@@ -209,12 +209,12 @@ test('27.7-02: schema-file has exactly 13 entries', () => {
 // Per-tool tests: input contract + output shape (2 per tool = 24)
 // ---------------------------------------------------------------------------
 
-test('27.7-02: gdd_status — input schema is open object; output shape matches', async () => {
+test('27.7-02: hone_status — input schema is open object; output shape matches', async () => {
   const root = tmp('mcp-status');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_status');
-    assert.equal(mod.name, 'gdd_status');
+    const mod = await loadTool('hone_status');
+    assert.equal(mod.name, 'hone_status');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     for (const k of ['phase', 'branch', 'last_decisions', 'last_completed_plans', 'blocker_count']) {
@@ -224,17 +224,17 @@ test('27.7-02: gdd_status — input schema is open object; output shape matches'
   });
 });
 
-test('27.7-02: gdd_status — schema input is empty-additionalProperties-false', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_status.schema.json');
+test('27.7-02: hone_status — schema input is empty-additionalProperties-false', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_status.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.equal(s.properties.input.additionalProperties, false);
 });
 
-test('27.7-02: gdd_phase_current — returns position fields', async () => {
+test('27.7-02: hone_phase_current — returns position fields', async () => {
   const root = tmp('mcp-phase-current');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_phase_current');
+    const mod = await loadTool('hone_phase_current');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     for (const k of ['phase', 'stage', 'task_progress', 'status']) {
@@ -244,17 +244,17 @@ test('27.7-02: gdd_phase_current — returns position fields', async () => {
   });
 });
 
-test('27.7-02: gdd_phase_current — schema declares 4 required output keys', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_phase_current.schema.json');
+test('27.7-02: hone_phase_current — schema declares 4 required output keys', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_phase_current.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.deepEqual(s.properties.output.required.sort(), ['phase', 'stage', 'status', 'task_progress'].sort());
 });
 
-test('27.7-02: gdd_phases_list — returns array of parsed phases', async () => {
+test('27.7-02: hone_phases_list — returns array of parsed phases', async () => {
   const root = tmp('mcp-phases');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_phases_list');
+    const mod = await loadTool('hone_phases_list');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     assert.ok(Array.isArray(res.data.phases));
@@ -262,17 +262,17 @@ test('27.7-02: gdd_phases_list — returns array of parsed phases', async () => 
   });
 });
 
-test('27.7-02: gdd_phases_list — schema input is empty', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_phases_list.schema.json');
+test('27.7-02: hone_phases_list — schema input is empty', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_phases_list.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.deepEqual(Object.keys(s.properties.input.properties || {}), []);
 });
 
-test('27.7-02: gdd_plans_list — returns {phase, plans}', async () => {
+test('27.7-02: hone_plans_list — returns {phase, plans}', async () => {
   const root = tmp('mcp-plans');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_plans_list');
+    const mod = await loadTool('hone_plans_list');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     assert.ok(Array.isArray(res.data.plans));
@@ -281,17 +281,17 @@ test('27.7-02: gdd_plans_list — returns {phase, plans}', async () => {
   });
 });
 
-test('27.7-02: gdd_plans_list — schema allows optional phase input', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_plans_list.schema.json');
+test('27.7-02: hone_plans_list — schema allows optional phase input', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_plans_list.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.ok(s.properties.input.properties.phase);
 });
 
-test('27.7-02: gdd_decisions_list — returns decisions array', async () => {
+test('27.7-02: hone_decisions_list — returns decisions array', async () => {
   const root = tmp('mcp-decisions');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_decisions_list');
+    const mod = await loadTool('hone_decisions_list');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     assert.ok(Array.isArray(res.data.decisions));
@@ -299,22 +299,22 @@ test('27.7-02: gdd_decisions_list — returns decisions array', async () => {
   });
 });
 
-test('27.7-02: gdd_decisions_list — filters by status', async () => {
+test('27.7-02: hone_decisions_list — filters by status', async () => {
   const root = tmp('mcp-decisions-filter');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_decisions_list');
+    const mod = await loadTool('hone_decisions_list');
     const res = await mod.handle({ status: 'locked' });
     assert.equal(res.success, true);
     for (const d of res.data.decisions) assert.equal(d.status, 'locked');
   });
 });
 
-test('27.7-02: gdd_intel_get — reads existing slice', async () => {
+test('27.7-02: hone_intel_get — reads existing slice', async () => {
   const root = tmp('mcp-intel-ok');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_intel_get');
+    const mod = await loadTool('hone_intel_get');
     const res = await mod.handle({ slice_id: 'slice-001' });
     assert.equal(res.success, true);
     assert.equal(res.data.slice_id, 'slice-001');
@@ -322,13 +322,13 @@ test('27.7-02: gdd_intel_get — reads existing slice', async () => {
   });
 });
 
-test('27.7-02: gdd_intel_get — schema requires slice_id', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_intel_get.schema.json');
+test('27.7-02: hone_intel_get — schema requires slice_id', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_intel_get.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.deepEqual(s.properties.input.required, ['slice_id']);
 });
 
-test('27.7-02: gdd_telemetry_query — returns events array', async () => {
+test('27.7-02: hone_telemetry_query — returns events array', async () => {
   const root = tmp('mcp-telemetry');
   writeMinimalProject(root);
   // Append two events
@@ -339,7 +339,7 @@ test('27.7-02: gdd_telemetry_query — returns events array', async () => {
     JSON.stringify({ type: 'bar', timestamp: '2026-05-18T00:00:01Z', sessionId: 's1', payload: {} }) + '\n',
   );
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_telemetry_query');
+    const mod = await loadTool('hone_telemetry_query');
     const res = await mod.handle({ limit: 10 });
     assert.equal(res.success, true);
     assert.equal(Array.isArray(res.data.events), true);
@@ -347,19 +347,19 @@ test('27.7-02: gdd_telemetry_query — returns events array', async () => {
   });
 });
 
-test('27.7-02: gdd_telemetry_query — schema declares limit/since/type', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_telemetry_query.schema.json');
+test('27.7-02: hone_telemetry_query — schema declares limit/since/type', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_telemetry_query.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   for (const k of ['type', 'since', 'limit']) {
     assert.ok(s.properties.input.properties[k], 'missing input.' + k);
   }
 });
 
-test('27.7-02: gdd_cycle_recap — returns since + diff with full snapshot present', async () => {
+test('27.7-02: hone_cycle_recap — returns since + diff with full snapshot present', async () => {
   const root = tmp('mcp-recap');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_cycle_recap');
+    const mod = await loadTool('hone_cycle_recap');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     assert.ok('since' in res.data);
@@ -368,17 +368,17 @@ test('27.7-02: gdd_cycle_recap — returns since + diff with full snapshot prese
   });
 });
 
-test('27.7-02: gdd_cycle_recap — schema output requires since+diff', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_cycle_recap.schema.json');
+test('27.7-02: hone_cycle_recap — schema output requires since+diff', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_cycle_recap.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.deepEqual(s.properties.output.required.sort(), ['diff', 'since']);
 });
 
-test('27.7-02: gdd_reflections_latest — returns latest reflection content_excerpt', async () => {
+test('27.7-02: hone_reflections_latest — returns latest reflection content_excerpt', async () => {
   const root = tmp('mcp-reflect');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_reflections_latest');
+    const mod = await loadTool('hone_reflections_latest');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     assert.match(res.data.content_excerpt, /Lessons learned/);
@@ -386,17 +386,17 @@ test('27.7-02: gdd_reflections_latest — returns latest reflection content_exce
   });
 });
 
-test('27.7-02: gdd_reflections_latest — schema caps content_excerpt to 4096 chars', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_reflections_latest.schema.json');
+test('27.7-02: hone_reflections_latest — schema caps content_excerpt to 4096 chars', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_reflections_latest.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.equal(s.properties.output.properties.content_excerpt.maxLength, 4096);
 });
 
-test('27.7-02: gdd_learnings_digest — returns digest <= 5120 chars', async () => {
+test('27.7-02: hone_learnings_digest — returns digest <= 5120 chars', async () => {
   const root = tmp('mcp-digest');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_learnings_digest');
+    const mod = await loadTool('hone_learnings_digest');
     const res = await mod.handle({ cycles: 5 });
     assert.equal(res.success, true);
     assert.equal(typeof res.data.digest, 'string');
@@ -405,13 +405,13 @@ test('27.7-02: gdd_learnings_digest — returns digest <= 5120 chars', async () 
   });
 });
 
-test('27.7-02: gdd_learnings_digest — schema declares cycles input', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_learnings_digest.schema.json');
+test('27.7-02: hone_learnings_digest — schema declares cycles input', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_learnings_digest.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.ok(s.properties.input.properties.cycles);
 });
 
-test('27.7-02: gdd_events_tail — returns last-N events', async () => {
+test('27.7-02: hone_events_tail — returns last-N events', async () => {
   const root = tmp('mcp-events-tail');
   writeMinimalProject(root);
   const eventsPath = path.join(root, '.design', 'telemetry', 'events.jsonl');
@@ -421,25 +421,25 @@ test('27.7-02: gdd_events_tail — returns last-N events', async () => {
   }
   fs.writeFileSync(eventsPath, lines.join('\n') + '\n');
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_events_tail');
+    const mod = await loadTool('hone_events_tail');
     const res = await mod.handle({ limit: 2 });
     assert.equal(res.success, true);
     assert.equal(res.data.events.length, 2);
   });
 });
 
-test('27.7-02: gdd_events_tail — schema declares limit+type', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_events_tail.schema.json');
+test('27.7-02: hone_events_tail — schema declares limit+type', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_events_tail.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.ok(s.properties.input.properties.limit);
   assert.ok(s.properties.input.properties.type);
 });
 
-test('27.7-02: gdd_health — returns 4 checks with valid statuses', async () => {
+test('27.7-02: hone_health — returns 4 checks with valid statuses', async () => {
   const root = tmp('mcp-health');
   writeMinimalProject(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_health');
+    const mod = await loadTool('hone_health');
     const res = await mod.handle({});
     assert.equal(res.success, true);
     // Plan 30-06 added 5th check (issue_reporter); was 4 in Plan 27.7-02.
@@ -456,8 +456,8 @@ test('27.7-02: gdd_health — returns 4 checks with valid statuses', async () =>
   });
 });
 
-test('27.7-02: gdd_health — schema enum restricts status to ok/warn/fail', () => {
-  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'gdd_health.schema.json');
+test('27.7-02: hone_health — schema enum restricts status to ok/warn/fail', () => {
+  const sp = path.join(TOOLS_DIR, '..', 'schemas', 'hone_health.schema.json');
   const s = JSON.parse(fs.readFileSync(sp, 'utf8'));
   assert.deepEqual(
     s.properties.output.properties.checks.items.properties.status.enum.sort(),
@@ -469,39 +469,39 @@ test('27.7-02: gdd_health — schema enum restricts status to ok/warn/fail', () 
 // Graceful-missing-directory tests (Warning #5) — 3 tools
 // ---------------------------------------------------------------------------
 
-test('27.7-02: gdd_intel_get — returns directory_not_found error when .design/intel/ absent', async () => {
+test('27.7-02: hone_intel_get — returns directory_not_found error when .design/intel/ absent', async () => {
   const root = tmp('mcp-intel-missing');
   // No .design/intel/ — satisfy walk-up with .planning only
   fs.mkdirSync(path.join(root, '.planning'), { recursive: true });
   fs.mkdirSync(path.join(root, '.design'), { recursive: true });
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_intel_get');
+    const mod = await loadTool('hone_intel_get');
     const res = await mod.handle({ slice_id: 'foo' });
     assert.equal(res.success, false);
     assert.equal(res.error.mcp_code, 'directory_not_found');
   });
 });
 
-test('27.7-02: gdd_reflections_latest — returns directory_not_found when .design/reflections/ absent', async () => {
+test('27.7-02: hone_reflections_latest — returns directory_not_found when .design/reflections/ absent', async () => {
   const root = tmp('mcp-reflect-missing');
   fs.mkdirSync(path.join(root, '.planning'), { recursive: true });
   fs.mkdirSync(path.join(root, '.design'), { recursive: true });
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_reflections_latest');
+    const mod = await loadTool('hone_reflections_latest');
     const res = await mod.handle({});
     assert.equal(res.success, false);
     assert.equal(res.error.mcp_code, 'directory_not_found');
   });
 });
 
-test('27.7-02: gdd_cycle_recap — returns directory_not_found when .design/snapshots/ absent', async () => {
+test('27.7-02: hone_cycle_recap — returns directory_not_found when .design/snapshots/ absent', async () => {
   const root = tmp('mcp-recap-missing');
   fs.mkdirSync(path.join(root, '.planning'), { recursive: true });
   fs.mkdirSync(path.join(root, '.design'), { recursive: true });
   // Need a STATE.md for the recap read; but the snapshot probe runs first
   writeMinimalState(root);
   await withProjectRoot(root, async () => {
-    const mod = await loadTool('gdd_cycle_recap');
+    const mod = await loadTool('hone_cycle_recap');
     const res = await mod.handle({});
     assert.equal(res.success, false);
     assert.equal(res.error.mcp_code, 'directory_not_found');

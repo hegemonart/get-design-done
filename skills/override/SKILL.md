@@ -1,25 +1,25 @@
 ---
-name: gdd-override
+name: hone-override
 description: "Escalation surface for a risk-blocked action or a fact-force gate. Use when the Phase 56 risk gate blocked a writer action (suggested_action=block) and a reviewer has signed off, or when the first-write fact-force gate is holding a file you have legitimately reviewed. Activates for requests involving overriding a blocked edit, approving a high-risk change, or clearing a fact-force hold on a path."
 argument-hint: "<finding-id | factforce <path>> [--approver <who>] [--reason <text>]"
 user-invocable: true
 tools: Read, Write, Bash, Grep, Glob
 ---
 
-# /gdd:override
+# /hone:override
 
 A risk-blocked action is hard: the Phase 56 risk gate routes `suggested_action=block`
 to `override` (see `scripts/lib/risk/route.cjs`), and the fact-force gate holds the
 first write to a file until its facts are read. This skill is the audited way past
-either hold. It mirrors `/gdd:unlock-decision`: a named approver plus a
+either hold. It mirrors `/hone:unlock-decision`: a named approver plus a
 reason, recorded before anything is let through. Override is never silent.
 
 ## Invocation
 
 | Command | Behavior |
 |---|---|
-| `/gdd:override <finding-id> --approver <who> --reason <text>` | Record a `D-XX` `override`-tagged decision in STATE.md `<decisions>` and let the risk-blocked action through. |
-| `/gdd:override factforce <path> --approver <who> --reason <text>` | Set `checked[path]` in the session fact-force state so the fact-force gate stops holding that path. |
+| `/hone:override <finding-id> --approver <who> --reason <text>` | Record a `D-XX` `override`-tagged decision in STATE.md `<decisions>` and let the risk-blocked action through. |
+| `/hone:override factforce <path> --approver <who> --reason <text>` | Set `checked[path]` in the session fact-force state so the fact-force gate stops holding that path. |
 
 Both modes ask for a rationale: the audit trail is the reason override exists.
 
@@ -38,7 +38,7 @@ Both modes ask for a rationale: the audit trail is the reason override exists.
      session-state file it lands in.
 
 3. **Apply (finding mode).** Record the audited decision via the STATE writer
-   `mcp__gdd_state__add_decision` (it auto-assigns the next `D-N`). Pass the `text`
+   `mcp__hone_state__add_decision` (it auto-assigns the next `D-N`). Pass the `text`
    from the pure builder so the `override` tag is embedded and greppable:
 
    ```bash
@@ -50,7 +50,7 @@ Both modes ask for a rationale: the audit trail is the reason override exists.
    ' "<finding-id>" "<who>" "<reason>"
    ```
 
-   Then call `mcp__gdd_state__add_decision` with `{ text: <entry.text>, status: "locked" }`.
+   Then call `mcp__hone_state__add_decision` with `{ text: <entry.text>, status: "locked" }`.
    The blocked action is now approved on the audit record; proceed with it.
 
 4. **Apply (factforce mode).** Set `checked[path]` in the session state file at

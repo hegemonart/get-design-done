@@ -1,6 +1,6 @@
 'use strict';
 // Phase 38.5 — Deployment Coordination Loop regression baseline. Freezes the v1.38.5 artifact:
-// the pure rollout-status classifier, the rollout-coordinator agent + /gdd:rollout-status skill,
+// the pure rollout-status classifier, the rollout-coordinator agent + /hone:rollout-status skill,
 // the rollout-coordination reference (registered), the verify_outcome event seeds, and the
 // 6-manifest lockstep. Version-AGNOSTIC. Hermetic: file reads + the pure classifier. `38.5-02:`.
 

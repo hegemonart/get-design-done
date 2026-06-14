@@ -1,6 +1,6 @@
 <div align="center">
 
-# GET DESIGN DONE
+# Hone
 
 [English](../../README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [Français](README.fr.md) · [Italiano](README.it.md) · [Deutsch](README.de.md)
 
@@ -8,18 +8,20 @@
 
 **AI 코딩 에이전트를 위한 디자인 품질 파이프라인: 브리프 -> 탐색 -> 계획 -> 디자인 -> 검증.**
 
-**Get Design Done은 AI가 생성한 UI가 브리프, 디자인 시스템, 로컬 디자인 지식, 품질 게이트에 계속 묶여 있도록 합니다. Claude Code를 위해 만들어졌으며, Codex, Cursor, Gemini, OpenCode, Copilot, Windsurf 등에 설치됩니다.**
+**Hone은 AI가 생성한 UI가 브리프, 디자인 시스템, 로컬 디자인 지식, 품질 게이트에 계속 묶여 있도록 합니다. Claude Code를 위해 만들어졌으며, Codex, Cursor, Gemini, OpenCode, Copilot, Windsurf 등에 설치됩니다.**
 
-[![npm version](https://img.shields.io/npm/v/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
-[![npm downloads](https://img.shields.io/npm/dm/@hegemonart/get-design-done?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/get-design-done)
-[![CI](https://img.shields.io/github/actions/workflow/status/hegemonart/get-design-done/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI)](https://github.com/hegemonart/get-design-done/actions/workflows/ci.yml)
-[![GitHub stars](https://img.shields.io/github/stars/hegemonart/get-design-done?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/get-design-done)
+[![npm version](https://img.shields.io/npm/v/@hegemonart/hone?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/hone)
+[![npm downloads](https://img.shields.io/npm/dm/@hegemonart/hone?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@hegemonart/hone)
+[![CI](https://img.shields.io/github/actions/workflow/status/hegemonart/hone/ci.yml?branch=main&style=for-the-badge&logo=github&label=CI)](https://github.com/hegemonart/hone/actions/workflows/ci.yml)
+[![GitHub stars](https://img.shields.io/github/stars/hegemonart/hone?style=for-the-badge&logo=github&color=181717)](https://github.com/hegemonart/hone)
 [![Node](https://img.shields.io/badge/node-22%20%7C%2024-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 ```bash
-npx @hegemonart/get-design-done@latest
+npx hone
 ```
+
+> **get-design-done (gdd) 에서 이름이 변경되었습니다.** 기존 설치는 계속 작동합니다: 더 이상 사용되지 않는 `/gdd:` 별칭은 1~2개 버전 동안 유지됩니다. 새 설치는 `npx hone` 입니다. `@hegemonart/get-design-done` 은 `@hegemonart/hone` 을 위해 npm 에서 더 이상 사용되지 않습니다. _(번역이 영어 README 보다 늦을 수 있습니다.)_
 
 **macOS, Linux, Windows에서 동작합니다.**
 
@@ -31,11 +33,11 @@ npx @hegemonart/get-design-done@latest
 
 ## 무엇인가
 
-Get Design Done은 AI 코딩 에이전트가 제품에 어울리는 UI를 출시하도록 돕습니다.
+Hone은 AI 코딩 에이전트가 제품에 어울리는 UI를 출시하도록 돕습니다.
 
 "이 화면을 더 좋게 만들어 줘" 같은 막연한 요청을 추적 가능한 디자인 워크플로로 바꿉니다: 브리프, 탐색, 계획, 디자인, 검증.
 
-에이전트에게 감각만으로 즉흥적으로 만들라고 요청하는 대신, GDD는 구조화된 프로세스, 로컬 디자인 지식, 프로젝트별 메모리, 선택적 디자인 도구 연결, 그리고 작업이 출시되기 전의 검증을 제공합니다.
+에이전트에게 감각만으로 즉흥적으로 만들라고 요청하는 대신, Hone는 구조화된 프로세스, 로컬 디자인 지식, 프로젝트별 메모리, 선택적 디자인 도구 연결, 그리고 작업이 출시되기 전의 검증을 제공합니다.
 
 ## 왜 존재하는가
 
@@ -49,53 +51,53 @@ AI 에이전트는 UI를 빠르게 만들어 냅니다. 어려운 부분은 그 
 - 위계가 화면마다 달라집니다
 - 구현이 더 이상 원래 브리프와 맞지 않습니다
 
-GDD는 AI 코딩 워크플로에 빠져 있던 디자인 규율을 더합니다. 문제를 캡처하고, 현재 디자인 시스템을 매핑하고, 범위가 정해진 변경을 계획하고, 원자적 단계로 실행한 뒤, 결과를 브리프, 토큰, 접근성, 디자인 품질 루브릭에 대해 검증합니다.
+Hone는 AI 코딩 워크플로에 빠져 있던 디자인 규율을 더합니다. 문제를 캡처하고, 현재 디자인 시스템을 매핑하고, 범위가 정해진 변경을 계획하고, 원자적 단계로 실행한 뒤, 결과를 브리프, 토큰, 접근성, 디자인 품질 루브릭에 대해 검증합니다.
 
-무대 뒤에는 64개의 전문 에이전트, 쿼리 가능한 인텔 저장소, 티어 인식 모델 라우팅, 39개의 선택적 도구 연결이 있습니다. 일상적으로 사용하는 것은 몇 개의 `/gdd:*` 명령입니다.
+무대 뒤에는 64개의 전문 에이전트, 쿼리 가능한 인텔 저장소, 티어 인식 모델 라우팅, 39개의 선택적 도구 연결이 있습니다. 일상적으로 사용하는 것은 몇 개의 `/hone:*` 명령입니다.
 
 ## 설치
 
 ### npm
 
 ```bash
-npx @hegemonart/get-design-done@latest
+npx hone
 ```
 
 ### Claude Code
 
 ```bash
-/plugin marketplace add hegemonart/get-design-done
-/plugin install get-design-done@get-design-done
+/plugin marketplace add hegemonart/hone
+/plugin install hone@hone
 /reload-plugins
 ```
 
 ### Codex
 
 ```bash
-codex plugin marketplace add hegemonart/get-design-done
+codex plugin marketplace add hegemonart/hone
 ```
 
 ### agentskills.io
 
-[agentskills.io](https://agentskills.io) 스킬 레지스트리에서 Get Design Done을 둘러보고 설치하세요.
+[agentskills.io](https://agentskills.io) 스킬 레지스트리에서 Hone을 둘러보고 설치하세요.
 
 ### 런타임 직접 인스톨러
 
 ```bash
 # Claude Code
-npx @hegemonart/get-design-done --claude --global
-npx @hegemonart/get-design-done --claude --local
+npx @hegemonart/hone --claude --global
+npx @hegemonart/hone --claude --local
 
 # Other runtimes
-npx @hegemonart/get-design-done --codex --global
-npx @hegemonart/get-design-done --cursor --global
-npx @hegemonart/get-design-done --gemini --global
+npx @hegemonart/hone --codex --global
+npx @hegemonart/hone --cursor --global
+npx @hegemonart/hone --gemini --global
 
 # Multi-runtime install
-npx @hegemonart/get-design-done --all --global
+npx @hegemonart/hone --all --global
 
 # Preview without writing
-npx @hegemonart/get-design-done --dry-run
+npx @hegemonart/hone --dry-run
 ```
 
 ## 빠른 시작
@@ -103,33 +105,33 @@ npx @hegemonart/get-design-done --dry-run
 가벼운 첫 패스를 실행하세요:
 
 ```bash
-/gdd:start
+/hone:start
 ```
 
 또는 전체 디자인 사이클을 실행하세요:
 
 ```bash
-/gdd:brief
-/gdd:explore
-/gdd:plan
-/gdd:design
-/gdd:verify
+/hone:brief
+/hone:explore
+/hone:plan
+/hone:design
+/hone:verify
 ```
 
 자연어 라우팅:
 
 ```bash
-/gdd:do improve the checkout page hierarchy, spacing, and empty states
+/hone:do improve the checkout page hierarchy, spacing, and empty states
 ```
 
 ## 활용 사례
 
 ### 기존 화면 개선
 
-화면이 기술적으로는 동작하지만 시각적으로 일관되지 않거나, 불명확하거나, 디자인이 덜 된 느낌일 때 GDD를 사용하세요.
+화면이 기술적으로는 동작하지만 시각적으로 일관되지 않거나, 불명확하거나, 디자인이 덜 된 느낌일 때 Hone를 사용하세요.
 
 ```bash
-/gdd:do improve the settings page layout and component hierarchy
+/hone:do improve the settings page layout and component hierarchy
 ```
 
 ### AI 출력물을 디자인 시스템으로 되돌리기
@@ -137,7 +139,7 @@ npx @hegemonart/get-design-done --dry-run
 에이전트가 그럴듯해 보이지만 토큰, 간격, 상태, 컴포넌트와 맞지 않는 UI를 생성했을 때 사용하세요.
 
 ```bash
-/gdd:verify
+/hone:verify
 ```
 
 ### 출시 전 감사
@@ -145,19 +147,19 @@ npx @hegemonart/get-design-done --dry-run
 PR, 릴리스, 디자인 핸드오프 전에 검증을 실행하세요.
 
 ```bash
-/gdd:audit
+/hone:audit
 ```
 
 ### 다크 모드 수정
 
 ```bash
-/gdd:darkmode
+/hone:darkmode
 ```
 
 ### 디자인 핸드오프 임포트
 
 ```bash
-/gdd:handoff ./my-design.html
+/hone:handoff ./my-design.html
 ```
 
 이것은 Claude Design 번들을 파싱하여 CSS 사용자 정의 속성을 디자인 결정으로 추출하고, 핸드오프 충실도 검사를 실행합니다.
@@ -165,14 +167,14 @@ PR, 릴리스, 디자인 핸드오프 전에 검증을 실행하세요.
 ### 작고 집중된 수정
 
 ```bash
-/gdd:fast "fix contrast in pricing cards"
+/hone:fast "fix contrast in pricing cards"
 ```
 
 ## 무엇이 다른가
 
 ### 로컬 디자인 지식
 
-GDD는 디자인 작업을 위한 방대한 로컬 레퍼런스 라이브러리를 함께 제공합니다. 에이전트는 기본적인 디자인 판단을 위해 실시간 웹 검색에 의존하지 않고도 이를 사용할 수 있습니다.
+Hone는 디자인 작업을 위한 방대한 로컬 레퍼런스 라이브러리를 함께 제공합니다. 에이전트는 기본적인 디자인 판단을 위해 실시간 웹 검색에 의존하지 않고도 이를 사용할 수 있습니다.
 
 접근성, WCAG, 타이포그래피, 간격, 그리드, 색상, 대비, 표면, 모션, UX 라이팅, 폼, 빈 상태, 시각 위계, 다크 모드, 반응형 동작, i18n, 리서치 방법, 감사 채점, 디자인 안티패턴을 다룹니다.
 
@@ -182,7 +184,7 @@ GDD는 디자인 작업을 위한 방대한 로컬 레퍼런스 라이브러리�
 
 ### 프로젝트별 메모리
 
-GDD는 각 사이클을 기반에 묶어 두는 `.design/` 워크스페이스를 만듭니다:
+Hone는 각 사이클을 기반에 묶어 두는 `.design/` 워크스페이스를 만듭니다:
 
 | 산출물 | 목적 |
 | --- | --- |
@@ -198,7 +200,7 @@ GDD는 각 사이클을 기반에 묶어 두는 `.design/` 워크스페이스를
 
 ### 출시 전 검증
 
-GDD는 UI가 "다 된 것처럼 보일" 때 멈추지 않습니다.
+Hone는 UI가 "다 된 것처럼 보일" 때 멈추지 않습니다.
 
 검증 단계는 결과가 여전히 다음과 맞는지 확인합니다:
 
@@ -210,11 +212,11 @@ GDD는 UI가 "다 된 것처럼 보일" 때 멈추지 않습니다.
 - 모션 및 인터랙션 규칙
 - 기록된 디자인 결정
 
-갭이 나타나면, GDD는 리뷰를 감각에 맡기는 대신 구조화된 수정 목록을 만들어 냅니다.
+갭이 나타나면, Hone는 리뷰를 감각에 맡기는 대신 구조화된 수정 목록을 만들어 냅니다.
 
 ### 스킬 동작 테스트
 
-GDD 자체 스킬은 적대적 압박 시나리오(시간 압박, 매몰 비용, 권위, 범위 최소화) 아래에서 시험되어, 무너지지 않고 규율을 유지하는지 확인합니다. 압박 시나리오를 추가하는 방법은 [CONTRIBUTING.md](CONTRIBUTING.md)를 참조하세요.
+Hone 자체 스킬은 적대적 압박 시나리오(시간 압박, 매몰 비용, 권위, 범위 최소화) 아래에서 시험되어, 무너지지 않고 규율을 유지하는지 확인합니다. 압박 시나리오를 추가하는 방법은 [CONTRIBUTING.md](CONTRIBUTING.md)를 참조하세요.
 
 ## 작동 방식
 
@@ -224,11 +226,11 @@ Brief -> Explore -> Plan -> Design -> Verify -> Ship
 
 | 단계 | 명령 | 산출 |
 | --- | --- | --- |
-| Brief | `/gdd:brief` | 디자인 문제를 캡처 |
-| Explore | `/gdd:explore` | UI 시스템, 부채, 토큰, 컴포넌트를 매핑 |
-| Plan | `/gdd:plan` | 원자적 디자인 태스크를 생성 |
-| Design | `/gdd:design` | 검증과 함께 태스크를 실행 |
-| Verify | `/gdd:verify` | 최종 결과를 감사 |
+| Brief | `/hone:brief` | 디자인 문제를 캡처 |
+| Explore | `/hone:explore` | UI 시스템, 부채, 토큰, 컴포넌트를 매핑 |
+| Plan | `/hone:plan` | 원자적 디자인 태스크를 생성 |
+| Design | `/hone:design` | 검증과 함께 태스크를 실행 |
+| Verify | `/hone:verify` | 최종 결과를 감사 |
 
 ### 핵심 산출물
 
@@ -243,50 +245,50 @@ Brief -> Explore -> Plan -> Design -> Verify -> Ship
 
 ## 명령
 
-GDD는 96개의 스킬을 제공합니다. 다음은 대부분의 사용자가 일상적으로 필요로 하는 것들입니다. 전체 레퍼런스는 [SKILL.md](SKILL.md)를 참조하세요.
+Hone는 96개의 스킬을 제공합니다. 다음은 대부분의 사용자가 일상적으로 필요로 하는 것들입니다. 전체 레퍼런스는 [SKILL.md](SKILL.md)를 참조하세요.
 
 ### 핵심 파이프라인
 
 | 명령 | 목적 |
 | --- | --- |
-| `/gdd:brief` | 디자인 브리프 캡처 |
-| `/gdd:explore` | 현재 UI 시스템 인벤토리 |
-| `/gdd:plan` | 디자인 계획 생성 |
-| `/gdd:design` | 계획 실행 |
-| `/gdd:verify` | 결과 검증 |
-| `/gdd:ship` | 깨끗한 PR 브랜치 준비 |
-| `/gdd:next` | 다음 단계로 자동 라우팅 |
+| `/hone:brief` | 디자인 브리프 캡처 |
+| `/hone:explore` | 현재 UI 시스템 인벤토리 |
+| `/hone:plan` | 디자인 계획 생성 |
+| `/hone:design` | 계획 실행 |
+| `/hone:verify` | 결과 검증 |
+| `/hone:ship` | 깨끗한 PR 브랜치 준비 |
+| `/hone:next` | 다음 단계로 자동 라우팅 |
 
 ### 일상 사용
 
 | 명령 | 목적 |
 | --- | --- |
-| `/gdd:do <task>` | 자연어 라우터 |
-| `/gdd:fast <task>` | 작고 집중된 수정 |
-| `/gdd:quick` | 가벼운 태스크 흐름 |
-| `/gdd:audit` | 디자인 품질 감사 |
-| `/gdd:darkmode` | 다크 모드 감사 |
-| `/gdd:style <component>` | 컴포넌트 스타일 핸드오프 |
-| `/gdd:health` | 파이프라인 상태 진단 |
-| `/gdd:progress` | 현재 사이클 진행 상황 표시 |
-| `/gdd:resume` | 체크포인트에서 재개 |
+| `/hone:do <task>` | 자연어 라우터 |
+| `/hone:fast <task>` | 작고 집중된 수정 |
+| `/hone:quick` | 가벼운 태스크 흐름 |
+| `/hone:audit` | 디자인 품질 감사 |
+| `/hone:darkmode` | 다크 모드 감사 |
+| `/hone:style <component>` | 컴포넌트 스타일 핸드오프 |
+| `/hone:health` | 파이프라인 상태 진단 |
+| `/hone:progress` | 현재 사이클 진행 상황 표시 |
+| `/hone:resume` | 체크포인트에서 재개 |
 
 ### 디자인 도구 및 핸드오프
 
 | 명령 | 목적 |
 | --- | --- |
-| `/gdd:connections` | 선택적 통합 구성 |
-| `/gdd:figma-extract` | Figma 디자인 시스템 컨텍스트 추출 |
-| `/gdd:figma-write` | 결정과 상태를 Figma에 다시 쓰기 |
-| `/gdd:handoff <bundle>` | Claude Design 번들 임포트 |
-| `/gdd:sketch <idea>` | 다중 변형 HTML 목업 생성 |
-| `/gdd:spike <idea>` | 시간 제한 가능성 패스 |
+| `/hone:connections` | 선택적 통합 구성 |
+| `/hone:figma-extract` | Figma 디자인 시스템 컨텍스트 추출 |
+| `/hone:figma-write` | 결정과 상태를 Figma에 다시 쓰기 |
+| `/hone:handoff <bundle>` | Claude Design 번들 임포트 |
+| `/hone:sketch <idea>` | 다중 변형 HTML 목업 생성 |
+| `/hone:spike <idea>` | 시간 제한 가능성 패스 |
 
 전체 명령 레퍼런스: [SKILL.md](SKILL.md)
 
 ## 연결
 
-GDD는 외부 도구 없이도 동작하지만, 39개의 선택적 통합에 연결할 수 있습니다. 모두 선택 사항이며, 어떤 연결이든 사용 불가일 때 파이프라인은 폴백으로 우아하게 degrade합니다.
+Hone는 외부 도구 없이도 동작하지만, 39개의 선택적 통합에 연결할 수 있습니다. 모두 선택 사항이며, 어떤 연결이든 사용 불가일 때 파이프라인은 폴백으로 우아하게 degrade합니다.
 
 연결 레이어는 다음 카테고리에 걸쳐 있습니다:
 
@@ -302,7 +304,7 @@ GDD는 외부 도구 없이도 동작하지만, 39개의 선택적 통합에 연
 통합 구성:
 
 ```bash
-/gdd:connections
+/hone:connections
 ```
 
 프로브 패턴이 포함된 전체 연결 목록은 [connections/connections.md](connections/connections.md)를 참조하세요.
@@ -315,15 +317,15 @@ GDD는 외부 도구 없이도 동작하지만, 39개의 선택적 통합에 연
 
 ## 다중 런타임 지원
 
-GDD는 14개의 AI 코딩 런타임에 설치됩니다: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline. 동일한 소스 스킬과 에이전트가 런타임별 변환기에 의해 각 런타임의 네이티브 레이아웃(`skills/`, `command/`, `agents/`, 또는 `.clinerules`)으로 컴파일되므로, 파이프라인이 에디터를 넘나들며 당신과 함께 이동합니다.
+Hone는 14개의 AI 코딩 런타임에 설치됩니다: Claude Code, Codex, Cursor, Gemini CLI, OpenCode, Kilo, Copilot, Windsurf, Antigravity, Augment, Trae, Qwen Code, CodeBuddy, Cline. 동일한 소스 스킬과 에이전트가 런타임별 변환기에 의해 각 런타임의 네이티브 레이아웃(`skills/`, `command/`, `agents/`, 또는 `.clinerules`)으로 컴파일되므로, 파이프라인이 에디터를 넘나들며 당신과 함께 이동합니다.
 
 Claude Code가 대표 런타임입니다. 전체 경험은 그곳에서 처음부터 끝까지 실행됩니다: 모든 에이전트, 심층 방어 훅, MCP 기반 연결. 다른 런타임에서는 동일한 스킬과 에이전트를 네이티브 형태로 얻고, MCP 기반 연결은 MCP를 지원하는 호스트에서 활성화되며, 훅 레이어는 Claude Code 전용입니다.
 
 ## 보안과 프라이버시
 
-GDD는 기본적으로 로컬 우선입니다. 프로젝트 산출물을 `.design/` 아래에 작성하고, 구성된 경우에만 선택적 통합을 사용하며, 이슈 리포팅은 동의 기반으로 유지합니다.
+Hone는 기본적으로 로컬 우선입니다. 프로젝트 산출물을 `.design/` 아래에 작성하고, 구성된 경우에만 선택적 통합을 사용하며, 이슈 리포팅은 동의 기반으로 유지합니다.
 
-플러그인에는 보호된 경로, 위험 명령 차단, 인젝션 스캔, MCP 서킷 브레이킹, 예산 강제를 위한 심층 방어 훅이 포함됩니다. GDD는 또한 안전한 프로젝트 인트로스펙션을 위한 13개의 읽기 전용 MCP 도구를 제공합니다.
+플러그인에는 보호된 경로, 위험 명령 차단, 인젝션 스캔, MCP 서킷 브레이킹, 예산 강제를 위한 심층 방어 훅이 포함됩니다. Hone는 또한 안전한 프로젝트 인트로스펙션을 위한 13개의 읽기 전용 MCP 도구를 제공합니다.
 
 런타임의 deny 리스트에 민감 경로를 추가하세요:
 
@@ -346,13 +348,13 @@ GDD는 기본적으로 로컬 우선입니다. 프로젝트 산출물을 `.desig
 ## 업데이트
 
 ```bash
-npx @hegemonart/get-design-done@latest
+npx hone
 ```
 
 또는 Claude Code 안에서:
 
 ```bash
-/gdd:update
+/hone:update
 ```
 
 전체 릴리스 이력은 [CHANGELOG.md](CHANGELOG.md)를 참조하세요.
@@ -364,20 +366,20 @@ npx @hegemonart/get-design-done@latest
 런타임을 재시작하고 실행하세요:
 
 ```bash
-/gdd:help
+/hone:help
 ```
 
 ### 파이프라인이 멈춤
 
 ```bash
-/gdd:health
-/gdd:resume
+/hone:health
+/hone:resume
 ```
 
 ### 비용이 너무 높음
 
 ```bash
-/gdd:optimize
+/hone:optimize
 ```
 
 ## 기여
@@ -398,6 +400,6 @@ MIT 라이선스. 자세한 내용은 [LICENSE](LICENSE)를 참조하세요. 서
 
 <div align="center">
 
-**Claude Code는 코드를 출시합니다. Get Design Done은 디자인까지 출시되도록 만듭니다.**
+**Claude Code는 코드를 출시합니다. Hone은 디자인까지 출시되도록 만듭니다.**
 
 </div>

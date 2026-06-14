@@ -4,13 +4,13 @@
  *
  * Asserts skills/health/SKILL.md has been extended with a skill-length
  * report subsection (per D-11) and remains compliant with the skill-authoring
- * contract (≤99 lines; name: gdd-health; disable-model-invocation: true).
+ * contract (≤99 lines; name: hone-health; disable-model-invocation: true).
  *
  * Behavior covered (per plan 28.5-11 Task 2):
  *   1. Health SKILL.md has a section/subsection mentioning skill-length.
  *   2. The subsection references the validator (`validate-skill-length`).
  *   3. Length stays ≤99 (preserve D-01 / Wave B compliance).
- *   4. name: gdd-health unchanged.
+ *   4. name: hone-health unchanged.
  *   5. disable-model-invocation: true preserved (from 28.5-06 / D-09).
  *   6. Health skill still passes the validator (0 errors, 0 warnings).
  */
@@ -51,9 +51,9 @@ test('28.5-11 health: SKILL.md is ≤99 lines (D-01 / Wave B)', () => {
   assert.ok(n <= 99, `health SKILL.md is ${n} lines; threshold ≤99`);
 });
 
-test('28.5-11 health: name: gdd-health is preserved', () => {
+test('28.5-11 health: name: hone-health is preserved', () => {
   const text = readHealth();
-  assert.match(text, /^name:\s*gdd-health\s*$/m, 'name: gdd-health not present in frontmatter');
+  assert.match(text, /^name:\s*hone-health\s*$/m, 'name: hone-health not present in frontmatter');
 });
 
 test('28.5-11 health: disable-model-invocation: true is preserved (D-09)', () => {

@@ -15,13 +15,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { REPO_ROOT } = require('./helpers.ts');
 
-const PKG_PREFIX = '@hegemonart/get-design-done/';
+const PKG_PREFIX = '@hegemonart/hone/';
 
 /**
- * Resolve a documented `@hegemonart/get-design-done/sdk/<sub>` import to the
+ * Resolve a documented `@hegemonart/hone/sdk/<sub>` import to the
  * repo-tree file it should point at. Directory modules resolve to their
  * `index.ts`; primitives resolve to the `.cjs` of the same basename; the
- * mcp/gdd-state server resolves to `server.ts`. Returns an absolute path or
+ * mcp/hone-state server resolves to `server.ts`. Returns an absolute path or
  * null when the import is not a `/sdk/...` path.
  */
 function resolveDocumentedPath(importSpec) {
@@ -35,8 +35,8 @@ function resolveDocumentedPath(importSpec) {
   if (/^sdk\/primitives\/[^/]+$/.test(sub)) {
     return `${abs}.cjs`;
   }
-  // mcp/gdd-state → the server entry.
-  if (sub === 'sdk/mcp/gdd-state') {
+  // mcp/hone-state → the server entry.
+  if (sub === 'sdk/mcp/hone-state') {
     return path.join(abs, 'server.ts');
   }
   // bare root barrel.
@@ -105,7 +105,7 @@ test('31-5-04: the six SDK subtrees are physically present under sdk/', () => {
     'sdk/primitives/iteration-budget.cjs',
     'sdk/primitives/jittered-backoff.cjs',
     'sdk/primitives/lockfile.cjs',
-    'sdk/mcp/gdd-state/server.ts',
+    'sdk/mcp/hone-state/server.ts',
     'sdk/index.ts',
   ];
   const missing = required.filter(

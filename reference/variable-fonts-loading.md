@@ -1,4 +1,4 @@
-<!-- Source: Phase 18 — get-design-done -->
+<!-- Source: Phase 18 — hone -->
 
 # Variable Fonts & Font Loading
 

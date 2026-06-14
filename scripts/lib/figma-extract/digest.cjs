@@ -44,7 +44,7 @@ const DEFAULT_TOKEN_PRIORITY = ['variables', 'plugin', 'styles'];
 // Receiver-written payload marker (31-06 contract). A rawDir/variables.json that
 // carries this top-level field is the plugin's Path-C payload, NOT the Figma
 // Variables API body.
-const PLUGIN_PAYLOAD_MARKER = 'gdd-plugin';
+const PLUGIN_PAYLOAD_MARKER = 'hone-plugin';
 
 // ── component filter (D-08) ────────────────────────────────────────────────────
 
@@ -153,7 +153,7 @@ function extractTokensFromVariables(vars) {
  * shape. The plugin (D-13) emits ALL local variables; we accept either a
  * pre-shaped `tokens[]` array or the raw `variables`/`meta` form and pass it
  * through extractTokensFromVariables when needed.
- * @param {object|null} payload  variables.json carrying source:'gdd-plugin'
+ * @param {object|null} payload  variables.json carrying source:'hone-plugin'
  * @returns {Array}
  */
 function normalizePluginPayload(payload) {

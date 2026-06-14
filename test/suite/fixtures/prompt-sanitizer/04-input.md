@@ -1,1 +1,1 @@
-Run /gdd:progress
+Run /hone:progress

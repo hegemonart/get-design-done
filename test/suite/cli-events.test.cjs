@@ -8,7 +8,7 @@ const { tmpdir } = require('node:os');
 const { join } = require('node:path');
 const { spawnSync } = require('node:child_process');
 
-const CLI = join(__dirname, '../..', 'scripts', 'cli', 'gdd-events.mjs');
+const CLI = join(__dirname, '../..', 'scripts', 'cli', 'hone-events.mjs');
 
 // Node 24 on Windows crashes the child process (STATUS_STACK_BUFFER_OVERRUN
 // 0xC0000409) when it imports our .mjs CLI which dynamic-imports type-
@@ -37,7 +37,7 @@ function runCli(args, opts = {}) {
 }
 
 function seedEvents(events) {
-  const dir = mkdtempSync(join(tmpdir(), 'gdd-cli-'));
+  const dir = mkdtempSync(join(tmpdir(), 'hone-cli-'));
   const path = join(dir, 'events.jsonl');
   writeFileSync(path, events.map((e) => JSON.stringify(e)).join('\n') + '\n');
   return { dir, path };

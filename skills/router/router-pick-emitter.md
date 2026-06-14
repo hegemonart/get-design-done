@@ -1,4 +1,4 @@
-# gdd-router - router_pick emitter (Phase 32-08 / D-02)
+# hone-router - router_pick emitter (Phase 32-08 / D-02)
 
 Co-located reference for `skills/router/SKILL.md` - split out per the Phase 28.5
 contract (router SKILL ≤100 lines) and the Phase 28.6 co-location pattern (same

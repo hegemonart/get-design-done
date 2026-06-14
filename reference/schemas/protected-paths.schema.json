@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/hegemonart/get-design-done/reference/schemas/protected-paths.schema.json",
+  "$id": "https://github.com/hegemonart/hone/reference/schemas/protected-paths.schema.json",
   "title": "Protected Paths",
   "description": "Glob list describing paths the plugin refuses to Edit/Write or mutate via destructive Bash. User additions MERGE with this default list; users cannot reduce the default set.",
   "type": "object",

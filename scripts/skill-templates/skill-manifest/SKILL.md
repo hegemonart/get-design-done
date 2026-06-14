@@ -1,5 +1,5 @@
 ---
-name: gdd-skill-manifest
+name: hone-skill-manifest
 description: "Lists all registered GDD skills and agents, with descriptions, from the intel store. Falls back to directory scan if intel store not present."
 tools: Bash, Read, Glob
 ---
@@ -24,14 +24,14 @@ Generated from intel store: .design/intel/exports.json
 
 SKILLS (Commands)
 ─────────────────
-{{command_prefix}}scan               gdd-scan
-{{command_prefix}}discover           gdd-discover
-{{command_prefix}}plan               gdd-plan
-{{command_prefix}}design             gdd-design
-{{command_prefix}}verify             gdd-verify
-{{command_prefix}}style              gdd-style
-{{command_prefix}}darkmode           gdd-darkmode
-{{command_prefix}}compare            gdd-compare
+{{command_prefix}}scan               hone-scan
+{{command_prefix}}discover           hone-discover
+{{command_prefix}}plan               hone-plan
+{{command_prefix}}design             hone-design
+{{command_prefix}}verify             hone-verify
+{{command_prefix}}style              hone-style
+{{command_prefix}}darkmode           hone-darkmode
+{{command_prefix}}compare            hone-compare
 ... (all skills)
 
 AGENTS

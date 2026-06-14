@@ -3,7 +3,7 @@ chromatic.md
 claude-design.md
 connections.md
 figma.md
-gdd-state.md
+hone-state.md
 graphify.md
 magic-patterns.md
 paper-design.md

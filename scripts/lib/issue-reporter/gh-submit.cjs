@@ -57,7 +57,7 @@ function submitViaGh(opts) {
   if (title.length === 0) throw new Error('submitViaGh: title required');
   if (body.length === 0) throw new Error('submitViaGh: body required');
 
-  const tmpDir = opts.tmpDir || fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-issue-'));
+  const tmpDir = opts.tmpDir || fs.mkdtempSync(path.join(os.tmpdir(), 'hone-issue-'));
   const bodyFile = path.join(tmpDir, 'body.md');
   fs.writeFileSync(bodyFile, body, 'utf8');
 
@@ -65,7 +65,7 @@ function submitViaGh(opts) {
   const ghPath = opts.ghPath || 'gh';
 
   // Argument order is deliberate: --repo must come BEFORE --title/--body-file
-  // so the test for H1 ("--repo hegemonart/get-design-done in argv") can use
+  // so the test for H1 ("--repo hegemonart/hone in argv") can use
   // simple substring matching and not be sensitive to interleaving.
   const args = [
     'issue', 'create',

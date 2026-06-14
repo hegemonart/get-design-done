@@ -1,6 +1,6 @@
 'use strict';
-// Phase 41 — SC#10 network-isolation gate. gdd-detect is OFFLINE BY DEFAULT: its executable surface
-// (bin/gdd-detect + scripts/lib/detect/**/*.cjs) must contain NO network primitives. It is a pure
+// Phase 41 — SC#10 network-isolation gate. hone-detect is OFFLINE BY DEFAULT: its executable surface
+// (bin/hone-detect + scripts/lib/detect/**/*.cjs) must contain NO network primitives. It is a pure
 // regex engine over local files — no jsdom, no puppeteer, no fetch/https/axios.
 // Mirrors test/suite/issue-reporter-network-isolation.test.cjs.
 //
@@ -30,9 +30,9 @@ function walkCode(root) {
   return out;
 }
 
-test('41-03: gdd-detect executable surface contains no network primitives (offline by default)', () => {
+test('41-03: hone-detect executable surface contains no network primitives (offline by default)', () => {
   const roots = [
-    path.join(REPO_ROOT, 'bin', 'gdd-detect'),       // the extensionless trampoline (scanned directly)
+    path.join(REPO_ROOT, 'bin', 'hone-detect'),       // the extensionless trampoline (scanned directly)
     path.join(REPO_ROOT, 'scripts', 'lib', 'detect'), // the engine + rules + cli (.cjs)
   ];
   const files = roots.flatMap(walkCode);
@@ -47,7 +47,7 @@ test('41-03: gdd-detect executable surface contains no network primitives (offli
       }
     }
   }
-  assert.deepEqual(violations, [], `network primitives in the gdd-detect CLI surface:\n  ${violations.join('\n  ')}`);
+  assert.deepEqual(violations, [], `network primitives in the hone-detect CLI surface:\n  ${violations.join('\n  ')}`);
 });
 
 test('41-03: the CLI has no optional-dependency references (regex-only, no jsdom/puppeteer)', () => {

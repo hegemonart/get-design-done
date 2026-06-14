@@ -1,6 +1,6 @@
 // sdk/cli/commands/audit.ts — Plan 21-09 Task 5 (SDK-21).
 //
-// `gdd-sdk audit` — regression + verification dry-run.
+// `hone-sdk audit` — regression + verification dry-run.
 //
 //   1. Probe connections (via in-process probe_connections handler —
 //      Plan 21-09 deliberately avoids the MCP stdio roundtrip here;
@@ -45,7 +45,7 @@ const AUDIT_FLAGS: readonly FlagSpec[] = [
   { name: 'state-path', type: 'string' },
 ];
 
-const USAGE = `gdd-sdk audit [flags]
+const USAGE = `hone-sdk audit [flags]
 
 Probe connections + dry-run verify.
 
@@ -134,7 +134,7 @@ export async function auditCommand(
   try {
     flags = coerceFlags(args, AUDIT_FLAGS);
   } catch (err) {
-    stderr.write(`gdd-sdk audit: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk audit: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -150,7 +150,7 @@ export async function auditCommand(
     // An explicit --state-path that does not exist is an arg error: the
     // caller pointed us at a specific file that should be present.
     if (explicitStatePath) {
-      stderr.write(`gdd-sdk audit: STATE.md not found at ${statePath}\n`);
+      stderr.write(`hone-sdk audit: STATE.md not found at ${statePath}\n`);
       return 3;
     }
     // No active cycle (default .design/STATE.md absent). Graceful degrade:
@@ -164,7 +164,7 @@ export async function auditCommand(
   try {
     state = await readFn(statePath);
   } catch (err) {
-    stderr.write(`gdd-sdk audit: failed to read STATE.md: ${errMessage(err)}\n`);
+    stderr.write(`hone-sdk audit: failed to read STATE.md: ${errMessage(err)}\n`);
     return 3;
   }
 
@@ -203,7 +203,7 @@ export async function auditCommand(
     try {
       baselineReport = computeBaselineDrift(state, resolvePath(cwd, baselineFlag));
     } catch (err) {
-      stderr.write(`gdd-sdk audit: baseline error: ${errMessage(err)}\n`);
+      stderr.write(`hone-sdk audit: baseline error: ${errMessage(err)}\n`);
       return 3;
     }
   }
@@ -249,7 +249,7 @@ function emitDegraded(
   stderr: NodeJS.WritableStream,
 ): number {
   // Human-facing notice on stderr so JSON on stdout stays machine-parseable.
-  stderr.write('gdd-sdk audit: no active cycle — run /gdd:start\n');
+  stderr.write('hone-sdk audit: no active cycle — run /hone:start\n');
 
   const report: AuditReport = {
     connections: Object.freeze([]),
@@ -354,9 +354,9 @@ function computeBaselineDrift(
 
 /**
  * Synchronous baseline parse. We want a stand-alone parser that works
- * on the baseline file without taking a lock — gdd-state's `read()` is
+ * on the baseline file without taking a lock — hone-state's `read()` is
  * async but lock-free, so we wrap it with a top-level await via
- * readFileSync + the gdd-state parser exports. Since parser.ts is not
+ * readFileSync + the hone-state parser exports. Since parser.ts is not
  * exported from the public index, we duplicate the minimal parse here:
  * grab the `<connections>` and `<must_haves>` blocks via regex. This is
  * fine because baseline audit tolerates a simplified shape — any
@@ -407,7 +407,7 @@ function parseBaselineStateSync(raw: string): Pick<ParsedState, 'connections' | 
 function renderHuman(report: AuditReport): string {
   const lines: string[] = [];
   if (report.degraded === true) {
-    lines.push('audit: degraded (no active cycle — run /gdd:start)');
+    lines.push('audit: degraded (no active cycle — run /hone:start)');
     lines.push('');
     lines.push('No active cycle: skipped connection + must-have checks.');
     return lines.join('\n') + '\n';

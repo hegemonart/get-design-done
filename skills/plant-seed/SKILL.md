@@ -1,12 +1,12 @@
 ---
-name: gdd-plant-seed
+name: hone-plant-seed
 description: "Forward-looking design idea with a trigger condition. Seeds surface automatically when trigger is met. Writes to .design/SEEDS.md."
 argument-hint: "[--trigger <condition>] [text]"
 tools: Read, Write, AskUserQuestion
 disable-model-invocation: true
 ---
 
-# /gdd:plant-seed
+# /hone:plant-seed
 
 **Role:** Capture an idea that is too early to act on now but should surface when a future condition is met. Backing store: `.design/SEEDS.md`.
 
@@ -32,7 +32,7 @@ Create the file with `# Design Seeds` header if missing. Append:
 
 ## Step 3 - Surfacing contract
 
-Seeds are surfaced automatically by `/gdd:progress` and `/gdd:health`. Those commands do a keyword match of each seed's trigger text against current STATE.md + `.design/CYCLES.md` content and print any matches as `Seed ready to germinate: <text>`.
+Seeds are surfaced automatically by `/hone:progress` and `/hone:health`. Those commands do a keyword match of each seed's trigger text against current STATE.md + `.design/CYCLES.md` content and print any matches as `Seed ready to germinate: <text>`.
 
 This skill does NOT surface seeds itself - it only plants them.
 

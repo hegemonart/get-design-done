@@ -18,7 +18,7 @@ const {
 } = require('../../scripts/lib/design-tokens/index.cjs');
 
 function tmp(prefix) {
-  return mkdtempSync(join(tmpdir(), `gdd-tokens-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `hone-tokens-${prefix}-`));
 }
 
 test('23-08: detectFormat picks css-vars for .css files', () => {

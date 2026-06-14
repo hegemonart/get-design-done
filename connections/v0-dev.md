@@ -1,6 +1,6 @@
 # v0.dev — Connection Specification
 
-This file is the connection specification for v0.dev within the get-design-done pipeline. v0.dev is Vercel's generative-UI tool (AI-native, Wave 2): prompt in, React/Tailwind/shadcn component code out. It is a **generator-category** connection — same family as [21st.dev](21st-dev.md) and [Magic Patterns](magic-patterns.md) — and plugs into the shared component-generator agent as a new implementation (Phase 14 pattern). See `connections/connections.md` for the full connection index and capability matrix.
+This file is the connection specification for v0.dev within the hone pipeline. v0.dev is Vercel's generative-UI tool (AI-native, Wave 2): prompt in, React/Tailwind/shadcn component code out. It is a **generator-category** connection — same family as [21st.dev](21st-dev.md) and [Magic Patterns](magic-patterns.md) — and plugs into the shared component-generator agent as a new implementation (Phase 14 pattern). See `connections/connections.md` for the full connection index and capability matrix.
 
 ---
 

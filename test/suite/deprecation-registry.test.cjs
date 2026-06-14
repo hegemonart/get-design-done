@@ -51,10 +51,10 @@ test('39.5-03: classify boundaries — pending / deprecated / removed', () => {
 
 test('39.5-03: checkReference resolves a known old path + returns null for unknown', () => {
   const entries = parseDeprecations(DEPRECATIONS);
-  const hit = checkReference(entries, 'scripts/mcp-servers/gdd-mcp/server.ts', '1.39.5');
+  const hit = checkReference(entries, 'scripts/mcp-servers/hone-mcp/server.ts', '1.39.5');
   assert.ok(hit, 'known path resolves');
   assert.equal(hit.status, 'removed');
-  assert.equal(hit.entry.new, 'sdk/mcp/gdd-mcp/server.ts');
+  assert.equal(hit.entry.new, 'sdk/mcp/hone-mcp/server.ts');
   assert.match(hit.message, /removed in v1\.33\.0/);
   assert.equal(checkReference(entries, 'totally/made/up', '1.39.5'), null);
   assert.throws(() => checkReference('nope', 'x', '1.0.0'), /must be an array/);

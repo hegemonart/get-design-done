@@ -1,5 +1,5 @@
 {
-  "name": "get-design-done",
+  "name": "hone",
   "version": "9.9.9",
   "description": "Agent-orchestrated 5-stage design pipeline.",
   "skills": "./skills/",

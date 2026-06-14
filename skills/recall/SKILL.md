@@ -1,5 +1,5 @@
 ---
-name: gdd-recall
+name: hone-recall
 description: "Search cross-cycle memory: decisions, learnings, experience archives. Returns ranked matches."
 argument-hint: "<query> [--reindex]"
 tools: Read, Write, Bash
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 @reference/retrieval-contract.md
 
-# /gdd:recall
+# /hone:recall
 
 Searches `.design/archive/`, `.design/learnings/LEARNINGS.md`, `.design/CYCLES.md`, and `STATE.md` decision blocks for the given query and returns ranked matches. Uses FTS5 when `better-sqlite3` is available, ripgrep next, Node fs scan as universal fallback.
 
@@ -63,7 +63,7 @@ Searches `.design/archive/`, `.design/learnings/LEARNINGS.md`, `.design/CYCLES.m
 7. **Empty result**: if no matches, print:
    ```
    No matches for "<query>" in cross-cycle memory.
-   Tip: run /gdd:recall --reindex if the archive has been updated since last index build.
+   Tip: run /hone:recall --reindex if the archive has been updated since last index build.
    ```
 
 ## Do Not

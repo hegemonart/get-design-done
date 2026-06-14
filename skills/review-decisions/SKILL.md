@@ -1,12 +1,12 @@
 ---
-name: gdd-review-decisions
+name: hone-review-decisions
 description: "Surfaces the async decision-review queue for team mode. Reads .design/reviews/<decision-id>/ entries and reports each decision's state in the proposed → reviewing → approved → locked machine (via scripts/lib/collab/review-queue.cjs), so a team can see what's awaiting review, what's approved, and what's locked. --pending shows only decisions still needing action. Read-only - it reports the queue; it never advances a decision (that's a reviewer's explicit call). Use to run an async design-decision review without a meeting."
 argument-hint: "[<decision-id>] [--pending]"
 user-invocable: true
 tools: Read, Bash, Grep, Glob
 ---
 
-# /gdd:review-decisions
+# /hone:review-decisions
 
 Closes the async-review gap for team mode: design decisions move through an explicit review queue
 instead of being decided in a single operator's head. This skill reports where each decision is.
@@ -17,9 +17,9 @@ instead of being decided in a single operator's head. This skill reports where e
 
 | Command | Behavior |
 |---|---|
-| `/gdd:review-decisions` | Every decision in the queue, grouped by state. |
-| `/gdd:review-decisions <decision-id>` | One decision's state + audit trail. |
-| `/gdd:review-decisions --pending` | Only decisions not yet `locked` (awaiting action). |
+| `/hone:review-decisions` | Every decision in the queue, grouped by state. |
+| `/hone:review-decisions <decision-id>` | One decision's state + audit trail. |
+| `/hone:review-decisions --pending` | Only decisions not yet `locked` (awaiting action). |
 
 ## Steps
 
@@ -30,7 +30,7 @@ instead of being decided in a single operator's head. This skill reports where e
 3. **Render** grouped by state: `proposed` / `reviewing` / `approved` / `locked`, each listing the
    decision id + a one-line summary. For `--pending`, use `review-queue.pending(entries)` to show only
    non-locked ones. For a single `<decision-id>`, also print its audit trail (transitions + approvers).
-4. **Do not advance.** Reporting only - moving a decision forward (or `/gdd:unlock-decision`) is the
+4. **Do not advance.** Reporting only - moving a decision forward (or `/hone:unlock-decision`) is the
    reviewer's explicit call.
 
 ## Output

@@ -1,5 +1,5 @@
 ---
-name: gdd-do
+name: hone-do
 description: "Natural-language design task router. Parses your intent, maps to the right gdd command(s), confirms before executing. Activates for requests involving a natural-language design request, routing intent to the right command, or not knowing which skill to use."
 argument-hint: "<natural language description>"
 tools: Read, Write, AskUserQuestion
@@ -15,8 +15,8 @@ Takes a free-form description, maps it to a `{{command_prefix}}*` command, confi
 |---|---|
 | "explore", "scan", "what design patterns", "what components" | `{{command_prefix}}explore` |
 | "discuss", "decide", "what should we use for", "help me decide" | `{{command_prefix}}discuss` |
-| "plan", "create tasks", "what tasks do we need" | `@get-design-done plan` |
-| "design", "implement", "build", "execute" | `@get-design-done design` |
+| "plan", "create tasks", "what tasks do we need" | `{{command_prefix}}plan` |
+| "design", "implement", "build", "execute" | `{{command_prefix}}design` |
 | "verify", "check", "audit", "review" | `{{command_prefix}}audit` |
 | "sketch", "explore directions", "try designs", "variant" | `{{command_prefix}}sketch` |
 | "spike", "experiment", "feasibility", "test if" | `{{command_prefix}}spike` |

@@ -23,7 +23,7 @@ allowed-write-paths:
 
 ## Role
 
-Write `.design/START-REPORT.md` for `/gdd:start`. The report is the single artifact the user sees after a first-run scan. It must feel like GDD understood the project, not like it printed a generic checklist. One best_first_proof, one suggested next command, no ambiguity.
+Write `.design/START-REPORT.md` for `/hone:start`. The report is the single artifact the user sees after a first-run scan. It must feel like GDD understood the project, not like it printed a generic checklist. One best_first_proof, one suggested next command, no ambiguity.
 
 ---
 
@@ -70,7 +70,7 @@ Write `.design/START-REPORT.md` exactly matching this shape. **All seven H2 sect
 ```markdown
 # GDD First-Run Report
 
-> Generated <generated_at> by `/gdd:start`. This report does not start a pipeline cycle — it is a 0→1 proof path. Run the suggested next command to continue.
+> Generated <generated_at> by `/hone:start`. This report does not start a pipeline cycle — it is a 0→1 proof path. Run the suggested next command to continue.
 
 ## What I inspected
 
@@ -105,9 +105,9 @@ Write `.design/START-REPORT.md` exactly matching this shape. **All seven H2 sect
 
 ```bash
 <exact command — one of:>
-/gdd:fast "<concrete description of the single fix>"
-/gdd:brief
-/gdd:scan
+/hone:fast "<concrete description of the single fix>"
+/hone:brief
+/hone:scan
 ```
 
 <one-line rationale: why this command and not the others.>
@@ -116,20 +116,20 @@ Write `.design/START-REPORT.md` exactly matching this shape. **All seven H2 sect
 
 | Surface | Status | Unlock |
 |---------|--------|--------|
-| Preview MCP | <ok \| unconfigured \| unavailable> | <`/gdd:connections preview` or "already configured"> |
+| Preview MCP | <ok \| unconfigured \| unavailable> | <`/hone:connections preview` or "already configured"> |
 | Storybook | <…> | <…> |
-| Figma | <…> | <`/gdd:connections figma` or "already configured"> |
+| Figma | <…> | <`/hone:connections figma` or "already configured"> |
 | Canvas (.canvas) | <…> | <…> |
 
 <one-line note if `interview.figma_workflow` picked a specific surface - nudge toward that one first.>
 
 ## Full pipeline path
 
-If you want more than a single fix, the full pipeline would do this on this project: `/gdd:brief` to capture the design problem, `/gdd:explore` to inventory your components and interview for context, `/gdd:plan` to decompose the work, `/gdd:design` to execute, and `/gdd:verify` to score the result. The pipeline writes `.design/STATE.md` and runs across a real design cycle.
+If you want more than a single fix, the full pipeline would do this on this project: `/hone:brief` to capture the design problem, `/hone:explore` to inventory your components and interview for context, `/hone:plan` to decompose the work, `/hone:design` to execute, and `/hone:verify` to score the result. The pipeline writes `.design/STATE.md` and runs across a real design cycle.
 
 ## Connections / writeback optional
 
-If you want to push design decisions back into Figma, paper.design, pencil.dev, or a Claude Design handoff bundle, run `/gdd:connections` to wire up the surfaces. Writeback is never required - the pipeline runs code-first by default.
+If you want to push design decisions back into Figma, paper.design, pencil.dev, or a Claude Design handoff bundle, run `/hone:connections` to wire up the surfaces. Writeback is never required - the pipeline runs code-first by default.
 
 ---
 
@@ -168,9 +168,9 @@ If you want to push design decisions back into Figma, paper.design, pencil.dev, 
 
 ### Suggested next command
 
-- If `bestFirstProofId` is non-null → emit `/gdd:fast "<task>"` where `<task>` is a one-line description tied to the finding's fix sketch.
-- If `bestFirstProofId` is null AND there are findings → emit `/gdd:brief` with rationale "the findings need a design decision the rubric cannot make for you."
-- If no findings at all → emit `/gdd:scan` with rationale "this codebase looks healthy at first glance — a full audit confirms."
+- If `bestFirstProofId` is non-null → emit `/hone:fast "<task>"` where `<task>` is a one-line description tied to the finding's fix sketch.
+- If `bestFirstProofId` is null AND there are findings → emit `/hone:brief` with rationale "the findings need a design decision the rubric cannot make for you."
+- If no findings at all → emit `/hone:scan` with rationale "this codebase looks healthy at first glance — a full audit confirms."
 
 ### Visual Proof Readiness
 
@@ -183,13 +183,13 @@ If you want to push design decisions back into Figma, paper.design, pencil.dev, 
 
 ### Connections / writeback optional
 
-- Keep the paragraph short. Never assert which surface is best; point at `/gdd:connections`.
+- Keep the paragraph short. Never assert which surface is best; point at `/hone:connections`.
 
 ---
 
 ## JSON block
 
-The JSON block at the bottom is the contract future `/gdd:fast` / `/gdd:do` invocations will consume. Shape:
+The JSON block at the bottom is the contract future `/hone:fast` / `/hone:do` invocations will consume. Shape:
 
 ```json
 {
@@ -198,7 +198,7 @@ The JSON block at the bottom is the contract future `/gdd:fast` / `/gdd:do` invo
   "detected": { "root", "kind", "framework", "design_system", "confidence" },
   "findings": [{ "id", "title", "file", "line", "severity", "category", "blast_radius" }],
   "best_first_proof": "F1" | null,
-  "suggested_command": { "kind": "fast" | "brief" | "scan", "text": "/gdd:fast \"...\"" },
+  "suggested_command": { "kind": "fast" | "brief" | "scan", "text": "/hone:fast \"...\"" },
   "visual_proof_readiness": { "preview", "storybook", "figma", "canvas" }
 }
 ```

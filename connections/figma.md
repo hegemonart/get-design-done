@@ -1,6 +1,6 @@
 # Figma MCP — Connection Specification
 
-This file is the connection specification for the Figma MCP within the get-design-done pipeline. Figma publishes two MCP variants, both officially supported:
+This file is the connection specification for the Figma MCP within the hone pipeline. Figma publishes two MCP variants, both officially supported:
 
 - **Remote MCP** (`https://mcp.figma.com/mcp`) — full read + write. Exposes read tools (`get_metadata`, `get_design_context`, `get_variable_defs`, `get_screenshot`, `get_figjam`, `search_design_system`) and remote-only write tools (`use_figma`, `generate_figma_design`, `create_new_file`, `whoami`).
 - **Desktop MCP** (local HTTP, served by the Figma desktop app in Dev Mode) — reads only. Exposes the same read tools but not `use_figma`. Useful for offline/no-network reads.
@@ -63,7 +63,7 @@ No data is lost — the remote MCP reads the same Figma files.
 
 ---
 
-> ⚠︎ **Authoring-redirect** — `/gdd:figma-write` (and the `design-figma-writer` agent behind it) is a *decision-writer*: annotations, token bindings, Code Connect mappings, implementation-status write-back. For **authoring new Figma content** — create pages, populate with library components, build doc layouts from scratch — use `figma:figma-generate-design` from the Figma plugin. It runs outside the plugin sandbox and has no per-call timeout.
+> ⚠︎ **Authoring-redirect** — `/hone:figma-write` (and the `design-figma-writer` agent behind it) is a *decision-writer*: annotations, token bindings, Code Connect mappings, implementation-status write-back. For **authoring new Figma content** — create pages, populate with library components, build doc layouts from scratch — use `figma:figma-generate-design` from the Figma plugin. It runs outside the plugin sandbox and has no per-call timeout.
 >
 > **Four sandbox pitfalls `use_figma` hits in authoring loops (see `reference/figma-sandbox.md`):**
 > 1. `loadFontAsync` does not cache across calls — preload once, clone existing nodes.
@@ -205,7 +205,7 @@ When `figma` is `not_configured` or `unavailable`, stages degrade gracefully —
 
 - `figma: not_configured` or `figma: unavailable` → skip the figma-write dispatch offer entirely (no prompt, no output)
 - `figma: available` → offer opt-in prompt after design-executor completes
-- Standalone `/gdd:figma-write` invocation against `figma: not_configured` → STOP with install note
+- Standalone `/hone:figma-write` invocation against `figma: not_configured` → STOP with install note
 
 Stages do not append a `<blocker>` for a missing Figma connection — Figma is an enhancement, not a requirement. If a `must_have` explicitly requires Figma data (reads or writes), THEN append a blocker.
 

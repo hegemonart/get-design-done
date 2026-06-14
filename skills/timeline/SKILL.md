@@ -1,5 +1,5 @@
 ---
-name: gdd-timeline
+name: hone-timeline
 description: "Narrative retrospective across cycles: reads EXPERIENCE.md files and git log to produce a timeline view."
 argument-hint: "[<cycle-N> | <from>-<to> | all]"
 tools: Read, Bash, Glob
@@ -9,7 +9,7 @@ disable-model-invocation: true
 @reference/retrieval-contract.md
 @reference/cycle-handoff-preamble.md
 
-# /gdd:timeline
+# /hone:timeline
 
 Generates a narrative retrospective across one or more completed cycles by reading `.design/archive/cycle-N/EXPERIENCE.md` files and correlating with `git log`.
 
@@ -55,7 +55,7 @@ Generates a narrative retrospective across one or more completed cycles by readi
 5. **No archives found**: print
    ```
    No archived cycles found in .design/archive/.
-   Complete a cycle first with /gdd:complete-cycle.
+   Complete a cycle first with /hone:complete-cycle.
    ```
 
 ## Do Not

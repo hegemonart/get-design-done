@@ -1,12 +1,12 @@
 ---
-name: gdd-state
+name: hone-state
 description: "Query, recover, or roll back the Phase 57 SQLite state backbone. Use when you need to inspect the decisions/blockers/plans tables with a raw SELECT, rebuild a corrupt state.sqlite from the markdown STATE.md, or revert to the markdown-only source of truth by removing state.sqlite. Activates for requests involving querying the SQLite state database, recovering from SQLite corruption, or reverting the migration (demigrate)."
 argument-hint: "<query \"<sql>\" | recover | demigrate>"
 user-invocable: true
 tools: Read, Bash, Grep, Glob
 ---
 
-# /gdd:state
+# /hone:state
 
 The Phase 57 SQLite state backbone is opt-in (`--migrate-state`) and fully reversible.
 Markdown `.design/STATE.md` is always the human-editable SoT; SQLite is a faster query
@@ -16,9 +16,9 @@ layer derived from it. This skill exposes three subcommands for operating on tha
 
 | Subcommand | What it does |
 |---|---|
-| `/gdd:state query "<sql>"` | Run a read-only SELECT against `.design/state.sqlite`. |
-| `/gdd:state recover` | Rotate the current sqlite to a `.bak` and rebuild from markdown. |
-| `/gdd:state demigrate` | Remove `.design/state.sqlite`; markdown becomes the SoT again. |
+| `/hone:state query "<sql>"` | Run a read-only SELECT against `.design/state.sqlite`. |
+| `/hone:state recover` | Rotate the current sqlite to a `.bak` and rebuild from markdown. |
+| `/hone:state demigrate` | Remove `.design/state.sqlite`; markdown becomes the SoT again. |
 
 ---
 

@@ -61,7 +61,7 @@ function hintForRuntime(r) {
 async function runInteractiveInstall() {
   const p = loadClack();
 
-  p.intro('get-design-done — multi-runtime installer');
+  p.intro('hone — multi-runtime installer');
 
   // Tier-2 distribution channels (cursor-marketplace, codex-plugin) carry
   // `configDir: null` per Phase 28.8 — they're out-of-band bundles, not
@@ -117,12 +117,12 @@ async function runInteractiveInstall() {
 async function runInteractiveUninstall(opts) {
   const p = loadClack();
 
-  p.intro('get-design-done — uninstall');
+  p.intro('hone — uninstall');
 
   const installed = detectInstalled(opts || {});
   if (installed.length === 0) {
     p.note(
-      'No runtimes appear to have the get-design-done plugin installed.',
+      'No runtimes appear to have the hone plugin installed.',
       'Nothing to do.',
     );
     p.outro('Done.');

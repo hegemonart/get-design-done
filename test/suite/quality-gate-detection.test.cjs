@@ -151,7 +151,7 @@ test('25-09 quality-gate-detection: skill SKILL.md timeout-and-failure semantics
   // refuses." Those are SKILL-level rules (skills/quality-gate/SKILL.md
   // Step 2 timeout branch + Step 4 fix-loop exhaustion); assert at the
   // content level that both rules are documented (the exact behavior is
-  // covered by gdd-state-quality-gate.test.ts at the parser/serializer
+  // covered by hone-state-quality-gate.test.ts at the parser/serializer
   // level and by the verify-entry doc check elsewhere).
   const skillPath = path.join(REPO_ROOT, 'skills', 'quality-gate', 'SKILL.md');
   const md = fs.readFileSync(skillPath, 'utf8');

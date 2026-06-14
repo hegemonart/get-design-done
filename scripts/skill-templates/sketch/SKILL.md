@@ -1,5 +1,5 @@
 ---
-name: gdd-sketch
+name: hone-sketch
 description: "Multi-variant HTML design exploration that creates .design/sketches/<slug>/ with N standalone variants (default 3), browser-openable directly via file:// without a build step. Use when answering 'what could this look like?' before committing to a direction."
 argument-hint: "[topic] [--variants N] [--quick]"
 tools: Read, Write, AskUserQuestion, Bash

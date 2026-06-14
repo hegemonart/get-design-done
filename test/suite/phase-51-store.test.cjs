@@ -51,7 +51,7 @@ const SCHEMA = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
 // ---------------------------------------------------------------------------
 
 function mkTmp() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-instinct-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'hone-instinct-'));
 }
 function rmrf(dir) {
   try {

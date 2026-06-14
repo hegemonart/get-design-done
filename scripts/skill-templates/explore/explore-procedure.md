@@ -15,7 +15,7 @@ recording).
 
 # Explore Procedure
 
-Detailed procedure for the get-design-done `explore` Stage 2 orchestrator. Companion to
+Detailed procedure for the hone `explore` Stage 2 orchestrator. Companion to
 `../skills/explore/SKILL.md`. Read this file when executing a specific step; the SKILL.md
 keeps the essential workflow + decision tree, this file holds the deep methodology.
 
@@ -23,12 +23,12 @@ keeps the essential workflow + decision tree, this file holds the deep methodolo
 
 ## Stage entry
 
-All STATE.md persistence in this skill goes through `gdd-state` MCP tools - no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
+All STATE.md persistence in this skill goes through `hone-state` MCP tools - no direct edits. The skill writes to `.design/STATE.md` (connections, decisions, progress, checkpoint) via those tools, and to plain design docs (DESIGN.md / DESIGN-DEBT.md / DESIGN-CONTEXT.md) via `Write`.
 
-1. Call `mcp__gdd_state__transition_stage` with `to: "explore"`.
+1. Call `mcp__hone_state__transition_stage` with `to: "explore"`.
    - On success: proceed to probes.
    - On gate failure: emit blockers to the user (do not advance). Each blocker is a line in the `error.context.blockers` array; print them verbatim.
-2. Call `mcp__gdd_state__get` with no arguments - snapshot the parsed state into a local `state` variable for downstream steps.
+2. Call `mcp__hone_state__get` with no arguments - snapshot the parsed state into a local `state` variable for downstream steps.
 
 ---
 
@@ -91,7 +91,7 @@ Found -> pencil-dev: available
 
 After all probes complete, commit results in a single call:
 
-`mcp__gdd_state__probe_connections` with `probe_results` = an array of `{ name, status }` entries - one per probed connection. Example:
+`mcp__hone_state__probe_connections` with `probe_results` = an array of `{ name, status }` entries - one per probed connection. Example:
 
 ```json
 {
@@ -138,7 +138,7 @@ If no greenfield components in scope: skip this step.
 **Parallelism decision (before any multi-agent spawn):**
 1. Read `.design/config.json` `parallelism` (or defaults from `reference/config-schema.md`).
 2. Apply rules from `reference/parallelism-rules.md` (hard -> soft).
-3. Record the verdict via `mcp__gdd_state__set_status` with a short status label (e.g., `status: "explore_parallel"` or `"explore_serial"`) carrying the stage/verdict/reason/agents payload.
+3. Record the verdict via `mcp__hone_state__set_status` with a short status label (e.g., `status: "explore_parallel"` or `"explore_serial"`) carrying the stage/verdict/reason/agents payload.
 4. If verdict is `parallel`, dispatch via multiple `Task()` calls in one response; if `serial`, spawn sequentially.
 
 Run the canonical scan grep/glob inventory (preserves PLAT-01/02 POSIX ERE patterns from Phase 1):
@@ -154,7 +154,7 @@ Write findings to:
 - `.design/DESIGN.md` - current design system inventory + baseline score
 - `.design/DESIGN-DEBT.md` - prioritized debt roadmap
 
-Record scan progress: call `mcp__gdd_state__update_progress` with `task_progress: "<completed>/<total>"` to reflect the scan pass.
+Record scan progress: call `mcp__hone_state__update_progress` with `task_progress: "<completed>/<total>"` to reflect the scan pass.
 
 ### Step 2.x - i18n readiness probe (informational)
 
@@ -189,7 +189,7 @@ Localization readiness: framework-managed | partial | none
 
 ## Step 2.5 - Detect prior sketches and project-local conventions
 
-**Sketches**: If `.design/sketches/` exists, list all sketch slugs - group by those with `WINNER.md` (completed wrap-ups) vs without (pending). Call `mcp__gdd_state__set_status` with a brief note (e.g., `status: "explore_sketches_present"`) so downstream stages see the history. Include the inventory in DESIGN.md under a "Prior Explorations" section.
+**Sketches**: If `.design/sketches/` exists, list all sketch slugs - group by those with `WINNER.md` (completed wrap-ups) vs without (pending). Call `mcp__hone_state__set_status` with a brief note (e.g., `status: "explore_sketches_present"`) so downstream stages see the history. Include the inventory in DESIGN.md under a "Prior Explorations" section.
 
 **Project-local skills**: Read any `./.claude/skills/design-*-conventions.md` files if present. Include their content in DESIGN-CONTEXT.md under a `<project_conventions>` section - these are codified decisions from prior `{{command_prefix}}sketch-wrap-up` runs or manual edits, and they override defaults.
 
@@ -204,7 +204,7 @@ Localization readiness: framework-managed | partial | none
 ### 3.a - Pre-load context
 
 Read in this order:
-1. `state.decisions` from the snapshot captured at stage entry - existing D-XX entries (do NOT re-ask anything covered). If the snapshot is stale, refresh by calling `mcp__gdd_state__get`.
+1. `state.decisions` from the snapshot captured at stage entry - existing D-XX entries (do NOT re-ask anything covered). If the snapshot is stale, refresh by calling `mcp__hone_state__get`.
 2. `.design/BRIEF.md` - problem statement, audience, constraints
 3. `.design/DESIGN.md` - auto-detected inventory from Step 2
 4. `.design/DESIGN-CONTEXT.md` if it exists - `<gray_areas>` block lists unresolved topics
@@ -234,7 +234,7 @@ Reject generic answers ("modern", "clean", "professional"). If the answer is vag
 ### 3.d - Record after each answer
 
 After each confirmed answer:
-1. Call `mcp__gdd_state__add_decision` with the decision payload. The tool assigns the next `D-NN` id and persists atomically. Format the summary as:
+1. Call `mcp__hone_state__add_decision` with the decision payload. The tool assigns the next `D-NN` id and persists atomically. Format the summary as:
    ```
    [Category] Decision summary — short rationale
    ```
@@ -253,8 +253,8 @@ When all questions are answered, write `.design/DESIGN-CONTEXT.md` summarizing t
 
 ## Step 4 - Close out explore
 
-- If the synthesizer (or equivalent mapper batch) ran in Step 2, call `mcp__gdd_state__update_progress` with `task_progress: "<mappers-completed>/<mappers-total>"` and `status: "explore_mappers_done"` before advancing.
-- Call `mcp__gdd_state__checkpoint` - bumps `frontmatter.last_checkpoint` + appends a timestamp entry.
+- If the synthesizer (or equivalent mapper batch) ran in Step 2, call `mcp__hone_state__update_progress` with `task_progress: "<mappers-completed>/<mappers-total>"` and `status: "explore_mappers_done"` before advancing.
+- Call `mcp__hone_state__checkpoint` - bumps `frontmatter.last_checkpoint` + appends a timestamp entry.
 - Stage advance to `plan` happens at the next stage's entry (the plan skill will transition from its own entry step); do not edit frontmatter directly from this skill.
 
 ## After Writing
@@ -262,6 +262,6 @@ When all questions are answered, write `.design/DESIGN-CONTEXT.md` summarizing t
 ```
 === Explore complete ===
 Saved: .design/DESIGN.md, .design/DESIGN-DEBT.md, .design/DESIGN-CONTEXT.md
-Next: @get-design-done plan
+Next: {{command_prefix}}plan
 =========================
 ```

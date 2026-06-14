@@ -1,12 +1,12 @@
 ---
-name: gdd-openrouter-status
+name: hone-openrouter-status
 description: "Read-only OpenRouter catalog + tier-mapping diagnostic - surfaces catalog freshness (fetched_at vs the 24h TTL), the last-fetch timestamp, the resolved opus/sonnet/haiku → model mappings (via the Phase-33.6 adapter), and a per-tier preview. Use when investigating which OpenRouter model a tier resolves to, or whether the catalog cache is fresh/stale. Phase 33.6 (v1.33.6) diagnostic - {{command_prefix}}openrouter-status."
 argument-hint: "[--refresh]"
 tools: Read, Bash
 disable-model-invocation: true
 ---
 
-# gdd-openrouter-status
+# hone-openrouter-status
 
 ## Role
 

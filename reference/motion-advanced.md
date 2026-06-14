@@ -1,4 +1,4 @@
-<!-- Source: Phase 18 — get-design-done -->
+<!-- Source: Phase 18 — hone -->
 <!-- Extends: reference/motion.md (for advanced patterns) -->
 <!-- See also: reference/framer-motion-patterns.md, reference/motion-easings.md, reference/motion-spring.md -->
 

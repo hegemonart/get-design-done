@@ -69,10 +69,10 @@ function writeText(filePath, content) {
  * @returns {string}  absolute tmpdir path with sentinel package.json planted
  */
 function makeTmpFixture(state) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-doctor-tier2-' + state + '-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-doctor-tier2-' + state + '-'));
   // Anchor walk-up at tmpdir (T-X2-06).
   writeJson(path.join(tmpDir, 'package.json'), {
-    name: 'gdd-doctor-tier2-test-' + state,
+    name: 'hone-doctor-tier2-test-' + state,
     version: '1.28.8',
   });
 
@@ -80,7 +80,7 @@ function makeTmpFixture(state) {
     // Codex plugin manifest — valid C1 shape: name + version +
     // description + at least one of entrypoint/commands/skills.
     writeJson(path.join(tmpDir, '.codex-plugin', 'plugin.json'), {
-      name: 'gdd-doctor-tier2-test',
+      name: 'hone-doctor-tier2-test',
       version: '1.28.8',
       description: 'X2 doctor aggregator test fixture',
       skills: [],
@@ -91,9 +91,9 @@ function makeTmpFixture(state) {
     // `ready-to-install`. Without this the verdict is
     // `manifest-only-not-ready` with `catalog absent` reason.
     writeJson(path.join(tmpDir, '.claude-plugin', 'marketplace.json'), {
-      name: 'get-design-done',
+      name: 'hone',
       plugins: [
-        { name: 'gdd-doctor-tier2-test', version: '1.28.8' },
+        { name: 'hone-doctor-tier2-test', version: '1.28.8' },
       ],
     });
   }
@@ -101,10 +101,10 @@ function makeTmpFixture(state) {
   if (state === 'complete') {
     // Cursor manifest + state file — D-16 submitted-pending state.
     writeJson(path.join(tmpDir, '.cursor-plugin', 'plugin.json'), {
-      name: 'gdd-doctor-tier2-test',
+      name: 'hone-doctor-tier2-test',
       version: '1.28.8',
       description: 'X2 doctor aggregator test fixture',
-      author: { name: 'gdd-test-author' },
+      author: { name: 'hone-test-author' },
       keywords: ['gdd', 'test'],
     });
     writeJson(path.join(tmpDir, '.cursor-plugin', 'marketplace-state.json'), {
@@ -113,12 +113,12 @@ function makeTmpFixture(state) {
     });
     // agentskills.io lint pass — plant a single valid SKILL.md.
     writeText(
-      path.join(tmpDir, 'skills', 'gdd-tier2-fixture', 'SKILL.md'),
+      path.join(tmpDir, 'skills', 'hone-tier2-fixture', 'SKILL.md'),
       '---\n' +
-      'name: gdd-tier2-fixture\n' +
+      'name: hone-tier2-fixture\n' +
       'description: minimal fixture for Plan 28-8-X2 doctor aggregator tests\n' +
       '---\n' +
-      '# gdd-tier2-fixture\n\n' +
+      '# hone-tier2-fixture\n\n' +
       'Body content (lint-clean per Phase 28.5 contract).\n'
     );
   }
@@ -318,7 +318,7 @@ test('doctor tier-2: malformed marketplace-state.json does NOT crash aggregator'
   // T-X2-03 mitigation — B2 throws on malformed state-file; aggregator
   // catches and surfaces as not-configured with detail. This test guards
   // that contract.
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gdd-doctor-tier2-malformed-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hone-doctor-tier2-malformed-'));
   try {
     writeJson(path.join(tmpDir, 'package.json'), { name: 'x', version: '0.0.0' });
     writeJson(path.join(tmpDir, '.cursor-plugin', 'plugin.json'), {
