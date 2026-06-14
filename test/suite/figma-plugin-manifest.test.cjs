@@ -59,7 +59,7 @@ test("31-04: no wildcard '*' and no external host in allowedDomains", () => {
   assert.ok(!domains.includes('*'), "allowedDomains must NOT contain the wildcard '*' (D-06)");
   for (const domain of domains) {
     assert.ok(
-      !/\bapi\.figma\.com\b/.test(domain),
+      !domain.includes('api.figma.com'),
       `allowedDomains must NOT reach the Figma REST API ("${domain}")`,
     );
     // No public/external host: anything that is not localhost/127.0.0.1:5179 is forbidden.

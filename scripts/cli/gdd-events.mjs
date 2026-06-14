@@ -29,7 +29,7 @@
 //
 // Default --path is `.design/telemetry/events.jsonl` (relative to cwd).
 
-import { statSync, openSync, readSync, closeSync } from 'node:fs';
+import { openSync, readSync, closeSync, fstatSync } from 'node:fs';
 import { resolve, isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { argv, exit, stdout, stderr } from 'node:process';
@@ -154,7 +154,11 @@ async function cmdTail(parsed) {
     for await (const ev of readEvents({ path })) {
       stdout.write(JSON.stringify(ev) + '\n');
     }
-    offset = statSync(path).size;
+    // Capture the EOF offset from a short-lived fd (open+fstat) instead of
+    // statSync(path): keeping every size check on a descriptor — never on the
+    // path — leaves no stat→open pair for the poll loop below to race on.
+    const fd0 = openSync(path, 'r');
+    try { offset = fstatSync(fd0).size; } finally { closeSync(fd0); }
   } catch (e) {
     if (e.code !== 'ENOENT') throw e;
     offset = 0;
@@ -164,17 +168,9 @@ async function cmdTail(parsed) {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     await new Promise((r) => setTimeout(r, 250));
-    // Stat + open directly and treat ENOENT as "file not there this tick"
-    // (skip and re-poll) — avoids the existsSync→statSync/openSync TOCTOU race
-    // where the file could be removed between the check and the use.
-    let size;
-    try {
-      size = statSync(path).size;
-    } catch (e) {
-      if (e.code === 'ENOENT') continue;
-      throw e;
-    }
-    if (size <= offset) continue;
+    // Open the file first and fstat the handle — both the size check and the
+    // read target the descriptor, not the path, so there is no stat→open TOCTOU
+    // window. ENOENT means the file isn't there this tick: skip and re-poll.
     let fd;
     try {
       fd = openSync(path, 'r');
@@ -183,6 +179,8 @@ async function cmdTail(parsed) {
       throw e;
     }
     try {
+      const size = fstatSync(fd).size;
+      if (size <= offset) continue;
       const need = size - offset;
       const chunk = Buffer.allocUnsafe(need);
       const n = readSync(fd, chunk, 0, need, offset);
