@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Get Design Done — 5-stage agent-orchestrated design pipeline (Brief → Explore → Plan → Design → Verify) for AI coding agents. 64 agents, 96 skills, 39 connection integrations, two MCP servers, opt-in SQLite state backbone, bidirectional Figma write-back, and a reflector-driven self-improvement loop. Cross-runtime install for Claude Code, Codex, Cursor, OpenCode, Gemini, and more.",
-    "version": "1.60.2"
+    "version": "1.60.3"
   },
   "plugins": [
     {
       "name": "get-design-done",
       "source": "./",
       "description": "Agent-orchestrated 5-stage design pipeline (Brief → Explore → Plan → Design → Verify) for AI coding agents. 64 specialized agents, 96 skills, 39 connection integrations (Figma, Refero, Preview, Storybook, Chromatic, Graphify, Linear, Jira, Notion, …), bidirectional Figma write-back, queryable intel store, opt-in SQLite state backbone, and a reflector-driven self-improvement loop. Two MCP servers (gdd-state for typed STATE mutators, gdd-mcp for 13 read-only project-priming tools), tier-aware routing with cost telemetry, and defense-in-depth hooks (protected paths, MCP circuit breaker, injection scanner, budget enforcer). Cross-runtime install for Claude Code, Codex, Cursor, OpenCode, Gemini, Copilot, and more.",
-      "version": "1.60.2",
+      "version": "1.60.3",
       "author": {
         "name": "hegemonart"
       },

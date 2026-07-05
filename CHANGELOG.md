@@ -4,6 +4,22 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.60.3] - 2026-07-06
+
+**Multi-runtime install fix** - the Claude-only `model:` frontmatter directive no longer leaks into the command files generated for non-Claude runtimes. Running any `/gdd-*` command on Kilo Code (Qwen) crashed with `Model not found: inherit/.` because the installer round-tripped `model: inherit` verbatim into the command file and Kilo parsed the value as a literal model id.
+
+### Fixed
+
+- **`model:` frontmatter stripped from non-Claude command files** (`scripts/lib/install/converters/shared.cjs`). `buildFrontmatter` now drops the `model:` line when emitting artifacts for the 12 non-Claude command-format runtimes (Kilo, Qwen, OpenCode, Gemini, Cursor, Codex, Copilot, Antigravity, Augment, CodeBuddy, Windsurf, Trae). `model: inherit` is a Claude-Code directive meaning "defer to the session model"; it - and the Claude tier names `opus` / `sonnet` / `haiku` - are not valid model ids on any other runtime, so Kilo read `inherit` as `<provider>/<model>` (`inherit/`) and failed with `Model not found: inherit/.`. Cross-runtime model selection remains the job of `default-tier` / `reasoning-class` + `tier-resolver.cjs`, which round-trip untouched; sibling keys such as `default-tier:` and `model-notes:` are preserved. Agents are Claude-local-only, so no agent artifact was affected. Regression coverage added in `test/suite/converters-wave4.test.cjs` (Kilo / OpenCode / Gemini integration plus a direct `buildFrontmatter` unit).
+
+### Breaking changes
+
+None.
+
+5,145/5,145 tests pass.
+
+---
+
 ## [1.60.2] - 2026-06-13
 
 **Security & CI hardening** - bring the SAST/dependency-audit gates the project lacked, and close the one untrusted-link gap in the injection scanner, *before* the detection engine lands its large new surface. Sourced from a reconciliation against the upstream framework's recent releases (`.planning/audits/UPSTREAM-GSD-CORE-DIFF-2026-06-13.md`).

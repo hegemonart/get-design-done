@@ -767,6 +767,10 @@ OFF_CADENCE_VERSIONS.add('1.60.1');
 // v1.60.2 — Phase 60.2 security & CI hardening (CodeQL + npm-audit gate + hono
 // override + dangerous-link detection), an off-cadence patch on the 1.60 minor.
 OFF_CADENCE_VERSIONS.add('1.60.2');
+// v1.60.3 — multi-runtime install fix: strip the Claude-only `model:` frontmatter
+// from generated non-Claude command files (Kilo/Qwen crashed with
+// "Model not found: inherit/."), an off-cadence patch on the 1.60 minor.
+OFF_CADENCE_VERSIONS.add('1.60.3');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {
