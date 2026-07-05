@@ -291,6 +291,42 @@ test('codex-plugin: convert copies skills tree verbatim', () => {
   }
 });
 
+test('codex-plugin: convert strips Claude-only `model:` from copied SKILL.md', () => {
+  // Regression: the Tier-2 bundle copied skills/ verbatim, so `model: inherit`
+  // leaked into the marketplace bundle and would crash non-Claude consumers
+  // (Kilo: `Model not found: inherit/.`) — the same bug the Tier-1 file-drop
+  // path had. The copy now sanitizes SKILL.md frontmatter.
+  const tmp = mkTmpdir();
+  try {
+    const skillsDir = path.join(tmp, 'skills');
+    const dir = path.join(skillsDir, 'gate');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'SKILL.md'),
+      '---\nname: gdd-gate\ndescription: d\nmodel: inherit\ndefault-tier: haiku\n---\n\nGate body.\n',
+      'utf8'
+    );
+    const outDir = path.join(tmp, 'out');
+    convert({ skillsDir, outDir, manifest: buildManifest(fixtureSources()) });
+
+    const copied = fs.readFileSync(
+      path.join(outDir, 'skills', 'gate', 'SKILL.md'),
+      'utf8'
+    );
+    assert.equal(/^\s*model\s*:/m.test(copied), false, 'model: stripped from bundle SKILL.md');
+    assert.equal(copied.includes('inherit'), false, 'inherit gone');
+    assert.ok(/^\s*default-tier\s*:\s*haiku\s*$/m.test(copied), 'default-tier preserved');
+    assert.ok(copied.includes('name: gdd-gate'), 'name preserved');
+    assert.ok(copied.includes('Gate body.'), 'body preserved');
+
+    // Source SKILL.md must remain untouched.
+    const srcContent = fs.readFileSync(path.join(dir, 'SKILL.md'), 'utf8');
+    assert.ok(/^\s*model\s*:\s*inherit\s*$/m.test(srcContent), 'source SKILL.md untouched');
+  } finally {
+    rmTmpdir(tmp);
+  }
+});
+
 test('codex-plugin: convert throws on manifest missing required field', () => {
   const tmp = mkTmpdir();
   try {
