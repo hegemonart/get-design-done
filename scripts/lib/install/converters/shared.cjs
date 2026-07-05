@@ -102,6 +102,21 @@ const CODEX_TOOL_MAP = Object.freeze({
 });
 
 // ---------------------------------------------------------------------------
+// MODEL_FIELD_RE — the Claude-only `model:` frontmatter key
+// ---------------------------------------------------------------------------
+
+/**
+ * Matches a `model:` frontmatter line (optional leading whitespace, exact key).
+ * The `model:` directive is Claude-Code-only: its values (`inherit`, or a
+ * Claude tier name `opus`/`sonnet`/`haiku`) are not valid model ids on any
+ * non-Claude runtime, whose command loaders parse the value as a literal
+ * `<provider>/<model>` and fail (Kilo: `Model not found: inherit/.`). Every
+ * converter that emits artifacts for a non-Claude consumer strips this line.
+ * Anchored to the exact key so `default-tier:` / `model-notes:` never match.
+ */
+const MODEL_FIELD_RE = /^\s*model\s*:/;
+
+// ---------------------------------------------------------------------------
 // extractFrontmatterAndBody — YAML frontmatter parser
 // ---------------------------------------------------------------------------
 
@@ -356,11 +371,11 @@ function buildFrontmatter(originalFrontmatter, skillName, runtimePrefix) {
   // job of `default-tier`/`reasoning-class` + tier-resolver.cjs, NOT this
   // per-command harness directive, so we strip the whole line here.
   //
-  // The `^\s*model\s*:` anchor matches only the exact `model` key — sibling
-  // keys like `model-notes:` or `default-tier:` are preserved.
+  // `MODEL_FIELD_RE` matches only the exact `model` key — sibling keys like
+  // `model-notes:` or `default-tier:` are preserved.
   const lines = originalFrontmatter
     .split(/\r?\n/)
-    .filter((line) => !/^\s*model\s*:/.test(line));
+    .filter((line) => !MODEL_FIELD_RE.test(line));
   let nameSeen = false;
   for (let i = 0; i < lines.length; i++) {
     const m = lines[i].match(/^(\s*name\s*:\s*)(.*)$/);
@@ -384,6 +399,41 @@ function buildFrontmatter(originalFrontmatter, skillName, runtimePrefix) {
 }
 
 // ---------------------------------------------------------------------------
+// stripModelFromFrontmatter — drop the Claude-only `model:` line, keep body
+// ---------------------------------------------------------------------------
+
+/**
+ * Strip the Claude-only `model:` directive from a full SKILL.md string's
+ * frontmatter, leaving the body untouched.
+ *
+ * Used by the Tier-2 marketplace bundle emitters (codex-plugin.cjs,
+ * cursor-marketplace.cjs), which copy the `skills/` tree for non-Claude
+ * consumers. A verbatim copy would ship `model: inherit` and crash those
+ * consumers exactly as the Tier-1 file-drop path did before `buildFrontmatter`
+ * learned to drop it (Kilo: `Model not found: inherit/.`).
+ *
+ * Byte-preserving when there is nothing to strip: if `content` has no
+ * frontmatter, or the frontmatter carries no `model:` line, the ORIGINAL
+ * string is returned unchanged. Callers can therefore compare `stripped ===
+ * original` and fall back to a byte-exact `copyFileSync` for untouched files.
+ *
+ * The `model:` field is always a single-line scalar (`model: inherit`) in the
+ * GDD source set, so a line filter is sufficient — no block-scalar handling.
+ *
+ * @param {string} content  Full SKILL.md content (frontmatter + body).
+ * @returns {string}
+ */
+function stripModelFromFrontmatter(content) {
+  if (typeof content !== 'string' || content === '') return content;
+  const { frontmatter, body } = extractFrontmatterAndBody(content);
+  if (frontmatter == null) return content; // no frontmatter → nothing to strip
+  const lines = frontmatter.split(/\r?\n/);
+  const kept = lines.filter((line) => !MODEL_FIELD_RE.test(line));
+  if (kept.length === lines.length) return content; // no model line → unchanged
+  return '---\n' + kept.join('\n') + '\n---\n' + body;
+}
+
+// ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
 
@@ -393,5 +443,7 @@ module.exports = {
   rewriteCodeFenceTools,
   ensureAdapterHeader,
   buildFrontmatter,
+  stripModelFromFrontmatter,
+  MODEL_FIELD_RE,
   CODEX_TOOL_MAP,
 };

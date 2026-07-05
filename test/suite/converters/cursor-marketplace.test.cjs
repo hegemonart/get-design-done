@@ -228,6 +228,41 @@ test('cursor-marketplace: convert copies skills/ tree byte-for-byte', () => {
   }
 });
 
+test('cursor-marketplace: convert strips Claude-only `model:` from copied SKILL.md', () => {
+  // Regression: the Tier-2 bundle copied skills/ verbatim, so `model: inherit`
+  // leaked into the marketplace bundle and would crash non-Claude consumers
+  // (Kilo: `Model not found: inherit/.`). The copy now sanitizes SKILL.md.
+  const tmp = mkTmpdir();
+  try {
+    const skills = path.join(tmp, 'skills');
+    const dir = path.join(skills, 'gdd-gate');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'SKILL.md'),
+      '---\nname: gdd-gate\ndescription: gate\nmodel: inherit\ndefault-tier: haiku\n---\nGate body.\n'
+    );
+    const out = path.join(tmp, 'out');
+    const m = c.buildManifest(realSources());
+    c.convert({ skillsDir: skills, outDir: out, manifest: m });
+
+    const copied = fs.readFileSync(
+      path.join(out, 'skills', 'gdd-gate', 'SKILL.md'),
+      'utf8'
+    );
+    assert.equal(/^\s*model\s*:/m.test(copied), false, 'model: stripped from bundle SKILL.md');
+    assert.equal(copied.includes('inherit'), false, 'inherit gone');
+    assert.ok(/^\s*default-tier\s*:\s*haiku\s*$/m.test(copied), 'default-tier preserved');
+    assert.ok(copied.includes('name: gdd-gate'), 'name preserved');
+    assert.ok(copied.includes('Gate body.'), 'body preserved');
+
+    // Source SKILL.md must remain untouched.
+    const srcContent = fs.readFileSync(path.join(dir, 'SKILL.md'), 'utf8');
+    assert.ok(/^\s*model\s*:\s*inherit\s*$/m.test(srcContent), 'source SKILL.md untouched');
+  } finally {
+    rmTmpdir(tmp);
+  }
+});
+
 test('cursor-marketplace: convert returns filesWritten as a sorted array of relative paths', () => {
   const tmp = mkTmpdir();
   try {

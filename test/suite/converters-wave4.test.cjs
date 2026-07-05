@@ -398,6 +398,25 @@ test('converters-wave4: shared.buildFrontmatter drops `model:`, keeps sibling fi
   assert.ok(out3.includes('model-notes: keep this'), 'model-notes preserved (not a model: field)');
 });
 
+test('converters-wave4: shared.stripModelFromFrontmatter drops model:, preserves body + byte-identity', () => {
+  // Used by the Tier-2 marketplace bundle emitters (codex-plugin,
+  // cursor-marketplace) that copy the skills/ tree for non-Claude consumers.
+  const withModel =
+    '---\nname: gdd-x\ndescription: d\nmodel: inherit\ndefault-tier: haiku\n---\n\nBody stays.\n';
+  const out = shared.stripModelFromFrontmatter(withModel);
+  assert.equal(/^\s*model\s*:/m.test(out), false, 'model line stripped');
+  assert.ok(/^\s*default-tier\s*:\s*haiku\s*$/m.test(out), 'default-tier kept');
+  assert.ok(out.includes('Body stays.'), 'body preserved');
+  // No frontmatter → returned unchanged, and a `model:`-looking line in the
+  // BODY is never touched (only the frontmatter block is scanned).
+  const noFm = '# Heading\n\nmodel: not-a-frontmatter-field\n';
+  assert.equal(shared.stripModelFromFrontmatter(noFm), noFm, 'no-frontmatter content unchanged');
+  // Frontmatter without a model line → returned unchanged (byte-preserving,
+  // so the Tier-2 copy stays byte-exact for model-free skills).
+  const noModel = '---\nname: gdd-y\ndescription: d\n---\nBody.\n';
+  assert.equal(shared.stripModelFromFrontmatter(noModel), noModel, 'model-free content unchanged');
+});
+
 // ── Wave B completeness invariant — all 13 runtime converters + 2 Tier-2 ─
 
 test('converters-wave4: Wave B complete — 13 runtime + 2 Tier-2 converter files exist', () => {

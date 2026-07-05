@@ -44,6 +44,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const shared = require('./shared.cjs');
 
 // Per research § Top-level fields: name, version, description are the only
 // strictly-required spec fields. All other manifest fields are optional.
@@ -112,6 +113,12 @@ function curateKeywords(arr) {
 /**
  * Copy a directory tree recursively. Vanilla fs only — no deps. Mirrors
  * the helper used by cursor-marketplace.cjs (Plan 28-8-B1).
+ *
+ * `SKILL.md` files are sanitized in transit: the Claude-only `model:`
+ * frontmatter directive is stripped so non-Claude marketplace consumers do
+ * not choke on `model: inherit` (Kilo: `Model not found: inherit/.`). Files
+ * that carry no `model:` line are copied byte-for-byte (copyFileSync), so the
+ * verbatim-copy guarantee still holds for everything else.
  */
 function copyDirRecursive(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -121,7 +128,17 @@ function copyDirRecursive(src, dest) {
     if (entry.isDirectory()) {
       copyDirRecursive(srcPath, destPath);
     } else if (entry.isFile()) {
-      fs.copyFileSync(srcPath, destPath);
+      if (entry.name === 'SKILL.md') {
+        const original = fs.readFileSync(srcPath, 'utf8');
+        const stripped = shared.stripModelFromFrontmatter(original);
+        if (stripped === original) {
+          fs.copyFileSync(srcPath, destPath); // byte-exact, no re-encode
+        } else {
+          fs.writeFileSync(destPath, stripped, 'utf8');
+        }
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
     }
     // symlinks + other: ignored (skills tree is regular files only).
   }

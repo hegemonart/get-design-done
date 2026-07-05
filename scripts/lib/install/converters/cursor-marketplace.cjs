@@ -34,6 +34,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const shared = require('./shared.cjs');
 
 // Curated keyword subset for Cursor's marketplace card display.
 // Per Wave A research § Schema Mapping `keywords` row: marketplace card
@@ -201,6 +202,12 @@ function buildManifest(sources, opts) {
 /**
  * Copy a directory tree recursively. Vanilla fs only — no deps.
  * Returns the list of relative paths written (relative to `dest`).
+ *
+ * `SKILL.md` files are sanitized in transit: the Claude-only `model:`
+ * frontmatter directive is stripped so non-Claude marketplace consumers do
+ * not choke on `model: inherit` (Kilo: `Model not found: inherit/.`). Files
+ * that carry no `model:` line are copied byte-for-byte (copyFileSync), so the
+ * verbatim-copy guarantee still holds for everything else.
  */
 function copyDirRecursive(src, dest, relPrefix) {
   const written = [];
@@ -208,16 +215,30 @@ function copyDirRecursive(src, dest, relPrefix) {
   while (stack.length > 0) {
     const { s, d, rel } = stack.pop();
     fs.mkdirSync(d, { recursive: true });
-    const entries = fs.readdirSync(s);
+    // Use withFileTypes so dir/file classification comes from the single
+    // readdir syscall (the dirent), not a follow-up statSync — this collapses
+    // the check-then-use file race (CodeQL js/file-system-race) between the
+    // stat and the readFileSync/copyFileSync. Mirrors codex-plugin.cjs.
+    const entries = fs.readdirSync(s, { withFileTypes: true });
     for (const entry of entries) {
-      const sp = path.join(s, entry);
-      const dp = path.join(d, entry);
-      const relPath = rel ? `${rel}/${entry}` : entry;
-      const stat = fs.statSync(sp);
-      if (stat.isDirectory()) {
+      const name = entry.name;
+      const sp = path.join(s, name);
+      const dp = path.join(d, name);
+      const relPath = rel ? `${rel}/${name}` : name;
+      if (entry.isDirectory()) {
         stack.push({ s: sp, d: dp, rel: relPath });
-      } else if (stat.isFile()) {
-        fs.copyFileSync(sp, dp);
+      } else if (entry.isFile()) {
+        if (name === 'SKILL.md') {
+          const original = fs.readFileSync(sp, 'utf8');
+          const stripped = shared.stripModelFromFrontmatter(original);
+          if (stripped === original) {
+            fs.copyFileSync(sp, dp); // byte-exact, no re-encode
+          } else {
+            fs.writeFileSync(dp, stripped, 'utf8');
+          }
+        } else {
+          fs.copyFileSync(sp, dp);
+        }
         written.push(relPath);
       }
       // symlinks + other: ignored (skills tree is regular files only)
