@@ -47,6 +47,7 @@ const path = require('node:path');
 const opencode = require('../../scripts/lib/install/converters/opencode.cjs');
 const kilo = require('../../scripts/lib/install/converters/kilo.cjs');
 const gemini = require('../../scripts/lib/install/converters/gemini.cjs');
+const shared = require('../../scripts/lib/install/converters/shared.cjs');
 
 // ── Source fixture (loaded once) ──────────────────────────────────────────
 
@@ -321,6 +322,80 @@ test('converters-wave4: gemini.cjs cites reference/gemini-tools.md per D-06', ()
     src.includes('reference/gemini-tools.md'),
     'gemini.cjs must cite Phase 21 reference (D-06)'
   );
+});
+
+// ── `model:` frontmatter is Claude-only — must NOT leak to other runtimes ─
+//
+// Regression for the reported crash: running `/gdd-quality-gate` on Kilo
+// (Qwen) failed with `Model not found: inherit/.`. Root cause — the
+// `quality-gate` SKILL.md carries `model: inherit` (a Claude-Code directive
+// meaning "defer to the session model"). buildFrontmatter round-tripped it
+// verbatim into the Kilo command file; Kilo read the `model:` field and
+// parsed `inherit` as a literal `<provider>/<model>` → `inherit/` → error.
+// `inherit` and the Claude tier names (opus/sonnet/haiku) are all invalid
+// model ids on every non-Claude runtime, so the converter must drop the
+// `model:` line entirely. Cross-runtime model selection is handled
+// separately by `default-tier`/`reasoning-class` + tier-resolver.cjs.
+
+const MODEL_INHERIT_SRC = [
+  '---',
+  'name: gdd-quality-gate',
+  'description: "Runs the project quality gate before verify."',
+  'tools: Read, Write, Bash',
+  'color: amber',
+  'model: inherit',
+  'default-tier: haiku',
+  '---',
+  '',
+  'Body invoking /gdd-verify.',
+  '',
+].join('\n');
+
+for (const c of CONVERTERS) {
+  test('converters-wave4: ' + c.name + ' strips Claude-only `model:` frontmatter', () => {
+    const out = c.mod.convert(MODEL_INHERIT_SRC, 'quality-gate', { runtime: c.name });
+    assert.equal(
+      /^\s*model\s*:/m.test(out),
+      false,
+      c.name + ': must not emit a `model:` line (Kilo would read `inherit` as a model id)'
+    );
+    assert.equal(
+      out.includes('inherit'),
+      false,
+      c.name + ': `inherit` must not survive anywhere in output'
+    );
+    // The tier hint is GDD-internal (consumed by tier-resolver, ignored by
+    // the harness command loader) and MUST survive.
+    assert.ok(
+      /^\s*default-tier\s*:\s*haiku\s*$/m.test(out),
+      c.name + ': default-tier must round-trip'
+    );
+    // Name + description still round-trip.
+    assert.ok(/name:\s*"?gdd-quality-gate"?/.test(out), c.name + ': name preserved');
+    assert.ok(out.includes('Runs the project quality gate'), c.name + ': description preserved');
+  });
+}
+
+test('converters-wave4: shared.buildFrontmatter drops `model:`, keeps sibling fields', () => {
+  const fm = [
+    'name: gdd-x',
+    'description: "d"',
+    'model: inherit',
+    'default-tier: haiku',
+  ].join('\n');
+  const out = shared.buildFrontmatter(fm, 'x', 'gdd-');
+  assert.equal(/^\s*model\s*:/m.test(out), false, 'model line stripped');
+  assert.ok(/^\s*default-tier\s*:\s*haiku\s*$/m.test(out), 'default-tier kept');
+  assert.ok(out.includes('description: "d"'), 'description kept');
+  // A literal tier value on `model:` (not just `inherit`) is equally invalid
+  // off-Claude and must also be stripped.
+  const fm2 = 'name: gdd-y\nmodel: haiku\n';
+  const out2 = shared.buildFrontmatter(fm2, 'y', 'gdd-');
+  assert.equal(/^\s*model\s*:/m.test(out2), false, 'model: haiku also stripped');
+  // A field whose name merely starts with "model" must NOT be stripped.
+  const fm3 = 'name: gdd-z\nmodel-notes: keep this\n';
+  const out3 = shared.buildFrontmatter(fm3, 'z', 'gdd-');
+  assert.ok(out3.includes('model-notes: keep this'), 'model-notes preserved (not a model: field)');
 });
 
 // ── Wave B completeness invariant — all 13 runtime converters + 2 Tier-2 ─
