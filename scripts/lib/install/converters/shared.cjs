@@ -316,6 +316,10 @@ function ensureAdapterHeader(body, runtimeDisplay) {
  *     `gsd-` prefix on the existing name to avoid `gdd-gdd-`-style
  *     duplication). All other fields round-trip verbatim — we do NOT
  *     parse YAML; we operate on the raw text with a line-by-line scan.
+ *   - EXCEPTION: the Claude-Code-only `model:` line is dropped. Its
+ *     values (`inherit` / a Claude tier name) are invalid model ids on
+ *     non-Claude runtimes and crash their command loaders (Kilo:
+ *     `Model not found: inherit/.`). See the inline note below.
  *   - If the original has no `name:` field, prepend one.
  *
  * Returns a complete frontmatter string with leading/trailing `---`
@@ -339,8 +343,24 @@ function buildFrontmatter(originalFrontmatter, skillName, runtimePrefix) {
   }
 
   // Line-by-line rewrite of the `name:` field. We never touch description,
-  // tools, or any other field — they round-trip verbatim.
-  const lines = originalFrontmatter.split(/\r?\n/);
+  // tools, or any other field — they round-trip verbatim, with ONE
+  // exception: the Claude-Code-only `model:` directive is dropped.
+  //
+  // `model:` is a Claude harness directive ("defer to the session model" for
+  // `inherit`, or pin a Claude tier for `opus`/`sonnet`/`haiku`). None of
+  // those values are valid model ids on the non-Claude runtimes this
+  // converter targets. Kilo (and other command-runners) read the `model:`
+  // frontmatter and parse the value as a literal `<provider>/<model>` — so
+  // `model: inherit` becomes `inherit/` (empty model) and the command dies
+  // with `Model not found: inherit/.`. Cross-runtime model selection is the
+  // job of `default-tier`/`reasoning-class` + tier-resolver.cjs, NOT this
+  // per-command harness directive, so we strip the whole line here.
+  //
+  // The `^\s*model\s*:` anchor matches only the exact `model` key — sibling
+  // keys like `model-notes:` or `default-tier:` are preserved.
+  const lines = originalFrontmatter
+    .split(/\r?\n/)
+    .filter((line) => !/^\s*model\s*:/.test(line));
   let nameSeen = false;
   for (let i = 0; i < lines.length; i++) {
     const m = lines[i].match(/^(\s*name\s*:\s*)(.*)$/);
