@@ -771,6 +771,10 @@ OFF_CADENCE_VERSIONS.add('1.60.2');
 // from generated non-Claude command files (Kilo/Qwen crashed with
 // "Model not found: inherit/."), an off-cadence patch on the 1.60 minor.
 OFF_CADENCE_VERSIONS.add('1.60.3');
+// v1.60.4 — follow-up to 1.60.3: strip the same `model:` directive from the
+// Tier-2 marketplace bundles (codex-plugin / cursor-marketplace copied skills
+// verbatim), an off-cadence patch on the 1.60 minor.
+OFF_CADENCE_VERSIONS.add('1.60.4');
 
 
 test('semver-compare: consecutive versions in sequence are exact patch bumps', () => {

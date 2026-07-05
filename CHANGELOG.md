@@ -4,6 +4,22 @@ All notable changes to get-design-done are documented here. Versions follow [sem
 
 ---
 
+## [1.60.4] - 2026-07-06
+
+**Multi-runtime install fix (Tier-2 bundles)** - follow-up to 1.60.3. The same Claude-only `model:` frontmatter directive is now stripped from the Tier-2 marketplace distribution bundles, not just the Tier-1 file-drop command files.
+
+### Fixed
+
+- **`model:` frontmatter stripped from Tier-2 marketplace bundles** (`scripts/lib/install/converters/codex-plugin.cjs`, `scripts/lib/install/converters/cursor-marketplace.cjs`). These converters copied the `skills/` tree verbatim, so `model: inherit` still leaked into the Codex-plugin and Cursor-marketplace bundles and would crash non-Claude consumers exactly as the file-drop path did before 1.60.3 (`Model not found: inherit/.`). A new shared helper `stripModelFromFrontmatter` drops the `model:` line from each `SKILL.md` frontmatter during the copy; files that carry no `model:` line are still copied byte-for-byte, so the verbatim-copy guarantee holds for everything else. `buildFrontmatter` and the new helper share a single `MODEL_FIELD_RE` so the Tier-1 and Tier-2 paths strip identically. Regression coverage in `test/suite/converters/codex-plugin.test.cjs`, `test/suite/converters/cursor-marketplace.test.cjs`, and a `stripModelFromFrontmatter` unit in `test/suite/converters-wave4.test.cjs`.
+
+### Breaking changes
+
+None.
+
+5,148/5,148 tests pass.
+
+---
+
 ## [1.60.3] - 2026-07-06
 
 **Multi-runtime install fix** - the Claude-only `model:` frontmatter directive no longer leaks into the command files generated for non-Claude runtimes. Running any `/gdd-*` command on Kilo Code (Qwen) crashed with `Model not found: inherit/.` because the installer round-tripped `model: inherit` verbatim into the command file and Kilo parsed the value as a literal model id.
