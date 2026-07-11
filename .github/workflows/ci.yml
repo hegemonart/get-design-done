@@ -32,7 +32,7 @@ jobs:
         run: npx markdownlint-cli2 "**/*.md" "#node_modules" "#.planning" "#.claude" "#test/fixtures/baselines"
 
       - name: Link check (lychee)
-        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2
         with:
           # .lycheeignore is auto-discovered at repo root. `--exclude 'file://'`
           # skips local-file link resolution (lychee resolves repo-root-relative
