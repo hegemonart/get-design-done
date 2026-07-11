@@ -110,7 +110,7 @@
     "ajv-formats": "^3.0.1",
     "esbuild": "^0.28.0",
     "json-schema-to-typescript": "^15.0.0",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "keywords": [
     "claude",
