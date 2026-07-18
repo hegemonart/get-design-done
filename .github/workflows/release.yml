@@ -80,7 +80,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup Node.js 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -155,7 +155,7 @@ jobs:
           ref: v${{ needs.detect-version.outputs.version }}
 
       - name: Setup Node.js 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -204,7 +204,7 @@ jobs:
         # Node 24 sidesteps the broken cache entirely by shipping a fresh
         # npm 11.x as part of its install. No upgrade step required, so no
         # surface area for the bundled tool cache to corrupt.
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
@@ -247,7 +247,7 @@ jobs:
           ref: v${{ needs.detect-version.outputs.version }}
 
       - name: Setup Node.js 22
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
