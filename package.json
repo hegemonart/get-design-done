@@ -109,7 +109,7 @@
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.1",
     "esbuild": "^0.28.0",
-    "json-schema-to-typescript": "^15.0.0",
+    "json-schema-to-typescript": "^16.0.0",
     "typescript": "^6.0.3"
   },
   "keywords": [
